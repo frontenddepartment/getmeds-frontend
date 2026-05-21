@@ -1,0 +1,126 @@
+{
+  "meta": {
+    "title": "Contact Us - GetMEDS",
+    "description": "Get in touch with the GetMEDS team. We'd love to hear from you."
+  },
+  "hero": {
+    "image": "assets/contactushero.png",
+    "imageAlt": "Contact Us",
+    "headingLine1": "Get in Touch",
+    "headingAccent": "CONTACT US",
+    "description": "We'd love to hear from you. Whether you have a question about services, pricing, need a consultation, or anything else, our team is ready to answer all your questions."
+  },
+  "info": {
+    "tagline": "I get in touch!",
+    "heading": "We are always ready to help you and answer your questions",
+    "description": "We're here to assist you and provide the answers you need. Your well-being is our priority, and we're just a message away.",
+    "items": [
+      {
+        "label": "Call Center",
+        "values": [
+          "800 188 975 20 34",
+          "+ (123) 1800-234-5678"
+        ]
+      },
+      {
+        "label": "Our location",
+        "values": [
+          "USA, New York - 1080",
+          "Str. First Avenue 1"
+        ]
+      },
+      {
+        "label": "Email",
+        "values": [
+          "getmeds@mail.co"
+        ]
+      },
+      {
+        "label": "Social network",
+        "socials": [
+          {
+            "platform": "Facebook",
+            "icon": "fa-brands fa-facebook",
+            "href": "#"
+          },
+          {
+            "platform": "Twitter",
+            "icon": "fa-brands fa-twitter",
+            "href": "#"
+          },
+          {
+            "platform": "LinkedIn",
+            "icon": "fa-brands fa-linkedin",
+            "href": "#"
+          },
+          {
+            "platform": "Telegram",
+            "icon": "fa-brands fa-telegram",
+            "href": "#"
+          },
+          {
+            "platform": "YouTube",
+            "icon": "fa-brands fa-youtube",
+            "href": "#"
+          }
+        ]
+      }
+    ]
+  },
+  "form": {
+    "heading": "Get in Touch with Us",
+    "fields": [
+      {
+        "name": "fullName",
+        "label": "Full Name",
+        "type": "text",
+        "placeholder": "Type Full Name",
+        "required": true
+      },
+      {
+        "name": "email",
+        "label": "Email Address",
+        "type": "email",
+        "placeholder": "Type Email Address",
+        "required": true
+      },
+      {
+        "name": "phone",
+        "label": "Phone Number",
+        "type": "tel",
+        "placeholder": "Type Phone Number",
+        "required": false
+      },
+      {
+        "name": "subject",
+        "label": "Subject",
+        "type": "select",
+        "placeholder": "Select Subject",
+        "required": false,
+        "options": [
+          {
+            "value": "general",
+            "label": "General Inquiry"
+          },
+          {
+            "value": "support",
+            "label": "Customer Support"
+          },
+          {
+            "value": "sales",
+            "label": "Sales & Pricing"
+          }
+        ]
+      },
+      {
+        "name": "message",
+        "label": "Message",
+        "type": "textarea",
+        "placeholder": "Let us know how we can help you.",
+        "required": false
+      }
+    ],
+    "submitLabel": "Submit",
+    "privacyNotice": "By submitting, I agree to the Privacy Policy."
+  }
+}

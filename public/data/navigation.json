@@ -1,0 +1,154 @@
+{
+  "logo": {
+    "src": "assets/getmedslogo.png",
+    "alt": "GetMEDS Logo",
+    "href": "index.html"
+  },
+  "mainLinks": [
+    { "label": "Home", "href": "/" },
+    { "label": "Order Medicines", "href": "order-medicines.html" },
+    { "label": "Product Range", "href": "product-range.html", "hasDropdown": true },
+    { "label": "Meditations", "href": "meditations.html" },
+    { "label": "About Us", "href": "about-us.html" },
+    { "label": "Contact Us", "href": "contact-us.html" },
+    { "label": "Company", "href": "#", "hasDropdown": true }
+  ],
+  "productMegaMenu": {
+    "columns": [
+      {
+        "heading": "Oncology (Solid Tumors)",
+        "items": [
+          { "label": "Breast Cancer", "href": "product-range.html?category=breast-cancer" },
+          { "label": "Ovarian Cancer", "href": "product-range.html?category=ovarian-cancer" },
+          { "label": "Non-Small Cell Lung Cancer", "href": "product-range.html?category=lung-cancer" },
+          { "label": "Prostate Cancer", "href": "product-range.html?category=prostate-cancer" },
+          { "label": "Colorectal Cancer", "href": "product-range.html?category=colorectal-cancer" },
+          { "label": "Pancreatic Cancer", "href": "product-range.html?category=pancreatic-cancer" }
+        ]
+      },
+      {
+        "heading": "Hematology Range",
+        "items": [
+          { "label": "Acute Myeloid Leukemia", "href": "product-range.html?category=aml" },
+          { "label": "Chronic Myeloid Leukemia", "href": "product-range.html?category=cml" },
+          { "label": "Hodgkin/Non-Hodgkin's Lymphoma", "href": "product-range.html?category=lymphoma" },
+          { "label": "Sickle Cell Anemia", "href": "product-range.html?category=sickle-cell" }
+        ]
+      },
+      {
+        "heading": "Anti-Infectives",
+        "items": [
+          { "label": "Respiratory Infections", "href": "product-range.html?category=respiratory" },
+          { "label": "Urinary Tract Infections", "href": "product-range.html?category=uti" },
+          { "label": "Skin and Soft Tissue Infections", "href": "product-range.html?category=skin-infections" },
+          { "label": "Bone and Joint Infections", "href": "product-range.html?category=bone-infections" }
+        ]
+      },
+      {
+        "heading": "Endocrinology",
+        "items": [
+          { "label": "Endometriosis", "href": "product-range.html?category=endometriosis" },
+          { "label": "Fibrocystic Breast Disease", "href": "product-range.html?category=fibrocystic" }
+        ]
+      },
+      {
+        "heading": "Orthopedic",
+        "items": [
+          { "label": "Multiple Myeloma", "href": "product-range.html?category=multiple-myeloma" },
+          { "label": "Osteoporosis", "href": "product-range.html?category=osteoporosis" }
+        ]
+      },
+      {
+        "heading": "Cardiology",
+        "items": [
+          { "label": "Arrhythmia management", "href": "product-range.html?category=arrhythmia" },
+          { "label": "Hypertension/Angina", "href": "product-range.html?category=hypertension" }
+        ]
+      },
+      {
+        "heading": "Neuro-Oncology",
+        "items": [
+          { "label": "Glioblastoma Multiforme", "href": "product-range.html?category=glioblastoma" }
+        ]
+      },
+      {
+        "heading": "Respiratory / Allergy",
+        "items": [
+          { "label": "Seasonal Allergic Rhinitis", "href": "product-range.html?category=allergic-rhinitis" }
+        ]
+      },
+      {
+        "heading": "Nephrology / Renal",
+        "items": [
+          { "label": "Chronic Kidney Disease", "href": "product-range.html?category=kidney-disease" }
+        ]
+      },
+      {
+        "heading": "Pain Management",
+        "items": [
+          { "label": "Chronic Pain", "href": "product-range.html?category=pain" }
+        ]
+      },
+      {
+        "heading": "Rheumatology",
+        "items": [
+          { "label": "Inflammatory Disorders", "href": "product-range.html?category=rheumatology" }
+        ]
+      }
+    ]
+  },
+  "companyMegaMenu": {
+    "sections": [
+      {
+        "heading": "Explore by Organization",
+        "links": [
+          { "label": "Our Services", "href": "services.html" },
+          { "label": "Global Presence", "href": "global-presence.html" },
+          { "label": "Patient Assistance Program", "href": "pap.html", "isLogoLink": true, "logoSrc": "assets/PAPlogo.png", "logoAlt": "Patient Assistance Program" }
+        ]
+      },
+      {
+        "heading": "More Information",
+        "links": [
+          { "label": "CSR", "href": "csr.html" },
+          { "label": "Careers", "href": "careers.html" },
+          { "label": "United Nations Global Compact", "href": "ungc.html" }
+        ]
+      }
+    ],
+    "slides": [
+      {
+        "image": "assets/about_us_hero.png",
+        "title": "About Us",
+        "description": "Learn more about our mission and vision."
+      },
+      {
+        "image": "assets/globalpresencehero.jpg",
+        "title": "Global Presence",
+        "description": "We are expanding healthcare solutions worldwide."
+      },
+      {
+        "image": "assets/careershero.png",
+        "title": "Careers",
+        "description": "Join our team and make a difference."
+      }
+    ]
+  },
+  "mobileMenu": {
+    "productSubLinks": [
+      { "label": "Oncology / Hematology", "href": "product-range.html?category=oncology-hematology" },
+      { "label": "Hematology / Obstetrician / Gynecology", "href": "product-range.html?category=hematology-obgyn" },
+      { "label": "Anti-Infectives", "href": "product-range.html?category=anti-infectives" },
+      { "label": "Endocrinology", "href": "product-range.html?category=endocrinology" },
+      { "label": "Orthopedic", "href": "product-range.html?category=orthopedic" },
+      { "label": "Cardiology", "href": "product-range.html?category=cardiology" },
+      { "label": "Neuro-Oncology", "href": "product-range.html?category=neuro-oncology" },
+      { "label": "Respiratory / Allergy", "href": "product-range.html?category=respiratory-allergy" },
+      { "label": "Nephrology / Renal", "href": "product-range.html?category=nephrology-renal" },
+      { "label": "Pain Management", "href": "product-range.html?category=pain-management" },
+      { "label": "Rheumatology", "href": "product-range.html?category=rheumatology" },
+      { "label": "Radiology", "href": "product-range.html?category=radiology" }
+    ],
+    "companyLabel": "Company"
+  }
+}

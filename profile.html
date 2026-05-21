@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - GetMEDS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { primary: '#0D99FF', success: '#61A644', dark: '#1A202C', footer: '#1A1D2B', cardbg: '#F8FAFC' },
+                    fontFamily: { sans: ['Poppins', 'sans-serif'] },
+                    borderWidth: {
+                        '3': '3px',
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="components/components.js?v=1775704983"></script>
+    <style>
+        body { font-family: 'Poppins', sans-serif; background-color: #ffffff; }
+        .sidebar-link.active {
+            color: #0D99FF;
+            font-weight: 700;
+            background-color: #eff6ff;
+            border-left: 3px solid #0D99FF;
+        }
+        .tab-btn.active {
+            color: #0D99FF;
+            border-bottom: 2px solid #0D99FF;
+            font-weight: 600;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 4px;
+        }
+        
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="text-gray-800 antialiased">
+    <div id="navbar-placeholder"></div>
+
+    <main class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-8 mt-5 mb-20 flex flex-col md:flex-row gap-6">
+        
+        <!-- Left Sidebar -->
+        <aside class="w-full md:w-64 flex-shrink-0 bg-white rounded-xl p-5 shadow-sm border border-gray-100 h-fit">
+            <div class="flex items-center gap-4 mb-6 pt-2">
+                <div class="h-[52px] w-[52px] rounded-full bg-primary text-white flex items-center justify-center font-bold text-2xl shadow-md cursor-pointer hover:opacity-90" id="profile-avatar">U</div>
+                <div class="overflow-hidden">
+                    <h3 class="font-bold text-gray-900 text-base leading-tight truncate" id="profile-name">User</h3>
+                    <a href="edit-profile.html" class="text-xs text-gray-400 font-medium hover:text-primary transition flex items-center gap-1.5 mt-1"><i class="fa-solid fa-pen text-[10px]"></i> Edit Profile</a>
+                </div>
+            </div>
+
+            <nav class="flex flex-col space-y-1">
+                <a href="javascript:void(0)" onclick="switchProfileTab('purchases', this)" class="sidebar-link active flex items-center gap-3 px-4 py-3 text-[13px] font-medium text-gray-600 rounded-r-lg hover:bg-gray-50 transition border-l-3 border-transparent" style="border-left-color: #0D99FF">
+                    <i class="fa-solid fa-file-invoice text-center text-lg w-5 text-gray-400"></i> My Purchases
+                </a>
+                <a href="javascript:void(0)" onclick="switchProfileTab('notifications', this)" class="sidebar-link flex items-center gap-3 px-4 py-3 text-[13px] font-medium text-gray-600 rounded-r-lg hover:bg-gray-50 transition border-l-3 border-transparent">
+                    <i class="fa-solid fa-bell text-center text-lg w-5 text-gray-400"></i> Notifications
+                </a>
+                <a href="javascript:void(0)" onclick="switchProfileTab('vouchers', this)" class="sidebar-link flex items-center gap-3 px-4 py-3 text-[13px] font-medium text-gray-600 rounded-r-lg hover:bg-gray-50 transition border-l-3 border-transparent">
+                    <i class="fa-solid fa-ticket text-center text-lg w-5 text-gray-400"></i> My Vouchers
+                </a>
+                <a href="javascript:void(0)" onclick="switchProfileTab('coins', this)" class="sidebar-link flex items-center gap-3 px-4 py-3 text-[13px] font-medium text-gray-600 rounded-r-lg hover:bg-gray-50 transition border-l-3 border-transparent">
+                    <i class="fa-solid fa-coins text-center text-lg w-5 text-yellow-500"></i> My GetMEDS Coins
+                </a>
+                
+                <hr class="border-gray-100 my-3 mx-2">
+                <button onclick="if(window.logoutUser) { window.logoutUser(); window.location.href='index.html'; }" class="flex items-center gap-3 px-4 py-2 mt-1 text-[13px] font-bold text-red-500 hover:bg-red-50 rounded-lg transition text-left">
+                    <i class="fa-solid fa-arrow-right-from-bracket w-5 text-center text-base"></i> Logout
+                </button>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="flex-1 min-w-0">
+            <!-- PURCHASES VIEW -->
+            <div id="section-purchases" class="profile-section block bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                
+                <!-- Status Tabs -->
+                <div class="flex overflow-x-auto no-scrollbar border-b border-gray-100 bg-white w-full px-2">
+                    <button class="tab-btn active px-6 py-4 text-[14px] text-gray-600 font-medium whitespace-nowrap hover:text-primary transition flex-1 text-center">All</button>
+                    <button class="tab-btn px-6 py-4 text-[14px] text-gray-600 font-medium whitespace-nowrap hover:text-primary transition flex-1 text-center">To Pay</button>
+                    <button class="tab-btn px-6 py-4 text-[14px] text-gray-600 font-medium whitespace-nowrap hover:text-primary transition flex-1 text-center">To Ship</button>
+                    <button class="tab-btn px-6 py-4 text-[14px] text-gray-600 font-medium whitespace-nowrap hover:text-primary transition flex-1 text-center">To Receive</button>
+                    <button class="tab-btn px-6 py-4 text-[14px] text-gray-600 font-medium whitespace-nowrap hover:text-primary transition flex-1 text-center">Completed</button>
+                    <button class="tab-btn px-6 py-4 text-[14px] text-gray-600 font-medium whitespace-nowrap hover:text-primary transition flex-1 text-center">Cancelled</button>
+                    <button class="tab-btn px-6 py-4 text-[14px] text-gray-600 font-medium whitespace-nowrap hover:text-primary transition flex-1 text-center">Return Refund</button>
+                </div>
+
+                <!-- Search Orders -->
+                <div class="p-4 bg-gray-50/70 border-b border-gray-100">
+                    <div class="relative max-w-full">
+                        <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                        <input type="text" placeholder="You can search by Seller Name, Order ID or Product name" class="w-full bg-white border border-gray-200 rounded text-gray-700 pl-11 pr-4 py-2.5 text-[13px] outline-none focus:border-primary focus:ring-1 focus:ring-primary shadow-[inset_0_1px_2px_rgba(0,0,0,0.02)] transition placeholder-gray-400">
+                    </div>
+                </div>
+
+                <!-- Order List -->
+                <div class="p-6 bg-gray-50/30">
+                    
+                    <!-- Single Order Card -->
+                    <div class="bg-white border border-gray-100 rounded-2xl shadow-[0_5px_20px_-10px_rgba(0,0,0,0.05)] hover:shadow-md transition overflow-hidden">
+                        
+                        <!-- Header -->
+                        <div class="bg-white px-6 py-4 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                            <div class="flex items-center gap-3">
+                                <span class="bg-green-100 text-success text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">Official Pharmacy</span>
+                                <span class="font-bold text-gray-800 text-sm">GetMEDS Supply</span>
+                            </div>
+                            <div class="flex items-center gap-3 self-end sm:self-auto">
+                                <span class="text-gray-500 text-xs font-semibold"><i class="fa-solid fa-truck-fast mr-1"></i> Delivered on Apr 10, 2026</span>
+                                <span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>
+                                <span class="text-success font-bold uppercase tracking-wide text-[13px]">Completed</span>
+                            </div>
+                        </div>
+
+                        <!-- Body (Products) -->
+                        <div class="px-6 py-5 border-b border-gray-50 flex gap-5 bg-white items-start cursor-pointer group" onclick="openInquiryModal('Cytarabine 100 MG / 16.7 ML INJECTION', '₱ 1,840.00', 'assets/cytarabine.png', 'Oncology')">
+                            <div class="w-24 h-24 bg-gray-50 rounded-xl overflow-hidden flex-shrink-0 border border-gray-100 p-2 shadow-sm flex items-center justify-center">
+                                <img src="assets/cytarabine.png" class="max-w-full max-h-full object-contain mix-blend-multiply group-hover:scale-105 transition" alt="Cytarabine">
+                            </div>
+                            <div class="flex-1 min-w-0 mt-1 flex flex-col sm:flex-row justify-between gap-4">
+                                <div>
+                                    <h4 class="font-bold text-gray-900 text-[16px] mb-2 leading-snug group-hover:text-primary transition">Cytarabine 100 MG / 16.7 ML INJECTION</h4>
+                                    <p class="text-gray-500 text-[13px] mb-1">Variation: 1 Vial</p>
+                                    <p class="text-gray-400 font-medium text-[13px]">Qty: 1</p>
+                                </div>
+                                <div class="text-left sm:text-right flex flex-col justify-start">
+                                    <span class="text-gray-800 font-black text-lg">₱ 1,840.00</span>
+                                    <span class="text-gray-400 line-through text-sm">₱ 2,100.00</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Footer -->
+                        <div class="bg-blue-50/30 px-6 py-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                            <div>
+                                <p class="text-[13px] text-gray-600 font-medium">Order Total: <span class="text-2xl font-extrabold text-primary ml-2">₱ 1,840.00</span></p>
+                            </div>
+                            <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
+                                <button class="flex-1 sm:flex-none bg-white border border-gray-200 text-gray-700 hover:text-primary hover:border-primary font-bold py-2.5 px-6 rounded-xl text-sm transition shadow-sm">Contact Support</button>
+                                <button class="flex-1 sm:flex-none text-white bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:from-[#1D9FDA] hover:to-[#61A644] font-bold py-2.5 px-8 rounded-xl text-sm transition shadow-md hover:shadow-lg active:scale-[0.98]">Rate Product</button>
+                                <button onclick="openInquiryModal('Cytarabine 100 MG / 16.7 ML INJECTION', '₱ 1,840.00', 'assets/cytarabine.png', 'Oncology')" class="flex-1 sm:flex-none bg-gray-900 hover:bg-gray-800 text-white font-bold py-2.5 px-6 rounded-xl text-sm transition shadow-md active:scale-[0.98]">Buy Again</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+
+            <!-- NOTIFICATIONS VIEW -->
+            <div id="section-notifications" class="profile-section hidden bg-white rounded-2xl shadow-sm border border-gray-100 p-20 flex flex-col items-center justify-center min-h-[500px]">
+                <div class="h-24 w-24 bg-blue-50 text-primary rounded-full flex items-center justify-center mb-6 shadow-inner">
+                    <i class="fa-regular fa-bell text-4xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-800 mb-2">No New Notifications</h3>
+                <p class="text-[15px] text-gray-500 text-center max-w-sm">Check back later for updates on your latest orders and special health promotions!</p>
+            </div>
+
+            <!-- VOUCHERS VIEW -->
+            <div id="section-vouchers" class="profile-section hidden bg-white rounded-2xl shadow-sm border border-gray-100 p-20 flex flex-col items-center justify-center min-h-[500px]">
+                <div class="h-24 w-24 bg-blue-50 text-primary rounded-full flex items-center justify-center mb-6 shadow-inner">
+                    <i class="fa-solid fa-ticket text-4xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-800 mb-2">No Available Vouchers</h3>
+                <p class="text-[15px] text-gray-500 text-center max-w-sm">You currently don't have any vouchers. Shop to discover exclusive coupons!</p>
+            </div>
+
+            <!-- COINS VIEW -->
+            <div id="section-coins" class="profile-section hidden bg-white rounded-2xl shadow-sm border border-gray-100 p-20 flex flex-col items-center justify-center min-h-[500px]">
+                <div class="h-24 w-24 bg-yellow-50 text-yellow-500 rounded-full flex items-center justify-center mb-6 shadow-inner">
+                    <i class="fa-solid fa-coins text-4xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-800 mb-2">0 GetMEDS Coins</h3>
+                <p class="text-[15px] text-gray-500 text-center max-w-sm">Buy more products and leave reviews to earn coins that you can use for direct discounts.</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Enhanced Inquiry Modal -->
+    <div id="inquiry-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 sm:p-6">
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-dark/60 backdrop-blur-sm transition-opacity duration-300"
+            onclick="closeInquiryModal()"></div>
+
+        <!-- Modal Content -->
+        <div class="relative bg-white w-full max-w-6xl max-h-[95vh] rounded-[15px] shadow-2xl overflow-hidden flex flex-col transform transition-all duration-300 scale-95 opacity-0"
+            id="modal-content">
+            
+            <!-- Modal Header -->
+            <div class="bg-white border-b border-gray-100 px-6 py-4 flex justify-between items-center shrink-0">
+                <div class="flex items-center space-x-4">
+                    <img src="assets/getmedslogo.png" alt="GetMEDS Logo" class="h-6 w-auto object-contain">
+                    <h3 class="text-base font-semibold text-gray-800 border-l border-gray-200 pl-4">Product Details & Inquiry</h3>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button class="hidden sm:flex items-center text-gray-500 hover:text-primary transition text-sm space-x-1.5">
+                        <i class="fa-regular fa-circle-question"></i>
+                        <span>Do you need help?</span>
+                    </button>
+                    <button onclick="closeInquiryModal()" class="text-gray-500 hover:text-gray-800 transition border border-gray-200 hover:border-gray-300 rounded-full w-8 h-8 flex items-center justify-center bg-white shadow-sm hover:shadow">
+                        <i class="fa-solid fa-xmark text-sm"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Modal Body (Scrollable) -->
+            <div class="flex-1 overflow-y-auto p-0 flex flex-col lg:flex-row bg-white">
+                
+                <!-- Left Column: Product Info -->
+                <div class="lg:w-1/2 p-6 lg:p-8 border-b lg:border-b-0 lg:border-r border-gray-100 flex flex-col">
+                    
+                    <!-- Product Details Section -->
+                    <div class="flex flex-col-reverse md:flex-row gap-8 mb-8">
+                        <!-- Details (Left Side) -->
+                        <div class="w-full md:w-1/2 flex flex-col justify-center">
+                            <!-- Badges -->
+                            <div class="flex flex-nowrap whitespace-nowrap items-center gap-3 mb-3 text-sm text-gray-600">
+                                <span class="flex items-center text-success font-medium">
+                                    <i class="fa-solid fa-check mr-1.5"></i> In stock
+                                </span>
+                                <span class="text-gray-300">|</span>
+                                <span id="modal-category-badge" class="capitalize text-primary font-medium">
+                                    Oncology
+                                </span>
+                            </div>
+
+                            <h1 class="text-xl font-bold text-gray-900 mb-4 leading-tight" id="modal-product-title">
+                                Cytarabine 100 MG / 16.7 ML INJECTION
+                            </h1>
+
+                            <p class="text-gray-600 text-[13px] leading-relaxed">
+                                An antimetabolite chemotherapy drug used principally in the treatment of cancers of white blood cells such as acute myeloid leukemia (AML) and non-Hodgkin lymphoma.
+                            </p>
+                        </div>
+
+                        <!-- Image Placeholder (Right Side) -->
+                        <div class="w-full md:w-1/2 flex items-center justify-center">
+                            <div class="w-full max-w-[200px] aspect-square flex flex-col items-center justify-center bg-gray-50 rounded-[15px] border border-gray-100 text-gray-300 group transition hover:bg-gray-100/50">
+                                <i class="fa-regular fa-image text-4xl mb-3 group-hover:scale-110 transition-transform"></i>
+                                <span class="text-xs font-medium uppercase tracking-wider">Product Image</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tabs Section -->
+                    <div class="bg-white rounded-[15px] border border-gray-100 p-5 mt-auto">
+                        <div class="flex overflow-x-auto no-scrollbar border-b border-gray-100 mb-5 gap-6">
+                            <button type="button" class="tab-btn active pb-3 text-[13px] text-gray-500 font-medium whitespace-nowrap transition-colors" data-target="m-tab-description">Description</button>
+                            <button type="button" class="tab-btn pb-3 text-[13px] text-gray-500 font-medium whitespace-nowrap hover:text-gray-800 transition-colors" data-target="m-tab-usage">Usage</button>
+                            <button type="button" class="tab-btn pb-3 text-[13px] text-gray-500 font-medium whitespace-nowrap hover:text-gray-800 transition-colors" data-target="m-tab-precautions">Precautions</button>
+                        </div>
+                        <div class="text-[13px] text-gray-600 leading-relaxed max-h-[200px] overflow-y-auto pr-2 custom-scrollbar">
+                            <div id="m-tab-description" class="tab-content active">
+                                <p>Cytarabine belongs to a general group of medicines known as antimetabolites. It is used to treat some types of cancer of the blood (leukemia). Cytarabine works by interfering with the growth of cancer cells, which are eventually destroyed by the body.</p>
+                                <ul class="list-disc pl-5 mt-3 space-y-1">
+                                    <li>Effective in acutely inducing remission.</li>
+                                    <li>High concentration formulation.</li>
+                                </ul>
+                            </div>
+                            <div id="m-tab-usage" class="tab-content">
+                                <p>This drug is administered by a healthcare professional in a clinical or hospital setting. The dosage and schedule will be determined by your doctor.</p>
+                                <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mt-3">
+                                    <p class="text-[12px] text-yellow-700 font-medium">Never attempt to self-administer unless explicitly instructed.</p>
+                                </div>
+                            </div>
+                            <div id="m-tab-precautions" class="tab-content">
+                                <ul class="list-disc pl-5 space-y-2">
+                                    <li>Tell your doctor if you have ever had an unusual or allergic reaction to cytarabine.</li>
+                                    <li>Inform your doctor if you have liver or kidney disease.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:w-1/2 bg-white p-6 lg:p-8 pb-10">
+                    <div class="mb-6">
+                        <h4 class="text-lg font-bold text-gray-900">Send Inquiry</h4>
+                        <p class="text-xs text-gray-500 mt-1">Submit your details to get a formal quote for this product.</p>
+                    </div>
+ 
+                    <form id="inquiry-form" class="space-y-4">
+                        <div>
+                            <label class="block text-[11px] font-medium text-gray-500 mb-2">Target Product</label>
+                            <input type="text" id="inquiry-product-name" readonly class="w-full bg-gray-50 border border-gray-100 rounded-xl px-3 py-2.5 text-[13px] font-bold text-primary outline-none cursor-default">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-medium text-gray-500 mb-2">Full Name</label>
+                            <input type="text" id="inquiry-name" required placeholder="John Doe" class="w-full bg-white border border-gray-200 rounded-xl px-3 py-2.5 text-[13px] text-gray-700 outline-none focus:border-primary transition">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-medium text-gray-500 mb-2">Phone Number</label>
+                            <input type="tel" id="inquiry-phone" required placeholder="+63 900 000 0000" class="w-full bg-white border border-gray-200 rounded-xl px-3 py-2.5 text-[13px] text-gray-700 outline-none focus:border-primary transition">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-medium text-gray-500 mb-2">Email Address</label>
+                            <input type="email" id="inquiry-email" required placeholder="john@example.com" class="w-full bg-white border border-gray-200 rounded-xl px-3 py-2.5 text-[13px] text-gray-700 outline-none focus:border-primary transition">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-medium text-gray-500 mb-2">Message</label>
+                            <textarea id="inquiry-message" rows="3" placeholder="Tell us more about your requirements..." class="w-full bg-white border border-gray-200 rounded-xl px-3 py-2.5 text-[13px] text-gray-700 outline-none focus:border-primary transition resize-none"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-medium text-gray-500 mb-2">Upload Prescription (Optional)</label>
+                            <input type="file" id="prescription-upload" multiple accept=".png, .jpg, .jpeg, .pdf" class="w-full text-[13px] text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-[12px] file:font-medium file:bg-primary/10 file:text-primary hover:file:bg-primary/20 transition cursor-pointer border border-gray-200 rounded-xl p-1.5 bg-white outline-none">
+                            <div id="file-upload-preview" class="mt-2 space-y-1"></div>
+                        </div>
+                        <button type="submit" class="w-full bg-gradient-to-r from-success to-primary hover:from-primary hover:to-success text-white font-bold py-3 rounded-xl shadow-lg transition-all duration-500 transform active:scale-[0.98] mt-6 mb-8 text-[13px]">
+                            Submit Inquiry Request
+                        </button>
+                        <div class="h-8"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="footer-placeholder"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const userJson = localStorage.getItem('getmeds_user');
+            if (userJson) {
+                const user = JSON.parse(userJson);
+                document.getElementById('profile-name').innerText = user.name;
+                const avatar = document.getElementById('profile-avatar');
+                const initials = user.name.charAt(0).toUpperCase();
+                
+                if (user.avatar) {
+                    avatar.innerHTML = `<img src="${user.avatar}" class="w-full h-full object-cover rounded-full">`;
+                } else {
+                    avatar.innerText = initials;
+                }
+            }
+        });
+
+        window.switchProfileTab = function(sectionId, element) {
+            // Remove active styles from all links
+            document.querySelectorAll('.sidebar-link').forEach(link => {
+                link.classList.remove('active');
+                link.style.borderLeftColor = 'transparent';
+            });
+            // Set active style to clicked
+            element.classList.add('active');
+            element.style.borderLeftColor = '#0D99FF';
+
+            // Hide all sections
+            document.querySelectorAll('.profile-section').forEach(section => {
+                section.classList.add('hidden');
+                section.classList.remove('block');
+            });
+
+            // Show active section
+            const target = document.getElementById('section-' + sectionId);
+            if (target) {
+                target.classList.remove('hidden');
+                target.classList.add('block');
+            }
+        };
+
+        // Modal specific logic
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('#inquiry-modal .tab-btn').forEach(button => {
+                button.addEventListener('click', () => {
+                    document.querySelectorAll('#inquiry-modal .tab-btn').forEach(btn => btn.classList.remove('active', 'text-gray-800'));
+                    document.querySelectorAll('#inquiry-modal .tab-content').forEach(content => content.classList.remove('active'));
+
+                    button.classList.add('active');
+                    const target = button.getAttribute('data-target');
+                    if (document.getElementById(target)) {
+                        document.getElementById(target).classList.add('active');
+                    }
+                });
+            });
+
+            // Helper function to convert files to base64
+            function fileToBase64(file) {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.readAsDataURL(file);
+                    reader.onload = () => {
+                        const base64String = reader.result.split(',')[1];
+                        resolve(base64String);
+                    };
+                    reader.onerror = error => reject(error);
+                });
+            }
+
+            // Inquiry Form Submit Logic
+            const form = document.getElementById('inquiry-form');
+            if (form) {
+                form.onsubmit = async function (e) {
+                    e.preventDefault();
+                    const btn = this.querySelector('button');
+                    const originalText = btn.innerText;
+
+                    btn.disabled = true;
+                    btn.innerText = 'Sending...';
+
+                    // IMPORTANT: Replace this placeholder with your deployed Google Web App URL (ends in /exec)
+                    const SCRIPT_URL = 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE';
+
+                    const productName = document.getElementById('inquiry-product-name').value;
+                    const fullName = document.getElementById('inquiry-name').value;
+                    const phone = document.getElementById('inquiry-phone').value;
+                    const email = document.getElementById('inquiry-email').value;
+                    const message = document.getElementById('inquiry-message').value;
+
+                    // Handle file conversions
+                    const fileInput = document.getElementById('prescription-upload');
+                    const filesData = [];
+                    if (fileInput && fileInput.files.length > 0) {
+                        const filesArray = Array.from(fileInput.files);
+                        for (const file of filesArray) {
+                            try {
+                                const base64 = await fileToBase64(file);
+                                filesData.push({
+                                    name: file.name,
+                                    type: file.type,
+                                    base64: base64
+                                });
+                            } catch (err) {
+                                console.error('Error processing file:', file.name, err);
+                            }
+                        }
+                    }
+
+                    const payload = {
+                        productName,
+                        fullName,
+                        phone,
+                        email,
+                        message,
+                        files: filesData
+                    };
+
+                    try {
+                        if (!SCRIPT_URL || SCRIPT_URL.includes('YOUR_GOOGLE_APPS_SCRIPT_URL_HERE')) {
+                            console.warn('Google Apps Script URL is not configured. Simulating form submission.');
+                            await new Promise(resolve => setTimeout(resolve, 1500));
+                        } else {
+                            // Send to Google Spreadsheet Apps Script
+                            await fetch(SCRIPT_URL, {
+                                method: 'POST',
+                                mode: 'no-cors', // Avoids CORS blocker on cross-origin App Script Web App redirects
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify(payload)
+                            });
+                        }
+
+                        btn.innerHTML = '<i class="fa-solid fa-check mr-2"></i> Inquiry Sent Successfully!';
+                        btn.classList.replace('bg-gradient-to-r', 'bg-success');
+                        btn.classList.remove('from-success', 'to-primary');
+
+                        setTimeout(() => {
+                            closeInquiryModal();
+                            this.reset();
+                            document.getElementById('file-upload-preview').innerHTML = '';
+                            btn.disabled = false;
+                            btn.innerText = originalText;
+                            btn.classList.add('bg-gradient-to-r', 'from-success', 'to-primary');
+                            btn.classList.remove('bg-success');
+                        }, 1500);
+
+                    } catch (error) {
+                        console.error('Submission error:', error);
+                        btn.innerText = 'Failed to submit. Try again.';
+                        btn.disabled = false;
+                        setTimeout(() => {
+                            btn.innerText = originalText;
+                        }, 2000);
+                    }
+                };
+            }
+
+            // File Upload Preview
+            const uploadInput = document.getElementById('prescription-upload');
+            if (uploadInput) {
+                uploadInput.addEventListener('change', function() {
+                    const previewContainer = document.getElementById('file-upload-preview');
+                    if (!previewContainer) return;
+                    previewContainer.innerHTML = '';
+                    
+                    if (this.files && this.files.length > 0) {
+                        Array.from(this.files).forEach(file => {
+                            const item = document.createElement('div');
+                            item.className = 'flex items-center text-[11px] text-gray-500 bg-gray-50 px-2 py-1.5 rounded-md border border-gray-100';
+                            item.innerHTML = `<i class="fa-solid fa-file-lines mr-2 text-primary/70"></i> <span class="truncate">${file.name}</span>`;
+                            previewContainer.appendChild(item);
+                        });
+                    }
+                });
+            }
+        });
+
+        function openInquiryModal(productName, productPrice, productImg, productCategory) {
+            const modal = document.getElementById('inquiry-modal');
+            const content = document.getElementById('modal-content');
+            const input = document.getElementById('inquiry-product-name');
+
+            document.getElementById('modal-product-title').innerText = productName;
+            document.getElementById('modal-category-badge').innerText = productCategory || 'Product';
+            // Image elements were removed from the modal to simplify layout
+
+            input.value = productName;
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                content.classList.remove('scale-95', 'opacity-0');
+                content.classList.add('scale-100', 'opacity-100');
+            }, 10);
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeInquiryModal() {
+            const modal = document.getElementById('inquiry-modal');
+            const content = document.getElementById('modal-content');
+
+            content.classList.remove('scale-100', 'opacity-100');
+            content.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+            document.body.style.overflow = 'auto';
+        }
+    </script>
+</body>
+</html>

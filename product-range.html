@@ -1,0 +1,1453 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Range - GetMEDS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#0D99FF',
+                        success: '#61A644',
+                        dark: '#1A202C',
+                        footer: '#1A1D2B',
+                        cardbg: '#F8FAFC'
+                    },
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #61A644 0%, #1D9FDA 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, #61A644 0%, #1D9FDA 100%);
+        }
+
+        .category-item.active {
+            color: #0D99FF;
+            background: #F0F9FF;
+            border-right: 4px solid #0D99FF;
+        }
+
+        /* Sub-category dropdown animation */
+        .sub-menu {
+            max-height: 0;
+            overflow-y: auto;
+            transition: max-height 0.3s ease-out;
+            scrollbar-width: thin;
+            scrollbar-color: #0D99FF transparent;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 4px;
+        }
+
+        .tab-btn.active {
+            color: #0D99FF;
+            border-bottom: 2px solid #0D99FF;
+            font-weight: 600;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .sub-menu::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .sub-menu::-webkit-scrollbar-thumb {
+            background-color: #0D99FF;
+            border-radius: 20px;
+        }
+
+        .category-item.open+.sub-menu {
+            max-height: 450px;
+        }
+
+        .sub-menu a.active-sub {
+            color: #0D99FF !important;
+            font-weight: 700 !important;
+            background: #F0F9FF !important;
+            border-radius: 8px;
+            padding-left: 56px !important;
+            /* px-14 is 56px */
+        }
+
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(0.5);
+        }
+
+        #product-grid>div {
+            height: 430px !important;
+            min-height: 430px !important;
+            max-height: 430px !important;
+        }
+
+        @keyframes fadeUp {
+            0% {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-up {
+            animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+    </style>
+</head>
+
+<body class="bg-white text-gray-800 antialiased">
+
+    <!-- Navbar Placeholder -->
+    <div id="navbar-placeholder"></div>
+
+    <!-- Hero Video Section -->
+    <section class="w-full mx-auto px-4 md:px-6 mt-4 mb-4 max-w-[1600px]">
+        <div
+            class="relative rounded-[1.5rem] border border-gray-100/20 overflow-hidden min-h-[300px] md:min-h-[400px] flex items-center justify-center">
+            <!-- Background Video -->
+            <video autoplay loop muted playsinline
+                class="absolute inset-0 w-full h-full object-cover object-center pointer-events-none">
+                <source src="assets/oncologyvideo.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+
+            <!-- Fade Overlay -->
+            <div
+                class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent pointer-events-none">
+            </div>
+
+            <!-- Text Overlay -->
+            <div
+                class="relative z-10 text-center px-4 md:px-8 max-w-4xl mx-auto flex flex-col items-center justify-center w-full h-full pointer-events-none">
+                <h1
+                    class="text-2xl md:text-4xl lg:text-5xl font-semibold mb-4 drop-shadow-xl animate-fade-up tracking-tight gradient-text pb-1">
+                    GetMEDS Products
+                </h1>
+                <p class="text-white/90 text-[14px] md:text-lg max-w-2xl drop-shadow-md animate-fade-up font-medium leading-relaxed"
+                    style="animation-delay: 0.2s; opacity: 0;">
+                    Explore our comprehensive catalog of high-quality pharmaceutical and healthcare solutions designed
+                    for your needs.
+                </p>
+            </div>
+        </div>
+    </section>
+
+
+
+
+    <!-- Main Content: Sidebar + Products -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-24">
+        <div class="flex flex-col lg:flex-row gap-10">
+
+            <!-- LEFT PANEL: Categories -->
+            <div class="lg:w-1/4">
+                <div class="bg-white border border-gray-100 rounded-[10px] overflow-hidden sticky top-28 shadow-sm">
+                    <div class="bg-gray-50/50 px-6 py-5 border-b border-gray-100">
+                        <h3 class="font-semibold text-gray-900 flex items-center">
+                            Categories
+                        </h3>
+                    </div>
+ 
+                    <div class="py-2">
+                        <!-- All Products -->
+                        <div class="category-group">
+                            <a href="product-range.html"
+                                class="w-full flex items-center justify-between px-6 py-4 text-[14px] font-semibold text-primary bg-blue-50/50 transition category-item active">
+                                <span class="flex items-center">
+                                    All Products
+                                </span>
+                            </a>
+                        </div>
+                        <!-- Oncology / Hematology (Consolidated) -->
+                        <div class="category-group">
+                            <button onclick="toggleCategory(this)"
+                                class="w-full flex items-center justify-between px-6 py-3 text-[13.5px] font-semibold text-gray-600 hover:bg-blue-50/50 hover:text-primary transition category-item group">
+                                <span class="flex items-center">
+                                    Oncology / Hematology
+                                </span>
+                                <i
+                                    class="fa-solid fa-chevron-down text-[10px] transition-transform duration-300 transform"></i>
+                            </button>
+                            <div class="sub-menu bg-gray-50/30">
+                                <!-- Solid Tumors -->
+                                <a href="#"
+                                    class="block px-14 py-1.5 text-[12.5px] text-gray-500 hover:text-primary transition">Breast
+                                    Cancer</a>
+                                <a href="#"
+                                    class="block px-14 py-1.5 text-[12.5px] text-gray-500 hover:text-primary transition">Ovarian
+                                    Cancer</a>
+                                <a href="#"
+                                    class="block px-14 py-1.5 text-[12.5px] text-gray-500 hover:text-primary transition">Non-Small
+                                    Cell Lung Cancer</a>
+                                <a href="#"
+                                    class="block px-14 py-1.5 text-[12.5px] text-gray-500 hover:text-primary transition">Prostate
+                                    Cancer</a>
+                                <a href="#"
+                                    class="block px-14 py-1.5 text-[12.5px] text-gray-500 hover:text-primary transition">Colorectal
+                                    Cancer</a>
+                                <a href="#"
+                                    class="block px-14 py-1.5 text-[12.5px] text-gray-500 hover:text-primary transition">Pancreatic
+                                    Cancer</a>
+                                <a href="#"
+                                    class="block px-14 py-1.5 text-[12.5px] text-gray-500 hover:text-primary transition">Gastric
+                                    Cancer</a>
+                                <a href="#"
+                                    class="block px-14 py-1.5 text-[12.5px] text-gray-500 hover:text-primary transition">Head
+                                    and Neck Cancer</a>
+                                <a href="#"
+                                    class="block px-14 py-1.5 text-[12.5px] text-gray-500 hover:text-primary transition">Malignant
+                                    Pleural Mesothelioma</a>
+                                <a href="#"
+                                    class="block px-14 py-1.5 text-[12.5px] text-gray-500 hover:text-primary transition">Malignant
+                                    Pleural Effusion</a>
+                                <a href="#"
+                                    class="block px-14 py-1.5 text-[12.5px] text-gray-500 hover:text-primary transition">Gastrointestinal
+                                    Stromal Tumors</a>
+ 
+                                <!-- Hematology (Excel) -->
+                                <a href="#"
+                                    class="block px-14 py-1.5 text-[12.5px] text-gray-500 hover:text-primary transition border-t border-gray-100 mt-1 pt-2 font-bold">Hematology
+                                    Range</a>
+                                <a href="#"
+                                    class="block px-14 py-1.5 text-[12.5px] text-gray-500 hover:text-primary transition">Acute
+                                    Myeloid Leukemia</a>
+                                <a href="#"
+                                    class="block px-14 py-1.5 text-[12.5px] text-gray-500 hover:text-primary transition">Chronic
+                                    Myeloid Leukemia</a>
+                                <a href="#"
+                                    class="block px-14 py-1.5 text-[12.5px] text-gray-500 hover:text-primary transition">Acute
+                                    Lymphocytic Leukemia</a>
+                                <a href="#"
+                                    class="block px-14 py-1.5 text-[12.5px] text-gray-500 hover:text-primary transition">Chronic
+                                    Lymphocytic Leukemia</a>
+                                <a href="#"
+                                    class="block px-14 py-1.5 text-[12.5px] text-gray-500 hover:text-primary transition">Hodgkin/Non-Hodgkin's
+                                    Lymphoma</a>
+                                <a href="#"
+                                    class="block px-14 py-1.5 text-[12.5px] text-gray-500 hover:text-primary transition">Mantle
+                                    Cell Lymphoma</a>
+                                <a href="#"
+                                    class="block px-14 py-1.5 text-[12.5px] text-gray-500 hover:text-primary transition">Chronic
+                                    Myelocytic Leukemia</a>
+                                <a href="#"
+                                    class="block px-14 py-1.5 text-[12.5px] text-gray-500 hover:text-primary transition">Meningeal
+                                    Leukemia</a>
+                                <a href="#"
+                                    class="block px-14 py-1.5 text-[12.5px] text-gray-500 hover:text-primary transition">Acute
+                                    Lymphoblastic Leukemia</a>
+                                <a href="#"
+                                    class="block px-14 py-1.5 text-[12.5px] text-gray-500 hover:text-primary transition">Acute
+                                    Promyelocytic Leukemia</a>
+                                <a href="#"
+                                    class="block px-14 py-1.5 text-[12.5px] text-gray-500 hover:text-primary transition">Sickle
+                                    Cell Anemia</a>
+                            </div>
+                        </div>
+ 
+                        <!-- Neurology -->
+                        <div class="category-group">
+                            <button onclick="toggleCategory(this)"
+                                class="w-full flex items-center justify-between px-6 py-3 text-[13.5px] font-semibold text-gray-600 hover:bg-blue-50/50 hover:text-primary transition category-item group">
+                                <span class="flex items-center">
+                                    Hematology / Obstetrician / Gynecology
+                                </span>
+                                <i
+                                    class="fa-solid fa-chevron-down text-[10px] transition-transform duration-300 transform"></i>
+                            </button>
+                            <div class="sub-menu bg-gray-50/30">
+                                <a href="#"
+                                    class="block px-14 py-1.5 text-[12.5px] text-gray-500 hover:text-primary transition">Folate
+                                    Deficiency Anemia</a>
+                                <a href="#"
+                                    class="block px-14 py-1.5 text-[12.5px] text-gray-500 hover:text-primary transition">Iron
+                                    Deficiency Anemia</a>
+                            </div>
+                        </div>
+ 
+                        <!-- Anti-Infectives -->
+                        <div class="category-group">
+                            <button onclick="toggleCategory(this)"
+                                class="w-full flex items-center justify-between px-6 py-3 text-[13.5px] font-semibold text-gray-600 hover:bg-blue-50/50 hover:text-primary transition category-item group">
+                                <span class="flex items-center">
+                                    Anti-Infectives
+                                </span>
+                                <i
+                                    class="fa-solid fa-chevron-down text-[10px] transition-transform duration-300 transform"></i>
+                            </button>
+                            <div class="sub-menu bg-gray-50/30">
+                                <a href="#"
+                                    class="block px-14 py-1.5 text-[12.5px] text-gray-500 hover:text-primary transition">Respiratory
+                                    Infections</a>
+                                <a href="#"
+                                    class="block px-14 py-1.5 text-[12.5px] text-gray-500 hover:text-primary transition">Urinary
+                                    Tract Infections</a>
+                                <a href="#"
+                                    class="block px-14 py-1.5 text-[12.5px] text-gray-500 hover:text-primary transition">Skin
+                                    and Soft Tissue Infections</a>
+                                <a href="#"
+                                    class="block px-14 py-1.5 text-[12.5px] text-gray-500 hover:text-primary transition">Bone
+                                    and Joint Infections</a>
+                                <a href="#"
+                                    class="block px-14 py-1.5 text-[12.5px] text-gray-500 hover:text-primary transition">Gynecological
+                                    infections</a>
+                                <a href="#"
+                                    class="block px-14 py-1.5 text-[12.5px] text-gray-500 hover:text-primary transition">Intra-abdominal
+                                    infections</a>
+                                <a href="#"
+                                    class="block px-14 py-1.5 text-[12.5px] text-gray-500 hover:text-primary transition">Bloodstream
+                                    infections</a>
+                                <a href="#"
+                                    class="block px-14 py-1.5 text-[12.5px] text-gray-500 hover:text-primary transition">Ocular
+                                    or topical infections</a>
+                            </div>
+                        </div>
+ 
+                        <!-- Endocrinology -->
+                        <div class="category-group">
+                            <button onclick="toggleCategory(this)"
+                                class="w-full flex items-center justify-between px-6 py-3 text-[13.5px] font-semibold text-gray-600 hover:bg-blue-50/50 hover:text-primary transition category-item group">
+                                <span class="flex items-center">
+                                    Endocrinology
+                                </span>
+                                <i
+                                    class="fa-solid fa-chevron-down text-[10px] transition-transform duration-300 transform"></i>
+                            </button>
+                            <div class="sub-menu bg-gray-50/30">
+                                <a href="#"
+                                    class="block px-14 py-1.5 text-[12.5px] text-gray-500 hover:text-primary transition">Endometriosis</a>
+                                <a href="#"
+                                    class="block px-14 py-1.5 text-[12.5px] text-gray-500 hover:text-primary transition">Fibrocystic
+                                    Breast Disease</a>
+                                <a href="#"
+                                    class="block px-14 py-1.5 text-[12.5px] text-gray-500 hover:text-primary transition">Benign
+                                    Prostatic Hyperplasia</a>
+                            </div>
+                        </div>
+ 
+                        <!-- Orthopedic -->
+                        <div class="category-group">
+                            <button onclick="toggleCategory(this)"
+                                class="w-full flex items-center justify-between px-6 py-3 text-[13.5px] font-semibold text-gray-600 hover:bg-blue-50/50 hover:text-primary transition category-item group">
+                                <span class="flex items-center">
+                                    Orthopedic
+                                </span>
+                                <i
+                                    class="fa-solid fa-chevron-down text-[10px] transition-transform duration-300 transform"></i>
+                            </button>
+                            <div class="sub-menu bg-gray-50/30">
+                                <a href="#"
+                                    class="block px-14 py-1.5 text-[12.5px] text-gray-500 hover:text-primary transition">Multiple
+                                    Myeloma</a>
+                                <a href="#"
+                                    class="block px-14 py-1.5 text-[12.5px] text-gray-500 hover:text-primary transition">Glucocorticoid-Induced
+                                    Osteoporosis</a>
+                            </div>
+                        </div>
+ 
+                        <!-- Cardiology -->
+                        <div class="category-group">
+                            <button onclick="toggleCategory(this)"
+                                class="w-full flex items-center justify-between px-6 py-3 text-[13.5px] font-semibold text-gray-600 hover:bg-blue-50/50 hover:text-primary transition category-item group">
+                                <span class="flex items-center">
+                                    Cardiology
+                                </span>
+                                <i
+                                    class="fa-solid fa-chevron-down text-[10px] transition-transform duration-300 transform"></i>
+                            </button>
+                            <div class="sub-menu bg-gray-50/30">
+                                <a href="#"
+                                    class="block px-14 py-1.5 text-[12.5px] text-gray-500 hover:text-primary transition">Arrhythmia
+                                    management</a>
+                                <a href="#"
+                                    class="block px-14 py-1.5 text-[12.5px] text-gray-500 hover:text-primary transition">Hypertension/Angina</a>
+                            </div>
+                        </div>
+ 
+                        <!-- Neuro-Oncology -->
+                        <div class="category-group">
+                            <button onclick="toggleCategory(this)"
+                                class="w-full flex items-center justify-between px-6 py-3 text-[13.5px] font-semibold text-gray-600 hover:bg-blue-50/50 hover:text-primary transition category-item group">
+                                <span class="flex items-center">
+                                    Neuro-Oncology
+                                </span>
+                                <i
+                                    class="fa-solid fa-chevron-down text-[10px] transition-transform duration-300 transform"></i>
+                            </button>
+                            <div class="sub-menu bg-gray-50/30">
+                                <a href="#"
+                                    class="block px-14 py-1.5 text-[12.5px] text-gray-500 hover:text-primary transition">Glioblastoma
+                                    Multiforme</a>
+                            </div>
+                        </div>
+ 
+                        <!-- Respiratory / Allergy -->
+                        <div class="category-group">
+                            <button onclick="toggleCategory(this)"
+                                class="w-full flex items-center justify-between px-6 py-3 text-[13.5px] font-semibold text-gray-600 hover:bg-blue-50/50 hover:text-primary transition category-item group">
+                                <span class="flex items-center">
+                                    Respiratory / Allergy
+                                </span>
+                                <i
+                                    class="fa-solid fa-chevron-down text-[10px] transition-transform duration-300 transform"></i>
+                            </button>
+                            <div class="sub-menu bg-gray-50/30">
+                                <a href="#"
+                                    class="block px-14 py-1.5 text-[12.5px] text-gray-500 hover:text-primary transition">Seasonal
+                                    Allergic Rhinitis</a>
+                            </div>
+                        </div>
+ 
+                        <!-- Nephrology / Renal -->
+                        <div class="category-group">
+                            <button onclick="toggleCategory(this)"
+                                class="w-full flex items-center justify-between px-6 py-3 text-[13.5px] font-semibold text-gray-600 hover:bg-blue-50/50 hover:text-primary transition category-item group">
+                                <span class="flex items-center">
+                                    Nephrology / Renal
+                                </span>
+                                <i
+                                    class="fa-solid fa-chevron-down text-[10px] transition-transform duration-300 transform"></i>
+                            </button>
+                            <div class="sub-menu bg-gray-50/30">
+                                <a href="#"
+                                    class="block px-14 py-1.5 text-[12.5px] text-gray-500 hover:text-primary transition">chronic
+                                    kidney disease</a>
+                            </div>
+                        </div>
+ 
+                        <!-- Pain Management -->
+                        <div class="category-group">
+                            <button onclick="toggleCategory(this)"
+                                class="w-full flex items-center justify-between px-6 py-3 text-[13.5px] font-semibold text-gray-600 hover:bg-blue-50/50 hover:text-primary transition category-item group">
+                                <span class="flex items-center">
+                                    Pain Management
+                                </span>
+                                <i
+                                    class="fa-solid fa-chevron-down text-[10px] transition-transform duration-300 transform"></i>
+                            </button>
+                            <div class="sub-menu bg-gray-50/30">
+                                <a href="#"
+                                    class="block px-14 py-1.5 text-[12.5px] text-gray-500 hover:text-primary transition">Chronic
+                                    Pain Management</a>
+                            </div>
+                        </div>
+ 
+                        <!-- Rheumatology -->
+                        <div class="category-group">
+                            <button onclick="toggleCategory(this)"
+                                class="w-full flex items-center justify-between px-6 py-3 text-[13.5px] font-semibold text-gray-600 hover:bg-blue-50/50 hover:text-primary transition category-item group">
+                                <span class="flex items-center">
+                                    Rheumatology
+                                </span>
+                                <i
+                                    class="fa-solid fa-chevron-down text-[10px] transition-transform duration-300 transform"></i>
+                            </button>
+                            <div class="sub-menu bg-gray-50/30">
+                                <a href="#"
+                                    class="block px-14 py-1.5 text-[12.5px] text-gray-500 hover:text-primary transition">Inflammatory
+                                    & Rheumatic Disorders</a>
+                            </div>
+                        </div>
+ 
+                        <!-- Radiology -->
+                        <div class="category-group">
+                            <button onclick="toggleCategory(this)"
+                                class="w-full flex items-center justify-between px-6 py-3 text-[13.5px] font-semibold text-gray-600 hover:bg-blue-50/50 hover:text-primary transition category-item group">
+                                <span class="flex items-center">
+                                    Radiology
+                                </span>
+                                <i
+                                    class="fa-solid fa-chevron-down text-[10px] transition-transform duration-300 transform"></i>
+                            </button>
+                            <div class="sub-menu bg-gray-50/30">
+                                <a href="#"
+                                    class="block px-14 py-1.5 text-[12.5px] text-gray-500 hover:text-primary transition">Radiologic
+                                    imaging enhancement</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sidebar Contact Banner -->
+                    <div
+                        class="m-4 rounded-2xl overflow-hidden relative bg-gradient-to-br from-[#61A644] to-[#1D9FDA] p-5 text-white group cursor-pointer transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5">
+                        <!-- Glow blur circles -->
+                        <div
+                            class="absolute top-[-10px] right-[-10px] w-20 h-20 bg-white/10 rounded-full blur-xl pointer-events-none">
+                        </div>
+                        <div
+                            class="absolute bottom-[-20px] left-[-20px] w-16 h-16 bg-black/5 rounded-full blur-lg pointer-events-none">
+                        </div>
+
+                        <!-- SVG Illustration -->
+                        <div
+                            class="absolute right-2 bottom-0 w-20 h-20 opacity-30 group-hover:opacity-50 transition-all duration-500 group-hover:scale-110 pointer-events-none">
+                            <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="50" cy="38" r="18" fill="white" />
+                                <path d="M20 80 C20 60, 80 60, 80 80" fill="white" />
+                                <rect x="43" y="24" width="4" height="14" rx="2" fill="#61A644" />
+                                <rect x="37" y="30" width="14" height="4" rx="2" fill="#61A644" />
+                                <circle cx="75" cy="20" r="8" fill="white" opacity="0.6" />
+                                <text x="71" y="24" fill="#1D9FDA" font-size="10" font-weight="bold">?</text>
+                            </svg>
+                        </div>
+
+                        <!-- Content -->
+                        <div class="relative z-10 w-[70%]">
+                            <p class="text-white/70 text-[10px] font-semibold uppercase tracking-wider mb-1">Support
+                                24/7</p>
+                            <h4 class="font-bold text-[14px] mb-1.5 tracking-tight leading-snug">Need Medical
+                                Assistance?</h4>
+                            <p class="text-white/80 text-[10px] mb-3 leading-snug">Our healthcare experts are here to
+                                help anytime.</p>
+                            <button
+                                class="bg-white text-success font-bold px-4 py-1.5 rounded-full text-[10px] shadow-md hover:bg-gray-50 active:scale-95 transition">
+                                Contact Us
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- RIGHT COLUMN: Products Grid -->
+            <div class="lg:w-3/4">
+                <div class="flex items-center justify-between mb-8">
+                    <h2 class="text-xl font-bold text-gray-900 whitespace-nowrap">All Products <span
+                            class="text-gray-400 font-normal text-sm ml-2">(12 Items)</span></h2>
+
+                    <!-- Integrated Search Bar -->
+                    <div class="relative w-full max-w-md mx-4" id="search-wrapper">
+                        <div class="bg-white rounded-full py-1 px-1.5 border border-gray-200 flex items-center">
+                            <div class="relative flex-grow flex items-center ml-3">
+                                <i class="fa-solid fa-magnifying-glass text-gray-400 text-[13px]"></i>
+                                <input type="text" id="main-search-input" placeholder="Search products..."
+                                    class="w-full bg-transparent border-none pl-2.5 pr-2 py-1.5 text-[13px] text-gray-700 outline-none placeholder-gray-400">
+                            </div>
+                            <button
+                                class="h-7 w-7 bg-primary rounded-full flex items-center justify-center text-white hover:bg-blue-600 transition-colors duration-300 flex-shrink-0 active:scale-95 group">
+                                <i
+                                    class="fa-solid fa-sliders text-[10px] group-hover:rotate-180 transition-transform duration-500"></i>
+                            </button>
+                        </div>
+
+                        <!-- Suggestions Dropdown -->
+                        <div id="search-suggestions"
+                            class="hidden absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-xl border border-gray-100 p-4 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+                            <div class="flex items-center justify-between mb-3 px-1">
+                                <h4 class="text-[12px] font-medium text-gray-500">Recent Searches</h4>
+                                <button onclick="clearSearchHistory()"
+                                    class="text-[11px] font-bold text-primary hover:text-blue-700 transition">Clear
+                                    All</button>
+                            </div>
+                            <div id="search-history-list" class="grid grid-cols-1 gap-1 mb-4">
+                                <div
+                                    class="flex items-center justify-between p-2 hover:bg-blue-50/50 rounded-xl cursor-pointer group transition">
+                                    <div class="flex items-center gap-2">
+                                        <i class="fa-solid fa-clock-rotate-left text-gray-300 text-[11px]"></i>
+                                        <span class="text-[13px] text-gray-600 font-medium">Oncology Medicines</span>
+                                    </div>
+                                    <i
+                                        class="fa-solid fa-xmark text-gray-300 hover:text-red-500 text-[10px] transition opacity-0 group-hover:opacity-100"></i>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between mb-3 px-1">
+                                <h4 class="text-[12px] font-medium text-gray-500">Suggested</h4>
+                            </div>
+                            <div id="suggested-products-list" class="grid grid-cols-1 gap-2">
+                                <div
+                                    class="flex items-center gap-3 p-2 hover:bg-blue-50/50 rounded-xl cursor-pointer transition group">
+                                    <div
+                                        class="w-10 h-10 bg-white border border-gray-100 p-1.5 rounded-lg flex items-center justify-center overflow-hidden">
+                                        <img src="assets/CYTAGET.png"
+                                            class="w-full h-full object-contain mix-blend-multiply group-hover:scale-110 transition duration-300">
+                                    </div>
+                                    <div>
+                                        <p class="text-[13px] font-bold text-gray-800">Cytarabine</p>
+                                        <p class="text-[10px] text-gray-400 mt-0.5">₱ 1,840.00</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-2 whitespace-nowrap">
+                        <span class="text-[13px] text-gray-500 font-medium">Sort by:</span>
+                        <div class="relative">
+                            <select
+                                class="appearance-none bg-white border border-blue-200 hover:border-primary rounded-full pl-4 pr-8 py-1.5 text-[13px] font-bold text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition-all cursor-pointer shadow-sm">
+                                <option>Popularity</option>
+                                <option>Price: Low to High</option>
+                                <option>Price: High to Low</option>
+                                <option>Newest</option>
+                            </select>
+                            <div
+                                class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-gray-600">
+                                <i class="fa-solid fa-chevron-down text-[10px]"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product Table -->
+                <div class="overflow-x-auto bg-white rounded-[10px] border border-gray-100 shadow-sm">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-gray-50/50 border-b border-gray-100">
+                                <th class="px-6 py-4 text-[14px] font-semibold text-gray-900 capitalize">
+                                    Product</th>
+                                <th class="px-6 py-4 text-[14px] font-semibold text-gray-900 capitalize">
+                                    Category</th>
+                                <th class="px-6 py-4 text-[14px] font-semibold text-gray-900 capitalize">Price
+                                </th>
+                                <th class="px-6 py-4 text-[14px] font-semibold text-gray-900 capitalize text-center">
+                                    Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="product-table-body" class="divide-y divide-gray-50">
+                            <!-- Products will be rendered here by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <script>
+                    const oncologyProducts = [
+                        // Oncology / Hematology - Leukemia & Lymphoma (Based on Excel)
+                        { name: "Cytarabine 100 MG / 5 ML", category: "Acute Myeloid Leukemia", price: 1850.00 },
+                        { name: "Idarubicin 5 MG VIAL", category: "Acute Myeloid Leukemia", price: 4200.00 },
+
+                        { name: "Imatinib (as Mesilate) 100 MG", category: "Chronic Myeloid Leukemia", price: 3200.00 },
+                        { name: "Hydroxyurea 500 MG", category: "Chronic Myeloid Leukemia", price: 1200.00 },
+
+                        { name: "Cytarabine 500 MG VIAL", category: "Acute Lymphocytic Leukemia", price: 2800.00 },
+                        { name: "Vincristine 1 MG / 1 ML", category: "Acute Lymphocytic Leukemia", price: 1500.00 },
+
+                        { name: "Bendamustine (as Hydrochloride) 100 MG", category: "Chronic Lymphocytic Leukemia", price: 12500.00 },
+
+                        { name: "Cytarabine 1 G VIAL", category: "Hodgkin/Non-Hodgkin's Lymphoma", price: 3500.00 },
+                        { name: "Methotrexate 50 MG / 2 ML", category: "Hodgkin/Non-Hodgkin's Lymphoma", price: 1650.00 },
+                        { name: "Vincristine 2 MG VIAL", category: "Hodgkin/Non-Hodgkin's Lymphoma", price: 2100.00 },
+                        { name: "Cyclophosphamide (as monohydrate) 500 MG", category: "Hodgkin/Non-Hodgkin's Lymphoma", price: 2800.00 },
+                        { name: "Bendamustine (as Hydrochloride) 25 MG", category: "Hodgkin/Non-Hodgkin's Lymphoma", price: 5600.00 },
+
+                        { name: "Bortezomib 3.5 MG VIAL", category: "Mantle Cell Lymphoma", price: 18500.00 },
+
+                        { name: "Cytarabine 100 MG", category: "Chronic Myelocytic Leukemia", price: 1850.00 },
+
+                        { name: "Cytarabine 100 MG / 5 ML (Meningeal)", category: "Meningeal Leukemia", price: 1950.00 },
+
+                        { name: "Imatinib (as Mesilate) 400 MG", category: "Acute Lymphoblastic Leukemia", price: 6800.00 },
+                        { name: "Idarubicin 10 MG VIAL", category: "Acute Lymphoblastic Leukemia", price: 7500.00 },
+                        { name: "Methotrexate 2.5 MG", category: "Acute Lymphoblastic Leukemia", price: 850.00 },
+
+                        { name: "Idarubicin 5 MG (Promyelocytic)", category: "Acute Promyelocytic Leukemia", price: 4200.00 },
+
+                        { name: "Hydroxyurea 500 MG (Sickle Cell)", category: "Sickle Cell Anemia", price: 1200.00 },
+
+                        { name: "Folic Acid", category: "Folate Deficiency Anemia", price: 350.00 },
+                        { name: "Ferrous Sulfate", category: "Iron Deficiency Anemia", price: 420.00 },
+
+                        // Original Oncology products
+                        { name: "Paclitaxel 100 MG / 16.7 ML", category: "Breast Cancer", price: 2150.00 },
+                        { name: "Docetaxel (as Trihydrate) 20 MG / 0.5 ML", category: "Breast Cancer", price: 1850.00 },
+                        { name: "Gemcitabine (as Hydrochloride) 1 G VIAL", category: "Breast Cancer", price: 3200.00 },
+                        { name: "Capecitabine 500 MG", category: "Breast Cancer", price: 1150.00 },
+                        { name: "Letrozole 2.5 MG", category: "Breast Cancer", price: 8900.00 },
+                        { name: "Anastrozole 1 MG", category: "Breast Cancer", price: 4200.00 },
+                        { name: "Cyclophosphamide (as monohydrate) 500 MG VIAL", category: "Breast Cancer", price: 2800.00 },
+                        { name: "Docetaxel RTU 20 MG / 2 ML", category: "Breast Cancer", price: 1950.00 },
+                        { name: "Methotrexate 50 MG / 2 ML", category: "Breast Cancer", price: 1500.00 },
+                        { name: "Lapatinib 250 MG", category: "Breast Cancer", price: 12500.00 },
+
+                        { name: "Paclitaxel 100 MG / 16.7 ML", category: "Ovarian Cancer", price: 2150.00 },
+                        { name: "Carboplatin 150 MG / 15 ML", category: "Ovarian Cancer", price: 3500.00 },
+                        { name: "Gemcitabine (as Hydrochloride) 1 G VIAL", category: "Ovarian Cancer", price: 3200.00 },
+                        { name: "Cyclophosphamide (as monohydrate) 500 MG VIAL", category: "Ovarian Cancer", price: 2800.00 },
+
+                        { name: "Paclitaxel 100 MG / 16.7 ML", category: "Non-Small Cell Lung Cancer", price: 2150.00 },
+                        { name: "Docetaxel (as Trihydrate) 20 MG / 0.5 ML", category: "Non-Small Cell Lung Cancer", price: 1850.00 },
+                        { name: "Gemcitabine (as Hydrochloride) 1 G VIAL", category: "Non-Small Cell Lung Cancer", price: 3200.00 },
+                        { name: "Pemetrexed (as Disodium Heptahydrate) 500 MG", category: "Non-Small Cell Lung Cancer", price: 4500.00 },
+                        { name: "Docetaxel RTU 20 MG / 2 ML", category: "Non-Small Cell Lung Cancer", price: 1950.00 },
+
+                        { name: "Docetaxel (as Trihydrate) 20 MG / 0.5 ML", category: "Prostate Cancer", price: 1850.00 },
+                        { name: "Abiraterone Acetate 250 MG", category: "Prostate Cancer", price: 15000.00 },
+                        { name: "Docetaxel RTU 20 MG / 2 ML", category: "Prostate Cancer", price: 1950.00 },
+
+                        { name: "Oxaliplatin 100 MG / 20 ML", category: "Colorectal Cancer", price: 5200.00 },
+                        { name: "Capecitabine 500 MG", category: "Colorectal Cancer", price: 1150.00 },
+                        { name: "Fluorouracil 500 MG / 10 ML", category: "Colorectal Cancer", price: 850.00 },
+
+                        { name: "Gemcitabine (as Hydrochloride) 1 G VIAL", category: "Pancreatic Cancer", price: 3200.00 },
+                        { name: "Fluorouracil 500 MG / 10 ML", category: "Pancreatic Cancer", price: 850.00 },
+
+                        { name: "Docetaxel (as Trihydrate) 20 MG / 0.5 ML", category: "Gastric Cancer", price: 1850.00 },
+                        { name: "Capecitabine 500 MG", category: "Gastric Cancer", price: 1150.00 },
+                        { name: "Fluorouracil 500 MG / 10 ML", category: "Gastric Cancer", price: 850.00 },
+                        { name: "Docetaxel RTU 20 MG / 2 ML", category: "Gastric Cancer", price: 1950.00 },
+
+                        { name: "Hydroxyurea 500 MG", category: "Head and Neck Cancer", price: 1200.00 },
+                        { name: "Pemetrexed (as Disodium Heptahydrate) 500 MG", category: "Malignant Pleural Mesothelioma", price: 4500.00 },
+                        { name: "Bleomycin (as Sulfate) 15 UNITS", category: "Malignant Pleural Effusion", price: 3800.00 },
+                        { name: "Imatinib (as Mesilate) 400 MG", category: "Gastrointestinal Stromal Tumors", price: 3200.00 },
+
+                        { name: "Cytarabine 100 MG / 16.7 ML INJECTION", category: "All", price: 1840.00, img: "assets/CYTAGET.png" },
+                        { name: "Docetaxel 50 MG", category: "All", price: 560.00, img: "assets/docetaxel.png" },
+                        { name: "Capecitabine 300 MCG / 1 ML INJECTION", category: "All", price: 1150.00, img: "assets/capecitabine.png" },
+                        { name: "Letrozole 250 MG / 5 ML PF SYRINGE", category: "All", price: 8900.00, img: "assets/letrozole.png" },
+                        { name: "Temozolomide 100 MG Caps", category: "All", price: 12450.00, img: "assets/temozolomide.png" },
+                        { name: "Folic Acid", category: "All", price: 350.00 },
+                        { name: "Ferrous Sulfate", category: "All", price: 420.00 },
+
+                        // Anti-Infectives
+                        { name: "Amikacin (as sulfate)", category: "Respiratory Infections", price: 850.00 },
+                        { name: "Cefoxitin (as Sodium)", category: "Respiratory Infections", price: 920.00 },
+                        { name: "Cefazolin (as Sodium)", category: "Respiratory Infections", price: 780.00 },
+                        { name: "Vancomycin (as Hydrochloride)", category: "Respiratory Infections", price: 1500.00 },
+
+                        { name: "Cefoxitin (as Sodium)", category: "Urinary Tract Infections", price: 920.00 },
+                        { name: "Cefazolin (as Sodium)", category: "Urinary Tract Infections", price: 780.00 },
+
+                        { name: "Cefazolin (as Sodium)", category: "Skin and Soft Tissue Infections", price: 780.00 },
+                        { name: "Cefazolin (as Sodium)", category: "Bone and Joint Infections", price: 780.00 },
+                        { name: "Cefoxitin (as Sodium)", category: "Gynecological infections", price: 920.00 },
+                        { name: "Cefoxitin (as Sodium)", category: "Intra-abdominal infections", price: 920.00 },
+
+                        { name: "Polymyxin B", category: "Bloodstream infections", price: 2100.00 },
+                        { name: "Polymyxin B", category: "Ocular or topical infections", price: 2100.00 },
+
+                        // Endocrinology
+                        { name: "Danazol", category: "Endometriosis", price: 1850.00 },
+                        { name: "Danazol", category: "Fibrocystic Breast Disease", price: 1850.00 },
+                        { name: "Finasteride", category: "Benign Prostatic Hyperplasia", price: 1200.00 },
+
+                        // Orthopedic
+                        { name: "Bortezomib", category: "Multiple Myeloma", price: 18500.00 },
+                        { name: "Zoledronic Acid (as Monohydrate)", category: "Multiple Myeloma", price: 8500.00 },
+                        { name: "Zoledronic Acid (as Monohydrate)", category: "Glucocorticoid-Induced Osteoporosis", price: 8500.00 },
+
+                        // Cardiology
+                        { name: "Amiodarone Hydrochloride", category: "Arrhythmia management", price: 950.00 },
+                        { name: "Amlodipine", category: "Hypertension/Angina", price: 450.00 },
+
+                        // Neuro-Oncology
+                        { name: "Temozolomide", category: "Glioblastoma Multiforme", price: 12450.00 },
+
+                        // Respiratory / Allergy
+                        { name: "Loratadine", category: "Seasonal Allergic Rhinitis", price: 350.00 },
+                        { name: "Cetirizine Hydrochloride", category: "Seasonal Allergic Rhinitis", price: 380.00 },
+
+                        // Nephrology / Renal
+                        { name: "Sevelamer Carbonate", category: "chronic kidney disease", price: 4200.00 },
+
+                        // Pain Management
+                        { name: "Tramadol", category: "Chronic Pain Management", price: 650.00 },
+
+                        // Rheumatology
+                        { name: "Dexamethasone", category: "Inflammatory & Rheumatic Disorders", price: 450.00 },
+
+                        // Radiology
+                        { name: "Iodine (as Iohexol)", category: "Radiologic imaging enhancement", price: 3200.00 }
+                    ];
+
+                    // --- Pagination State ---
+                    const ITEMS_PER_PAGE = 12;
+                    let currentPage = 1;
+                    let currentCategory = 'All';
+                    let currentFiltered = [];
+
+                    function getFiltered(category) {
+                        return oncologyProducts.filter(p =>
+                            category === 'All' ||
+                            p.category === category ||
+                            ((category === 'Oncology' || category === 'Oncology / Hematology') && p.category !== 'All')
+                        );
+                    }
+
+                    function renderProducts(category = 'All', page = 1) {
+                        currentCategory = category;
+                        currentPage = page;
+                        currentFiltered = getFiltered(category);
+
+                        const tableBody = document.getElementById('product-table-body');
+                        if (!tableBody) return;
+                        tableBody.innerHTML = '';
+
+                        const totalPages = Math.ceil(currentFiltered.length / ITEMS_PER_PAGE);
+                        const start = (page - 1) * ITEMS_PER_PAGE;
+                        const paginated = currentFiltered.slice(start, start + ITEMS_PER_PAGE);
+
+                        const heading = document.querySelector('h2.text-xl.font-bold');
+                        if (heading) {
+                            heading.innerHTML = `${category} <span class="text-gray-400 font-normal text-sm ml-2">(${currentFiltered.length} Items)</span>`;
+                        }
+
+                        paginated.forEach(p => {
+                            const row = document.createElement('tr');
+                            row.className = "hover:bg-blue-50/30 transition-colors group";
+
+                            const priceFormatted = p.price.toLocaleString('en-PH', { style: 'currency', currency: 'PHP' });
+
+                            row.innerHTML = `
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center gap-4">
+                                        <div class="w-12 h-12 bg-gray-50 rounded-xl overflow-hidden flex-shrink-0 border border-gray-100 p-1">
+                                            <img src="${p.img || 'assets/no-image.png'}" alt="${p.name}" 
+                                                class="w-full h-full object-contain mix-blend-multiply"
+                                                onerror="this.src='https://placehold.co/100x100?text=PHARMA'">
+                                        </div>
+                                        <div class="flex flex-col">
+                                            <span class="text-[14px] font-bold text-gray-900 group-hover:text-primary transition-colors cursor-pointer" 
+                                                  onclick="openInquiryModal('${p.name.replace(/'/g, "\\'")}', '${priceFormatted}', '${p.img || 'assets/no-image.png'}', '${p.category.replace(/'/g, "\\'")}')">
+                                                ${p.name}
+                                            </span>
+                                            <span class="text-[11px] text-gray-400">Available: <span class="text-success font-bold">In Stock</span></span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 text-[13px] text-gray-600 font-medium">
+                                    ${p.category}
+                                </td>
+                                <td class="px-6 py-4 text-[14px] font-bold text-gray-900">
+                                    ${priceFormatted}
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <button onclick="openInquiryModal('${p.name.replace(/'/g, "\\'")}', '${priceFormatted}', '${p.img || 'assets/no-image.png'}', '${p.category.replace(/'/g, "\\'")}')"
+                                        class="bg-primary hover:bg-blue-600 text-white text-[11px] font-bold px-4 py-1.5 rounded-full transition-all duration-300 shadow-md hover:shadow-lg active:scale-95 inline-flex items-center justify-center gap-1.5 whitespace-nowrap">
+                                        <i class="fa-solid fa-paper-plane text-[10px]"></i>
+                                        Send Inquiry
+                                    </button>
+                                </td>
+                            `;
+                            tableBody.appendChild(row);
+                        });
+
+                        renderPagination(totalPages, page);
+                    }
+
+                    function renderPagination(totalPages, activePage) {
+                        const container = document.getElementById('pagination-container');
+                        if (!container) return;
+                        container.innerHTML = '';
+
+                        if (totalPages <= 1) return;
+
+                        const btnBase = 'w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition cursor-pointer select-none';
+                        const btnInactive = `${btnBase} border border-gray-200 text-gray-600 hover:border-primary hover:text-primary`;
+                        const btnActive = `${btnBase} bg-primary text-white shadow-md`;
+                        const btnArrow = `${btnBase} border border-gray-200 text-gray-400 hover:border-primary hover:text-primary`;
+                        const btnDisabled = `${btnBase} border border-gray-100 text-gray-300 cursor-not-allowed`;
+
+                        // Prev button
+                        const prev = document.createElement('button');
+                        prev.className = activePage === 1 ? btnDisabled : btnArrow;
+                        prev.innerHTML = '<i class="fa-solid fa-chevron-left text-xs"></i>';
+                        if (activePage > 1) prev.onclick = () => { renderProducts(currentCategory, activePage - 1); scrollToGrid(); };
+                        container.appendChild(prev);
+
+                        // Page number buttons with smart ellipsis
+                        const pages = getPageRange(activePage, totalPages);
+                        pages.forEach(p => {
+                            if (p === '...') {
+                                const dots = document.createElement('span');
+                                dots.className = 'text-gray-400 px-1 flex items-center';
+                                dots.textContent = '...';
+                                container.appendChild(dots);
+                            } else {
+                                const btn = document.createElement('button');
+                                btn.className = p === activePage ? btnActive : btnInactive;
+                                btn.textContent = p;
+                                btn.onclick = () => { renderProducts(currentCategory, p); scrollToGrid(); };
+                                container.appendChild(btn);
+                            }
+                        });
+
+                        // Next button
+                        const next = document.createElement('button');
+                        next.className = activePage === totalPages ? btnDisabled : btnArrow;
+                        next.innerHTML = '<i class="fa-solid fa-chevron-right text-xs"></i>';
+                        if (activePage < totalPages) next.onclick = () => { renderProducts(currentCategory, activePage + 1); scrollToGrid(); };
+                        container.appendChild(next);
+                    }
+
+                    function getPageRange(current, total) {
+                        if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+                        const pages = [];
+                        if (current <= 4) {
+                            for (let i = 1; i <= 5; i++) pages.push(i);
+                            pages.push('...'); pages.push(total);
+                        } else if (current >= total - 3) {
+                            pages.push(1); pages.push('...');
+                            for (let i = total - 4; i <= total; i++) pages.push(i);
+                        } else {
+                            pages.push(1); pages.push('...');
+                            pages.push(current - 1); pages.push(current); pages.push(current + 1);
+                            pages.push('...'); pages.push(total);
+                        }
+                        return pages;
+                    }
+
+                    function scrollToGrid() {
+                        const grid = document.getElementById('product-grid');
+                        if (grid) grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+
+                    // Handle Sidebar clicks
+                    document.addEventListener('DOMContentLoaded', () => {
+                        const subMenuLinks = document.querySelectorAll('.sub-menu a');
+                        subMenuLinks.forEach(link => {
+                            link.addEventListener('click', (e) => {
+                                e.preventDefault();
+                                const category = link.innerText.trim();
+                                renderProducts(category, 1);
+
+                                // Update active state for sub-menu links
+                                document.querySelectorAll('.sub-menu a').forEach(l => l.classList.remove('active-sub'));
+                                link.classList.add('active-sub');
+
+                                // Update active state for parent category
+                                document.querySelectorAll('.category-item').forEach(item => item.classList.remove('active', 'bg-blue-50/50', 'text-primary'));
+                                const categoryBtn = link.closest('.category-group').querySelector('.category-item');
+                                categoryBtn.classList.add('active', 'bg-blue-50/50', 'text-primary');
+                            });
+                        });
+
+                        // Main Category Clicks
+                        document.querySelectorAll('.category-item').forEach(btn => {
+                            btn.addEventListener('click', () => {
+                                const text = btn.innerText.trim();
+                                if (text === 'All Products') renderProducts('All', 1);
+                                if (text === 'Oncology') renderProducts('Oncology', 1);
+                                if (text.includes('Oncology / Hematology')) renderProducts('Oncology / Hematology', 1);
+                            });
+                        });
+
+                        renderProducts('All', 1);
+                    });
+                </script>
+
+                <!-- Pagination -->
+                <div id="pagination-container" class="mt-16 flex justify-center items-center gap-2"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer Placeholder -->
+    <div id="footer-placeholder"></div>
+
+    <script src="components/data-loader.js"></script>
+    <script src="components/components.js?v=1775012548480"></script>
+    <script>
+        // Hero logic removed as it now uses an auto-playing video
+
+        // Sidebar logic
+        function toggleCategory(btn) {
+            const group = btn.closest('.category-group');
+            const icon = btn.querySelector('.fa-chevron-down');
+
+            btn.classList.toggle('open');
+            if (btn.classList.contains('open')) {
+                icon.style.transform = 'rotate(180deg)';
+            } else {
+                icon.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        // Qty Logic
+        function updateQty(btn, change) {
+            const span = btn.parentElement.querySelector('span');
+            let current = parseInt(span.innerText);
+            let newVal = current + change;
+            if (newVal < 1) newVal = 1;
+            span.innerText = newVal;
+        }
+
+        // Add to Cart Logic
+        function addToCart(name, price, btn) {
+            const card = btn.closest('.group') || btn.closest('.bg-white');
+            const qtyElem = card.querySelector('.flex.items-center.space-x-2 span') || btn.parentElement.querySelector('span');
+            const qty = parseInt(qtyElem.innerText);
+
+            const icon = btn.querySelector('i');
+            const originalIcon = icon.className;
+
+            // Visual feedback
+            const originalBtnClass = btn.className;
+            btn.classList.remove('bg-success');
+            btn.classList.add('bg-blue-600');
+            icon.className = 'fa-solid fa-check border-none';
+
+            // Logic (simplified cart)
+            let cart = JSON.parse(localStorage.getItem('getmeds_cart') || '[]');
+            const existing = cart.find(i => i.name === name);
+
+            if (existing) {
+                existing.qty += qty;
+            } else {
+                const imgElem = card.querySelector('img');
+                const img = imgElem ? imgElem.src : 'assets/no-image.png';
+                // Get volume if available, or default to "1 Box"
+                const volElem = card.querySelector('p.text-gray-500');
+                const vol = volElem ? volElem.innerText.split(':')[1]?.trim() || '1 Box' : '1 Box';
+
+                cart.push({
+                    name,
+                    price,
+                    qty,
+                    img,
+                    vol
+                });
+            }
+
+            localStorage.setItem('getmeds_cart', JSON.stringify(cart));
+
+            setTimeout(() => {
+                btn.classList.replace('bg-blue-600', 'bg-success');
+                icon.className = originalIcon;
+                qtyElem.innerText = '1';
+                // Dispatch event to update badge in navbar
+                window.dispatchEvent(new Event('cartUpdated'));
+            }, 1000);
+        }
+
+        // Search logic
+        const searchInput = document.getElementById('main-search-input');
+        const searchSuggestions = document.getElementById('search-suggestions');
+        const searchWrapper = document.getElementById('search-wrapper');
+
+        function filterProducts(term) {
+            term = term.toLowerCase().trim();
+            // Filter auto-suggest dropdown
+            const items = document.querySelectorAll('#suggested-products-list > div');
+            items.forEach(item => {
+                const text = item.innerText.toLowerCase();
+                item.style.display = text.includes(term) ? 'flex' : 'none';
+            });
+
+            // Filter actual product cards in the grid
+            const productTitles = document.querySelectorAll('h4.gradient-text');
+            productTitles.forEach(h4 => {
+                const card = h4.closest('.group');
+                if (!card) return;
+                const titleText = h4.innerText.toLowerCase();
+                card.style.display = titleText.includes(term) ? 'flex' : 'none';
+            });
+        }
+
+        if (searchInput) {
+            searchInput.addEventListener('focus', () => {
+                searchSuggestions.classList.remove('hidden');
+            });
+
+            searchInput.addEventListener('input', (e) => {
+                filterProducts(e.target.value);
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!searchWrapper.contains(e.target)) {
+                    searchSuggestions.classList.add('hidden');
+                }
+            });
+
+            // Check for URL query parameters from navbar search
+            const urlParams = new URLSearchParams(window.location.search);
+            const query = urlParams.get('search');
+            if (query) {
+                searchInput.value = query;
+                filterProducts(query);
+
+                // Hide suggestions dropdown if coming from a direct URL search
+                setTimeout(() => searchSuggestions.classList.add('hidden'), 50);
+            }
+        }
+
+        window.clearSearchHistory = function () {
+            const list = document.getElementById('search-history-list');
+            if (list) {
+                list.innerHTML = `
+                    <div class="col-span-full py-8 text-center bg-gray-50 rounded-2xl border-2 border-dashed border-gray-100">
+                        <i class="fa-solid fa-ghost text-gray-300 text-2xl mb-3 block"></i>
+                        <p class="text-xs font-semibold text-gray-400">No search history found</p>
+                    </div>
+                `;
+            }
+        }
+    </script>
+    <!-- Enhanced Inquiry Modal -->
+    <div id="inquiry-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 sm:p-6">
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-dark/60 backdrop-blur-sm transition-opacity duration-300"
+            onclick="closeInquiryModal()"></div>
+
+        <!-- Modal Content -->
+        <div class="relative bg-white w-full max-w-6xl max-h-[95vh] rounded-[15px] shadow-2xl overflow-hidden flex flex-col transform transition-all duration-300 scale-95 opacity-0"
+            id="modal-content">
+
+            <!-- Modal Header -->
+            <div class="bg-white border-b border-gray-100 px-6 py-4 flex justify-between items-center shrink-0">
+                <div class="flex items-center space-x-4">
+                    <img src="assets/getmedslogo.png" alt="GetMEDS Logo" class="h-6 w-auto object-contain">
+                    <h3 class="text-base font-semibold text-gray-800 border-l border-gray-200 pl-4">Product Details &
+                        Inquiry</h3>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button
+                        class="hidden sm:flex items-center text-gray-500 hover:text-primary transition text-sm space-x-1.5">
+                        <i class="fa-regular fa-circle-question"></i>
+                        <span>Do you need help?</span>
+                    </button>
+                    <button onclick="closeInquiryModal()"
+                        class="text-gray-500 hover:text-gray-800 transition border border-gray-200 hover:border-gray-300 rounded-full w-8 h-8 flex items-center justify-center bg-white shadow-sm hover:shadow">
+                        <i class="fa-solid fa-xmark text-sm"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Modal Body (Scrollable) -->
+            <div class="flex-1 overflow-y-auto p-0 flex flex-col lg:flex-row bg-white">
+
+                <!-- Left Column: Product Info -->
+                <div class="lg:w-1/2 p-6 lg:p-8 border-b lg:border-b-0 lg:border-r border-gray-100 flex flex-col">
+
+                    <!-- Product Details Section -->
+                    <div class="flex flex-col-reverse md:flex-row gap-8 mb-8">
+                        <!-- Details (Left Side) -->
+                        <div class="w-full md:w-1/2 flex flex-col justify-center">
+                            <!-- Badges -->
+                            <div
+                                class="flex flex-nowrap whitespace-nowrap items-center gap-3 mb-3 text-sm text-gray-600">
+                                <span class="flex items-center text-success font-medium">
+                                    <i class="fa-solid fa-check mr-1.5"></i> In stock
+                                </span>
+                                <span class="text-gray-300">|</span>
+                                <span id="modal-category-badge" class="capitalize text-primary font-medium">
+                                    Oncology
+                                </span>
+                            </div>
+
+                            <h1 class="text-xl font-bold text-gray-900 mb-4 leading-tight" id="modal-product-title">
+                                Cytarabine 100 MG / 16.7 ML INJECTION
+                            </h1>
+
+                            <p class="text-gray-600 text-[13px] leading-relaxed">
+                                An antimetabolite chemotherapy drug used principally in the treatment of cancers of
+                                white blood cells such as acute myeloid leukemia (AML) and non-Hodgkin lymphoma.
+                            </p>
+                        </div>
+
+                        <!-- Image Placeholder (Right Side) -->
+                        <div class="w-full md:w-1/2 flex items-center justify-center">
+                            <div
+                                class="w-full max-w-[200px] aspect-square flex flex-col items-center justify-center bg-gray-50 rounded-[15px] border border-gray-100 text-gray-300 group transition hover:bg-gray-100/50">
+                                <i
+                                    class="fa-regular fa-image text-4xl mb-3 group-hover:scale-110 transition-transform"></i>
+                                <span class="text-xs font-medium uppercase tracking-wider">Product Image</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tabs Section -->
+                    <div class="bg-white rounded-[15px] border border-gray-100 p-5 mt-auto">
+                        <div class="flex overflow-x-auto no-scrollbar border-b border-gray-100 mb-5 gap-6">
+                            <button type="button"
+                                class="tab-btn active pb-3 text-[13px] text-gray-500 font-medium whitespace-nowrap transition-colors"
+                                data-target="m-tab-description">Description</button>
+                            <button type="button"
+                                class="tab-btn pb-3 text-[13px] text-gray-500 font-medium whitespace-nowrap hover:text-gray-800 transition-colors"
+                                data-target="m-tab-usage">Usage</button>
+                            <button type="button"
+                                class="tab-btn pb-3 text-[13px] text-gray-500 font-medium whitespace-nowrap hover:text-gray-800 transition-colors"
+                                data-target="m-tab-precautions">Precautions</button>
+                        </div>
+                        <div
+                            class="text-[13px] text-gray-600 leading-relaxed max-h-[200px] overflow-y-auto pr-2 custom-scrollbar">
+                            <div id="m-tab-description" class="tab-content active">
+                                <p>Cytarabine belongs to a general group of medicines known as antimetabolites. It is
+                                    used to treat some types of cancer of the blood (leukemia). Cytarabine works by
+                                    interfering with the growth of cancer cells, which are eventually destroyed by the
+                                    body.</p>
+                                <ul class="list-disc pl-5 mt-3 space-y-1">
+                                    <li>Effective in acutely inducing remission.</li>
+                                    <li>High concentration formulation.</li>
+                                </ul>
+                            </div>
+                            <div id="m-tab-usage" class="tab-content">
+                                <p>This drug is administered by a healthcare professional in a clinical or hospital
+                                    setting. The dosage and schedule will be determined by your doctor.</p>
+                                <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mt-3">
+                                    <p class="text-[12px] text-yellow-700 font-medium">Never attempt to self-administer
+                                        unless explicitly instructed.</p>
+                                </div>
+                            </div>
+                            <div id="m-tab-precautions" class="tab-content">
+                                <ul class="list-disc pl-5 space-y-2">
+                                    <li>Tell your doctor if you have ever had an unusual or allergic reaction to
+                                        cytarabine.</li>
+                                    <li>Inform your doctor if you have liver or kidney disease.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Inquiry Form -->
+                <div class="lg:w-1/2 bg-white p-6 lg:p-8 pb-10">
+                    <div class="mb-6">
+                        <h4 class="text-lg font-bold text-gray-900">Send Inquiry</h4>
+                        <p class="text-xs text-gray-500 mt-1">Submit your details to get a formal quote for this
+                            product.</p>
+                    </div>
+
+                    <form id="inquiry-form" class="space-y-4">
+                        <div>
+                            <label class="block text-[11px] font-medium text-gray-500 mb-2">Target Product</label>
+                            <input type="text" id="inquiry-product-name" readonly
+                                class="w-full bg-gray-50 border border-gray-100 rounded-xl px-3 py-2.5 text-[13px] font-bold text-primary outline-none cursor-default">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-medium text-gray-500 mb-2">Full Name</label>
+                            <input type="text" id="inquiry-name" required placeholder="John Doe"
+                                class="w-full bg-white border border-gray-200 rounded-xl px-3 py-2.5 text-[13px] text-gray-700 outline-none focus:border-primary transition">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-medium text-gray-500 mb-2">Phone Number</label>
+                            <input type="tel" id="inquiry-phone" required placeholder="+63 900 000 0000"
+                                class="w-full bg-white border border-gray-200 rounded-xl px-3 py-2.5 text-[13px] text-gray-700 outline-none focus:border-primary transition">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-medium text-gray-500 mb-2">Email Address</label>
+                            <input type="email" id="inquiry-email" required placeholder="john@example.com"
+                                class="w-full bg-white border border-gray-200 rounded-xl px-3 py-2.5 text-[13px] text-gray-700 outline-none focus:border-primary transition">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-medium text-gray-500 mb-2">Message</label>
+                            <textarea id="inquiry-message" rows="3" placeholder="Tell us more about your requirements..."
+                                class="w-full bg-white border border-gray-200 rounded-xl px-3 py-2.5 text-[13px] text-gray-700 outline-none focus:border-primary transition resize-none"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-medium text-gray-500 mb-2">Upload Prescription
+                                (Optional)</label>
+                            <input type="file" id="prescription-upload" multiple accept=".png, .jpg, .jpeg, .pdf"
+                                class="w-full text-[13px] text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-[12px] file:font-medium file:bg-primary/10 file:text-primary hover:file:bg-primary/20 transition cursor-pointer border border-gray-200 rounded-xl p-1.5 bg-white outline-none">
+                            <div id="file-upload-preview" class="mt-2 space-y-1"></div>
+                        </div>
+                        <button type="submit"
+                            class="w-full bg-gradient-to-r from-success to-primary hover:from-primary hover:to-success text-white font-bold py-3 rounded-xl shadow-lg transition-all duration-500 transform active:scale-[0.98] mt-6 mb-8 text-[13px]">
+                            Submit Inquiry Request
+                        </button>
+                        <div class="h-8"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Setup Tab functionality for Modal
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('#inquiry-modal .tab-btn').forEach(button => {
+                button.addEventListener('click', () => {
+                    document.querySelectorAll('#inquiry-modal .tab-btn').forEach(btn => btn.classList.remove('active', 'text-gray-800'));
+                    document.querySelectorAll('#inquiry-modal .tab-content').forEach(content => content.classList.remove('active'));
+
+                    button.classList.add('active');
+                    const target = button.getAttribute('data-target');
+                    if (document.getElementById(target)) {
+                        document.getElementById(target).classList.add('active');
+                    }
+                });
+            });
+        });
+
+        function openInquiryModal(productName, productPrice, productImg, productCategory) {
+            const modal = document.getElementById('inquiry-modal');
+            const content = document.getElementById('modal-content');
+            const input = document.getElementById('inquiry-product-name');
+
+            document.getElementById('modal-product-title').innerText = productName;
+            document.getElementById('modal-category-badge').innerText = productCategory || 'Product';
+            // Image elements were removed from the modal to simplify layout
+
+            input.value = productName;
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                content.classList.remove('scale-95', 'opacity-0');
+                content.classList.add('scale-100', 'opacity-100');
+            }, 10);
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeInquiryModal() {
+            const modal = document.getElementById('inquiry-modal');
+            const content = document.getElementById('modal-content');
+
+            content.classList.remove('scale-100', 'opacity-100');
+            content.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+            document.body.style.overflow = 'auto';
+        }
+
+        // Helper function to convert files to base64
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => {
+                    const base64String = reader.result.split(',')[1];
+                    resolve(base64String);
+                };
+                reader.onerror = error => reject(error);
+            });
+        }
+
+        document.getElementById('inquiry-form').onsubmit = async function (e) {
+            e.preventDefault();
+            const btn = this.querySelector('button');
+            const originalText = btn.innerText;
+
+            btn.disabled = true;
+            btn.innerText = 'Sending...';
+
+            // IMPORTANT: Replace this placeholder with your deployed Google Web App URL (ends in /exec)
+            const SCRIPT_URL = 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE';
+
+            const productName = document.getElementById('inquiry-product-name').value;
+            const fullName = document.getElementById('inquiry-name').value;
+            const phone = document.getElementById('inquiry-phone').value;
+            const email = document.getElementById('inquiry-email').value;
+            const message = document.getElementById('inquiry-message').value;
+
+            // Handle file conversions
+            const fileInput = document.getElementById('prescription-upload');
+            const filesData = [];
+            if (fileInput && fileInput.files.length > 0) {
+                const filesArray = Array.from(fileInput.files);
+                for (const file of filesArray) {
+                    try {
+                        const base64 = await fileToBase64(file);
+                        filesData.push({
+                            name: file.name,
+                            type: file.type,
+                            base64: base64
+                        });
+                    } catch (err) {
+                        console.error('Error processing file:', file.name, err);
+                    }
+                }
+            }
+
+            const payload = {
+                productName,
+                fullName,
+                phone,
+                email,
+                message,
+                files: filesData
+            };
+
+            try {
+                if (!SCRIPT_URL || SCRIPT_URL.includes('YOUR_GOOGLE_APPS_SCRIPT_URL_HERE')) {
+                    console.warn('Google Apps Script URL is not configured. Simulating form submission.');
+                    await new Promise(resolve => setTimeout(resolve, 1500));
+                } else {
+                    // Send to Google Spreadsheet Apps Script
+                    await fetch(SCRIPT_URL, {
+                        method: 'POST',
+                        mode: 'no-cors', // Avoids CORS blocker on cross-origin App Script Web App redirects
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(payload)
+                    });
+                }
+
+                btn.innerHTML = '<i class="fa-solid fa-check mr-2"></i> Inquiry Sent Successfully!';
+                btn.classList.replace('bg-gradient-to-r', 'bg-success');
+
+                setTimeout(() => {
+                    closeInquiryModal();
+                    this.reset();
+                    document.getElementById('file-upload-preview').innerHTML = '';
+                    btn.disabled = false;
+                    btn.innerText = originalText;
+                    btn.classList.add('bg-gradient-to-r');
+                }, 1500);
+
+            } catch (error) {
+                console.error('Submission error:', error);
+                btn.innerText = 'Failed to submit. Try again.';
+                btn.disabled = false;
+                setTimeout(() => {
+                    btn.innerText = originalText;
+                }, 2000);
+            }
+        };
+
+        // File Upload Preview
+        document.getElementById('prescription-upload').addEventListener('change', function () {
+            const previewContainer = document.getElementById('file-upload-preview');
+            previewContainer.innerHTML = '';
+
+            if (this.files && this.files.length > 0) {
+                Array.from(this.files).forEach(file => {
+                    const item = document.createElement('div');
+                    item.className = 'flex items-center text-[11px] text-gray-500 bg-gray-50 px-2 py-1.5 rounded-md border border-gray-100';
+                    item.innerHTML = `<i class="fa-solid fa-file-lines mr-2 text-primary/70"></i> <span class="truncate">${file.name}</span>`;
+                    previewContainer.appendChild(item);
+                });
+            }
+        });
+    </script>
+    <script src="components/components.js?v=1775704983"></script>
+</body>
+
+</html>

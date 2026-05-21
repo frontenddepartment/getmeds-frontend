@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSR - GetMEDS</title>
+    <meta name="description"
+        content="Corporate Social Responsibility at GetMeds. Our mission to make healthcare accessible through partnerships and patient advocacy.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#0D99FF',
+                        dark: '#1A202C',
+                        footer: '#1A1D2B',
+                    },
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Scroll Reveal Effect */
+        .reveal {
+            transform: translateY(30px);
+            opacity: 0;
+            transition: all 0.8s ease-out;
+        }
+
+        .reveal.active {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    </style>
+</head>
+
+<body class="bg-white text-gray-800 antialiased overflow-x-hidden">
+
+    <!-- Navbar Component -->
+    <div id="navbar-placeholder"></div>
+
+    <!-- ============================================================
+         HERO SECTION — styled like UNGC hero
+    ============================================================ -->
+    <section class="w-full mx-auto px-3 sm:px-4 md:px-6 mt-3 md:mt-4 mb-16 max-w-[1600px]">
+        <div
+            class="relative rounded-[1.5rem] border border-gray-100/20 overflow-hidden min-h-[450px] md:min-h-[500px] flex items-end">
+            <!-- Background Image -->
+            <img src="assets/csrhero.png" alt="Corporate Social Responsibility" data-json-src="hero.image" data-json-alt="hero.imageAlt"
+                class="absolute inset-0 w-full h-full object-cover object-center">
+
+            <!-- Overlay for readability -->
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+            <div
+                class="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent w-[100%] md:w-[70%]">
+            </div>
+
+            <div class="relative z-10 w-full px-8 md:px-14 pb-12 md:pb-16 pt-20 max-w-4xl reveal">
+                <h1 class="text-[28px] md:text-[38px] leading-tight font-bold mb-3 tracking-tight">
+                    <span data-json="hero.headingLine1" class="text-white">Corporate Social</span><br>
+                    <span data-json="hero.headingAccent"
+                        class="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent leading-tight tracking-tight">
+                        Responsibility
+                    </span>
+                </h1>
+                <p data-json="hero.description" class="text-white/90 text-[13px] md:text-[14px] max-w-[650px] mb-5 leading-normal font-normal">
+                    We don't just distribute medicine; we facilitate healing. Through NGO partnerships and digital
+                    health advocacy,
+                    we ensure no patient navigates their journey alone.
+                </p>
+                <div class="flex gap-4">
+                    <button
+                        class="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:from-[#1D9FDA] hover:to-[#61A644] text-white font-semibold py-2 px-6 rounded-full text-[13px] inline-block transition shadow-md">
+                        Read More
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         FREE CANCER MEDICINES PROGRAM
+    ============================================================ -->
+    <section class="py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col lg:flex-row gap-12 mb-12 items-end">
+                <!-- Left: FB Flyer Image -->
+                <div class="lg:w-[28%]">
+                    <img src="assets/fbpost.png" alt="Free Cancer Medicines Flyer" class="w-full rounded-2xl shadow-sm">
+                </div>
+                <!-- Right: Program Details -->
+                <div class="lg:w-[72%] reveal">
+                    <span
+                        class="bg-[#1D9FDA] text-white text-[10px] font-bold px-4 py-1.5 rounded-full mb-6 inline-block tracking-widest uppercase">
+                        Patient Support Initiatives
+                    </span>
+                    <h2 class="text-2xl md:text-3xl font-bold mb-6 tracking-tight text-[#2A2A2A]">
+                        <span class="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">
+                            Free
+                        </span>
+                        Cancer Medicines Program
+                    </h2>
+                    <p class="text-gray-500 text-[14px] leading-[1.8] mb-8">
+                        Getmeds runs an ongoing online campaign dedicated to providing free cancer medicines to
+                        financially challenged patients
+                        who struggle to afford essential treatments. Through this initiative, patients in need can
+                        access vital oncology medications
+                        without the burden of cost, helping ensure continuity of care and improving health outcomes.
+                    </p>
+                    <img src="assets/model.png" alt="Medicine Distribution"
+                        class="w-full h-64 object-cover rounded-2xl shadow-md">
+                </div>
+            </div>
+
+            <!-- Beating Cancer Twice Section -->
+            <div class="flex flex-col md:flex-row gap-12 items-start mb-24">
+                <!-- Left: Video Embed -->
+                <div class="md:w-1/2 reveal overflow-hidden rounded-3xl shadow-xl h-[300px] md:h-auto">
+                    <iframe class="w-full h-full aspect-video" src="https://www.youtube.com/embed/aIKzCDi2NGA"
+                        title="DORIE SHARES HER BREAST CANCER JOURNEY AND ADVICE | CARE AT GETMEDS" frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
+                    </iframe>
+                </div>
+                <!-- Right: Description and Links -->
+                <div class="w-full md:w-1/2 pt-2 reveal">
+                    <p class="text-gray-500 text-[15px] leading-relaxed mb-8">
+                        Getmeds runs an ongoing online campaign dedicated to providing free cancer medicines to
+                        financially challenged patients who struggle to afford essential treatments. Through this
+                        initiative, patients in need can access vital oncology medications without the burden of cost,
+                        helping ensure continuity of care and improving health outcomes.
+                    </p>
+                    <h4 class="text-dark font-extrabold text-[16px] mb-6 tracking-tight">Watch some of our patients'
+                        journeys here:</h4>
+                    <div class="space-y-4">
+                        <a href="https://youtu.be/aIKzCDi2NGA" target="_blank"
+                            class="text-[#0D99FF] text-[14px] font-medium flex items-center gap-3 hover:underline">
+                            <i class="fa-brands fa-youtube text-red-500"></i>
+                            https://youtu.be/aIKzCDi2NGA
+                        </a>
+                        <a href="https://www.facebook.com/reel/971664227768897" target="_blank"
+                            class="text-[#0D99FF] text-[14px] font-medium flex items-center gap-3 hover:underline">
+                            <i class="fa-brands fa-facebook text-blue-600"></i>
+                            https://www.facebook.com/reel/971664227768897
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section> <!-- ============================================================
+         PROGRAM GALLERY SLIDER (SMOOTH & BORDERLESS)
+    ============================================================ -->
+    <style>
+        .gallery-container {
+            position: relative;
+            height: 480px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .gallery-item {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transition: all 0.9s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Desktop Positions */
+        .pos-0 {
+            transform: translate(-50%, -50%) translateX(-420px) scale(1);
+            opacity: 0.3;
+            z-index: 10;
+            width: 190px;
+            height: 260px;
+        }
+
+        .pos-1 {
+            transform: translate(-50%, -50%) translateX(-230px) scale(1);
+            opacity: 0.7;
+            z-index: 20;
+            width: 220px;
+            height: 320px;
+        }
+
+        .pos-2 {
+            transform: translate(-50%, -50%) translateX(0) scale(1);
+            opacity: 1;
+            z-index: 30;
+            width: 280px;
+            height: 420px;
+            box-shadow: 0 40px 80px -15px rgba(0, 0, 0, 0.3);
+        }
+
+        .pos-3 {
+            transform: translate(-50%, -50%) translateX(230px) scale(1);
+            opacity: 0.7;
+            z-index: 20;
+            width: 220px;
+            height: 320px;
+        }
+
+        .pos-4 {
+            transform: translate(-50%, -50%) translateX(420px) scale(1);
+            opacity: 0.3;
+            z-index: 10;
+            width: 190px;
+            height: 260px;
+        }
+
+        @media (max-width: 1024px) {
+            .pos-0 {
+                transform: translate(-50%, -50%) translateX(-300px) scale(0.8);
+                opacity: 0.1;
+            }
+
+            .pos-1 {
+                transform: translate(-50%, -50%) translateX(-180px) scale(0.9);
+            }
+
+            .pos-3 {
+                transform: translate(-50%, -50%) translateX(180px) scale(0.9);
+            }
+
+            .pos-4 {
+                transform: translate(-50%, -50%) translateX(300px) scale(0.8);
+                opacity: 0.1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .gallery-container {
+                height: 400px;
+            }
+
+            .pos-0,
+            .pos-4 {
+                opacity: 0;
+                visibility: hidden;
+            }
+
+            .pos-1 {
+                transform: translate(-50%, -50%) translateX(-120px) scale(0.8);
+                opacity: 0.5;
+            }
+
+            .pos-3 {
+                transform: translate(-50%, -50%) translateX(120px) scale(0.8);
+                opacity: 0.5;
+            }
+
+            .pos-2 {
+                width: 220px;
+                height: 340px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .pos-1 {
+                transform: translate(-50%, -50%) translateX(-100px) scale(0.7);
+                opacity: 0.3;
+            }
+
+            .pos-3 {
+                transform: translate(-50%, -50%) translateX(100px) scale(0.7);
+                opacity: 0.3;
+            }
+        }
+    </style>
+
+    <section class="py-10 bg-white overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 text-center mb-16 reveal">
+            <h2 class="text-dark font-bold text-2xl md:text-3xl tracking-tight mb-4">Free Cancer Medicines
+                Program</h2>
+            <p class="text-gray-500 text-[14px] md:text-[16px] max-w-2xl mx-auto leading-relaxed">
+                Discover exciting opportunities to grow your career with us. We are looking for passionate individuals
+                to join our mission-driven team.
+            </p>
+        </div>
+
+        <div class="gallery-container">
+            <!-- Slide 1 -->
+            <div class="gallery-item pos-0">
+                <img src="assets/csrslider3.png">
+            </div>
+            <!-- Slide 2 -->
+            <div class="gallery-item pos-1">
+                <img src="assets/csrslider2.png">
+            </div>
+            <!-- Slide 3 -->
+            <div class="gallery-item pos-2">
+                <img src="assets/csrslider1.png">
+            </div>
+            <!-- Slide 4 -->
+            <div class="gallery-item pos-3">
+                <img src="assets/csrslider4.png">
+            </div>
+            <!-- Slide 5 -->
+            <div class="gallery-item pos-4">
+                <img src="assets/csrslider5.png">
+            </div>
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const items = Array.from(document.querySelectorAll('.gallery-item'));
+                let classes = ['pos-0', 'pos-1', 'pos-2', 'pos-3', 'pos-4'];
+
+                function rotateGallery() {
+                    // Shift the classes
+                    classes.unshift(classes.pop());
+
+                    items.forEach((item, index) => {
+                        item.className = 'gallery-item ' + classes[index];
+                    });
+                }
+
+                setInterval(rotateGallery, 5000);
+            });
+        </script>
+    </section>
+
+    <!-- ============================================================
+         PATIENT ASSISTANCE PROGRAM
+    ============================================================ -->
+    <section class="py-16 bg-white overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 text-center mb-12 reveal">
+            <h2 class="text-dark font-bold text-2xl md:text-3xl tracking-tight mb-4">Patient Assistance Program</h2>
+            <p class="text-gray-500 text-[14px] md:text-[15px] max-w-2xl mx-auto leading-relaxed">
+                Discover exciting opportunities to grow your career with us. We are looking for passionate individuals
+                to join our mission-driven team.
+            </p>
+        </div>
+
+        <div class="relative w-full max-w-[1200px] mx-auto px-4">
+            <div id="assist-3d-viewport"
+                class="relative h-[280px] md:h-[400px] w-full flex items-center justify-center [perspective:1200px] overflow-visible">
+                <!-- Slide 1 -->
+                <div class="assist-card absolute w-[280px] md:w-[750px] transition-all duration-700 ease-out cursor-pointer z-20 opacity-100"
+                    data-pos="0">
+                    <img src="assets/papsliderone.png"
+                        class="w-full h-[220px] md:h-[360px] object-cover rounded-[1rem] shadow-2xl">
+                </div>
+                <!-- Slide 2 -->
+                <div class="assist-card absolute w-[280px] md:w-[750px] transition-all duration-700 ease-out cursor-pointer z-10 opacity-60"
+                    data-pos="1">
+                    <img src="assets/papslidertwo.png"
+                        class="w-full h-[220px] md:h-[360px] object-cover rounded-[1rem] shadow-lg">
+                </div>
+                <!-- Slide 3 -->
+                <div class="assist-card absolute w-[280px] md:w-[750px] transition-all duration-700 ease-out cursor-pointer z-10 opacity-60"
+                    data-pos="-1">
+                    <img src="assets/papsliderthree.png"
+                        class="w-full h-[220px] md:h-[360px] object-cover rounded-[1rem] shadow-lg">
+                </div>
+
+                <!-- Navigation Buttons -->
+                <button id="assist-prev"
+                    class="absolute left-0 md:-left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white shadow-xl rounded-full flex items-center justify-center text-gray-400 hover:text-primary transition-all z-40 hover:scale-110">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </button>
+                <button id="assist-next"
+                    class="absolute right-0 md:-right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white shadow-xl rounded-full flex items-center justify-center text-gray-400 hover:text-primary transition-all z-40 hover:scale-110">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <style>
+            .assist-card[data-pos="0"] {
+                transform: translate3d(0, 0, 0) scale(1) rotateY(0deg);
+                z-index: 30;
+                opacity: 1;
+            }
+
+            .assist-card[data-pos="1"] {
+                transform: translate3d(45%, 0, -250px) scale(0.85) rotateY(-35deg);
+                z-index: 20;
+                opacity: 0.6;
+            }
+
+            .assist-card[data-pos="-1"] {
+                transform: translate3d(-45%, 0, -250px) scale(0.85) rotateY(35deg);
+                z-index: 20;
+                opacity: 0.6;
+            }
+
+            @media (max-width: 768px) {
+                .assist-card[data-pos="1"] {
+                    transform: translate3d(35%, 0, -150px) scale(0.8) rotateY(-25deg);
+                }
+
+                .assist-card[data-pos="-1"] {
+                    transform: translate3d(-35%, 0, -150px) scale(0.8) rotateY(25deg);
+                }
+            }
+        </style>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const cards = document.querySelectorAll('.assist-card');
+                const nextBtn = document.getElementById('assist-next');
+                const prevBtn = document.getElementById('assist-prev');
+
+                let positions = [0, 1, -1];
+
+                function update3D() {
+                    cards.forEach((card, i) => {
+                        card.setAttribute('data-pos', positions[i]);
+                    });
+                }
+
+                function next() {
+                    positions.push(positions.shift());
+                    update3D();
+                }
+
+                function prev() {
+                    positions.unshift(positions.pop());
+                    update3D();
+                }
+
+                nextBtn.addEventListener('click', next);
+                prevBtn.addEventListener('click', prev);
+
+                setInterval(next, 6000);
+            });
+        </script>
+    </section>
+    </section>
+
+    <!-- ============================================================
+         CHRISTMAS PROMO & CANCER WARRIORS
+    ============================================================ -->
+    <section class="py-20 bg-white overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col lg:flex-row gap-16 items-center mb-32">
+                <!-- Left: Hugging Image -->
+                <div class="lg:w-1/2">
+                    <img src="assets/cancerpatient.png" alt="Christmas Promo Hug" class="w-full rounded-3xl shadow-2xl">
+                </div>
+                <!-- Right: Christmas Promo -->
+                <div class="lg:w-1/2 reveal">
+                    <h2 class="text-2xl md:text-3xl font-bold text-dark leading-tight mb-8">
+                        Christmas Promo For<br>
+                        Cancer Patients
+                    </h2>
+                    <div class="space-y-8">
+                        <div class="flex gap-5 items-start">
+                            <div
+                                class="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center flex-shrink-0">
+                                <i class="fa-solid fa-gift text-[#1D9FDA] text-lg"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-[16px] font-bold text-dark mb-1">Celebrate with us</h4>
+                                <p class="text-gray-400 text-sm leading-relaxed">Spreading holiday cheer to those
+                                    undergoing treatment during the festive season.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-5 items-start">
+                            <div
+                                class="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center flex-shrink-0">
+                                <i class="fa-solid fa-heart text-[#1D9FDA] text-lg"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-[16px] font-bold text-dark mb-1">Spread the joy</h4>
+                                <p class="text-gray-400 text-sm leading-relaxed">Connecting survivors and patients
+                                    through community events and shared experiences.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-5 items-start">
+                            <div
+                                class="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center flex-shrink-0">
+                                <i class="fa-solid fa-handshake-angle text-[#1D9FDA] text-lg"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-[16px] font-bold text-dark mb-1">Give more</h4>
+                                <p class="text-gray-400 text-sm leading-relaxed">Providing extra support and medicine
+                                    packs to brighten the holiday season for everyone.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Breast Cancer Warriors -->
+            <div class="flex flex-col lg:flex-row gap-10 items-center mb-8">
+                <!-- Left: Content -->
+                <div class="lg:w-1/2 reveal">
+                    <div class="flex gap-3 mb-5">
+                        <span
+                            class="bg-[#1D9FDA] text-white text-[10px] font-bold px-4 py-1.5 rounded-full uppercase">NGO
+                            PARTNERSHIPS</span>
+                        <span
+                            class="bg-[#1D9FDA] text-white text-[10px] font-bold px-4 py-1.5 rounded-full uppercase">COLLABORATION</span>
+                    </div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-dark leading-tight mb-6">
+                        The Beautiful One Dhe<br>
+                        Breast Cancer Warriors
+                    </h2>
+                    <p class="text-gray-500 text-[15px] leading-[1.8] mb-8">
+                        The Beautiful One Dhe is dedicated to supporting breast cancer warriors in their fight against
+                        the disease.
+                        In collaboration with this organization, Getmeds provides free medicines to patients, ensuring
+                        they have
+                        access to essential treatments and support throughout their journey to recovery.
+                    </p>
+                </div>
+                <!-- Right: Large Photo -->
+                <div class="lg:w-1/2">
+                    <img src="assets/one.png" alt="Warriors Event"
+                        class="w-full md:h-[350px] object-cover rounded-tl-[150px] rounded-tr-[1rem] rounded-br-[1rem] rounded-bl-[1rem] shadow-xl">
+                </div>
+            </div>
+
+            <!-- Event Mini Gallery -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <img src="assets/two.png"
+                    class="w-full h-60 object-cover rounded-2xl shadow-sm transition-transform hover:scale-[1.02]">
+                <img src="assets/three.png"
+                    class="w-full h-60 object-cover rounded-2xl shadow-sm transition-transform hover:scale-[1.02]">
+                <img src="assets/four.png"
+                    class="w-full h-60 object-cover rounded-tl-2xl rounded-tr-2xl rounded-br-[100px] rounded-bl-2xl shadow-sm transition-transform hover:scale-[1.02]">
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         EPCALM FOUNDATION
+    ============================================================ -->
+    <section class="pt-0 pb-16 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row gap-10 items-center mb-8">
+                <div class="md:w-1/2">
+                    <img src="assets/five.png" alt="EPCALM Partnership"
+                        class="w-full h-[350px] object-cover rounded-[1rem] shadow-lg">
+                </div>
+                <div class="md:w-1/2 reveal">
+                    <h2 class="text-2xl md:text-3xl font-bold text-dark mb-6 tracking-tight">
+                        Epcalm Adult Leukimia<br>Foundation
+                    </h2>
+                    <p class="text-gray-500 text-[15px] leading-[1.8] mb-6">
+                        In partnership with EPCALM, Getmeds provides free cancer medications to adult patients with
+                        chronic myeloid leukemia, helping remove financial barriers and ensure access to life-saving
+                        treatment.
+                    </p>
+                    <div class="flex items-center gap-4">
+                        <div class="w-16 h-16 flex items-center justify-center p-2">
+                            <img src="assets/epcalmlogo.png" class="w-full h-full object-contain">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Extra Photos -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="overflow-hidden h-60 rounded-tl-2xl rounded-tr-2xl rounded-br-2xl rounded-bl-[100px]">
+                    <img src="assets/six.png"
+                        class="w-full h-full object-cover transition-transform hover:scale-[1.02]">
+                </div>
+                <div class="overflow-hidden h-60 rounded-2xl">
+                    <img src="assets/seven.png"
+                        class="w-full h-full object-cover transition-transform hover:scale-[1.02]">
+                </div>
+                <div
+                    class="relative overflow-hidden h-60 rounded-tl-2xl rounded-tr-2xl rounded-br-[100px] rounded-bl-2xl">
+                    <img src="assets/eight.png"
+                        class="w-full h-full object-cover transition-transform hover:scale-[1.02]">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         FACES OF HOPE BANNER
+    ============================================================ -->
+    <section class="max-w-7xl mx-auto px-4 mb-32 mt-40">
+        <div
+            class="bg-[#26A8E1] rounded-[1rem] px-8 md:px-16 py-10 flex flex-col md:flex-row items-center gap-10 relative">
+            <!-- Left: Floating Circle & Caption -->
+            <div class="flex flex-col items-center -mt-28 md:-mt-32 shrink-0 z-20">
+                <div
+                    class="w-[210px] h-[210px] rounded-full border-[8px] border-white overflow-hidden mb-6 shadow-2xl bg-white">
+                    <img src="assets/fohimage.png" alt="Faces of Hope" class="w-full h-full object-cover">
+                </div>
+                <p
+                    class="text-white text-[14px] md:text-[15px] font-[700] text-center max-w-[300px] leading-relaxed tracking-wide">
+                    Mother of a Chronic Myeloid Leukemia Patient<br>(EPCALM Beneficiary)
+                </p>
+            </div>
+
+            <!-- Right: Content -->
+            <div class="flex-1 text-center md:text-left text-white reveal">
+                <h3 class="text-2xl md:text-3xl font-bold mb-4">Faces of Hope</h3>
+                <p class="text-[14px] md:text-[16px] leading-[1.8] opacity-95">
+                    "Since 2019, my son has been fighting his cancer. This is more than just a blessing. It's a big
+                    help to us, because if we had to buy it ourselves, we simply couldn't afford it. Because of
+                    Getmeds, he has a chance to live longer and continue his life."
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         PINK RUN SECTION
+    ============================================================ -->
+    <section class="py-20 bg-white overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col lg:flex-row gap-16 items-center">
+                <!-- Left: Large Screen Photo -->
+                <div class="lg:w-1/2">
+                    <img src="assets/pinkrun.png" alt="Pink Run Screen" class="w-full rounded-2xl shadow-xl">
+                </div>
+                <!-- Right content -->
+                <div class="lg:w-1/2 reveal">
+                    <div class="mb-5">
+                        <span
+                            class="bg-[#26A8E1] text-white text-[10px] font-bold px-4 py-1.5 rounded-full uppercase tracking-wider">
+                            HEALTH PROMOTION EVENTS
+                        </span>
+                    </div>
+                    <h2 class="text-3xl md:text-4xl font-extrabold text-dark leading-tight mb-8">
+                        Pink Run Breast Cancer Awareness
+                    </h2>
+                    <div class="space-y-6">
+                        <p class="text-gray-400 text-[15px] leading-[1.8]">
+                            The Pink Run is a running event in the Philippines dedicated to promoting breast cancer
+                            awareness. As the official health partner, Getmeds supports the advocacy by championing
+                            early detection, survivor support, improved healthcare access, and physical wellness.
+                        </p>
+                        <p class="text-gray-400 text-[15px] leading-[1.8]">
+                            To support participants, Getmeds provides free supplements for their well-being and
+                            highlights its Patient Assistance Program, helping patients gain access to essential
+                            oncology products.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pink Run Gallery -->
+    <!-- ============================================================
+         PINK RUN GALLERY (3D SLIDER)
+    ============================================================ -->
+    <section class="py-10 bg-white overflow-hidden">
+        <div class="relative w-full max-w-[1200px] mx-auto px-4">
+            <div id="pink-3d-viewport"
+                class="relative h-[280px] md:h-[400px] w-full flex items-center justify-center [perspective:1200px] overflow-visible">
+                <!-- Slide 1 -->
+                <div class="pink-card absolute w-[280px] md:w-[750px] transition-all duration-700 ease-out cursor-pointer"
+                    data-pos="0">
+                    <img src="assets/pinkrunone.png"
+                        class="w-full h-[220px] md:h-[360px] object-cover rounded-[1rem] shadow-2xl">
+                </div>
+                <!-- Slide 2 -->
+                <div class="pink-card absolute w-[280px] md:w-[750px] transition-all duration-700 ease-out cursor-pointer"
+                    data-pos="1">
+                    <img src="assets/pinkruntwo.png"
+                        class="w-full h-[220px] md:h-[360px] object-cover rounded-[1rem] shadow-lg">
+                </div>
+                <!-- Slide 3 -->
+                <div class="pink-card absolute w-[280px] md:w-[750px] transition-all duration-700 ease-out cursor-pointer"
+                    data-pos="-1">
+                    <img src="assets/pinkrunthree.png"
+                        class="w-full h-[220px] md:h-[360px] object-cover rounded-[1rem] shadow-lg">
+                </div>
+
+                <!-- Navigation Buttons -->
+                <button id="pink-prev"
+                    class="absolute left-0 md:-left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white shadow-xl rounded-full flex items-center justify-center text-gray-400 hover:text-[#26A8E1] transition-all z-40 hover:scale-110">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </button>
+                <button id="pink-next"
+                    class="absolute right-0 md:-right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white shadow-xl rounded-full flex items-center justify-center text-gray-400 hover:text-[#26A8E1] transition-all z-40 hover:scale-110">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <style>
+            .pink-card[data-pos="0"] {
+                transform: translate3d(0, 0, 0) scale(1) rotateY(0deg);
+                z-index: 30;
+                opacity: 1;
+            }
+
+            .pink-card[data-pos="1"] {
+                transform: translate3d(45%, 0, -250px) scale(0.85) rotateY(-40deg);
+                z-index: 20;
+                opacity: 0.6;
+            }
+
+            .pink-card[data-pos="-1"] {
+                transform: translate3d(-45%, 0, -250px) scale(0.85) rotateY(40deg);
+                z-index: 20;
+                opacity: 0.6;
+            }
+        </style>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                const pinkCards = document.querySelectorAll(".pink-card");
+                const pinkNext = document.getElementById("pink-next");
+                const pinkPrev = document.getElementById("pink-prev");
+                let pinkPositions = [0, 1, -1];
+
+                const updatePinkCards = () => {
+                    pinkCards.forEach((card, i) => {
+                        card.setAttribute("data-pos", pinkPositions[i]);
+                    });
+                };
+                pinkNext.addEventListener("click", () => {
+                    pinkPositions.push(pinkPositions.shift());
+                    updatePinkCards();
+                });
+                pinkPrev.addEventListener("click", () => {
+                    pinkPositions.unshift(pinkPositions.pop());
+                    updatePinkCards();
+                });
+                // Auto rotate
+                setInterval(() => {
+                    pinkPositions.push(pinkPositions.shift());
+                    updatePinkCards();
+                }, 6000);
+            });
+        </script>
+    </section>
+    <!-- Footer Component -->
+    <div id="footer-placeholder"></div>
+
+    <!-- Scroll Reveal Script -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const revealOptions = {
+                root: null,
+                threshold: 0.1,
+                rootMargin: "0px 0px -50px 0px" // Trigger slightly before the element enters the view
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                    }
+                });
+            }, revealOptions);
+
+            const revealElements = document.querySelectorAll('.reveal');
+            revealElements.forEach(el => observer.observe(el));
+        });
+    </script>
+    <script src="components/data-loader.js"></script>
+    <script src="components/components.js?v=2"></script>
+</body>
+
+</html>

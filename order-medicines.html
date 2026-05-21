@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Medicines - GetMEDS</title>
+    <meta name="description"
+        content="Order your medicines securely with GetMeds. Upload your prescription and get fast delivery to your doorstep.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#0D99FF',
+                        dark: '#1A202C',
+                        footer: '#1A1D2B',
+                        success: '#61A644',
+                    },
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .gradient-text {
+            background: linear-gradient(to right, #61A644, #1D9FDA);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .gradient-bg {
+            background: linear-gradient(to right, #61A644, #1D9FDA);
+        }
+
+        .step-active {
+            border-color: #0D99FF;
+            color: #0D99FF;
+        }
+
+        .prescription-guide-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .prescription-guide-icon {
+            flex-shrink: 0;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #E8F5E3;
+            color: #61A644;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+    </style>
+</head>
+
+<body class="bg-white text-gray-800 antialiased overflow-x-hidden">
+
+    <!-- Navbar Component -->
+    <div id="navbar-placeholder"></div>
+
+    <!-- ============================================================
+         HERO SECTION
+    ============================================================ -->
+    <section class="w-full mx-auto px-3 sm:px-4 md:px-6 mt-3 md:mt-4 mb-10 max-w-[1600px]">
+        <div
+            class="relative rounded-[15px] overflow-hidden min-h-[250px] md:min-h-[300px] flex items-center bg-gray-50 border border-gray-100">
+
+            <!-- Hero Content -->
+            <div class="relative z-10 w-full px-8 md:px-14 py-10 max-w-4xl">
+                <span data-json="hero.sectionLabel"
+                    class="inline-block bg-[#E8F5E3] text-[#61A644] text-[10px] font-bold px-4 py-1.5 rounded-full mb-4 tracking-wider uppercase">
+                    Secure Orders
+                </span>
+                <h1 class="text-[28px] md:text-[40px] leading-tight font-extrabold mb-3 tracking-tight text-dark">
+                    Order Your <span data-json="hero.headingAccent" class="gradient-text">Medicines</span><br>
+                    With Ease
+                </h1>
+                <p data-json="hero.description" class="text-gray-500 text-[13px] md:text-[14px] max-w-[500px] leading-relaxed">
+                    Simply upload your prescription, fill out the validation form, and our licensed pharmacists will
+                    handle the rest. Your health, delivered.
+                </p>
+            </div>
+
+            <!-- Background Decoration -->
+            <div
+                class="absolute right-0 top-0 h-full w-1/3 bg-gradient-to-l from-blue-50 to-transparent pointer-events-none opacity-50">
+            </div>
+            <div class="absolute -right-20 -top-20 w-80 h-80 bg-[#1D9FDA]/5 rounded-full blur-3xl"></div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         ORDER PROCESS SECTION
+    ============================================================ -->
+    <section class="py-10 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+            <div class="flex flex-col gap-8">
+
+                <!-- 1. How It Works (Process Guide) -->
+                <div class="mb-12">
+                    <div class="text-center mb-10">
+                        <h2 data-json="howItWorks.heading" class="text-2xl font-bold text-dark">How to Order with Prescription</h2>
+                        <p data-json="howItWorks.description" class="text-gray-500 text-sm mt-1">A simple 3-step process designed for your convenience</p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <!-- Step 1 -->
+                        <div class="relative flex flex-col items-center">
+                            <div
+                                class="w-16 h-16 rounded-[15px] bg-blue-50 text-primary flex items-center justify-center text-2xl mb-5 shadow-sm border border-blue-100/50">
+                                <i class="fa-solid fa-camera-retro"></i>
+                            </div>
+                            <div class="text-center">
+                                <h3 data-json="howItWorks.steps.0.title" class="font-bold text-dark mb-2">1. Upload</h3>
+                                <p data-json="howItWorks.steps.0.description" class="text-[12px] text-gray-500 leading-relaxed px-4">Take a clear photo or upload a
+                                    digital copy of your valid prescription.</p>
+                            </div>
+                            <div class="hidden md:block absolute top-8 -right-4 text-gray-200">
+                                <i class="fa-solid fa-chevron-right"></i>
+                            </div>
+                        </div>
+                        <!-- Step 2 -->
+                        <div class="relative flex flex-col items-center">
+                            <div
+                                class="w-16 h-16 rounded-[15px] bg-green-50 text-green-600 flex items-center justify-center text-2xl mb-5 shadow-sm border border-green-100/50">
+                                <i class="fa-solid fa-user-check"></i>
+                            </div>
+                            <div class="text-center">
+                                <h3 data-json="howItWorks.steps.1.title" class="font-bold text-dark mb-2">2. Verification</h3>
+                                <p data-json="howItWorks.steps.1.description" class="text-[12px] text-gray-500 leading-relaxed px-4">Our licensed pharmacists will
+                                    verify the details within minutes.</p>
+                            </div>
+                            <div class="hidden md:block absolute top-8 -right-4 text-gray-200">
+                                <i class="fa-solid fa-chevron-right"></i>
+                            </div>
+                        </div>
+                        <!-- Step 3 -->
+                        <div class="relative flex flex-col items-center">
+                            <div
+                                class="w-16 h-16 rounded-[15px] bg-purple-50 text-purple-600 flex items-center justify-center text-2xl mb-5 shadow-sm border border-purple-100/50">
+                                <i class="fa-solid fa-clipboard-check"></i>
+                            </div>
+                            <div class="text-center">
+                                <h3 data-json="howItWorks.steps.2.title" class="font-bold text-dark mb-2">3. Confirmation</h3>
+                                <p data-json="howItWorks.steps.2.description" class="text-[12px] text-gray-500 leading-relaxed px-4">You'll receive a notification
+                                    once your order is confirmed and ready.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TOP ROW: Tools & Assistance Grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+
+                    <!-- 1. Upload Prescription Card (Col Span 4) -->
+                    <div
+                        class="lg:col-span-4 bg-white rounded-[15px] border border-gray-100 p-8 shadow-sm flex flex-col h-full hover:shadow-md transition">
+                        <div class="flex items-center gap-4 mb-8">
+                            <div
+                                class="w-10 h-10 rounded-[12px] gradient-bg flex items-center justify-center text-white shadow-lg shadow-blue-100">
+                                <i class="fa-solid fa-file-prescription text-lg"></i>
+                            </div>
+                            <div>
+                                <h2 data-json="uploadSection.heading" class="text-lg font-bold text-dark tracking-tight">Upload Prescription</h2>
+                                <p data-json="uploadSection.subheading" class="text-gray-400 text-[11px] mt-0.5">JPEG, PNG, or PDF formats</p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 gap-6 flex-grow">
+                            <!-- Upload New -->
+                            <label class="group relative cursor-pointer">
+                                <input type="file" class="hidden">
+                                <div
+                                    class="h-full border-2 border-dashed border-gray-100 rounded-[15px] p-6 flex flex-col items-center justify-center text-center transition-all group-hover:border-primary/40 group-hover:bg-blue-50/30">
+                                    <div
+                                        class="w-14 h-14 rounded-full bg-blue-50 text-primary flex items-center justify-center mb-3 transition-transform group-hover:scale-110 group-hover:bg-primary group-hover:text-white">
+                                        <i class="fa-solid fa-cloud-arrow-up text-xl"></i>
+                                    </div>
+                                    <span data-json="uploadSection.uploadNewLabel" class="text-[14px] font-semibold text-dark mb-1">Upload New</span>
+                                    <span data-json="uploadSection.uploadNewHint" class="text-gray-400 text-[11px]">Click to browse files</span>
+                                </div>
+                            </label>
+
+                            <!-- Past Prescriptions -->
+                            <div class="group relative cursor-pointer">
+                                <div
+                                    class="h-full border border-gray-100 rounded-[15px] p-5 flex items-center gap-4 transition-all bg-gray-50/50 hover:bg-white hover:border-[#61A644]/40 hover:shadow-md">
+                                    <div
+                                        class="w-10 h-10 rounded-full bg-[#E8F5E3] text-[#61A644] flex items-center justify-center transition-transform group-hover:rotate-12 group-hover:bg-[#61A644] group-hover:text-white">
+                                        <i class="fa-solid fa-clock-rotate-left text-lg"></i>
+                                    </div>
+                                    <div class="text-left">
+                                        <span class="text-[14px] font-semibold text-dark block">Use Past Record</span>
+                                        <span class="text-gray-400 text-[10px]">Select from history</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div
+                            class="mt-8 flex items-start gap-4 p-4 bg-blue-50/50 rounded-[12px] border border-blue-100/50">
+                            <i class="fa-solid fa-circle-info text-[#1D9FDA] mt-1 text-sm"></i>
+                            <p class="text-[12px] text-gray-500 leading-relaxed">
+                                <span class="font-bold text-[#1A202C]">Note:</span> Always upload a clean version for
+                                faster verification.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- 2. Guide Slider (Col Span 5) -->
+                    <div
+                        class="lg:col-span-5 gradient-bg rounded-[15px] overflow-hidden flex flex-col h-full relative border-none shadow-lg">
+                        <div class="p-6 border-b border-white/10 bg-black/5">
+                            <h2 class="text-lg font-semibold text-white tracking-tight">Guide for a Valid Prescription
+                            </h2>
+                            <p class="text-white/70 text-[11px] mt-1">Make sure your upload includes these critical
+                                details</p>
+                        </div>
+
+                        <div class="relative flex-grow overflow-hidden group">
+                            <div id="guide-slider" class="flex transition-transform duration-700 ease-in-out h-full">
+                                <!-- Slide 1: Header/Doctor Info -->
+                                <div class="w-full flex-shrink-0 flex flex-col items-center justify-center p-6">
+                                    <div
+                                        class="relative group/img overflow-hidden rounded-[15px] shadow-2xl border border-white/20 w-full max-w-[260px] aspect-[4/5] bg-white">
+                                        <img src="assets/clinicdetails.png" alt="Doctor Information Guide"
+                                            class="w-full h-full object-cover transition duration-500 group-hover/img:scale-110">
+                                        <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent">
+                                        </div>
+                                    </div>
+                                    <div class="mt-4 text-center">
+                                        <h3 class="text-[13px] font-bold text-white">Clinic Details</h3>
+                                        <p class="text-white/70 text-[11px] mt-1 max-w-[200px]">The clinic address and
+                                            doctor's license number must be visible.</p>
+                                    </div>
+                                </div>
+                                <!-- Slide 2: Medicine & Dosage -->
+                                <div class="w-full flex-shrink-0 flex flex-col items-center justify-center p-6">
+                                    <div
+                                        class="relative group/img overflow-hidden rounded-[15px] shadow-2xl border border-white/20 w-full max-w-[260px] aspect-[4/5] bg-white">
+                                        <img src="assets/medicationinfo.png" alt="Medication Details Guide"
+                                            class="w-full h-full object-cover transition duration-500 group-hover/img:scale-110">
+                                        <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent">
+                                        </div>
+                                    </div>
+                                    <div class="mt-4 text-center">
+                                        <h3 class="text-[13px] font-bold text-white">Medication Info</h3>
+                                        <p class="text-white/70 text-[11px] mt-1 max-w-[200px]">Clearly list medicine
+                                            name, strength, and frequency.</p>
+                                    </div>
+                                </div>
+                                <!-- Slide 3: Sign & Stamp -->
+                                <div class="w-full flex-shrink-0 flex flex-col items-center justify-center p-6">
+                                    <div
+                                        class="relative group/img overflow-hidden rounded-[15px] shadow-2xl border border-white/20 w-full max-w-[260px] aspect-[4/5] bg-white">
+                                        <img src="assets/legalvalidation.png" alt="Signature and Stamp Guide"
+                                            class="w-full h-full object-cover transition duration-500 group-hover/img:scale-110">
+                                        <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent">
+                                        </div>
+                                    </div>
+                                    <div class="mt-4 text-center">
+                                        <h3 class="text-[13px] font-bold text-white">Legal Validation</h3>
+                                        <p class="text-white/70 text-[11px] mt-1 max-w-[200px]">Physical signature and
+                                            clinic stamp are mandatory.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
+                                <button onclick="goToSlide(0)"
+                                    class="guide-dot w-1.5 h-1.5 rounded-full bg-white/40 transition-all duration-300"></button>
+                                <button onclick="goToSlide(1)"
+                                    class="guide-dot w-1.5 h-1.5 rounded-full bg-white/40 transition-all duration-300"></button>
+                                <button onclick="goToSlide(2)"
+                                    class="guide-dot w-1.5 h-1.5 rounded-full bg-white/40 transition-all duration-300"></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Column C: Guidance & Trust (Col Span 3) -->
+                    <div class="lg:col-span-3 flex flex-col gap-6">
+                        <!-- Assistance Card -->
+                        <div
+                            class="bg-white p-6 rounded-[15px] border border-gray-100 flex flex-col h-full shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-md transition">
+                            <p
+                                class="text-[10px] font-semibold bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent uppercase tracking-widest mb-2 px-1">
+                                Need Assistance?</p>
+                            <h3
+                                class="text-sm font-semibold bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent mb-4 px-1">
+                                Chat with our Pharmacist</h3>
+
+                            <div class="space-y-4">
+                                <a href="tel:(02)8888-8888" class="flex items-center gap-3 group">
+                                    <div
+                                        class="w-9 h-9 rounded-[10px] bg-gray-50 flex items-center justify-center text-dark text-xs group-hover:bg-primary group-hover:text-white transition shadow-sm">
+                                        <i class="fa-solid fa-phone"></i>
+                                    </div>
+                                    <div class="text-left">
+                                        <p class="text-[10px] text-gray-400 font-medium">Customer Support</p>
+                                        <p class="text-[12px] font-bold text-dark">(02) 8888-8888</p>
+                                    </div>
+                                </a>
+                                <a href="mailto:support@getmeds.ph" class="flex items-center gap-3 group">
+                                    <div
+                                        class="w-9 h-9 rounded-[10px] bg-gray-50 flex items-center justify-center text-dark text-xs group-hover:bg-primary group-hover:text-white transition shadow-sm">
+                                        <i class="fa-solid fa-envelope"></i>
+                                    </div>
+                                    <div class="text-left">
+                                        <p class="text-[10px] text-gray-400 font-medium">Email Address</p>
+                                        <p class="text-[11px] font-bold text-dark">support@getmeds.ph</p>
+                                    </div>
+                                </a>
+                            </div>
+
+                            <!-- Trust Image Area -->
+                            <div class="mt-auto pt-6">
+                                <div
+                                    class="bg-white p-4 rounded-[12px] border border-gray-100 flex flex-col items-center text-center shadow-sm">
+                                    <div
+                                        class="w-10 h-10 rounded-full bg-green-50 text-green-500 flex items-center justify-center mb-2">
+                                        <i class="fa-solid fa-shield-halved"></i>
+                                    </div>
+                                    <p class="text-[11px] font-bold text-dark mb-1 leading-tight">Secure Prescription
+                                        Storage</p>
+                                    <p class="text-[9px] text-gray-400 leading-relaxed px-1">Your data is stored with
+                                        bank-level encryption.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Data Protection Section -->
+                        <div
+                            class="bg-white p-6 rounded-[15px] border border-gray-100 shadow-sm flex flex-col relative overflow-hidden group h-full hover:shadow-md transition">
+                            <!-- Decorative UI -->
+                            <div
+                                class="absolute -bottom-6 -right-6 opacity-[0.03] group-hover:scale-125 transition duration-700 pointer-events-none">
+                                <i class="fa-solid fa-user-shield text-8xl text-dark"></i>
+                            </div>
+                            <div
+                                class="w-9 h-9 rounded-[10px] bg-green-50 flex items-center justify-center text-green-500 text-xs mb-4">
+                                <i class="fa-solid fa-check-double"></i>
+                            </div>
+                            <h3 class="text-sm font-bold text-dark mb-2">Pharmacy Verified</h3>
+                            <p class="text-[11px] text-gray-400 leading-relaxed z-10">We strictly follow FDA standards
+                                for medication dispensing and privacy.</p>
+                            <div class="mt-auto pt-4 flex items-center gap-2">
+                                <span class="h-1.5 w-1.5 rounded-full bg-green-500"></span>
+                                <span class="text-[9px] font-bold text-green-600 uppercase tracking-tight">HIPAA Compliant</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- BOTTOM ROW: Simplified Validation Form (Full Width to match top) -->
+                <div class="w-full">
+                    <div class="bg-white rounded-[15px] border border-gray-100 p-8 md:p-12 shadow-sm">
+
+                        <div class="mb-8">
+                            <h2 class="text-2xl font-semibold text-gray-900 mb-1">Customer Validation</h2>
+                            <p class="text-gray-400 text-[13px]">Please provide accurate details for legal verification.
+                            </p>
+                        </div>
+
+                        <!-- Form Content -->
+                        <div class="space-y-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+
+                                <!-- Patient Name -->
+                                <div class="space-y-2">
+                                    <label class="text-[13px] font-bold text-gray-800 ml-1">Patient Full Name</label>
+                                    <input type="text" placeholder="As written on prescription"
+                                        class="w-full bg-gray-50 border-none rounded-[15px] px-6 py-3.5 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition placeholder-gray-300">
+                                </div>
+
+                                <!-- Email -->
+                                <div class="space-y-2">
+                                    <label class="text-[13px] font-bold text-gray-800 ml-1">Email Address</label>
+                                    <input type="email" placeholder="example@domain.com"
+                                        class="w-full bg-gray-50 border-none rounded-[15px] px-6 py-3.5 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition placeholder-gray-300">
+                                </div>
+
+                                <!-- Phone -->
+                                <div class="space-y-2">
+                                    <label class="text-[13px] font-bold text-gray-800 ml-1">Phone Number</label>
+                                    <input type="tel" placeholder="+63 9xx xxx xxxx"
+                                        class="w-full bg-gray-50 border-none rounded-[15px] px-6 py-3.5 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition placeholder-gray-300">
+                                </div>
+
+                                <!-- Date of Birth -->
+                                <div class="space-y-2">
+                                    <label class="text-[13px] font-bold text-gray-800 ml-1">Date of Birth</label>
+                                    <input type="date"
+                                        class="w-full bg-gray-50 border-none rounded-[15px] px-6 py-3.5 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition">
+                                </div>
+
+                            </div>
+
+                            <!-- Delivery Address -->
+                            <div class="space-y-2">
+                                <label class="text-[13px] font-bold text-gray-800 ml-1">Delivery Address</label>
+                                <textarea placeholder="Complete address for courier delivery..." rows="3"
+                                    class="w-full bg-gray-50 border-none rounded-[15px] px-6 py-4 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition placeholder-gray-300 resize-none"></textarea>
+                            </div>
+
+                            <!-- Terms -->
+                            <div class="flex items-center gap-3 pt-2">
+                                <input type="checkbox" id="terms"
+                                    class="w-4 h-4 rounded-md border-gray-200 text-success focus:ring-success">
+                                <label for="terms" class="text-[12px] text-gray-500 cursor-pointer">
+                                    I confirm that all provided information is authentic.
+                                </label>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <div class="pt-4">
+                                <button
+                                    class="gradient-bg hover:opacity-90 text-white font-bold py-3.5 px-10 rounded-[15px] text-[14px] transition shadow-lg shadow-blue-100">
+                                    Submit Order
+                                </button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         UPLOADING MODAL
+    ============================================================ -->
+    <div id="upload-modal"
+        class="fixed inset-0 z-[100] flex items-center justify-center bg-dark/60 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="bg-[#1A1C1E] w-full max-w-[340px] rounded-[15px] p-8 text-center shadow-2xl relative transform scale-95 transition-transform duration-300"
+            id="upload-modal-content">
+
+            <!-- Close icon (visual only) -->
+            <button onclick="closeUploadModal()"
+                class="absolute top-4 right-4 text-gray-500 hover:text-white transition">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+
+            <!-- Upload Icon -->
+            <div
+                class="w-16 h-16 bg-[#5E5CE6]/20 text-[#5E5CE6] rounded-2xl flex items-center justify-center mx-auto mb-6">
+                <i class="fa-solid fa-file-arrow-up text-3xl"></i>
+            </div>
+
+            <h3 class="text-white text-lg font-bold mb-2">Just a minute....</h3>
+            <p class="text-gray-400 text-[12px] leading-relaxed mb-8 px-4">
+                Your file is uploading right now. Just<br>please wait for a few moments
+            </p>
+
+            <!-- Progress Bar Area -->
+            <div class="mb-8">
+                <div class="w-full h-1.5 bg-gray-800 rounded-full overflow-hidden mb-3">
+                    <div id="upload-progress-bar" class="h-full gradient-bg transition-all duration-300 w-0"></div>
+                </div>
+                <div class="text-[#5E5CE6] text-sm font-bold" id="upload-percentage">0%</div>
+            </div>
+
+            <!-- Cancel Button -->
+            <button onclick="closeUploadModal()"
+                class="w-full py-4 bg-gray-800 hover:bg-gray-700 text-white font-bold rounded-[12px] text-[13px] transition">
+                Cancel
+            </button>
+        </div>
+    </div>
+
+    <!-- Footer Component -->
+    <div id="footer-placeholder"></div>
+
+    <script src="components/data-loader.js"></script>
+    <script src="components/components.js"></script>
+    <script>
+        let currentSlide = 0;
+        const totalSlides = 3;
+        const slider = document.getElementById('guide-slider');
+        const dots = document.querySelectorAll('.guide-dot');
+
+        function updateSlider() {
+            slider.style.transform = `translateX(-${currentSlide * 100}%)`;
+            dots.forEach((dot, index) => {
+                if (index === currentSlide) {
+                    dot.classList.add('bg-white', 'w-4');
+                    dot.classList.remove('bg-white/40', 'w-1.5');
+                } else {
+                    dot.classList.add('bg-white/40', 'w-1.5');
+                    dot.classList.remove('bg-white', 'w-4');
+                }
+            });
+        }
+
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % totalSlides;
+            updateSlider();
+        }
+
+        function goToSlide(index) {
+            currentSlide = index;
+            updateSlider();
+        }
+
+        let slideInterval = setInterval(nextSlide, 4000);
+
+        function manualGoTo(index) {
+            clearInterval(slideInterval);
+            goToSlide(index);
+            slideInterval = setInterval(nextSlide, 4000);
+        }
+
+        updateSlider();
+
+        // ==========================================
+        // UPLOAD MODAL LOGIC
+        // ==========================================
+        const uploadModal = document.getElementById('upload-modal');
+        const modalContent = document.getElementById('upload-modal-content');
+        const progressBar = document.getElementById('upload-progress-bar');
+        const percentageText = document.getElementById('upload-percentage');
+        let uploadInterval;
+
+        function openUploadModal() {
+            uploadModal.classList.remove('opacity-0', 'pointer-events-none');
+            modalContent.classList.remove('scale-95');
+            simulateUpload();
+        }
+
+        function closeUploadModal() {
+            uploadModal.classList.add('opacity-0', 'pointer-events-none');
+            modalContent.classList.add('scale-95');
+            clearInterval(uploadInterval);
+            // Reset after transition
+            setTimeout(() => {
+                progressBar.style.width = '0%';
+                percentageText.innerText = '0%';
+            }, 300);
+        }
+
+        function simulateUpload() {
+            let progress = 0;
+            progressBar.style.width = '0%';
+            percentageText.innerText = '0%';
+
+            uploadInterval = setInterval(() => {
+                progress += Math.floor(Math.random() * 15) + 5;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(uploadInterval);
+                    setTimeout(() => {
+                        // In a real app, this would show "Success" or close
+                        alert("Prescription Uploaded Successfully!");
+                        closeUploadModal();
+                    }, 500);
+                }
+                progressBar.style.width = `${progress}%`;
+                percentageText.innerText = `${progress}%`;
+            }, 400);
+        }
+
+        // Attach to the file input
+        const fileInput = document.querySelector('input[type="file"]');
+        fileInput.addEventListener('change', function () {
+            if (this.files && this.files[0]) {
+                openUploadModal();
+            }
+        });
+
+    </script>
+</body>
+
+</html>

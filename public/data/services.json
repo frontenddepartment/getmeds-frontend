@@ -1,0 +1,102 @@
+{
+  "meta": {
+    "title": "Our Services - GetMEDS | Revolutionizing Healthcare Access",
+    "description": "GetMEDS delivers precision pharmaceutical solutions and nationwide distribution — from regulatory compliance and government bidding to pioneering digital oncology care."
+  },
+  "hero": {
+    "image": "assets/services_hero_new.png",
+    "imageAlt": "Healthcare Services",
+    "headingLine1": "Our Premium",
+    "headingAccent": "Services",
+    "description": "GetMEDS delivers precision pharmaceutical solutions and nationwide distribution — from regulatory compliance and government bidding to pioneering digital oncology care."
+  },
+  "stats": [
+    { "value": 120, "suffix": "+", "label": "Countries Served" },
+    { "value": 50000, "suffix": "+", "label": "Patients Helped" },
+    { "value": 500, "suffix": "+", "label": "Partner Clinics" },
+    { "value": 24, "suffix": "/7", "label": "Hour Support" }
+  ],
+  "sectionLabel": "Corporate Services",
+  "sectionHeading": "Our Core Competencies",
+  "sectionDescription": "We provide specialized pharmaceutical solutions designed for reliability, compliance, and nationwide impact across the healthcare sector. Our commitment to excellence ensures that every partner and patient receives the highest standard of care through innovative distribution and strategic collaboration.",
+  "services": [
+    {
+      "id": "regulatory-compliance",
+      "icon": "fa-solid fa-file-shield",
+      "title": "Regulatory & Compliance",
+      "badge": "FDA Registration",
+      "description": "We ensure full compliance with the Food and Drug Administration (FDA) regulations and industry standards, maintaining proper product registration, documentation, and adherence to guarantee safe, legal, and reliable healthcare solutions. Our dedicated compliance team manages every detail of the regulatory lifecycle to keep operations seamless and secure.",
+      "tags": ["FDA Quality Standards", "Proper Product Registration", "Documentation Adherence"]
+    },
+    {
+      "id": "precision-supply-chain",
+      "icon": "fa-solid fa-truck-ramp-box",
+      "title": "Precision Supply Chain",
+      "badge": "Nationwide Logistics",
+      "description": "A precision-managed supply chain that ensures every medicine batch is tracked, handled, and delivered with maximum control and accountability. Backed by rapid response and flexible delivery schedules, we move beyond fixed timetables to support urgent and critical patient needs — because access to life-saving medicines should never be delayed.",
+      "tags": ["Flexible Delivery Schedules", "Batch-level Accountability", "Urgent Response Systems"]
+    },
+    {
+      "id": "sales-distribution",
+      "icon": "fa-solid fa-handshake",
+      "title": "Sales and Distribution",
+      "badge": "Market Solutions",
+      "description": "We deliver comprehensive solutions for the pharmaceutical sector, building strong connections with partners and clients across the industry. Our services extend to distributors, wholesalers, traders, drugstores, and standalone clinics, ensuring seamless collaboration, reliable access to high-quality medicines, and support for the efficient growth of every business we work with.",
+      "tags": ["Strategic Telemarketing", "Agile Solutions", "Nationwide Reach"]
+    },
+    {
+      "id": "government-bidding",
+      "icon": "fa-solid fa-building-columns",
+      "title": "Government Bidding",
+      "badge": "Public Healthcare",
+      "description": "Fully equipped to participate in government bidding across large public hospitals nationwide, we provide competitive, high-quality Oncology, Hematology, and Anesthesiology medicines. Our bidding specialists, with over 15 years of experience, bring unmatched connections, expertise, and competence to every participation, ensuring strict compliance and the delivery of safe, reliable healthcare solutions.",
+      "tags": ["15+ Years Proven Experience", "Nationwide Public Hospitals", "Strict Bidding Compliance"]
+    },
+    {
+      "id": "clidp",
+      "icon": "fa-solid fa-box-open",
+      "title": "Certificate of Listing (CLIDP)",
+      "badge": "Rebranding",
+      "description": "We provide CLIDP services across our CPR portfolio, enabling partners to rebrand and commercialize their own product lines with fast-track processing, efficient execution, and shorter time-to-market. We grow with our clients through every stage of their expansion, providing the infrastructure needed for low-risk growth.",
+      "tags": ["End-to-End Execution", "Low-Risk & Flexible MOQs", "Prioritized Manufacturing"]
+    },
+    {
+      "id": "digital-smart-solutions",
+      "icon": "fa-solid fa-mobile-screen-button",
+      "title": "Digital & Smart Solutions",
+      "badge": "Innovation",
+      "description": "Introducing Getmeds, the first to pioneer fully digital oncology care in the Philippines. We deliver fast, reliable, and flexible access to life-saving medicines anytime, anywhere through our innovative e-commerce platform and mobile app. Smart, tech-driven solutions that put patients first — setting a new standard in pharmaceutical services.",
+      "tags": ["Pioneering Digital Oncology", "Innovative E-commerce Platform", "Mobile App Integration"]
+    }
+  ],
+  "whyTrust": {
+    "sectionLabel": "Our Promise",
+    "heading": "Why Trust GetMEDS for Your Health?",
+    "description": "We don't just distribute medicine; we facilitate healing. Through strict quality standards and advanced digital solutions, we ensure your healthcare journey is safe, private, and efficient.",
+    "items": [
+      {
+        "icon": "fa-solid fa-shield-halved",
+        "title": "Verified Authenticity",
+        "description": "Strict international quality standards ensuring genuine care."
+      },
+      {
+        "icon": "fa-solid fa-user-shield",
+        "title": "Patient Data Privacy",
+        "description": "Banking-grade encryption protecting your health records."
+      },
+      {
+        "icon": "fa-solid fa-clock",
+        "title": "Efficiency Redefined",
+        "description": "Optimized steps for speed — less waiting, more healing."
+      }
+    ]
+  },
+  "cta": {
+    "heading": "Ready to Experience Better Healthcare?",
+    "description": "Join thousands of patients who trust GetMEDS for fast, reliable, and expert medical services every day.",
+    "primaryAction": "Order Medicines",
+    "primaryHref": "order-medicines.html",
+    "secondaryAction": "Contact Us",
+    "secondaryHref": "contact-us.html"
+  }
+}

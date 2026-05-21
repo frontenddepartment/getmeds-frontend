@@ -1,0 +1,50 @@
+{
+  "branding": {
+    "logo": {
+      "src": "assets/getmedslogo.png",
+      "alt": "GetMEDS Logo"
+    },
+    "description": "GetMEDS is your trusted online healthcare partner, providing access to top-quality medicines, doctor consultations, and lab tests from anywhere in the world."
+  },
+  "socials": [
+    { "platform": "Facebook", "icon": "fa-brands fa-facebook-f", "href": "#" },
+    { "platform": "Twitter", "icon": "fa-brands fa-twitter", "href": "#" },
+    { "platform": "Instagram", "icon": "fa-brands fa-instagram", "href": "#" },
+    { "platform": "LinkedIn", "icon": "fa-brands fa-linkedin-in", "href": "#" }
+  ],
+  "linkGroups": [
+    {
+      "heading": "About",
+      "links": [
+        { "label": "About Us", "href": "about-us.html" },
+        { "label": "Our Leadership", "href": "#" },
+        { "label": "Careers", "href": "#" },
+        { "label": "News & Media", "href": "#" }
+      ]
+    },
+    {
+      "heading": "Delivery",
+      "links": [
+        { "label": "Track Order", "href": "#" },
+        { "label": "Return Policy", "href": "#" },
+        { "label": "Delivery Info", "href": "#" },
+        { "label": "FAQs", "href": "#" }
+      ]
+    },
+    {
+      "heading": "Contact",
+      "items": [
+        { "type": "address", "icon": "fa-solid fa-location-dot", "text": "123 Medical Drive, Health City, NY 10001" },
+        { "type": "phone", "icon": "fa-solid fa-phone", "text": "+1 (800) 123-4567" },
+        { "type": "email", "icon": "fa-solid fa-envelope", "text": "support@getmeds.com" }
+      ]
+    }
+  ],
+  "bottomBar": {
+    "copyright": "© 2023 GetMEDS. All rights reserved.",
+    "legalLinks": [
+      { "label": "Privacy Policy", "href": "#" },
+      { "label": "Terms of Service", "href": "#" }
+    ]
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "meta": {
+    "title": "Order Medicines - GetMEDS",
+    "description": "Order your medicines securely with GetMeds. Upload your prescription and get fast delivery to your doorstep."
+  },
+  "hero": {
+    "sectionLabel": "Secure Orders",
+    "heading": "Order Your Medicines With Ease",
+    "headingAccent": "Medicines",
+    "description": "Simply upload your prescription, fill out the validation form, and our licensed pharmacists will handle the rest. Your health, delivered."
+  },
+  "howItWorks": {
+    "heading": "How to Order with Prescription",
+    "description": "A simple 3-step process designed for your convenience",
+    "steps": [
+      {
+        "number": 1,
+        "icon": "fa-solid fa-camera-retro",
+        "title": "Upload",
+        "description": "Take a clear photo or upload a digital copy of your valid prescription."
+      },
+      {
+        "number": 2,
+        "icon": "fa-solid fa-user-check",
+        "title": "Verification",
+        "description": "Our licensed pharmacists will verify the details within minutes."
+      },
+      {
+        "number": 3,
+        "icon": "fa-solid fa-clipboard-check",
+        "title": "Confirmation",
+        "description": "You'll receive a notification once your order is confirmed and ready."
+      }
+    ]
+  },
+  "uploadSection": {
+    "heading": "Upload Prescription",
+    "subheading": "JPEG, PNG, or PDF formats",
+    "uploadNewLabel": "Upload New",
+    "uploadNewHint": "Click to browse files"
+  },
+  "prescriptionGuidance": {
+    "heading": "Prescription Guide",
+    "items": [
+      "Ensure your prescription is from a licensed physician",
+      "The prescription must be current and not expired",
+      "All medication names, dosages, and quantities must be clearly visible",
+      "Your name and the prescribing doctor's details must be present"
+    ]
+  }
+}

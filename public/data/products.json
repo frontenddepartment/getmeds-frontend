@@ -1,0 +1,113 @@
+{
+  "categories": [
+    {
+      "id": "oncology",
+      "name": "Oncology (Solid Tumors)",
+      "subcategories": [
+        { "id": "breast-cancer", "name": "Breast Cancer" },
+        { "id": "ovarian-cancer", "name": "Ovarian Cancer" },
+        { "id": "lung-cancer", "name": "Non-Small Cell Lung Cancer" },
+        { "id": "prostate-cancer", "name": "Prostate Cancer" },
+        { "id": "colorectal-cancer", "name": "Colorectal Cancer" },
+        { "id": "pancreatic-cancer", "name": "Pancreatic Cancer" }
+      ]
+    },
+    {
+      "id": "hematology",
+      "name": "Hematology Range",
+      "subcategories": [
+        { "id": "aml", "name": "Acute Myeloid Leukemia" },
+        { "id": "cml", "name": "Chronic Myeloid Leukemia" },
+        { "id": "lymphoma", "name": "Hodgkin/Non-Hodgkin's Lymphoma" },
+        { "id": "sickle-cell", "name": "Sickle Cell Anemia" }
+      ]
+    },
+    {
+      "id": "anti-infectives",
+      "name": "Anti-Infectives",
+      "subcategories": [
+        { "id": "respiratory", "name": "Respiratory Infections" },
+        { "id": "uti", "name": "Urinary Tract Infections" },
+        { "id": "skin-infections", "name": "Skin and Soft Tissue Infections" },
+        { "id": "bone-infections", "name": "Bone and Joint Infections" }
+      ]
+    },
+    {
+      "id": "endocrinology",
+      "name": "Endocrinology",
+      "subcategories": [
+        { "id": "endometriosis", "name": "Endometriosis" },
+        { "id": "fibrocystic", "name": "Fibrocystic Breast Disease" }
+      ]
+    },
+    {
+      "id": "orthopedic",
+      "name": "Orthopedic",
+      "subcategories": [
+        { "id": "multiple-myeloma", "name": "Multiple Myeloma" },
+        { "id": "osteoporosis", "name": "Osteoporosis" }
+      ]
+    },
+    {
+      "id": "cardiology",
+      "name": "Cardiology",
+      "subcategories": [
+        { "id": "arrhythmia", "name": "Arrhythmia management" },
+        { "id": "hypertension", "name": "Hypertension/Angina" }
+      ]
+    },
+    {
+      "id": "neuro-oncology",
+      "name": "Neuro-Oncology",
+      "subcategories": [
+        { "id": "glioblastoma", "name": "Glioblastoma Multiforme" }
+      ]
+    },
+    {
+      "id": "respiratory-allergy",
+      "name": "Respiratory / Allergy",
+      "subcategories": [
+        { "id": "allergic-rhinitis", "name": "Seasonal Allergic Rhinitis" }
+      ]
+    },
+    {
+      "id": "nephrology-renal",
+      "name": "Nephrology / Renal",
+      "subcategories": [
+        { "id": "kidney-disease", "name": "Chronic Kidney Disease" }
+      ]
+    },
+    {
+      "id": "pain-management",
+      "name": "Pain Management",
+      "subcategories": [
+        { "id": "pain", "name": "Chronic Pain" }
+      ]
+    },
+    {
+      "id": "rheumatology",
+      "name": "Rheumatology",
+      "subcategories": [
+        { "id": "rheumatology", "name": "Inflammatory Disorders" }
+      ]
+    }
+  ],
+  "searchSuggestions": [
+    "Cytarabine 100 MG",
+    "Palonosetron Hydrochloride",
+    "Temozolomide Injection",
+    "Paracetamol 500mg",
+    "Ibuprofen 400mg",
+    "Vitamin C + Zinc",
+    "Oncology Drugs",
+    "Diagnostic Kits",
+    "Personal Care",
+    "Surgical Supplies",
+    "Amoxicillin Capsules",
+    "Metformin 500mg",
+    "Atorvastatin 20mg",
+    "Face Masks (KN95)",
+    "Digital Thermometer",
+    "Hand Sanitizer"
+  ]
+}

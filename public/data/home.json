@@ -1,0 +1,70 @@
+{
+  "meta": {
+    "title": "GetMEDS - Your Trusted Online Healthcare Partner",
+    "description": "GetMEDS delivers precision pharmaceutical solutions, digital oncology care, and nationwide healthcare distribution."
+  },
+  "topBar": {
+    "label": "Connect With Us",
+    "phone": "+ (123) 1800-234-5678",
+    "phoneHref": "contact-us.html",
+    "socialLinks": [
+      { "platform": "Facebook", "icon": "fa-brands fa-facebook", "href": "#" },
+      { "platform": "LinkedIn", "icon": "fa-brands fa-linkedin", "href": "#" }
+    ]
+  },
+  "hero": {
+    "backgroundImage": "assets/herosectiontsx.jpg",
+    "heading": "Your Trusted Online Healthcare Partner",
+    "headingLine1": "Your Health Deserves",
+    "headingAccent": "The Best Care Possible",
+    "description": "Access the world's finest medical care from the comfort of your home. Discover how our global network empowers your health journey.",
+    "subheading": "GetMEDS delivers precision pharmaceutical solutions, digital oncology care, and nationwide healthcare distribution.",
+    "slides": [
+      { "image": "assets/slideone.jpg" },
+      { "image": "assets/slidetwo.jpg" },
+      { "image": "assets/slidethree.jpg" }
+    ]
+  },
+  "stats": [
+    { "value": 50000, "suffix": "+", "label": "Patients Helped" },
+    { "value": 11, "suffix": "+", "label": "Countries Served" },
+    { "value": 500, "suffix": "+", "label": "Partner Clinics" },
+    { "value": 24, "suffix": "/7", "label": "Hour Support" }
+  ],
+  "features": [
+    {
+      "icon": "fa-solid fa-truck-fast",
+      "title": "Fast Delivery",
+      "description": "Speedy medication delivery straight to your doorstep."
+    },
+    {
+      "icon": "fa-solid fa-shield-halved",
+      "title": "Secure Platform",
+      "description": "Your health data is safe with our advanced security."
+    },
+    {
+      "icon": "fa-solid fa-headset",
+      "title": "24/7 Support",
+      "description": "Our customer care and medical experts are always ready."
+    },
+    {
+      "icon": "fa-solid fa-tags",
+      "title": "Best Prices",
+      "description": "Affordable medicine and discounted lab tests for you."
+    }
+  ],
+  "productTabs": [
+    { "id": "all", "label": "All" },
+    { "id": "oncology", "label": "Oncology" },
+    { "id": "hematology", "label": "Hematology" },
+    { "id": "anti-infectives", "label": "Anti-Infectives" },
+    { "id": "cardiology", "label": "Cardiology" }
+  ],
+  "appSection": {
+    "heading": "Download the GetMEDS App",
+    "description": "Manage your prescriptions, track orders, and access our full range of healthcare services from your phone.",
+    "image": "assets/app.jpg",
+    "appStoreLabel": "Download on the App Store",
+    "googlePlayLabel": "Get it on Google Play"
+  }
+}

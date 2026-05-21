@@ -1,0 +1,194 @@
+{
+  "meta": {
+    "title": "Global Presence - GetMEDS",
+    "description": "Discover seamless healthcare solutions worldwide. Access a world-class medical network efficiently linking you with top care continuously."
+  },
+  "hero": {
+    "image": "assets/globalpresencehero.jpg",
+    "imageAlt": "Global Healthcare",
+    "headingLine1": "Global Healthcare",
+    "headingAccent": "Without Borders",
+    "description": "Discover seamless healthcare solutions. Access a world-class medical network worldwide, efficiently linking you with top care continuously."
+  },
+  "countries": [
+    {
+      "name": "Philippines (HQ)",
+      "flag": "https://flagcdn.com/w80/ph.png",
+      "role": "Importer | Distributor | Marketing Pharmacy",
+      "description": "Managing supply, distribution, and growth.",
+      "region": "Asia",
+      "office": "123 Manila St, Metro Manila, Philippines",
+      "phone": "+63 900 123 4567",
+      "website": "www.getmeds.ph"
+    },
+    {
+      "name": "India",
+      "flag": "https://flagcdn.com/w80/in.png",
+      "role": "Sales Office | Exporter",
+      "description": "Expert support and localized market management.",
+      "region": "Asia",
+      "office": "456 Mumbai Road, Bandra West, India",
+      "phone": "+91 98765 43210",
+      "website": "www.getmeds.in"
+    },
+    {
+      "name": "Cambodia",
+      "flag": "https://flagcdn.com/w80/kh.png",
+      "role": "Representative Office",
+      "description": "Official hubs managing regional partnerships and local compliance.",
+      "region": "Asia",
+      "office": "12 Phnom Penh Ave, Cambodia",
+      "phone": "+855 23 456 789",
+      "website": "www.getmeds.com.kh"
+    },
+    {
+      "name": "Laos",
+      "flag": "https://flagcdn.com/w80/la.png",
+      "role": "Representative Office",
+      "description": "Official hubs managing regional partnerships and local compliance.",
+      "region": "Asia",
+      "office": "78 Vientiane St, Laos",
+      "phone": "+856 20 1234 5678",
+      "website": "www.getmeds.la"
+    },
+    {
+      "name": "Malaysia",
+      "flag": "https://flagcdn.com/w80/my.png",
+      "role": "Representative Office",
+      "description": "Official hubs managing regional partnerships and local compliance.",
+      "region": "Asia",
+      "office": "88 Kuala Lumpur Way, Malaysia",
+      "phone": "+60 3 1234 5678",
+      "website": "www.getmeds.com.my"
+    },
+    {
+      "name": "Myanmar",
+      "flag": "https://flagcdn.com/w80/mm.png",
+      "role": "Representative Office",
+      "description": "Official hubs managing regional partnerships and local compliance.",
+      "region": "Asia",
+      "office": "55 Yangon Road, Myanmar",
+      "phone": "+95 1 234 567",
+      "website": "www.getmeds.com.mm"
+    },
+    {
+      "name": "Pakistan",
+      "flag": "https://flagcdn.com/w80/pk.png",
+      "role": "Importer | Distributor",
+      "description": "Managing supply, distribution, and growth.",
+      "region": "Asia",
+      "office": "99 Karachi Central, Pakistan",
+      "phone": "+92 21 3456789",
+      "website": "www.getmeds.pk"
+    },
+    {
+      "name": "Singapore",
+      "flag": "https://flagcdn.com/w80/sg.png",
+      "role": "Representative Office",
+      "description": "Official hubs managing regional partnerships and local compliance.",
+      "region": "Asia",
+      "office": "1 Marina Blvd, Singapore",
+      "phone": "+65 6123 4567",
+      "website": "www.getmeds.sg"
+    },
+    {
+      "name": "Vietnam",
+      "flag": "https://flagcdn.com/w80/vn.png",
+      "role": "Representative Office",
+      "description": "Official hubs managing regional partnerships and local compliance.",
+      "region": "Asia",
+      "office": "123 Ho Chi Minh City, Vietnam",
+      "phone": "+84 28 3456 7890",
+      "website": "www.getmeds.vn"
+    },
+    {
+      "name": "Vanuatu",
+      "flag": "https://flagcdn.com/w80/vu.png",
+      "role": "Representative Office",
+      "description": "Official hubs managing regional partnerships and local compliance.",
+      "region": "Oceania",
+      "office": "Port Vila, Vanuatu",
+      "phone": "+678 22345",
+      "website": "www.getmeds.vu"
+    },
+    {
+      "name": "Saint Kitts and Nevis",
+      "flag": "https://flagcdn.com/w80/kn.png",
+      "role": "Representative Office",
+      "description": "Official hubs managing regional partnerships and local compliance.",
+      "region": "Caribbean",
+      "office": "Basseterre, Saint Kitts And Nevis",
+      "phone": "+1 869 123 4567",
+      "website": "www.getmeds.kn"
+    }
+  ],
+  "globalBanner": {
+    "headingLine1": "Grow beyond",
+    "headingLine2": "borders with",
+    "headingAccent": "GETMEDS",
+    "description": "Whether you're sourcing specialized medicines or expanding healthcare access overseas, GetMeds makes it simple, fast, secure, and reliable.",
+    "globeImage": "assets/globe.jpg",
+    "actionLabel": "LEARN MORE"
+  },
+  "timeline": {
+    "sectionHeading": "A Timeline of GetMeds",
+    "description": "Tracking our continuous journey of growth, innovation, and unwavering commitment to expanding global healthcare access.",
+    "events": [
+      {
+        "year": "2018",
+        "title": "Established 2MG Inc.",
+        "description": "Founded 2MG Inc., a pharmaceutical importer and distributor in the Philippines."
+      },
+      {
+        "year": "2020",
+        "title": "Launch of Getmeds Digital Platform",
+        "description": "Introduced Getmeds, the first to pioneer a fully digital oncology care platform in the Philippines, featuring an innovative e-commerce platform and mobile app."
+      },
+      {
+        "year": "2021",
+        "title": "Established Getmeds HealthTech Pte. Ltd.",
+        "description": "Extending its global reach and creating new opportunities for international expansion across Asia and beyond in Singapore."
+      },
+      {
+        "year": "2022",
+        "title": "Established Getmeds Philippines Inc.",
+        "description": "A pharmaceutical company committed to redefining the Philippine healthcare landscape by providing high-quality, affordable generic medicines that are accessible to every Filipino."
+      },
+      {
+        "year": "2023",
+        "title": "Continental Expansion",
+        "milestones": [
+          "Established Getmeds India",
+          "Established Getmeds Vietnam"
+        ]
+      },
+      {
+        "year": "2024",
+        "title": "Expansion to Pakistan",
+        "description": "Opened an office in Pakistan in partnership with a trusted healthcare provider, supplying essential medicines and reaching more communities with reliable healthcare solutions."
+      },
+      {
+        "year": "2025",
+        "title": "2025 Milestones",
+        "milestones": [
+          {
+            "title": "Registered in Saint Kitts and Nevis",
+            "description": "Strengthening its global presence and paving the way for further international growth in the Caribbean and beyond."
+          },
+          {
+            "title": "Opened Office in Vanuatu",
+            "description": "Collaborated with the government to enhance medical support and introduce cancer awareness initiatives and life-saving healthcare solutions for the Pacific community."
+          },
+          {
+            "title": "First Specialty Cancer Pharmacy in the Pacific",
+            "description": "Opened the Pacific's first specialty pharmacy dedicated to cancer medicines, providing localized access to life-saving treatments for patients in Vanuatu, Fiji, and across the Pacific region."
+          }
+        ]
+      }
+    ]
+  },
+  "globalFootprint": {
+    "heading": "Our Global Footprint",
+    "description": "Exploring new horizons and expanding our global reach to bring health solutions closer to you."
+  }
+}

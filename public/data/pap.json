@@ -1,0 +1,78 @@
+{
+  "meta": {
+    "title": "Patient Assistance Program (PAP) - GetMEDS",
+    "description": "Getmeds Patient Assistance Program - Access free cancer medicines and chemotherapy support through DSWD and PCSO accreditation."
+  },
+  "hero": {
+    "image": "https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&q=80&w=2000",
+    "imageAlt": "Medical Support",
+    "programTitle": "PATIENT ASSISTANCE PROGRAM",
+    "programSubtitle": "Chemotherapy at Mga Gamot sa Cancer",
+    "accreditationBadge": "DSWD & PCSO Accredited"
+  },
+  "intro": {
+    "heading": "Patient Assistance Program",
+    "subheading": "Chemotherapy at Mga Gamot sa Cancer",
+    "paragraphs": [
+      "Ang Getmeds ay nakatuon sa pagsuporta sa kalusugan at kapakanan ng bawat Pilipinong lumalaban sa cancer. Sa pamamagitan ng aming Patient Assistance Program, nakikipagtulungan kami sa mga ahensya ng gobyerno tulad ng DSWD (AICS) at PCSO (MAP) upang makapagbigay ng tulong medikal, partikular na ang libreng chemotherapy at iba pang gamot sa cancer, sa mga higit na nangangailangan.",
+      "Layunin ng programang ito na mapagaan ang gastusin ng mga Pilipinong pasyenteng may cancer at kanilang pamilya na nahaharap sa mataas na halaga ng gamutan."
+    ]
+  },
+  "steps": [
+    {
+      "number": 1,
+      "title": "KUMONSULTA SA IYONG DOKTOR",
+      "icon": "fa-solid fa-stethoscope",
+      "instruction": "Tanungin ang iyong attending physician tungkol sa pagkuha ng government assistance para sa iyong mga gamot sa cancer."
+    },
+    {
+      "number": 2,
+      "title": "IHANDA ANG IYONG MEDICAL DOCUMENTS",
+      "instruction": "Siguraduhing makuha ang sumusunod na requirements mula sa iyong doktor:",
+      "documents": [
+        { "icon": "fa-solid fa-file-prescription", "label": "Medical Prescription" },
+        { "icon": "fa-solid fa-notes-medical", "label": "Treatment Protocol" },
+        { "icon": "fa-solid fa-file-medical", "label": "Medical Abstract / Clinical Summary" }
+      ],
+      "note": "Lahat ng dokumento ay dapat original copy, may buong pangalan, pirma, at license number ng doktor upang masigurong maayos at mabilis ang proseso."
+    },
+    {
+      "number": 3,
+      "title": "KUMPLETUHIN ANG IYONG APPLICATION DOCUMENTS",
+      "instruction": "Bukod sa medical documents mula sa doktor, ihanda ang karagdagang requirements depende sa ahensya na iyong aaplayan."
+    }
+  ],
+  "agencies": {
+    "tabs": [
+      { "id": "dswd", "label": "DSWD (AICS)" },
+      { "id": "pcso", "label": "PCSO (MAP)" }
+    ],
+    "dswd": {
+      "heading": "DSWD Medical Assistance (AICS)",
+      "requirements": [
+        "Barangay Indigency Certificate",
+        "Medical Certificate from attending physician",
+        "Hospital / Laboratory results",
+        "Government-issued ID",
+        "Birth Certificate (PSA)",
+        "Proof of billing / residence",
+        "DSWD Intake Form",
+        "Social Case Study Report (from DSWD social worker)"
+      ]
+    },
+    "pcso": {
+      "heading": "PCSO Medical Assistance (MAP)",
+      "requirements": [
+        "Accomplished PCSO MAP Application Form",
+        "Medical Certificate from attending physician",
+        "Treatment Protocol / Chemotherapy Protocol",
+        "Medical Prescription",
+        "Hospital / Laboratory results",
+        "Government-issued ID",
+        "Proof of billing / residence",
+        "Barangay Indigency Certificate",
+        "Birth Certificate (PSA)"
+      ]
+    }
+  }
+}

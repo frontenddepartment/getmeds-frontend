@@ -1,0 +1,44 @@
+{
+  "meta": {
+    "title": "UN Global Compact - GetMEDS",
+    "description": "At Getmeds Philippines, we do more than provide medicines — we drive meaningful impact through responsible healthcare, compassion, and sustainable action."
+  },
+  "hero": {
+    "image": "assets/ungcimage.jpg",
+    "imageAlt": "UN Global Compact",
+    "logo": {
+      "src": "assets/ungclogowhite.png",
+      "alt": "UNGC Logo"
+    },
+    "heading": "United Nations Global Compact",
+    "headingLine1": "United Nations",
+    "headingLine2": "Global Compact",
+    "description": "At Getmeds Philippines, we do more than provide medicines—we drive meaningful impact through responsible healthcare, compassion, and sustainable action."
+  },
+  "whatIsUngc": {
+    "heading": "What is UNGC?",
+    "description": "The United Nations Global Compact (UNGC) is the world's largest corporate sustainability initiative. It encourages companies to adopt responsible, ethical, and sustainable business practices that create positive impact for people, communities, and the planet.",
+    "supportLabel": "We Support",
+    "logo": {
+      "src": "assets/UNGClogo.png",
+      "alt": "UNGC Logo"
+    }
+  },
+  "events": [
+    {
+      "date": "24 Sept 2025",
+      "title": "Getmeds CEO Naresh Bishnoi at the UNGC Network Philippines Event",
+      "image": "assets/left.jpg"
+    },
+    {
+      "date": "24 Sept 2025",
+      "title": "Leading SDG conversations in Healthcare Innovation",
+      "image": "assets/topmid.jpg"
+    },
+    {
+      "date": "24 Sept 2025",
+      "title": "Connecting with Global Stakeholders",
+      "image": "assets/bottommid.jpg"
+    }
+  ]
+}

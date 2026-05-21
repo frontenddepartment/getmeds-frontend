@@ -1,0 +1,324 @@
+<!-- Auth Modals -->
+<div id="auth-overlay"
+    class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[1000] hidden items-center justify-center p-4 transition-all duration-300 opacity-0 pointer-events-none">
+
+    <!-- Modal Container -->
+    <div id="auth-modal"
+        class="bg-white rounded-[15px] shadow-2xl w-full max-w-[820px] overflow-hidden flex flex-col md:flex-row transform scale-95 transition-transform duration-300"
+        style="min-height: 500px;">
+
+        <!-- LEFT PANE: Full-Cover Illustration Image -->
+        <div class="md:w-[45%] relative overflow-hidden bg-[#1D9FDA] p-10">
+            <img src="assets/loginimage.png" alt="GetMEDS Authentication"
+                class="w-full h-full object-cover absolute inset-0">
+            <div class="relative z-10">
+                <h3 class="text-2xl font-bold text-white mb-2 leading-tight drop-shadow-lg">Complete Health<br>Solutions
+                </h3>
+                <p class="text-white/90 text-[13px] font-medium drop-shadow-md">Early protection for family health</p>
+            </div>
+        </div>
+
+        <!-- RIGHT PANE: Forms -->
+        <div class="md:w-[55%] bg-white px-12 py-10 flex flex-col relative justify-center">
+            <!-- Close button -->
+            <button onclick="closeAuthModal()"
+                class="absolute top-6 right-6 text-gray-400 hover:text-gray-600 transition z-10">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+
+            <div class="w-full max-w-[380px] mx-auto">
+                <!-- Login Form -->
+                <div id="login-form" class="flex flex-col">
+                    <h2 class="text-xl font-bold text-gray-900 mb-0.5">Sign In</h2>
+                    <p class="text-gray-400 text-xs mb-6">Welcome back! Please enter your details.</p>
+
+                    <div class="space-y-4">
+                        <div class="space-y-2">
+                            <label class="text-[13px] font-bold text-gray-800 ml-1">Email address</label>
+                            <input id="login-email" type="email" placeholder="example@email.com"
+                                class="w-full bg-gray-50 border-none rounded-[15px] px-6 py-3 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition placeholder-gray-300">
+                        </div>
+                        <div class="space-y-2">
+                            <div class="flex justify-between items-center ml-1">
+                                <label class="text-[13px] font-bold text-gray-800">Password</label>
+                                <a href="#" class="text-[11px] font-semibold text-primary hover:underline">Forgot
+                                    password?</a>
+                            </div>
+                            <div class="relative">
+                                <input id="login-password" type="password" placeholder="••••••••••"
+                                    class="w-full bg-gray-50 border-none rounded-[15px] px-6 py-3 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition placeholder-gray-300">
+                                <button
+                                    class="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition p-1">
+                                    <i class="fa-solid fa-eye text-xs"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <button onclick="handleLogin()"
+                            class="w-full bg-primary hover:bg-blue-600 text-[14px] text-white font-bold py-3 rounded-[15px] shadow-lg shadow-blue-100 transition-all transform active:scale-[0.98]">
+                            Sign In
+                        </button>
+
+                        <div class="relative flex items-center justify-center gap-3">
+                            <div class="flex-1 border-t border-gray-100"></div>
+                            <span class="text-[11px] font-bold text-gray-300 uppercase tracking-widest">or</span>
+                            <div class="flex-1 border-t border-gray-100"></div>
+                        </div>
+
+                        <div class="flex gap-2">
+                            <button
+                                class="flex-1 flex items-center justify-center gap-2 py-3 border border-gray-200 rounded-[15px] hover:bg-gray-50 transition text-[12px] font-semibold text-gray-600">
+                                <i class="fa-brands fa-google text-sm"></i> Google
+                            </button>
+                            <button
+                                class="w-12 h-11 flex items-center justify-center border border-gray-200 rounded-[15px] hover:bg-gray-50 transition">
+                                <i class="fa-brands fa-facebook text-blue-600 text-sm"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <p class="text-[11px] text-gray-400 text-center mt-5">
+                        Don't have an account?
+                        <a href="#" onclick="toggleAuth('signup')"
+                            class="text-primary font-semibold hover:underline ml-1">Sign up</a>
+                    </p>
+                </div>
+
+                <!-- Signup Form -->
+                <div id="signup-form" class="hidden flex flex-col">
+                    <h2 class="text-xl font-bold text-gray-900 mb-0.5">Sign Up</h2>
+                    <p class="text-gray-400 text-xs mb-6">Access your medicines and health records anytime.</p>
+
+                    <div class="space-y-4">
+                        <div class="space-y-2">
+                            <label class="text-[13px] font-bold text-gray-800 ml-1">Full Name</label>
+                            <input id="signup-name" type="text" placeholder="John Doe"
+                                class="w-full bg-gray-50 border-none rounded-[15px] px-6 py-3 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition placeholder-gray-300">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[13px] font-bold text-gray-800 ml-1">Email address</label>
+                            <input id="signup-email" type="email" placeholder="example@email.com"
+                                class="w-full bg-gray-50 border-none rounded-[15px] px-6 py-3 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition placeholder-gray-300">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[13px] font-bold text-gray-800 ml-1">Set password</label>
+                            <div class="relative">
+                                <input id="signup-password" type="password" placeholder="••••••••••"
+                                    class="w-full bg-gray-50 border-none rounded-[15px] px-6 py-3 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition placeholder-gray-300">
+                                <button
+                                    class="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 p-1">
+                                    <i class="fa-solid fa-eye text-xs"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <p class="text-[11px] text-gray-400 leading-relaxed ml-1">
+                            By creating an account, you agree to the
+                            <a href="#" class="text-primary font-semibold hover:underline">Terms of Service</a> and
+                            <a href="#" class="text-primary hover:underline">Privacy Policy</a>.
+                        </p>
+
+                        <button onclick="handleSignup()"
+                            class="w-full bg-primary hover:bg-blue-600 text-[14px] text-white font-bold py-3 rounded-[15px] shadow-lg shadow-blue-100 transition-all transform active:scale-[0.98]">
+                            Create Account
+                        </button>
+
+                        <div class="relative flex items-center justify-center gap-3">
+                            <div class="flex-1 border-t border-gray-100"></div>
+                            <span class="text-[11px] font-bold text-gray-300 uppercase tracking-widest">or</span>
+                            <div class="flex-1 border-t border-gray-100"></div>
+                        </div>
+
+                        <div class="flex gap-2">
+                            <button
+                                class="flex-1 flex items-center justify-center gap-2 py-3 border border-gray-200 rounded-[15px] hover:bg-gray-50 transition text-[12px] font-semibold text-gray-600">
+                                <i class="fa-brands fa-google text-sm"></i> Google
+                            </button>
+                            <button
+                                class="w-12 h-11 flex items-center justify-center border border-gray-200 rounded-[15px] hover:bg-gray-50 transition">
+                                <i class="fa-brands fa-facebook text-blue-600 text-sm"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <p class="text-[11px] text-gray-400 text-center mt-5">
+                        Already have an account?
+                        <a href="#" onclick="toggleAuth('login')"
+                            class="text-primary font-semibold hover:underline ml-1">Sign in</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<script>
+    window.openAuthModal = function (type = 'login') {
+        const overlay = document.getElementById('auth-overlay');
+        const modal = document.getElementById('auth-modal');
+
+        toggleAuth(type);
+
+        overlay.classList.remove('hidden');
+        overlay.style.display = 'flex';
+
+        setTimeout(() => {
+            overlay.classList.remove('opacity-0', 'pointer-events-none');
+            overlay.classList.add('opacity-100');
+            modal.classList.remove('scale-95');
+            modal.classList.add('scale-100');
+        }, 10);
+
+        overlay.onclick = (e) => {
+            if (e.target === overlay) closeAuthModal();
+        };
+    };
+
+    window.closeAuthModal = function () {
+        const overlay = document.getElementById('auth-overlay');
+        const modal = document.getElementById('auth-modal');
+
+        overlay.classList.remove('opacity-100');
+        overlay.classList.add('opacity-0', 'pointer-events-none');
+        modal.classList.remove('scale-100');
+        modal.classList.add('scale-95');
+
+        setTimeout(() => {
+            overlay.style.display = 'none';
+            overlay.classList.add('hidden');
+        }, 300);
+    };
+
+    window.toggleAuth = function (type) {
+        const loginForm = document.getElementById('login-form');
+        const signupForm = document.getElementById('signup-form');
+
+        if (type === 'signup') {
+            loginForm.classList.add('hidden');
+            signupForm.classList.remove('hidden');
+        } else {
+            signupForm.classList.add('hidden');
+            loginForm.classList.remove('hidden');
+        }
+    };
+
+    window.updateAuthUI = function () {
+        const userJson = localStorage.getItem('getmeds_user');
+        const authButtons = document.getElementById('auth-buttons');
+        const userProfile = document.getElementById('user-profile');
+        const mobileAuthButtons = document.getElementById('mobile-auth-buttons');
+        const mobileUserProfile = document.getElementById('mobile-user-profile');
+
+        if (!authButtons && !mobileAuthButtons) return; // Navbar not loaded yet
+
+        if (userJson) {
+            const user = JSON.parse(userJson);
+            const initials = user.name.charAt(0).toUpperCase();
+            const email = user.email;
+
+            // Desktop Update
+            if (authButtons) {
+                authButtons.classList.add('hidden', 'lg:hidden');
+                authButtons.classList.remove('lg:flex');
+                if (userProfile) {
+                    userProfile.classList.remove('hidden');
+                    userProfile.classList.add('lg:flex');
+                }
+                const nDisp = document.getElementById('user-name-display');
+                if (nDisp) nDisp.innerText = user.name;
+
+                const eDisp = document.getElementById('user-email-display');
+                if (eDisp) eDisp.innerText = email;
+
+                const aDisp = document.getElementById('user-avatar-text');
+                if (aDisp) {
+                    if (user.avatar) {
+                        aDisp.innerHTML = `<img src="${user.avatar}" class="w-full h-full object-cover rounded-full">`;
+                    } else {
+                        aDisp.innerText = initials;
+                    }
+                }
+            }
+
+            // Mobile Update
+            if (mobileAuthButtons) {
+                mobileAuthButtons.classList.add('hidden');
+                mobileAuthButtons.classList.remove('flex');
+                if (mobileUserProfile) {
+                    mobileUserProfile.classList.remove('hidden');
+                    mobileUserProfile.classList.add('flex');
+                }
+                const mnDisp = document.getElementById('mobile-user-name-display');
+                if (mnDisp) mnDisp.innerText = user.name;
+
+                const meDisp = document.getElementById('mobile-user-email-display');
+                if (meDisp) meDisp.innerText = email;
+
+                const maDisp = document.getElementById('mobile-user-avatar-text');
+                if (maDisp) {
+                    if (user.avatar) {
+                        maDisp.innerHTML = `<img src="${user.avatar}" class="w-full h-full object-cover rounded-full">`;
+                    } else {
+                        maDisp.innerText = initials;
+                    }
+                }
+            }
+        } else {
+            // Logged out
+            if (authButtons) {
+                authButtons.classList.remove('hidden', 'lg:hidden');
+                authButtons.classList.add('lg:flex');
+                userProfile.classList.add('hidden');
+                userProfile.classList.remove('lg:flex');
+            }
+
+            if (mobileAuthButtons) {
+                mobileAuthButtons.classList.remove('hidden');
+                mobileAuthButtons.classList.add('flex');
+                mobileUserProfile.classList.add('hidden');
+                mobileUserProfile.classList.remove('flex');
+            }
+        }
+    };
+
+    window.handleLogin = function () {
+        const email = document.getElementById('login-email').value;
+        const pass = document.getElementById('login-password').value;
+        if (!email || !pass) return alert("Please enter email and password.");
+
+        localStorage.setItem('getmeds_user', JSON.stringify({ name: email.split('@')[0], email: email }));
+        closeAuthModal();
+        updateAuthUI();
+    };
+
+    window.handleSignup = function () {
+        const name = document.getElementById('signup-name').value;
+        const email = document.getElementById('signup-email').value;
+        const pass = document.getElementById('signup-password').value;
+        if (!name || !email || !pass) return alert("Please fill up all the fields.");
+
+        localStorage.setItem('getmeds_user', JSON.stringify({ name: name, email: email }));
+        closeAuthModal();
+        updateAuthUI();
+    };
+
+    window.logoutUser = function () {
+        localStorage.removeItem('getmeds_user');
+        updateAuthUI();
+        if (window.toggleMobileMenu) {
+            document.getElementById('mobile-menu').classList.add('hidden');
+        }
+    };
+
+    // Watcher interval to apply UI updates dynamically if navbar loads asynchronously
+    setInterval(() => {
+        const u = localStorage.getItem('getmeds_user');
+        const ab = document.getElementById('auth-buttons');
+        if (ab) {
+            const isShowingAuth = ab.classList.contains('lg:flex');
+            const outOfSync = (!!u && isShowingAuth) || (!u && !isShowingAuth);
+            if (outOfSync) updateAuthUI();
+        }
+    }, 500);
+</script>

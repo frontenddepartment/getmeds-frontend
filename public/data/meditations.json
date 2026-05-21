@@ -1,0 +1,78 @@
+{
+  "meta": {
+    "title": "Meditations - GetMEDS",
+    "description": "Nurture your Mind, Body & Soul. Experience the Getmeds Meditation App with interactive breathing guides and live ambient soundscapes."
+  },
+  "hero": {
+    "heading": "Getmeds Meditation App",
+    "description": "Nurture your mind, body, and soul. Discover clinical mindfulness, guided breathing exercises, and soothing ambient soundscapes designed to support your holistic wellness journey.",
+    "mockupImages": [
+      { "src": "assets/categories.png", "alt": "App Screen Left" },
+      { "src": "assets/workbook.png", "alt": "App Screen Center" },
+      { "src": "assets/profile.png", "alt": "App Screen Right" }
+    ]
+  },
+  "appStores": [
+    { "label": "Download on the App Store", "href": "#", "image": "https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg" },
+    { "label": "Get it on Google Play", "href": "#", "image": "https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" }
+  ],
+  "mindfulness": {
+    "heading": "Mindfulness, Measured.",
+    "description": "Meet the meditation app designed to bring clarity to your chaos. By blending intuitive guided meditations with comprehensive wellness tracking, it seamlessly adapts to your unique daily routine—helping you visualize your progress as you cultivate inner peace.",
+    "mockupImage": { "src": "assets/scheduling.png", "alt": "App Screen" },
+    "mockupCaption": "Smart Scheduling — Set due dates, recurring sessions, and get automated calm reminders to stay grounded."
+  },
+  "benefits": {
+    "heading": "The Benefits",
+    "description": "The GetMEDS Meditation App is designed to seamlessly integrate into your daily routine, offering deep mental restoration through our custom-designed programs. By prioritizing long-term growth, the app helps you build lasting habits of mindfulness that naturally improve your focus throughout the day. To complement your practice, it also provides tranquil soundscapes entirely tailored to your unique lifestyle, ensuring your journey toward inner peace feels effortless and personal.",
+    "mockupImage": { "src": "assets/benefits.png", "alt": "App Screen" },
+    "mockupCaption": "Custom Benefits — Gain mental clarity, reduce stress, and achieve total inner peace."
+  },
+  "features": {
+    "heading": "Features",
+    "description": "Discover a comprehensive suite of tools designed to support your mental well-being. From guided sessions to advanced analytics, our features work together seamlessly to help you build a calmer, more mindful daily routine.",
+    "moreFeaturesLabel": "More Features",
+    "items": [
+      {
+        "icon": "fa-solid fa-brain",
+        "title": "Mindfulness",
+        "description": "Explore guided meditations designed to reduce stress and cultivate presence."
+      },
+      {
+        "icon": "fa-solid fa-wind",
+        "title": "Breathing",
+        "description": "Master simple breathing techniques to instantly calm your nervous system."
+      },
+      {
+        "icon": "fa-solid fa-moon",
+        "title": "Sleep Sounds",
+        "description": "Drift into deep rest with our curated, tranquil audio library."
+      },
+      {
+        "icon": "fa-solid fa-bullseye",
+        "title": "Daily Goals",
+        "description": "Build lasting wellness habits with easily achievable daily mindful milestones."
+      },
+      {
+        "icon": "fa-solid fa-chart-line",
+        "title": "Progress Tracking",
+        "description": "Visualize your mental health growth with detailed, personal data insights."
+      },
+      {
+        "icon": "fa-solid fa-calendar-days",
+        "title": "Wellness Events",
+        "description": "Join live community sessions and expert-led mindfulness workshops globally."
+      }
+    ]
+  },
+  "download": {
+    "heading": "Download Our App",
+    "description": "Nurture your mind, body, and soul. Discover clinical mindfulness, guided breathing exercises, and soothing ambient soundscapes designed to support your holistic wellness journey.",
+    "mockupImage": { "src": "assets/home.png", "alt": "App Screen" }
+  },
+  "ambientTracks": [
+    { "id": 1, "title": "Midnight Rainstorm" },
+    { "id": 2, "title": "Pacific Wavefront" },
+    { "id": 3, "title": "Pristine Nature Stream" }
+  ]
+}

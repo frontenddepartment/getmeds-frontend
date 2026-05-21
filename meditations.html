@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meditations - GetMEDS</title>
+    <meta name="description"
+        content="Nurture your Mind, Body & Soul. Experience the Getmeds Meditation App with interactive breathing guides and live ambient soundscapes.">
+
+    <!-- Tailwind CSS with custom configuration -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#0D99FF', // bright blue
+                        secondary: '#4A5568',
+                        dark: '#1A202C',
+                        footer: '#1A1D2B',
+                        cardbg: '#F8FAFC'
+                    },
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Override navbar background to blend with hero section on this page only */
+        #navbar-placeholder nav {
+            border-bottom: none !important;
+        }
+
+        /* Glassmorphism utility */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.45);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        /* Animated equalizing waves */
+        .equalizer-wave {
+            display: flex;
+            align-items: flex-end;
+            gap: 2.5px;
+            height: 30px;
+        }
+
+        .equalizer-bar {
+            width: 3px;
+            height: 10%;
+            background: linear-gradient(to top, #61A644, #1D9FDA);
+            border-radius: 3px;
+            transition: height 0.15s ease-in-out;
+        }
+
+        .equalizer-bar.active {
+            animation: bounce-bar 1.2s ease-in-out infinite alternate;
+        }
+
+        @keyframes bounce-bar {
+            0% {
+                height: 10%;
+            }
+
+            100% {
+                height: 100%;
+            }
+        }
+
+        /* Custom breathing ring pulsing animation */
+        @keyframes breathe-in-out {
+
+            0%,
+            100% {
+                transform: scale(0.9);
+                opacity: 0.45;
+                box-shadow: 0 0 10px rgba(97, 166, 68, 0.2), 0 0 20px rgba(29, 159, 218, 0.1);
+            }
+
+            50% {
+                transform: scale(1.15);
+                opacity: 0.95;
+                box-shadow: 0 0 25px rgba(97, 166, 68, 0.4), 0 0 50px rgba(29, 159, 218, 0.3);
+            }
+        }
+
+        .pulse-breathing-active {
+            animation: breathe-in-out 4s ease-in-out infinite;
+        }
+
+        /* Hide scrollbars */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+
+<body class="bg-white text-gray-800 antialiased overflow-x-hidden">
+
+    <!-- Navbar Component -->
+    <div id="navbar-placeholder"></div>
+
+    <!-- PRICING HERO SECTION -->
+    <section class="w-full mx-auto px-3 sm:px-4 md:px-6 mt-3 md:mt-4 mb-6 max-w-[1600px] relative pb-0 md:pb-2">
+        <div class="w-full relative">
+
+            <!-- Blue Banner Container -->
+            <div
+                class="w-full bg-gradient-to-r from-[#61A644] to-[#1D9FDA] rounded-[1.5rem] pt-20 pb-56 px-6 text-center relative overflow-hidden shadow-sm border border-[#1D9FDA]/50 min-h-[450px] md:min-h-[500px]">
+                <!-- Left Side 3-Layer Glass Effect -->
+                <div
+                    class="absolute top-16 left-[-2rem] w-32 md:w-40 h-[600px] bg-white/10 backdrop-blur-md rounded-[15px] pointer-events-none">
+                </div>
+                <div
+                    class="absolute top-32 left-[3rem] md:left-[5rem] w-32 md:w-40 h-[500px] bg-white/10 backdrop-blur-md rounded-[15px] pointer-events-none">
+                </div>
+                <div
+                    class="absolute top-48 left-[8rem] md:left-[12rem] w-32 md:w-40 h-[400px] bg-white/10 backdrop-blur-md rounded-[15px] pointer-events-none">
+                </div>
+
+                <!-- Right Side 3-Layer Glass Effect -->
+                <div
+                    class="absolute top-16 right-[-2rem] w-32 md:w-40 h-[600px] bg-white/10 backdrop-blur-md rounded-[15px] pointer-events-none">
+                </div>
+                <div
+                    class="absolute top-32 right-[3rem] md:right-[5rem] w-32 md:w-40 h-[500px] bg-white/10 backdrop-blur-md rounded-[15px] pointer-events-none">
+                </div>
+                <div
+                    class="absolute top-48 right-[8rem] md:right-[12rem] w-32 md:w-40 h-[400px] bg-white/10 backdrop-blur-md rounded-[15px] pointer-events-none">
+                </div>
+
+                <h1 data-json="hero.heading" class="text-3xl md:text-5xl font-semibold text-white mb-6 relative z-10 tracking-tight mt-4">
+                    Getmeds Meditation App
+                </h1>
+                <p data-json="hero.description"
+                    class="text-white/80 text-[13px] md:text-sm max-w-2xl mx-auto mb-10 relative z-10 leading-relaxed font-medium">
+                    Nurture your mind, body, and soul. Discover clinical mindfulness, guided breathing exercises, and
+                    soothing ambient soundscapes designed to support your holistic wellness journey.
+                </p>
+            </div>
+
+            <!-- Phone Mockups (Overlapping the blue banner) -->
+            <div
+                class="max-w-[700px] mx-auto grid grid-cols-1 md:grid-cols-3 gap-4 relative z-20 -mt-32 md:-mt-48 px-4 lg:px-0 pb-2 items-center">
+
+                <!-- Phone 1 (Left) -->
+                <div
+                    class="relative w-full max-w-[190px] mx-auto h-[380px] bg-slate-900 rounded-[30px] p-1.5 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.3)] border-2 border-slate-700/80 overflow-hidden flex flex-col items-center z-10 transition-transform duration-500 hover:scale-[1.02] transform md:translate-y-2">
+                    <div class="w-full h-full bg-white rounded-[20px] overflow-hidden relative shadow-inner">
+                        <img src="assets/categories.png" alt="App Screen Left"
+                            class="w-full h-[calc(100%-1.25rem)] mt-5 object-contain">
+                        <!-- High-fidelity iPhone 15 Pro dynamic island notch overlay -->
+                        <div class="w-20 h-3.5 bg-black rounded-full absolute left-1/2 -translate-x-1/2 top-1.5 z-20">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Phone 2 (Center - Elevated) -->
+                <div
+                    class="relative w-full max-w-[225px] mx-auto h-[450px] bg-slate-900 rounded-[35px] p-1.5 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.6)] border-2 border-slate-700/80 overflow-hidden flex flex-col items-center z-20 transition-transform duration-500 hover:scale-[1.02] transform md:-translate-y-6">
+                    <div class="w-full h-full bg-white rounded-[25px] overflow-hidden relative shadow-inner">
+                        <img src="assets/workbook.png" alt="App Screen Center"
+                            class="w-full h-[calc(100%-1.5rem)] mt-6 object-contain">
+                        <!-- High-fidelity iPhone 15 Pro dynamic island notch overlay -->
+                        <div class="w-24 h-4 bg-black rounded-full absolute left-1/2 -translate-x-1/2 top-1.5 z-20">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Phone 3 (Right) -->
+                <div
+                    class="relative w-full max-w-[190px] mx-auto h-[380px] bg-slate-900 rounded-[30px] p-1.5 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.3)] border-2 border-slate-700/80 overflow-hidden flex flex-col items-center z-10 transition-transform duration-500 hover:scale-[1.02] transform md:translate-y-2">
+                    <div class="w-full h-full bg-white rounded-[20px] overflow-hidden relative shadow-inner">
+                        <img src="assets/profile.png" alt="App Screen Right"
+                            class="w-full h-[calc(100%-1.25rem)] mt-5 object-contain">
+                        <!-- High-fidelity iPhone 15 Pro dynamic island notch overlay -->
+                        <div class="w-20 h-3.5 bg-black rounded-full absolute left-1/2 -translate-x-1/2 top-1.5 z-20">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div> <!-- End of PRICING HERO SECTION -->
+    </section>
+
+    <!-- ABOUT US SECTION -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 pb-24 relative overflow-hidden">
+        <!-- Abstract Background Elements Wrapper -->
+        <div class="absolute inset-0 pointer-events-none z-0">
+            <!-- Large circular abstract background -->
+            <svg class="absolute top-1/2 -translate-y-1/2 left-[5%] w-[600px] h-[600px] text-slate-300"
+                viewBox="0 0 800 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="400" cy="400" r="350" fill="currentColor" opacity="0.05" />
+                <circle cx="400" cy="400" r="250" fill="currentColor" opacity="0.1" />
+                <circle cx="400" cy="400" r="150" fill="currentColor" opacity="0.15" />
+            </svg>
+            <!-- Faint grid background elements -->
+            <div class="absolute top-20 right-20 w-32 h-32 opacity-20">
+                <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+                            <path d="M 20 0 L 0 0 0 20" fill="none" stroke="currentColor" stroke-width="1" />
+                        </pattern>
+                    </defs>
+                    <rect width="100%" height="100%" fill="url(#grid)" />
+                </svg>
+            </div>
+        </div>
+
+        <!-- App Store Badges (Centered) -->
+        <div class="relative z-20 flex justify-center items-center gap-4 mb-16 md:-mt-4">
+            <a href="#"
+                class="h-[42px] hover:scale-105 transition-transform duration-300 shadow-[0_10px_20px_rgba(0,0,0,0.1)] rounded-[10px] overflow-hidden bg-black">
+                <img src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg"
+                    alt="Download on the App Store" class="h-full">
+            </a>
+            <a href="#"
+                class="h-[60px] -ml-2 hover:scale-105 transition-transform duration-300 drop-shadow-xl relative top-[1px]">
+                <img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png"
+                    alt="Get it on Google Play" class="h-full object-contain">
+            </a>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative z-10">
+            <!-- Left Content -->
+            <div class="max-w-xl md:ml-12 lg:ml-24">
+                <h2 data-json="mindfulness.heading" class="text-2xl md:text-[1.75rem] font-bold text-slate-900 mb-6 leading-snug">
+                    Mindfulness, Measured.
+                </h2>
+
+                <p data-json="mindfulness.description" class="text-slate-500 text-[15px] leading-relaxed max-w-md">
+                    Meet the meditation app designed to bring clarity to your chaos. By blending intuitive guided
+                    meditations with comprehensive wellness tracking, it seamlessly adapts to your unique daily
+                    routine—helping you visualize your progress as you cultivate inner peace.
+                </p>
+            </div>
+
+            <!-- Right Phone Mockup Panel -->
+            <div class="flex justify-center lg:justify-end md:pr-12 lg:pr-24 mt-12 lg:mt-0">
+                <!-- Light gray background block -->
+                <div
+                    class="bg-[#f2f4f6] rounded-[40px] px-8 flex flex-col items-center max-w-[420px] relative w-full h-[360px] overflow-hidden">
+
+                    <!-- Phone Mockup Container -->
+                    <div
+                        class="relative w-full max-w-[240px] mx-auto h-[480px] bg-slate-900 rounded-[38px] p-2 shadow-2xl z-10 border border-slate-700/50 transform translate-y-[80px]">
+                        <!-- Inner screen -->
+                        <div class="w-full h-full bg-white rounded-[30px] overflow-hidden relative shadow-inner">
+                            <!-- Dynamic Island Notch -->
+                            <div class="w-20 h-4 bg-black rounded-full absolute left-1/2 -translate-x-1/2 top-2 z-20">
+                            </div>
+
+                            <!-- App Interface content -->
+                            <img src="assets/scheduling.png" alt="App Screen" class="w-full h-full object-cover pt-6">
+                        </div>
+
+
+                    </div>
+
+                    <!-- White Gradient Fade Overlay -->
+                    <div
+                        class="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-white via-white/90 to-transparent z-40 pointer-events-none">
+                    </div>
+
+                    <!-- Text below the phone inside the white fade -->
+                    <div
+                        class="absolute bottom-6 left-0 right-0 z-50 flex justify-center text-center px-8 pointer-events-none">
+                        <p class="text-slate-600 text-[14px] leading-relaxed font-medium">
+                            <strong class="text-slate-900">Smart Scheduling</strong> Set due dates, recurring
+                            sessions, and get automated calm reminders to stay grounded.
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- BENEFITS SECTION -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 relative overflow-hidden">
+        <!-- Abstract Background Elements Wrapper -->
+        <div class="absolute inset-0 pointer-events-none z-0">
+            <!-- Mirrored circular abstract background -->
+            <svg class="absolute top-1/2 -translate-y-1/2 right-[5%] w-[600px] h-[600px] text-slate-300 transform scale-x-[-1]"
+                viewBox="0 0 800 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="400" cy="400" r="350" fill="currentColor" opacity="0.05" />
+                <circle cx="400" cy="400" r="250" fill="currentColor" opacity="0.1" />
+                <circle cx="400" cy="400" r="150" fill="currentColor" opacity="0.15" />
+            </svg>
+            <!-- Faint grid background elements on the left side -->
+            <div class="absolute top-20 left-20 w-32 h-32 opacity-20">
+                <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <pattern id="grid-benefits" width="20" height="20" patternUnits="userSpaceOnUse">
+                            <path d="M 20 0 L 0 0 0 20" fill="none" stroke="currentColor" stroke-width="1" />
+                        </pattern>
+                    </defs>
+                    <rect width="100%" height="100%" fill="url(#grid-benefits)" />
+                </svg>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative z-10">
+
+            <!-- Left Phone Mockup Panel -->
+            <div class="flex justify-center lg:justify-start md:pl-12 lg:pl-24 order-2 lg:order-1 mt-12 lg:mt-0">
+                <!-- Light gray background block -->
+                <div
+                    class="bg-[#f2f4f6] rounded-[40px] px-8 flex flex-col items-center max-w-[420px] relative w-full h-[360px] overflow-hidden">
+
+                    <!-- Phone Mockup Container -->
+                    <div
+                        class="relative w-full max-w-[240px] mx-auto h-[480px] bg-slate-900 rounded-[38px] p-2 shadow-2xl z-10 border border-slate-700/50 transform translate-y-[80px]">
+                        <!-- Inner screen -->
+                        <div class="w-full h-full bg-white rounded-[30px] overflow-hidden relative shadow-inner">
+                            <!-- Dynamic Island Notch -->
+                            <div class="w-20 h-4 bg-black rounded-full absolute left-1/2 -translate-x-1/2 top-2 z-20">
+                            </div>
+
+                            <!-- App Interface content -->
+                            <img src="assets/benefits.png" alt="App Screen" class="w-full h-full object-cover pt-6">
+                        </div>
+                    </div>
+
+                    <!-- White Gradient Fade Overlay -->
+                    <div
+                        class="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-white via-white/90 to-transparent z-40 pointer-events-none">
+                    </div>
+
+                    <!-- Text below the phone inside the white fade -->
+                    <div
+                        class="absolute bottom-6 left-0 right-0 z-50 flex justify-center text-center px-8 pointer-events-none">
+                        <p class="text-slate-600 text-[14px] leading-relaxed font-medium">
+                            <strong class="text-slate-900">Custom Benefits</strong> Gain mental clarity, reduce stress,
+                            and achieve total inner peace.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Content -->
+            <div class="max-w-xl md:ml-12 lg:ml-24 order-1 lg:order-2">
+                <h2 data-json="benefits.heading" class="text-2xl md:text-[1.75rem] font-bold text-slate-900 mb-6 leading-snug">
+                    The Benefits
+                </h2>
+
+                <p data-json="benefits.description" class="text-slate-500 text-[15px] leading-relaxed max-w-md">
+                    The GetMEDS Meditation App is designed to seamlessly integrate into your daily routine, offering
+                    deep mental restoration through our custom-designed programs. By prioritizing long-term growth, the
+                    app helps you build lasting habits of mindfulness that naturally improve your focus throughout the
+                    day. To complement your practice, it also provides tranquil soundscapes entirely tailored to your
+                    unique lifestyle, ensuring your journey toward inner peace feels effortless and personal.
+                </p>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- FEATURES SECTION -->
+    <section class="w-full pt-24 pb-16 px-4 sm:px-6 lg:px-8 mt-10"
+        style="background: linear-gradient(to bottom, #1D9FDA 75%, #ffffff 75%);">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+
+                <!-- Left: Title, Description, Button -->
+                <div class="text-white pl-12">
+                    <h2 data-json="features.heading" class="text-4xl md:text-5xl font-semibold mb-6 leading-tight">Features</h2>
+                    <p data-json="features.description" class="text-white/75 text-[15px] leading-relaxed max-w-md mb-10">
+                        Discover a comprehensive suite of tools designed to support your mental well-being. From guided
+                        sessions to advanced analytics, our features work together seamlessly to help you build a
+                        calmer, more mindful daily routine.
+                    </p>
+                    <a href="#explore-features"
+                        class="inline-block border-2 border-white text-white font-semibold text-[14px] px-8 py-3 rounded-lg hover:bg-white hover:text-[#2b50d8] transition-all duration-200">
+                        More Features
+                    </a>
+                </div>
+
+                <!-- Right: 2x3 Feature Cards Grid -->
+                <div class="grid grid-cols-3 gap-4">
+
+                    <!-- Card 1: Mindfulness -->
+                    <div
+                        class="group bg-white rounded-[20px] p-5 shadow-[0_10px_25px_rgba(0,0,0,0.05)] hover:shadow-[0_18px_35px_rgba(0,0,0,0.1)] hover:-translate-y-1.5 hover:scale-[1.02] transition-all duration-300 ease-out cursor-pointer border border-slate-100/80">
+                        <div
+                            class="w-10 h-10 rounded-xl bg-[#3b5bdb] flex items-center justify-center mb-3.5 group-hover:scale-105 group-hover:rotate-6 transition-all duration-300 ease-out">
+                            <i class="fa-solid fa-brain text-white text-[15px]"></i>
+                        </div>
+                        <h4 class="text-[12.5px] font-semibold text-slate-800 mb-1.5">Mindfulness</h4>
+                        <p class="text-slate-400 text-[10.5px] leading-relaxed">Explore guided meditations designed to
+                            reduce stress and cultivate presence.</p>
+                    </div>
+
+                    <!-- Card 2: Breathing -->
+                    <div
+                        class="group bg-white rounded-[20px] p-5 shadow-[0_10px_25px_rgba(0,0,0,0.05)] hover:shadow-[0_18px_35px_rgba(0,0,0,0.1)] hover:-translate-y-1.5 hover:scale-[1.02] transition-all duration-300 ease-out cursor-pointer border border-slate-100/80">
+                        <div
+                            class="w-10 h-10 rounded-xl bg-[#0ca678] flex items-center justify-center mb-3.5 group-hover:scale-105 group-hover:rotate-6 transition-all duration-300 ease-out">
+                            <i class="fa-solid fa-wind text-white text-[15px]"></i>
+                        </div>
+                        <h4 class="text-[12.5px] font-semibold text-slate-800 mb-1.5">Breathing</h4>
+                        <p class="text-slate-400 text-[10.5px] leading-relaxed">Master simple breathing techniques to
+                            instantly calm your nervous system.</p>
+                    </div>
+
+                    <!-- Card 3: Sleep Sounds -->
+                    <div
+                        class="group bg-white rounded-[20px] p-5 shadow-[0_10px_25px_rgba(0,0,0,0.05)] hover:shadow-[0_18px_35px_rgba(0,0,0,0.1)] hover:-translate-y-1.5 hover:scale-[1.02] transition-all duration-300 ease-out cursor-pointer border border-slate-100/80">
+                        <div
+                            class="w-10 h-10 rounded-xl bg-[#e67700] flex items-center justify-center mb-3.5 group-hover:scale-105 group-hover:rotate-6 transition-all duration-300 ease-out">
+                            <i class="fa-solid fa-moon text-white text-[15px]"></i>
+                        </div>
+                        <h4 class="text-[12.5px] font-semibold text-slate-800 mb-1.5">Sleep Sounds</h4>
+                        <p class="text-slate-400 text-[10.5px] leading-relaxed">Drift into deep rest with our curated,
+                            tranquil audio library.</p>
+                    </div>
+
+                    <!-- Card 4: Daily Goals -->
+                    <div
+                        class="group bg-white rounded-[20px] p-5 shadow-[0_10px_25px_rgba(0,0,0,0.05)] hover:shadow-[0_18px_35px_rgba(0,0,0,0.1)] hover:-translate-y-1.5 hover:scale-[1.02] transition-all duration-300 ease-out cursor-pointer border border-slate-100/80">
+                        <div
+                            class="w-10 h-10 rounded-xl bg-[#37b24d] flex items-center justify-center mb-3.5 group-hover:scale-105 group-hover:rotate-6 transition-all duration-300 ease-out">
+                            <i class="fa-solid fa-bullseye text-white text-[15px]"></i>
+                        </div>
+                        <h4 class="text-[12.5px] font-semibold text-slate-800 mb-1.5">Daily Goals</h4>
+                        <p class="text-slate-400 text-[10.5px] leading-relaxed">Build lasting wellness habits with
+                            easily achievable daily mindful milestones.</p>
+                    </div>
+
+                    <!-- Card 5: Progress Tracking -->
+                    <div
+                        class="group bg-white rounded-[20px] p-5 shadow-[0_10px_25px_rgba(0,0,0,0.05)] hover:shadow-[0_18px_35px_rgba(0,0,0,0.1)] hover:-translate-y-1.5 hover:scale-[1.02] transition-all duration-300 ease-out cursor-pointer border border-slate-100/80">
+                        <div
+                            class="w-10 h-10 rounded-xl bg-[#ae3ec9] flex items-center justify-center mb-3.5 group-hover:scale-105 group-hover:rotate-6 transition-all duration-300 ease-out">
+                            <i class="fa-solid fa-chart-line text-white text-[15px]"></i>
+                        </div>
+                        <h4 class="text-[12.5px] font-semibold text-slate-800 mb-1.5">Progress Tracking</h4>
+                        <p class="text-slate-400 text-[10.5px] leading-relaxed">Visualize your mental health growth with
+                            detailed, personal data insights.</p>
+                    </div>
+
+                    <!-- Card 6: Wellness Events -->
+                    <div
+                        class="group bg-white rounded-[20px] p-5 shadow-[0_10px_25px_rgba(0,0,0,0.05)] hover:shadow-[0_18px_35px_rgba(0,0,0,0.1)] hover:-translate-y-1.5 hover:scale-[1.02] transition-all duration-300 ease-out cursor-pointer border border-slate-100/80">
+                        <div
+                            class="w-10 h-10 rounded-xl bg-[#c92a2a] flex items-center justify-center mb-3.5 group-hover:scale-105 group-hover:rotate-6 transition-all duration-300 ease-out">
+                            <i class="fa-solid fa-calendar-days text-white text-[15px]"></i>
+                        </div>
+                        <h4 class="text-[12.5px] font-semibold text-slate-800 mb-1.5">Wellness Events</h4>
+                        <p class="text-slate-400 text-[10.5px] leading-relaxed">Join live community sessions and
+                            expert-led mindfulness workshops globally.</p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- DOWNLOAD APP SECTION -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-24 relative overflow-hidden -mt-4">
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center relative z-10">
+
+            <!-- Left Content & Buttons -->
+            <div class="max-w-xl md:ml-12 lg:ml-24">
+                <h2 data-json="download.heading"
+                    class="text-3xl md:text-4xl lg:text-5xl whitespace-nowrap font-semibold text-slate-900 leading-tight tracking-tight mt-6 mb-6">
+                    Download Our App
+                </h2>
+
+                <p data-json="download.description" class="text-slate-500 text-[15px] leading-relaxed max-w-md mb-8">
+                    Nurture your mind, body, and soul. Discover clinical mindfulness, guided breathing exercises, and
+                    soothing ambient soundscapes designed to support your holistic wellness journey.
+                </p>
+
+                <!-- App Store Badges (Left-aligned) -->
+                <div class="flex items-center gap-4">
+                    <a href="#"
+                        class="h-[42px] hover:scale-105 transition-transform duration-300 shadow-[0_10px_20px_rgba(0,0,0,0.1)] rounded-[10px] overflow-hidden bg-black">
+                        <img src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg"
+                            alt="Download on the App Store" class="h-full">
+                    </a>
+                    <a href="#"
+                        class="h-[60px] -ml-2 hover:scale-105 transition-transform duration-300 drop-shadow-xl relative top-[1px]">
+                        <img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png"
+                            alt="Get it on Google Play" class="h-full object-contain">
+                    </a>
+                </div>
+            </div>
+
+            <!-- Right Phone Mockup & Spiral Background -->
+            <div
+                class="flex justify-center lg:justify-end md:pr-12 lg:pr-24 mt-12 lg:mt-0 relative min-h-[460px] items-center">
+
+                <!-- Solid Filled Circles in the back of the phone mockup -->
+                <div class="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
+                    <!-- Outer Circle -->
+                    <div
+                        class="absolute w-[360px] h-[360px] bg-sky-500/10 rounded-full animate-[pulse_6s_ease-in-out_infinite]">
+                    </div>
+                    <!-- Inner Circle -->
+                    <div
+                        class="absolute w-[240px] h-[240px] bg-emerald-500/15 rounded-full translate-x-8 translate-y-8 animate-[pulse_8s_ease-in-out_infinite]">
+                    </div>
+                </div>
+
+                <!-- Phone Mockup Container -->
+                <div
+                    class="relative w-full max-w-[225px] h-[450px] mx-auto bg-slate-900 rounded-[35px] p-1.5 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.15)] z-10 border border-slate-700/50 transform hover:scale-[1.03] transition-transform duration-300 overflow-hidden flex flex-col items-center">
+                    <!-- Inner screen -->
+                    <div class="w-full h-full bg-white rounded-[25px] overflow-hidden relative shadow-inner">
+                        <!-- Dynamic Island Notch -->
+                        <div class="w-24 h-4 bg-black rounded-full absolute left-1/2 -translate-x-1/2 top-1.5 z-20">
+                        </div>
+                        <!-- App Interface content -->
+                        <img src="assets/home.png" alt="App Screen" class="w-full h-[calc(100%-1.5rem)] mt-6 object-contain">
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+
+    <!-- Footer Component -->
+    <div id="footer-placeholder"></div>
+
+
+    <!-- ==================== FRONTEND JAVASCRIPT ==================== -->
+    <script>
+        // Standard dropdown toggle script for mobile navigation
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        // Global state for live audio synthesizer
+        let audioCtx = null;
+        let ambientOscs = [];
+        let noiseNode = null;
+        let mainGain = null;
+        let isGlobalAudioPlaying = false;
+        let activeTrack = 1; // 1: Midnight Rainstorm, 2: Pacific Wavefront, 3: Pristine Nature Stream
+
+        // Select specific ambient track in widget
+        function selectAmbientTrack(trackId) {
+            // Remove selection class from all
+            for (let i = 1; i <= 3; i++) {
+                const item = document.getElementById(`track-item-${i}`);
+                const badge = document.getElementById(`track-play-badge-${i}`);
+                item.classList.remove('border-l-4', 'border-l-emerald-500', 'bg-cyan-50/20');
+                badge.innerHTML = '<i class="fa-solid fa-play text-[9px] pl-0.5"></i>';
+                badge.className = 'w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-slate-400';
+            }
+
+            // Add selection class to chosen track
+            const activeItem = document.getElementById(`track-item-${trackId}`);
+            const activeBadge = document.getElementById(`track-play-badge-${trackId}`);
+            activeItem.classList.add('border-l-4', 'border-l-emerald-500', 'bg-cyan-50/20');
+            activeBadge.innerHTML = '<i class="fa-solid fa-music text-[9px]"></i>';
+            activeBadge.className = 'w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center text-white';
+
+            activeTrack = trackId;
+
+            // Set titles in widgets and mockups
+            const trackTitles = {
+                1: 'Midnight Rainstorm',
+                2: 'Pacific Wavefront',
+                3: 'Pristine Nature Stream'
+            };
+
+            const mockTitle = document.getElementById('mock-track-title');
+            if (mockTitle) mockTitle.innerText = trackTitles[trackId];
+            document.getElementById('ambient-widget-title').innerText = trackTitles[trackId];
+
+            // Re-route audio parameters live if playing
+            if (isGlobalAudioPlaying) {
+                stopAmbientSynth();
+                startAmbientSynth();
+            }
+        }
+
+        // Initialize Web Audio API components to produce deep, organic relaxing cords and noise loops
+        function initAudioCtx() {
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            audioCtx = new AudioContext();
+
+            // Create main gain node for volume envelope
+            mainGain = audioCtx.createGain();
+            mainGain.gain.setValueAtTime(0, audioCtx.currentTime);
+            mainGain.connect(audioCtx.destination);
+        }
+
+        // Web Audio Synthesizer: Pure Code Synthesized Calming Ambient Sounds!
+        function startAmbientSynth() {
+            if (!audioCtx) initAudioCtx();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+
+            // Clear any active nodes
+            stopAmbientSynth();
+
+            // Set main volume envelope to soft comfortable levels
+            mainGain.gain.cancelScheduledValues(audioCtx.currentTime);
+            mainGain.gain.setValueAtTime(0, audioCtx.currentTime);
+            mainGain.gain.linearRampToValueAtTime(0.35, audioCtx.currentTime + 1.5); // Slow fade in
+
+            // 1. Organic Noise Node (Simulates rain/waves)
+            const bufferSize = audioCtx.sampleRate * 2;
+            const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+            const output = noiseBuffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) {
+                output[i] = Math.random() * 2 - 1; // White noise
+            }
+
+            noiseNode = audioCtx.createBufferSource();
+            noiseNode.buffer = noiseBuffer;
+            noiseNode.loop = true;
+
+            // Filters to shape the noise into soft waves or clinical rain
+            const filter = audioCtx.createBiquadFilter();
+            filter.type = 'lowpass';
+
+            const noiseGain = audioCtx.createGain();
+
+            if (activeTrack === 1) {
+                // Midnight Rainstorm: Deep stationary lowpass filtering
+                filter.frequency.value = 450;
+                noiseGain.gain.value = 0.25;
+            } else if (activeTrack === 2) {
+                // Pacific Wavefront: Modulate filter frequency to simulate ocean swells (6s cycle)
+                filter.frequency.setValueAtTime(250, audioCtx.currentTime);
+                filter.frequency.linearRampToValueAtTime(800, audioCtx.currentTime + 3);
+
+                noiseGain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                noiseGain.gain.linearRampToValueAtTime(0.3, audioCtx.currentTime + 3);
+
+                // Wave LFO simulation loop
+                let isSwell = true;
+                setInterval(() => {
+                    if (!isGlobalAudioPlaying || activeTrack !== 2) return;
+                    if (isSwell) {
+                        filter.frequency.linearRampToValueAtTime(250, audioCtx.currentTime + 3);
+                        noiseGain.gain.linearRampToValueAtTime(0.1, audioCtx.currentTime + 3);
+                    } else {
+                        filter.frequency.linearRampToValueAtTime(800, audioCtx.currentTime + 3);
+                        noiseGain.gain.linearRampToValueAtTime(0.3, audioCtx.currentTime + 3);
+                    }
+                    isSwell = !isSwell;
+                }, 3000);
+            } else {
+                // Pristine Nature Stream: Bandpass filtered light water bubbler noise
+                filter.type = 'bandpass';
+                filter.frequency.value = 1200;
+                filter.Q.value = 4;
+                noiseGain.gain.value = 0.15;
+            }
+
+            noiseNode.connect(filter);
+            filter.connect(noiseGain);
+            noiseGain.connect(mainGain);
+            noiseNode.start();
+
+            // 2. Synthesize deep relaxing chords (Sine/Triangle oscillators for soft harmonics)
+            // Chord Frequencies: F Major (174.6Hz F3, 220Hz A3, 261.6Hz C4, 349.2Hz F4)
+            const freqs = [174.61, 220.00, 261.63, 349.23];
+
+            freqs.forEach((freq, idx) => {
+                const osc = audioCtx.createOscillator();
+                osc.type = idx % 2 === 0 ? 'sine' : 'triangle';
+                osc.frequency.value = freq;
+
+                const oscGain = audioCtx.createGain();
+                oscGain.gain.value = 0.08 / freqs.length; // safe mix
+
+                // Slow subtle envelope modulation to keep the chord alive
+                oscGain.gain.setValueAtTime(oscGain.gain.value, audioCtx.currentTime);
+                setInterval(() => {
+                    if (!isGlobalAudioPlaying) return;
+                    oscGain.gain.linearRampToValueAtTime(0.04 / freqs.length + Math.random() * (0.08 / freqs.length), audioCtx.currentTime + 2);
+                }, 2000);
+
+                osc.connect(oscGain);
+                oscGain.connect(mainGain);
+                osc.start();
+                ambientOscs.push(osc);
+            });
+        }
+
+        // Pause ambient synth with slow comfortable fade out
+        function stopAmbientSynth() {
+            if (mainGain) {
+                mainGain.gain.cancelScheduledValues(audioCtx.currentTime);
+                mainGain.gain.setValueAtTime(mainGain.gain.gain, audioCtx.currentTime);
+                mainGain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.8); // Smooth fade
+            }
+            setTimeout(() => {
+                if (isGlobalAudioPlaying) return;
+                ambientOscs.forEach(o => { try { o.stop(); } catch (e) { } });
+                ambientOscs = [];
+                if (noiseNode) { try { noiseNode.stop(); } catch (e) { } noiseNode = null; }
+            }, 850);
+        }
+
+        // Toggle button controller
+        function toggleGlobalAudio() {
+            const playerBars = document.querySelectorAll('.equalizer-bar');
+
+            if (isGlobalAudioPlaying) {
+                // STOP THE SOUND
+                isGlobalAudioPlaying = false;
+                stopAmbientSynth();
+
+                // UI adjustments
+                document.getElementById('ambient-cta-icon').className = 'fa-solid fa-play text-xs text-[#1D9FDA]';
+                document.getElementById('ambient-cta-text').innerText = 'Play Ambient Sample';
+                const mockPlayBtn = document.getElementById('mock-play-btn');
+                if (mockPlayBtn) mockPlayBtn.className = 'fa-solid fa-play text-[10px] pl-0.5';
+                document.getElementById('ambient-widget-icon').className = 'fa-solid fa-play text-xs pl-0.5';
+
+                // Stop equalizer animation
+                playerBars.forEach(bar => bar.classList.remove('active'));
+            } else {
+                // START THE SOUND
+                isGlobalAudioPlaying = true;
+                startAmbientSynth();
+
+                // UI adjustments
+                document.getElementById('ambient-cta-icon').className = 'fa-solid fa-pause text-xs text-[#1D9FDA]';
+                document.getElementById('ambient-cta-text').innerText = 'Pause Ambient Sample';
+                const mockPlayBtn = document.getElementById('mock-play-btn');
+                if (mockPlayBtn) mockPlayBtn.className = 'fa-solid fa-pause text-[10px]';
+                document.getElementById('ambient-widget-icon').className = 'fa-solid fa-pause text-xs';
+
+                // Start equalizer animation
+                playerBars.forEach(bar => bar.classList.add('active'));
+            }
+        }
+
+        // ==================== INTERACTIVE BREATHING TIMER SCRIPT ====================
+        let isTrainerRunning = false;
+        let trainerCycle = 'in'; // 'in' -> 'hold' -> 'out'
+        let trainerSecondsLeft = 4;
+        let trainerInterval = null;
+        let defaultBoxSecs = 4;
+
+        function changeBreathingCycle(val) {
+            defaultBoxSecs = parseInt(val);
+            resetTrainerSession();
+        }
+
+        function toggleTrainerSession() {
+            if (isTrainerRunning) {
+                // PAUSE SESSION
+                isTrainerRunning = false;
+                clearInterval(trainerInterval);
+                document.getElementById('trainer-play-icon').className = 'fa-solid fa-play text-[10px]';
+                document.getElementById('trainer-play-text').innerText = 'Start Trainer';
+                document.getElementById('trainer-breath-ring').classList.remove('pulse-breathing-active');
+            } else {
+                // START SESSION
+                isTrainerRunning = true;
+                document.getElementById('trainer-play-icon').className = 'fa-solid fa-pause text-[10px]';
+                document.getElementById('trainer-play-text').innerText = 'Pause Session';
+                document.getElementById('trainer-breath-ring').classList.add('pulse-breathing-active');
+
+                runTrainerTick();
+            }
+        }
+
+        function resetTrainerSession() {
+            isTrainerRunning = false;
+            clearInterval(trainerInterval);
+            trainerCycle = 'in';
+            trainerSecondsLeft = defaultBoxSecs;
+
+            document.getElementById('trainer-play-icon').className = 'fa-solid fa-play text-[10px]';
+            document.getElementById('trainer-play-text').innerText = 'Start Trainer';
+
+            const ring = document.getElementById('trainer-breath-ring');
+            ring.classList.remove('pulse-breathing-active');
+            ring.style.transform = 'scale(0.9)'; // reset size
+
+            document.getElementById('trainer-breath-label').innerText = 'Breathe In';
+            document.getElementById('trainer-breath-timer').innerText = `${defaultBoxSecs}s`;
+        }
+
+        function runTrainerTick() {
+            trainerInterval = setInterval(() => {
+                if (!isTrainerRunning) return;
+
+                trainerSecondsLeft--;
+                document.getElementById('trainer-breath-timer').innerText = `${trainerSecondsLeft}s`;
+
+                // Sync mock phone breathing countdown values safely
+                const mockBreathTimer = document.getElementById('mock-breath-timer');
+                if (mockBreathTimer) mockBreathTimer.innerText = `${trainerSecondsLeft}s`;
+
+                if (trainerSecondsLeft <= 0) {
+                    // CYCLE TRANSITION
+                    if (trainerCycle === 'in') {
+                        trainerCycle = 'hold';
+                        trainerSecondsLeft = defaultBoxSecs;
+                        document.getElementById('trainer-breath-label').innerText = 'Hold Breath';
+                        const mockBreathText = document.getElementById('mock-breath-text');
+                        if (mockBreathText) mockBreathText.innerText = 'Hold';
+                        // Ring stays at peak size
+                        document.getElementById('trainer-breath-ring').style.transform = 'scale(1.15)';
+                    } else if (trainerCycle === 'hold') {
+                        trainerCycle = 'out';
+                        trainerSecondsLeft = defaultBoxSecs;
+                        document.getElementById('trainer-breath-label').innerText = 'Breathe Out';
+                        const mockBreathText = document.getElementById('mock-breath-text');
+                        if (mockBreathText) mockBreathText.innerText = 'Breathe Out';
+                        // Ring scales down
+                        document.getElementById('trainer-breath-ring').style.transform = 'scale(0.9)';
+                    } else {
+                        trainerCycle = 'in';
+                        trainerSecondsLeft = defaultBoxSecs;
+                        document.getElementById('trainer-breath-label').innerText = 'Breathe In';
+                        const mockBreathText = document.getElementById('mock-breath-text');
+                        if (mockBreathText) mockBreathText.innerText = 'Breathe In';
+                        // Ring scales up
+                        document.getElementById('trainer-breath-ring').style.transform = 'scale(1.15)';
+                    }
+                }
+            }, 1000);
+        }
+
+        // Sync visual phone mockup ticking indicator in background
+        let mockAudioSecs = 324; // 05:24
+        setInterval(() => {
+            if (isGlobalAudioPlaying) {
+                mockAudioSecs++;
+                if (mockAudioSecs >= 720) mockAudioSecs = 0; // reset at 12:00
+
+                const mins = Math.floor(mockAudioSecs / 60);
+                const secs = mockAudioSecs % 60;
+                const mockAudioTime = document.getElementById('mock-audio-time');
+                if (mockAudioTime) mockAudioTime.innerText = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+
+                // Advance slider
+                const pct = (mockAudioSecs / 720) * 100;
+                const mockAudioProgress = document.getElementById('mock-audio-progress');
+                if (mockAudioProgress) mockAudioProgress.style.width = `${pct}%`;
+            }
+        }, 1000);
+
+    </script>
+
+    <!-- Global dynamically loaded components scripts -->
+    <script src="components/data-loader.js"></script>
+    <script src="components/components.js"></script>
+
+</body>
+
+</html>

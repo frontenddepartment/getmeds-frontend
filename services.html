@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Services - GetMEDS | Revolutionizing Healthcare Access</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#0D99FF',
+                        dark: '#1A202C',
+                        accent: '#61A644'
+                    },
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #ffffff;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, #61A644, #1D9FDA);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Service card hover */
+        .service-card {
+            transition: transform 0.35s cubic-bezier(.22, .68, 0, 1.2), box-shadow 0.35s ease;
+        }
+
+        .service-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 30px 60px -12px rgba(13, 153, 255, 0.18);
+        }
+
+        .service-card:hover .svc-icon {
+            transform: scale(1.12) rotate(6deg);
+        }
+
+        .svc-icon {
+            transition: transform 0.35s cubic-bezier(.22, .68, 0, 1.2);
+        }
+
+        /* Stat counter */
+        .stat-item {
+            border-right: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .stat-item:last-child {
+            border-right: none;
+        }
+
+        /* Scroll Reveal Effect */
+        .reveal {
+            transform: translateY(30px);
+            opacity: 0;
+            transition: all 0.8s ease-out;
+        }
+
+        .reveal.active {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* FAQ accordion */
+        .faq-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease, padding 0.3s ease;
+        }
+
+        .faq-body.open {
+            max-height: 300px;
+        }
+
+        .faq-chevron {
+            transition: transform 0.3s ease;
+        }
+
+        .faq-item.open .faq-chevron {
+            transform: rotate(180deg);
+        }
+
+        /* Process step connector */
+        .step-line {
+            background: linear-gradient(to bottom, #1D9FDA, #61A644);
+        }
+
+        /* Floating card bounce */
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(-8px)
+            }
+
+            50% {
+                transform: translateY(0)
+            }
+        }
+
+        .animate-float {
+            animation: float 3.5s ease-in-out infinite;
+        }
+
+        /* Gradient icon backgrounds */
+        .icon-blue {
+            background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+            color: #1D9FDA;
+        }
+
+        .icon-green {
+            background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+            color: #61A644;
+        }
+
+        .icon-purple {
+            background: linear-gradient(135deg, #f3e8ff, #e9d5ff);
+            color: #9333ea;
+        }
+
+        .icon-orange {
+            background: linear-gradient(135deg, #ffedd5, #fed7aa);
+            color: #ea580c;
+        }
+
+        .icon-teal {
+            background: linear-gradient(135deg, #ccfbf1, #99f6e4);
+            color: #0d9488;
+        }
+
+        .icon-rose {
+            background: linear-gradient(135deg, #ffe4e6, #fecdd3);
+            color: #e11d48;
+        }
+
+        .badge-pill {
+            background: linear-gradient(135deg, rgba(97, 166, 68, .12), rgba(29, 159, 218, .12));
+            border: 1px solid rgba(29, 159, 218, .2);
+            color: #1D9FDA;
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: -200% center
+            }
+
+            100% {
+                background-position: 200% center
+            }
+        }
+
+        .btn-gradient {
+            background: linear-gradient(90deg, #61A644, #1D9FDA, #61A644);
+            background-size: 200% auto;
+            transition: background-position .5s ease, box-shadow .3s ease;
+        }
+
+        .btn-gradient:hover {
+            background-position: right center;
+            box-shadow: 0 8px 24px rgba(29, 159, 218, .4);
+        }
+    </style>
+</head>
+
+<body class="bg-white text-gray-800 antialiased overflow-x-hidden">
+
+    <!-- Navbar Component -->
+    <div id="navbar-placeholder"></div>
+
+    <!-- Enhanced Hero Section -->
+    <section class="w-full mx-auto px-3 sm:px-4 md:px-6 mt-3 md:mt-4 mb-0 max-w-[1600px]">
+        <div class="relative rounded-[1.5rem] overflow-hidden min-h-[450px] md:min-h-[500px] flex items-end group">
+            <!-- Background Image -->
+            <div class="absolute inset-0 z-0">
+                <img src="assets/services_hero_new.png" data-json-src="hero.image" data-json-alt="hero.imageAlt"
+                    class="w-full h-full object-cover object-center transform group-hover:scale-105 transition-transform duration-[4s]"
+                    alt="Healthcare Services">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                <div
+                    class="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent w-full md:w-[70%]">
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div class="relative z-10 w-full px-8 md:px-14 pb-12 md:pb-16 pt-20 max-w-4xl reveal">
+
+                <h1 class="text-[28px] md:text-[38px] leading-tight font-bold mb-3 tracking-tight">
+                    <span data-json="hero.headingLine1" class="text-white">Our Premium</span><br>
+                    <span data-json="hero.headingAccent"
+                        class="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent leading-tight tracking-tight">Services</span>
+                </h1>
+                <p data-json="hero.description" class="text-white/90 text-[13px] md:text-[14px] max-w-[600px] mb-5 leading-normal font-normal">
+                    GetMEDS delivers precision pharmaceutical solutions and nationwide distribution — from regulatory
+                    compliance and government bidding to pioneering digital oncology care.
+                </p>
+                <div class="flex flex-wrap gap-4">
+                    <a href="#services-grid"
+                        class="btn-gradient text-white font-semibold py-2 px-6 rounded-full text-[13px] inline-flex items-center gap-2 shadow-md">
+                        Explore Services <i class="fa-solid fa-arrow-down text-xs"></i>
+                    </a>
+                    <a href="contact-us.html"
+                        class="bg-white/10 backdrop-blur-md border border-white/25 text-white font-semibold py-2 px-6 rounded-full text-[13px] hover:bg-white/20 transition inline-flex items-center gap-2">
+                        Contact Us <i class="fa-solid fa-arrow-right text-xs"></i>
+                    </a>
+                </div>
+            </div>
+
+
+        </div>
+    </section>
+
+    <!-- Stats Bar -->
+    <section class="max-w-[1600px] mx-auto px-3 sm:px-4 md:px-6 mb-10">
+        <div class="rounded-b-[2rem] px-8 py-7 grid grid-cols-2 md:grid-cols-4 divide-x divide-gray-100">
+            <div class="stat-item flex flex-col items-center px-6 py-2 border-r border-gray-100 last:border-0 reveal">
+                <span class="text-[32px] font-black text-gradient leading-none" data-target="120">0</span>
+                <span class="text-gray-400 text-[11px] font-semibold uppercase tracking-widest mt-2">Countries
+                    Served</span>
+            </div>
+            <div class="stat-item flex flex-col items-center px-6 py-2 border-r border-gray-100 last:border-0 reveal">
+                <span class="text-[32px] font-black text-gradient leading-none" data-target="50000">0</span>
+                <span class="text-gray-400 text-[11px] font-semibold uppercase tracking-widest mt-2">Patients
+                    Helped</span>
+            </div>
+            <div class="stat-item flex flex-col items-center px-6 py-2 border-r border-gray-100 last:border-0 reveal">
+                <span class="text-[32px] font-black text-gradient leading-none" data-target="500">0</span>
+                <span class="text-gray-400 text-[11px] font-semibold uppercase tracking-widest mt-2">Partner
+                    Clinics</span>
+            </div>
+            <div class="stat-item flex flex-col items-center px-6 py-2 last:border-0 reveal">
+                <span class="text-[32px] font-black text-gradient leading-none" data-target="24">0</span>
+                <span class="text-gray-400 text-[11px] font-semibold uppercase tracking-widest mt-2">Hour Support</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services — Direct Layout -->
+    <section id="services-grid" class="pt-10 pb-8 scroll-mt-24 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+            <!-- Section Header -->
+            <div class="mb-16 reveal">
+                <div
+                    class="inline-flex items-center gap-2 px-4 py-2 rounded-full badge-pill text-[11px] font-bold uppercase tracking-widest mb-4">
+                    <i class="fa-solid fa-briefcase-medical"></i> Corporate Services
+                </div>
+                <h2 class="text-2xl md:text-3xl font-bold mb-4 tracking-tight text-[#2A2A2A]"><span
+                        class="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">Our</span>
+                    Core Competencies</h2>
+                <p data-json="sectionDescription" class="text-gray-500 mt-3 text-[15px] max-w-none">We provide specialized pharmaceutical solutions
+                    designed for reliability, compliance, and nationwide impact across the healthcare sector. Our
+                    commitment to excellence ensures that every partner and patient receives the highest standard of
+                    care through innovative distribution and strategic collaboration.</p>
+            </div>
+
+            <!-- Divider list of services -->
+            <div class="divide-y divide-gray-100">
+
+                <!-- Service 1: Regulatory & Compliance -->
+                <div class="flex flex-col md:flex-row gap-6 py-12 reveal">
+                    <div class="flex-shrink-0">
+                        <div
+                            class="h-14 w-14 rounded-full bg-gradient-to-br from-[#61A644] to-[#1D9FDA] flex items-center justify-center text-xl text-white shadow-lg">
+                            <i class="fa-solid fa-file-shield"></i>
+                        </div>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex flex-wrap items-center gap-3 mb-2">
+                            <h3 class="text-[20px] font-bold text-dark">Regulatory & <span
+                                    class="text-gradient">Compliance</span></h3>
+                            <span
+                                class="text-[10px] font-black uppercase tracking-widest text-blue-400 bg-blue-50 px-3 py-1 rounded-full">FDA
+                                Registration</span>
+                        </div>
+                        <p class="text-gray-500 text-[15px] leading-[1.8] mb-5">We ensure full compliance with the Food
+                            and Drug Administration (FDA) regulations and industry standards, maintaining proper product
+                            registration, documentation, and adherence to guarantee safe, legal, and reliable healthcare
+                            solutions. Our dedicated compliance team manages every detail of the regulatory lifecycle to
+                            keep operations seamless and secure.</p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span
+                                class="text-[12px] bg-gray-50 border border-gray-100 text-gray-600 px-3 py-1 rounded-full">FDA
+                                Quality Standards</span>
+                            <span
+                                class="text-[12px] bg-gray-50 border border-gray-100 text-gray-600 px-3 py-1 rounded-full">Proper
+                                Product Registration</span>
+                            <span
+                                class="text-[12px] bg-gray-50 border border-gray-100 text-gray-600 px-3 py-1 rounded-full">Documentation
+                                Adherence</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Service 2: Precision Supply Chain -->
+                <div class="flex flex-col md:flex-row gap-6 py-12 reveal">
+                    <div class="flex-shrink-0">
+                        <div
+                            class="h-14 w-14 rounded-full bg-gradient-to-br from-[#61A644] to-[#1D9FDA] flex items-center justify-center text-xl text-white shadow-lg">
+                            <i class="fa-solid fa-truck-ramp-box"></i>
+                        </div>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex flex-wrap items-center gap-3 mb-2">
+                            <h3 class="text-[20px] font-bold text-dark">Precision Supply <span
+                                    class="text-gradient">Chain</span></h3>
+                            <span
+                                class="text-[10px] font-black uppercase tracking-widest text-purple-400 bg-purple-50 px-3 py-1 rounded-full">Nationwide
+                                Logistics</span>
+                        </div>
+                        <p class="text-gray-500 text-[15px] leading-[1.8] mb-5">A precision-managed supply chain that
+                            ensures every medicine batch is tracked, handled, and delivered with maximum control and
+                            accountability. Backed by rapid response and flexible delivery schedules, we move beyond
+                            fixed timetables to support urgent and critical patient needs — because access to
+                            life-saving medicines should never be delayed.</p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span
+                                class="text-[12px] bg-gray-50 border border-gray-100 text-gray-600 px-3 py-1 rounded-full">Flexible
+                                Delivery Schedules</span>
+                            <span
+                                class="text-[12px] bg-gray-50 border border-gray-100 text-gray-600 px-3 py-1 rounded-full">Batch-level
+                                Accountability</span>
+                            <span
+                                class="text-[12px] bg-gray-50 border border-gray-100 text-gray-600 px-3 py-1 rounded-full">Urgent
+                                Response Systems</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Service 3: Sales and Distribution -->
+                <div class="flex flex-col md:flex-row gap-6 py-12 reveal">
+                    <div class="flex-shrink-0">
+                        <div
+                            class="h-14 w-14 rounded-full bg-gradient-to-br from-[#61A644] to-[#1D9FDA] flex items-center justify-center text-xl text-white shadow-lg">
+                            <i class="fa-solid fa-handshake"></i>
+                        </div>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex flex-wrap items-center gap-3 mb-2">
+                            <h3 class="text-[20px] font-bold text-dark">Sales and <span
+                                    class="text-gradient">Distribution</span></h3>
+                            <span
+                                class="text-[10px] font-black uppercase tracking-widest text-teal-500 bg-teal-50 px-3 py-1 rounded-full">Market
+                                Solutions</span>
+                        </div>
+                        <p class="text-gray-500 text-[15px] leading-[1.8] mb-5">We deliver comprehensive solutions for
+                            the pharmaceutical sector, building strong connections with partners and clients across the
+                            industry. Our services extend to distributors, wholesalers, traders, drugstores, and
+                            standalone clinics, ensuring seamless collaboration, reliable access to high-quality
+                            medicines, and support for the efficient growth of every business we work with.</p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span
+                                class="text-[12px] bg-gray-50 border border-gray-100 text-gray-600 px-3 py-1 rounded-full">Strategic
+                                Telemarketing</span>
+                            <span
+                                class="text-[12px] bg-gray-50 border border-gray-100 text-gray-600 px-3 py-1 rounded-full">Agile
+                                Solutions</span>
+                            <span
+                                class="text-[12px] bg-gray-50 border border-gray-100 text-gray-600 px-3 py-1 rounded-full">Nationwide
+                                Reach</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Service 4: Government Bidding -->
+                <div class="flex flex-col md:flex-row gap-6 py-12 reveal">
+                    <div class="flex-shrink-0">
+                        <div
+                            class="h-14 w-14 rounded-full bg-gradient-to-br from-[#61A644] to-[#1D9FDA] flex items-center justify-center text-xl text-white shadow-lg">
+                            <i class="fa-solid fa-building-columns"></i>
+                        </div>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex flex-wrap items-center gap-3 mb-2">
+                            <h3 class="text-[20px] font-bold text-dark">Government <span
+                                    class="text-gradient">Bidding</span></h3>
+                            <span
+                                class="text-[10px] font-black uppercase tracking-widest text-rose-400 bg-rose-50 px-3 py-1 rounded-full">Public
+                                Healthcare</span>
+                        </div>
+                        <p class="text-gray-500 text-[15px] leading-[1.8] mb-5">Fully equipped to participate in
+                            government bidding across large public hospitals nationwide, we provide competitive,
+                            high-quality Oncology, Hematology, and Anesthesiology medicines. Our bidding specialists,
+                            with over 15 years of experience, bring unmatched connections, expertise, and competence to
+                            every participation, ensuring strict compliance and the delivery of safe, reliable
+                            healthcare solutions.</p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span
+                                class="text-[12px] bg-gray-50 border border-gray-100 text-gray-600 px-3 py-1 rounded-full">15+
+                                Years Proven Experience</span>
+                            <span
+                                class="text-[12px] bg-gray-50 border border-gray-100 text-gray-600 px-3 py-1 rounded-full">Nationwide
+                                Public Hospitals</span>
+                            <span
+                                class="text-[12px] bg-gray-50 border border-gray-100 text-gray-600 px-3 py-1 rounded-full">Strict
+                                Bidding Compliance</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Service 5: Certificate of Listing (CLIDP) -->
+                <div class="flex flex-col md:flex-row gap-6 py-12 reveal">
+                    <div class="flex-shrink-0">
+                        <div
+                            class="h-14 w-14 rounded-full bg-gradient-to-br from-[#61A644] to-[#1D9FDA] flex items-center justify-center text-xl text-white shadow-lg">
+                            <i class="fa-solid fa-box-open"></i>
+                        </div>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex flex-wrap items-center gap-3 mb-2">
+                            <h3 class="text-[20px] font-bold text-dark">Certificate of Listing <span
+                                    class="text-gradient">(CLIDP)</span></h3>
+                            <span
+                                class="text-[10px] font-black uppercase tracking-widest text-orange-400 bg-orange-50 px-3 py-1 rounded-full">Rebranding</span>
+                        </div>
+                        <p class="text-gray-500 text-[15px] leading-[1.8] mb-5">We provide CLIDP services across our CPR
+                            portfolio, enabling partners to rebrand and commercialize their own product lines with
+                            fast-track processing, efficient execution, and shorter time-to-market. We grow with our
+                            clients through every stage of their expansion, providing the infrastructure needed for
+                            low-risk growth.</p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span
+                                class="text-[12px] bg-gray-50 border border-gray-100 text-gray-600 px-3 py-1 rounded-full">End-to-End
+                                Execution</span>
+                            <span
+                                class="text-[12px] bg-gray-50 border border-gray-100 text-gray-600 px-3 py-1 rounded-full">Low-Risk
+                                &amp; Flexible MOQs</span>
+                            <span
+                                class="text-[12px] bg-gray-50 border border-gray-100 text-gray-600 px-3 py-1 rounded-full">Prioritized
+                                Manufacturing</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Service 6: Digital & Smart Solutions -->
+                <div class="flex flex-col md:flex-row gap-6 py-12 reveal">
+                    <div class="flex-shrink-0">
+                        <div
+                            class="h-14 w-14 rounded-full bg-gradient-to-br from-[#61A644] to-[#1D9FDA] flex items-center justify-center text-xl text-white shadow-lg">
+                            <i class="fa-solid fa-mobile-screen-button"></i>
+                        </div>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex flex-wrap items-center gap-3 mb-2">
+                            <h3 class="text-[20px] font-bold text-dark">Digital &amp; Smart <span
+                                    class="text-gradient">Solutions</span></h3>
+                            <span
+                                class="text-[10px] font-black uppercase tracking-widest text-green-500 bg-green-50 px-3 py-1 rounded-full">Innovation</span>
+                        </div>
+                        <p class="text-gray-500 text-[15px] leading-[1.8] mb-5">Introducing Getmeds, the first to
+                            pioneer fully digital oncology care in the Philippines. We deliver fast, reliable, and
+                            flexible access to life-saving medicines anytime, anywhere through our innovative e-commerce
+                            platform and mobile app. Smart, tech-driven solutions that put patients first — setting a
+                            new standard in pharmaceutical services.</p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span
+                                class="text-[12px] bg-gray-50 border border-gray-100 text-gray-600 px-3 py-1 rounded-full">Pioneering
+                                Digital Oncology</span>
+                            <span
+                                class="text-[12px] bg-gray-50 border border-gray-100 text-gray-600 px-3 py-1 rounded-full">Innovative
+                                E-commerce Platform</span>
+                            <span
+                                class="text-[12px] bg-gray-50 border border-gray-100 text-gray-600 px-3 py-1 rounded-full">Mobile
+                                App Integration</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Why Choose Us -->
+    <section class="py-24 bg-white overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col lg:flex-row items-center gap-12 lg:gap-12">
+                <!-- Left Content -->
+                <div class="lg:w-[48%] reveal">
+                    <div
+                        class="inline-flex items-center gap-2 px-4 py-2 rounded-full badge-pill text-[11px] font-bold uppercase tracking-widest mb-6">
+                        <i class="fa-solid fa-medal"></i> Our Promise</div>
+                    <h2 class="text-[28px] md:text-[38px] font-bold text-dark leading-tight mb-6 tracking-tight">Why
+                        Trust <br><span
+                            class="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">GetMEDS</span>
+                        for Your Health?</h2>
+                    <p class="text-gray-500 text-[15px] leading-relaxed mb-10 max-w-lg">We don't just distribute
+                        medicine; we facilitate healing. Through strict quality standards and advanced digital
+                        solutions, we ensure your healthcare journey is safe, private, and efficient.</p>
+                    <a href="about-us.html"
+                        class="btn-gradient text-white font-bold py-4 px-10 rounded-xl text-[14px] inline-flex items-center gap-3 shadow-lg">Learn
+                        More <i class="fa-solid fa-arrow-right text-xs"></i></a>
+                </div>
+
+                <!-- Right Content (Staggered Cards) -->
+                <div class="lg:w-[52%] relative reveal">
+                    <!-- Background blobs for depth -->
+                    <div class="absolute -top-10 -right-10 w-64 h-64 bg-blue-50 rounded-full blur-3xl opacity-60"></div>
+                    <div class="absolute -bottom-10 -left-10 w-64 h-64 bg-green-50 rounded-full blur-3xl opacity-60">
+                    </div>
+
+                    <div class="space-y-6 relative z-10">
+                        <!-- Card 1 -->
+                        <div
+                            class="bg-white p-7 rounded-2xl shadow-[0_12px_45px_rgba(0,0,0,0.05)] flex items-center gap-6 relative max-w-[540px] group hover:translate-y-[-5px] transition-all duration-300 overflow-hidden">
+                            <!-- Gradient Accent -->
+                            <div
+                                class="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-[#61A644] to-[#1D9FDA]">
+                            </div>
+                            <div
+                                class="flex-shrink-0 h-14 w-14 rounded-full bg-gradient-to-br from-[#61A644]/10 to-[#1D9FDA]/10 flex items-center justify-center text-2xl text-[#61A644]">
+                                <i class="fa-solid fa-shield-halved"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-[17px] font-bold text-dark mb-1">Verified Authenticity</h4>
+                                <p class="text-gray-400 text-[13px] leading-relaxed">Strict international quality
+                                    standards ensuring genuine care.</p>
+                            </div>
+                            <i
+                                class="fa-solid fa-quote-right absolute top-6 right-8 text-gray-100 text-2xl opacity-50"></i>
+                        </div>
+
+                        <!-- Card 2 (Staggered) -->
+                        <div
+                            class="bg-white p-7 rounded-2xl shadow-[0_12px_45px_rgba(0,0,0,0.05)] flex items-center gap-6 relative max-w-[540px] lg:ml-12 group hover:translate-y-[-5px] transition-all duration-300 overflow-hidden">
+                            <!-- Gradient Accent -->
+                            <div
+                                class="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-[#61A644] to-[#1D9FDA]">
+                            </div>
+                            <div
+                                class="flex-shrink-0 h-14 w-14 rounded-full bg-gradient-to-br from-[#61A644]/10 to-[#1D9FDA]/10 flex items-center justify-center text-2xl text-[#1D9FDA]">
+                                <i class="fa-solid fa-user-shield"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-[17px] font-bold text-dark mb-1">Patient Data Privacy</h4>
+                                <p class="text-gray-400 text-[13px] leading-relaxed">Banking-grade encryption protecting
+                                    your health records.</p>
+                            </div>
+                            <i
+                                class="fa-solid fa-quote-right absolute top-6 right-8 text-gray-100 text-2xl opacity-50"></i>
+                        </div>
+
+                        <!-- Card 3 -->
+                        <div
+                            class="bg-white p-7 rounded-2xl shadow-[0_12px_45px_rgba(0,0,0,0.05)] flex items-center gap-6 relative max-w-[540px] group hover:translate-y-[-5px] transition-all duration-300 overflow-hidden">
+                            <!-- Gradient Accent -->
+                            <div
+                                class="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-[#61A644] to-[#1D9FDA]">
+                            </div>
+                            <div
+                                class="flex-shrink-0 h-14 w-14 rounded-full bg-gradient-to-br from-[#61A644]/10 to-[#1D9FDA]/10 flex items-center justify-center text-2xl text-[#61A644]">
+                                <i class="fa-solid fa-clock"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-[17px] font-bold text-dark mb-1">Efficiency Redefined</h4>
+                                <p class="text-gray-400 text-[13px] leading-relaxed">Optimized steps for speed — less
+                                    waiting, more healing.</p>
+                            </div>
+                            <i
+                                class="fa-solid fa-quote-right absolute top-6 right-8 text-gray-100 text-2xl opacity-50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Banner -->
+    <section class="py-20 bg-gradient-to-r from-[#1a2744] to-[#0f3460]">
+        <div class="max-w-7xl mx-auto px-4 text-center reveal">
+            <h2 class="text-[28px] md:text-[38px] font-bold text-white mb-4 tracking-tight">Ready to Experience <span
+                    class="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">Better
+                    Healthcare?</span></h2>
+            <p class="text-white/60 text-[15px] mb-10 max-w-xl mx-auto">Join thousands of patients who trust GetMEDS for
+                fast, reliable, and expert medical services every day.</p>
+            <div class="flex flex-wrap justify-center gap-4">
+                <a href="order-medicines.html"
+                    class="btn-gradient text-white font-bold py-4 px-10 rounded-full text-[14px] inline-flex items-center gap-3 shadow-lg">Order
+                    Medicines <i class="fa-solid fa-arrow-right text-xs"></i></a>
+                <a href="contact-us.html"
+                    class="bg-white/10 backdrop-blur-md border border-white/20 text-white font-bold py-4 px-10 rounded-full text-[14px] hover:bg-white/20 transition inline-flex items-center gap-3">Contact
+                    Us <i class="fa-solid fa-phone text-xs"></i></a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer (Dark Theme - Identical to Home) -->
+    <footer class="bg-[#1A1D2B] text-gray-300 pt-16 pb-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-12 relative">
+                <!-- Branding -->
+                <div class="lg:col-span-2 space-y-6">
+                    <div class="flex items-center">
+                        <img src="assets/getmedslogo.png" alt="GetMEDS Logo"
+                            class="h-8 w-auto object-contain brightness-0 invert opacity-90">
+                    </div>
+                    <p class="text-sm text-gray-400 max-w-xs">
+                        GetMEDS is your trusted online healthcare partner, providing access to top-quality medicines,
+                        doctor consultations, and lab tests from anywhere in the world.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#"
+                            class="h-10 w-10 rounded-full bg-gray-800 flex items-center justify-center text-white hover:bg-primary transition"><i
+                                class="fa-brands fa-facebook-f"></i></a>
+                        <a href="#"
+                            class="h-10 w-10 rounded-full bg-gray-800 flex items-center justify-center text-white hover:bg-primary transition"><i
+                                class="fa-brands fa-twitter"></i></a>
+                        <a href="#"
+                            class="h-10 w-10 rounded-full bg-gray-800 flex items-center justify-center text-white hover:bg-primary transition"><i
+                                class="fa-brands fa-instagram"></i></a>
+                        <a href="#"
+                            class="h-10 w-10 rounded-full bg-gray-800 flex items-center justify-center text-white hover:bg-primary transition"><i
+                                class="fa-brands fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+
+                <!-- Links 1 -->
+                <div>
+                    <h4 class="text-white font-bold mb-6 text-lg">About</h4>
+                    <ul class="space-y-3 text-sm">
+                        <li><a href="about-us.html" class="hover:text-primary transition">About Us</a></li>
+                        <li><a href="#" class="hover:text-primary transition">Our Leadership</a></li>
+                        <li><a href="#" class="hover:text-primary transition">Careers</a></li>
+                        <li><a href="#" class="hover:text-primary transition">News &amp; Media</a></li>
+                    </ul>
+                </div>
+
+                <!-- Links 2 -->
+                <div>
+                    <h4 class="text-white font-bold mb-6 text-lg">Delivery</h4>
+                    <ul class="space-y-3 text-sm">
+                        <li><a href="#" class="hover:text-primary transition">Track Order</a></li>
+                        <li><a href="#" class="hover:text-primary transition">Return Policy</a></li>
+                        <li><a href="#" class="hover:text-primary transition">Delivery Info</a></li>
+                        <li><a href="#" class="hover:text-primary transition">FAQs</a></li>
+                    </ul>
+                </div>
+
+                <!-- Links 3 -->
+                <div>
+                    <h4 class="text-white font-bold mb-6 text-lg">Contact</h4>
+                    <ul class="space-y-3 text-sm">
+                        <li class="flex items-start space-x-3">
+                            <i class="fa-solid fa-location-dot mt-1 text-primary"></i>
+                            <span>123 Medical Drive, Health City, NY 10001</span>
+                        </li>
+                        <li class="flex items-center space-x-3">
+                            <i class="fa-solid fa-phone text-primary"></i>
+                            <span>+1 (800) 123-4567</span>
+                        </li>
+                        <li class="flex items-center space-x-3">
+                            <i class="fa-solid fa-envelope text-primary"></i>
+                            <span>support@getmeds.com</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div
+                class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-gray-500">
+                <p>&copy; 2023 GetMEDS. All rights reserved.</p>
+                <div class="flex space-x-6 mt-4 md:mt-0">
+                    <a href="#" class="hover:text-white transition">Privacy Policy</a>
+                    <a href="#" class="hover:text-white transition">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="components/data-loader.js"></script>
+    <script src="components/components.js"></script>
+    <script>
+        // Animated stat counters
+        function animateCounters() {
+            document.querySelectorAll('[data-target]').forEach(el => {
+                const target = parseInt(el.dataset.target);
+                let current = 0;
+                const step = target / (1800 / 16);
+                const timer = setInterval(() => {
+                    current = Math.min(current + step, target);
+                    el.textContent = target >= 1000
+                        ? Math.floor(current).toLocaleString() + '+'
+                        : Math.floor(current) + (target === 24 ? '/7' : '+');
+                    if (current >= target) clearInterval(timer);
+                }, 16);
+            });
+        }
+        const statsEl = document.querySelector('[data-target]');
+        if (statsEl) {
+            const obs = new IntersectionObserver(e => { if (e[0].isIntersecting) { animateCounters(); obs.disconnect(); } }, { threshold: 0.3 });
+            obs.observe(statsEl.closest('section'));
+        }
+    </script>
+    <script>
+        // Scroll Reveal Animation Logic
+        document.addEventListener("DOMContentLoaded", function () {
+            const revealOptions = {
+                root: null,
+                threshold: 0.1,
+                rootMargin: "0px 0px -50px 0px"
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                    } else {
+                        entry.target.classList.remove('active');
+                    }
+                });
+            }, revealOptions);
+
+            const revealElements = document.querySelectorAll('.reveal');
+            revealElements.forEach(el => observer.observe(el));
+        });
+    </script>
+</body>
+
+</html>

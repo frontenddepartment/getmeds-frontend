@@ -1,0 +1,47 @@
+{
+  "meta": {
+    "title": "CSR - GetMEDS",
+    "description": "Corporate Social Responsibility at GetMeds. Our mission to make healthcare accessible through partnerships and patient advocacy."
+  },
+  "hero": {
+    "image": "assets/csrhero.png",
+    "imageAlt": "Corporate Social Responsibility",
+    "headingLine1": "Corporate Social",
+    "headingAccent": "Responsibility",
+    "description": "We don't just distribute medicine; we facilitate healing. Through NGO partnerships and digital health advocacy, we ensure no patient navigates their journey alone."
+  },
+  "programs": [
+    {
+      "id": "free-cancer-medicines",
+      "sectionLabel": "Patient Support Initiatives",
+      "heading": "Free Cancer Medicines Program",
+      "flyerImage": { "src": "assets/fbpost.png", "alt": "Free Cancer Medicines Flyer" },
+      "descriptionParagraphs": [
+        "Getmeds runs an ongoing online campaign dedicated to providing free cancer medicines to financially challenged patients who struggle to afford essential treatments. Through this initiative, patients in need can access vital oncology medications without the burden of cost, helping ensure continuity of care and improving health outcomes.",
+        "Getmeds runs an ongoing online campaign dedicated to providing free cancer medicines to financially challenged patients who struggle to afford essential treatments. Through this initiative, patients in need can access vital oncology medications without the burden of cost, helping ensure continuity of care and improving health outcomes."
+      ],
+      "programImage": { "src": "assets/model.png", "alt": "Medicine Distribution" }
+    }
+  ],
+  "patientJourneys": {
+    "heading": "Watch some of our patients' journeys here:",
+    "video": {
+      "src": "https://www.youtube.com/embed/aIKzCDi2NGA",
+      "title": "DORIE SHARES HER BREAST CANCER JOURNEY AND ADVICE | CARE AT GETMEDS"
+    },
+    "links": [
+      {
+        "platform": "YouTube",
+        "icon": "fa-brands fa-youtube",
+        "href": "https://youtu.be/aIKzCDi2NGA",
+        "label": "https://youtu.be/aIKzCDi2NGA"
+      },
+      {
+        "platform": "Facebook",
+        "icon": "fa-brands fa-facebook",
+        "href": "https://www.facebook.com/reel/971664227768897",
+        "label": "https://www.facebook.com/reel/971664227768897"
+      }
+    ]
+  }
+}

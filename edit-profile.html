@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile - GetMEDS</title>
+    <!-- Use Tailwind CSS with custom configuration -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { primary: '#0D99FF', success: '#61A644', dark: '#1A202C', footer: '#1A1D2B', cardbg: '#F8FAFC' },
+                    fontFamily: { sans: ['Poppins', 'sans-serif'] },
+                    borderWidth: { '3': '3px' }
+                }
+            }
+        }
+    </script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="components/components.js?v=1775704983"></script>
+    <style>
+        body { font-family: 'Poppins', sans-serif; background-color: #ffffff; }
+        .sidebar-link.active {
+            color: #0D99FF;
+            font-weight: 700;
+            background-color: #eff6ff;
+            border-left: 3px solid #0D99FF;
+        }
+    </style>
+</head>
+<body class="text-gray-800 antialiased relative">
+    <div id="navbar-placeholder"></div>
+
+    <main class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-8 mt-5 mb-20 flex flex-col md:flex-row gap-6">
+        
+        <!-- Left Sidebar -->
+        <aside class="w-full md:w-64 flex-shrink-0 bg-white rounded-xl p-5 shadow-sm border border-gray-100 h-fit">
+            <div class="flex items-center gap-4 mb-6 pt-2">
+                <div class="h-[52px] w-[52px] rounded-full bg-primary text-white flex items-center justify-center font-bold text-2xl shadow-md cursor-pointer hover:opacity-90 transition relative overflow-hidden group text-center" id="profile-avatar">
+                   U
+                </div>
+                <div class="overflow-hidden">
+                    <h3 class="font-bold text-gray-900 text-base leading-tight truncate" id="profile-name">User</h3>
+                    <a href="profile.html" class="text-xs text-gray-400 font-medium hover:text-primary transition flex items-center gap-1.5 mt-1"><i class="fa-solid fa-arrow-left text-[10px]"></i> Back to Dashboard</a>
+                </div>
+            </div>
+
+            <nav class="flex flex-col space-y-1">
+                <a href="edit-profile.html" class="sidebar-link active flex items-center gap-3 px-4 py-3 text-[13px] font-medium text-gray-600 rounded-r-lg hover:bg-gray-50 transition border-l-3 border-transparent" style="border-left-color: #0D99FF">
+                    <i class="fa-solid fa-user-pen text-center text-lg w-5 text-gray-400"></i> Edit Profile
+                </a>
+                <a href="profile.html" class="sidebar-link flex items-center gap-3 px-4 py-3 text-[13px] font-medium text-gray-600 rounded-r-lg hover:bg-gray-50 transition border-l-3 border-transparent">
+                    <i class="fa-solid fa-file-invoice text-center text-lg w-5 text-gray-400"></i> My Profile
+                </a>
+                
+                <hr class="border-gray-100 my-3 mx-2">
+                <button onclick="if(window.logoutUser) { window.logoutUser(); window.location.href='index.html'; }" class="flex items-center gap-3 px-4 py-2 mt-1 text-[13px] font-bold text-red-500 hover:bg-red-50 rounded-lg transition text-left w-full">
+                    <i class="fa-solid fa-arrow-right-from-bracket w-5 text-center text-base"></i> Logout
+                </button>
+            </nav>
+        </aside>
+
+        <!-- Main Content (Edit Form) -->
+        <div class="flex-1 min-w-0">
+            <div class="bg-white rounded-xl shadow-[0_5px_20px_-10px_rgba(0,0,0,0.05)] border border-gray-100 overflow-hidden">
+                
+                <div class="border-b border-gray-100 px-8 py-5 bg-white">
+                    <h1 class="text-xl font-bold text-gray-900">My Profile</h1>
+                    <p class="text-sm text-gray-500 mt-1">Manage and protect your account details</p>
+                </div>
+
+                <div class="p-8 flex flex-col md:flex-row gap-10">
+                    
+                    <!-- Form Area -->
+                    <div class="flex-1 space-y-6">
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
+                            <label class="text-[13.5px] text-gray-600 md:text-right font-medium">Username</label>
+                            <div class="md:col-span-3">
+                                <span class="text-gray-800 font-semibold text-sm" id="form-username">user_12345</span>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
+                            <label class="text-[13.5px] text-gray-600 md:text-right font-medium">Name</label>
+                            <div class="md:col-span-3">
+                                <input type="text" id="edit-name" class="w-full lg:w-3/4 border border-gray-200 rounded px-4 py-2 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition hover:border-gray-300" value="User">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
+                            <label class="text-[13.5px] text-gray-600 md:text-right font-medium">Email</label>
+                            <div class="md:col-span-3 flex items-center gap-2">
+                                <span class="text-gray-700 text-sm" id="form-email">user@example.com</span>
+                                <a href="javascript:void(0)" class="text-primary text-xs hover:underline ml-2 font-medium">Change</a>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
+                            <label class="text-[13.5px] text-gray-600 md:text-right font-medium">Phone Number</label>
+                            <div class="md:col-span-3 flex items-center gap-2">
+                                <span class="text-gray-700 text-sm">********89</span>
+                                <a href="javascript:void(0)" class="text-primary text-xs hover:underline ml-2 font-medium">Change</a>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
+                            <label class="text-[13.5px] text-gray-600 md:text-right font-medium">Gender</label>
+                            <div class="md:col-span-3 flex items-center gap-6">
+                                <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer hover:text-primary transition group">
+                                    <input type="radio" name="gender" class="accent-primary w-4 h-4 cursor-pointer" checked> <span class="group-hover:text-primary">Male</span>
+                                </label>
+                                <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer hover:text-primary transition group">
+                                    <input type="radio" name="gender" class="accent-primary w-4 h-4 cursor-pointer"> <span class="group-hover:text-primary">Female</span>
+                                </label>
+                                <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer hover:text-primary transition group">
+                                    <input type="radio" name="gender" class="accent-primary w-4 h-4 cursor-pointer"> <span class="group-hover:text-primary">Other</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
+                            <label class="text-[13.5px] text-gray-600 md:text-right font-medium">Date of Birth</label>
+                            <div class="md:col-span-3 flex gap-3 max-w-xs">
+                                <select class="flex-1 border border-gray-200 rounded px-2 text-center py-2 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition cursor-pointer">
+                                    <option>Day</option>
+                                    <option selected>01</option>
+                                    <option>02</option>
+                                </select>
+                                <select class="flex-1 border border-gray-200 rounded px-2 text-center py-2 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition cursor-pointer">
+                                    <option>Month</option>
+                                    <option selected>Jan</option>
+                                    <option>Feb</option>
+                                </select>
+                                <select class="flex-1 border border-gray-200 rounded px-2 text-center py-2 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition cursor-pointer">
+                                    <option>Year</option>
+                                    <option selected>1990</option>
+                                    <option>1991</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Save Button Row -->
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-start pt-4">
+                            <div class="md:col-span-4 flex justify-center md:justify-start md:pl-[25%] mt-2">
+                                <button id="save-profile-btn" class="text-white bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:from-[#1D9FDA] hover:to-[#61A644] font-bold py-2.5 px-10 rounded text-sm transition shadow-sm hover:shadow-md active:scale-95">Save</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Avatar Section -->
+                    <div class="w-full md:w-64 border-t md:border-t-0 md:border-l border-gray-100 flex flex-col items-center justify-start pt-8 md:pt-0">
+                        <div class="h-28 w-28 rounded-full bg-blue-50 text-white border border-gray-100 flex items-center justify-center font-bold text-5xl shadow-sm mb-5 relative group overflow-hidden" id="edit-avatar-display-bg">
+                            <img src="" alt="Avatar" class="w-full h-full object-cover hidden" id="avatar-img">
+                            <span class="text-primary hidden" id="edit-avatar-text">U</span>
+                        </div>
+                        <input type="file" id="avatar-input" accept="image/*" class="hidden">
+                        <button id="select-image-btn" class="bg-white border border-gray-300 text-gray-700 hover:text-primary hover:border-primary hover:bg-gray-50 font-medium py-1.5 px-4 rounded shadow-sm transition active:scale-95 text-[14px] mb-3">Select Image</button>
+                        <p class="text-[12px] text-gray-400 text-center leading-relaxed mt-1">File size: maximum 1 MB<br>File extension: .JPEG, .PNG</p>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const userJson = localStorage.getItem('getmeds_user');
+            let currentUser = userJson ? JSON.parse(userJson) : null;
+            let currentAvatarData = currentUser ? currentUser.avatar : null;
+
+            const avatarInput = document.getElementById('avatar-input');
+            const selectBtn = document.getElementById('select-image-btn');
+            const avatarImg = document.getElementById('avatar-img');
+            const avatarText = document.getElementById('edit-avatar-text');
+            const sidebarAvatar = document.getElementById('profile-avatar');
+            const sidebarName = document.getElementById('profile-name');
+
+            if (currentUser) {
+                const char = currentUser.name.charAt(0).toUpperCase();
+                
+                // Sidebar Setup
+                sidebarName.innerText = currentUser.name;
+                updateAvatarUI(currentUser.avatar, char, [sidebarAvatar, avatarImg, avatarText]);
+                
+                // Form Setup
+                document.getElementById('edit-name').value = currentUser.name;
+                document.getElementById('form-email').innerText = currentUser.email || 'user@example.com';
+                document.getElementById('form-username').innerText = (currentUser.name.split(' ')[0] || 'user').toLowerCase() + '_getmeds';
+            }
+
+            function updateAvatarUI(avatar, initials, elements) {
+                const [sidebar, mainImg, mainText] = elements;
+                if (avatar) {
+                    sidebar.innerHTML = `<img src="${avatar}" class="w-full h-full object-cover rounded-full">`;
+                    mainImg.src = avatar;
+                    mainImg.classList.remove('hidden');
+                    mainText.classList.add('hidden');
+                } else {
+                    sidebar.innerText = initials;
+                    sidebar.innerHTML = initials; // Ensure clean text/icon
+                    mainImg.classList.add('hidden');
+                    mainText.innerText = initials;
+                    mainText.classList.remove('hidden');
+                }
+            }
+
+            // Image Selection Flow
+            selectBtn.addEventListener('click', () => avatarInput.click());
+
+            avatarInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    if (file.size > 1024 * 1024) {
+                        alert("File is too large! Maximum size is 1MB.");
+                        return;
+                    }
+
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        currentAvatarData = event.target.result;
+                        // Preview
+                        avatarImg.src = currentAvatarData;
+                        avatarImg.classList.remove('hidden');
+                        avatarText.classList.add('hidden');
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // Save Button Logic
+            document.getElementById('save-profile-btn').addEventListener('click', () => {
+                const btn = document.getElementById('save-profile-btn');
+                const newName = document.getElementById('edit-name').value;
+                
+                if (!newName.trim()) return alert("Name cannot be empty");
+
+                btn.innerText = 'Saving...';
+                
+                setTimeout(() => {
+                    if(currentUser) {
+                        currentUser.name = newName;
+                        currentUser.avatar = currentAvatarData;
+                        localStorage.setItem('getmeds_user', JSON.stringify(currentUser));
+                        
+                        // Update UI immediately (sidebar)
+                        sidebarName.innerText = newName;
+                        const newChar = newName.charAt(0).toUpperCase();
+                        updateAvatarUI(currentAvatarData, newChar, [sidebarAvatar, avatarImg, avatarText]);
+
+                        // Notify components (navbar etc.)
+                        if(window.updateAuthUI) window.updateAuthUI();
+                        
+                        alert('Profile updated successfully!');
+                        btn.innerText = 'Save';
+                    }
+                }, 400);
+            });
+        });
+    </script>
+</body>
+</html>

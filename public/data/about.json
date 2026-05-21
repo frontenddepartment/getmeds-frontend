@@ -1,0 +1,174 @@
+{
+  "meta": {
+    "title": "About Us - GetMEDS",
+    "description": "Learn more about GetMEDS, your trusted companion in health and wellness. Discover our mission, vision, and the team behind our platform."
+  },
+  "hero": {
+    "image": "assets/about_us_hero.png",
+    "imageAlt": "About GetMEDS",
+    "heading": "Your Compassionate",
+    "headingAccent": "Health Ally",
+    "description": "We are dedicated to providing accessible, high-quality healthcare services to everyone. Our platform bridges the gap between patients and reliable medical care through innovation and empathy."
+  },
+  "introImages": [
+    { "src": "assets/about_intro_1.png", "alt": "GetMEDS Logistics" },
+    { "src": "assets/about_intro_2.png", "alt": "Medical Technology" },
+    { "src": "assets/about_intro_3.png", "alt": "Healthcare Excellence" }
+  ],
+  "about": {
+    "heading": "About Us",
+    "paragraphs": [
+      "Introducing the next evolution of pharmaceutical care. GetMEDS builds upon a foundation of compassion and innovation while introducing advanced healthcare compositions for modern patients. Our expanded service collection maintains our signature commitment to reliability, elevated by new, thoughtfully crafted digital health solutions.",
+      "We've refined every detail to perfection, from enhanced patient distribution models to more sophisticated logistics treatments. Our new dashboard layouts, expanded messaging interfaces, and innovative data visualizations provide even more tools for managing health experiences effectively.",
+      "Transform your healthcare journey with our most comprehensive pharmaceutical release yet. Whether you're navigating complex treatments, social platforms, or enterprise health applications, GetMEDS delivers the precision you deserve."
+    ],
+    "dedicatedToLabel": "Dedicated to:",
+    "dedicatedItems": [
+      "Precision Distribution",
+      "Patient Support Systems",
+      "Strategic Global Partnerships",
+      "Digital Oncology Care",
+      "Regulatory Compliance",
+      "Public Hospital Logistics"
+    ]
+  },
+  "highlights": {
+    "heading": "Highlights",
+    "certifications": [
+      "FDA Licensed Distributor",
+      "UN Global Compact Member",
+      "ISO 9001:2015 Certified",
+      "GDSP Compliant Logistics",
+      "Verified ESG Performance"
+    ]
+  },
+  "mission": {
+    "sectionLabel": "Our Drive",
+    "heading": "Mission",
+    "text": "Our mission is to transform the landscape of oncological, hematological, critical care, rare medicine and healthcare e-commerce through relentless innovation, compassionate service, and international collaboration."
+  },
+  "vision": {
+    "sectionLabel": "Our Goal",
+    "heading": "Vision",
+    "text": "To be the global beacon of hope and innovation, tirelessly dedicated to improving the lives of humankind. We envision a world where every patient has access from the first line treatments to the most advanced medicines, where borders do not limit healthcare, and where our unwavering commitment shines through every corner of the globe."
+  },
+  "coreValues": {
+    "sectionLabel": "Core Values",
+    "heading": "The Heart of Our Purpose",
+    "values": [
+      { "label": "Compassion", "icon": "fa-solid fa-heart" },
+      { "label": "Integrity", "icon": "fa-solid fa-shield-heart" },
+      { "label": "Speed", "icon": "fa-solid fa-truck-fast" },
+      { "label": "Precision", "icon": "fa-solid fa-microscope" },
+      { "label": "Expertise", "icon": "fa-solid fa-user-doctor" },
+      { "label": "Care", "icon": "fa-solid fa-hand-holding-medical" },
+      { "label": "Innovation", "icon": "fa-solid fa-lightbulb" },
+      { "label": "Global", "icon": "fa-solid fa-earth-asia" },
+      { "label": "Security", "icon": "fa-solid fa-lock" },
+      { "label": "Safety", "icon": "fa-solid fa-vial-circle-check" },
+      { "label": "Community", "icon": "fa-solid fa-people-group" },
+      { "label": "Affordable", "icon": "fa-solid fa-tags" },
+      { "label": "Reliable", "icon": "fa-solid fa-clipboard-check" },
+      { "label": "Excellence", "icon": "fa-solid fa-award" }
+    ],
+    "centerLogoSrc": "assets/logo.png",
+    "handImage": "assets/hand.png",
+    "handImageAlt": "Supportive Hand"
+  },
+  "whyChooseUs": {
+    "sectionLabel": "Our Advantages",
+    "heading": "Why Choose GetMEDS?",
+    "description": "We go above and beyond to ensure our services exceed your expectations when it comes to your health and convenience.",
+    "items": [
+      {
+        "icon": "fa-solid fa-truck-fast",
+        "title": "Fast Delivery",
+        "description": "Speedy medication delivery straight to your door step."
+      },
+      {
+        "icon": "fa-solid fa-shield-halved",
+        "title": "Secure Platform",
+        "description": "Your health data is safe with our advanced security."
+      },
+      {
+        "icon": "fa-solid fa-headset",
+        "title": "24/7 Support",
+        "description": "Our customer care and medical experts are always ready."
+      },
+      {
+        "icon": "fa-solid fa-tags",
+        "title": "Best Prices",
+        "description": "Affordable medicine and discounted lab tests for you."
+      }
+    ]
+  },
+  "team": {
+    "sectionLabel": "Executive Team",
+    "heading": "The Minds Behind GetMEDS",
+    "description": "Our leadership team brings decades of experience in healthcare, technology, and logistics to revolutionize patient care.",
+    "members": [
+      {
+        "name": "Mr. Naresh Bishnoi",
+        "role": "Founder & CEO",
+        "image": "assets/CEO.png",
+        "ribbonLabel": "GETMEDS"
+      },
+      {
+        "name": "Dr. Elena Rodriguez",
+        "role": "Chief Operations Officer",
+        "image": "assets/employeeone.png",
+        "ribbonLabel": "GetMEDS"
+      },
+      {
+        "name": "Dr. Michael Chen",
+        "role": "Medical Director",
+        "image": "assets/employeetwo.png",
+        "ribbonLabel": "GetMEDS"
+      },
+      {
+        "name": "Dr. Sarah Jenkins",
+        "role": "Chief Financial Officer",
+        "image": "assets/employeethree.png",
+        "ribbonLabel": "Finance"
+      },
+      {
+        "name": "Mr. David Torres",
+        "role": "Chief Technology Officer",
+        "image": "assets/employeefour.png",
+        "ribbonLabel": "Technology"
+      },
+      {
+        "name": "Dr. Emily Wong",
+        "role": "Head of R&D",
+        "image": "assets/employeefive.png",
+        "ribbonLabel": "Research"
+      },
+      {
+        "name": "Ms. Rachel Green",
+        "role": "VP of Human Resources",
+        "image": "assets/employeesix.png",
+        "ribbonLabel": "People"
+      }
+    ]
+  },
+  "partners": {
+    "sectionLabel": "Trust Network",
+    "heading": "Strategic Partners & Affiliates",
+    "partners": [
+      { "name": "PHARMALINK" },
+      { "name": "LABTECH" },
+      { "name": "VITALICARE" },
+      { "name": "SECUREHEALTH" },
+      { "name": "SWIFTLOG" },
+      { "name": "UN Global Compact", "logo": "assets/UNGClogo.png" }
+    ]
+  },
+  "cta": {
+    "heading": "Ready to take control of your health?",
+    "description": "Join thousands of satisfied patients and experience the future of healthcare today.",
+    "primaryAction": "Order Medicines",
+    "primaryHref": "order-medicines.html",
+    "secondaryAction": "Contact Us",
+    "secondaryHref": "contact-us.html"
+  }
+}
