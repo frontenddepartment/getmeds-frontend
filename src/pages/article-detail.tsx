@@ -175,14 +175,46 @@ export default function ArticleDetail() {
   };
 
   return (
-    <div style={{ fontFamily: "'Poppins', sans-serif" }} className="bg-white min-h-screen">
+    <div style={{ fontFamily: "'Poppins', sans-serif", background: 'linear-gradient(160deg, #eef4ff 0%, #f8faff 40%, #ffffff 100%)' }} className="min-h-screen relative">
+
+      {/* Glassy sphere background */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none" style={{ zIndex: 0 }}>
+        <div style={{
+          position: 'absolute', top: '-18%', right: '-8%',
+          width: '52vw', height: '52vw', maxWidth: '680px', maxHeight: '680px',
+          borderRadius: '50%',
+          background: 'radial-gradient(circle at 33% 33%, rgba(255,255,255,0.35) 0%, rgba(210,228,255,0.18) 38%, rgba(130,175,255,0.08) 65%, transparent 100%)',
+          boxShadow: 'inset -22px -22px 60px rgba(100,145,255,0.06), 0 0 90px rgba(100,145,255,0.04)',
+        }} />
+        <div style={{
+          position: 'absolute', top: '18%', right: '7%',
+          width: '18vw', height: '18vw', maxWidth: '240px', maxHeight: '240px',
+          borderRadius: '50%',
+          background: 'radial-gradient(circle at 33% 33%, rgba(185,215,255,0.28) 0%, rgba(80,145,255,0.15) 48%, rgba(50,105,255,0.06) 75%, transparent 100%)',
+          boxShadow: 'inset -10px -10px 28px rgba(30,85,255,0.08), 0 0 45px rgba(60,125,255,0.05)',
+        }} />
+        <div style={{
+          position: 'absolute', top: '42%', left: '-3%',
+          width: '9vw', height: '9vw', maxWidth: '120px', maxHeight: '120px',
+          borderRadius: '50%',
+          background: 'radial-gradient(circle at 33% 33%, rgba(140,175,255,0.25) 0%, rgba(70,125,255,0.14) 52%, rgba(40,95,255,0.05) 78%, transparent 100%)',
+          boxShadow: 'inset -5px -5px 14px rgba(30,80,255,0.06), 0 0 28px rgba(60,120,255,0.04)',
+        }} />
+        <div style={{
+          position: 'absolute', bottom: '-12%', left: '8%',
+          width: '32vw', height: '32vw', maxWidth: '420px', maxHeight: '420px',
+          borderRadius: '50%',
+          background: 'radial-gradient(circle at 33% 33%, rgba(255,255,255,0.22) 0%, rgba(205,222,255,0.14) 42%, rgba(120,162,255,0.06) 70%, transparent 100%)',
+          boxShadow: 'inset -14px -14px 40px rgba(80,120,255,0.05), 0 0 65px rgba(80,120,255,0.03)',
+        }} />
+      </div>
 
       {/* Navbar — always in DOM so useEffect fetch can inject it */}
       <div id="navbar-container" className="sticky top-0 z-[50]" />
 
       {article && <>
       {/* Back button */}
-      <div className="max-w-3xl mx-auto px-4 pt-6 pb-2">
+      <div className="max-w-3xl mx-auto px-4 pt-6 pb-2 relative z-10">
         <a
           href="/articles"
           className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-800 transition-colors"
@@ -193,7 +225,7 @@ export default function ArticleDetail() {
       </div>
 
       {/* Article header */}
-      <div className="max-w-3xl mx-auto px-4 text-center py-4">
+      <div className="max-w-3xl mx-auto px-4 text-center py-4 relative z-10">
         {/* Category badge */}
         <span
           className="inline-block text-xs font-semibold px-3 py-1 rounded-full mb-5"
@@ -218,7 +250,7 @@ export default function ArticleDetail() {
       </div>
 
       {/* Hero image */}
-      <div className="max-w-5xl mx-auto px-4 mt-6 mb-10">
+      <div className="max-w-5xl mx-auto px-4 mt-6 mb-10 relative z-10">
         <img
           src={article.img}
           alt={article.title}
@@ -228,7 +260,7 @@ export default function ArticleDetail() {
       </div>
 
       {/* Two-column content */}
-      <div className="max-w-4xl mx-auto px-4 pb-20">
+      <div className="max-w-4xl mx-auto px-4 pb-20 relative z-10">
         <div className="flex gap-10">
 
           {/* Left sidebar: TOC + Share */}

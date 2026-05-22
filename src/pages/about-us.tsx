@@ -73,7 +73,7 @@ export default function AboutUs() {
         <div className="relative rounded-[1.5rem] overflow-hidden min-h-[450px] md:min-h-[500px] flex items-end group">
           {/* Background Image */}
           <div className="absolute inset-0 z-0">
-            <img src="assets/about_us_hero.png" data-json-src="hero.image" data-json-alt="hero.imageAlt"
+            <img src="assets/aboutusone.jpg" data-json-src="hero.image" data-json-alt="hero.imageAlt"
               className="w-full h-full object-cover object-center transform group-hover:scale-105 transition-transform duration-[4s]"
               alt="About GetMEDS" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
@@ -115,20 +115,20 @@ export default function AboutUs() {
           <div className="grid grid-cols-1 md:grid-cols-12 gap-4 mb-20 reveal">
             {/* Large Image (Left) */}
             <div className="md:col-span-8">
-              <div className="relative h-[300px] md:h-[380px] rounded-[2rem] overflow-hidden shadow-xl group">
-                <img src="assets/about_intro_1.png" alt="GetMEDS Logistics"
+              <div className="relative h-[300px] md:h-[380px] rounded-[1rem] overflow-hidden shadow-xl group">
+                <img src="assets/aboutustwo.jpg" alt="GetMEDS Logistics"
                   className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
               </div>
             </div>
             {/* Stacked Images (Right) */}
             <div className="md:col-span-4 flex flex-col gap-4">
-              <div className="h-[142px] md:h-[182px] rounded-[2rem] overflow-hidden shadow-lg group">
-                <img src="assets/about_intro_2.png" alt="Medical Technology"
+              <div className="h-[142px] md:h-[182px] rounded-[1rem] overflow-hidden shadow-lg group">
+                <img src="assets/aboutusthree.jpg" alt="Medical Technology"
                   className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700" />
               </div>
-              <div className="h-[142px] md:h-[182px] rounded-[2rem] overflow-hidden shadow-lg group">
-                <img src="assets/about_intro_3.png" alt="Healthcare Excellence"
+              <div className="h-[142px] md:h-[182px] rounded-[1rem] overflow-hidden shadow-lg group">
+                <img src="assets/aboutusfour.jpg" alt="Healthcare Excellence"
                   className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700" />
               </div>
             </div>
@@ -140,7 +140,7 @@ export default function AboutUs() {
             {/* Left side: Introduction about getmeds */}
             <div className="lg:col-span-8 reveal">
               <h3
-                className="inline-block text-[28px] md:text-[38px] leading-tight font-bold mb-8 tracking-tight bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">
+                className="inline-block text-3xl md:text-4xl lg:text-[35px] leading-tight font-semibold mb-8 tracking-tight text-gray-900">
                 About Us</h3>
               <div className="space-y-6">
                 <p className="text-gray-600 text-[15px] leading-[1.8]">
@@ -157,7 +157,7 @@ export default function AboutUs() {
                 </p>
 
                 <div className="pt-6">
-                  <p className="text-dark font-black text-[13px] uppercase tracking-widest mb-4">🚀 Dedicated to:</p>
+                  <p className="text-dark font-black text-[13px] uppercase tracking-widest mb-4">Dedicated to:</p>
                   <ul className="grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-8 text-[14px] text-gray-500 font-medium">
                     <li className="flex items-center gap-2">
                       <div className="w-1.5 h-1.5 rounded-full bg-primary"></div> Precision Distribution
@@ -192,7 +192,7 @@ export default function AboutUs() {
             {/* Right side: Highlights section list of certifications */}
             <div className="lg:col-span-4 reveal">
               <h3
-                className="inline-block text-[24px] font-bold mb-8 tracking-tight bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">
+                className="inline-block text-3xl md:text-3xl lg:text-[35px] leading-tight font-semibold mb-8 tracking-tight text-gray-900">
                 Highlights</h3>
               <div className="space-y-6">
                 {/* Cert 1 */}
@@ -323,18 +323,18 @@ export default function AboutUs() {
 
           {/* Header */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center mb-14 reveal">
-            {/* Left: eyebrow + description */}
+            {/* Left: title */}
+            <div>
+              <h2 className="text-[28px] md:text-[36px] font-semibold text-dark leading-tight tracking-tight">
+                Enhancing patient connectivity and clinical reach.
+              </h2>
+            </div>
+            {/* Right: eyebrow + description */}
             <div>
               <span className="text-primary font-bold text-sm uppercase tracking-widest mb-4 block">OUR COMMITMENTS</span>
               <p className="text-gray-500 text-[15px] leading-relaxed">
                 With relentless dedication to innovation, empathy, and accessible global healthcare solutions.
               </p>
-            </div>
-            {/* Right: title */}
-            <div>
-              <h2 className="text-[28px] md:text-[36px] font-bold text-dark leading-tight tracking-tight">
-                Enhancing patient connectivity and clinical reach.
-              </h2>
             </div>
           </div>
 
@@ -393,8 +393,7 @@ export default function AboutUs() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
           <div className="text-center mb-24 reveal">
             <span className="text-primary font-bold text-sm uppercase tracking-widest mb-4 block">Core Values</span>
-            <h2 className="text-[28px] md:text-[38px] leading-tight font-bold text-dark mb-3 tracking-tight">The <span
-              className="text-gradient">Heart</span> of Our Purpose</h2>
+            <h2 className="text-[28px] md:text-[38px] leading-tight font-semibold text-dark mb-3 tracking-tight">The Heart of Our Purpose</h2>
           </div>
 
           <div className="relative min-h-[600px] flex flex-col items-center justify-center py-8" id="values-container" ref={valuesContainerRef}>
@@ -518,8 +517,8 @@ export default function AboutUs() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-16 reveal">
             <span className="text-primary font-bold text-sm uppercase tracking-wider mb-2 block">Our Advantages</span>
-            <h2 className="text-3xl md:text-4xl font-bold text-dark mb-4">Why Choose <span
-              className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent inline-block">GetMEDS</span>?
+            <h2 className="text-3xl md:text-4xl font-semibold text-dark mb-4">Why Choose <span
+              className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent inline-block">Getmeds</span>?
             </h2>
             <p className="text-gray-500 text-[15px]">We go above and beyond to ensure our services exceed your
               expectations when it comes to your health and convenience.</p>
@@ -558,7 +557,7 @@ export default function AboutUs() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center max-w-2xl mx-auto mb-20 reveal">
             <span className="text-primary font-bold text-sm uppercase tracking-[0.2em] mb-4 block">Executive Team</span>
-            <h2 className="text-3xl md:text-4xl font-bold text-dark mb-4">The Minds Behind <span
+            <h2 className="text-3xl md:text-4xl font-semibold text-dark mb-4">The Minds Behind <span
               className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent inline-block">GetMEDS</span>
             </h2>
             <p className="text-gray-500 text-[15px]">Our leadership team brings decades of experience in healthcare,
@@ -757,7 +756,7 @@ export default function AboutUs() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16 reveal">
             <span className="text-primary font-bold text-sm uppercase tracking-[0.2em] mb-4 block">Trust Network</span>
-            <h2 className="text-3xl font-bold text-dark mb-4">Strategic Partners &amp; Affiliates</h2>
+            <h2 className="text-3xl font-semibold text-dark mb-4">Strategic Partners &amp; Affiliates</h2>
             <div className="w-20 h-1 bg-gradient-to-r from-primary to-accent mx-auto rounded-full"></div>
           </div>
 

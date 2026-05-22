@@ -1,106 +1,34 @@
 import React, { useState, useEffect } from 'react';
 
-// Declare global properties for window/Tailwind
-declare global {
-  interface Window {
-    tailwind?: any;
-  }
-}
-
 export default function PatientAssistanceProgram() {
   const [activeTab, setActiveTab] = useState<'dswd' | 'pcso'>('dswd');
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
 
   useEffect(() => {
-    // 1. Inject Fonts if not present
-    if (!document.getElementById('google-fonts-pap')) {
-      const link = document.createElement('link');
-      link.id = 'google-fonts-pap';
-      link.href = 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800&display=swap';
-      link.rel = 'stylesheet';
-      document.head.appendChild(link);
+    const navContainer = document.getElementById('navbar-container');
+    if (navContainer && navContainer.innerHTML.trim() === '') {
+      fetch('public/components/navbar.html')
+        .then(r => r.text())
+        .then(html => { navContainer.innerHTML = html; });
     }
 
-    // 2. Inject FontAwesome if not present
-    if (!document.getElementById('font-awesome-pap')) {
-      const link = document.createElement('link');
-      link.id = 'font-awesome-pap';
-      link.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css';
-      link.rel = 'stylesheet';
-      document.head.appendChild(link);
+    const footerContainer = document.getElementById('footer-container');
+    if (footerContainer && footerContainer.innerHTML.trim() === '') {
+      fetch('public/components/footer.html')
+        .then(r => r.text())
+        .then(html => { footerContainer.innerHTML = html; });
     }
+  }, []);
 
-    // 3. Inject Tailwind CDN if not present (with custom configurations matching pap.html)
-    if (!window.tailwind && !document.getElementById('tailwind-cdn-pap')) {
-      const script = document.createElement('script');
-      script.id = 'tailwind-cdn-pap';
-      script.src = 'https://cdn.tailwindcss.com';
-      script.onload = () => {
-        if (window.tailwind) {
-          window.tailwind.config = {
-            theme: {
-              extend: {
-                colors: {
-                  primary: '#1D9FDA',
-                  accent: '#6BB84A',
-                  dark: '#1A202C',
-                },
-                fontFamily: {
-                  sans: ['Inter', 'Poppins', 'sans-serif'],
-                }
-              }
-            }
-          };
-        }
-      };
-      document.head.appendChild(script);
-    } else if (window.tailwind) {
-      window.tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              primary: '#1D9FDA',
-              accent: '#6BB84A',
-              dark: '#1A202C',
-            },
-            fontFamily: {
-              sans: ['Inter', 'Poppins', 'sans-serif'],
-            }
-          }
-        }
-      };
-    }
-
-    // 4. Scroll Reveal Intersection Observer
-    const revealOptions = {
-      root: null,
-      threshold: 0.1,
-      rootMargin: "0px 0px -50px 0px"
-    };
-
+  useEffect(() => {
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('active');
-        }
+        if (entry.isIntersecting) entry.target.classList.add('active');
       });
-    }, revealOptions);
+    }, { root: null, threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
 
-    const revealElements = document.querySelectorAll('.reveal');
-    revealElements.forEach(el => observer.observe(el));
-
-    // 5. Load external global component loader script
-    const scriptComp = document.createElement('script');
-    scriptComp.src = 'components/components.js?v=PAP';
-    scriptComp.async = true;
-    document.body.appendChild(scriptComp);
-
-    return () => {
-      revealElements.forEach(el => observer.unobserve(el));
-      if (document.body.contains(scriptComp)) {
-        document.body.removeChild(scriptComp);
-      }
-    };
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    return () => observer.disconnect();
   }, []);
 
   const toggleFaq = (index: number) => {
@@ -108,374 +36,362 @@ export default function PatientAssistanceProgram() {
   };
 
   return (
-    <div className="bg-white text-gray-800 antialiased overflow-x-hidden">
-      {/* Dynamic styles insertion for animations and tabs */}
-      <style dangerouslySetInnerHTML={{
-        __html: `
-        body { font-family: 'Inter', sans-serif; }
-        .reveal { transform: translateY(30px); opacity: 0; transition: all 0.8s ease-out; }
-        .reveal.active { transform: translateY(0); opacity: 1; }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-        .faq-content { max-height: 0; overflow: hidden; transition: max-height 0.5s ease-in-out, opacity 0.3s; opacity: 0; }
-        .faq-content.active { max-height: 500px; opacity: 1; }
-        .chevron-rotate { transition: transform 0.3s; }
-        .chevron-rotate.active { transform: rotate(180deg); }
-      ` }} />
+    <div className="bg-white text-gray-800 antialiased">
 
-      {/* Navbar Component Placeholder */}
-      <div id="navbar-placeholder"></div>
+      {/* Navbar */}
+      <div id="navbar-container" className="sticky top-0 z-[50]" />
 
       {/* 1. Hero Banner Section */}
       <section className="relative w-full aspect-[21/9] md:aspect-[24/7] overflow-hidden">
         <img
-          src="https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&q=80&w=2000"
+          src="assets/papbanner.png"
+          data-json-src="hero.image" data-json-alt="hero.imageAlt"
           className="w-full h-full object-cover brightness-90"
           alt="Medical Support"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-transparent"></div>
-
-        <div className="absolute inset-0 flex items-center">
-          <div className="max-w-7xl mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-2">
-            <div className="space-y-4">
-              <div className="bg-white/90 backdrop-blur-sm p-6 rounded-tr-[50px] rounded-bl-[50px] shadow-2xl inline-block border-l-[10px] border-primary reveal">
-                <h1 className="text-3xl md:text-5xl font-black text-primary leading-none mb-2 tracking-tight">
-                  PATIENT <br className="hidden md:block" /> ASSISTANCE <br className="hidden md:block" /> PROGRAM
-                </h1>
-                <p className="text-accent text-sm md:text-xl font-extrabold uppercase tracking-wide">
-                  Chemotherapy at Mga Gamot sa Cancer
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="absolute bottom-0 w-full bg-accent py-3 text-center">
-          <p className="text-white font-black uppercase tracking-[0.3em] text-[10px] md:text-xs">DSWD & PCSO Accredited</p>
-        </div>
       </section>
 
       {/* 2. Program Intro */}
-      <section className="py-20 max-w-7xl mx-auto px-6">
-        <div className="flex flex-col md:flex-row items-start gap-12 reveal">
-          <div className="shrink-0">
-            <div className="w-16 h-16 bg-accent/10 flex items-center justify-center rounded-[15px]">
-              <i className="fa-solid fa-shield-virus text-4xl text-accent"></i>
+      <section className="w-full overflow-hidden reveal relative bg-gradient-to-br from-[#dff5e8] via-white to-[#ceedf8]">
+        {/* Abstract decorative blobs */}
+        <div className="absolute top-0 left-0 w-80 h-80 bg-gradient-to-br from-[#61A644]/40 to-transparent rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
+        <div className="absolute bottom-0 right-0 w-[28rem] h-[28rem] bg-gradient-to-tl from-[#1D9FDA]/35 to-transparent rounded-full blur-3xl translate-x-1/3 translate-y-1/3 pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 w-72 h-72 bg-gradient-to-r from-[#61A644]/20 to-[#1D9FDA]/20 rounded-full blur-2xl -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
+        {/* Top gradient border */}
+        <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-[#61A644] to-[#1D9FDA]" />
+        {/* Bottom white fade */}
+        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent pointer-events-none" />
+
+        {/* Top — pap.png logo + subtitle side by side */}
+        <div className="max-w-7xl mx-auto px-6 pt-4 pb-0 flex items-center gap-6 justify-center mb-0">
+          <img
+            src="assets/pap.png"
+            alt="Patient Assistance Program"
+            className="w-52 md:w-64 object-contain shrink-0"
+          />
+          <div>
+            <p data-json="intro.subheading" className="text-xl md:text-2xl lg:text-3xl font-semibold uppercase tracking-widest whitespace-nowrap bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">
+              Chemotherapy at Mga Gamot sa Cancer
+            </p>
+            <div className="mt-2 w-10 h-1 bg-gradient-to-r from-[#61A644] to-[#1D9FDA] rounded-full" />
+          </div>
+        </div>
+
+        {/* Body — patient image left, text right */}
+        <div className="max-w-7xl mx-auto px-6 flex flex-col lg:flex-row items-center gap-6 -mt-10">
+
+          {/* Left — patientpap.png anchored to bottom */}
+          <div className="shrink-0 flex items-end self-end w-72 md:w-96 lg:w-[420px] xl:w-[480px] -mb-1">
+            <img
+              src="assets/patientpap.png"
+              alt="Cancer Patient"
+              className="w-full object-contain object-bottom"
+            />
+          </div>
+
+          {/* Right — paragraphs only */}
+          <div className="flex-1 py-4 space-y-4 text-gray-700 font-medium leading-relaxed text-sm md:text-base max-w-xl">
+            <p data-json="intro.paragraphs.0">
+              Ang Getmeds ay nakatuon sa pagsuporta sa kalusugan at kapakanan ng bawat Pilipinong lumalaban sa cancer. Sa pamamagitan ng aming Patient Assistance Program, nakikipagtulungan kami sa mga ahensya ng gobyerno tulad ng DSWD (AICS) at PCSO (MAP) upang makapagbigay ng tulong medikal, partikular na ang libreng chemotherapy at iba pang gamot sa cancer, sa mga higit na nangangailangan.
+            </p>
+            <p data-json="intro.paragraphs.1">
+              Layunin ng programang ito na mapagaan ang gastusin ng mga Pilipinong pasyenteng may cancer at kanilang pamilya na nahaharap sa mataas na halaga ng gamutan.
+            </p>
+
+            {/* Partner agencies */}
+            <div className="pt-2 space-y-2">
+              <p className="text-gray-900 font-semibold text-sm">Mga katuwang na ahensya:</p>
+              <div className="flex items-center gap-6 flex-nowrap">
+                <div className="flex items-center gap-2 shrink-0">
+                  <span className="w-2 h-2 rounded-full bg-gradient-to-r from-[#61A644] to-[#1D9FDA] shrink-0"></span>
+                  <p className="text-gray-900 text-sm font-semibold whitespace-nowrap">DSWD – AICS (Assistance to Individuals in Crisis Situation)</p>
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  <span className="w-2 h-2 rounded-full bg-gradient-to-r from-[#61A644] to-[#1D9FDA] shrink-0"></span>
+                  <p className="text-gray-900 text-sm font-semibold whitespace-nowrap">PCSO – Medical Assistance Program</p>
+                </div>
+              </div>
             </div>
           </div>
-          <div className="space-y-6 flex-grow">
-            <h2 className="text-2xl font-black text-accent leading-none">
-              Patient Assistance Program <br />
-              <span className="text-gray-400 text-sm font-bold uppercase tracking-widest">Chemotherapy at Mga Gamot sa Cancer</span>
-            </h2>
-            <div className="text-gray-500 font-medium leading-relaxed max-w-5xl space-y-4 text-sm md:text-base">
-              <p>
-                Ang Getmeds ay nakatuon sa pagsuporta sa kalusugan at kapakanan ng bawat Pilipinong lumalaban sa cancer. Sa pamamagitan ng aming Patient Assistance Program, nakikipagtulungan kami sa mga ahensya ng gobyerno tulad ng DSWD (AICS) at PCSO (MAP) upang makapagbigay ng tulong medikal, partikular na ang libreng chemotherapy at iba pang gamot sa cancer, sa mga higit na nangangailangan.
-              </p>
-              <p>
-                Layunin ng programang ito na mapagaan ang gastusin ng mga Pilipinong pasyenteng may cancer at kanilang pamilya na nahaharap sa mataas na halaga ng gamutan.
-              </p>
+
+        </div>
+      </section>
+
+      {/* Steps Title */}
+      <div className="max-w-7xl mx-auto px-6 pt-12 pb-2">
+        <h2 className="text-2xl md:text-3xl font-semibold text-gray-900 text-center">
+          Mga Hakbang Para Makakuha ng Cancer Assistance
+        </h2>
+      </div>
+
+      {/* STEP 1 */}
+      <section className="relative w-full overflow-hidden bg-gradient-to-br from-[#dff5e8] via-white to-[#ceedf8]">
+        {/* Decorative blobs */}
+        <div className="absolute top-0 left-0 w-80 h-80 bg-gradient-to-br from-[#61A644]/30 to-transparent rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
+        <div className="absolute bottom-0 right-0 w-[28rem] h-[28rem] bg-gradient-to-tl from-[#1D9FDA]/25 to-transparent rounded-full blur-3xl translate-x-1/3 translate-y-1/3 pointer-events-none" />
+
+        <div className="max-w-7xl mx-auto px-6 py-8">
+          <div className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] py-4 px-8 rounded-[15px] flex items-center gap-6 shadow-xl mb-8 reveal max-w-6xl mx-auto">
+            <span className="text-white text-4xl font-black">1</span>
+            <h3 data-json="steps.0.title" className="text-white text-xl md:text-2xl font-black uppercase leading-tight tracking-tight">
+              KUMONSULTA SA IYONG DOKTOR
+            </h3>
+          </div>
+          <div className="flex flex-col md:flex-row items-center justify-center gap-10 reveal">
+            <p data-json="steps.0.instruction" className="max-w-sm text-xl font-semibold text-gray-800 leading-relaxed">
+              Tanungin ang iyong attending physician tungkol sa pagkuha ng government assistance para sa iyong mga gamot sa cancer.
+            </p>
+            <div className="relative shrink-0 w-72 md:w-96 lg:w-[480px]">
+              <img src="assets/stepone.png" alt="Kumonsulta sa Doktor" className="w-full object-contain rounded-[15px]" />
+              <div className="absolute inset-0 rounded-[15px] pointer-events-none" style={{ boxShadow: 'inset 0 0 60px 30px rgba(220,245,232,0.85)' }} />
             </div>
           </div>
         </div>
       </section>
 
-      {/* STEP 1: Section */}
-      <section className="py-8 max-w-7xl mx-auto px-6">
-        <div className="bg-primary py-4 px-8 rounded-[15px] flex items-center gap-6 shadow-xl mb-8 reveal">
-          <span className="text-white text-4xl font-black">1</span>
-          <h3 className="text-white text-xl md:text-2xl font-black uppercase leading-tight tracking-tight">
-            KUMONSULTA SA IYONG DOKTOR
-          </h3>
-        </div>
-        <div className="bg-white border border-gray-100 p-8 lg:p-10 rounded-[15px] shadow-sm flex flex-col md:flex-row items-center gap-10 reveal">
-          <div className="w-16 h-16 bg-blue-50 rounded-[15px] flex items-center justify-center shrink-0">
-            <i className="fa-solid fa-stethoscope text-3xl text-primary"></i>
-          </div>
-          <p className="text-lg font-bold text-gray-700 leading-relaxed text-center md:text-left">
-            Tanungin ang iyong attending physician tungkol sa pagkuha ng government assistance para sa iyong mga gamot sa cancer.
-          </p>
-        </div>
-      </section>
-
-      {/* STEP 2: Section */}
+      {/* STEP 2 */}
       <section className="py-10 max-w-7xl mx-auto px-6">
-        <div className="bg-accent py-4 px-8 rounded-[12px] flex items-center gap-5 shadow-lg mb-8 reveal">
+        <div className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] py-4 px-8 rounded-[12px] flex items-center gap-5 shadow-lg mb-8 reveal max-w-6xl mx-auto">
           <span className="text-white text-3xl font-black">2</span>
-          <h3 className="text-white text-lg md:text-xl font-black uppercase leading-tight tracking-tight">
+          <h3 data-json="steps.1.title" className="text-white text-lg md:text-xl font-black uppercase leading-tight tracking-tight">
             IHANDA ANG IYONG MEDICAL DOCUMENTS
           </h3>
         </div>
-        <div className="bg-white border border-gray-100 p-10 lg:p-14 rounded-[15px] shadow-sm space-y-10 reveal">
-          <p className="font-black text-gray-900 text-lg border-l-4 border-accent pl-6 uppercase tracking-tight">Siguraduhing makuha ang sumusunod na requirements mula sa iyong doktor:</p>
-
-          <div className="grid sm:grid-cols-3 gap-8">
-            {/* Doc 1 */}
-            <div className="bg-gray-50 p-8 rounded-[15px] border border-gray-100 flex flex-col items-center text-center space-y-4 hover:bg-green-50/50 transition-colors group">
-              <div className="w-12 h-12 bg-white rounded-[12px] flex items-center justify-center shadow-sm text-accent group-hover:scale-110 transition-transform">
-                <i className="fa-solid fa-file-prescription text-xl"></i>
-              </div>
-              <p className="font-bold text-gray-800 text-sm">Medical Prescription</p>
-            </div>
-            {/* Doc 2 */}
-            <div className="bg-gray-50 p-8 rounded-[15px] border border-gray-100 flex flex-col items-center text-center space-y-4 hover:bg-green-50/50 transition-colors group">
-              <div className="w-12 h-12 bg-white rounded-[12px] flex items-center justify-center shadow-sm text-accent group-hover:scale-110 transition-transform">
-                <i className="fa-solid fa-notes-medical text-xl"></i>
-              </div>
-              <p className="font-bold text-gray-800 text-sm">Treatment Protocol</p>
-            </div>
-            {/* Doc 3 */}
-            <div className="bg-gray-50 p-8 rounded-[15px] border border-gray-100 flex flex-col items-center text-center space-y-4 hover:bg-green-50/50 transition-colors group">
-              <div className="w-12 h-12 bg-white rounded-[12px] flex items-center justify-center shadow-sm text-accent group-hover:scale-110 transition-transform">
-                <i className="fa-solid fa-file-medical text-xl"></i>
-              </div>
-              <p className="font-bold text-gray-800 text-sm">Medical Abstract / Clinical Summary</p>
+        <div className="flex flex-col lg:flex-row items-center gap-10 reveal">
+          {/* Visual LEFT */}
+          <div className="shrink-0 w-56 lg:w-72 flex items-center justify-center">
+            <div className="w-full aspect-square bg-gradient-to-br from-[#61A644]/15 to-[#1D9FDA]/20 rounded-[24px] flex items-center justify-center">
+              <i className="fa-solid fa-file-medical text-7xl text-[#1D9FDA]/70"></i>
             </div>
           </div>
-
-          <div className="p-8 bg-gray-50 rounded-[15px] border border-dashed border-gray-200">
-            <p className="text-xs font-bold text-gray-500 leading-relaxed italic text-center uppercase tracking-wider">
-              Lahat ng dokumento ay dapat <span className="text-gray-900">original copy</span>, may buong pangalan, pirma, at license number ng doktor upang masigurong maayos at mabilis ang proseso.
-            </p>
+          {/* Content RIGHT */}
+          <div className="flex-1 space-y-6">
+            <p className="font-black text-gray-900 text-lg border-l-4 border-accent pl-6 uppercase tracking-tight">Siguraduhing makuha ang sumusunod na requirements mula sa iyong doktor:</p>
+            <div className="grid sm:grid-cols-3 gap-6">
+              {[
+                { icon: 'fa-file-prescription', label: 'Medical Prescription' },
+                { icon: 'fa-notes-medical', label: 'Treatment Protocol' },
+                { icon: 'fa-file-medical', label: 'Medical Abstract / Clinical Summary' },
+              ].map((doc, i) => (
+                <div key={i} className="bg-gray-50 p-6 rounded-[15px] border border-gray-100 flex flex-col items-center text-center space-y-3 hover:bg-green-50/50 transition-colors group">
+                  <div className="w-12 h-12 bg-white rounded-[12px] flex items-center justify-center shadow-sm text-accent group-hover:scale-110 transition-transform">
+                    <i className={`fa-solid ${doc.icon} text-xl`}></i>
+                  </div>
+                  <p className="font-bold text-gray-800 text-sm">{doc.label}</p>
+                </div>
+              ))}
+            </div>
+            <div className="p-6 bg-gray-50 rounded-[15px] border border-dashed border-gray-200">
+              <p className="text-xs font-bold text-gray-500 leading-relaxed italic text-center uppercase tracking-wider">
+                Lahat ng dokumento ay dapat <span className="text-gray-900">original copy</span>, may buong pangalan, pirma, at license number ng doktor.
+              </p>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* STEP 3: Section (Integrated with Tabs) */}
+      {/* STEP 3 — Tabs */}
       <section className="py-8 max-w-7xl mx-auto px-6">
-        <div className="bg-primary py-4 px-8 rounded-[15px] flex items-center gap-6 shadow-xl mb-8 reveal">
+        <div className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] py-4 px-8 rounded-[15px] flex items-center gap-6 shadow-xl mb-8 reveal max-w-6xl mx-auto">
           <span className="text-white text-4xl font-black">3</span>
           <h3 className="text-white text-xl md:text-2xl font-black uppercase leading-tight tracking-tight">
             KUMPLETUHIN ANG IYONG APPLICATION DOCUMENTS
           </h3>
         </div>
 
-        <div className="mb-10 text-center max-w-3xl mx-auto reveal">
-          <p className="text-gray-500 font-medium">Bukod sa medical documents mula sa doktor, ihanda ang karagdagang requirements depende sa ahensya na iyong aaplayan.</p>
-        </div>
+        <div className="flex flex-col lg:flex-row items-start gap-10 reveal">
+          {/* Content LEFT */}
+          <div className="flex-1 space-y-6">
+            <p className="text-gray-500 font-medium">Bukod sa medical documents mula sa doktor, ihanda ang karagdagang requirements depende sa ahensya na iyong aaplayan.</p>
 
-        <div className="flex justify-center mb-10 reveal">
-          <div className="bg-white p-1.5 rounded-[15px] shadow-sm flex gap-2 border border-gray-100">
-            <button
-              id="btn-dswd"
-              onClick={() => setActiveTab('dswd')}
-              className={`tab-btn px-8 py-3 rounded-[12px] text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'dswd'
-                  ? 'bg-primary text-white shadow-lg shadow-blue-500/20'
-                  : 'text-gray-400 hover:text-gray-600'
-                }`}
-            >
-              DSWD (AICS)
-            </button>
-            <button
-              id="btn-pcso"
-              onClick={() => setActiveTab('pcso')}
-              className={`tab-btn px-8 py-3 rounded-[12px] text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'pcso'
-                  ? 'bg-accent text-white shadow-lg shadow-green-500/20'
-                  : 'text-gray-400 hover:text-gray-600'
-                }`}
-            >
-              PCSO (MAP)
-            </button>
-          </div>
-        </div>
+            <div className="flex gap-2">
+              <div className="bg-white p-1.5 rounded-[15px] shadow-sm flex gap-2 border border-gray-100">
+                <button
+                  onClick={() => setActiveTab('dswd')}
+                  className={`px-8 py-3 rounded-[12px] text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'dswd' ? 'bg-primary text-white shadow-lg shadow-blue-500/20' : 'text-gray-400 hover:text-gray-600'}`}
+                >
+                  DSWD (AICS)
+                </button>
+                <button
+                  onClick={() => setActiveTab('pcso')}
+                  className={`px-8 py-3 rounded-[12px] text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'pcso' ? 'bg-accent text-white shadow-lg shadow-green-500/20' : 'text-gray-400 hover:text-gray-600'}`}
+                >
+                  PCSO (MAP)
+                </button>
+              </div>
+            </div>
 
-        <div className="bg-white rounded-[15px] shadow-xl overflow-hidden border border-gray-100 max-w-5xl mx-auto reveal">
-          <div
-            id="tab-dswd"
-            className={`tab-content p-8 lg:p-14 space-y-10 ${activeTab === 'dswd' ? 'active' : ''}`}
-            style={{ display: activeTab === 'dswd' ? 'block' : 'none' }}
-          >
-            <h4 className="text-2xl font-black uppercase tracking-tight text-primary">DSWD Medical Assistance (AICS)</h4>
-            <ul className="grid sm:grid-cols-2 gap-x-12 gap-y-5">
-              <li className="flex items-start gap-4 group">
-                <div className="mt-1.5 w-4 h-4 rounded-full bg-blue-50 text-primary flex items-center justify-center shrink-0">
-                  <i className="fa-solid fa-check text-[8px]"></i>
+            <div className="bg-white rounded-[15px] shadow-xl overflow-hidden border border-gray-100">
+              {activeTab === 'dswd' && (
+                <div className="p-8 space-y-6">
+                  <h4 className="text-lg font-black uppercase tracking-tight text-primary">DSWD Medical Assistance (AICS)</h4>
+                  <ul className="grid sm:grid-cols-2 gap-x-8 gap-y-4">
+                    {[
+                      'Medical Prescription (Original, signed by doctor)',
+                      'Treatment Protocol (Original, signed by doctor)',
+                      'Medical Abstract / Clinical Summary (Original)',
+                      'Photocopy ng valid gov\'t ID ng pasyente & representative',
+                      'Social Case Study Report (Mula sa CSWDO)',
+                      'Certificate of Indigency (Mula sa barangay)',
+                      'Official Price Quotation (Mula sa Getmeds)',
+                    ].map((item, i) => (
+                      <li key={i} className="flex items-start gap-3 group">
+                        <div className="mt-1 w-4 h-4 rounded-full bg-blue-50 text-primary flex items-center justify-center shrink-0">
+                          <i className="fa-solid fa-check text-[8px]"></i>
+                        </div>
+                        <span className="text-gray-600 font-bold text-sm">{item}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-                <span className="text-gray-600 font-bold text-sm">Medical Prescription (Original, signed by doctor)</span>
-              </li>
-              <li className="flex items-start gap-4 group">
-                <div className="mt-1.5 w-4 h-4 rounded-full bg-blue-50 text-primary flex items-center justify-center shrink-0">
-                  <i className="fa-solid fa-check text-[8px]"></i>
+              )}
+              {activeTab === 'pcso' && (
+                <div className="p-8 space-y-6">
+                  <h4 className="text-lg font-black uppercase tracking-tight text-accent">PCSO Medical Assistance Program (MAP/IMAP)</h4>
+                  <ul className="grid sm:grid-cols-2 gap-x-8 gap-y-4">
+                    {[
+                      'Medical Prescription (Original, signed by doctor)',
+                      'Treatment Protocol (Original, signed by doctor)',
+                      'Medical Abstract / Clinical Summary (Original)',
+                      'Kumpletong PCSO IMAP Application Form',
+                      'Photocopy ng valid gov\'t ID ng pasyente & representative',
+                      'Tatlong (3) official price quotations mula sa suppliers',
+                      'Note: Ang unang quotation ay makukuha sa Getmeds',
+                    ].map((item, i) => (
+                      <li key={i} className="flex items-start gap-3 group">
+                        <div className="mt-1 w-4 h-4 rounded-full bg-green-50 text-accent flex items-center justify-center shrink-0">
+                          <i className="fa-solid fa-check text-[8px]"></i>
+                        </div>
+                        <span className="text-gray-600 font-bold text-sm">{item}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-                <span className="text-gray-600 font-bold text-sm">Treatment Protocol (Original, signed by doctor)</span>
-              </li>
-              <li className="flex items-start gap-4 group">
-                <div className="mt-1.5 w-4 h-4 rounded-full bg-blue-50 text-primary flex items-center justify-center shrink-0">
-                  <i className="fa-solid fa-check text-[8px]"></i>
-                </div>
-                <span className="text-gray-600 font-bold text-sm">Medical Abstract / Clinical Summary (Original)</span>
-              </li>
-              <li className="flex items-start gap-4 group">
-                <div className="mt-1.5 w-4 h-4 rounded-full bg-blue-50 text-primary flex items-center justify-center shrink-0">
-                  <i className="fa-solid fa-check text-[8px]"></i>
-                </div>
-                <span className="text-gray-600 font-bold text-sm">Photocopy ng valid gov't ID ng pasyente & representative</span>
-              </li>
-              <li className="flex items-start gap-4 group">
-                <div className="mt-1.5 w-4 h-4 rounded-full bg-blue-50 text-primary flex items-center justify-center shrink-0">
-                  <i className="fa-solid fa-check text-[8px]"></i>
-                </div>
-                <span className="text-gray-600 font-bold text-sm">Social Case Study Report (Mula sa CSWDO)</span>
-              </li>
-              <li className="flex items-start gap-4 group">
-                <div className="mt-1.5 w-4 h-4 rounded-full bg-blue-50 text-primary flex items-center justify-center shrink-0">
-                  <i className="fa-solid fa-check text-[8px]"></i>
-                </div>
-                <span className="text-gray-600 font-bold text-sm">Certificate of Indigency (Mula sa barangay)</span>
-              </li>
-              <li className="flex items-start gap-4 group">
-                <div className="mt-1.5 w-4 h-4 rounded-full bg-blue-50 text-primary flex items-center justify-center shrink-0">
-                  <i className="fa-solid fa-check text-[8px]"></i>
-                </div>
-                <span className="text-gray-600 font-bold text-sm">Official Price Quotation (Mula sa Getmeds)</span>
-              </li>
-            </ul>
+              )}
+            </div>
           </div>
 
-          <div
-            id="tab-pcso"
-            className={`tab-content p-8 lg:p-14 space-y-10 ${activeTab === 'pcso' ? 'active' : ''}`}
-            style={{ display: activeTab === 'pcso' ? 'block' : 'none' }}
-          >
-            <h4 className="text-2xl font-black uppercase tracking-tight text-accent">PCSO Medical Assistance Program (MAP/IMAP)</h4>
-            <ul className="grid sm:grid-cols-2 gap-x-12 gap-y-5">
-              <li className="flex items-start gap-4 group">
-                <div className="mt-1.5 w-4 h-4 rounded-full bg-green-50 text-accent flex items-center justify-center shrink-0">
-                  <i className="fa-solid fa-check text-[8px]"></i>
-                </div>
-                <span className="text-gray-600 font-bold text-sm">Medical Prescription (Original, signed by doctor)</span>
-              </li>
-              <li className="flex items-start gap-4 group">
-                <div className="mt-1.5 w-4 h-4 rounded-full bg-green-50 text-accent flex items-center justify-center shrink-0">
-                  <i className="fa-solid fa-check text-[8px]"></i>
-                </div>
-                <span className="text-gray-600 font-bold text-sm">Treatment Protocol (Original, signed by doctor)</span>
-              </li>
-              <li className="flex items-start gap-4 group">
-                <div className="mt-1.5 w-4 h-4 rounded-full bg-green-50 text-accent flex items-center justify-center shrink-0">
-                  <i className="fa-solid fa-check text-[8px]"></i>
-                </div>
-                <span className="text-gray-600 font-bold text-sm">Medical Abstract / Clinical Summary (Original)</span>
-              </li>
-              <li className="flex items-start gap-4 group">
-                <div className="mt-1.5 w-4 h-4 rounded-full bg-green-50 text-accent flex items-center justify-center shrink-0">
-                  <i className="fa-solid fa-check text-[8px]"></i>
-                </div>
-                <span className="text-gray-600 font-bold text-sm">Kumpletong PCSO IMAP Application Form</span>
-              </li>
-              <li className="flex items-start gap-4 group">
-                <div className="mt-1.5 w-4 h-4 rounded-full bg-green-50 text-accent flex items-center justify-center shrink-0">
-                  <i className="fa-solid fa-check text-[8px]"></i>
-                </div>
-                <span className="text-gray-600 font-bold text-sm">Photocopy ng valid gov't ID ng pasyente & representative</span>
-              </li>
-              <li className="flex items-start gap-4 group">
-                <div className="mt-1.5 w-4 h-4 rounded-full bg-green-50 text-accent flex items-center justify-center shrink-0">
-                  <i className="fa-solid fa-check text-[8px]"></i>
-                </div>
-                <span className="text-gray-600 font-bold text-sm">Tatlong (3) official price quotations mula sa suppliers</span>
-              </li>
-              <li className="flex items-start gap-4 group">
-                <div className="mt-1.5 w-4 h-4 rounded-full bg-green-50 text-accent flex items-center justify-center shrink-0">
-                  <i className="fa-solid fa-check text-[8px]"></i>
-                </div>
-                <span className="text-gray-600 font-bold text-sm">Note: Ang unang quotation ay makukuha sa Getmeds</span>
-              </li>
-            </ul>
+          {/* Visual RIGHT */}
+          <div className="shrink-0 w-56 lg:w-72 flex items-center justify-center self-center">
+            <div className="w-full aspect-square bg-gradient-to-br from-[#61A644]/15 to-[#1D9FDA]/20 rounded-[24px] flex items-center justify-center">
+              <i className="fa-solid fa-clipboard-list text-7xl text-[#61A644]/70"></i>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* STEP 4: Section */}
+      {/* STEP 4 */}
       <section className="py-10 max-w-7xl mx-auto px-6">
-        <div className="bg-primary py-4 px-8 rounded-[12px] flex items-center gap-5 shadow-lg mb-8 reveal">
+        <div className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] py-4 px-8 rounded-[12px] flex items-center gap-5 shadow-lg mb-8 reveal max-w-6xl mx-auto">
           <span className="text-white text-3xl font-black">4</span>
           <h3 className="text-white text-lg md:text-xl font-black uppercase leading-tight tracking-tight">
             MAKIPAG-UGNAYAN SA AMING PATIENT ASSISTANCE OFFICER
           </h3>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-12 items-stretch reveal">
-          <div className="bg-white border border-gray-100 p-12 rounded-[15px] shadow-sm flex flex-col justify-center border-l-8 border-primary transition-all hover:bg-blue-50/20">
-            <div className="bg-blue-50 p-4 rounded-[15px] inline-block self-start mb-6">
-              <i className="fa-solid fa-users text-4xl text-primary"></i>
+        <div className="flex flex-col lg:flex-row items-center gap-10 reveal">
+          {/* Visual LEFT */}
+          <div className="shrink-0 w-56 lg:w-72 flex items-center justify-center">
+            <div className="w-full aspect-square bg-gradient-to-br from-[#1D9FDA]/15 to-[#61A644]/20 rounded-[24px] flex items-center justify-center">
+              <i className="fa-solid fa-users text-7xl text-[#1D9FDA]/70"></i>
             </div>
-            <p className="text-xl font-black text-gray-900 leading-tight">Ang aming Getmeds Patient Assistance Officer ay narito para gabayan kayo.</p>
           </div>
-          <div className="space-y-4">
-            <div className="bg-white border border-gray-100 p-6 rounded-[15px] shadow-sm flex items-center gap-6 hover:border-primary/30 transition-all group">
-              <div className="w-2.5 h-2.5 rounded-full bg-primary group-hover:scale-150 transition-transform"></div>
-              <p className="font-bold text-gray-700 text-sm leading-relaxed">Gagabay sa buong proseso ng iyong aplikasyon.</p>
-            </div>
-            <div className="bg-white border border-gray-100 p-6 rounded-[15px] shadow-sm flex items-center gap-6 hover:border-primary/30 transition-all group">
-              <div className="w-2.5 h-2.5 rounded-full bg-primary group-hover:scale-150 transition-transform"></div>
-              <p className="font-bold text-gray-700 text-sm leading-relaxed">Susuri sa inyong mga requirements bago ang submission.</p>
-            </div>
-            <div className="bg-white border border-gray-100 p-6 rounded-[15px] shadow-sm flex items-center gap-6 hover:border-primary/30 transition-all group">
-              <div className="w-2.5 h-2.5 rounded-full bg-primary group-hover:scale-150 transition-transform"></div>
-              <p className="font-bold text-gray-700 text-sm leading-relaxed">Magbibigay ng opisyal na quotation para sa inyong gamot sa cancer.</p>
+
+          {/* Content RIGHT */}
+          <div className="flex-1 space-y-4">
+            <p className="text-xl font-black text-gray-900 leading-tight">Ang aming Getmeds Patient Assistance Officer ay narito para gabayan kayo.</p>
+            <div className="space-y-4 pt-2">
+              {[
+                'Gagabay sa buong proseso ng iyong aplikasyon.',
+                'Susuri sa inyong mga requirements bago ang submission.',
+                'Magbibigay ng opisyal na quotation para sa inyong gamot sa cancer.',
+              ].map((text, i) => (
+                <div key={i} className="bg-white border border-gray-100 p-6 rounded-[15px] shadow-sm flex items-center gap-6 hover:border-primary/30 transition-all group">
+                  <div className="w-2.5 h-2.5 rounded-full bg-primary group-hover:scale-150 transition-transform"></div>
+                  <p className="font-bold text-gray-700 text-sm leading-relaxed">{text}</p>
+                </div>
+              ))}
             </div>
           </div>
         </div>
       </section>
 
-      {/* STEP 5: Section */}
+      {/* STEP 5 */}
       <section className="py-10 max-w-7xl mx-auto px-6">
-        <div className="bg-accent py-4 px-8 rounded-[12px] flex items-center gap-5 shadow-lg mb-8 reveal">
+        <div className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] py-4 px-8 rounded-[12px] flex items-center gap-5 shadow-lg mb-8 reveal max-w-6xl mx-auto">
           <span className="text-white text-3xl font-black">5</span>
           <h3 className="text-white text-lg md:text-xl font-black uppercase leading-tight tracking-tight">
             I-SUBMIT ANG IYONG REQUIREMENTS
           </h3>
         </div>
 
-        <div className="bg-white border border-gray-100 p-12 lg:p-16 rounded-[15px] shadow-sm space-y-12 reveal">
-          <p className="text-center font-black text-gray-900 text-lg uppercase tracking-tight">Ang paraan ng pagsusumite ay nakadepende sa government agency na iyong inaaplayan.</p>
+        <div className="flex flex-col lg:flex-row items-start gap-10 reveal">
+          {/* Content LEFT */}
+          <div className="flex-1 space-y-6">
+            <p className="font-black text-gray-900 text-lg uppercase tracking-tight">Ang paraan ng pagsusumite ay nakadepende sa government agency na iyong inaaplayan.</p>
 
-          <div className="grid md:grid-cols-2 gap-12">
-            <div className="space-y-6">
-              <div className="text-center py-4 bg-gray-50 rounded-[15px] border border-gray-100">
-                <p className="font-black text-primary text-[10px] uppercase tracking-[0.2em]">Ahensya / Programa</p>
+            <div className="grid sm:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <div className="text-center py-3 bg-gray-50 rounded-[12px] border border-gray-100">
+                  <p className="font-black text-primary text-[10px] uppercase tracking-[0.2em]">Ahensya / Programa</p>
+                </div>
+                <div className="bg-white border border-gray-100 p-6 rounded-[15px] shadow-sm flex items-center justify-center h-24 hover:bg-blue-50/30 transition-colors border-l-8 border-l-primary">
+                  <p className="font-bold text-gray-800 text-sm text-center">DSWD Medical Assistance (AICS)</p>
+                </div>
+                <div className="bg-white border border-gray-100 p-6 rounded-[15px] shadow-sm flex items-center justify-center h-24 hover:bg-blue-50/30 transition-colors border-l-8 border-l-primary">
+                  <p className="font-bold text-gray-800 text-sm text-center">PCSO Medical Assistance Program (MAP / IMAP)</p>
+                </div>
               </div>
-              <div className="bg-white border border-gray-100 p-8 rounded-[15px] shadow-sm text-center h-28 flex items-center justify-center group hover:bg-blue-50/30 transition-colors border-l-8 border-l-primary">
-                <p className="font-bold text-gray-800">DSWD Medical Assistance (AICS)</p>
-              </div>
-              <div className="bg-white border border-gray-100 p-8 rounded-[15px] shadow-sm text-center h-28 flex items-center justify-center group hover:bg-blue-50/30 transition-colors border-l-8 border-l-primary">
-                <p className="font-bold text-gray-800">PCSO Medical Assistance Program (MAP / IMAP)</p>
+              <div className="space-y-4">
+                <div className="text-center py-3 bg-gray-50 rounded-[12px] border border-gray-100">
+                  <p className="font-black text-accent text-[10px] uppercase tracking-[0.2em]">Paraan ng Pagsumite</p>
+                </div>
+                <div className="bg-white border border-gray-100 p-6 rounded-[15px] shadow-sm flex items-center justify-center h-24 hover:bg-green-50/30 transition-colors border-l-8 border-l-accent">
+                  <p className="text-sm font-bold text-gray-500 text-center">Personal na isumite sa pinakamalapit na DSWD Satellite Office</p>
+                </div>
+                <div className="bg-white border border-gray-100 p-6 rounded-[15px] shadow-sm flex items-center justify-center h-24 hover:bg-green-50/30 transition-colors border-l-8 border-l-accent">
+                  <p className="text-sm font-bold text-gray-500 text-center">Online submission (soft copy) sa PCSO website</p>
+                </div>
               </div>
             </div>
+          </div>
 
-            <div className="space-y-6">
-              <div className="text-center py-4 bg-gray-50 rounded-[15px] border border-gray-100">
-                <p className="font-black text-accent text-[10px] uppercase tracking-[0.2em]">Paraan ng Pagsumite</p>
-              </div>
-              <div className="bg-white border border-gray-100 p-8 rounded-[15px] shadow-sm text-center h-28 flex items-center justify-center group hover:bg-green-50/30 transition-colors border-l-8 border-l-accent">
-                <p className="text-sm font-bold text-gray-500">Personal na isumite sa pinakamalapit na DSWD Satellite Office</p>
-              </div>
-              <div className="bg-white border border-gray-100 p-8 rounded-[15px] shadow-sm text-center h-28 flex items-center justify-center group hover:bg-green-50/30 transition-colors border-l-8 border-l-accent">
-                <p className="text-sm font-bold text-gray-500">Online submission (soft copy) sa PCSO website</p>
-              </div>
+          {/* Visual RIGHT */}
+          <div className="shrink-0 w-56 lg:w-72 flex items-center justify-center self-center">
+            <div className="w-full aspect-square bg-gradient-to-br from-[#61A644]/15 to-[#1D9FDA]/20 rounded-[24px] flex items-center justify-center">
+              <i className="fa-solid fa-paper-plane text-7xl text-[#61A644]/70"></i>
             </div>
           </div>
         </div>
       </section>
 
-      {/* STEP 6: Section */}
+      {/* STEP 6 */}
       <section className="py-10 max-w-7xl mx-auto px-6">
-        <div className="bg-primary py-4 px-8 rounded-[12px] flex items-center gap-5 shadow-lg mb-8 reveal">
+        <div className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] py-4 px-8 rounded-[12px] flex items-center gap-5 shadow-lg mb-8 reveal max-w-6xl mx-auto">
           <span className="text-white text-3xl font-black">6</span>
           <h3 className="text-white text-lg md:text-xl font-black uppercase leading-tight tracking-tight">
             HINTAYIN ANG IYONG GUARANTEE LETTER (GL)
           </h3>
         </div>
 
-        <div className="bg-white border border-gray-100 p-12 lg:p-20 rounded-[15px] shadow-sm space-y-10 leading-relaxed text-gray-600 font-medium text-lg reveal">
-          <div className="flex gap-6 items-start">
-            <div className="w-12 h-12 bg-blue-50 rounded-[15px] flex items-center justify-center shrink-0">
-              <i className="fa-solid fa-envelope-circle-check text-2xl text-primary"></i>
+        <div className="flex flex-col lg:flex-row items-center gap-10 reveal">
+          {/* Visual LEFT */}
+          <div className="shrink-0 w-56 lg:w-72 flex items-center justify-center">
+            <div className="w-full aspect-square bg-gradient-to-br from-[#1D9FDA]/15 to-[#61A644]/20 rounded-[24px] flex items-center justify-center">
+              <i className="fa-solid fa-envelope-circle-check text-7xl text-[#1D9FDA]/70"></i>
             </div>
-            <p>Kapag naaprubahan, ibibigay ng ahensiya ang GL bilang patunay na sasagutin nila ang gastusin sa gamot ng pasyente. Ang GL ay dokumentong nagpapatunay na ang ahensiya ang may pananagutan sa pagbabayad.</p>
           </div>
-          <p className="pl-18">Dalhin ito sa nakasaad na medicine distributor o supplier upang makuha ang gamot. Para sa gabay sa pag-claim, makipag-ugnayan muli sa aming Patient Assistance Officer.</p>
+
+          {/* Content RIGHT */}
+          <div className="flex-1 space-y-6 text-gray-600 font-medium leading-relaxed text-lg">
+            <div className="flex gap-4 items-start">
+              <div className="w-10 h-10 bg-blue-50 rounded-[12px] flex items-center justify-center shrink-0 mt-1">
+                <i className="fa-solid fa-envelope-circle-check text-xl text-primary"></i>
+              </div>
+              <p>Kapag naaprubahan, ibibigay ng ahensiya ang GL bilang patunay na sasagutin nila ang gastusin sa gamot ng pasyente. Ang GL ay dokumentong nagpapatunay na ang ahensiya ang may pananagutan sa pagbabayad.</p>
+            </div>
+            <p className="pl-14">Dalhin ito sa nakasaad na medicine distributor o supplier upang makuha ang gamot. Para sa gabay sa pag-claim, makipag-ugnayan muli sa aming Patient Assistance Officer.</p>
+          </div>
         </div>
       </section>
 
@@ -513,9 +429,9 @@ export default function PatientAssistanceProgram() {
 
       {/* FAQs & Compassionate Special Permit */}
       <section id="faqs" className="py-24 bg-gray-50 border-t border-gray-100">
-        <div className="max-w-4xl mx-auto px-6">
+        <div className="max-w-6xl mx-auto mx-auto px-6">
           <div className="text-center mb-10 space-y-3 reveal">
-            <h3 className="text-2xl font-black text-gray-900 tracking-tight uppercase">FAQs & Additional Info</h3>
+            <h3 className="text-2xl font-black text-gray-900 tracking-tight uppercase">FAQs &amp; Additional Info</h3>
             <div className="w-16 h-1 bg-primary mx-auto rounded-full"></div>
           </div>
 
@@ -527,24 +443,15 @@ export default function PatientAssistanceProgram() {
                 className="w-full px-6 py-4 flex items-center justify-between text-left group"
               >
                 <span className="font-black text-gray-800 text-base group-hover:text-primary transition-colors uppercase tracking-tight">Ano ang Guarantee Letter o GL?</span>
-                <i
-                  id="faq-icon-0"
-                  className={`fa-solid fa-chevron-down text-gray-400 group-hover:text-primary transition-all duration-300 chevron-rotate text-sm ${activeFaq === 0 ? 'active' : ''}`}
-                ></i>
+                <i className={`fa-solid fa-chevron-down text-gray-400 group-hover:text-primary transition-all duration-300 text-sm ${activeFaq === 0 ? 'rotate-180' : ''}`}></i>
               </button>
-              <div
-                id="faq-content-0"
-                className={`faq-content ${activeFaq === 0 ? 'active' : ''}`}
-                style={{
-                  maxHeight: activeFaq === 0 ? '500px' : '0px',
-                  opacity: activeFaq === 0 ? 1 : 0
-                }}
-              >
+              {activeFaq === 0 && (
                 <div className="px-8 pb-8 pt-2 text-gray-600 font-medium leading-relaxed border-t border-gray-50 mt-2">
                   Kapag naaprubahan ang iyong aplikasyon at mga kinakailangang dokumento, maglalabas ang ahensiya ng Guarantee Letter (GL) para sa pasyente o sa kaniyang kinatawan. Ang GL ay isang mahalagang dokumento na nagpapatunay na ang ahensiya ang sasagot sa lahat ng gastusin para sa gamot ng pasyente. Sa pamamagitan ng GL, magkakaroon ka ng katiyakan na ang iyong gamot ay maibibigay nang walang abala sa bayad.
                 </div>
-              </div>
+              )}
             </div>
+
             {/* FAQ 2 */}
             <div className="bg-white rounded-[15px] shadow-sm border border-gray-100 overflow-hidden group">
               <button
@@ -552,23 +459,13 @@ export default function PatientAssistanceProgram() {
                 className="w-full px-8 py-6 flex items-center justify-between text-left group"
               >
                 <span className="font-black text-gray-900 text-lg group-hover:text-primary transition-colors uppercase tracking-tight">Ano ang Compassionate Special Permit?</span>
-                <i
-                  id="faq-icon-1"
-                  className={`fa-solid fa-chevron-down text-gray-400 group-hover:text-primary transition-all duration-300 chevron-rotate ${activeFaq === 1 ? 'active' : ''}`}
-                ></i>
+                <i className={`fa-solid fa-chevron-down text-gray-400 group-hover:text-primary transition-all duration-300 ${activeFaq === 1 ? 'rotate-180' : ''}`}></i>
               </button>
-              <div
-                id="faq-content-1"
-                className={`faq-content ${activeFaq === 1 ? 'active' : ''}`}
-                style={{
-                  maxHeight: activeFaq === 1 ? '500px' : '0px',
-                  opacity: activeFaq === 1 ? 1 : 0
-                }}
-              >
+              {activeFaq === 1 && (
                 <div className="px-8 pb-8 pt-2 text-gray-600 font-medium leading-relaxed border-t border-gray-50 mt-2">
                   Nag-aalok din ang Getmeds ng tulong para sa mga gamot sa cancer na nangangailangan ng espesyal na permit, upang mas mapabilis at maayos ang proseso ng pagkuha. Halimbawa nito ang Compassionate Special Permit (CSP), na ginagamit para sa Restricted Use of Covered Pharmaceutical Products o Access to unregistered drugs for seriously ill patients.
                 </div>
-              </div>
+              )}
             </div>
           </div>
 
@@ -598,7 +495,7 @@ export default function PatientAssistanceProgram() {
 
       {/* Final Contact Section */}
       <section className="py-16 bg-white border-t border-gray-100">
-        <div className="max-w-4xl mx-auto px-6 text-center space-y-10">
+        <div className="max-w-6xl mx-auto mx-auto px-6 text-center space-y-10">
           <div className="space-y-3 reveal">
             <p className="text-primary font-black uppercase tracking-[0.4em] text-[10px]">Need immediate assistance?</p>
             <h4 className="text-xl md:text-2xl font-black text-gray-900 tracking-tight leading-tight">Contact our Patient Assistance Officer today via Viber for a quick quotation.</h4>
@@ -614,8 +511,9 @@ export default function PatientAssistanceProgram() {
         </div>
       </section>
 
-      {/* Footer Component Placeholder */}
-      <div id="footer-placeholder"></div>
+      {/* Footer */}
+      <div id="footer-container" />
+
     </div>
   );
 }

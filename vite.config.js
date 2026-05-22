@@ -29,6 +29,12 @@ export default defineConfig({
             const urlPath = (req.url || '').split('?')[0];
             const cleanPath = urlPath.startsWith('/') ? urlPath : '/' + urlPath;
             
+            if (cleanPath === '/pap.html') {
+              res.statusCode = 302;
+              res.setHeader('Location', '/pap');
+              res.end();
+              return;
+            }
             if (cleanPath === '/pap' || cleanPath === '/pap/') {
               const htmlPath = path.join(process.cwd(), 'pap-preview.html');
               if (fs.existsSync(htmlPath)) {
