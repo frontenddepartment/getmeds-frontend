@@ -1,12 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import PatientAssistanceProgram from './pap';
+import ContactUs from '../pages/contact-us';
 
 const rootElement = document.getElementById('root');
 if (rootElement) {
   ReactDOM.createRoot(rootElement).render(
     <React.StrictMode>
-      <PatientAssistanceProgram />
+      <ContactUs />
     </React.StrictMode>
   );
 }

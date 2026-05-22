@@ -1,3 +1,32 @@
+<style>
+    /* Active nav link — keyed off data-page attribute on each page's <body> */
+    body[data-page="home"] a[href="/"],
+    body[data-page="home"] a[href="index.html"] { color: #0D99FF; }
+    body[data-page="order-medicines"] a[href="order-medicines.html"] { color: #0D99FF; }
+    body[data-page="product-range"] a[href="product-range.html"] { color: #0D99FF; }
+    body[data-page="meditations"] a[href="meditations.html"] { color: #0D99FF; }
+    body[data-page="about-us"] a[href="about-us.html"] { color: #0D99FF; }
+    body[data-page="contact-us"] a[href="contact-us.html"] { color: #0D99FF; }
+
+    body[data-page="services"] #company-nav-btn,
+    body[data-page="global-presence"] #company-nav-btn,
+    body[data-page="csr"] #company-nav-btn,
+    body[data-page="careers"] #company-nav-btn,
+    body[data-page="ungc"] #company-nav-btn,
+    body[data-page="articles"] #company-nav-btn,
+    body[data-page="article-detail"] #company-nav-btn,
+    body[data-page="pap"] #company-nav-btn { color: #0D99FF; }
+
+    body[data-page="services"] #mobile-company-label,
+    body[data-page="global-presence"] #mobile-company-label,
+    body[data-page="csr"] #mobile-company-label,
+    body[data-page="careers"] #mobile-company-label,
+    body[data-page="ungc"] #mobile-company-label,
+    body[data-page="articles"] #mobile-company-label,
+    body[data-page="article-detail"] #mobile-company-label,
+    body[data-page="pap"] #mobile-company-label { color: #0D99FF; }
+</style>
+
 <!-- Navbar -->
 <nav class="w-full bg-white shadow-sm sticky top-0 z-50 border-b border-gray-100">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -174,7 +203,7 @@
 
                 <!-- Company Dropdown -->
                 <div class="group h-20 flex items-center">
-                    <button
+                    <button id="company-nav-btn"
                         class="flex items-center hover:text-primary transition focus:outline-none whitespace-nowrap">
                         Company <i class="fa-solid fa-chevron-down ml-1.5 text-[10px]"></i>
                     </button>
@@ -293,6 +322,8 @@
                                             <li><a href="ungc.html"
                                                     class="relative inline-block text-gray-700 font-semibold hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300 text-base">United
                                                     Nations Global Compact</a></li>
+                                            <li><a href="/articles"
+                                                    class="relative inline-block text-gray-700 font-semibold hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300 text-base">Articles</a></li>
                                         </ul>
                                     </div>
                                 </div>
@@ -405,7 +436,7 @@
                 class="block px-3 py-3 text-base font-semibold text-gray-700 border-b border-gray-50 hover:text-primary">Contact
                 Us</a>
 
-            <div class="px-3 pt-3 pb-1 text-xs font-black uppercase text-gray-400 tracking-wider">Company</div>
+            <div id="mobile-company-label" class="px-3 pt-3 pb-1 text-xs font-black uppercase text-gray-400 tracking-wider">Company</div>
             <a href="services.html"
                 class="block pl-6 pr-3 py-2 text-sm font-medium text-gray-600 hover:text-primary">Our Services</a>
             <a href="pap.html"
@@ -418,8 +449,10 @@
             <a href="careers.html"
                 class="block pl-6 pr-3 py-2 text-sm font-medium text-gray-600 hover:text-primary">Careers</a>
             <a href="ungc.html"
-                class="block pl-6 pr-3 py-2 text-sm font-medium text-gray-600 hover:text-primary border-b border-gray-50 pb-4">United
+                class="block pl-6 pr-3 py-2 text-sm font-medium text-gray-600 hover:text-primary">United
                 Nations Global Compact</a>
+            <a href="/articles"
+                class="block pl-6 pr-3 py-2 text-sm font-medium text-gray-600 hover:text-primary border-b border-gray-50 pb-4">Articles</a>
 
             <!-- Auth removed -->
 
@@ -446,12 +479,51 @@
     console.log('[GetMEDS] Navbar Script initializing...');
     // Mark active nav link based on current page
     (function () {
-        const page = window.location.pathname.split('/').pop() || 'index.html';
+        const rawPath = window.location.pathname;
+        // Normalize: strip leading /, .html extension, trailing /  → e.g. "/meditations" → "meditations"
+        const normalizedPath = rawPath.replace(/^\//, '').replace(/\.html$/, '').replace(/\/$/, '') || 'index';
+
+        // Pages that live under the "Company" dropdown
+        const companyPages = new Set([
+            'services', 'global-presence', 'csr', 'careers',
+            'ungc', 'articles', 'article-detail', 'pap'
+        ]);
+
+        // Only match top-level nav links, not mega-menu sub-links
+        const topLevelHrefs = new Set([
+            '/', 'index.html',
+            'order-medicines.html', '/order-medicines',
+            'product-range.html', '/product-range',
+            'meditations.html', '/meditations',
+            'about-us.html', '/about-us',
+            'contact-us.html', '/contact-us'
+        ]);
+
         document.querySelectorAll('nav a[href]').forEach(link => {
-            if (link.getAttribute('href') === page) {
+            const href = link.getAttribute('href') || '';
+            if (!topLevelHrefs.has(href)) return;
+            const normalizedHref = href.replace(/^\//, '').replace(/\.html$/, '').replace(/\/$/, '') || 'index';
+            if (normalizedHref === normalizedPath) {
                 link.classList.add('text-primary');
             }
         });
+
+        // Highlight the Company button/label when on a Company sub-page
+        if (companyPages.has(normalizedPath)) {
+            // Desktop: the Company <button>
+            document.querySelectorAll('nav button').forEach(btn => {
+                if (btn.textContent.trim().startsWith('Company')) {
+                    btn.classList.add('text-primary');
+                }
+            });
+            // Mobile: the Company section label <div>
+            document.querySelectorAll('#mobile-menu div').forEach(div => {
+                if (div.textContent.trim() === 'Company') {
+                    div.classList.add('text-primary');
+                    div.classList.remove('text-gray-400');
+                }
+            });
+        }
     })();
 
     window.toggleSearchBar = function () {

@@ -49,7 +49,6 @@ const AnimatedCounter = ({ end, duration = 2000, suffix = "" }: { end: number, d
 
 export default function GetMedsHomepage() {
   const [isScrolled, setIsScrolled] = useState(false);
-  const [activeTab, setActiveTab] = useState('all');
   const [isInquiryOpen, setIsInquiryOpen] = useState(false);
   const [therapPage, setTherapPage] = useState(0);
   const [openFaq, setOpenFaq] = useState(0);
@@ -209,7 +208,7 @@ export default function GetMedsHomepage() {
 
           {/* Navigation Bar (Transparent overlay, smoothly switches to colored shadow card on scroll) */}
           <nav className={`w-full z-50 ${isScrolled
-            ? 'bg-white shadow-xl border-b border-gray-100 text-gray-800 fixed top-0 left-0 animate-slide-down'
+            ? 'bg-white border-b border-gray-100 text-gray-800 fixed top-0 left-0 animate-slide-down'
             : 'bg-transparent text-white absolute top-full left-0 transition-colors duration-300'
             }`}>
             <div className="max-w-7xl mx-auto px-6 flex items-center justify-between h-20 relative">
@@ -366,6 +365,7 @@ export default function GetMedsHomepage() {
                               <li><a href="csr.html" className="relative inline-block text-gray-700 font-semibold hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300 text-base">CSR</a></li>
                               <li><a href="careers.html" className="relative inline-block text-gray-700 font-semibold hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300 text-base">Careers</a></li>
                               <li><a href="ungc.html" className="relative inline-block text-gray-700 font-semibold hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300 text-base">United Nations Global Compact</a></li>
+                              <li><a href="/articles" className="relative inline-block text-gray-700 font-semibold hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300 text-base">Articles</a></li>
                             </ul>
                           </div>
                         </div>
@@ -698,8 +698,11 @@ export default function GetMedsHomepage() {
       <section className="py-16 px-6 reveal">
         <div className="max-w-7xl mx-auto">
           <div className="text-center max-w-3xl mx-auto mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 leading-tight">
-              Capabilities that move medicines, partnerships, and patients forward.
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 leading-tight">
+              Capabilities that move{' '}
+              <span className="bg-gradient-to-r from-primary via-green-400 to-blue-500 bg-clip-text text-transparent">
+                medicines, partnerships, and patients forward.
+              </span>
             </h2>
             <p className="text-gray-500 text-base leading-relaxed">
               Getmeds operates a full-stack pharmaceutical platform — from global sourcing and regulatory compliance to last-mile distribution, government access, and digital health.
@@ -1191,7 +1194,7 @@ export default function GetMedsHomepage() {
                     </div>
 
                     {/* Read More button */}
-                    <button className="w-full text-white font-semibold text-sm py-3 rounded-2xl hover:opacity-90 transition-opacity duration-200" style={{ background: 'linear-gradient(135deg,#1D9FDA,#61A644)' }}>
+                    <button className="w-full bg-white text-gray-800 font-semibold text-sm py-3 rounded-2xl hover:bg-gray-100 transition-colors duration-200">
                       Read More
                     </button>
 

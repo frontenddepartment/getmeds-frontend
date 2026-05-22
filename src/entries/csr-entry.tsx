@@ -1,12 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import GetMedsHomepage from './home';
+import Csr from '../pages/csr';
 
 const rootElement = document.getElementById('root');
 if (rootElement) {
   ReactDOM.createRoot(rootElement).render(
     <React.StrictMode>
-      <GetMedsHomepage />
+      <Csr />
     </React.StrictMode>
   );
 }
