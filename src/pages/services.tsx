@@ -4,7 +4,7 @@ export default function Services() {
   useEffect(() => {
     const navContainer = document.getElementById('navbar-container');
     if (navContainer && navContainer.innerHTML.trim() === '') {
-      fetch('public/components/navbar.html')
+      fetch('/components/navbar.html')
         .then(r => r.text())
         .then(html => { navContainer.innerHTML = html; });
     }

@@ -137,14 +137,14 @@ export default function ArticleDetail() {
   useEffect(() => {
     const navContainer = document.getElementById('navbar-container');
     if (navContainer && navContainer.innerHTML.trim() === '') {
-      fetch('public/components/navbar.html')
+      fetch('/components/navbar.html')
         .then(r => r.text())
         .then(html => { navContainer.innerHTML = html; });
     }
 
     const footerContainer = document.getElementById('footer-container');
     if (footerContainer && footerContainer.innerHTML.trim() === '') {
-      fetch('public/components/footer.html')
+      fetch('/components/footer.html')
         .then(r => r.text())
         .then(html => { footerContainer.innerHTML = html; });
     }

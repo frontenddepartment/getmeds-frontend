@@ -3,13 +3,13 @@ import React, { useEffect } from 'react';
 const Careers: React.FC = () => {
   // Navbar / Footer injection
   useEffect(() => {
-    fetch('public/components/navbar.html')
+    fetch('/components/navbar.html')
       .then(r => r.text())
       .then(html => {
         const el = document.getElementById('navbar-container');
         if (el) el.innerHTML = html;
       });
-    fetch('public/components/footer.html')
+    fetch('/components/footer.html')
       .then(r => r.text())
       .then(html => {
         const el = document.getElementById('footer-container');
