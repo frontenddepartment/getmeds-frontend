@@ -141,9 +141,18 @@ export default function PatientAssistanceProgram() {
             <p data-json="steps.0.instruction" className="max-w-sm text-xl font-semibold text-gray-800 leading-relaxed">
               Tanungin ang iyong attending physician tungkol sa pagkuha ng government assistance para sa iyong mga gamot sa cancer.
             </p>
-            <div className="relative shrink-0 w-72 md:w-96 lg:w-[480px]">
-              <img src="assets/stepone.png" alt="Kumonsulta sa Doktor" className="w-full object-contain rounded-[15px]" />
-              <div className="absolute inset-0 rounded-[15px] pointer-events-none" style={{ boxShadow: 'inset 0 0 60px 30px rgba(220,245,232,0.85)' }} />
+            <div className="shrink-0 w-72 md:w-96 lg:w-[480px]">
+              <img
+                src="assets/stepone.png"
+                alt="Kumonsulta sa Doktor"
+                className="w-full object-contain"
+                style={{
+                  maskImage: 'linear-gradient(to right, transparent 0%, black 18%, black 82%, transparent 100%), linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%)',
+                  WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 18%, black 82%, transparent 100%), linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%)',
+                  maskComposite: 'intersect',
+                  WebkitMaskComposite: 'destination-in',
+                }}
+              />
             </div>
           </div>
         </div>

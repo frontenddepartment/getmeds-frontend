@@ -36,6 +36,24 @@ const TableSkeleton = () => (
   </div>
 );
 
+const categoryIcons: Record<string, string> = {
+  'Oncology': 'fa-ribbon',
+  'Hematology': 'fa-droplet',
+  'Obstetrician': 'fa-baby',
+  'Gynecology': 'fa-venus',
+  'Endocrinology': 'fa-syringe',
+  'Anti-Infectives': 'fa-shield-virus',
+  'Orthopedic': 'fa-bone',
+  'Cardiology': 'fa-heart-pulse',
+  'Neuro-Oncology': 'fa-brain',
+  'Respiratory': 'fa-lungs',
+  'Allergy': 'fa-hand-dots',
+  'Nephrology': 'fa-kidneys',
+  'Renal': 'fa-droplet',
+  'Pain Management': 'fa-pills',
+  'Rheumatology': 'fa-person-walking',
+  'Radiology': 'fa-x-ray',
+};
 
 export default function ProductRange() {
   const { data: productsData, loading: productsLoading } = useProducts();
@@ -55,6 +73,29 @@ export default function ProductRange() {
   const [formData, setFormData] = useState({ name: '', phone: '', email: '', message: '' });
   const [submitState, setSubmitState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
   const [searchHistoryCleared, setSearchHistoryCleared] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [activeFlyoutCat, setActiveFlyoutCat] = useState<any | null>(null);
+  const [flyoutVisible, setFlyoutVisible] = useState(false);
+
+  const openFlyout = (cat: any) => {
+    if (activeFlyoutCat?.name === cat.name && flyoutVisible) {
+      setFlyoutVisible(false);
+      setTimeout(() => setActiveFlyoutCat(null), 450);
+      return;
+    }
+    setFlyoutVisible(false);
+    setActiveFlyoutCat(cat);
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        setFlyoutVisible(true);
+      });
+    });
+  };
+
+  const closeFlyout = () => {
+    setFlyoutVisible(false);
+    setTimeout(() => setActiveFlyoutCat(null), 450);
+  };
 
   const searchWrapperRef = useRef<HTMLDivElement>(null);
   const tableRef = useRef<HTMLDivElement>(null);
@@ -283,141 +324,173 @@ export default function ProductRange() {
     cat.subItems.some((s: any) => s.label === currentCategory) || cat.name === currentCategory;
 
   return (
-    <div style={{ fontFamily: "'Poppins', sans-serif" }} className="bg-white text-gray-800 antialiased">
-      <div id="navbar-container" className="sticky top-0 z-[50]" />
+    <div style={{ fontFamily: "'Poppins', sans-serif" }} className="bg-white text-gray-800 antialiased flex flex-col h-screen overflow-hidden">
+      <style>{`
+        .sidebar-scroll::-webkit-scrollbar { width: 4px; }
+        .sidebar-scroll::-webkit-scrollbar-track { background: transparent; }
+        .sidebar-scroll::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 999px; }
+        .sidebar-scroll::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+        .sidebar-scroll::-webkit-scrollbar-button { display: none; }
+      `}</style>
 
-      {/* Hero Video Section */}
-      <section className="w-full mx-auto px-4 md:px-6 mt-4 mb-4 max-w-[1600px]">
-        <div className="relative rounded-[1.5rem] border border-gray-100/20 overflow-hidden min-h-[300px] md:min-h-[400px] flex items-center justify-center">
-          <video autoPlay loop muted playsInline className="absolute inset-0 w-full h-full object-cover object-center pointer-events-none">
-            <source src="assets/oncologyvideo.mp4" type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent pointer-events-none" />
-          <div className="relative z-10 text-center px-4 md:px-8 max-w-4xl mx-auto flex flex-col items-center justify-center w-full h-full pointer-events-none">
-            <h1 className="text-2xl md:text-4xl lg:text-5xl font-semibold mb-4 drop-shadow-xl animate-fade-up tracking-tight gradient-text pb-1">
-              GetMEDS Products
-            </h1>
-            <p
-              className="text-white/90 text-[14px] md:text-lg max-w-2xl drop-shadow-md animate-fade-up font-medium leading-relaxed"
-              style={{ animationDelay: '0.2s', opacity: 0 }}
+      {/* NAVBAR */}
+      <div id="navbar-container" className="shrink-0 z-[50]" />
+
+      {/* BODY ROW */}
+      <div className="flex flex-1 min-h-0 relative">
+
+        {/* SIDEBAR */}
+        <aside
+          className="shrink-0 overflow-y-auto z-40 hidden lg:flex flex-col bg-white border-r border-gray-100 sidebar-scroll relative"
+          style={{ width: sidebarOpen ? '256px' : '0px', minWidth: 0, transition: 'width 0.3s ease', overflow: sidebarOpen ? 'auto' : 'hidden' }}
+        >
+          <div className="px-5 py-4 border-b border-gray-100 whitespace-nowrap flex items-center justify-between">
+            <p className="text-[15px] font-semibold text-gray-500">Categories</p>
+            <button
+              onClick={() => setSidebarOpen(false)}
+              className="w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors shrink-0"
+              title="Collapse sidebar"
             >
-              Explore our comprehensive catalog of high-quality pharmaceutical and healthcare solutions designed for your needs.
-            </p>
+              <i className="fa-solid fa-chevron-left text-[15px] text-gray-500" />
+            </button>
           </div>
-        </div>
-      </section>
+          <nav className="px-3 py-3 space-y-0.5">
+            <button
+              onClick={() => selectCategory('All')}
+              className="w-full flex items-center justify-between px-4 py-2.5 rounded-[10px] text-[13px] font-semibold transition-all duration-200"
+              style={currentCategory === 'All' && !flyoutVisible
+                ? { background: 'linear-gradient(to right, #61A644, #1D9FDA)', color: '#fff' }
+                : { color: '#374151' }}
+            >
+              <span>All Products</span>
+            </button>
+            {categoriesLoading ? (
+              <SidebarSkeleton />
+            ) : (
+              sidebarCategories.map(cat => (
+                <button
+                  key={cat.name}
+                  onClick={() => openFlyout(cat)}
+                  className="w-full flex items-center justify-between px-4 py-2.5 rounded-[10px] text-[13px] font-semibold transition-all duration-200 hover:bg-gray-50 group"
+                  style={(flyoutVisible ? activeFlyoutCat?.name === cat.name : isCatParentActive(cat))
+                    ? { background: 'linear-gradient(to right, #61A644, #1D9FDA)', color: '#fff' }
+                    : { color: '#374151' }}
+                >
+                  <div className="flex items-center gap-3 min-w-0">
+                    <i className={`fa-solid ${categoryIcons[cat.name] || 'fa-folder'} text-[14px] shrink-0 ${(flyoutVisible ? activeFlyoutCat?.name === cat.name : isCatParentActive(cat)) ? 'text-white' : 'text-gray-400 group-hover:text-primary'}`} />
+                    <span className="text-left leading-snug truncate">{cat.name}</span>
+                  </div>
+                  <i className={`fa-solid fa-chevron-right text-[9px] shrink-0 ${(flyoutVisible ? activeFlyoutCat?.name === cat.name : isCatParentActive(cat)) ? 'text-white/70' : 'text-gray-400'}`} />
+                </button>
+              ))
+            )}
+          </nav>
+        </aside>
 
-      {/* Main Content: Sidebar + Products */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-24">
-        <div className="flex flex-col lg:flex-row gap-10">
+        {/* FLYOUT BACKDROP */}
+        {activeFlyoutCat && (
+          <div
+            className="absolute inset-0 z-20"
+            style={{
+              backdropFilter: flyoutVisible ? 'blur(4px)' : 'blur(0px)',
+              background: flyoutVisible ? 'rgba(0,0,0,0.08)' : 'transparent',
+              transition: 'backdrop-filter 0.4s ease, background 0.4s ease',
+            }}
+            onClick={closeFlyout}
+          />
+        )}
 
-          {/* LEFT PANEL: Categories */}
-          <div className="lg:w-1/4">
-            <div className="bg-white border border-gray-100 rounded-[10px] overflow-hidden sticky top-28 shadow-sm">
-              <div className="bg-gray-50/50 px-6 py-5 border-b border-gray-100">
-                <h3 className="font-semibold text-gray-900 flex items-center">Categories</h3>
-              </div>
-
-              <div className="py-2">
-                {/* All Products */}
-                <div className="category-group">
-                  <a
-                    href="#"
-                    onClick={(e) => { e.preventDefault(); selectCategory('All'); }}
-                    className="w-full flex items-center justify-between px-6 py-4 text-[14px] font-semibold transition"
-                    style={currentCategory === 'All'
-                      ? { color: '#0D99FF', background: '#F0F9FF', borderRight: '4px solid #0D99FF' }
-                      : { color: '#374151' }}
-                  >
-                    <span className="flex items-center">All Products</span>
-                  </a>
-                </div>
-
-                {categoriesLoading ? (
-                  <SidebarSkeleton />
-                ) : (
-                  sidebarCategories.map(cat => (
-                    <div key={cat.name} className="category-group">
-                      <button
-                        onClick={() => { toggleCat(cat.name); selectCategory(cat.name); }}
-                        className="w-full flex items-center justify-between px-6 py-3 text-[13.5px] font-semibold hover:bg-blue-50/50 hover:text-primary transition"
-                        style={isCatParentActive(cat)
-                          ? { color: '#0D99FF', background: '#F0F9FF', borderRight: '4px solid #0D99FF' }
-                          : { color: '#4B5563' }}
-                      >
-                        <span className="flex items-center">{cat.name}</span>
-                        <i
-                          className="fa-solid fa-chevron-down text-[10px] transition-transform duration-300"
-                          style={{ transform: openCategories.has(cat.name) ? 'rotate(180deg)' : 'rotate(0deg)' }}
-                        />
-                      </button>
-                      <div
-                        className="bg-gray-50/30"
-                        style={{
-                          maxHeight: openCategories.has(cat.name) ? '450px' : '0px',
-                          overflowY: 'auto',
-                          overflow: 'hidden',
-                          transition: 'max-height 0.3s ease-out',
-                          scrollbarWidth: 'thin',
-                          scrollbarColor: '#0D99FF transparent',
-                        }}
-                      >
-                        {cat.subItems.map((sub: any, si: number) => (
-                          <a
-                            key={si}
-                            href="#"
-                            onClick={(e) => { e.preventDefault(); selectCategory(sub.label); }}
-                            className="block py-1.5 text-[12.5px] transition"
-                            style={currentCategory === sub.label
-                              ? { color: '#0D99FF', fontWeight: 700, background: '#F0F9FF', borderRadius: '8px', paddingLeft: '56px' }
-                              : { color: '#6B7280', paddingLeft: '56px' }}
-                          >
-                            {sub.label}
-                          </a>
-                        ))}
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-
-              {/* Sidebar Contact Banner */}
-              <div
-                className="m-4 rounded-2xl overflow-hidden relative p-5 text-white group cursor-pointer transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5"
-                style={{ background: 'linear-gradient(135deg, #61A644, #1D9FDA)' }}
-              >
-                <div className="absolute top-[-10px] right-[-10px] w-20 h-20 bg-white/10 rounded-full blur-xl pointer-events-none" />
-                <div className="absolute bottom-[-20px] left-[-20px] w-16 h-16 bg-black/5 rounded-full blur-lg pointer-events-none" />
-                <div className="absolute right-2 bottom-0 w-20 h-20 opacity-30 group-hover:opacity-50 transition-all duration-500 group-hover:scale-110 pointer-events-none">
-                  <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="50" cy="38" r="18" fill="white" />
-                    <path d="M20 80 C20 60, 80 60, 80 80" fill="white" />
-                    <rect x="43" y="24" width="4" height="14" rx="2" fill="#61A644" />
-                    <rect x="37" y="30" width="14" height="4" rx="2" fill="#61A644" />
-                    <circle cx="75" cy="20" r="8" fill="white" opacity="0.6" />
-                    <text x="71" y="24" fill="#1D9FDA" fontSize="10" fontWeight="bold">?</text>
-                  </svg>
-                </div>
-                <div className="relative z-10 w-[70%]">
-                  <p className="text-white/70 text-[10px] font-semibold uppercase tracking-wider mb-1">Support 24/7</p>
-                  <h4 className="font-bold text-[14px] mb-1.5 tracking-tight leading-snug">Need Medical Assistance?</h4>
-                  <p className="text-white/80 text-[10px] mb-3 leading-snug">Our healthcare experts are here to help anytime.</p>
-                  <button
-                    className="bg-white font-bold px-4 py-1.5 rounded-full text-[10px] shadow-md hover:bg-gray-50 active:scale-95 transition"
-                    style={{ color: '#61A644' }}
-                  >
-                    Contact Us
-                  </button>
-                </div>
-              </div>
+        {/* FLYOUT SUBCATEGORY PANEL */}
+        {activeFlyoutCat && (
+          <div
+            className="absolute z-30 bg-white shadow-2xl flex flex-col sidebar-scroll overflow-y-auto"
+            style={{
+              left: (sidebarOpen ? 256 : 0) + 12,
+              top: '12px',
+              bottom: '12px',
+              width: '250px',
+              borderRadius: '15px',
+              transform: flyoutVisible ? 'translateX(0)' : 'translateX(-48px)',
+              opacity: flyoutVisible ? 1 : 0,
+              transition: 'transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.35s ease',
+            }}
+          >
+            <div className="px-4 py-4 border-b border-gray-100 flex items-center justify-between shrink-0">
+              <p className="font-semibold text-gray-800 text-[13px] leading-snug">{activeFlyoutCat.name}</p>
+              <button onClick={closeFlyout} className="w-10 h-10 rounded-full hover:bg-gray-100 flex items-center justify-center transition-colors">
+                <i className="fa-solid fa-xmark text-gray-500 text-[16px]" />
+              </button>
+            </div>
+            <div className="px-2 py-2 space-y-0.5">
+              {activeFlyoutCat.subItems.map((sub: any, si: number) => (
+                <button
+                  key={si}
+                  onClick={() => { selectCategory(sub.label); closeFlyout(); }}
+                  className="w-full text-left px-3 py-2.5 rounded-[8px] text-[13.5px] transition-all duration-150 hover:bg-gray-50"
+                  style={currentCategory === sub.label
+                    ? { color: '#1D9FDA', fontWeight: 700, background: '#EFF8FF' }
+                    : { color: '#6B7280' }}
+                >
+                  {sub.label}
+                </button>
+              ))}
             </div>
           </div>
+        )}
 
-          {/* RIGHT COLUMN: Products Grid */}
-          <div className="lg:w-3/4">
+        {/* MAIN CONTENT COLUMN */}
+        <div className="flex-1 min-w-0 overflow-y-auto" style={{ transition: 'all 0.3s ease' }}>
+
+          {/* Hero Banner */}
+          <section className="w-full px-4 md:px-6 pt-5 pb-4">
+            <div
+              className="relative rounded-[15px] overflow-hidden flex items-center px-8 md:px-12"
+              style={{ background: 'linear-gradient(120deg, #3aaf5c 0%, #1a99d6 100%)', minHeight: '130px' }}
+            >
+              <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 rounded-full pointer-events-none" style={{ background: 'rgba(255,255,255,0.12)', filter: 'blur(40px)' }} />
+              <div className="absolute right-8 top-1/2 -translate-y-1/2 hidden md:block pointer-events-none" style={{ width: '220px', height: '90px' }}>
+                {[
+                  { right: '160px', rotate: '-14deg', opacity: 0.35 },
+                  { right: '110px', rotate: '-7deg',  opacity: 0.50 },
+                  { right: '58px',  rotate: '-1deg',  opacity: 0.65 },
+                  { right: '0px',   rotate:  '6deg',  opacity: 0.45 },
+                ].map((s, i) => (
+                  <div
+                    key={i}
+                    className="absolute w-16 h-[86px] rounded-2xl"
+                    style={{
+                      right: s.right,
+                      top: '50%',
+                      transform: `translateY(-50%) rotate(${s.rotate})`,
+                      background: `rgba(255,255,255,${s.opacity})`,
+                      boxShadow: '0 4px 16px rgba(0,0,0,0.12)',
+                    }}
+                  />
+                ))}
+              </div>
+              {!sidebarOpen && (
+                <button
+                  onClick={() => setSidebarOpen(true)}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full bg-white/20 hover:bg-white/35 flex items-center justify-center transition-colors"
+                  title="Expand sidebar"
+                >
+                  <i className="fa-solid fa-chevron-right text-[13px] text-white" />
+                </button>
+              )}
+              <div className={`relative z-10 transition-all duration-300 ${!sidebarOpen ? 'pl-8' : ''}`}>
+                <h1 className="text-2xl md:text-3xl font-semibold text-white tracking-tight leading-tight">
+                  GetMEDS Products
+                </h1>
+                <p className="text-white/75 text-[13px] mt-1 font-medium">Comprehensive catalog of pharmaceutical solutions.</p>
+                <p className="text-white/60 text-[12px] font-medium">Browse categories and send inquiries directly.</p>
+              </div>
+            </div>
+          </section>
+
+          {/* PRODUCTS LIST */}
+          <section className="px-4 sm:px-6 lg:px-8 mb-24">
             <div className="flex items-center justify-between mb-8">
-              <h2 className="text-xl font-bold text-gray-900 whitespace-nowrap">
+              <h2 className="text-xl font-semibold text-gray-900 whitespace-nowrap">
                 {currentCategory === 'All' ? 'All Products' : currentCategory}{' '}
                 <span className="text-gray-400 font-normal text-sm ml-2">({sorted.length} Items)</span>
               </h2>
@@ -493,7 +566,7 @@ export default function ProductRange() {
                   <select
                     value={sortBy}
                     onChange={e => { setSortBy(e.target.value); setCurrentPage(1); }}
-                    className="appearance-none bg-white border border-blue-200 hover:border-primary rounded-full pl-4 pr-8 py-1.5 text-[13px] font-bold text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition-all cursor-pointer shadow-sm"
+                    className="appearance-none bg-white border border-blue-200 hover:border-primary rounded-full pl-4 pr-8 py-1.5 text-[13px] font-semibold text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition-all cursor-pointer shadow-sm"
                   >
                     <option>Popularity</option>
                     <option>Price: Low to High</option>
@@ -609,11 +682,11 @@ export default function ProductRange() {
                 </button>
               </div>
             )}
-          </div>
-        </div>
-      </section>
+          </section>
 
-      <div id="footer-container" />
+          <div id="footer-container" />
+        </div>
+      </div>{/* end body row */}
 
       {/* Inquiry Modal */}
       {modalOpen && (
@@ -690,7 +763,7 @@ export default function ProductRange() {
                     </div>
                   </div>
                 </div>
- 
+
                 {/* Tabs */}
                 <div className="bg-white rounded-[15px] border border-gray-100 p-5 mt-auto">
                   <div className="flex overflow-x-auto border-b border-gray-100 mb-5 gap-6">
