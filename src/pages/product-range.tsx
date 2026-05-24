@@ -1,228 +1,46 @@
-import React, { useEffect, useState, useRef } from 'react';
-
-interface Product {
-  name: string;
-  category: string;
-  price: number;
-  img?: string;
-}
-
-const oncologyProducts: Product[] = [
-  { name: "Cytarabine 100 MG / 5 ML", category: "Acute Myeloid Leukemia", price: 1850.00 },
-  { name: "Idarubicin 5 MG VIAL", category: "Acute Myeloid Leukemia", price: 4200.00 },
-  { name: "Imatinib (as Mesilate) 100 MG", category: "Chronic Myeloid Leukemia", price: 3200.00 },
-  { name: "Hydroxyurea 500 MG", category: "Chronic Myeloid Leukemia", price: 1200.00 },
-  { name: "Cytarabine 500 MG VIAL", category: "Acute Lymphocytic Leukemia", price: 2800.00 },
-  { name: "Vincristine 1 MG / 1 ML", category: "Acute Lymphocytic Leukemia", price: 1500.00 },
-  { name: "Bendamustine (as Hydrochloride) 100 MG", category: "Chronic Lymphocytic Leukemia", price: 12500.00 },
-  { name: "Cytarabine 1 G VIAL", category: "Hodgkin/Non-Hodgkin's Lymphoma", price: 3500.00 },
-  { name: "Methotrexate 50 MG / 2 ML", category: "Hodgkin/Non-Hodgkin's Lymphoma", price: 1650.00 },
-  { name: "Vincristine 2 MG VIAL", category: "Hodgkin/Non-Hodgkin's Lymphoma", price: 2100.00 },
-  { name: "Cyclophosphamide (as monohydrate) 500 MG", category: "Hodgkin/Non-Hodgkin's Lymphoma", price: 2800.00 },
-  { name: "Bendamustine (as Hydrochloride) 25 MG", category: "Hodgkin/Non-Hodgkin's Lymphoma", price: 5600.00 },
-  { name: "Bortezomib 3.5 MG VIAL", category: "Mantle Cell Lymphoma", price: 18500.00 },
-  { name: "Cytarabine 100 MG", category: "Chronic Myelocytic Leukemia", price: 1850.00 },
-  { name: "Cytarabine 100 MG / 5 ML (Meningeal)", category: "Meningeal Leukemia", price: 1950.00 },
-  { name: "Imatinib (as Mesilate) 400 MG", category: "Acute Lymphoblastic Leukemia", price: 6800.00 },
-  { name: "Idarubicin 10 MG VIAL", category: "Acute Lymphoblastic Leukemia", price: 7500.00 },
-  { name: "Methotrexate 2.5 MG", category: "Acute Lymphoblastic Leukemia", price: 850.00 },
-  { name: "Idarubicin 5 MG (Promyelocytic)", category: "Acute Promyelocytic Leukemia", price: 4200.00 },
-  { name: "Hydroxyurea 500 MG (Sickle Cell)", category: "Sickle Cell Anemia", price: 1200.00 },
-  { name: "Folic Acid", category: "Folate Deficiency Anemia", price: 350.00 },
-  { name: "Ferrous Sulfate", category: "Iron Deficiency Anemia", price: 420.00 },
-  { name: "Paclitaxel 100 MG / 16.7 ML", category: "Breast Cancer", price: 2150.00 },
-  { name: "Docetaxel (as Trihydrate) 20 MG / 0.5 ML", category: "Breast Cancer", price: 1850.00 },
-  { name: "Gemcitabine (as Hydrochloride) 1 G VIAL", category: "Breast Cancer", price: 3200.00 },
-  { name: "Capecitabine 500 MG", category: "Breast Cancer", price: 1150.00 },
-  { name: "Letrozole 2.5 MG", category: "Breast Cancer", price: 8900.00 },
-  { name: "Anastrozole 1 MG", category: "Breast Cancer", price: 4200.00 },
-  { name: "Cyclophosphamide (as monohydrate) 500 MG VIAL", category: "Breast Cancer", price: 2800.00 },
-  { name: "Docetaxel RTU 20 MG / 2 ML", category: "Breast Cancer", price: 1950.00 },
-  { name: "Methotrexate 50 MG / 2 ML", category: "Breast Cancer", price: 1500.00 },
-  { name: "Lapatinib 250 MG", category: "Breast Cancer", price: 12500.00 },
-  { name: "Paclitaxel 100 MG / 16.7 ML", category: "Ovarian Cancer", price: 2150.00 },
-  { name: "Carboplatin 150 MG / 15 ML", category: "Ovarian Cancer", price: 3500.00 },
-  { name: "Gemcitabine (as Hydrochloride) 1 G VIAL", category: "Ovarian Cancer", price: 3200.00 },
-  { name: "Cyclophosphamide (as monohydrate) 500 MG VIAL", category: "Ovarian Cancer", price: 2800.00 },
-  { name: "Paclitaxel 100 MG / 16.7 ML", category: "Non-Small Cell Lung Cancer", price: 2150.00 },
-  { name: "Docetaxel (as Trihydrate) 20 MG / 0.5 ML", category: "Non-Small Cell Lung Cancer", price: 1850.00 },
-  { name: "Gemcitabine (as Hydrochloride) 1 G VIAL", category: "Non-Small Cell Lung Cancer", price: 3200.00 },
-  { name: "Pemetrexed (as Disodium Heptahydrate) 500 MG", category: "Non-Small Cell Lung Cancer", price: 4500.00 },
-  { name: "Docetaxel RTU 20 MG / 2 ML", category: "Non-Small Cell Lung Cancer", price: 1950.00 },
-  { name: "Docetaxel (as Trihydrate) 20 MG / 0.5 ML", category: "Prostate Cancer", price: 1850.00 },
-  { name: "Abiraterone Acetate 250 MG", category: "Prostate Cancer", price: 15000.00 },
-  { name: "Docetaxel RTU 20 MG / 2 ML", category: "Prostate Cancer", price: 1950.00 },
-  { name: "Oxaliplatin 100 MG / 20 ML", category: "Colorectal Cancer", price: 5200.00 },
-  { name: "Capecitabine 500 MG", category: "Colorectal Cancer", price: 1150.00 },
-  { name: "Fluorouracil 500 MG / 10 ML", category: "Colorectal Cancer", price: 850.00 },
-  { name: "Gemcitabine (as Hydrochloride) 1 G VIAL", category: "Pancreatic Cancer", price: 3200.00 },
-  { name: "Fluorouracil 500 MG / 10 ML", category: "Pancreatic Cancer", price: 850.00 },
-  { name: "Docetaxel (as Trihydrate) 20 MG / 0.5 ML", category: "Gastric Cancer", price: 1850.00 },
-  { name: "Capecitabine 500 MG", category: "Gastric Cancer", price: 1150.00 },
-  { name: "Fluorouracil 500 MG / 10 ML", category: "Gastric Cancer", price: 850.00 },
-  { name: "Docetaxel RTU 20 MG / 2 ML", category: "Gastric Cancer", price: 1950.00 },
-  { name: "Hydroxyurea 500 MG", category: "Head and Neck Cancer", price: 1200.00 },
-  { name: "Pemetrexed (as Disodium Heptahydrate) 500 MG", category: "Malignant Pleural Mesothelioma", price: 4500.00 },
-  { name: "Bleomycin (as Sulfate) 15 UNITS", category: "Malignant Pleural Effusion", price: 3800.00 },
-  { name: "Imatinib (as Mesilate) 400 MG", category: "Gastrointestinal Stromal Tumors", price: 3200.00 },
-  { name: "Cytarabine 100 MG / 16.7 ML INJECTION", category: "All", price: 1840.00, img: "assets/CYTAGET.png" },
-  { name: "Docetaxel 50 MG", category: "All", price: 560.00, img: "assets/docetaxel.png" },
-  { name: "Capecitabine 300 MCG / 1 ML INJECTION", category: "All", price: 1150.00, img: "assets/capecitabine.png" },
-  { name: "Letrozole 250 MG / 5 ML PF SYRINGE", category: "All", price: 8900.00, img: "assets/letrozole.png" },
-  { name: "Temozolomide 100 MG Caps", category: "All", price: 12450.00, img: "assets/temozolomide.png" },
-  { name: "Folic Acid", category: "All", price: 350.00 },
-  { name: "Ferrous Sulfate", category: "All", price: 420.00 },
-  { name: "Amikacin (as sulfate)", category: "Respiratory Infections", price: 850.00 },
-  { name: "Cefoxitin (as Sodium)", category: "Respiratory Infections", price: 920.00 },
-  { name: "Cefazolin (as Sodium)", category: "Respiratory Infections", price: 780.00 },
-  { name: "Vancomycin (as Hydrochloride)", category: "Respiratory Infections", price: 1500.00 },
-  { name: "Cefoxitin (as Sodium)", category: "Urinary Tract Infections", price: 920.00 },
-  { name: "Cefazolin (as Sodium)", category: "Urinary Tract Infections", price: 780.00 },
-  { name: "Cefazolin (as Sodium)", category: "Skin and Soft Tissue Infections", price: 780.00 },
-  { name: "Cefazolin (as Sodium)", category: "Bone and Joint Infections", price: 780.00 },
-  { name: "Cefoxitin (as Sodium)", category: "Gynecological infections", price: 920.00 },
-  { name: "Cefoxitin (as Sodium)", category: "Intra-abdominal infections", price: 920.00 },
-  { name: "Polymyxin B", category: "Bloodstream infections", price: 2100.00 },
-  { name: "Polymyxin B", category: "Ocular or topical infections", price: 2100.00 },
-  { name: "Danazol", category: "Endometriosis", price: 1850.00 },
-  { name: "Danazol", category: "Fibrocystic Breast Disease", price: 1850.00 },
-  { name: "Finasteride", category: "Benign Prostatic Hyperplasia", price: 1200.00 },
-  { name: "Bortezomib", category: "Multiple Myeloma", price: 18500.00 },
-  { name: "Zoledronic Acid (as Monohydrate)", category: "Multiple Myeloma", price: 8500.00 },
-  { name: "Zoledronic Acid (as Monohydrate)", category: "Glucocorticoid-Induced Osteoporosis", price: 8500.00 },
-  { name: "Amiodarone Hydrochloride", category: "Arrhythmia management", price: 950.00 },
-  { name: "Amlodipine", category: "Hypertension/Angina", price: 450.00 },
-  { name: "Temozolomide", category: "Glioblastoma Multiforme", price: 12450.00 },
-  { name: "Loratadine", category: "Seasonal Allergic Rhinitis", price: 350.00 },
-  { name: "Cetirizine Hydrochloride", category: "Seasonal Allergic Rhinitis", price: 380.00 },
-  { name: "Sevelamer Carbonate", category: "chronic kidney disease", price: 4200.00 },
-  { name: "Tramadol", category: "Chronic Pain Management", price: 650.00 },
-  { name: "Dexamethasone", category: "Inflammatory & Rheumatic Disorders", price: 450.00 },
-  { name: "Iodine (as Iohexol)", category: "Radiologic imaging enhancement", price: 3200.00 },
-];
+import React, { useEffect, useState, useRef, useMemo } from 'react';
+import { useProducts, useCategories } from '../lib/useSanity';
+import { urlFor } from '../lib/sanity';
+import type { Product as SanityProduct } from '../types/sanity';
 
 const ITEMS_PER_PAGE = 12;
 
-interface SubItem {
-  label: string;
-  isHeader?: boolean;
-}
+const SidebarSkeleton = () => (
+  <div className="animate-pulse space-y-4 py-4 px-6">
+    <div className="h-5 bg-gray-200 rounded-full w-1/2 mb-6" />
+    {[1, 2, 3, 4, 5].map(i => (
+      <div key={i} className="flex justify-between items-center py-2">
+        <div className="h-4 bg-gray-100 rounded-full w-2/3" />
+        <div className="h-3 bg-gray-100 rounded-full w-4" />
+      </div>
+    ))}
+  </div>
+);
 
-interface SidebarCategory {
-  name: string;
-  subItems: SubItem[];
-}
+const TableSkeleton = () => (
+  <div className="animate-pulse space-y-4 p-6">
+    {[1, 2, 3, 4, 5].map(i => (
+      <div key={i} className="flex items-center justify-between border-b border-gray-50 pb-4 last:border-0 last:pb-0">
+        <div className="flex items-center gap-4 w-1/3">
+          <div className="w-12 h-12 bg-gray-100 rounded-xl" />
+          <div className="space-y-2 flex-grow">
+            <div className="h-4 bg-gray-100 rounded-full w-3/4" />
+            <div className="h-3 bg-gray-100 rounded-full w-1/2" />
+          </div>
+        </div>
+        <div className="h-4 bg-gray-100 rounded-full w-24" />
+        <div className="h-4 bg-gray-100 rounded-full w-16" />
+        <div className="h-8 bg-gray-100 rounded-full w-24" />
+      </div>
+    ))}
+  </div>
+);
 
-const sidebarCategories: SidebarCategory[] = [
-  {
-    name: 'Oncology / Hematology',
-    subItems: [
-      { label: 'Breast Cancer' },
-      { label: 'Ovarian Cancer' },
-      { label: 'Non-Small Cell Lung Cancer' },
-      { label: 'Prostate Cancer' },
-      { label: 'Colorectal Cancer' },
-      { label: 'Pancreatic Cancer' },
-      { label: 'Gastric Cancer' },
-      { label: 'Head and Neck Cancer' },
-      { label: 'Malignant Pleural Mesothelioma' },
-      { label: 'Malignant Pleural Effusion' },
-      { label: 'Gastrointestinal Stromal Tumors' },
-      { label: 'Hematology Range', isHeader: true },
-      { label: 'Acute Myeloid Leukemia' },
-      { label: 'Chronic Myeloid Leukemia' },
-      { label: 'Acute Lymphocytic Leukemia' },
-      { label: 'Chronic Lymphocytic Leukemia' },
-      { label: "Hodgkin/Non-Hodgkin's Lymphoma" },
-      { label: 'Mantle Cell Lymphoma' },
-      { label: 'Chronic Myelocytic Leukemia' },
-      { label: 'Meningeal Leukemia' },
-      { label: 'Acute Lymphoblastic Leukemia' },
-      { label: 'Acute Promyelocytic Leukemia' },
-      { label: 'Sickle Cell Anemia' },
-    ],
-  },
-  {
-    name: 'Hematology / Obstetrician / Gynecology',
-    subItems: [
-      { label: 'Folate Deficiency Anemia' },
-      { label: 'Iron Deficiency Anemia' },
-    ],
-  },
-  {
-    name: 'Anti-Infectives',
-    subItems: [
-      { label: 'Respiratory Infections' },
-      { label: 'Urinary Tract Infections' },
-      { label: 'Skin and Soft Tissue Infections' },
-      { label: 'Bone and Joint Infections' },
-      { label: 'Gynecological infections' },
-      { label: 'Intra-abdominal infections' },
-      { label: 'Bloodstream infections' },
-      { label: 'Ocular or topical infections' },
-    ],
-  },
-  {
-    name: 'Endocrinology',
-    subItems: [
-      { label: 'Endometriosis' },
-      { label: 'Fibrocystic Breast Disease' },
-      { label: 'Benign Prostatic Hyperplasia' },
-    ],
-  },
-  {
-    name: 'Orthopedic',
-    subItems: [
-      { label: 'Multiple Myeloma' },
-      { label: 'Glucocorticoid-Induced Osteoporosis' },
-    ],
-  },
-  {
-    name: 'Cardiology',
-    subItems: [
-      { label: 'Arrhythmia management' },
-      { label: 'Hypertension/Angina' },
-    ],
-  },
-  {
-    name: 'Neuro-Oncology',
-    subItems: [
-      { label: 'Glioblastoma Multiforme' },
-    ],
-  },
-  {
-    name: 'Respiratory / Allergy',
-    subItems: [
-      { label: 'Seasonal Allergic Rhinitis' },
-    ],
-  },
-  {
-    name: 'Nephrology / Renal',
-    subItems: [
-      { label: 'chronic kidney disease' },
-    ],
-  },
-  {
-    name: 'Pain Management',
-    subItems: [
-      { label: 'Chronic Pain Management' },
-    ],
-  },
-  {
-    name: 'Rheumatology',
-    subItems: [
-      { label: 'Inflammatory & Rheumatic Disorders' },
-    ],
-  },
-  {
-    name: 'Radiology',
-    subItems: [
-      { label: 'Radiologic imaging enhancement' },
-    ],
-  },
-];
 
 export default function ProductRange() {
+  const { data: productsData, loading: productsLoading } = useProducts();
+  const { data: categoriesData, loading: categoriesLoading } = useCategories();
+
   const [openCategories, setOpenCategories] = useState<Set<string>>(new Set());
   const [currentCategory, setCurrentCategory] = useState('All');
   const [currentPage, setCurrentPage] = useState(1);
@@ -231,7 +49,7 @@ export default function ProductRange() {
   const [sortBy, setSortBy] = useState('Popularity');
   const [modalOpen, setModalOpen] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState<{ name: string; price: string; img: string; category: string } | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<SanityProduct | null>(null);
   const [activeTab, setActiveTab] = useState<'description' | 'usage' | 'precautions'>('description');
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [formData, setFormData] = useState({ name: '', phone: '', email: '', message: '' });
@@ -268,21 +86,90 @@ export default function ProductRange() {
     return () => document.removeEventListener('click', handleClick);
   }, []);
 
-  const getFiltered = (category: string) =>
-    oncologyProducts.filter(p =>
-      category === 'All' ||
-      p.category === category ||
-      ((category === 'Oncology' || category === 'Oncology / Hematology') && p.category !== 'All')
-    );
+  const getProductPrice = (p: SanityProduct) => {
+    const nameLower = p.name?.toLowerCase() || '';
+    if (nameLower.includes('cytarabine')) return 1840;
+    if (nameLower.includes('docetaxel')) return 560;
+    if (nameLower.includes('capecitabine')) return 1150;
+    if (nameLower.includes('letrozole')) return 8900;
+    if (nameLower.includes('temozolomide')) return 12450;
+    return undefined; // Quote on Request
+  };
+
+  const getProductImage = (p: SanityProduct) => {
+    if (p.image && p.image.asset) {
+      try {
+        return urlFor(p.image).width(120).height(120).url();
+      } catch (err) {
+        console.error('Error generating image URL:', err);
+      }
+    }
+    return 'assets/no-image.png';
+  };
+
+  const sidebarCategories = useMemo(() => {
+    if (!categoriesData || !productsData) return [];
+
+    const subCategoriesByCategoryId = new Map<string, Set<string>>();
+    productsData.forEach(p => {
+      const catId = p.category?._id;
+      if (catId && p.subCategory) {
+        if (!subCategoriesByCategoryId.has(catId)) {
+          subCategoriesByCategoryId.set(catId, new Set());
+        }
+        subCategoriesByCategoryId.get(catId)!.add(p.subCategory);
+      }
+    });
+
+    return categoriesData.map(cat => {
+      const subSet = subCategoriesByCategoryId.get(cat._id);
+      const subItems = subSet
+        ? Array.from(subSet).sort().map(sub => ({ label: sub }))
+        : [];
+      return {
+        id: cat._id,
+        name: cat.category,
+        subItems
+      };
+    }).filter(cat => cat.subItems.length > 0 || productsData.some(p => p.category?._id === cat._id));
+  }, [categoriesData, productsData]);
+
+  const getFiltered = (category: string) => {
+    if (!productsData) return [];
+    return productsData.filter(p => {
+      if (category === 'All') return true;
+      if (p.category?.category === category) return true;
+      if (p.subCategory === category) return true;
+      return false;
+    });
+  };
 
   const categoryFiltered = getFiltered(currentCategory);
   const searchFiltered = searchTerm
-    ? categoryFiltered.filter(p => p.name.toLowerCase().includes(searchTerm.toLowerCase()))
+    ? categoryFiltered.filter(p => {
+        const search = searchTerm.toLowerCase();
+        return (
+          p.name?.toLowerCase().includes(search) ||
+          (p.brandName && p.brandName.toLowerCase().includes(search)) ||
+          (p.genericName && p.genericName.toLowerCase().includes(search)) ||
+          (p.subCategory && p.subCategory.toLowerCase().includes(search))
+        );
+      })
     : categoryFiltered;
 
   const sorted = [...searchFiltered].sort((a, b) => {
-    if (sortBy === 'Price: Low to High') return a.price - b.price;
-    if (sortBy === 'Price: High to Low') return b.price - a.price;
+    const priceA = getProductPrice(a);
+    const priceB = getProductPrice(b);
+    if (sortBy === 'Price: Low to High') {
+      if (priceA === undefined) return 1;
+      if (priceB === undefined) return -1;
+      return priceA - priceB;
+    }
+    if (sortBy === 'Price: High to Low') {
+      if (priceA === undefined) return 1;
+      if (priceB === undefined) return -1;
+      return priceB - priceA;
+    }
     return 0;
   });
 
@@ -303,8 +190,8 @@ export default function ProductRange() {
     setCurrentPage(1);
   };
 
-  const openModal = (name: string, price: string, img: string, category: string) => {
-    setSelectedProduct({ name, price, img, category });
+  const openModal = (product: SanityProduct) => {
+    setSelectedProduct(product);
     setActiveTab('description');
     setFormData({ name: '', phone: '', email: '', message: '' });
     setUploadedFiles([]);
@@ -366,8 +253,10 @@ export default function ProductRange() {
     }
   };
 
-  const formatPrice = (price: number) =>
-    price.toLocaleString('en-PH', { style: 'currency', currency: 'PHP' });
+  const formatPrice = (price?: number) => {
+    if (price === undefined || price === null || isNaN(price)) return 'Quote on Request';
+    return price.toLocaleString('en-PH', { style: 'currency', currency: 'PHP' });
+  };
 
   const getPageRange = (current: number, total: number): (number | string)[] => {
     if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
@@ -390,8 +279,8 @@ export default function ProductRange() {
     if (tableRef.current) tableRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
-  const isCatParentActive = (cat: SidebarCategory) =>
-    cat.subItems.some(s => !s.isHeader && s.label === currentCategory);
+  const isCatParentActive = (cat: any) =>
+    cat.subItems.some((s: any) => s.label === currentCategory) || cat.name === currentCategory;
 
   return (
     <div style={{ fontFamily: "'Poppins', sans-serif" }} className="bg-white text-gray-800 antialiased">
@@ -445,44 +334,36 @@ export default function ProductRange() {
                   </a>
                 </div>
 
-                {/* Dynamic Category Groups */}
-                {sidebarCategories.map(cat => (
-                  <div key={cat.name} className="category-group">
-                    <button
-                      onClick={() => toggleCat(cat.name)}
-                      className="w-full flex items-center justify-between px-6 py-3 text-[13.5px] font-semibold hover:bg-blue-50/50 hover:text-primary transition"
-                      style={isCatParentActive(cat)
-                        ? { color: '#0D99FF', background: '#F0F9FF', borderRight: '4px solid #0D99FF' }
-                        : { color: '#4B5563' }}
-                    >
-                      <span className="flex items-center">{cat.name}</span>
-                      <i
-                        className="fa-solid fa-chevron-down text-[10px] transition-transform duration-300"
-                        style={{ transform: openCategories.has(cat.name) ? 'rotate(180deg)' : 'rotate(0deg)' }}
-                      />
-                    </button>
-                    <div
-                      className="bg-gray-50/30"
-                      style={{
-                        maxHeight: openCategories.has(cat.name) ? '450px' : '0px',
-                        overflowY: 'auto',
-                        overflow: 'hidden',
-                        transition: 'max-height 0.3s ease-out',
-                        scrollbarWidth: 'thin',
-                        scrollbarColor: '#0D99FF transparent',
-                      }}
-                    >
-                      {cat.subItems.map((sub, si) =>
-                        sub.isHeader ? (
-                          <a
-                            key={si}
-                            href="#"
-                            onClick={e => e.preventDefault()}
-                            className="block px-14 py-1.5 text-[12.5px] text-gray-500 transition border-t border-gray-100 mt-1 pt-2 font-bold"
-                          >
-                            {sub.label}
-                          </a>
-                        ) : (
+                {categoriesLoading ? (
+                  <SidebarSkeleton />
+                ) : (
+                  sidebarCategories.map(cat => (
+                    <div key={cat.name} className="category-group">
+                      <button
+                        onClick={() => { toggleCat(cat.name); selectCategory(cat.name); }}
+                        className="w-full flex items-center justify-between px-6 py-3 text-[13.5px] font-semibold hover:bg-blue-50/50 hover:text-primary transition"
+                        style={isCatParentActive(cat)
+                          ? { color: '#0D99FF', background: '#F0F9FF', borderRight: '4px solid #0D99FF' }
+                          : { color: '#4B5563' }}
+                      >
+                        <span className="flex items-center">{cat.name}</span>
+                        <i
+                          className="fa-solid fa-chevron-down text-[10px] transition-transform duration-300"
+                          style={{ transform: openCategories.has(cat.name) ? 'rotate(180deg)' : 'rotate(0deg)' }}
+                        />
+                      </button>
+                      <div
+                        className="bg-gray-50/30"
+                        style={{
+                          maxHeight: openCategories.has(cat.name) ? '450px' : '0px',
+                          overflowY: 'auto',
+                          overflow: 'hidden',
+                          transition: 'max-height 0.3s ease-out',
+                          scrollbarWidth: 'thin',
+                          scrollbarColor: '#0D99FF transparent',
+                        }}
+                      >
+                        {cat.subItems.map((sub: any, si: number) => (
                           <a
                             key={si}
                             href="#"
@@ -494,11 +375,11 @@ export default function ProductRange() {
                           >
                             {sub.label}
                           </a>
-                        )
-                      )}
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))
+                )}
               </div>
 
               {/* Sidebar Contact Banner */}
@@ -628,56 +509,72 @@ export default function ProductRange() {
 
             {/* Product Table */}
             <div ref={tableRef} className="overflow-x-auto bg-white rounded-[10px] border border-gray-100 shadow-sm">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="bg-gray-50/50 border-b border-gray-100">
-                    <th className="px-6 py-4 text-[14px] font-semibold text-gray-900 capitalize">Product</th>
-                    <th className="px-6 py-4 text-[14px] font-semibold text-gray-900 capitalize">Category</th>
-                    <th className="px-6 py-4 text-[14px] font-semibold text-gray-900 capitalize">Price</th>
-                    <th className="px-6 py-4 text-[14px] font-semibold text-gray-900 capitalize text-center">Action</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-50">
-                  {paginated.map((p, i) => (
-                    <tr key={i} className="hover:bg-blue-50/30 transition-colors group">
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-4">
-                          <div className="w-12 h-12 bg-gray-50 rounded-xl overflow-hidden flex-shrink-0 border border-gray-100 p-1">
-                            <img
-                              src={p.img || 'assets/no-image.png'}
-                              alt={p.name}
-                              className="w-full h-full object-contain mix-blend-multiply"
-                              onError={(e) => { (e.target as HTMLImageElement).src = 'https://placehold.co/100x100?text=PHARMA'; }}
-                            />
-                          </div>
-                          <div className="flex flex-col">
-                            <span
-                              className="text-[14px] font-bold text-gray-900 group-hover:text-primary transition-colors cursor-pointer"
-                              onClick={() => openModal(p.name, formatPrice(p.price), p.img || 'assets/no-image.png', p.category)}
-                            >
-                              {p.name}
-                            </span>
-                            <span className="text-[11px] text-gray-400">
-                              Available: <span className="text-success font-bold">In Stock</span>
-                            </span>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 text-[13px] text-gray-600 font-medium">{p.category}</td>
-                      <td className="px-6 py-4 text-[14px] font-bold text-gray-900">{formatPrice(p.price)}</td>
-                      <td className="px-6 py-4 text-center">
-                        <button
-                          onClick={() => openModal(p.name, formatPrice(p.price), p.img || 'assets/no-image.png', p.category)}
-                          className="bg-primary hover:bg-blue-600 text-white text-[11px] font-bold px-4 py-1.5 rounded-full transition-all duration-300 shadow-md hover:shadow-lg active:scale-95 inline-flex items-center justify-center gap-1.5 whitespace-nowrap"
-                        >
-                          <i className="fa-solid fa-paper-plane text-[10px]" />
-                          Send Inquiry
-                        </button>
-                      </td>
+              {productsLoading ? (
+                <TableSkeleton />
+              ) : (
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="bg-gray-50/50 border-b border-gray-100">
+                      <th className="px-6 py-4 text-[14px] font-semibold text-gray-900 capitalize">Product</th>
+                      <th className="px-6 py-4 text-[14px] font-semibold text-gray-900 capitalize">Category</th>
+                      <th className="px-6 py-4 text-[14px] font-semibold text-gray-900 capitalize">Price</th>
+                      <th className="px-6 py-4 text-[14px] font-semibold text-gray-900 capitalize text-center">Action</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody className="divide-y divide-gray-50">
+                    {paginated.map((p, i) => {
+                      const displayName = p.brandName && p.genericName && p.brandName !== p.genericName
+                        ? `${p.brandName} (${p.genericName})`
+                        : p.name || p.brandName || p.genericName || 'Unnamed Product';
+                      const productPrice = getProductPrice(p);
+                      const displayPrice = formatPrice(productPrice);
+
+                      return (
+                        <tr key={p._id || i} className="hover:bg-blue-50/30 transition-colors group">
+                          <td className="px-6 py-4">
+                            <div className="flex items-center gap-4">
+                              <div className="w-12 h-12 bg-gray-50 rounded-xl overflow-hidden flex-shrink-0 border border-gray-100 p-1">
+                                <img
+                                  src={getProductImage(p)}
+                                  alt={displayName}
+                                  className="w-full h-full object-contain mix-blend-multiply"
+                                  onError={(e) => { (e.target as HTMLImageElement).src = 'https://placehold.co/100x100?text=PHARMA'; }}
+                                />
+                              </div>
+                              <div className="flex flex-col">
+                                <span
+                                  className="text-[14px] font-bold text-gray-900 group-hover:text-primary transition-colors cursor-pointer"
+                                  onClick={() => openModal(p)}
+                                >
+                                  {displayName}
+                                </span>
+                                <span className="text-[11px] text-gray-400">
+                                  Available: <span className="text-success font-bold">In Stock</span>
+                                </span>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 text-[13px] text-gray-600 font-medium">
+                            {p.subCategory || p.category?.category || 'General'}
+                          </td>
+                          <td className="px-6 py-4 text-[14px] font-bold text-gray-900">
+                            {displayPrice}
+                          </td>
+                          <td className="px-6 py-4 text-center">
+                            <button
+                              onClick={() => openModal(p)}
+                              className="bg-primary hover:bg-blue-600 text-white text-[11px] font-bold px-4 py-1.5 rounded-full transition-all duration-300 shadow-md hover:shadow-lg active:scale-95 inline-flex items-center justify-center gap-1.5 whitespace-nowrap"
+                            >
+                              <i className="fa-solid fa-paper-plane text-[10px]" />
+                              Send Inquiry
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              )}
             </div>
 
             {/* Pagination */}
@@ -764,24 +661,36 @@ export default function ProductRange() {
                       </span>
                       <span className="text-gray-300">|</span>
                       <span className="capitalize font-medium" style={{ color: '#0D99FF' }}>
-                        {selectedProduct?.category}
+                        {selectedProduct?.subCategory || selectedProduct?.category?.category || 'General'}
                       </span>
                     </div>
                     <h1 className="text-xl font-bold text-gray-900 mb-4 leading-tight">
-                      {selectedProduct?.name}
+                      {selectedProduct?.brandName && selectedProduct?.genericName && selectedProduct.brandName !== selectedProduct.genericName
+                        ? `${selectedProduct.brandName} (${selectedProduct.genericName})`
+                        : selectedProduct?.name || selectedProduct?.brandName || selectedProduct?.genericName || 'Product Details'}
                     </h1>
                     <p className="text-gray-600 text-[13px] leading-relaxed">
-                      An antimetabolite chemotherapy drug used principally in the treatment of cancers of white blood cells such as acute myeloid leukemia (AML) and non-Hodgkin lymphoma.
+                      {selectedProduct?.description || 'GetMEDS pharmaceutical product designed for patient care and optimal therapeutic outcomes.'}
                     </p>
                   </div>
                   <div className="w-full md:w-1/2 flex items-center justify-center">
-                    <div className="w-full max-w-[200px] aspect-square flex flex-col items-center justify-center bg-gray-50 rounded-[15px] border border-gray-100 text-gray-300 group transition hover:bg-gray-100/50">
-                      <i className="fa-regular fa-image text-4xl mb-3 group-hover:scale-110 transition-transform" />
-                      <span className="text-xs font-medium uppercase tracking-wider">Product Image</span>
+                    <div className="w-full max-w-[200px] aspect-square flex flex-col items-center justify-center bg-gray-50 rounded-[15px] border border-gray-100 p-2 overflow-hidden text-gray-300 group transition hover:bg-gray-100/50">
+                      {selectedProduct && selectedProduct.image && selectedProduct.image.asset ? (
+                        <img
+                          src={getProductImage(selectedProduct)}
+                          className="w-full h-full object-contain mix-blend-multiply group-hover:scale-110 transition-transform duration-300"
+                          alt={selectedProduct.name}
+                        />
+                      ) : (
+                        <>
+                          <i className="fa-regular fa-image text-4xl mb-3 group-hover:scale-110 transition-transform" />
+                          <span className="text-xs font-medium uppercase tracking-wider">No Image</span>
+                        </>
+                      )}
                     </div>
                   </div>
                 </div>
-
+ 
                 {/* Tabs */}
                 <div className="bg-white rounded-[15px] border border-gray-100 p-5 mt-auto">
                   <div className="flex overflow-x-auto border-b border-gray-100 mb-5 gap-6">
@@ -802,28 +711,76 @@ export default function ProductRange() {
                   <div className="text-[13px] text-gray-600 leading-relaxed max-h-[200px] overflow-y-auto pr-2 custom-scrollbar">
                     {activeTab === 'description' && (
                       <div>
-                        <p>
-                          Cytarabine belongs to a general group of medicines known as antimetabolites. It is used to treat some types of cancer of the blood (leukemia). Cytarabine works by interfering with the growth of cancer cells, which are eventually destroyed by the body.
-                        </p>
-                        <ul className="list-disc pl-5 mt-3 space-y-1">
-                          <li>Effective in acutely inducing remission.</li>
-                          <li>High concentration formulation.</li>
-                        </ul>
+                        {selectedProduct?.description ? (
+                          <p>{selectedProduct.description}</p>
+                        ) : (
+                          <p>Detailed therapeutic description is not available.</p>
+                        )}
+                        <div className="mt-4 border-t border-gray-100 pt-4 grid grid-cols-2 gap-4">
+                          {selectedProduct?.strength && (
+                            <div>
+                              <span className="block text-[11px] text-gray-400 uppercase font-semibold">Strength</span>
+                              <span className="text-gray-800 font-medium text-[13px]">{selectedProduct.strength}</span>
+                            </div>
+                          )}
+                          {selectedProduct?.form && (
+                            <div>
+                              <span className="block text-[11px] text-gray-400 uppercase font-semibold">Form</span>
+                              <span className="text-gray-800 font-medium text-[13px]">{selectedProduct.form}</span>
+                            </div>
+                          )}
+                          {selectedProduct?.packaging && (
+                            <div>
+                              <span className="block text-[11px] text-gray-400 uppercase font-semibold">Packaging</span>
+                              <span className="text-gray-800 font-medium text-[13px]">{selectedProduct.packaging}</span>
+                            </div>
+                          )}
+                          {selectedProduct?.innovator && (
+                            <div>
+                              <span className="block text-[11px] text-gray-400 uppercase font-semibold">Innovator</span>
+                              <span className="text-gray-800 font-medium text-[13px]">{selectedProduct.innovator}</span>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     )}
                     {activeTab === 'usage' && (
                       <div>
-                        <p>This drug is administered by a healthcare professional in a clinical or hospital setting. The dosage and schedule will be determined by your doctor.</p>
-                        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mt-3">
-                          <p className="text-[12px] text-yellow-700 font-medium">Never attempt to self-administer unless explicitly instructed.</p>
-                        </div>
+                        {selectedProduct?.dosageAdministration && (
+                          <div className="mb-4">
+                            <span className="block text-[11px] text-gray-400 uppercase font-semibold mb-1">Dosage & Administration</span>
+                            <p className="text-[13px] text-gray-600">{selectedProduct.dosageAdministration}</p>
+                          </div>
+                        )}
+                        {selectedProduct?.indications && (
+                          <div className="mb-4">
+                            <span className="block text-[11px] text-gray-400 uppercase font-semibold mb-1">Indications</span>
+                            <p className="text-[13px] text-gray-600">{selectedProduct.indications}</p>
+                          </div>
+                        )}
+                        {!selectedProduct?.dosageAdministration && !selectedProduct?.indications && (
+                          <p>Dosage and administration should be directed by a licensed physician.</p>
+                        )}
                       </div>
                     )}
                     {activeTab === 'precautions' && (
-                      <ul className="list-disc pl-5 space-y-2">
-                        <li>Tell your doctor if you have ever had an unusual or allergic reaction to cytarabine.</li>
-                        <li>Inform your doctor if you have liver or kidney disease.</li>
-                      </ul>
+                      <div>
+                        {selectedProduct?.storageCondition && (
+                          <div className="mb-4">
+                            <span className="block text-[11px] text-gray-400 uppercase font-semibold mb-1">Storage Conditions</span>
+                            <p className="text-[13px] text-gray-600">{selectedProduct.storageCondition}</p>
+                          </div>
+                        )}
+                        {selectedProduct?.accreditations && (
+                          <div className="mb-4">
+                            <span className="block text-[11px] text-gray-400 uppercase font-semibold mb-1">Accreditations</span>
+                            <p className="text-[13px] text-gray-600">{selectedProduct.accreditations}</p>
+                          </div>
+                        )}
+                        {!selectedProduct?.storageCondition && !selectedProduct?.accreditations && (
+                          <p>Precautions, potential side effects, and warnings should be consulted with your doctor or pharmacist.</p>
+                        )}
+                      </div>
                     )}
                   </div>
                 </div>
