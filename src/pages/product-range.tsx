@@ -1,7 +1,12 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { useProducts, useCategories } from '../lib/useSanity';
 import { urlFor } from '../lib/sanity';
-import type { Product as SanityProduct } from '../types/sanity';
+import type { Product as SanityProduct, Category } from '../types/sanity';
+
+interface ProductWithCategory extends Omit<SanityProduct, 'category'> {
+  category?: Category;
+}
+
 
 const ITEMS_PER_PAGE = 12;
 
@@ -56,7 +61,8 @@ const categoryIcons: Record<string, string> = {
 };
 
 export default function ProductRange() {
-  const { data: productsData, loading: productsLoading } = useProducts();
+  const { data: productsDataRaw, loading: productsLoading } = useProducts();
+  const productsData = productsDataRaw as ProductWithCategory[] | null;
   const { data: categoriesData, loading: categoriesLoading } = useCategories();
 
   const [openCategories, setOpenCategories] = useState<Set<string>>(new Set());
@@ -67,7 +73,7 @@ export default function ProductRange() {
   const [sortBy, setSortBy] = useState('Popularity');
   const [modalOpen, setModalOpen] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState<SanityProduct | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<ProductWithCategory | null>(null);
   const [activeTab, setActiveTab] = useState<'description' | 'usage' | 'precautions'>('description');
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [formData, setFormData] = useState({ name: '', phone: '', email: '', message: '' });
@@ -127,7 +133,7 @@ export default function ProductRange() {
     return () => document.removeEventListener('click', handleClick);
   }, []);
 
-  const getProductPrice = (p: SanityProduct) => {
+  const getProductPrice = (p: ProductWithCategory) => {
     const nameLower = p.name?.toLowerCase() || '';
     if (nameLower.includes('cytarabine')) return 1840;
     if (nameLower.includes('docetaxel')) return 560;
@@ -137,7 +143,7 @@ export default function ProductRange() {
     return undefined; // Quote on Request
   };
 
-  const getProductImage = (p: SanityProduct) => {
+  const getProductImage = (p: ProductWithCategory) => {
     if (p.image && p.image.asset) {
       try {
         return urlFor(p.image).width(120).height(120).url();
@@ -231,7 +237,7 @@ export default function ProductRange() {
     setCurrentPage(1);
   };
 
-  const openModal = (product: SanityProduct) => {
+  const openModal = (product: ProductWithCategory) => {
     setSelectedProduct(product);
     setActiveTab('description');
     setFormData({ name: '', phone: '', email: '', message: '' });
