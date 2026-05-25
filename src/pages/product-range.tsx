@@ -174,7 +174,7 @@ export default function ProductRange() {
         ? Array.from(subSet).sort().map(sub => ({ label: sub }))
         : [];
       return {
-        id: cat._id,
+        _id: cat._id,
         name: cat.category,
         subItems
       };
