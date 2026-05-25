@@ -2,9 +2,9 @@
   "branding": {
     "logo": {
       "src": "assets/getmedslogo.png",
-      "alt": "GetMEDS Logo"
+      "alt": "Getmeds Logo"
     },
-    "description": "GetMEDS is your trusted online healthcare partner, providing access to top-quality medicines, doctor consultations, and lab tests from anywhere in the world."
+    "description": "Getmeds is your trusted online healthcare partner, providing access to top-quality medicines, doctor consultations, and lab tests from anywhere in the world."
   },
   "socials": [
     { "platform": "Facebook", "icon": "fa-brands fa-facebook-f", "href": "#" },
@@ -41,7 +41,7 @@
     }
   ],
   "bottomBar": {
-    "copyright": "© 2023 GetMEDS. All rights reserved.",
+    "copyright": "© 2023 Getmeds. All rights reserved.",
     "legalLinks": [
       { "label": "Privacy Policy", "href": "#" },
       { "label": "Terms of Service", "href": "#" }

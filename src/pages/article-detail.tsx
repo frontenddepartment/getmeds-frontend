@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { injectHTML } from '../lib/injectHTML';
 
 const articleData = [
   {
@@ -139,21 +140,21 @@ export default function ArticleDetail() {
     if (navContainer && navContainer.innerHTML.trim() === '') {
       fetch('/components/navbar.html')
         .then(r => r.text())
-        .then(html => { navContainer.innerHTML = html; });
+        .then(html => { injectHTML(navContainer, html); });
     }
 
     const footerContainer = document.getElementById('footer-container');
     if (footerContainer && footerContainer.innerHTML.trim() === '') {
       fetch('/components/footer.html')
         .then(r => r.text())
-        .then(html => { footerContainer.innerHTML = html; });
+        .then(html => { injectHTML(footerContainer, html); });
     }
 
     const params = new URLSearchParams(window.location.search);
     const id = parseInt(params.get('id') || '0', 10);
     const found = articleData.find(a => a.id === id) || articleData[0];
     setArticle(found);
-    document.title = `${found.title} — GetMEDS`;
+    document.title = `${found.title} — Getmeds`;
 
     // Scroll spy
     const handleScroll = () => {

@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { injectHTML } from '../lib/injectHTML';
 
 const trackTitles: Record<number, string> = {
   1: 'Midnight Rainstorm',
@@ -42,13 +43,13 @@ export default function Meditations() {
     if (navContainer && navContainer.innerHTML.trim() === '') {
       fetch('/components/navbar.html')
         .then(r => r.text())
-        .then(html => { navContainer.innerHTML = html; });
+        .then(html => { injectHTML(navContainer, html); });
     }
     const footerContainer = document.getElementById('footer-container');
     if (footerContainer && footerContainer.innerHTML.trim() === '') {
       fetch('/components/footer.html')
         .then(r => r.text())
-        .then(html => { footerContainer.innerHTML = html; });
+        .then(html => { injectHTML(footerContainer, html); });
     }
 
     // Mock audio timer — mirrors original setInterval

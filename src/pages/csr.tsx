@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { injectHTML } from '../lib/injectHTML';
 
 const Csr: React.FC = () => {
   const galleryRef = useRef<HTMLDivElement>(null);
@@ -11,13 +12,13 @@ const Csr: React.FC = () => {
       .then(r => r.text())
       .then(html => {
         const el = document.getElementById('navbar-container');
-        if (el) el.innerHTML = html;
+        if (el) injectHTML(el, html);
       });
     fetch('/components/footer.html')
       .then(r => r.text())
       .then(html => {
         const el = document.getElementById('footer-container');
-        if (el) el.innerHTML = html;
+        if (el) injectHTML(el, html);
       });
   }, []);
 

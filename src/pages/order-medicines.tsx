@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { injectHTML } from '../lib/injectHTML';
 
 export default function OrderMedicines() {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -59,13 +60,13 @@ export default function OrderMedicines() {
     if (navContainer && navContainer.innerHTML.trim() === '') {
       fetch('/components/navbar.html')
         .then(r => r.text())
-        .then(html => { navContainer.innerHTML = html; });
+        .then(html => { injectHTML(navContainer, html); });
     }
     const footerContainer = document.getElementById('footer-container');
     if (footerContainer && footerContainer.innerHTML.trim() === '') {
       fetch('/components/footer.html')
         .then(r => r.text())
-        .then(html => { footerContainer.innerHTML = html; });
+        .then(html => { injectHTML(footerContainer, html); });
     }
   }, []);
 
@@ -75,32 +76,26 @@ export default function OrderMedicines() {
       {/* Navbar */}
       <div id="navbar-container" className="sticky top-0 z-[50]" />
 
-      {/* ============================================================
-          HERO SECTION
-      ============================================================ */}
-      <section className="w-full mx-auto px-3 sm:px-4 md:px-6 mt-3 md:mt-4 mb-10 max-w-[1600px]">
-        <div className="relative rounded-[15px] overflow-hidden min-h-[250px] md:min-h-[300px] flex items-center bg-gray-50 border border-gray-100">
-
-          {/* Hero Content */}
-          <div className="relative z-10 w-full px-8 md:px-14 py-10 max-w-4xl">
-            <span className="inline-block bg-[#E8F5E3] text-[#61A644] text-[10px] font-bold px-4 py-1.5 rounded-full mb-4 tracking-wider uppercase">
-              Secure Orders
-            </span>
-            <h1 className="text-[28px] md:text-[40px] leading-tight font-extrabold mb-3 tracking-tight text-dark">
-              Order Your{' '}
-              <span style={{ background: 'linear-gradient(to right,#61A644,#1D9FDA)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
-                Medicines
-              </span>
-              <br />With Ease
+      {/* Hero Banner */}
+      <section className="w-full px-4 md:px-6 pt-5 pb-4">
+        <div
+          className="relative rounded-[15px] overflow-hidden flex items-center px-8 md:px-12"
+          style={{ background: 'linear-gradient(135deg, #3aaf5c 0%, #1ab8c4 45%, #1a99d6 100%)', minHeight: '130px' }}
+        >
+          {/* Glassy circles */}
+          <div className="absolute pointer-events-none" style={{ width: 160, height: 160, borderRadius: '50%', bottom: '-55px', left: '28%', background: 'radial-gradient(circle at 40% 35%, rgba(100,240,200,0.55), rgba(30,180,210,0.30))', backdropFilter: 'blur(2px)', border: '1px solid rgba(255,255,255,0.25)' }} />
+          <div className="absolute pointer-events-none" style={{ width: 130, height: 130, borderRadius: '50%', bottom: '-42px', left: '45%', background: 'radial-gradient(circle at 38% 30%, rgba(120,100,240,0.55), rgba(60,80,220,0.35))', backdropFilter: 'blur(2px)', border: '1px solid rgba(255,255,255,0.20)' }} />
+          <div className="absolute pointer-events-none hidden md:block" style={{ width: 180, height: 180, borderRadius: '50%', bottom: '-70px', right: '8%', background: 'radial-gradient(circle at 42% 38%, rgba(130,230,230,0.45), rgba(60,190,210,0.22))', backdropFilter: 'blur(2px)', border: '1px solid rgba(255,255,255,0.22)' }} />
+          <div className="absolute pointer-events-none hidden md:block" style={{ width: 90, height: 90, borderRadius: '50%', bottom: '-20px', left: '18%', background: 'radial-gradient(circle at 35% 30%, rgba(160,240,120,0.60), rgba(40,210,130,0.35))', backdropFilter: 'blur(2px)', border: '1px solid rgba(255,255,255,0.25)' }} />
+          <div className="absolute pointer-events-none hidden md:block" style={{ width: 52, height: 52, borderRadius: '50%', top: '10px', right: '28%', background: 'radial-gradient(circle at 35% 30%, rgba(170,110,240,0.70), rgba(100,60,210,0.45))', backdropFilter: 'blur(2px)', border: '1px solid rgba(255,255,255,0.25)' }} />
+          <div className="absolute pointer-events-none hidden md:block" style={{ width: 85, height: 85, borderRadius: '50%', top: '-15px', right: '38%', background: 'radial-gradient(circle at 38% 32%, rgba(80,220,210,0.55), rgba(30,170,200,0.30))', backdropFilter: 'blur(2px)', border: '1px solid rgba(255,255,255,0.22)' }} />
+          <div className="absolute pointer-events-none" style={{ width: 280, height: 80, borderRadius: '50%', bottom: '-48px', left: '22%', background: 'radial-gradient(ellipse at 50% 40%, rgba(40,160,230,0.38), rgba(20,130,210,0.18))', backdropFilter: 'blur(2px)' }} />
+          <div className="relative z-10">
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-semibold text-white tracking-tight leading-tight">
+              Order Medicines
             </h1>
-            <p className="text-gray-500 text-[13px] md:text-[14px] max-w-[500px] leading-relaxed">
-              Simply upload your prescription, fill out the validation form, and our licensed pharmacists will handle the rest. Your health, delivered.
-            </p>
+            <p className="text-white/75 text-[12px] sm:text-[13px] mt-1 font-medium">Order your medicines with ease. Upload your prescription and we'll handle the rest.</p>
           </div>
-
-          {/* Background Decoration */}
-          <div className="absolute right-0 top-0 h-full w-1/3 bg-gradient-to-l from-blue-50 to-transparent pointer-events-none opacity-50" />
-          <div className="absolute -right-20 -top-20 w-80 h-80 bg-[#1D9FDA]/5 rounded-full blur-3xl" />
         </div>
       </section>
 

@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { injectHTML } from '../lib/injectHTML';
 
 export default function Services() {
   useEffect(() => {
@@ -6,7 +7,7 @@ export default function Services() {
     if (navContainer && navContainer.innerHTML.trim() === '') {
       fetch('/components/navbar.html')
         .then(r => r.text())
-        .then(html => { navContainer.innerHTML = html; });
+        .then(html => { injectHTML(navContainer, html); });
     }
   }, []);
 
@@ -90,7 +91,7 @@ export default function Services() {
                 className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent leading-tight tracking-tight">Services</span>
             </h1>
             <p data-json="hero.description" className="text-white/90 text-[13px] md:text-[14px] max-w-[600px] mb-5 leading-normal font-normal">
-              GetMEDS delivers precision pharmaceutical solutions and nationwide distribution — from regulatory
+              Getmeds delivers precision pharmaceutical solutions and nationwide distribution — from regulatory
               compliance and government bidding to pioneering digital oncology care.
             </p>
             <div className="flex flex-wrap gap-4">
@@ -378,7 +379,7 @@ export default function Services() {
                 <i className="fa-solid fa-medal"></i> Our Promise</div>
               <h2 className="text-[28px] md:text-[38px] font-bold text-dark leading-tight mb-6 tracking-tight">Why
                 Trust <br /><span
-                  className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">GetMEDS</span>
+                  className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">Getmeds</span>
                 {' '}for Your Health?</h2>
               <p className="text-gray-500 text-[15px] leading-relaxed mb-10 max-w-lg">We don't just distribute
                 medicine; we facilitate healing. Through strict quality standards and advanced digital
@@ -466,7 +467,7 @@ export default function Services() {
           <h2 className="text-[28px] md:text-[38px] font-bold text-white mb-4 tracking-tight">Ready to Experience <span
             className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">Better
             Healthcare?</span></h2>
-          <p className="text-white/60 text-[15px] mb-10 max-w-xl mx-auto">Join thousands of patients who trust GetMEDS for
+          <p className="text-white/60 text-[15px] mb-10 max-w-xl mx-auto">Join thousands of patients who trust Getmeds for
             fast, reliable, and expert medical services every day.</p>
           <div className="flex flex-wrap justify-center gap-4">
             <a href="order-medicines.html"
@@ -486,11 +487,11 @@ export default function Services() {
             {/* Branding */}
             <div className="lg:col-span-2 space-y-6">
               <div className="flex items-center">
-                <img src="assets/getmedslogo.png" alt="GetMEDS Logo"
+                <img src="assets/getmedslogo.png" alt="Getmeds Logo"
                   className="h-8 w-auto object-contain brightness-0 invert opacity-90" />
               </div>
               <p className="text-sm text-gray-400 max-w-xs">
-                GetMEDS is your trusted online healthcare partner, providing access to top-quality medicines,
+                Getmeds is your trusted online healthcare partner, providing access to top-quality medicines,
                 doctor consultations, and lab tests from anywhere in the world.
               </p>
               <div className="flex space-x-4">
@@ -553,7 +554,7 @@ export default function Services() {
 
           <div
             className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-gray-500">
-            <p>&copy; 2023 GetMEDS. All rights reserved.</p>
+            <p>&copy; 2023 Getmeds. All rights reserved.</p>
             <div className="flex space-x-6 mt-4 md:mt-0">
               <a href="#" className="hover:text-white transition">Privacy Policy</a>
               <a href="#" className="hover:text-white transition">Terms of Service</a>

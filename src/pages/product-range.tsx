@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { useProducts, useCategories } from '../lib/useSanity';
 import { urlFor } from '../lib/sanity';
 import type { Product as SanityProduct, Category } from '../types/sanity';
+import { injectHTML } from '../lib/injectHTML';
 
 interface ProductWithCategory extends Omit<SanityProduct, 'category'> {
   category?: Category;
@@ -41,24 +42,7 @@ const TableSkeleton = () => (
   </div>
 );
 
-const categoryIcons: Record<string, string> = {
-  'Oncology': 'fa-ribbon',
-  'Hematology': 'fa-droplet',
-  'Obstetrician': 'fa-baby',
-  'Gynecology': 'fa-venus',
-  'Endocrinology': 'fa-syringe',
-  'Anti-Infectives': 'fa-shield-virus',
-  'Orthopedic': 'fa-bone',
-  'Cardiology': 'fa-heart-pulse',
-  'Neuro-Oncology': 'fa-brain',
-  'Respiratory': 'fa-lungs',
-  'Allergy': 'fa-hand-dots',
-  'Nephrology': 'fa-kidneys',
-  'Renal': 'fa-droplet',
-  'Pain Management': 'fa-pills',
-  'Rheumatology': 'fa-person-walking',
-  'Radiology': 'fa-x-ray',
-};
+
 
 export default function ProductRange() {
   const { data: productsDataRaw, loading: productsLoading } = useProducts();
@@ -70,7 +54,7 @@ export default function ProductRange() {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const [sortBy, setSortBy] = useState('Popularity');
+  const [sortBy, setSortBy] = useState('Default');
   const [modalOpen, setModalOpen] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<ProductWithCategory | null>(null);
@@ -82,6 +66,10 @@ export default function ProductRange() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [activeFlyoutCat, setActiveFlyoutCat] = useState<any | null>(null);
   const [flyoutVisible, setFlyoutVisible] = useState(false);
+  const [filterPanelOpen, setFilterPanelOpen] = useState(false);
+  const [filterAvailability, setFilterAvailability] = useState<'all' | 'instock' | 'outofstock'>('all');
+  const [filterForms, setFilterForms] = useState<Set<string>>(new Set());
+  const filterPanelRef = useRef<HTMLDivElement>(null);
 
   const openFlyout = (cat: any) => {
     if (activeFlyoutCat?.name === cat.name && flyoutVisible) {
@@ -111,37 +99,64 @@ export default function ProductRange() {
     if (navContainer && navContainer.innerHTML.trim() === '') {
       fetch('/components/navbar.html')
         .then(r => r.text())
-        .then(html => { navContainer.innerHTML = html; });
+        .then(html => { injectHTML(navContainer, html); });
     }
     const footerContainer = document.getElementById('footer-container');
     if (footerContainer && footerContainer.innerHTML.trim() === '') {
       fetch('/components/footer.html')
         .then(r => r.text())
-        .then(html => { footerContainer.innerHTML = html; });
+        .then(html => { injectHTML(footerContainer, html); });
     }
 
     const urlParams = new URLSearchParams(window.location.search);
     const query = urlParams.get('search');
     if (query) setSearchTerm(query);
 
+    const categorySlug = urlParams.get('category');
+    if (categorySlug) {
+      const slugMap: Record<string, string> = {
+        'breast-cancer': 'Breast Cancer',
+        'ovarian-cancer': 'Ovarian Cancer',
+        'lung-cancer': 'Non-Small Cell Lung Cancer',
+        'prostate-cancer': 'Prostate Cancer',
+        'colorectal-cancer': 'Colorectal Cancer',
+        'pancreatic-cancer': 'Pancreatic Cancer',
+        'aml': 'Acute Myeloid Leukemia',
+        'cml': 'Chronic Myeloid Leukemia',
+        'lymphoma': "Hodgkin/Non-Hodgkin's Lymphoma",
+        'sickle-cell': 'Sickle Cell Anemia',
+        'respiratory': 'Respiratory Infections',
+        'uti': 'Urinary Tract Infections',
+        'skin-infections': 'Skin and Soft Tissue Infections',
+        'bone-infections': 'Bone and Joint Infections',
+        'endometriosis': 'Endometriosis',
+        'fibrocystic': 'Fibrocystic Breast Disease',
+        'multiple-myeloma': 'Multiple Myeloma',
+        'osteoporosis': 'Osteoporosis',
+        'arrhythmia': 'Arrhythmia management',
+        'hypertension': 'Hypertension/Angina',
+        'glioblastoma': 'Glioblastoma Multiforme',
+        'allergic-rhinitis': 'Seasonal Allergic Rhinitis',
+        'kidney-disease': 'Chronic Kidney Disease',
+        'pain': 'Chronic Pain',
+        'rheumatology': 'Inflammatory Disorders',
+      };
+      const mapped = slugMap[categorySlug];
+      if (mapped) setCurrentCategory(mapped);
+    }
+
     const handleClick = (e: MouseEvent) => {
       if (searchWrapperRef.current && !searchWrapperRef.current.contains(e.target as Node)) {
         setShowSuggestions(false);
+      }
+      if (filterPanelRef.current && !filterPanelRef.current.contains(e.target as Node)) {
+        setFilterPanelOpen(false);
       }
     };
     document.addEventListener('click', handleClick);
     return () => document.removeEventListener('click', handleClick);
   }, []);
 
-  const getProductPrice = (p: ProductWithCategory) => {
-    const nameLower = p.name?.toLowerCase() || '';
-    if (nameLower.includes('cytarabine')) return 1840;
-    if (nameLower.includes('docetaxel')) return 560;
-    if (nameLower.includes('capecitabine')) return 1150;
-    if (nameLower.includes('letrozole')) return 8900;
-    if (nameLower.includes('temozolomide')) return 12450;
-    return undefined; // Quote on Request
-  };
 
   const getProductImage = (p: ProductWithCategory) => {
     if (p.image && p.image.asset) {
@@ -204,19 +219,33 @@ export default function ProductRange() {
       })
     : categoryFiltered;
 
-  const sorted = [...searchFiltered].sort((a, b) => {
-    const priceA = getProductPrice(a);
-    const priceB = getProductPrice(b);
-    if (sortBy === 'Price: Low to High') {
-      if (priceA === undefined) return 1;
-      if (priceB === undefined) return -1;
-      return priceA - priceB;
+  const availableForms = useMemo(() => {
+    if (!productsData) return [];
+    const forms = new Set<string>();
+    productsData.forEach(p => { if (p.form) forms.add(p.form); });
+    return Array.from(forms).sort();
+  }, [productsData]);
+
+  const activeFilterCount = (filterAvailability !== 'all' ? 1 : 0) + filterForms.size;
+
+  const fullyFiltered = searchFiltered.filter(p => {
+    if (filterAvailability === 'instock' && p.availability === false) return false;
+    if (filterAvailability === 'outofstock' && p.availability !== false) return false;
+    if (filterForms.size > 0 && (!p.form || !filterForms.has(p.form))) return false;
+    return true;
+  });
+
+  const sorted = [...fullyFiltered].sort((a, b) => {
+    const nameA = (a.brandName || a.name || '').toLowerCase();
+    const nameB = (b.brandName || b.name || '').toLowerCase();
+    if (sortBy === 'Name: A → Z') return nameA.localeCompare(nameB);
+    if (sortBy === 'Name: Z → A') return nameB.localeCompare(nameA);
+    if (sortBy === 'In Stock First') {
+      const avA = a.availability === false ? 1 : 0;
+      const avB = b.availability === false ? 1 : 0;
+      return avA - avB;
     }
-    if (sortBy === 'Price: High to Low') {
-      if (priceA === undefined) return 1;
-      if (priceB === undefined) return -1;
-      return priceB - priceA;
-    }
+    if (sortBy === 'Form: A → Z') return (a.form || '').localeCompare(b.form || '');
     return 0;
   });
 
@@ -250,7 +279,7 @@ export default function ProductRange() {
 
   const closeModal = () => {
     setModalVisible(false);
-    setTimeout(() => setModalOpen(false), 300);
+    setTimeout(() => setModalOpen(false), 500);
     document.body.style.overflow = 'auto';
   };
 
@@ -298,11 +327,6 @@ export default function ProductRange() {
       setSubmitState('error');
       setTimeout(() => setSubmitState('idle'), 2000);
     }
-  };
-
-  const formatPrice = (price?: number) => {
-    if (price === undefined || price === null || isNaN(price)) return 'Quote on Request';
-    return price.toLocaleString('en-PH', { style: 'currency', currency: 'PHP' });
   };
 
   const getPageRange = (current: number, total: number): (number | string)[] => {
@@ -382,11 +406,7 @@ export default function ProductRange() {
                     ? { background: 'linear-gradient(to right, #61A644, #1D9FDA)', color: '#fff' }
                     : { color: '#374151' }}
                 >
-                  <div className="flex items-center gap-3 min-w-0">
-                    <i className={`fa-solid ${categoryIcons[cat.name] || 'fa-folder'} text-[14px] shrink-0 ${(flyoutVisible ? activeFlyoutCat?.name === cat.name : isCatParentActive(cat)) ? 'text-white' : 'text-gray-400 group-hover:text-primary'}`} />
-                    <span className="text-left leading-snug truncate">{cat.name}</span>
-                  </div>
-                  <i className={`fa-solid fa-chevron-right text-[9px] shrink-0 ${(flyoutVisible ? activeFlyoutCat?.name === cat.name : isCatParentActive(cat)) ? 'text-white/70' : 'text-gray-400'}`} />
+                  <span className="text-left leading-snug truncate">{cat.name}</span>
                 </button>
               ))
             )}
@@ -451,58 +471,55 @@ export default function ProductRange() {
           <section className="w-full px-4 md:px-6 pt-5 pb-4">
             <div
               className="relative rounded-[15px] overflow-hidden flex items-center px-8 md:px-12"
-              style={{ background: 'linear-gradient(120deg, #3aaf5c 0%, #1a99d6 100%)', minHeight: '130px' }}
+              style={{ background: 'linear-gradient(135deg, #3aaf5c 0%, #1ab8c4 45%, #1a99d6 100%)', minHeight: '130px' }}
             >
-              <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 rounded-full pointer-events-none" style={{ background: 'rgba(255,255,255,0.12)', filter: 'blur(40px)' }} />
-              <div className="absolute right-8 top-1/2 -translate-y-1/2 hidden md:block pointer-events-none" style={{ width: '220px', height: '90px' }}>
-                {[
-                  { right: '160px', rotate: '-14deg', opacity: 0.35 },
-                  { right: '110px', rotate: '-7deg',  opacity: 0.50 },
-                  { right: '58px',  rotate: '-1deg',  opacity: 0.65 },
-                  { right: '0px',   rotate:  '6deg',  opacity: 0.45 },
-                ].map((s, i) => (
-                  <div
-                    key={i}
-                    className="absolute w-16 h-[86px] rounded-2xl"
-                    style={{
-                      right: s.right,
-                      top: '50%',
-                      transform: `translateY(-50%) rotate(${s.rotate})`,
-                      background: `rgba(255,255,255,${s.opacity})`,
-                      boxShadow: '0 4px 16px rgba(0,0,0,0.12)',
-                    }}
-                  />
-                ))}
-              </div>
+              {/* Glassy circles — mirroring the reference image */}
+              {/* Large teal circle bottom-left */}
+              <div className="absolute pointer-events-none" style={{ width: 160, height: 160, borderRadius: '50%', bottom: '-55px', left: '28%', background: 'radial-gradient(circle at 40% 35%, rgba(100,240,200,0.55), rgba(30,180,210,0.30))', backdropFilter: 'blur(2px)', border: '1px solid rgba(255,255,255,0.25)' }} />
+              {/* Large blue/purple circle center-bottom */}
+              <div className="absolute pointer-events-none" style={{ width: 130, height: 130, borderRadius: '50%', bottom: '-42px', left: '45%', background: 'radial-gradient(circle at 38% 30%, rgba(120,100,240,0.55), rgba(60,80,220,0.35))', backdropFilter: 'blur(2px)', border: '1px solid rgba(255,255,255,0.20)' }} />
+              {/* Big light-teal circle right */}
+              <div className="absolute pointer-events-none hidden md:block" style={{ width: 180, height: 180, borderRadius: '50%', bottom: '-70px', right: '8%', background: 'radial-gradient(circle at 42% 38%, rgba(130,230,230,0.45), rgba(60,190,210,0.22))', backdropFilter: 'blur(2px)', border: '1px solid rgba(255,255,255,0.22)' }} />
+              {/* Medium green-yellow circle far left */}
+              <div className="absolute pointer-events-none hidden md:block" style={{ width: 90, height: 90, borderRadius: '50%', bottom: '-20px', left: '18%', background: 'radial-gradient(circle at 35% 30%, rgba(160,240,120,0.60), rgba(40,210,130,0.35))', backdropFilter: 'blur(2px)', border: '1px solid rgba(255,255,255,0.25)' }} />
+              {/* Small purple circle top-right area */}
+              <div className="absolute pointer-events-none hidden md:block" style={{ width: 52, height: 52, borderRadius: '50%', top: '10px', right: '28%', background: 'radial-gradient(circle at 35% 30%, rgba(170,110,240,0.70), rgba(100,60,210,0.45))', backdropFilter: 'blur(2px)', border: '1px solid rgba(255,255,255,0.25)' }} />
+              {/* Medium teal circle top center-right */}
+              <div className="absolute pointer-events-none hidden md:block" style={{ width: 85, height: 85, borderRadius: '50%', top: '-15px', right: '38%', background: 'radial-gradient(circle at 38% 32%, rgba(80,220,210,0.55), rgba(30,170,200,0.30))', backdropFilter: 'blur(2px)', border: '1px solid rgba(255,255,255,0.22)' }} />
+              {/* Wide shallow blue ellipse bottom */}
+              <div className="absolute pointer-events-none" style={{ width: 280, height: 80, borderRadius: '50%', bottom: '-48px', left: '22%', background: 'radial-gradient(ellipse at 50% 40%, rgba(40,160,230,0.38), rgba(20,130,210,0.18))', backdropFilter: 'blur(2px)' }} />
               {!sidebarOpen && (
-                <button
-                  onClick={() => setSidebarOpen(true)}
-                  className="absolute left-3 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full bg-white/20 hover:bg-white/35 flex items-center justify-center transition-colors"
-                  title="Expand sidebar"
-                >
-                  <i className="fa-solid fa-chevron-right text-[13px] text-white" />
-                </button>
+                <div className="absolute left-4 top-1/2 -translate-y-1/2 z-20 hidden lg:flex flex-col items-center gap-1.5">
+                  <span className="text-white font-semibold text-[11px] leading-tight text-center whitespace-nowrap drop-shadow">Check Products</span>
+                  <button
+                    onClick={() => setSidebarOpen(true)}
+                    className="w-14 h-14 rounded-full bg-white/25 hover:bg-white/40 flex items-center justify-center transition-colors shadow-lg"
+                    title="Expand sidebar"
+                  >
+                    <i className="fa-solid fa-chevron-right text-[20px] text-white" />
+                  </button>
+                </div>
               )}
-              <div className={`relative z-10 transition-all duration-300 ${!sidebarOpen ? 'pl-8' : ''}`}>
-                <h1 className="text-2xl md:text-3xl font-semibold text-white tracking-tight leading-tight">
-                  GetMEDS Products
+              <div className={`relative z-10 transition-all duration-300 ${!sidebarOpen ? 'lg:pl-24' : ''}`}>
+                <h1 className="text-xl sm:text-2xl md:text-3xl font-semibold text-white tracking-tight leading-tight">
+                  Getmeds Products
                 </h1>
-                <p className="text-white/75 text-[13px] mt-1 font-medium">Comprehensive catalog of pharmaceutical solutions.</p>
-                <p className="text-white/60 text-[12px] font-medium">Browse categories and send inquiries directly.</p>
+                <p className="text-white/75 text-[12px] sm:text-[13px] mt-1 font-medium">Comprehensive catalog of pharmaceutical solutions. Browse categories and send inquiries directly.</p>
               </div>
             </div>
           </section>
 
           {/* PRODUCTS LIST */}
           <section className="px-4 sm:px-6 lg:px-8 mb-24">
-            <div className="flex items-center justify-between mb-8">
+            {/* Toolbar: stacks vertically on mobile */}
+            <div className="flex flex-col gap-3 mb-6 sm:flex-row sm:items-center sm:justify-between sm:mb-8">
               <h2 className="text-xl font-semibold text-gray-900 whitespace-nowrap">
                 {currentCategory === 'All' ? 'All Products' : currentCategory}{' '}
                 <span className="text-gray-400 font-normal text-sm ml-2">({sorted.length} Items)</span>
               </h2>
 
-              {/* Search Bar */}
-              <div className="relative w-full max-w-md mx-4" ref={searchWrapperRef}>
+              {/* Search Bar — full width on mobile, flex-1 on desktop */}
+              <div className="relative w-full sm:flex-1 sm:min-w-0" ref={searchWrapperRef}>
                 <div className="bg-white rounded-full py-1 px-1.5 border border-gray-200 flex items-center">
                   <div className="relative flex-grow flex items-center ml-3">
                     <i className="fa-solid fa-magnifying-glass text-gray-400 text-[13px]" />
@@ -515,9 +532,85 @@ export default function ProductRange() {
                       className="w-full bg-transparent border-none pl-2.5 pr-2 py-1.5 text-[13px] text-gray-700 outline-none placeholder-gray-400"
                     />
                   </div>
-                  <button className="h-7 w-7 bg-primary rounded-full flex items-center justify-center text-white hover:bg-blue-600 transition-colors duration-300 flex-shrink-0 active:scale-95 group">
-                    <i className="fa-solid fa-sliders text-[10px] group-hover:rotate-180 transition-transform duration-500" />
-                  </button>
+                  <div className="relative flex-shrink-0" ref={filterPanelRef}>
+                    <button
+                      onClick={e => { e.stopPropagation(); setFilterPanelOpen(v => !v); setShowSuggestions(false); }}
+                      className="relative h-8 w-8 bg-primary rounded-full flex items-center justify-center text-white hover:bg-blue-600 transition-colors duration-300 active:scale-95"
+                    >
+                      <i className="fa-solid fa-sliders text-[11px]" />
+                      {activeFilterCount > 0 && (
+                        <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-[9px] font-bold flex items-center justify-center leading-none">
+                          {activeFilterCount}
+                        </span>
+                      )}
+                    </button>
+
+                    {/* Filter Panel */}
+                    {filterPanelOpen && (
+                      <div className="absolute right-0 top-full mt-2 w-72 bg-white rounded-2xl shadow-xl border border-gray-100 p-4 z-50">
+                        <div className="flex items-center justify-between mb-4">
+                          <h4 className="text-[13px] font-semibold text-gray-800">Filter Products</h4>
+                          {activeFilterCount > 0 && (
+                            <button
+                              onClick={() => { setFilterAvailability('all'); setFilterForms(new Set()); setCurrentPage(1); }}
+                              className="text-[11px] font-semibold text-primary hover:text-blue-700 transition"
+                            >
+                              Clear all
+                            </button>
+                          )}
+                        </div>
+
+                        {/* Availability */}
+                        <div className="mb-4">
+                          <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-2">Availability</p>
+                          <div className="flex gap-2">
+                            {(['all', 'instock', 'outofstock'] as const).map(v => (
+                              <button
+                                key={v}
+                                onClick={() => { setFilterAvailability(v); setCurrentPage(1); }}
+                                className={`px-3 py-1.5 rounded-full text-[11px] font-semibold border transition-all ${
+                                  filterAvailability === v
+                                    ? 'bg-primary text-white border-primary'
+                                    : 'bg-white text-gray-600 border-gray-200 hover:border-primary hover:text-primary'
+                                }`}
+                              >
+                                {v === 'all' ? 'All' : v === 'instock' ? 'In Stock' : 'Out of Stock'}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Form */}
+                        {availableForms.length > 0 && (
+                          <div>
+                            <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-2">Form</p>
+                            <div className="flex flex-wrap gap-2">
+                              {availableForms.map(form => (
+                                <button
+                                  key={form}
+                                  onClick={() => {
+                                    setFilterForms(prev => {
+                                      const next = new Set(prev);
+                                      next.has(form) ? next.delete(form) : next.add(form);
+                                      return next;
+                                    });
+                                    setCurrentPage(1);
+                                  }}
+                                  className={`px-3 py-1.5 rounded-full text-[11px] font-semibold border transition-all ${
+                                    filterForms.has(form)
+                                      ? 'bg-primary text-white border-primary'
+                                      : 'bg-white text-gray-600 border-gray-200 hover:border-primary hover:text-primary'
+                                  }`}
+                                >
+                                  {form}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 {/* Suggestions Dropdown */}
@@ -574,10 +667,11 @@ export default function ProductRange() {
                     onChange={e => { setSortBy(e.target.value); setCurrentPage(1); }}
                     className="appearance-none bg-white border border-blue-200 hover:border-primary rounded-full pl-4 pr-8 py-1.5 text-[13px] font-semibold text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition-all cursor-pointer shadow-sm"
                   >
-                    <option>Popularity</option>
-                    <option>Price: Low to High</option>
-                    <option>Price: High to Low</option>
-                    <option>Newest</option>
+                    <option>Default</option>
+                    <option>Name: A → Z</option>
+                    <option>Name: Z → A</option>
+                    <option>In Stock First</option>
+                    <option>Form: A → Z</option>
                   </select>
                   <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-gray-600">
                     <i className="fa-solid fa-chevron-down text-[10px]" />
@@ -586,73 +680,128 @@ export default function ProductRange() {
               </div>
             </div>
 
-            {/* Product Table */}
-            <div ref={tableRef} className="overflow-x-auto bg-white rounded-[10px] border border-gray-100 shadow-sm">
+            {/* Product List */}
+            <div ref={tableRef}>
               {productsLoading ? (
                 <TableSkeleton />
               ) : (
-                <table className="w-full text-left border-collapse">
-                  <thead>
-                    <tr className="bg-gray-50/50 border-b border-gray-100">
-                      <th className="px-6 py-4 text-[14px] font-semibold text-gray-900 capitalize">Product</th>
-                      <th className="px-6 py-4 text-[14px] font-semibold text-gray-900 capitalize">Category</th>
-                      <th className="px-6 py-4 text-[14px] font-semibold text-gray-900 capitalize">Price</th>
-                      <th className="px-6 py-4 text-[14px] font-semibold text-gray-900 capitalize text-center">Action</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-50">
+                <>
+                  {/* MOBILE CARDS — visible below lg */}
+                  <div className="lg:hidden space-y-3">
                     {paginated.map((p, i) => {
                       const displayName = p.brandName && p.genericName && p.brandName !== p.genericName
                         ? `${p.brandName} (${p.genericName})`
                         : p.name || p.brandName || p.genericName || 'Unnamed Product';
-                      const productPrice = getProductPrice(p);
-                      const displayPrice = formatPrice(productPrice);
-
                       return (
-                        <tr key={p._id || i} className="hover:bg-blue-50/30 transition-colors group">
-                          <td className="px-6 py-4">
-                            <div className="flex items-center gap-4">
-                              <div className="w-12 h-12 bg-gray-50 rounded-xl overflow-hidden flex-shrink-0 border border-gray-100 p-1">
-                                <img
-                                  src={getProductImage(p)}
-                                  alt={displayName}
-                                  className="w-full h-full object-contain mix-blend-multiply"
-                                  onError={(e) => { (e.target as HTMLImageElement).src = 'https://placehold.co/100x100?text=PHARMA'; }}
-                                />
-                              </div>
-                              <div className="flex flex-col">
-                                <span
-                                  className="text-[14px] font-bold text-gray-900 group-hover:text-primary transition-colors cursor-pointer"
-                                  onClick={() => openModal(p)}
-                                >
-                                  {displayName}
-                                </span>
-                                <span className="text-[11px] text-gray-400">
-                                  Available: <span className="text-success font-bold">In Stock</span>
-                                </span>
-                              </div>
+                        <div key={p._id || i} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 flex gap-3">
+                          <div className="w-14 h-14 bg-gray-50 rounded-xl overflow-hidden flex-shrink-0 border border-gray-100 p-1">
+                            <img
+                              src={getProductImage(p)}
+                              alt={displayName}
+                              className="w-full h-full object-contain mix-blend-multiply"
+                              onError={(e) => { (e.target as HTMLImageElement).src = 'https://placehold.co/100x100?text=PHARMA'; }}
+                            />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-start justify-between gap-2 mb-1">
+                              <span
+                                className="text-[14px] font-semibold text-gray-900 leading-snug cursor-pointer hover:text-primary transition-colors"
+                                onClick={() => openModal(p)}
+                              >
+                                {displayName}
+                              </span>
+                              {p.availability === false
+                                ? <span className="shrink-0 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-red-50 text-red-500 border border-red-100">Out of Stock</span>
+                                : <span className="shrink-0 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-green-50 text-green-600 border border-green-100">In Stock</span>
+                              }
                             </div>
-                          </td>
-                          <td className="px-6 py-4 text-[13px] text-gray-600 font-medium">
-                            {p.subCategory || p.category?.category || 'General'}
-                          </td>
-                          <td className="px-6 py-4 text-[14px] font-bold text-gray-900">
-                            {displayPrice}
-                          </td>
-                          <td className="px-6 py-4 text-center">
+                            <p className="text-[11px] text-primary font-medium mb-2">{p.subCategory || p.category?.category || 'General'}</p>
+                            <div className="flex flex-wrap gap-x-4 gap-y-1 mb-3">
+                              {p.strength && <span className="text-[11px] text-gray-500"><span className="font-semibold text-gray-400 uppercase tracking-wide">Strength</span> · {p.strength}</span>}
+                              {p.form && <span className="text-[11px] text-gray-500"><span className="font-semibold text-gray-400 uppercase tracking-wide">Form</span> · {p.form}</span>}
+                            </div>
                             <button
                               onClick={() => openModal(p)}
-                              className="bg-primary hover:bg-blue-600 text-white text-[11px] font-bold px-4 py-1.5 rounded-full transition-all duration-300 shadow-md hover:shadow-lg active:scale-95 inline-flex items-center justify-center gap-1.5 whitespace-nowrap"
+                              className="w-full justify-center bg-primary hover:bg-blue-600 text-white text-[12px] font-bold px-4 py-2.5 rounded-full transition-all duration-300 shadow-sm inline-flex items-center gap-1.5"
                             >
-                              <i className="fa-solid fa-paper-plane text-[10px]" />
+                              <i className="fa-solid fa-paper-plane text-[11px]" />
                               Send Inquiry
                             </button>
-                          </td>
-                        </tr>
+                          </div>
+                        </div>
                       );
                     })}
-                  </tbody>
-                </table>
+                  </div>
+
+                  {/* DESKTOP TABLE — visible lg and above */}
+                  <div className="hidden lg:block overflow-x-auto bg-white rounded-[10px] border border-gray-100 shadow-sm">
+                    <table className="w-full text-left border-collapse">
+                      <thead>
+                        <tr className="bg-gray-50/50 border-b border-gray-100">
+                          <th className="px-6 py-4 text-[14px] font-semibold text-gray-900 capitalize">Product</th>
+                          <th className="px-6 py-4 text-[14px] font-semibold text-gray-900 capitalize">Category</th>
+                          <th className="px-6 py-4 text-[14px] font-semibold text-gray-900 capitalize">Strength</th>
+                          <th className="px-6 py-4 text-[14px] font-semibold text-gray-900 capitalize">Form</th>
+                          <th className="px-6 py-4 text-[14px] font-semibold text-gray-900 capitalize text-center">Availability</th>
+                          <th className="px-6 py-4 text-[14px] font-semibold text-gray-900 capitalize text-center">Action</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-50">
+                        {paginated.map((p, i) => {
+                          const displayName = p.brandName && p.genericName && p.brandName !== p.genericName
+                            ? `${p.brandName} (${p.genericName})`
+                            : p.name || p.brandName || p.genericName || 'Unnamed Product';
+                          return (
+                            <tr key={p._id || i} className="hover:bg-blue-50/30 transition-colors group">
+                              <td className="px-6 py-4">
+                                <div className="flex items-center gap-4">
+                                  <div className="w-12 h-12 bg-gray-50 rounded-xl overflow-hidden flex-shrink-0 border border-gray-100 p-1">
+                                    <img
+                                      src={getProductImage(p)}
+                                      alt={displayName}
+                                      className="w-full h-full object-contain mix-blend-multiply"
+                                      onError={(e) => { (e.target as HTMLImageElement).src = 'https://placehold.co/100x100?text=PHARMA'; }}
+                                    />
+                                  </div>
+                                  <span
+                                    className="text-[14px] font-semibold text-gray-900 group-hover:text-primary transition-colors cursor-pointer"
+                                    onClick={() => openModal(p)}
+                                  >
+                                    {displayName}
+                                  </span>
+                                </div>
+                              </td>
+                              <td className="px-6 py-4 text-[13px] text-gray-600 font-medium">
+                                {p.subCategory || p.category?.category || 'General'}
+                              </td>
+                              <td className="px-6 py-4 text-[13px] text-gray-700">
+                                {p.strength || <span className="text-gray-400">—</span>}
+                              </td>
+                              <td className="px-6 py-4 text-[13px] text-gray-700">
+                                {p.form || <span className="text-gray-400">—</span>}
+                              </td>
+                              <td className="px-6 py-4 text-center">
+                                {p.availability === false
+                                  ? <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-red-50 text-red-500 border border-red-100">Out of Stock</span>
+                                  : <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-green-50 text-green-600 border border-green-100">In Stock</span>
+                                }
+                              </td>
+                              <td className="px-6 py-4 text-center">
+                                <button
+                                  onClick={() => openModal(p)}
+                                  className="bg-primary hover:bg-blue-600 text-white text-[12px] font-semibold px-4 py-1.5 rounded-full transition-all duration-300 shadow-md hover:shadow-lg active:scale-95 inline-flex items-center justify-center gap-1.5 whitespace-nowrap"
+                                >
+                                  <i className="fa-solid fa-paper-plane text-[10px]" />
+                                  Send Inquiry
+                                </button>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                </>
               )}
             </div>
 
@@ -696,19 +845,19 @@ export default function ProductRange() {
 
       {/* Inquiry Modal */}
       {modalOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
+        <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center sm:p-4 sm:p-6">
           <div
-            className="absolute inset-0 backdrop-blur-sm transition-opacity duration-300"
+            className={`absolute inset-0 backdrop-blur-sm transition-opacity duration-500 ${modalVisible ? 'opacity-100' : 'opacity-0'}`}
             style={{ background: 'rgba(26,32,44,0.6)' }}
             onClick={closeModal}
           />
           <div
-            className={`relative bg-white w-full max-w-6xl max-h-[95vh] rounded-[15px] shadow-2xl overflow-hidden flex flex-col transform transition-all duration-300 ${modalVisible ? 'scale-100 opacity-100' : 'scale-95 opacity-0'}`}
+            className={`relative bg-white w-full sm:max-w-6xl h-full sm:h-auto sm:max-h-[95vh] sm:rounded-[15px] rounded-t-[20px] shadow-2xl overflow-hidden flex flex-col transform transition-all duration-500 ease-out ${modalVisible ? 'translate-y-0 sm:scale-100 sm:opacity-100' : 'translate-y-full sm:translate-y-0 sm:scale-95 sm:opacity-0'}`}
           >
             {/* Modal Header */}
             <div className="bg-white border-b border-gray-100 px-6 py-4 flex justify-between items-center shrink-0">
               <div className="flex items-center space-x-4">
-                <img src="assets/getmedslogo.png" alt="GetMEDS Logo" className="h-6 w-auto object-contain" />
+                <img src="assets/getmedslogo.png" alt="Getmeds Logo" className="h-6 w-auto object-contain" />
                 <h3 className="text-base font-semibold text-gray-800 border-l border-gray-200 pl-4">
                   Product Details & Inquiry
                 </h3>
@@ -734,12 +883,12 @@ export default function ProductRange() {
               <div className="lg:w-1/2 p-6 lg:p-8 border-b lg:border-b-0 lg:border-r border-gray-100 flex flex-col">
                 <div className="flex flex-col-reverse md:flex-row gap-8 mb-8">
                   <div className="w-full md:w-1/2 flex flex-col justify-center">
-                    <div className="flex flex-nowrap whitespace-nowrap items-center gap-3 mb-3 text-sm text-gray-600">
-                      <span className="flex items-center font-medium" style={{ color: '#61A644' }}>
+                    <div className="flex flex-wrap items-start gap-x-3 gap-y-1 mb-3 text-sm text-gray-600">
+                      <span className="flex items-center font-medium whitespace-nowrap" style={{ color: '#61A644' }}>
                         <i className="fa-solid fa-check mr-1.5" /> In stock
                       </span>
-                      <span className="text-gray-300">|</span>
-                      <span className="capitalize font-medium" style={{ color: '#0D99FF' }}>
+                      <span className="text-gray-300 whitespace-nowrap">|</span>
+                      <span className="capitalize font-medium leading-snug" style={{ color: '#0D99FF' }}>
                         {selectedProduct?.subCategory || selectedProduct?.category?.category || 'General'}
                       </span>
                     </div>
@@ -749,7 +898,7 @@ export default function ProductRange() {
                         : selectedProduct?.name || selectedProduct?.brandName || selectedProduct?.genericName || 'Product Details'}
                     </h1>
                     <p className="text-gray-600 text-[13px] leading-relaxed">
-                      {selectedProduct?.description || 'GetMEDS pharmaceutical product designed for patient care and optimal therapeutic outcomes.'}
+                      {selectedProduct?.description || 'Getmeds pharmaceutical product designed for patient care and optimal therapeutic outcomes.'}
                     </p>
                   </div>
                   <div className="w-full md:w-1/2 flex items-center justify-center">
@@ -873,17 +1022,17 @@ export default function ProductRange() {
                 </div>
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div>
-                    <label className="block text-[11px] font-medium text-gray-500 mb-2">Target Product</label>
+                    <label className="block text-[13px] font-medium text-gray-500 mb-2">Target Product</label>
                     <input
                       type="text"
                       readOnly
                       value={selectedProduct?.name || ''}
-                      className="w-full bg-gray-50 border border-gray-100 rounded-xl px-3 py-2.5 text-[13px] font-bold outline-none cursor-default"
+                      className="w-full bg-gray-50 border border-gray-100 rounded-xl px-3 py-2.5 text-[13px] font-semibold outline-none cursor-default"
                       style={{ color: '#0D99FF' }}
                     />
                   </div>
                   <div>
-                    <label className="block text-[11px] font-medium text-gray-500 mb-2">Full Name</label>
+                    <label className="block text-[13px] font-medium text-gray-500 mb-2">Full Name</label>
                     <input
                       type="text"
                       required
@@ -894,7 +1043,7 @@ export default function ProductRange() {
                     />
                   </div>
                   <div>
-                    <label className="block text-[11px] font-medium text-gray-500 mb-2">Phone Number</label>
+                    <label className="block text-[13px] font-medium text-gray-500 mb-2">Phone Number</label>
                     <input
                       type="tel"
                       required
@@ -905,7 +1054,7 @@ export default function ProductRange() {
                     />
                   </div>
                   <div>
-                    <label className="block text-[11px] font-medium text-gray-500 mb-2">Email Address</label>
+                    <label className="block text-[13px] font-medium text-gray-500 mb-2">Email Address</label>
                     <input
                       type="email"
                       required
@@ -916,7 +1065,7 @@ export default function ProductRange() {
                     />
                   </div>
                   <div>
-                    <label className="block text-[11px] font-medium text-gray-500 mb-2">Message</label>
+                    <label className="block text-[13px] font-medium text-gray-500 mb-2">Message</label>
                     <textarea
                       rows={3}
                       placeholder="Tell us more about your requirements..."
@@ -926,7 +1075,7 @@ export default function ProductRange() {
                     />
                   </div>
                   <div>
-                    <label className="block text-[11px] font-medium text-gray-500 mb-2">Upload Prescription (Optional)</label>
+                    <label className="block text-[13px] font-medium text-gray-500 mb-2">Upload Prescription (Optional)</label>
                     <input
                       type="file"
                       multiple

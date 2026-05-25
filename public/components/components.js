@@ -122,97 +122,123 @@
             const style = document.createElement('style');
             style.id = styleId;
             style.textContent = `
+                @keyframes zap-orb-float {
+                    0%, 100% { transform: translateY(0px) scale(1); }
+                    33%       { transform: translateY(-6px) scale(1.05); }
+                    66%       { transform: translateY(3px) scale(0.96); }
+                }
+                @keyframes zap-orb-ring {
+                    0%   { transform: scale(0.75); opacity: 0.7; }
+                    100% { transform: scale(1.7);  opacity: 0; }
+                }
+                @keyframes zap-typing {
+                    0%, 100% { transform: translateY(0); }
+                    50%      { transform: translateY(-4px); }
+                }
+                @keyframes zap-welcome-bounce {
+                    0%, 100% { transform: translateY(0px); }
+                    40%      { transform: translateY(-14px); }
+                    60%      { transform: translateY(-7px); }
+                }
+
                 #zap-ai-trigger {
                     position: fixed !important;
                     bottom: 95px !important;
                     right: 30px !important;
-                    width: 50px !important;
-                    height: 50px !important;
+                    width: 56px !important;
+                    height: 56px !important;
                     background: linear-gradient(135deg, #61A644 0%, #1D9FDA 100%) !important;
-                    color: white !important;
                     border: none !important;
-                    border-radius: 15px !important;
+                    border-radius: 50% !important;
                     cursor: pointer !important;
                     display: flex !important;
                     align-items: center !important;
                     justify-content: center !important;
-                    box-shadow: 0 10px 25px rgba(29, 159, 218, 0.3) !important;
                     z-index: 9999998 !important;
-                    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
-                    font-size: 20px !important;
+                    overflow: visible !important;
+                    animation: zap-orb-float 3.5s ease-in-out infinite !important;
+                    box-shadow: 0 6px 24px rgba(97,166,68,0.4), 0 10px 40px rgba(29,159,218,0.3) !important;
                 }
-                #zap-ai-trigger:hover {
-                    transform: scale(1.1) rotate(5deg) !important;
-                    box-shadow: 0 15px 30px rgba(29, 159, 218, 0.4) !important;
+                #zap-ai-trigger::before {
+                    content: '' !important;
+                    position: absolute !important;
+                    inset: 0 !important;
+                    border-radius: 50% !important;
+                    background: linear-gradient(135deg, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0.0) 55%) !important;
+                    pointer-events: none !important;
                 }
+                #zap-ai-trigger::after {
+                    content: '' !important;
+                    position: absolute !important;
+                    inset: -7px !important;
+                    border-radius: 50% !important;
+                    border: 2px solid rgba(29,159,218,0.4) !important;
+                    animation: zap-orb-ring 2.6s ease-out infinite !important;
+                    pointer-events: none !important;
+                }
+                #zap-ai-trigger i { display: none !important; }
 
                 #zap-chat-window {
                     position: fixed !important;
                     bottom: 30px !important;
                     right: 95px !important;
-                    width: 380px !important;
-                    height: 500px !important;
-                    max-height: calc(100vh - 130px) !important;
-                    max-width: calc(100vw - 120px) !important;
-                    background: linear-gradient(135deg, rgba(97, 166, 68, 0.95) 0%, rgba(29, 159, 218, 0.95) 100%) !important;
-                    backdrop-filter: blur(25px) !important;
-                    z-index: 40 !important;
-                    border-radius: 24px !important;
+                    width: 500px !important;
+                    height: 410px !important;
+                    max-height: calc(100vh - 120px) !important;
+                    max-width: calc(100vw - 100px) !important;
+                    background:
+                        radial-gradient(ellipse 75% 65% at 10% 10%, rgba(97,166,68,0.35) 0%, transparent 100%),
+                        radial-gradient(ellipse 70% 60% at 92% 92%, rgba(29,159,218,0.38) 0%, transparent 100%),
+                        #ffffff !important;
+                    z-index: 9999997 !important;
+                    border-radius: 22px !important;
                     overflow: hidden !important;
-                    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+                    box-shadow: 0 20px 50px rgba(0,0,0,0.12), 0 4px 16px rgba(0,0,0,0.07) !important;
                     display: flex !important;
                     flex-direction: column !important;
                     opacity: 0 !important;
-                    transform: translateX(30px) scale(0.9) !important;
+                    transform: translateY(18px) scale(0.95) !important;
                     visibility: hidden !important;
-                    transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
-                    border: 1px solid rgba(255,255,255,0.2) !important;
+                    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+                    border: 1px solid rgba(0,0,0,0.06) !important;
                 }
                 #zap-chat-window.active {
                     opacity: 1 !important;
                     visibility: visible !important;
-                    transform: translateX(0) scale(1) !important;
-                }
-
-                .zap-glass {
-                    background: rgba(255, 255, 255, 0.1) !important;
-                    backdrop-filter: blur(10px) !important;
-                    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-                }
-
-                .zap-gradient-bg {
-                    background: transparent !important;
+                    transform: translateY(0) scale(1) !important;
                 }
 
                 #zap-messages {
                     flex: 1 !important;
                     overflow-y: auto !important;
-                    padding: 20px !important;
+                    padding: 8px 18px 14px !important;
                     display: flex !important;
                     flex-direction: column !important;
-                    gap: 12px !important;
+                    gap: 10px !important;
                     scrollbar-width: none !important;
+                    background: transparent !important;
                 }
-                #zap-messages::-webkit-scrollbar {
-                    display: none;
-                }
+                #zap-messages::-webkit-scrollbar { display: none; }
 
                 .zap-msg {
-                    padding: 10px 16px !important;
-                    border-radius: 18px !important;
+                    padding: 10px 14px !important;
+                    border-radius: 16px !important;
                     font-size: 13.5px !important;
-                    line-height: 1.5 !important;
-                    max-width: 85% !important;
+                    line-height: 1.55 !important;
+                    max-width: 82% !important;
                     word-wrap: break-word !important;
-                    color: white !important;
                 }
                 .zap-msg.ai {
-                    background: rgba(255,255,255,0.15) !important;
+                    background: rgba(255,255,255,0.75) !important;
+                    color: #1a1a1a !important;
                     align-self: flex-start !important;
                     border-bottom-left-radius: 4px !important;
+                    backdrop-filter: blur(8px) !important;
+                    box-shadow: 0 1px 6px rgba(0,0,0,0.08) !important;
                 }
                 .zap-msg.user {
-                    background: rgba(0,0,0,0.15) !important;
+                    background: linear-gradient(135deg, #61A644 0%, #1D9FDA 100%) !important;
+                    color: #ffffff !important;
                     align-self: flex-end !important;
                     border-bottom-right-radius: 4px !important;
                 }
@@ -222,45 +248,77 @@
                     display: inline-flex !important;
                     align-items: center !important;
                     gap: 6px !important;
-                    padding: 6px 12px !important;
-                    border-radius: 12px !important;
-                    background: rgba(255, 255, 255, 0.1) !important;
-                    border: 1px solid rgba(255, 255, 255, 0.2) !important;
-                    color: white !important;
+                    padding: 5px 11px !important;
+                    border-radius: 10px !important;
+                    background: rgba(255,255,255,0.15) !important;
+                    border: 1px solid rgba(255,255,255,0.25) !important;
+                    color: #ffffff !important;
                     font-size: 11px !important;
                     font-weight: 500 !important;
-                    transition: all 0.2s ease-in-out !important;
+                    transition: all 0.2s ease !important;
                     max-width: 100% !important;
                 }
                 .zap-resource-link:hover {
-                    background: rgba(255, 255, 255, 0.2) !important;
-                    border-color: rgba(255, 255, 255, 0.3) !important;
+                    background: rgba(255,255,255,0.25) !important;
                     transform: translateY(-1px) !important;
-                    box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
                 }
 
-                @keyframes zap-typing {
-                    0%, 100% {
-                        transform: translateY(0);
-                    }
-                    50% {
-                        transform: translateY(-3px);
-                    }
-                }
                 .zap-dot {
                     display: inline-block;
-                    width: 4px;
-                    height: 4px;
-                    background: white;
+                    width: 5px;
+                    height: 5px;
+                    background: #999;
                     border-radius: 50%;
-                    margin: 0 1px;
+                    margin: 0 2px;
                     animation: zap-typing 1s infinite ease-in-out;
                 }
-                .zap-dot:nth-child(2) {
-                    animation-delay: 0.2s;
+                .zap-dot:nth-child(2) { animation-delay: 0.2s; }
+                .zap-dot:nth-child(3) { animation-delay: 0.4s; }
+
+                #zap-welcome-orb { display: none !important; }
+
+                @keyframes zap-mic-pulse {
+                    0%   { box-shadow: 0 0 0 0 rgba(239,68,68,0.5); }
+                    70%  { box-shadow: 0 0 0 10px rgba(239,68,68,0); }
+                    100% { box-shadow: 0 0 0 0 rgba(239,68,68,0); }
                 }
-                .zap-dot:nth-child(3) {
-                    animation-delay: 0.4s;
+                #zap-mic-btn.zap-listening {
+                    background: #ef4444 !important;
+                    color: #ffffff !important;
+                    border-color: #ef4444 !important;
+                    animation: zap-mic-pulse 1.2s ease-out infinite !important;
+                }
+
+                @media (max-width: 640px) {
+                    #zap-ai-trigger {
+                        bottom: 20px !important;
+                        right: 20px !important;
+                    }
+                    #zap-chat-window {
+                        bottom: 0 !important;
+                        right: 0 !important;
+                        left: 0 !important;
+                        width: 100% !important;
+                        max-width: 100vw !important;
+                        height: 88vh !important;
+                        max-height: 88vh !important;
+                        border-radius: 22px 22px 0 0 !important;
+                        transform: translateY(100%) !important;
+                        opacity: 1 !important;
+                        transition: transform 0.45s cubic-bezier(0.32, 0.72, 0, 1), visibility 0s 0.45s !important;
+                    }
+                    #zap-chat-window.active {
+                        transform: translateY(0) !important;
+                        visibility: visible !important;
+                        transition: transform 0.45s cubic-bezier(0.32, 0.72, 0, 1) !important;
+                    }
+                    #zap-welcome-orb {
+                        display: flex !important;
+                        animation: zap-welcome-bounce 1.5s ease-in-out infinite !important;
+                    }
+                    #zap-ai-trigger.zap-modal-open {
+                        display: none !important;
+                    }
                 }
             `;
             document.head.appendChild(style);
@@ -269,7 +327,7 @@
         // Trigger Button
         const btn = document.createElement('button');
         btn.id = 'zap-ai-trigger';
-        btn.innerHTML = '<i class="fa-solid fa-face-smile-wink"></i>';
+        btn.innerHTML = '<span style="width:12px;height:12px;border-radius:50%;background:rgba(255,255,255,0.88);box-shadow:0 0 10px rgba(255,255,255,0.7),0 0 20px rgba(255,255,255,0.35);position:relative;z-index:2;display:block;"></span>';
         btn.title = 'Ask GetAssist';
         document.body.appendChild(btn);
 
@@ -277,38 +335,46 @@
         const chatWindow = document.createElement('div');
         chatWindow.id = 'zap-chat-window';
         chatWindow.innerHTML = `
-            <div class="p-5 flex items-center justify-between shadow-sm border-b border-white/10">
-                <div class="flex items-center gap-3">
-                    <div class="h-10 w-10 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30">
-                        <i class="fa-solid fa-robot text-white text-lg"></i>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:13px 16px;flex-shrink:0;">
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#61A644,#1D9FDA);display:flex;align-items:center;justify-content:center;position:relative;flex-shrink:0;box-shadow:0 4px 14px rgba(29,159,218,0.3);">
+                        <span style="width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,0.88);box-shadow:0 0 8px rgba(255,255,255,0.6);display:block;position:relative;z-index:1;"></span>
+                        <span style="position:absolute;inset:0;border-radius:50%;background:linear-gradient(135deg,rgba(255,255,255,0.4) 0%,transparent 55%);pointer-events:none;"></span>
                     </div>
-                    <div>
-                        <h4 class="text-white font-bold text-sm tracking-wide">GetAssist</h4>
-                        <div class="flex items-center gap-1.5">
-                            <span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span>
-                            <span class="text-white/60 text-[10px] font-bold tracking-widest uppercase">Online</span>
-                        </div>
-                    </div>
+                    <span style="font-size:15px;font-weight:600;color:#1a1a1a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;letter-spacing:0.1px;">GetAssist</span>
                 </div>
-                <button id="zap-close-win" class="text-white/50 hover:text-white transition">
-                    <i class="fa-solid fa-xmark text-lg"></i>
+                <button id="zap-close-win" style="background:rgba(0,0,0,0.07);border:1px solid rgba(0,0,0,0.1);border-radius:50%;width:30px;height:30px;cursor:pointer;color:#555;display:flex;align-items:center;justify-content:center;font-size:13px;line-height:1;transition:background 0.2s;" onmouseover="this.style.background='rgba(0,0,0,0.13)'" onmouseout="this.style.background='rgba(0,0,0,0.07)'">
+                    <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
 
             <div id="zap-messages">
-                <div class="zap-msg ai">Hi! I'm GetAssist, your GetMEDS health assistant. How can I help you navigate our system today?</div>
+                <div id="zap-welcome" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px;gap:22px;">
+                    <div id="zap-welcome-orb" style="width:68px;height:68px;border-radius:50%;background:linear-gradient(135deg,#61A644,#1D9FDA);display:flex;align-items:center;justify-content:center;position:relative;box-shadow:0 10px 30px rgba(29,159,218,0.35);">
+                        <span style="width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,0.88);box-shadow:0 0 14px rgba(255,255,255,0.65);display:block;position:relative;z-index:1;"></span>
+                        <span style="position:absolute;inset:0;border-radius:50%;background:linear-gradient(135deg,rgba(255,255,255,0.42) 0%,transparent 55%);pointer-events:none;"></span>
+                    </div>
+                    <p style="margin:0;font-size:18px;font-weight:600;color:#1a1a1a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;text-align:center;line-height:1.5;letter-spacing:-0.2px;">Hi! How can I help<br>you today?</p>
+                </div>
             </div>
 
-            <div class="p-4 bg-white/5 backdrop-blur-xl border-t border-white/10">
-                <div class="zap-glass p-1.5 rounded-2xl flex items-center gap-2">
-                    <input type="text" id="zap-input" placeholder="Type your message..." class="flex-1 bg-transparent border-none outline-none px-3 py-2 text-sm text-white placeholder-white/30">
-                    <button id="zap-send-btn" class="h-9 w-9 bg-[#61A644] text-white rounded-xl flex items-center justify-center hover:scale-105 active:scale-95 transition shadow-lg">
-                        <i class="fa-solid fa-paper-plane text-xs"></i>
-                    </button>
-                </div>
-                <div class="flex gap-2 mt-3 overflow-x-auto no-scrollbar pb-1">
-                    <button class="zap-chip whitespace-nowrap px-3 py-1.5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 text-white/60 text-[11px] font-medium transition" onclick="document.dispatchEvent(new CustomEvent('zapAsk', {detail: 'How to inquire?'}))">How to inquire?</button>
-                    <button class="zap-chip whitespace-nowrap px-3 py-1.5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 text-white/60 text-[11px] font-medium transition" onclick="document.dispatchEvent(new CustomEvent('zapAsk', {detail: 'Search products'}))">Search products</button>
+            <div style="padding:10px 12px 14px;flex-shrink:0;">
+                <div style="background:#ffffff;border-radius:18px;padding:14px 16px;box-shadow:0 4px 24px rgba(0,0,0,0.12);">
+                    <input type="text" id="zap-input" placeholder="Ask me anything..." style="width:100%;background:transparent;border:none;outline:none;font-size:13.5px;color:#1a1a1a;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;box-sizing:border-box;">
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px;">
+                        <div style="display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;flex:1;margin-right:10px;">
+                            <button style="white-space:nowrap;padding:5px 13px;border-radius:20px;background:#f3f4f6;border:1px solid #e5e7eb;color:#555;font-size:11px;font-weight:500;cursor:pointer;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;transition:background 0.15s;flex-shrink:0;" onclick="document.dispatchEvent(new CustomEvent('zapAsk',{detail:'How to inquire?'}))" onmouseover="this.style.background='#e9eaec'" onmouseout="this.style.background='#f3f4f6'">How to inquire?</button>
+                            <button style="white-space:nowrap;padding:5px 13px;border-radius:20px;background:#f3f4f6;border:1px solid #e5e7eb;color:#555;font-size:11px;font-weight:500;cursor:pointer;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;transition:background 0.15s;flex-shrink:0;" onclick="document.dispatchEvent(new CustomEvent('zapAsk',{detail:'Search products'}))" onmouseover="this.style.background='#e9eaec'" onmouseout="this.style.background='#f3f4f6'">Search products</button>
+                        </div>
+                        <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
+                            <button id="zap-mic-btn" title="Speak your message" style="height:34px;width:34px;background:#f3f4f6;border:1.5px solid #e5e7eb;color:#666;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;">
+                                <i class="fa-solid fa-microphone" style="font-size:12px;"></i>
+                            </button>
+                            <button id="zap-send-btn" style="height:34px;width:34px;background:linear-gradient(135deg,#61A644,#1D9FDA);color:#fff;border:none;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 12px rgba(29,159,218,0.4);transition:transform 0.15s,opacity 0.15s;" onmouseover="this.style.opacity='0.88'" onmouseout="this.style.opacity='1'" onmousedown="this.style.transform='scale(0.9)'" onmouseup="this.style.transform='scale(1)'">
+                                <i class="fa-solid fa-arrow-up" style="font-size:13px;"></i>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         `;
@@ -319,15 +385,21 @@
         const zapMessages = chatWindow.querySelector('#zap-messages');
         const zapSend = chatWindow.querySelector('#zap-send-btn');
 
+        const isMobile = () => window.innerWidth <= 640;
+
         btn.addEventListener('click', () => {
             chatWindow.classList.toggle('active');
             if (chatWindow.classList.contains('active')) {
                 zapInput.focus();
+                if (isMobile()) btn.classList.add('zap-modal-open');
+            } else {
+                btn.classList.remove('zap-modal-open');
             }
         });
 
         chatWindow.querySelector('#zap-close-win').addEventListener('click', () => {
             chatWindow.classList.remove('active');
+            btn.classList.remove('zap-modal-open');
         });
 
         function getChatbotApiUrl() {
@@ -523,6 +595,9 @@
             const val = zapInput.value.trim();
             if (!val) return;
 
+            const welcome = chatWindow.querySelector('#zap-welcome');
+            if (welcome) welcome.remove();
+
             addMessage(val, 'user');
             zapInput.value = '';
             handleResponse(val);
@@ -536,9 +611,65 @@
 
         // Listen for internal chips
         document.addEventListener('zapAsk', e => {
+            const welcome = chatWindow.querySelector('#zap-welcome');
+            if (welcome) welcome.remove();
             addMessage(e.detail, 'user');
             handleResponse(e.detail);
         });
+
+        // ── Speech-to-Text ────────────────────────────────────────────
+        const zapMicBtn = chatWindow.querySelector('#zap-mic-btn');
+        const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+        if (SpeechRecognitionAPI && zapMicBtn) {
+            const recognition = new SpeechRecognitionAPI();
+            recognition.continuous = false;
+            recognition.interimResults = true;
+            recognition.lang = 'en-US';
+            let isListening = false;
+
+            zapMicBtn.addEventListener('click', () => {
+                if (isListening) {
+                    recognition.stop();
+                } else {
+                    window.speechSynthesis && window.speechSynthesis.cancel();
+                    try { recognition.start(); } catch(e) {}
+                }
+            });
+
+            recognition.onstart = () => {
+                isListening = true;
+                zapMicBtn.classList.add('zap-listening');
+                zapInput.placeholder = 'Listening…';
+                zapInput.value = '';
+            };
+
+            recognition.onend = () => {
+                isListening = false;
+                zapMicBtn.classList.remove('zap-listening');
+                zapInput.placeholder = 'Ask me anything...';
+            };
+
+            recognition.onresult = (e) => {
+                const transcript = Array.from(e.results)
+                    .map(r => r[0].transcript).join('');
+                zapInput.value = transcript;
+                if (e.results[e.results.length - 1].isFinal) {
+                    recognition.stop();
+                    setTimeout(() => sendMessage(), 300);
+                }
+            };
+
+            recognition.onerror = () => {
+                isListening = false;
+                zapMicBtn.classList.remove('zap-listening');
+                zapInput.placeholder = 'Ask me anything...';
+            };
+        } else if (zapMicBtn) {
+            zapMicBtn.style.opacity = '0.35';
+            zapMicBtn.style.cursor = 'not-allowed';
+            zapMicBtn.title = 'Voice input not supported in this browser';
+        }
     }
 
     function injectFavicon() {
@@ -590,8 +721,8 @@
                     z-index: 9999999 !important;
                     opacity: 0 !important;
                     visibility: hidden !important;
-                    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
-                    transform: translateY(20px) !important;
+                    transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease !important;
+                    transform: translateY(12px) !important;
                     padding: 0 !important;
                     margin: 0 !important;
                 }
@@ -601,9 +732,12 @@
                     transform: translateY(0) !important;
                 }
                 #scroll-to-top:hover {
-                    transform: translateY(-5px) !important;
+                    transform: translateY(-5px) scale(1.08) !important;
                     box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3) !important;
                     filter: brightness(1.1) !important;
+                }
+                #scroll-to-top:active {
+                    transform: scale(0.95) !important;
                 }
             `;
             document.head.appendChild(style);
@@ -615,19 +749,46 @@
         btn.title = 'Back to Top';
         document.body.appendChild(btn);
 
-        const toggleVisible = () => {
-            if (window.scrollY > 300) {
+        const THRESHOLD = 300;
+
+        // Check if any scrollable context has scrolled past threshold
+        function checkScrolled() {
+            if (window.scrollY > THRESHOLD) {
+                btn.classList.add('show');
+                return;
+            }
+            // Also check overflow-y-auto divs (React inner scroll containers)
+            var scrolled = false;
+            document.querySelectorAll('*').forEach(function (el) {
+                if (el === btn) return;
+                var style = window.getComputedStyle(el);
+                var overflow = style.overflowY;
+                if ((overflow === 'auto' || overflow === 'scroll') && el.scrollTop > THRESHOLD) {
+                    scrolled = true;
+                }
+            });
+            if (scrolled) {
                 btn.classList.add('show');
             } else {
                 btn.classList.remove('show');
             }
-        };
+        }
 
-        window.addEventListener('scroll', toggleVisible);
-        toggleVisible();
+        // Capture phase catches scroll on ANY element (including React content divs)
+        document.addEventListener('scroll', checkScrolled, true);
+        window.addEventListener('scroll', checkScrolled);
 
         btn.addEventListener('click', function () {
             window.scrollTo({ top: 0, behavior: 'smooth' });
+            // Also reset any inner scroll containers
+            document.querySelectorAll('*').forEach(function (el) {
+                if (el === btn) return;
+                var style = window.getComputedStyle(el);
+                var overflow = style.overflowY;
+                if ((overflow === 'auto' || overflow === 'scroll') && el.scrollTop > 0) {
+                    el.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            });
         });
 
         console.log('[GetMEDS] Scroll-to-top button injected and secured');

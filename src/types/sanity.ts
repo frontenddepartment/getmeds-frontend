@@ -1,5 +1,5 @@
 /**
- * GetMEDS Sanity TypeScript Types
+ * Getmeds Sanity TypeScript Types
  * Auto-generated from schema definitions
  */
 

@@ -1,26 +1,26 @@
 {
   "meta": {
-    "title": "About Us - GetMEDS",
-    "description": "Learn more about GetMEDS, your trusted companion in health and wellness. Discover our mission, vision, and the team behind our platform."
+    "title": "About Us - Getmeds",
+    "description": "Learn more about Getmeds, your trusted companion in health and wellness. Discover our mission, vision, and the team behind our platform."
   },
   "hero": {
     "image": "assets/about_us_hero.png",
-    "imageAlt": "About GetMEDS",
+    "imageAlt": "About Getmeds",
     "heading": "Your Compassionate",
     "headingAccent": "Health Ally",
     "description": "We are dedicated to providing accessible, high-quality healthcare services to everyone. Our platform bridges the gap between patients and reliable medical care through innovation and empathy."
   },
   "introImages": [
-    { "src": "assets/about_intro_1.png", "alt": "GetMEDS Logistics" },
+    { "src": "assets/about_intro_1.png", "alt": "Getmeds Logistics" },
     { "src": "assets/about_intro_2.png", "alt": "Medical Technology" },
     { "src": "assets/about_intro_3.png", "alt": "Healthcare Excellence" }
   ],
   "about": {
     "heading": "About Us",
     "paragraphs": [
-      "Introducing the next evolution of pharmaceutical care. GetMEDS builds upon a foundation of compassion and innovation while introducing advanced healthcare compositions for modern patients. Our expanded service collection maintains our signature commitment to reliability, elevated by new, thoughtfully crafted digital health solutions.",
+      "Introducing the next evolution of pharmaceutical care. Getmeds builds upon a foundation of compassion and innovation while introducing advanced healthcare compositions for modern patients. Our expanded service collection maintains our signature commitment to reliability, elevated by new, thoughtfully crafted digital health solutions.",
       "We've refined every detail to perfection, from enhanced patient distribution models to more sophisticated logistics treatments. Our new dashboard layouts, expanded messaging interfaces, and innovative data visualizations provide even more tools for managing health experiences effectively.",
-      "Transform your healthcare journey with our most comprehensive pharmaceutical release yet. Whether you're navigating complex treatments, social platforms, or enterprise health applications, GetMEDS delivers the precision you deserve."
+      "Transform your healthcare journey with our most comprehensive pharmaceutical release yet. Whether you're navigating complex treatments, social platforms, or enterprise health applications, Getmeds delivers the precision you deserve."
     ],
     "dedicatedToLabel": "Dedicated to:",
     "dedicatedItems": [
@@ -77,7 +77,7 @@
   },
   "whyChooseUs": {
     "sectionLabel": "Our Advantages",
-    "heading": "Why Choose GetMEDS?",
+    "heading": "Why Choose Getmeds?",
     "description": "We go above and beyond to ensure our services exceed your expectations when it comes to your health and convenience.",
     "items": [
       {
@@ -104,26 +104,26 @@
   },
   "team": {
     "sectionLabel": "Executive Team",
-    "heading": "The Minds Behind GetMEDS",
+    "heading": "The Minds Behind Getmeds",
     "description": "Our leadership team brings decades of experience in healthcare, technology, and logistics to revolutionize patient care.",
     "members": [
       {
         "name": "Mr. Naresh Bishnoi",
         "role": "Founder & CEO",
         "image": "assets/CEO.png",
-        "ribbonLabel": "GETMEDS"
+        "ribbonLabel": "Getmeds"
       },
       {
         "name": "Dr. Elena Rodriguez",
         "role": "Chief Operations Officer",
         "image": "assets/employeeone.png",
-        "ribbonLabel": "GetMEDS"
+        "ribbonLabel": "Getmeds"
       },
       {
         "name": "Dr. Michael Chen",
         "role": "Medical Director",
         "image": "assets/employeetwo.png",
-        "ribbonLabel": "GetMEDS"
+        "ribbonLabel": "Getmeds"
       },
       {
         "name": "Dr. Sarah Jenkins",

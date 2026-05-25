@@ -1,7 +1,7 @@
-{
+﻿{
   "meta": {
-    "title": "CSR - GetMEDS",
-    "description": "Corporate Social Responsibility at GetMeds. Our mission to make healthcare accessible through partnerships and patient advocacy."
+    "title": "CSR - Getmeds",
+    "description": "Corporate Social Responsibility at Getmeds. Our mission to make healthcare accessible through partnerships and patient advocacy."
   },
   "hero": {
     "image": "assets/csrhero.png",
@@ -27,7 +27,7 @@
     "heading": "Watch some of our patients' journeys here:",
     "video": {
       "src": "https://www.youtube.com/embed/aIKzCDi2NGA",
-      "title": "DORIE SHARES HER BREAST CANCER JOURNEY AND ADVICE | CARE AT GETMEDS"
+      "title": "DORIE SHARES HER BREAST CANCER JOURNEY AND ADVICE | CARE AT Getmeds"
     },
     "links": [
       {

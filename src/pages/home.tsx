@@ -52,6 +52,9 @@ export default function GetMedsHomepage() {
   const [isInquiryOpen, setIsInquiryOpen] = useState(false);
   const [therapPage, setTherapPage] = useState(0);
   const [openFaq, setOpenFaq] = useState(0);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [mobileProductsOpen, setMobileProductsOpen] = useState(false);
+  const [mobileCompanyOpen, setMobileCompanyOpen] = useState(false);
 
   useEffect(() => {
     // 1. Inject Fonts
@@ -88,7 +91,7 @@ export default function GetMedsHomepage() {
                   dark: '#1A202C',
                 },
                 fontFamily: {
-                  sans: ['Inter', 'Poppins', 'sans-serif'],
+                  sans: ['Poppins', 'Inter', 'sans-serif'],
                 }
               }
             }
@@ -106,7 +109,7 @@ export default function GetMedsHomepage() {
               dark: '#1A202C',
             },
             fontFamily: {
-              sans: ['Inter', 'Poppins', 'sans-serif'],
+              sans: ['Poppins', 'Inter', 'sans-serif'],
             }
           }
         }
@@ -149,7 +152,7 @@ export default function GetMedsHomepage() {
 
 
   return (
-    <div className="bg-white text-gray-800 antialiased overflow-x-hidden">
+    <div style={{ fontFamily: "'Poppins', sans-serif" }} className="bg-white text-gray-800 antialiased overflow-x-hidden">
       <style dangerouslySetInnerHTML={{
         __html: `
         body { font-family: 'Inter', sans-serif; }
@@ -218,7 +221,7 @@ export default function GetMedsHomepage() {
                 <a href="index.html" className="flex items-center">
                   <img
                     src="assets/getmedslogo.png"
-                    alt="GetMEDS Logo"
+                    alt="Getmeds Logo"
                     className={`h-10 w-auto object-contain transition-all duration-300 ${isScrolled ? '' : 'brightness-0 invert'}`}
                   />
                 </a>
@@ -399,12 +402,101 @@ export default function GetMedsHomepage() {
                 </div>
               </div>
 
-              {/* Right side (Empty to match static pages) */}
-              <div className="w-[180px] shrink-0 flex items-center justify-end space-x-4">
-                {/* Clean, empty right-aligned spacing to center navigation links */}
+              {/* Right side — hamburger on mobile, empty spacer on desktop */}
+              <div className="w-[180px] shrink-0 flex items-center justify-end">
+                <button
+                  className={`lg:hidden p-2 rounded-md transition-colors duration-300 ${isScrolled ? 'text-gray-600 hover:text-primary' : 'text-white hover:text-white/70'}`}
+                  onClick={() => setIsMobileMenuOpen(o => !o)}
+                  aria-label="Toggle menu"
+                >
+                  <i className={`fa-solid ${isMobileMenuOpen ? 'fa-xmark' : 'fa-bars'} text-2xl`}></i>
+                </button>
               </div>
             </div>
           </nav>
+
+          {/* Mobile Sidebar Menu */}
+          {isMobileMenuOpen && (
+            <div className="lg:hidden fixed top-[80px] left-0 w-full bg-white shadow-xl border-t border-gray-100 z-[200] overflow-y-auto" style={{ height: 'calc(100vh - 80px)' }}>
+              <div className="flex flex-col px-4 py-4 pb-12">
+                <a href="index.html" className="flex items-center px-3 py-3.5 text-[15px] font-semibold text-primary border-b border-gray-100">Home</a>
+                <a href="order-medicines.html" className="flex items-center px-3 py-3.5 text-[15px] font-semibold text-gray-700 border-b border-gray-100 hover:text-primary transition">Order Medicines</a>
+
+                {/* Product Range accordion */}
+                <div className="border-b border-gray-100">
+                  <button onClick={() => setMobileProductsOpen(o => !o)} className="w-full flex items-center justify-between px-3 py-3.5 text-[15px] font-semibold text-gray-700 hover:text-primary transition">
+                    <span>Product Range</span>
+                    <i className={`fa-solid fa-chevron-down text-[11px] text-gray-400 transition-transform duration-300 ${mobileProductsOpen ? 'rotate-180' : ''}`}></i>
+                  </button>
+                  {mobileProductsOpen && (
+                    <div className="px-2 pb-3">
+                      <p className="px-3 pt-3 pb-1 text-[10px] font-black uppercase text-gray-400 tracking-wider">Oncology (Solid Tumors)</p>
+                      <a href="product-range.html?category=breast-cancer" className="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Breast Cancer</a>
+                      <a href="product-range.html?category=ovarian-cancer" className="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Ovarian Cancer</a>
+                      <a href="product-range.html?category=lung-cancer" className="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Non-Small Cell Lung Cancer</a>
+                      <a href="product-range.html?category=prostate-cancer" className="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Prostate Cancer</a>
+                      <a href="product-range.html?category=colorectal-cancer" className="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Colorectal Cancer</a>
+                      <a href="product-range.html?category=pancreatic-cancer" className="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Pancreatic Cancer</a>
+                      <p className="px-3 pt-3 pb-1 text-[10px] font-black uppercase text-gray-400 tracking-wider">Hematology</p>
+                      <a href="product-range.html?category=aml" className="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Acute Myeloid Leukemia</a>
+                      <a href="product-range.html?category=cml" className="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Chronic Myeloid Leukemia</a>
+                      <a href="product-range.html?category=lymphoma" className="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Hodgkin / Non-Hodgkin's Lymphoma</a>
+                      <a href="product-range.html?category=sickle-cell" className="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Sickle Cell Anemia</a>
+                      <p className="px-3 pt-3 pb-1 text-[10px] font-black uppercase text-gray-400 tracking-wider">Anti-Infectives</p>
+                      <a href="product-range.html?category=respiratory" className="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Respiratory Infections</a>
+                      <a href="product-range.html?category=uti" className="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Urinary Tract Infections</a>
+                      <a href="product-range.html?category=skin-infections" className="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Skin and Soft Tissue Infections</a>
+                      <a href="product-range.html?category=bone-infections" className="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Bone and Joint Infections</a>
+                      <p className="px-3 pt-3 pb-1 text-[10px] font-black uppercase text-gray-400 tracking-wider">Endocrinology</p>
+                      <a href="product-range.html?category=endometriosis" className="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Endometriosis</a>
+                      <a href="product-range.html?category=fibrocystic" className="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Fibrocystic Breast Disease</a>
+                      <p className="px-3 pt-3 pb-1 text-[10px] font-black uppercase text-gray-400 tracking-wider">Orthopedic</p>
+                      <a href="product-range.html?category=multiple-myeloma" className="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Multiple Myeloma</a>
+                      <a href="product-range.html?category=osteoporosis" className="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Osteoporosis</a>
+                      <p className="px-3 pt-3 pb-1 text-[10px] font-black uppercase text-gray-400 tracking-wider">Cardiology</p>
+                      <a href="product-range.html?category=arrhythmia" className="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Arrhythmia Management</a>
+                      <a href="product-range.html?category=hypertension" className="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Hypertension / Angina</a>
+                      <p className="px-3 pt-3 pb-1 text-[10px] font-black uppercase text-gray-400 tracking-wider">Neuro-Oncology</p>
+                      <a href="product-range.html?category=glioblastoma" className="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Glioblastoma Multiforme</a>
+                      <p className="px-3 pt-3 pb-1 text-[10px] font-black uppercase text-gray-400 tracking-wider">Respiratory - Allergy</p>
+                      <a href="product-range.html?category=allergic-rhinitis" className="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Seasonal Allergic Rhinitis</a>
+                      <p className="px-3 pt-3 pb-1 text-[10px] font-black uppercase text-gray-400 tracking-wider">Nephrology - Renal</p>
+                      <a href="product-range.html?category=kidney-disease" className="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Chronic Kidney Disease</a>
+                      <p className="px-3 pt-3 pb-1 text-[10px] font-black uppercase text-gray-400 tracking-wider">Pain Management</p>
+                      <a href="product-range.html?category=pain" className="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Chronic Pain</a>
+                      <p className="px-3 pt-3 pb-1 text-[10px] font-black uppercase text-gray-400 tracking-wider">Rheumatology</p>
+                      <a href="product-range.html?category=rheumatology" className="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Inflammatory Disorders</a>
+                    </div>
+                  )}
+                </div>
+
+                <a href="meditations.html" className="flex items-center px-3 py-3.5 text-[15px] font-semibold text-gray-700 border-b border-gray-100 hover:text-primary transition">Meditations</a>
+                <a href="about-us.html" className="flex items-center px-3 py-3.5 text-[15px] font-semibold text-gray-700 border-b border-gray-100 hover:text-primary transition">About Us</a>
+                <a href="contact-us.html" className="flex items-center px-3 py-3.5 text-[15px] font-semibold text-gray-700 border-b border-gray-100 hover:text-primary transition">Contact Us</a>
+
+                {/* Company accordion */}
+                <div className="border-b border-gray-100">
+                  <button onClick={() => setMobileCompanyOpen(o => !o)} className="w-full flex items-center justify-between px-3 py-3.5 text-[15px] font-semibold text-gray-700 hover:text-primary transition">
+                    <span>Company</span>
+                    <i className={`fa-solid fa-chevron-down text-[11px] text-gray-400 transition-transform duration-300 ${mobileCompanyOpen ? 'rotate-180' : ''}`}></i>
+                  </button>
+                  {mobileCompanyOpen && (
+                    <div className="px-2 pb-3 space-y-0.5">
+                      <a href="services.html" className="block pl-5 py-2.5 text-[14px] font-medium text-gray-600 hover:text-primary transition">Our Services</a>
+                      <a href="global-presence.html" className="block pl-5 py-2.5 text-[14px] font-medium text-gray-600 hover:text-primary transition">Global Presence</a>
+                      <a href="csr.html" className="block pl-5 py-2.5 text-[14px] font-medium text-gray-600 hover:text-primary transition">CSR</a>
+                      <a href="careers.html" className="block pl-5 py-2.5 text-[14px] font-medium text-gray-600 hover:text-primary transition">Careers</a>
+                      <a href="ungc.html" className="block pl-5 py-2.5 text-[14px] font-medium text-gray-600 hover:text-primary transition">United Nations Global Compact</a>
+                      <a href="/articles" className="block pl-5 py-2.5 text-[14px] font-medium text-gray-600 hover:text-primary transition">Articles</a>
+                      <a href="pap.html" className="block pl-5 py-1">
+                        <img src="assets/PAPlogo.png" alt="Patient Assistance Program" className="h-12 w-auto object-contain" />
+                      </a>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Hero Content Area */}
@@ -413,7 +505,7 @@ export default function GetMedsHomepage() {
             <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent font-bold uppercase tracking-widest text-[10px] md:text-xs">
               Best For Your Health & Recovery.
             </span>
-            <h1 className="text-3xl md:text-[42px] lg:text-5xl font-bold text-white leading-tight tracking-tight">
+            <h1 className="text-3xl md:text-[42px] lg:text-5xl font-semibold text-white leading-tight tracking-tight">
               Life-Saving Access. <br />
               <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent md:whitespace-nowrap">Redefining Healthcare Possibilities.</span>
             </h1>
@@ -478,7 +570,7 @@ export default function GetMedsHomepage() {
           {/* Left Column: Eyebrow & Title */}
           <div className="flex flex-col justify-center items-end text-right space-y-4 max-w-lg md:ml-auto">
             <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent font-bold uppercase tracking-widest text-xs">Who We Are</span>
-            <h2 className="text-3xl md:text-4xl lg:text-[42px] font-bold text-gray-900 leading-tight tracking-tight">
+            <h2 className="text-3xl md:text-4xl lg:text-[42px] font-semibold text-gray-900 leading-tight tracking-tight">
               Patient First. <br />
               Raising the standard <br />
               <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">for Filipino care.</span>
@@ -571,11 +663,11 @@ export default function GetMedsHomepage() {
         <div className="max-w-7xl mx-auto px-6 relative z-10">
           <div className="text-center max-w-2xl mx-auto mb-16">
             <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent font-bold uppercase tracking-widest text-lg">Our Portfolio</span>
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 mb-4">
               Our pharmaceutical portfolio —<span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent inline-block">from essential medicines to advanced therapies.</span>
             </h2>
             <p className="text-gray-500 text-[15px]">
-              Most distributors operate in one layer of the market. GetMEDS is built for all four layers.
+              Most distributors operate in one layer of the market. Getmeds is built for all four layers.
             </p>
           </div>
 
@@ -633,7 +725,7 @@ export default function GetMedsHomepage() {
             <div className="max-w-7xl mx-auto bg-gray-100 rounded-3xl p-8">
               {/* Header row */}
               <div className="flex flex-col md:flex-row md:items-start justify-between mb-8 gap-4">
-                <h2 className="text-2xl md:text-3xl font-bold text-gray-900 max-w-md leading-tight">Therapeutic areas we serve across the Philippines.</h2>
+                <h2 className="text-2xl md:text-3xl font-semibold text-gray-900 max-w-md leading-tight">Therapeutic areas we serve across the Philippines.</h2>
                 <p className="text-gray-500 text-sm md:text-base max-w-sm leading-relaxed">From essential medicines to specialized therapies, discover the areas where Getmeds makes healthcare accessible.</p>
               </div>
 
@@ -698,7 +790,7 @@ export default function GetMedsHomepage() {
       <section className="py-16 px-6 reveal">
         <div className="max-w-7xl mx-auto">
           <div className="text-center max-w-3xl mx-auto mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 leading-tight">
+            <h2 className="text-3xl md:text-4xl font-semibold mb-4 leading-tight">
               Capabilities that move{' '}
               <span className="bg-gradient-to-r from-primary via-green-400 to-blue-500 bg-clip-text text-transparent">
                 medicines, partnerships, and patients forward.
@@ -948,7 +1040,7 @@ export default function GetMedsHomepage() {
             <div className="max-w-7xl mx-auto relative z-10">
 
               {/* Heading — same size as other sections */}
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 leading-tight mb-14 max-w-xl">
+              <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 leading-tight mb-14 max-w-xl">
                 Why hospitals and pharmacies choose{' '}
                 <span className="bg-gradient-to-r from-[#1D9FDA] to-[#61A644] bg-clip-text text-transparent">Getmeds.</span>
               </h2>
@@ -983,7 +1075,7 @@ export default function GetMedsHomepage() {
               backgroundClip: 'text',
               display: 'inline-block',
             }}>Partnership</span>
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 leading-tight">Partner with us!</h2>
+            <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 leading-tight">Partner with us!</h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-14">
@@ -1063,7 +1155,7 @@ export default function GetMedsHomepage() {
             q: 'Does Getmeds accept Senior Citizen and PWD IDs for discounts?',
             a: (
               <span>
-                Yes. Getmeds fully complies with the Expanded Senior Citizens Act (Republic Act 9994) and the Magna Carta for Persons with Disabilities (Republic Act 10754). Qualified Senior Citizens and Persons with Disabilities are entitled to a 20% discount plus VAT exemption on eligible prescription medicines purchased through GetMEDS pharmacies and direct-to-consumer channels.<br /><br />
+                Yes. Getmeds fully complies with the Expanded Senior Citizens Act (Republic Act 9994) and the Magna Carta for Persons with Disabilities (Republic Act 10754). Qualified Senior Citizens and Persons with Disabilities are entitled to a 20% discount plus VAT exemption on eligible prescription medicines purchased through Getmeds pharmacies and direct-to-consumer channels.<br /><br />
                 To avail of the benefit, simply present a valid Senior Citizen ID or PWD ID together with a valid prescription at the point of purchase.
               </span>
             ),
@@ -1080,7 +1172,7 @@ export default function GetMedsHomepage() {
                     <i className="fa-regular fa-circle-question text-xs" style={{ color: '#1D9FDA' }}></i>
                     <span className="text-xs font-medium" style={{ color: '#1D9FDA' }}>Frequently asked questions</span>
                   </div>
-                  <h2 className="text-3xl md:text-4xl font-bold text-gray-900 leading-tight mb-4">
+                  <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 leading-tight mb-4">
                     Frequently asked<br />
                     <span className="bg-gradient-to-r from-[#1D9FDA] to-[#61A644] bg-clip-text text-transparent">questions.</span>
                   </h2>
@@ -1257,7 +1349,7 @@ export default function GetMedsHomepage() {
         </div>
 
         <div className="max-w-7xl mx-auto px-6 mt-12 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between text-xs text-white/40">
-          <p>© 2026 GetMEDS. All Rights Reserved.</p>
+          <p>© 2026 Getmeds. All Rights Reserved.</p>
           <div className="flex space-x-6 mt-4 md:mt-0">
             <a href="#" className="hover:text-white transition">Privacy Policy</a>
             <a href="#" className="hover:text-white transition">Terms & Conditions</a>

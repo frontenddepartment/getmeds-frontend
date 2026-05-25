@@ -1,6 +1,6 @@
 {
   "meta": {
-    "title": "Global Presence - GetMEDS",
+    "title": "Global Presence - Getmeds",
     "description": "Discover seamless healthcare solutions worldwide. Access a world-class medical network efficiently linking you with top care continuously."
   },
   "hero": {
@@ -125,13 +125,13 @@
   "globalBanner": {
     "headingLine1": "Grow beyond",
     "headingLine2": "borders with",
-    "headingAccent": "GETMEDS",
-    "description": "Whether you're sourcing specialized medicines or expanding healthcare access overseas, GetMeds makes it simple, fast, secure, and reliable.",
+    "headingAccent": "Getmeds",
+    "description": "Whether you're sourcing specialized medicines or expanding healthcare access overseas, Getmeds makes it simple, fast, secure, and reliable.",
     "globeImage": "assets/globe.jpg",
     "actionLabel": "LEARN MORE"
   },
   "timeline": {
-    "sectionHeading": "A Timeline of GetMeds",
+    "sectionHeading": "A Timeline of Getmeds",
     "description": "Tracking our continuous journey of growth, innovation, and unwavering commitment to expanding global healthcare access.",
     "events": [
       {

@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { injectHTML } from '../lib/injectHTML';
 
 export default function ContactUs() {
   useEffect(() => {
@@ -6,14 +7,14 @@ export default function ContactUs() {
     if (navContainer && navContainer.innerHTML.trim() === '') {
       fetch('/components/navbar.html')
         .then(r => r.text())
-        .then(html => { navContainer.innerHTML = html; });
+        .then(html => { injectHTML(navContainer, html); });
     }
 
     const footerContainer = document.getElementById('footer-container');
     if (footerContainer && footerContainer.innerHTML.trim() === '') {
       fetch('/components/footer.html')
         .then(r => r.text())
-        .then(html => { footerContainer.innerHTML = html; });
+        .then(html => { injectHTML(footerContainer, html); });
     }
   }, []);
 

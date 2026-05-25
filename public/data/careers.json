@@ -1,18 +1,18 @@
 {
   "meta": {
-    "title": "Careers - GetMEDS",
-    "description": "Join the GetMeds team. We're looking for passionate individuals to innovate and grow with us in the global healthcare space."
+    "title": "Careers - Getmeds",
+    "description": "Join the Getmeds team. We're looking for passionate individuals to innovate and grow with us in the global healthcare space."
   },
   "hero": {
     "image": "assets/careershero.png",
-    "imageAlt": "GetMeds Team",
+    "imageAlt": "Getmeds Team",
     "headingLine1": "Join the Minds",
     "headingAccent": "Behind the Medicine",
     "description": "Join our mission to make healthcare accessible worldwide. We're looking for passionate individuals to innovate and grow with us."
   },
   "benefits": {
     "sectionLabel": "Our Benefits",
-    "heading": "GetMeds Has Been Present For Over A Decade In Healthcare",
+    "heading": "Getmeds Has Been Present For Over A Decade In Healthcare",
     "descriptionParagraphs": [
       "Join a team of dedicated professionals working to make healthcare accessible and affordable for everyone. We believe in empowering our employees to innovate and make a real difference in people's lives.",
       "Our culture fosters growth, collaboration, and a relentless pursuit of excellence. Be part of a journey that matters, where your contributions directly impact global well-being."
@@ -21,24 +21,24 @@
       {
         "icon": "fa-solid fa-rotate",
         "title": "Innovate Healthcare",
-        "description": "Your career has no boundaries at GetMeds. Leverage our global footprint to build a fulfilling legacy in an environment that rewards merit and thrives on lifelong learning. We provide the experiences you need to become a leader of tomorrow."
+        "description": "Your career has no boundaries at Getmeds. Leverage our global footprint to build a fulfilling legacy in an environment that rewards merit and thrives on lifelong learning. We provide the experiences you need to become a leader of tomorrow."
       },
       {
         "icon": "fa-solid fa-paper-plane",
         "title": "Empower Yourself",
-        "description": "Break boundaries, not just ground. At GetMeds, we encourage you to look beyond your role and lead with thoughtful, decisive action. Your fresh perspectives are exactly what fuel our next breakthrough."
+        "description": "Break boundaries, not just ground. At Getmeds, we encourage you to look beyond your role and lead with thoughtful, decisive action. Your fresh perspectives are exactly what fuel our next breakthrough."
       },
       {
         "icon": "fa-solid fa-people-group",
         "title": "Grow With Us",
-        "description": "Success is a team sport at GetMeds. We've built a culture of radical transparency and professional support, ensuring you have a team that stands behind you — no matter the challenge."
+        "description": "Success is a team sport at Getmeds. We've built a culture of radical transparency and professional support, ensuring you have a team that stands behind you — no matter the challenge."
       }
     ]
   },
   "founderQuote": {
     "quote": "Join a culture where your growth is measured by the lives we touch.",
     "author": "Naresh Bishnoi",
-    "authorTitle": "Founder, GetMeds Inc.",
+    "authorTitle": "Founder, Getmeds Inc.",
     "authorImage": "assets/CEO.jpg",
     "authorImageAlt": "Naresh Bishnoi, Founder"
   },
@@ -49,7 +49,7 @@
   },
   "careerAdvantages": {
     "sectionLabel": "Career Advantages",
-    "heading": "Why professionals choose GetMEDS?",
+    "heading": "Why professionals choose Getmeds?",
     "description": "We provide more than just a job; we offer a path to excellence, innovation, and global impact in the healthcare industry.",
     "items": [
       {
@@ -121,7 +121,7 @@
       {
         "type": "Full time",
         "title": "Field Agent",
-        "description": "Be the face of GetMeds in the community. Handle local deliveries, assist with on-site customer inquiries, and ensure timely distribution of medical supplies."
+        "description": "Be the face of Getmeds in the community. Handle local deliveries, assist with on-site customer inquiries, and ensure timely distribution of medical supplies."
       },
       {
         "type": "Full time",

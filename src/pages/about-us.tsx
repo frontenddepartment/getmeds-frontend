@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { injectHTML } from '../lib/injectHTML';
 
 export default function AboutUs() {
   const valuesContainerRef = useRef<HTMLDivElement>(null);
@@ -8,14 +9,14 @@ export default function AboutUs() {
     if (navContainer && navContainer.innerHTML.trim() === '') {
       fetch('/components/navbar.html')
         .then(r => r.text())
-        .then(html => { navContainer.innerHTML = html; });
+        .then(html => { injectHTML(navContainer, html); });
     }
 
     const footerContainer = document.getElementById('footer-container');
     if (footerContainer && footerContainer.innerHTML.trim() === '') {
       fetch('/components/footer.html')
         .then(r => r.text())
-        .then(html => { footerContainer.innerHTML = html; });
+        .then(html => { injectHTML(footerContainer, html); });
     }
   }, []);
 
@@ -75,7 +76,7 @@ export default function AboutUs() {
           <div className="absolute inset-0 z-0">
             <img src="assets/aboutusone.jpg" data-json-src="hero.image" data-json-alt="hero.imageAlt"
               className="w-full h-full object-cover object-center transform group-hover:scale-105 transition-transform duration-[4s]"
-              alt="About GetMEDS" />
+              alt="About Getmeds" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
             <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent w-full md:w-[70%]"></div>
           </div>
@@ -116,7 +117,7 @@ export default function AboutUs() {
             {/* Large Image (Left) */}
             <div className="md:col-span-8">
               <div className="relative h-[300px] md:h-[380px] rounded-[1rem] overflow-hidden shadow-xl group">
-                <img src="assets/aboutustwo.jpg" alt="GetMEDS Logistics"
+                <img src="assets/aboutustwo.jpg" alt="Getmeds Logistics"
                   className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
               </div>
@@ -184,7 +185,7 @@ export default function AboutUs() {
                 <p className="text-gray-600 text-[15px] leading-[1.8] pt-6">
                   Transform your healthcare journey with our most comprehensive pharmaceutical release yet.
                   Whether you're navigating complex treatments, social platforms, or enterprise health
-                  applications, GetMEDS delivers the precision you deserve.
+                  applications, Getmeds delivers the precision you deserve.
                 </p>
               </div>
             </div>
@@ -450,7 +451,7 @@ export default function AboutUs() {
                 </div>
                 <div className="value-card bg-white p-3 rounded-full shadow-xl border border-gray-100 w-16 h-16 md:w-24 md:h-24 flex flex-col items-center justify-center text-center reveal z-30 bg-gradient-to-br from-white to-gray-50"
                   data-speed="2.5" style={{ transitionDelay: '700ms' }}>
-                  <img src="assets/logo.png" className="h-6 md:h-8" alt="GetMEDS Logo" />
+                  <img src="assets/logo.png" className="h-6 md:h-8" alt="Getmeds Logo" />
                 </div>
                 <div className="value-card bg-white p-3 rounded-full shadow-md border border-gray-100 w-16 h-16 md:w-24 md:h-24 flex flex-col items-center justify-center text-center reveal"
                   data-speed="2.1" style={{ transitionDelay: '800ms' }}>
@@ -558,7 +559,7 @@ export default function AboutUs() {
           <div className="text-center max-w-2xl mx-auto mb-20 reveal">
             <span className="text-primary font-bold text-sm uppercase tracking-[0.2em] mb-4 block">Executive Team</span>
             <h2 className="text-3xl md:text-4xl font-semibold text-dark mb-4">The Minds Behind <span
-              className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent inline-block">GetMEDS</span>
+              className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent inline-block">Getmeds</span>
             </h2>
             <p className="text-gray-500 text-[15px]">Our leadership team brings decades of experience in healthcare,
               technology, and logistics to revolutionize patient care.</p>
@@ -570,7 +571,7 @@ export default function AboutUs() {
               <div className="reveal w-full max-w-[280px]">
                 <div className="team-card bg-gray-100 group">
                   <div className="team-ribbon">
-                    <span className="vertical-text mb-16">GETMEDS</span>
+                    <span className="vertical-text mb-16">Getmeds</span>
                   </div>
                   <div className="team-img-wrapper">
                     <img src="assets/CEO.png" alt="Mr. Naresh Bishnoi" data-json-src="team.members.0.image" data-json-alt="team.members.0.name"
@@ -598,7 +599,7 @@ export default function AboutUs() {
               <div className="reveal" style={{ transitionDelay: '150ms' }}>
                 <div className="team-card bg-gray-100 group">
                   <div className="team-ribbon">
-                    <span className="vertical-text">GetMEDS</span>
+                    <span className="vertical-text">Getmeds</span>
                   </div>
                   <div className="team-img-wrapper">
                     <img src="assets/employeeone.png" alt="Dr. Elena Rodriguez"
@@ -623,7 +624,7 @@ export default function AboutUs() {
               <div className="reveal" style={{ transitionDelay: '300ms' }}>
                 <div className="team-card bg-gray-100 group">
                   <div className="team-ribbon">
-                    <span className="vertical-text">GetMEDS</span>
+                    <span className="vertical-text">Getmeds</span>
                   </div>
                   <div className="team-img-wrapper">
                     <img src="assets/employeetwo.png" alt="Dr. Michael Chen"

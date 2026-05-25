@@ -1,14 +1,14 @@
 {
   "meta": {
-    "title": "Our Services - GetMEDS | Revolutionizing Healthcare Access",
-    "description": "GetMEDS delivers precision pharmaceutical solutions and nationwide distribution — from regulatory compliance and government bidding to pioneering digital oncology care."
+    "title": "Our Services - Getmeds | Revolutionizing Healthcare Access",
+    "description": "Getmeds delivers precision pharmaceutical solutions and nationwide distribution — from regulatory compliance and government bidding to pioneering digital oncology care."
   },
   "hero": {
     "image": "assets/services_hero_new.png",
     "imageAlt": "Healthcare Services",
     "headingLine1": "Our Premium",
     "headingAccent": "Services",
-    "description": "GetMEDS delivers precision pharmaceutical solutions and nationwide distribution — from regulatory compliance and government bidding to pioneering digital oncology care."
+    "description": "Getmeds delivers precision pharmaceutical solutions and nationwide distribution — from regulatory compliance and government bidding to pioneering digital oncology care."
   },
   "stats": [
     { "value": 120, "suffix": "+", "label": "Countries Served" },
@@ -71,7 +71,7 @@
   ],
   "whyTrust": {
     "sectionLabel": "Our Promise",
-    "heading": "Why Trust GetMEDS for Your Health?",
+    "heading": "Why Trust Getmeds for Your Health?",
     "description": "We don't just distribute medicine; we facilitate healing. Through strict quality standards and advanced digital solutions, we ensure your healthcare journey is safe, private, and efficient.",
     "items": [
       {
@@ -93,7 +93,7 @@
   },
   "cta": {
     "heading": "Ready to Experience Better Healthcare?",
-    "description": "Join thousands of patients who trust GetMEDS for fast, reliable, and expert medical services every day.",
+    "description": "Join thousands of patients who trust Getmeds for fast, reliable, and expert medical services every day.",
     "primaryAction": "Order Medicines",
     "primaryHref": "order-medicines.html",
     "secondaryAction": "Contact Us",

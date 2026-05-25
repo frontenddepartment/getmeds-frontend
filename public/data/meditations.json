@@ -1,6 +1,6 @@
 {
   "meta": {
-    "title": "Meditations - GetMEDS",
+    "title": "Meditations - Getmeds",
     "description": "Nurture your Mind, Body & Soul. Experience the Getmeds Meditation App with interactive breathing guides and live ambient soundscapes."
   },
   "hero": {
@@ -24,7 +24,7 @@
   },
   "benefits": {
     "heading": "The Benefits",
-    "description": "The GetMEDS Meditation App is designed to seamlessly integrate into your daily routine, offering deep mental restoration through our custom-designed programs. By prioritizing long-term growth, the app helps you build lasting habits of mindfulness that naturally improve your focus throughout the day. To complement your practice, it also provides tranquil soundscapes entirely tailored to your unique lifestyle, ensuring your journey toward inner peace feels effortless and personal.",
+    "description": "The Getmeds Meditation App is designed to seamlessly integrate into your daily routine, offering deep mental restoration through our custom-designed programs. By prioritizing long-term growth, the app helps you build lasting habits of mindfulness that naturally improve your focus throughout the day. To complement your practice, it also provides tranquil soundscapes entirely tailored to your unique lifestyle, ensuring your journey toward inner peace feels effortless and personal.",
     "mockupImage": { "src": "assets/benefits.png", "alt": "App Screen" },
     "mockupCaption": "Custom Benefits — Gain mental clarity, reduce stress, and achieve total inner peace."
   },

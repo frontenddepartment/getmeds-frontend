@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { injectHTML } from '../lib/injectHTML';
 
 
 const articles = [
@@ -34,14 +35,14 @@ export default function Articles() {
     if (navContainer && navContainer.innerHTML.trim() === '') {
       fetch('/components/navbar.html')
         .then(r => r.text())
-        .then(html => { navContainer.innerHTML = html; });
+        .then(html => { injectHTML(navContainer, html); });
     }
 
     const footerContainer = document.getElementById('footer-container');
     if (footerContainer && footerContainer.innerHTML.trim() === '') {
       fetch('/components/footer.html')
         .then(r => r.text())
-        .then(html => { footerContainer.innerHTML = html; });
+        .then(html => { injectHTML(footerContainer, html); });
     }
   }, []);
 
@@ -140,7 +141,7 @@ export default function Articles() {
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
             <div>
-              <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-0.5 block">GetMEDS</span>
+              <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-0.5 block">Getmeds</span>
               <span className="text-[10px] font-bold uppercase tracking-widest mb-1.5 block" style={{
                 background: 'linear-gradient(135deg,#1D9FDA,#61A644)',
                 WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',

@@ -1,7 +1,7 @@
 {
   "meta": {
-    "title": "GetMEDS - Your Trusted Online Healthcare Partner",
-    "description": "GetMEDS delivers precision pharmaceutical solutions, digital oncology care, and nationwide healthcare distribution."
+    "title": "Getmeds - Your Trusted Online Healthcare Partner",
+    "description": "Getmeds delivers precision pharmaceutical solutions, digital oncology care, and nationwide healthcare distribution."
   },
   "topBar": {
     "label": "Connect With Us",
@@ -18,7 +18,7 @@
     "headingLine1": "Your Health Deserves",
     "headingAccent": "The Best Care Possible",
     "description": "Access the world's finest medical care from the comfort of your home. Discover how our global network empowers your health journey.",
-    "subheading": "GetMEDS delivers precision pharmaceutical solutions, digital oncology care, and nationwide healthcare distribution.",
+    "subheading": "Getmeds delivers precision pharmaceutical solutions, digital oncology care, and nationwide healthcare distribution.",
     "slides": [
       { "image": "assets/slideone.jpg" },
       { "image": "assets/slidetwo.jpg" },
@@ -61,7 +61,7 @@
     { "id": "cardiology", "label": "Cardiology" }
   ],
   "appSection": {
-    "heading": "Download the GetMEDS App",
+    "heading": "Download the Getmeds App",
     "description": "Manage your prescriptions, track orders, and access our full range of healthcare services from your phone.",
     "image": "assets/app.jpg",
     "appStoreLabel": "Download on the App Store",

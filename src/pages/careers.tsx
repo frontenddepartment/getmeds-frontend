@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { injectHTML } from '../lib/injectHTML';
 
 const Careers: React.FC = () => {
   // Navbar / Footer injection
@@ -7,13 +8,13 @@ const Careers: React.FC = () => {
       .then(r => r.text())
       .then(html => {
         const el = document.getElementById('navbar-container');
-        if (el) el.innerHTML = html;
+        if (el) injectHTML(el, html);
       });
     fetch('/components/footer.html')
       .then(r => r.text())
       .then(html => {
         const el = document.getElementById('footer-container');
-        if (el) el.innerHTML = html;
+        if (el) injectHTML(el, html);
       });
   }, []);
 
@@ -25,7 +26,7 @@ const Careers: React.FC = () => {
       {/* HERO SECTION */}
       <section className="w-full mx-auto px-3 sm:px-4 md:px-6 mt-3 md:mt-4 mb-16 max-w-[1600px]">
         <div className="relative rounded-[1.5rem] overflow-hidden min-h-[450px] md:min-h-[500px] flex items-end bg-gray-100">
-          <img src="assets/careershero.png" alt="GetMeds Team"
+          <img src="assets/careershero.png" alt="Getmeds Team"
             className="absolute inset-0 w-full h-full object-cover object-top" />
           <div className="relative z-10 w-full px-8 md:px-14 pb-7 md:pb-8 pt-0">
             <div className="inline-block bg-black/60 backdrop-blur-md rounded-2xl px-10 py-9 max-w-[500px]">
@@ -57,7 +58,7 @@ const Careers: React.FC = () => {
                 Our Benefits
               </span>
               <h2 className="text-[24px] md:text-[28px] font-bold text-dark leading-snug">
-                GetMeds Has Been Present For<br />
+                Getmeds Has Been Present For<br />
                 Over A Decade In{' '}
                 <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">
                   Healthcare
@@ -93,7 +94,7 @@ const Careers: React.FC = () => {
                 </h3>
               </div>
               <p className="text-gray-400 text-[13px] leading-[1.7] mb-5">
-                Your career has no boundaries at GetMeds. Leverage our global footprint to build a fulfilling
+                Your career has no boundaries at Getmeds. Leverage our global footprint to build a fulfilling
                 legacy in an environment that rewards merit and thrives on lifelong learning. We provide the
                 experiences you need to become a leader of tomorrow.
               </p>
@@ -114,7 +115,7 @@ const Careers: React.FC = () => {
                 </h3>
               </div>
               <p className="text-gray-400 text-[13px] leading-[1.7] mb-5">
-                Break boundaries, not just ground. At GetMeds, we encourage you to look beyond your role and
+                Break boundaries, not just ground. At Getmeds, we encourage you to look beyond your role and
                 lead with thoughtful, decisive action. Your fresh perspectives are exactly what fuel our next
                 breakthrough.
               </p>
@@ -135,7 +136,7 @@ const Careers: React.FC = () => {
                 </h3>
               </div>
               <p className="text-gray-400 text-[13px] leading-[1.7] mb-5">
-                Success is a team sport at GetMeds. We've built a culture of radical transparency and
+                Success is a team sport at Getmeds. We've built a culture of radical transparency and
                 professional support, ensuring you have a team that stands behind you — no matter the challenge.
               </p>
               <a href="#"
@@ -158,7 +159,7 @@ const Careers: React.FC = () => {
               </blockquote>
               <div>
                 <p className="text-dark font-bold text-[14px]">Naresh Bishnoi</p>
-                <p className="text-gray-400 text-[12px]">Founder, GetMeds Inc.</p>
+                <p className="text-gray-400 text-[12px]">Founder, Getmeds Inc.</p>
               </div>
             </div>
             <div className="w-52 h-52 md:w-64 md:h-64 flex-shrink-0">
@@ -189,14 +190,14 @@ const Careers: React.FC = () => {
         </div>
       </section>
 
-      {/* WHY PROFESSIONALS CHOOSE GETMEDS */}
+      {/* WHY PROFESSIONALS CHOOSE Getmeds */}
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <span className="text-primary font-bold text-sm uppercase tracking-wider mb-2 block">Career Advantages</span>
             <h2 className="text-3xl md:text-4xl font-bold text-dark mb-4">
               Why professionals choose{' '}
-              <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent inline-block">GetMEDS</span>?
+              <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent inline-block">Getmeds</span>?
             </h2>
             <p className="text-gray-500 text-[15px]">We provide more than just a job; we offer a path to excellence,
               innovation, and global impact in the healthcare industry.</p>
@@ -338,7 +339,7 @@ const Careers: React.FC = () => {
                 <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-2">Full time</span>
                 <h4 className="text-[16px] font-extrabold text-dark mb-3">Field Agent</h4>
                 <p className="text-gray-400 text-[12.5px] leading-[1.7] mb-5">
-                  Be the face of GetMeds in the community. Handle local deliveries, assist with on-site
+                  Be the face of Getmeds in the community. Handle local deliveries, assist with on-site
                   customer inquiries, and ensure timely distribution of medical supplies.
                 </p>
                 <button className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] text-white text-[11px] font-bold px-5 py-2 rounded-full tracking-wider hover:opacity-90 transition">
