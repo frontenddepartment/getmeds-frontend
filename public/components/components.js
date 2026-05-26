@@ -244,24 +244,28 @@
                     border-bottom-right-radius: 4px !important;
                 }
 
-                .zap-resource-link {
+                 .zap-resource-link {
                     text-decoration: none !important;
                     display: inline-flex !important;
                     align-items: center !important;
                     gap: 6px !important;
-                    padding: 5px 11px !important;
+                    padding: 6px 12px !important;
                     border-radius: 10px !important;
-                    background: rgba(255,255,255,0.15) !important;
-                    border: 1px solid rgba(255,255,255,0.25) !important;
-                    color: #ffffff !important;
-                    font-size: 11px !important;
-                    font-weight: 500 !important;
+                    background: #f1f5f9 !important;
+                    border: 1px solid #cbd5e1 !important;
+                    color: #1D9FDA !important;
+                    font-size: 11.5px !important;
+                    font-weight: 600 !important;
                     transition: all 0.2s ease !important;
                     max-width: 100% !important;
+                    margin-top: 6px !important;
+                    margin-right: 6px !important;
                 }
                 .zap-resource-link:hover {
-                    background: rgba(255,255,255,0.25) !important;
+                    background: #e2e8f0 !important;
+                    color: #0f76a8 !important;
                     transform: translateY(-1px) !important;
+                    box-shadow: 0 2px 8px rgba(0,0,0,0.05) !important;
                 }
 
                 .zap-dot {
@@ -364,8 +368,9 @@
                     <input type="text" id="zap-input" placeholder="Ask me anything..." style="width:100%;background:transparent;border:none;outline:none;font-size:13.5px;color:#1a1a1a;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;box-sizing:border-box;">
                     <div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px;">
                         <div style="display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;flex:1;margin-right:10px;">
-                            <button style="white-space:nowrap;padding:5px 13px;border-radius:20px;background:#f3f4f6;border:1px solid #e5e7eb;color:#555;font-size:11px;font-weight:500;cursor:pointer;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;transition:background 0.15s;flex-shrink:0;" onclick="document.dispatchEvent(new CustomEvent('zapAsk',{detail:'How to inquire?'}))" onmouseover="this.style.background='#e9eaec'" onmouseout="this.style.background='#f3f4f6'">How to inquire?</button>
-                            <button style="white-space:nowrap;padding:5px 13px;border-radius:20px;background:#f3f4f6;border:1px solid #e5e7eb;color:#555;font-size:11px;font-weight:500;cursor:pointer;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;transition:background 0.15s;flex-shrink:0;" onclick="document.dispatchEvent(new CustomEvent('zapAsk',{detail:'Search products'}))" onmouseover="this.style.background='#e9eaec'" onmouseout="this.style.background='#f3f4f6'">Search products</button>
+                            <button style="white-space:nowrap;padding:5px 13px;border-radius:20px;background:#f3f4f6;border:1px solid #e5e7eb;color:#555;font-size:11px;font-weight:500;cursor:pointer;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;transition:background 0.15s;flex-shrink:0;" onclick="window.location.href='product-range.html'" onmouseover="this.style.background='#e9eaec'" onmouseout="this.style.background='#f3f4f6'">Search Products</button>
+                            <button style="white-space:nowrap;padding:5px 13px;border-radius:20px;background:#f3f4f6;border:1px solid #e5e7eb;color:#555;font-size:11px;font-weight:500;cursor:pointer;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;transition:background 0.15s;flex-shrink:0;" onclick="window.location.href='order-medicines.html'" onmouseover="this.style.background='#e9eaec'" onmouseout="this.style.background='#f3f4f6'">Order Medicines</button>
+                            <button style="white-space:nowrap;padding:5px 13px;border-radius:20px;background:#f3f4f6;border:1px solid #e5e7eb;color:#555;font-size:11px;font-weight:500;cursor:pointer;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;transition:background 0.15s;flex-shrink:0;" onclick="window.location.href='contact-us.html'" onmouseover="this.style.background='#e9eaec'" onmouseout="this.style.background='#f3f4f6'">Contact Us</button>
                         </div>
                         <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
                             <button id="zap-mic-btn" title="Speak your message" style="height:34px;width:34px;background:#f3f4f6;border:1.5px solid #e5e7eb;color:#666;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;">
@@ -402,6 +407,35 @@
             chatWindow.classList.remove('active');
             btn.classList.remove('zap-modal-open');
         });
+
+        function loadChatHistory() {
+            const sid = getChatSessionId();
+            const query = `*[_type == "chatSession" && sessionId == "${sid}"][0]{ messages }`;
+            const url = 'https://s7ocz8zp.api.sanity.io/v2021-10-21/data/query/production?query=' + encodeURIComponent(query);
+
+            fetch(url)
+                .then(res => res.json())
+                .then(data => {
+                    const messages = data?.result?.messages;
+                    if (messages && Array.isArray(messages) && messages.length > 0) {
+                        const welcome = chatWindow.querySelector('#zap-welcome');
+                        if (welcome) welcome.remove();
+
+                        messages.forEach(msg => {
+                            if (msg.user) {
+                                addMessage(msg.user, 'user');
+                            }
+                            if (msg.ai) {
+                                const html = basicMarkdownToHtml(msg.ai);
+                                addMessage(html, 'ai', { allowHtml: true });
+                            }
+                        });
+                    }
+                })
+                .catch(err => console.warn('[GetMEDS] Failed to load chat history:', err));
+        }
+
+        loadChatHistory();
 
         function getChatbotApiUrl() {
             const explicitUrl =
@@ -554,7 +588,8 @@
                         let url = res.url || '#';
                         // Map backend routes to actual local HTML files
                         if (url.startsWith('/products/')) {
-                            url = 'product-details.html';
+                            const slug = url.substring('/products/'.length);
+                            url = 'product-range.html?search=' + encodeURIComponent(slug.split('-').join(' '));
                         } else if (url.startsWith('/services')) {
                             url = 'services.html';
                         } else if (url.startsWith('/team')) {
