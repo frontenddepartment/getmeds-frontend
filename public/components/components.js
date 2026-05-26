@@ -491,8 +491,22 @@
                 if (res.type === 'product') iconClass = 'fa-pills';
                 else if (res.type === 'service') iconClass = 'fa-stethoscope';
                 else if (res.type === 'team') iconClass = 'fa-user-md';
+                else if (res.type === 'category') iconClass = 'fa-folder-open';
 
                 let url = res.url || '#';
+                // Normalize legacy relative links
+                if (!url.startsWith('/') && !url.startsWith('http') && url !== '#') {
+                    if (url.startsWith('product-range.html')) {
+                        url = '/product-range' + url.substring('product-range.html'.length);
+                    } else if (url.startsWith('order-medicines.html')) {
+                        url = '/order-medicines' + url.substring('order-medicines.html'.length);
+                    } else if (url.startsWith('contact-us.html')) {
+                        url = '/contact-us' + url.substring('contact-us.html'.length);
+                    } else {
+                        url = '/' + url;
+                    }
+                }
+
                 // Map backend routes to actual clean URLs
                 if (url.startsWith('/products/')) {
                     const slug = url.substring('/products/'.length);

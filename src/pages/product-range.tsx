@@ -190,6 +190,39 @@ export default function ProductRange() {
     }
   }, [productsLoading, productsData]);
 
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const categorySlug = urlParams.get('category');
+    if (categorySlug && categoriesData) {
+      const cleanSlug = categorySlug.toLowerCase();
+      // Check main categories first
+      const matchedCat = categoriesData.find(
+        (cat: any) =>
+          cat.slug?.current?.toLowerCase() === cleanSlug ||
+          cat.category?.toLowerCase() === cleanSlug
+      );
+      if (matchedCat) {
+        setCurrentCategory(matchedCat.category);
+        return;
+      }
+      // Check subcategories
+      for (const cat of categoriesData) {
+        if (cat.subcategory && Array.isArray(cat.subcategory)) {
+          const matchedSub = cat.subcategory.find(
+            (sub: string) => {
+              const subSlug = sub.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+              return subSlug === cleanSlug || sub.toLowerCase() === cleanSlug;
+            }
+          );
+          if (matchedSub) {
+            setCurrentCategory(matchedSub);
+            return;
+          }
+        }
+      }
+    }
+  }, [categoriesData]);
+
 
   const getProductImage = (p: ProductWithCategory) => {
     if (p.image && p.image.asset) {
