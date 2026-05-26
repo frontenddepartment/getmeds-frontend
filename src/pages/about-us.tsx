@@ -65,6 +65,19 @@ export default function AboutUs() {
     return () => document.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
+  useEffect(() => {
+    const hash = window.location.hash;
+    if (hash) {
+      const targetId = decodeURIComponent(hash.substring(1));
+      setTimeout(() => {
+        const element = document.getElementById(targetId);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 600);
+    }
+  }, []);
+
   return (
     <div style={{ fontFamily: "'Poppins', sans-serif" }} className="bg-white text-gray-800 antialiased">
 
@@ -570,7 +583,7 @@ export default function AboutUs() {
           <div className="max-w-5xl mx-auto">
             {/* CEO Row */}
             <div className="flex justify-center mb-8">
-              <div className="reveal w-full max-w-[280px]">
+              <div className="reveal w-full max-w-[280px]" id="naresh-bishnoi">
                 <div className="team-card bg-gray-100 group">
                   <div className="team-ribbon">
                     <span className="vertical-text mb-16">Getmeds</span>
@@ -598,7 +611,7 @@ export default function AboutUs() {
             {/* Row 2 */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
               {/* Leader 2 */}
-              <div className="reveal" style={{ transitionDelay: '150ms' }}>
+              <div className="reveal" style={{ transitionDelay: '150ms' }} id="elena-rodriguez">
                 <div className="team-card bg-gray-100 group">
                   <div className="team-ribbon">
                     <span className="vertical-text">Getmeds</span>
@@ -623,7 +636,7 @@ export default function AboutUs() {
               </div>
 
               {/* Leader 3 */}
-              <div className="reveal" style={{ transitionDelay: '300ms' }}>
+              <div className="reveal" style={{ transitionDelay: '300ms' }} id="michael-chen">
                 <div className="team-card bg-gray-100 group">
                   <div className="team-ribbon">
                     <span className="vertical-text">Getmeds</span>
@@ -648,7 +661,7 @@ export default function AboutUs() {
               </div>
 
               {/* Leader 4 */}
-              <div className="reveal" style={{ transitionDelay: '450ms' }}>
+              <div className="reveal" style={{ transitionDelay: '450ms' }} id="sarah-jenkins">
                 <div className="team-card bg-gray-100 group">
                   <div className="team-ribbon">
                     <span className="vertical-text">Finance</span>
@@ -676,7 +689,7 @@ export default function AboutUs() {
             {/* Row 3 */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {/* Leader 5 */}
-              <div className="reveal" style={{ transitionDelay: '150ms' }}>
+              <div className="reveal" style={{ transitionDelay: '150ms' }} id="david-torres">
                 <div className="team-card bg-gray-100 group">
                   <div className="team-ribbon">
                     <span className="vertical-text">Technology</span>
@@ -701,7 +714,7 @@ export default function AboutUs() {
               </div>
 
               {/* Leader 6 */}
-              <div className="reveal" style={{ transitionDelay: '300ms' }}>
+              <div className="reveal" style={{ transitionDelay: '300ms' }} id="emily-wong">
                 <div className="team-card bg-gray-100 group">
                   <div className="team-ribbon">
                     <span className="vertical-text">Research</span>
@@ -726,7 +739,7 @@ export default function AboutUs() {
               </div>
 
               {/* Leader 7 */}
-              <div className="reveal" style={{ transitionDelay: '450ms' }}>
+              <div className="reveal" style={{ transitionDelay: '450ms' }} id="rachel-green">
                 <div className="team-card bg-gray-100 group">
                   <div className="team-ribbon">
                     <span className="vertical-text">People</span>

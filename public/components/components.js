@@ -368,9 +368,9 @@
                     <input type="text" id="zap-input" placeholder="Ask me anything..." style="width:100%;background:transparent;border:none;outline:none;font-size:13.5px;color:#1a1a1a;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;box-sizing:border-box;">
                     <div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px;">
                         <div style="display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;flex:1;margin-right:10px;">
-                            <button style="white-space:nowrap;padding:5px 13px;border-radius:20px;background:#f3f4f6;border:1px solid #e5e7eb;color:#555;font-size:11px;font-weight:500;cursor:pointer;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;transition:background 0.15s;flex-shrink:0;" onclick="window.location.href='product-range.html'" onmouseover="this.style.background='#e9eaec'" onmouseout="this.style.background='#f3f4f6'">Search Products</button>
-                            <button style="white-space:nowrap;padding:5px 13px;border-radius:20px;background:#f3f4f6;border:1px solid #e5e7eb;color:#555;font-size:11px;font-weight:500;cursor:pointer;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;transition:background 0.15s;flex-shrink:0;" onclick="window.location.href='order-medicines.html'" onmouseover="this.style.background='#e9eaec'" onmouseout="this.style.background='#f3f4f6'">Order Medicines</button>
-                            <button style="white-space:nowrap;padding:5px 13px;border-radius:20px;background:#f3f4f6;border:1px solid #e5e7eb;color:#555;font-size:11px;font-weight:500;cursor:pointer;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;transition:background 0.15s;flex-shrink:0;" onclick="window.location.href='contact-us.html'" onmouseover="this.style.background='#e9eaec'" onmouseout="this.style.background='#f3f4f6'">Contact Us</button>
+                            <button style="white-space:nowrap;padding:5px 13px;border-radius:20px;background:#f3f4f6;border:1px solid #e5e7eb;color:#555;font-size:11px;font-weight:500;cursor:pointer;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;transition:background 0.15s;flex-shrink:0;" onclick="window.location.href='/product-range'" onmouseover="this.style.background='#e9eaec'" onmouseout="this.style.background='#f3f4f6'">Search Products</button>
+                            <button style="white-space:nowrap;padding:5px 13px;border-radius:20px;background:#f3f4f6;border:1px solid #e5e7eb;color:#555;font-size:11px;font-weight:500;cursor:pointer;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;transition:background 0.15s;flex-shrink:0;" onclick="window.location.href='/order-medicines'" onmouseover="this.style.background='#e9eaec'" onmouseout="this.style.background='#f3f4f6'">Order Medicines</button>
+                            <button style="white-space:nowrap;padding:5px 13px;border-radius:20px;background:#f3f4f6;border:1px solid #e5e7eb;color:#555;font-size:11px;font-weight:500;cursor:pointer;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;transition:background 0.15s;flex-shrink:0;" onclick="window.location.href='/contact-us'" onmouseover="this.style.background='#e9eaec'" onmouseout="this.style.background='#f3f4f6'">Contact Us</button>
                         </div>
                         <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
                             <button id="zap-mic-btn" title="Speak your message" style="height:34px;width:34px;background:#f3f4f6;border:1.5px solid #e5e7eb;color:#666;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;">
@@ -426,7 +426,10 @@
                                 addMessage(msg.user, 'user');
                             }
                             if (msg.ai) {
-                                const html = basicMarkdownToHtml(msg.ai);
+                                let html = basicMarkdownToHtml(msg.ai);
+                                if (msg.resources) {
+                                    html += buildResourcesHtml(msg.resources);
+                                }
                                 addMessage(html, 'ai', { allowHtml: true });
                             }
                         });
@@ -478,6 +481,51 @@
                 .replace(/>/g, '&gt;')
                 .replace(/"/g, '&quot;')
                 .replace(/'/g, '&#039;');
+        }
+
+        function buildResourcesHtml(resources) {
+            if (!resources || !Array.isArray(resources) || resources.length === 0) return '';
+            let html = '<div class="zap-resources mt-3 flex flex-wrap gap-2">';
+            resources.forEach(res => {
+                let iconClass = 'fa-link';
+                if (res.type === 'product') iconClass = 'fa-pills';
+                else if (res.type === 'service') iconClass = 'fa-stethoscope';
+                else if (res.type === 'team') iconClass = 'fa-user-md';
+
+                let url = res.url || '#';
+                // Map backend routes to actual clean URLs
+                if (url.startsWith('/products/')) {
+                    const slug = url.substring('/products/'.length);
+                    url = '/product-range?product=' + slug;
+                } else if (url.startsWith('/services')) {
+                    url = '/services';
+                } else if (url.startsWith('/team')) {
+                    // Convert team member title to a slug: Mr. Naresh Bishnoi -> naresh-bishnoi
+                    const slug = res.title
+                        .toLowerCase()
+                        .replace(/^(mr\.|ms\.|dr\.|prof\.)\s+/g, '')
+                        .trim()
+                        .replace(/[^a-z0-9]+/g, '-');
+                    url = '/about-us#' + slug;
+                } else if (url.startsWith('/article-detail')) {
+                    url = '/' + url.substring(1); // e.g. /article-detail?id=0
+                } else if (url.startsWith('/articles')) {
+                    url = '/articles';
+                } else if (url === '/faq') {
+                    url = '/';
+                } else if (url.startsWith('/')) {
+                    url = '/' + url.substring(1);
+                }
+
+                html += `
+                    <a href="${escapeHtml(url)}" class="zap-resource-link">
+                        <i class="fa-solid ${iconClass}"></i>
+                        <span class="truncate">${escapeHtml(res.title)}</span>
+                    </a>
+                `;
+            });
+            html += '</div>';
+            return html;
         }
 
         function basicMarkdownToHtml(value) {
@@ -578,36 +626,7 @@
                 let answerHtml = basicMarkdownToHtml(response);
 
                 if (payload && typeof payload === 'object' && Array.isArray(payload.resources) && payload.resources.length > 0) {
-                    answerHtml += '<div class="zap-resources mt-3 flex flex-wrap gap-2">';
-                    payload.resources.forEach(res => {
-                        let iconClass = 'fa-link';
-                        if (res.type === 'product') iconClass = 'fa-pills';
-                        else if (res.type === 'service') iconClass = 'fa-stethoscope';
-                        else if (res.type === 'team') iconClass = 'fa-user-md';
-
-                        let url = res.url || '#';
-                        // Map backend routes to actual local HTML files
-                        if (url.startsWith('/products/')) {
-                            const slug = url.substring('/products/'.length);
-                            url = 'product-range.html?search=' + encodeURIComponent(slug.split('-').join(' '));
-                        } else if (url.startsWith('/services')) {
-                            url = 'services.html';
-                        } else if (url.startsWith('/team')) {
-                            url = 'about-us.html';
-                        } else if (url === '/faq') {
-                            url = 'index.html'; // Fallback
-                        } else if (url.startsWith('/')) {
-                            url = url.substring(1) + '.html';
-                        }
-
-                        answerHtml += `
-                            <a href="${escapeHtml(url)}" class="zap-resource-link">
-                                <i class="fa-solid ${iconClass}"></i>
-                                <span class="truncate">${escapeHtml(res.title)}</span>
-                            </a>
-                        `;
-                    });
-                    answerHtml += '</div>';
+                    answerHtml += buildResourcesHtml(payload.resources);
                 }
 
                 // Chatbot API content may include simple HTML links generated by the backend.

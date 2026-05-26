@@ -160,6 +160,36 @@ export default function ProductRange() {
     return () => document.removeEventListener('click', handleClick);
   }, []);
 
+  useEffect(() => {
+    if (!productsLoading && productsData) {
+      const urlParams = new URLSearchParams(window.location.search);
+      const productSlug = urlParams.get('product');
+      const searchQuery = urlParams.get('search');
+      
+      let targetProduct = null;
+      
+      if (productSlug) {
+        targetProduct = productsData.find(
+          p => p.slug?.current === productSlug || p.brandName?.toLowerCase() === productSlug.toLowerCase()
+        );
+      } else if (searchQuery) {
+        const cleanQuery = searchQuery.trim().toLowerCase();
+        targetProduct = productsData.find(
+          p => (p.brandName && p.brandName.toLowerCase() === cleanQuery) ||
+               (p.name && p.name.toLowerCase() === cleanQuery) ||
+               (p.brandName && p.genericName && `${p.brandName} (${p.genericName})`.toLowerCase() === cleanQuery)
+        );
+      }
+
+      if (targetProduct) {
+        setSelectedProduct(targetProduct);
+        setSearchTerm(targetProduct.brandName || targetProduct.name || '');
+        setModalOpen(true);
+        setModalVisible(true);
+      }
+    }
+  }, [productsLoading, productsData]);
+
 
   const getProductImage = (p: ProductWithCategory) => {
     if (p.image && p.image.asset) {
