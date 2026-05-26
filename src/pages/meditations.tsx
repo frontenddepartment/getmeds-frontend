@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { injectHTML } from '../lib/injectHTML';
+import { useImageMapper } from '../lib/useSanity';
 
 const trackTitles: Record<number, string> = {
   1: 'Midnight Rainstorm',
@@ -8,6 +9,7 @@ const trackTitles: Record<number, string> = {
 };
 
 export default function Meditations() {
+  const { getImage } = useImageMapper('meditations');
   // Audio state
   const [isGlobalAudioPlaying, setIsGlobalAudioPlaying] = useState(false);
   const [activeTrack, setActiveTrack] = useState(1);
@@ -300,7 +302,7 @@ export default function Meditations() {
             {/* Phone 1 (Left) */}
             <div className="relative w-full max-w-[190px] mx-auto h-[380px] bg-slate-900 rounded-[30px] p-1.5 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.3)] border-2 border-slate-700/80 overflow-hidden flex flex-col items-center z-10 transition-transform duration-500 hover:scale-[1.02] transform md:translate-y-2">
               <div className="w-full h-full bg-white rounded-[20px] overflow-hidden relative shadow-inner">
-                <img src="assets/categories.png" alt="App Screen Left" className="w-full h-[calc(100%-1.25rem)] mt-5 object-contain" />
+                <img src={getImage('assets/categories.png', 'assets/categories.png')} alt="App Screen Left" className="w-full h-[calc(100%-1.25rem)] mt-5 object-contain" />
                 <div className="w-20 h-3.5 bg-black rounded-full absolute left-1/2 -translate-x-1/2 top-1.5 z-20" />
               </div>
             </div>
@@ -308,7 +310,7 @@ export default function Meditations() {
             {/* Phone 2 (Center - Elevated) */}
             <div className="relative w-full max-w-[225px] mx-auto h-[450px] bg-slate-900 rounded-[35px] p-1.5 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.6)] border-2 border-slate-700/80 overflow-hidden flex flex-col items-center z-20 transition-transform duration-500 hover:scale-[1.02] transform md:-translate-y-6">
               <div className="w-full h-full bg-white rounded-[25px] overflow-hidden relative shadow-inner">
-                <img src="assets/workbook.png" alt="App Screen Center" className="w-full h-[calc(100%-1.5rem)] mt-6 object-contain" />
+                <img src={getImage('assets/workbook.png', 'assets/workbook.png')} alt="App Screen Center" className="w-full h-[calc(100%-1.5rem)] mt-6 object-contain" />
                 <div className="w-24 h-4 bg-black rounded-full absolute left-1/2 -translate-x-1/2 top-1.5 z-20" />
               </div>
             </div>
@@ -316,7 +318,7 @@ export default function Meditations() {
             {/* Phone 3 (Right) */}
             <div className="relative w-full max-w-[190px] mx-auto h-[380px] bg-slate-900 rounded-[30px] p-1.5 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.3)] border-2 border-slate-700/80 overflow-hidden flex flex-col items-center z-10 transition-transform duration-500 hover:scale-[1.02] transform md:translate-y-2">
               <div className="w-full h-full bg-white rounded-[20px] overflow-hidden relative shadow-inner">
-                <img src="assets/profile.png" alt="App Screen Right" className="w-full h-[calc(100%-1.25rem)] mt-5 object-contain" />
+                <img src={getImage('assets/profile.png', 'assets/profile.png')} alt="App Screen Right" className="w-full h-[calc(100%-1.25rem)] mt-5 object-contain" />
                 <div className="w-20 h-3.5 bg-black rounded-full absolute left-1/2 -translate-x-1/2 top-1.5 z-20" />
               </div>
             </div>
@@ -374,7 +376,7 @@ export default function Meditations() {
               <div className="relative w-full max-w-[240px] mx-auto h-[480px] bg-slate-900 rounded-[38px] p-2 shadow-2xl z-10 border border-slate-700/50 transform translate-y-[80px]">
                 <div className="w-full h-full bg-white rounded-[30px] overflow-hidden relative shadow-inner">
                   <div className="w-20 h-4 bg-black rounded-full absolute left-1/2 -translate-x-1/2 top-2 z-20" />
-                  <img src="assets/scheduling.png" alt="App Screen" className="w-full h-full object-cover pt-6" />
+                  <img src={getImage('assets/scheduling.png', 'assets/scheduling.png')} alt="App Screen" className="w-full h-full object-cover pt-6" />
                 </div>
               </div>
               <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-white via-white/90 to-transparent z-40 pointer-events-none" />
@@ -416,7 +418,7 @@ export default function Meditations() {
               <div className="relative w-full max-w-[240px] mx-auto h-[480px] bg-slate-900 rounded-[38px] p-2 shadow-2xl z-10 border border-slate-700/50 transform translate-y-[80px]">
                 <div className="w-full h-full bg-white rounded-[30px] overflow-hidden relative shadow-inner">
                   <div className="w-20 h-4 bg-black rounded-full absolute left-1/2 -translate-x-1/2 top-2 z-20" />
-                  <img src="assets/benefits.png" alt="App Screen" className="w-full h-full object-cover pt-6" />
+                  <img src={getImage('assets/benefits.png', 'assets/benefits.png')} alt="App Screen" className="w-full h-full object-cover pt-6" />
                 </div>
               </div>
               <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-white via-white/90 to-transparent z-40 pointer-events-none" />
@@ -563,7 +565,7 @@ export default function Meditations() {
             <div className="relative w-full max-w-[225px] h-[450px] mx-auto bg-slate-900 rounded-[35px] p-1.5 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.15)] z-10 border border-slate-700/50 transform hover:scale-[1.03] transition-transform duration-300 overflow-hidden flex flex-col items-center">
               <div className="w-full h-full bg-white rounded-[25px] overflow-hidden relative shadow-inner">
                 <div className="w-24 h-4 bg-black rounded-full absolute left-1/2 -translate-x-1/2 top-1.5 z-20" />
-                <img src="assets/home.png" alt="App Screen" className="w-full h-[calc(100%-1.5rem)] mt-6 object-contain" />
+                <img src={getImage('assets/home.png', 'assets/home.png')} alt="App Screen" className="w-full h-[calc(100%-1.5rem)] mt-6 object-contain" />
               </div>
             </div>
           </div>

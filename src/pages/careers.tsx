@@ -1,7 +1,9 @@
 import React, { useEffect } from 'react';
 import { injectHTML } from '../lib/injectHTML';
+import { useImageMapper } from '../lib/useSanity';
 
 const Careers: React.FC = () => {
+  const { getImage } = useImageMapper('careers');
   // Navbar / Footer injection
   useEffect(() => {
     fetch('/components/navbar.html')
@@ -26,7 +28,7 @@ const Careers: React.FC = () => {
       {/* HERO SECTION */}
       <section className="w-full mx-auto px-3 sm:px-4 md:px-6 mt-3 md:mt-4 mb-16 max-w-[1600px]">
         <div className="relative rounded-[1.5rem] overflow-hidden min-h-[450px] md:min-h-[500px] flex items-end bg-gray-100">
-          <img src="assets/careershero.png" alt="Getmeds Team"
+          <img src={getImage('assets/careershero.png', 'assets/careershero.png')} alt="Getmeds Team"
             className="absolute inset-0 w-full h-full object-cover object-top" />
           <div className="relative z-10 w-full px-8 md:px-14 pb-7 md:pb-8 pt-0">
             <div className="inline-block bg-black/60 backdrop-blur-md rounded-2xl px-10 py-9 max-w-[500px]">
@@ -163,7 +165,7 @@ const Careers: React.FC = () => {
               </div>
             </div>
             <div className="w-52 h-52 md:w-64 md:h-64 flex-shrink-0">
-              <img src="assets/CEO.jpg" alt="Naresh Bishnoi, Founder"
+              <img src={getImage('assets/CEO.jpg', 'assets/CEO.jpg')} alt="Naresh Bishnoi, Founder"
                 className="w-full h-full object-cover rounded-full shadow-xl border-4 border-white ring-2 ring-gray-100" />
             </div>
           </div>

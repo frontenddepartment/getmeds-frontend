@@ -80,6 +80,7 @@
 
             // Set Favicon dynamically
             injectFavicon();
+            fetchAndApplyLogo();
 
             // Inject Scroll and AI
             injectScrollToTop();
@@ -670,6 +671,52 @@
             zapMicBtn.style.cursor = 'not-allowed';
             zapMicBtn.title = 'Voice input not supported in this browser';
         }
+    }
+
+    function fetchAndApplyLogo() {
+        const query = '*[_type == "siteSettings" && _id == "global-site-settings"][0]{ "logoUrl": logo.src.asset->url }';
+        const url = 'https://s7ocz8zp.api.sanity.io/v2021-10-21/data/query/production?query=' + encodeURIComponent(query);
+
+        fetch(url)
+            .then(res => res.json())
+            .then(data => {
+                const logoUrl = data?.result?.logoUrl;
+                if (logoUrl) {
+                    setupLogoObserver(logoUrl);
+                }
+            })
+            .catch(err => console.warn('[GetMEDS] Failed to fetch dynamic logo:', err));
+    }
+
+    function setupLogoObserver(logoUrl) {
+        if (!logoUrl) return;
+        
+        const apply = () => {
+            document.querySelectorAll('img').forEach(img => {
+                const src = img.getAttribute('src') || '';
+                const alt = img.getAttribute('alt') || '';
+                if (
+                    src.includes('getmedslogo.png') || 
+                    src.includes('getmedslogo') ||
+                    alt.toLowerCase().includes('getmeds logo') ||
+                    alt.toLowerCase() === 'logo'
+                ) {
+                    if (img.src !== logoUrl) {
+                        img.src = logoUrl;
+                    }
+                }
+            });
+            // Update favicon
+            let link = document.querySelector("link[rel~='icon']");
+            if (link && link.href !== logoUrl) {
+                link.href = logoUrl;
+            }
+        };
+
+        apply();
+
+        const observer = new MutationObserver(apply);
+        observer.observe(document.body, { childList: true, subtree: true });
     }
 
     function injectFavicon() {

@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { injectHTML } from '../lib/injectHTML';
+import { useImageMapper } from '../lib/useSanity';
 
 export default function PatientAssistanceProgram() {
+  const { getImage } = useImageMapper('pap');
   const [activeTab, setActiveTab] = useState<'dswd' | 'pcso'>('dswd');
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
 
@@ -45,7 +47,7 @@ export default function PatientAssistanceProgram() {
       {/* 1. Hero Banner Section */}
       <section className="relative w-full aspect-[21/9] md:aspect-[24/7] overflow-hidden">
         <img
-          src="assets/papbanner.png"
+          src={getImage('assets/papbanner.png', 'assets/papbanner.png')}
           data-json-src="hero.image" data-json-alt="hero.imageAlt"
           className="w-full h-full object-cover brightness-90"
           alt="Medical Support"
@@ -66,7 +68,7 @@ export default function PatientAssistanceProgram() {
         {/* Top — pap.png logo + subtitle side by side */}
         <div className="max-w-7xl mx-auto px-6 pt-4 pb-0 flex items-center gap-6 justify-center mb-0">
           <img
-            src="assets/pap.png"
+            src={getImage('assets/pap.png', 'assets/pap.png')}
             alt="Patient Assistance Program"
             className="w-52 md:w-64 object-contain shrink-0"
           />
@@ -84,7 +86,7 @@ export default function PatientAssistanceProgram() {
           {/* Left — patientpap.png anchored to bottom */}
           <div className="shrink-0 flex items-end self-end w-72 md:w-96 lg:w-[420px] xl:w-[480px] -mb-1">
             <img
-              src="assets/patientpap.png"
+              src={getImage('assets/patientpap.png', 'assets/patientpap.png')}
               alt="Cancer Patient"
               className="w-full object-contain object-bottom"
             />
@@ -144,7 +146,7 @@ export default function PatientAssistanceProgram() {
             </p>
             <div className="shrink-0 w-72 md:w-96 lg:w-[480px]">
               <img
-                src="assets/stepone.png"
+                src={getImage('assets/stepone.png', 'assets/stepone.png')}
                 alt="Kumonsulta sa Doktor"
                 className="w-full object-contain"
                 style={{
