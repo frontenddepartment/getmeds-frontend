@@ -271,10 +271,11 @@ export default function GlobalPresence() {
                 Whether you're sourcing specialized medicines or expanding healthcare access overseas, Getmeds
                 makes it simple, fast, secure, and reliable.
               </p>
-              <button
-                className="bg-[#1a202c] hover:bg-black text-white font-bold py-2.5 px-6 text-[11px] uppercase rounded-full shadow-md transition duration-300 tracking-[0.05em]">
+              <a
+                href="about-us.html"
+                className="inline-block bg-[#1a202c] hover:bg-black text-white font-bold py-2.5 px-6 text-[11px] uppercase rounded-full shadow-md transition duration-300 tracking-[0.05em]">
                 LEARN MORE
-              </button>
+              </a>
             </div>
           </div>
         </div>

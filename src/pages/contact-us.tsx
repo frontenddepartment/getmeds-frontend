@@ -195,16 +195,16 @@ export default function ContactUs() {
               {/* Row 1 */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="flex flex-col space-y-2">
-                  <label className="text-[12px] font-bold text-gray-700">Full Name *</label>
-                  <input type="text" placeholder="Type Full Name" data-json-placeholder="form.fields.0.placeholder"
+                  <label className="text-[14px] font-semibold text-gray-700">Full Name *</label>
+                  <input type="text" placeholder="e.g. John Doe" data-json-placeholder="form.fields.0.placeholder"
                     value={formData.name}
                     onChange={e => setFormData(prev => ({ ...prev, name: e.target.value }))}
                     required
                     className="w-full bg-[#F4F6F9] rounded-xl px-4 py-3.5 text-[13px] outline-none border-2 border-transparent focus:border-primary/20 transition-colors placeholder-gray-400 font-medium" />
                 </div>
                 <div className="flex flex-col space-y-2">
-                  <label className="text-[12px] font-bold text-gray-700">Email Address *</label>
-                  <input type="email" placeholder="Type Email Address" data-json-placeholder="form.fields.1.placeholder"
+                  <label className="text-[14px] font-semibold text-gray-700">Email Address *</label>
+                  <input type="email" placeholder="e.g. johndoe@email.com" data-json-placeholder="form.fields.1.placeholder"
                     value={formData.email}
                     onChange={e => setFormData(prev => ({ ...prev, email: e.target.value }))}
                     required
@@ -215,14 +215,14 @@ export default function ContactUs() {
               {/* Row 2 */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="flex flex-col space-y-2">
-                  <label className="text-[12px] font-bold text-gray-700">Phone Number</label>
-                  <input type="tel" placeholder="Type Phone Number" data-json-placeholder="form.fields.2.placeholder"
+                  <label className="text-[14px] font-semibold text-gray-700">Phone Number</label>
+                  <input type="tel" placeholder="e.g. +63 912 345 6789" data-json-placeholder="form.fields.2.placeholder"
                     value={formData.phone}
                     onChange={e => setFormData(prev => ({ ...prev, phone: e.target.value }))}
                     className="w-full bg-[#F4F6F9] rounded-xl px-4 py-3.5 text-[13px] outline-none border-2 border-transparent focus:border-primary/20 transition-colors placeholder-gray-400 font-medium" />
                 </div>
                 <div className="flex flex-col space-y-2">
-                  <label className="text-[12px] font-bold text-gray-700">Subject</label>
+                  <label className="text-[14px] font-semibold text-gray-700">Subject</label>
                   <div className="relative">
                     <select value={formData.subject}
                       onChange={e => setFormData(prev => ({ ...prev, subject: e.target.value }))}
@@ -242,8 +242,8 @@ export default function ContactUs() {
 
               {/* Row 3 */}
               <div className="flex flex-col space-y-2 pt-1">
-                <label className="text-[12px] font-bold text-gray-700">Message</label>
-                <textarea placeholder="Let us know how we can help you." data-json-placeholder="form.fields.4.placeholder" rows={4}
+                <label className="text-[14px] font-semibold text-gray-700">Message</label>
+                <textarea placeholder="e.g. I would like to inquire about your pharmaceutical products..." data-json-placeholder="form.fields.4.placeholder" rows={4}
                   value={formData.message}
                   onChange={e => setFormData(prev => ({ ...prev, message: e.target.value }))}
                   className="w-full bg-[#F4F6F9] rounded-xl px-4 py-4 text-[13px] outline-none border-2 border-transparent focus:border-primary/20 transition-colors placeholder-gray-400 font-medium resize-none"></textarea>
