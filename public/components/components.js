@@ -411,7 +411,10 @@
         function loadChatHistory() {
             const sid = getChatSessionId();
             const query = `*[_type == "chatSession" && sessionId == "${sid}"][0]{ messages }`;
-            const url = 'https://s7ocz8zp.api.sanity.io/v2021-10-21/data/query/production?query=' + encodeURIComponent(query);
+            const projectId = document.querySelector('meta[name="getmeds-sanity-project-id"]')?.content || 's7ocz8zp';
+            const dataset = document.querySelector('meta[name="getmeds-sanity-dataset"]')?.content || 'production';
+            const apiVersion = document.querySelector('meta[name="getmeds-sanity-api-version"]')?.content || '2021-10-21';
+            const url = `https://${projectId}.api.sanity.io/v${apiVersion}/data/query/${dataset}?query=` + encodeURIComponent(query);
 
             fetch(url)
                 .then(res => res.json())
@@ -743,7 +746,10 @@
 
     function fetchAndApplyLogo() {
         const query = '*[_type == "siteSettings" && _id == "global-site-settings"][0]{ "logoUrl": logo.src.asset->url }';
-        const url = 'https://s7ocz8zp.api.sanity.io/v2021-10-21/data/query/production?query=' + encodeURIComponent(query);
+        const projectId = document.querySelector('meta[name="getmeds-sanity-project-id"]')?.content || 's7ocz8zp';
+        const dataset = document.querySelector('meta[name="getmeds-sanity-dataset"]')?.content || 'production';
+        const apiVersion = document.querySelector('meta[name="getmeds-sanity-api-version"]')?.content || '2021-10-21';
+        const url = `https://${projectId}.api.sanity.io/v${apiVersion}/data/query/${dataset}?query=` + encodeURIComponent(query);
 
         fetch(url)
             .then(res => res.json())

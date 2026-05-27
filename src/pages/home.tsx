@@ -96,7 +96,7 @@ export default function GetMedsHomepage() {
         ]
       };
 
-      const response = await fetch('http://localhost:3333/api/append-to-spreadsheet', {
+      const response = await fetch(import.meta.env.VITE_SPREADSHEET_API_URL || '/api/append-to-spreadsheet', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
