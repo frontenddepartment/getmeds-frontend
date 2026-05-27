@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { injectHTML } from '../lib/injectHTML';
+import { useImageMapper } from '../lib/useSanity';
 
 export default function PatientAssistanceProgram() {
+  const { getImage } = useImageMapper('pap');
   const [activeTab, setActiveTab] = useState<'dswd' | 'pcso'>('dswd');
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
 
@@ -45,7 +47,7 @@ export default function PatientAssistanceProgram() {
       {/* 1. Hero Banner Section */}
       <section className="relative w-full aspect-[21/9] md:aspect-[24/7] overflow-hidden">
         <img
-          src="assets/papbanner.png"
+          src={getImage('assets/papbanner.png', 'assets/papbanner.png')}
           data-json-src="hero.image" data-json-alt="hero.imageAlt"
           className="w-full h-full object-cover brightness-90"
           alt="Medical Support"
@@ -58,7 +60,7 @@ export default function PatientAssistanceProgram() {
         {/* Top — pap.png logo + subtitle side by side */}
         <div className="max-w-7xl mx-auto px-6 pt-1 pb-0 flex items-center gap-6 justify-center mb-0">
           <img
-            src="assets/pap.png"
+            src={getImage('assets/pap.png', 'assets/pap.png')}
             alt="Patient Assistance Program"
             className="w-52 md:w-64 object-contain shrink-0"
           />
@@ -76,7 +78,7 @@ export default function PatientAssistanceProgram() {
           {/* Left — patientpap.png anchored to bottom */}
           <div className="shrink-0 flex items-end self-end w-72 md:w-96 lg:w-[420px] xl:w-[480px] -mb-1">
             <img
-              src="assets/patientpap.png"
+              src={getImage('assets/patientpap.png', 'assets/patientpap.png')}
               alt="Cancer Patient"
               className="w-full object-contain object-bottom"
             />
@@ -131,7 +133,6 @@ export default function PatientAssistanceProgram() {
               <i className="fa-solid fa-user-doctor text-white/90 text-5xl relative z-10" />
             </div>
           </div>
-
           {/* Content row: connector left + content right */}
           <div className="flex items-stretch">
             {/* Connector column */}
@@ -144,19 +145,36 @@ export default function PatientAssistanceProgram() {
             </div>
 
             {/* Step 1 content */}
-            <div className="flex-1 py-6 flex flex-col gap-4">
-              <p data-json="steps.0.instruction" className="text-gray-900 text-base md:text-lg font-semibold leading-snug">
-                Tanungin ang iyong attending physician tungkol sa pagkuha ng government assistance para sa iyong mga gamot sa cancer.
-              </p>
-              <p className="text-gray-500 text-[15px] italic leading-relaxed">
-                Ask your attending physician about obtaining government assistance for your cancer medications.
-              </p>
-              <div className="flex items-start gap-3 bg-[#61A644]/10 rounded-[12px] px-4 py-3 mt-1">
-                <i className="fa-solid fa-lightbulb text-[#61A644] text-base mt-0.5 shrink-0" />
-                <p className="text-gray-700 text-[14px] leading-relaxed">
-                  <span className="font-bold">Tip:</span> Ihanda ang iyong diagnosis records bago ang konsultasyon.
-                  <span className="text-gray-500 italic"> — Have your diagnosis records ready before the consultation.</span>
-                </p>
+            <div className="flex-1 py-6">
+              <div className="flex flex-col lg:flex-row items-center gap-10 reveal">
+                <div className="flex-1 flex flex-col gap-4">
+                  <p data-json="steps.0.instruction" className="text-gray-900 text-base md:text-lg font-semibold leading-snug">
+                    Tanungin ang iyong attending physician tungkol sa pagkuha ng government assistance para sa iyong mga gamot sa cancer.
+                  </p>
+                  <p className="text-gray-500 text-[15px] italic leading-relaxed">
+                    Ask your attending physician about obtaining government assistance for your cancer medications.
+                  </p>
+                  <div className="flex items-start gap-3 bg-[#61A644]/10 rounded-[12px] px-4 py-3 mt-1">
+                    <i className="fa-solid fa-lightbulb text-[#61A644] text-base mt-0.5 shrink-0" />
+                    <p className="text-gray-700 text-[14px] leading-relaxed">
+                      <span className="font-bold">Tip:</span> Ihanda ang iyong diagnosis records bago ang konsultasyon.
+                      <span className="text-gray-500 italic"> — Have your diagnosis records ready before the consultation.</span>
+                    </p>
+                  </div>
+                </div>
+                <div className="shrink-0 w-56 lg:w-72 flex items-center justify-center">
+                  <img
+                    src={getImage('assets/stepone.png', 'assets/stepone.png')}
+                    alt="Kumonsulta sa Doktor"
+                    className="w-full object-contain"
+                    style={{
+                      maskImage: 'linear-gradient(to right, transparent 0%, black 18%, black 82%, transparent 100%), linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%)',
+                      WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 18%, black 82%, transparent 100%), linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%)',
+                      maskComposite: 'intersect',
+                      WebkitMaskComposite: 'destination-in',
+                    }}
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -196,98 +214,98 @@ export default function PatientAssistanceProgram() {
                   <svg viewBox="0 0 240 240" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
                     <defs>
                       <linearGradient id="blobGrad" x1="0" y1="0" x2="1" y2="1">
-                        <stop offset="0%" stopColor="#dbeafe"/>
-                        <stop offset="100%" stopColor="#e0f2fe"/>
+                        <stop offset="0%" stopColor="#dbeafe" />
+                        <stop offset="100%" stopColor="#e0f2fe" />
                       </linearGradient>
                       <linearGradient id="folderGrad" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#fbbf24"/>
-                        <stop offset="100%" stopColor="#f59e0b"/>
+                        <stop offset="0%" stopColor="#fbbf24" />
+                        <stop offset="100%" stopColor="#f59e0b" />
                       </linearGradient>
                       <linearGradient id="blueDocGrad" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#3b82f6"/>
-                        <stop offset="100%" stopColor="#2563eb"/>
+                        <stop offset="0%" stopColor="#3b82f6" />
+                        <stop offset="100%" stopColor="#2563eb" />
                       </linearGradient>
                       <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
-                        <feDropShadow dx="2" dy="4" stdDeviation="4" floodColor="#94a3b8" floodOpacity="0.25"/>
+                        <feDropShadow dx="2" dy="4" stdDeviation="4" floodColor="#94a3b8" floodOpacity="0.25" />
                       </filter>
                     </defs>
 
                     {/* Blob background */}
-                    <ellipse cx="118" cy="128" rx="96" ry="82" fill="url(#blobGrad)" opacity="0.8"/>
-                    <ellipse cx="80" cy="88" rx="30" ry="24" fill="#bfdbfe" opacity="0.35"/>
+                    <ellipse cx="118" cy="128" rx="96" ry="82" fill="url(#blobGrad)" opacity="0.8" />
+                    <ellipse cx="80" cy="88" rx="30" ry="24" fill="#bfdbfe" opacity="0.35" />
 
                     {/* Ground shadow */}
-                    <ellipse cx="118" cy="186" rx="58" ry="9" fill="#94a3b8" opacity="0.12"/>
+                    <ellipse cx="118" cy="186" rx="58" ry="9" fill="#94a3b8" opacity="0.12" />
 
                     {/* Back blue document */}
                     <g filter="url(#softShadow)">
-                      <rect x="122" y="46" width="76" height="102" rx="10" fill="url(#blueDocGrad)"/>
-                      <path d="M178 46 L198 66 L178 66 Z" fill="#1d4ed8"/>
-                      <path d="M178 46 L198 66 L178 66 L178 46 Z" fill="#1e40af"/>
-                      <rect x="178" y="46" width="20" height="20" rx="0" fill="#1d4ed8" opacity="0"/>
-                      <path d="M178 46 L178 66 L198 66" fill="none" stroke="#1e40af" strokeWidth="1"/>
+                      <rect x="122" y="46" width="76" height="102" rx="10" fill="url(#blueDocGrad)" />
+                      <path d="M178 46 L198 66 L178 66 Z" fill="#1d4ed8" />
+                      <path d="M178 46 L198 66 L178 66 L178 46 Z" fill="#1e40af" />
+                      <rect x="178" y="46" width="20" height="20" rx="0" fill="#1d4ed8" opacity="0" />
+                      <path d="M178 46 L178 66 L198 66" fill="none" stroke="#1e40af" strokeWidth="1" />
                     </g>
-                    <rect x="133" y="76" width="54" height="5" rx="2.5" fill="#bfdbfe"/>
-                    <rect x="133" y="89" width="54" height="5" rx="2.5" fill="#bfdbfe"/>
-                    <rect x="133" y="102" width="40" height="5" rx="2.5" fill="#bfdbfe"/>
-                    <rect x="133" y="115" width="48" height="5" rx="2.5" fill="#bfdbfe"/>
-                    <rect x="133" y="128" width="34" height="5" rx="2.5" fill="#bfdbfe"/>
+                    <rect x="133" y="76" width="54" height="5" rx="2.5" fill="#bfdbfe" />
+                    <rect x="133" y="89" width="54" height="5" rx="2.5" fill="#bfdbfe" />
+                    <rect x="133" y="102" width="40" height="5" rx="2.5" fill="#bfdbfe" />
+                    <rect x="133" y="115" width="48" height="5" rx="2.5" fill="#bfdbfe" />
+                    <rect x="133" y="128" width="34" height="5" rx="2.5" fill="#bfdbfe" />
 
                     {/* Middle white document */}
                     <g filter="url(#softShadow)">
-                      <rect x="84" y="54" width="76" height="102" rx="10" fill="white"/>
+                      <rect x="84" y="54" width="76" height="102" rx="10" fill="white" />
                     </g>
                     {/* Red header stripe like medical form */}
-                    <rect x="84" y="54" width="76" height="14" rx="10" fill="#fca5a5" opacity="0.5"/>
-                    <rect x="84" y="61" width="76" height="7" fill="#fca5a5" opacity="0.5"/>
+                    <rect x="84" y="54" width="76" height="14" rx="10" fill="#fca5a5" opacity="0.5" />
+                    <rect x="84" y="61" width="76" height="7" fill="#fca5a5" opacity="0.5" />
                     {/* Cross icon in header */}
-                    <rect x="115" y="57" width="4" height="10" rx="1" fill="#ef4444" opacity="0.7"/>
-                    <rect x="111" y="61" width="12" height="4" rx="1" fill="#ef4444" opacity="0.7"/>
-                    <rect x="94" y="78" width="56" height="4" rx="2" fill="#e2e8f0"/>
-                    <rect x="94" y="90" width="56" height="4" rx="2" fill="#e2e8f0"/>
-                    <rect x="94" y="102" width="40" height="4" rx="2" fill="#e2e8f0"/>
-                    <rect x="94" y="114" width="48" height="4" rx="2" fill="#e2e8f0"/>
-                    <rect x="94" y="126" width="34" height="4" rx="2" fill="#e2e8f0"/>
-                    <line x1="94" y1="148" x2="150" y2="148" stroke="#e2e8f0" strokeWidth="1.5"/>
-                    <rect x="94" y="152" width="28" height="3" rx="1.5" fill="#e2e8f0"/>
+                    <rect x="115" y="57" width="4" height="10" rx="1" fill="#ef4444" opacity="0.7" />
+                    <rect x="111" y="61" width="12" height="4" rx="1" fill="#ef4444" opacity="0.7" />
+                    <rect x="94" y="78" width="56" height="4" rx="2" fill="#e2e8f0" />
+                    <rect x="94" y="90" width="56" height="4" rx="2" fill="#e2e8f0" />
+                    <rect x="94" y="102" width="40" height="4" rx="2" fill="#e2e8f0" />
+                    <rect x="94" y="114" width="48" height="4" rx="2" fill="#e2e8f0" />
+                    <rect x="94" y="126" width="34" height="4" rx="2" fill="#e2e8f0" />
+                    <line x1="94" y1="148" x2="150" y2="148" stroke="#e2e8f0" strokeWidth="1.5" />
+                    <rect x="94" y="152" width="28" height="3" rx="1.5" fill="#e2e8f0" />
 
                     {/* Orange folder */}
                     <g filter="url(#softShadow)">
                       {/* Tab */}
-                      <path d="M42 98 Q42 89 51 89 L86 89 Q95 89 97 98 L97 104 L42 104 Z" fill="#d97706"/>
+                      <path d="M42 98 Q42 89 51 89 L86 89 Q95 89 97 98 L97 104 L42 104 Z" fill="#d97706" />
                       {/* Body back */}
-                      <rect x="42" y="102" width="106" height="74" rx="11" fill="#d97706"/>
+                      <rect x="42" y="102" width="106" height="74" rx="11" fill="#d97706" />
                       {/* Body front */}
-                      <rect x="42" y="110" width="106" height="66" rx="9" fill="url(#folderGrad)"/>
+                      <rect x="42" y="110" width="106" height="66" rx="9" fill="url(#folderGrad)" />
                     </g>
                     {/* Folder sheen */}
-                    <rect x="42" y="110" width="106" height="18" rx="9" fill="white" opacity="0.12"/>
+                    <rect x="42" y="110" width="106" height="18" rx="9" fill="white" opacity="0.12" />
                     {/* Medical cross on folder */}
-                    <rect x="82" y="130" width="7" height="22" rx="3" fill="white" opacity="0.9"/>
-                    <rect x="74" y="138" width="22" height="7" rx="3" fill="white" opacity="0.9"/>
+                    <rect x="82" y="130" width="7" height="22" rx="3" fill="white" opacity="0.9" />
+                    <rect x="74" y="138" width="22" height="7" rx="3" fill="white" opacity="0.9" />
                     {/* Cursor arrow */}
-                    <path d="M108 132 L108 158 L116 149 L122 161 L129 158 L123 146 L136 141 Z" fill="white" opacity="0.95"/>
+                    <path d="M108 132 L108 158 L116 149 L122 161 L129 158 L123 146 L136 141 Z" fill="white" opacity="0.95" />
 
                     {/* Blue pill badge */}
-                    <rect x="22" y="112" width="38" height="24" rx="12" fill="#1e40af"/>
-                    <rect x="22" y="112" width="38" height="24" rx="12" fill="#3b82f6" opacity="0.3"/>
-                    <line x1="41" y1="117" x2="41" y2="128" stroke="white" strokeWidth="2.5" strokeLinecap="round"/>
-                    <polyline points="36,124 41,130 46,124" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+                    <rect x="22" y="112" width="38" height="24" rx="12" fill="#1e40af" />
+                    <rect x="22" y="112" width="38" height="24" rx="12" fill="#3b82f6" opacity="0.3" />
+                    <line x1="41" y1="117" x2="41" y2="128" stroke="white" strokeWidth="2.5" strokeLinecap="round" />
+                    <polyline points="36,124 41,130 46,124" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
 
                     {/* Paperclip */}
-                    <path d="M58 186 C51 186 46 181 46 174 L46 154 C46 145 52 139 61 139 C70 139 76 145 76 154 L76 174 C76 178 73 182 69 182 C65 182 62 178 62 174 L62 155" stroke="#94a3b8" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M58 186 C51 186 46 181 46 174 L46 154 C46 145 52 139 61 139 C70 139 76 145 76 154 L76 174 C76 178 73 182 69 182 C65 182 62 178 62 174 L62 155" stroke="#94a3b8" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
 
                     {/* Stethoscope accent */}
-                    <path d="M174 60 C174 53 181 49 187 53 C193 58 191 68 185 71 L176 77 C169 82 167 92 171 99" stroke="#f59e0b" strokeWidth="3" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
-                    <circle cx="171" cy="103" r="5" stroke="#f59e0b" strokeWidth="2.5" fill="white"/>
-                    <circle cx="187" cy="52" r="4.5" fill="#fbbf24"/>
+                    <path d="M174 60 C174 53 181 49 187 53 C193 58 191 68 185 71 L176 77 C169 82 167 92 171 99" stroke="#f59e0b" strokeWidth="3" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+                    <circle cx="171" cy="103" r="5" stroke="#f59e0b" strokeWidth="2.5" fill="white" />
+                    <circle cx="187" cy="52" r="4.5" fill="#fbbf24" />
 
                     {/* Decorative dots */}
-                    <circle cx="28" cy="90" r="7" fill="#3b82f6"/>
-                    <circle cx="168" cy="74" r="5.5" fill="#3b82f6"/>
-                    <circle cx="176" cy="156" r="8" fill="#3b82f6"/>
-                    <circle cx="36" cy="162" r="4" fill="#93c5fd"/>
-                    <circle cx="192" cy="108" r="3" fill="#93c5fd"/>
+                    <circle cx="28" cy="90" r="7" fill="#3b82f6" />
+                    <circle cx="168" cy="74" r="5.5" fill="#3b82f6" />
+                    <circle cx="176" cy="156" r="8" fill="#3b82f6" />
+                    <circle cx="36" cy="162" r="4" fill="#93c5fd" />
+                    <circle cx="192" cy="108" r="3" fill="#93c5fd" />
                   </svg>
                 </div>
                 <div className="flex-1 space-y-6">

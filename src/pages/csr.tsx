@@ -1,7 +1,29 @@
 import React, { useEffect, useRef } from 'react';
 import { injectHTML } from '../lib/injectHTML';
+import { useImageMapper } from '../lib/useSanity';
 
 const Csr: React.FC = () => {
+  const { getImage, getSliderImages } = useImageMapper('csr');
+
+  const csrSliderImages = getSliderImages('CSR Slider Gallery', [
+    'assets/csrslider3.png',
+    'assets/csrslider2.png',
+    'assets/csrslider1.png',
+    'assets/csrslider4.png',
+    'assets/csrslider5.png'
+  ]);
+
+  const papSliderImages = getSliderImages('PAP Slider Gallery', [
+    'assets/papsliderone.png',
+    'assets/papslidertwo.png',
+    'assets/papsliderthree.png'
+  ]);
+
+  const pinkSliderImages = getSliderImages('Pink Run Slider Gallery', [
+    'assets/pinkrunone.png',
+    'assets/pinkruntwo.png',
+    'assets/pinkrunthree.png'
+  ]);
   const galleryRef = useRef<HTMLDivElement>(null);
   const assistViewportRef = useRef<HTMLDivElement>(null);
   const pinkViewportRef = useRef<HTMLDivElement>(null);
@@ -133,7 +155,7 @@ const Csr: React.FC = () => {
       {/* HERO SECTION */}
       <section className="w-full mx-auto px-3 sm:px-4 md:px-6 mt-3 md:mt-4 mb-16 max-w-[1600px]">
         <div className="relative rounded-[1.5rem] border border-gray-100/20 overflow-hidden min-h-[450px] md:min-h-[500px] flex items-end">
-          <img src="assets/csrhero.png" alt="Corporate Social Responsibility" className="absolute inset-0 w-full h-full object-cover object-center" />
+          <img src={getImage('assets/csrhero.png', 'assets/csrhero.png')} alt="Corporate Social Responsibility" className="absolute inset-0 w-full h-full object-cover object-center" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
           <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent w-[100%] md:w-[70%]"></div>
           <div className="relative z-10 w-full px-8 md:px-14 pb-12 md:pb-16 pt-20 max-w-4xl reveal">
@@ -162,7 +184,7 @@ const Csr: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col lg:flex-row gap-12 mb-12 items-end">
             <div className="lg:w-[28%]">
-              <img src="assets/fbpost.png" alt="Free Cancer Medicines Flyer" className="w-full rounded-2xl shadow-sm" />
+              <img src={getImage('assets/fbpost.png', 'assets/fbpost.png')} alt="Free Cancer Medicines Flyer" className="w-full rounded-2xl shadow-sm" />
             </div>
             <div className="lg:w-[72%] reveal">
               <span className="bg-[#1D9FDA] text-white text-[10px] font-bold px-4 py-1.5 rounded-full mb-6 inline-block tracking-widest uppercase">
@@ -181,7 +203,7 @@ const Csr: React.FC = () => {
                 access vital oncology medications
                 without the burden of cost, helping ensure continuity of care and improving health outcomes.
               </p>
-              <img src="assets/model.png" alt="Medicine Distribution" className="w-full h-64 object-cover rounded-2xl shadow-md" />
+              <img src={getImage('assets/model.png', 'assets/model.png')} alt="Medicine Distribution" className="w-full h-64 object-cover rounded-2xl shadow-md" />
             </div>
           </div>
 
@@ -234,11 +256,11 @@ const Csr: React.FC = () => {
           </p>
         </div>
         <div className="gallery-container" ref={galleryRef}>
-          <div className="gallery-item pos-0"><img src="assets/csrslider3.png" alt="" /></div>
-          <div className="gallery-item pos-1"><img src="assets/csrslider2.png" alt="" /></div>
-          <div className="gallery-item pos-2"><img src="assets/csrslider1.png" alt="" /></div>
-          <div className="gallery-item pos-3"><img src="assets/csrslider4.png" alt="" /></div>
-          <div className="gallery-item pos-4"><img src="assets/csrslider5.png" alt="" /></div>
+          {csrSliderImages.map((src, idx) => (
+            <div key={idx} className={`gallery-item pos-${idx}`}>
+              <img src={src} alt="" />
+            </div>
+          ))}
         </div>
       </section>
 
@@ -257,15 +279,24 @@ const Csr: React.FC = () => {
             ref={assistViewportRef}
             className="relative h-[280px] md:h-[400px] w-full flex items-center justify-center [perspective:1200px] overflow-visible"
           >
-            <div className="assist-card absolute w-[280px] md:w-[750px] transition-all duration-700 ease-out cursor-pointer z-20 opacity-100" data-pos="0">
-              <img src="assets/papsliderone.png" alt="" className="w-full h-[220px] md:h-[360px] object-cover rounded-[1rem] shadow-2xl" />
-            </div>
-            <div className="assist-card absolute w-[280px] md:w-[750px] transition-all duration-700 ease-out cursor-pointer z-10 opacity-60" data-pos="1">
-              <img src="assets/papslidertwo.png" alt="" className="w-full h-[220px] md:h-[360px] object-cover rounded-[1rem] shadow-lg" />
-            </div>
-            <div className="assist-card absolute w-[280px] md:w-[750px] transition-all duration-700 ease-out cursor-pointer z-10 opacity-60" data-pos="-1">
-              <img src="assets/papsliderthree.png" alt="" className="w-full h-[220px] md:h-[360px] object-cover rounded-[1rem] shadow-lg" />
-            </div>
+            {papSliderImages.map((src, idx) => {
+              const posMap = ['0', '1', '-1'];
+              const extraMap = ['z-20 opacity-100', 'z-10 opacity-60', 'z-10 opacity-60'];
+              const shadowMap = ['shadow-2xl', 'shadow-lg', 'shadow-lg'];
+              return (
+                <div
+                  key={idx}
+                  className={`assist-card absolute w-[280px] md:w-[750px] transition-all duration-700 ease-out cursor-pointer ${extraMap[idx]}`}
+                  data-pos={posMap[idx]}
+                >
+                  <img
+                    src={src}
+                    alt=""
+                    className={`w-full h-[220px] md:h-[360px] object-cover rounded-[1rem] ${shadowMap[idx]}`}
+                  />
+                </div>
+              );
+            })}
             <button id="assist-prev"
               className="absolute left-0 md:-left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white shadow-xl rounded-full flex items-center justify-center text-gray-400 hover:text-primary transition-all z-40 hover:scale-110">
               <i className="fa-solid fa-chevron-left"></i>
@@ -283,7 +314,7 @@ const Csr: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col lg:flex-row gap-16 items-center mb-32">
             <div className="lg:w-1/2">
-              <img src="assets/cancerpatient.png" alt="Christmas Promo Hug" className="w-full rounded-3xl shadow-2xl" />
+              <img src={getImage('assets/cancerpatient.png', 'assets/cancerpatient.png')} alt="Christmas Promo Hug" className="w-full rounded-3xl shadow-2xl" />
             </div>
             <div className="lg:w-1/2 reveal">
               <h2 className="text-2xl md:text-3xl font-bold text-dark leading-tight mb-8">
@@ -346,18 +377,18 @@ const Csr: React.FC = () => {
               </p>
             </div>
             <div className="lg:w-1/2">
-              <img src="assets/one.png" alt="Warriors Event"
+              <img src={getImage('assets/one.png', 'assets/one.png')} alt="Warriors Event"
                 className="w-full md:h-[350px] object-cover rounded-tl-[150px] rounded-tr-[1rem] rounded-br-[1rem] rounded-bl-[1rem] shadow-xl" />
             </div>
           </div>
 
           {/* Event Mini Gallery */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <img src="assets/two.png" alt=""
+            <img src={getImage('assets/two.png', 'assets/two.png')} alt=""
               className="w-full h-60 object-cover rounded-2xl shadow-sm transition-transform hover:scale-[1.02]" />
-            <img src="assets/three.png" alt=""
+            <img src={getImage('assets/three.png', 'assets/three.png')} alt=""
               className="w-full h-60 object-cover rounded-2xl shadow-sm transition-transform hover:scale-[1.02]" />
-            <img src="assets/four.png" alt=""
+            <img src={getImage('assets/four.png', 'assets/four.png')} alt=""
               className="w-full h-60 object-cover rounded-tl-2xl rounded-tr-2xl rounded-br-[100px] rounded-bl-2xl shadow-sm transition-transform hover:scale-[1.02]" />
           </div>
         </div>
@@ -368,7 +399,7 @@ const Csr: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row gap-10 items-center mb-8">
             <div className="md:w-1/2">
-              <img src="assets/five.png" alt="EPCALM Partnership"
+              <img src={getImage('assets/five.png', 'assets/five.png')} alt="EPCALM Partnership"
                 className="w-full h-[350px] object-cover rounded-[1rem] shadow-lg" />
             </div>
             <div className="md:w-1/2 reveal">
@@ -382,22 +413,22 @@ const Csr: React.FC = () => {
               </p>
               <div className="flex items-center gap-4">
                 <div className="w-16 h-16 flex items-center justify-center p-2">
-                  <img src="assets/epcalmlogo.png" alt="" className="w-full h-full object-contain" />
+                  <img src={getImage('assets/epcalmlogo.png', 'assets/epcalmlogo.png')} alt="" className="w-full h-full object-contain" />
                 </div>
               </div>
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="overflow-hidden h-60 rounded-tl-2xl rounded-tr-2xl rounded-br-2xl rounded-bl-[100px]">
-              <img src="assets/six.png" alt=""
+              <img src={getImage('assets/six.png', 'assets/six.png')} alt=""
                 className="w-full h-full object-cover transition-transform hover:scale-[1.02]" />
             </div>
             <div className="overflow-hidden h-60 rounded-2xl">
-              <img src="assets/seven.png" alt=""
+              <img src={getImage('assets/seven.png', 'assets/seven.png')} alt=""
                 className="w-full h-full object-cover transition-transform hover:scale-[1.02]" />
             </div>
             <div className="relative overflow-hidden h-60 rounded-tl-2xl rounded-tr-2xl rounded-br-[100px] rounded-bl-2xl">
-              <img src="assets/eight.png" alt=""
+              <img src={getImage('assets/eight.png', 'assets/eight.png')} alt=""
                 className="w-full h-full object-cover transition-transform hover:scale-[1.02]" />
             </div>
           </div>
@@ -409,7 +440,7 @@ const Csr: React.FC = () => {
         <div className="bg-[#26A8E1] rounded-[1rem] px-8 md:px-16 py-10 flex flex-col md:flex-row items-center gap-10 relative">
           <div className="flex flex-col items-center -mt-28 md:-mt-32 shrink-0 z-20">
             <div className="w-[210px] h-[210px] rounded-full border-[8px] border-white overflow-hidden mb-6 shadow-2xl bg-white">
-              <img src="assets/fohimage.png" alt="Faces of Hope" className="w-full h-full object-cover" />
+              <img src={getImage('assets/fohimage.png', 'assets/fohimage.png')} alt="Faces of Hope" className="w-full h-full object-cover" />
             </div>
             <p className="text-white text-[14px] md:text-[15px] font-[700] text-center max-w-[300px] leading-relaxed tracking-wide">
               Mother of a Chronic Myeloid Leukemia Patient<br />(EPCALM Beneficiary)
@@ -431,7 +462,7 @@ const Csr: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col lg:flex-row gap-16 items-center">
             <div className="lg:w-1/2">
-              <img src="assets/pinkrun.png" alt="Pink Run Screen" className="w-full rounded-2xl shadow-xl" />
+              <img src={getImage('assets/pinkrun.png', 'assets/pinkrun.png')} alt="Pink Run Screen" className="w-full rounded-2xl shadow-xl" />
             </div>
             <div className="lg:w-1/2 reveal">
               <div className="mb-5">
@@ -467,15 +498,23 @@ const Csr: React.FC = () => {
             ref={pinkViewportRef}
             className="relative h-[280px] md:h-[400px] w-full flex items-center justify-center [perspective:1200px] overflow-visible"
           >
-            <div className="pink-card absolute w-[280px] md:w-[750px] transition-all duration-700 ease-out cursor-pointer" data-pos="0">
-              <img src="assets/pinkrunone.png" alt="" className="w-full h-[220px] md:h-[360px] object-cover rounded-[1rem] shadow-2xl" />
-            </div>
-            <div className="pink-card absolute w-[280px] md:w-[750px] transition-all duration-700 ease-out cursor-pointer" data-pos="1">
-              <img src="assets/pinkruntwo.png" alt="" className="w-full h-[220px] md:h-[360px] object-cover rounded-[1rem] shadow-lg" />
-            </div>
-            <div className="pink-card absolute w-[280px] md:w-[750px] transition-all duration-700 ease-out cursor-pointer" data-pos="-1">
-              <img src="assets/pinkrunthree.png" alt="" className="w-full h-[220px] md:h-[360px] object-cover rounded-[1rem] shadow-lg" />
-            </div>
+            {pinkSliderImages.map((src, idx) => {
+              const posMap = ['0', '1', '-1'];
+              const shadowMap = ['shadow-2xl', 'shadow-lg', 'shadow-lg'];
+              return (
+                <div
+                  key={idx}
+                  className="pink-card absolute w-[280px] md:w-[750px] transition-all duration-700 ease-out cursor-pointer"
+                  data-pos={posMap[idx]}
+                >
+                  <img
+                    src={src}
+                    alt=""
+                    className={`w-full h-[220px] md:h-[360px] object-cover rounded-[1rem] ${shadowMap[idx]}`}
+                  />
+                </div>
+              );
+            })}
             <button id="pink-prev"
               className="absolute left-0 md:-left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white shadow-xl rounded-full flex items-center justify-center text-gray-400 hover:text-[#26A8E1] transition-all z-40 hover:scale-110">
               <i className="fa-solid fa-chevron-left"></i>

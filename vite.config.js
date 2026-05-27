@@ -28,10 +28,11 @@ export default defineConfig({
           server.middlewares.use((req, res, next) => {
             const urlPath = (req.url || '').split('?')[0];
             const cleanPath = urlPath.startsWith('/') ? urlPath : '/' + urlPath;
+            const qs = (req.url || '').includes('?') ? req.url.slice(req.url.indexOf('?')) : '';
             
             if (cleanPath === '/pap.html') {
               res.statusCode = 302;
-              res.setHeader('Location', '/pap');
+              res.setHeader('Location', '/pap' + qs);
               res.end();
               return;
             }
@@ -46,7 +47,7 @@ export default defineConfig({
             }
             if (cleanPath === '/ungc.html') {
               res.statusCode = 302;
-              res.setHeader('Location', '/ungc');
+              res.setHeader('Location', '/ungc' + qs);
               res.end();
               return;
             }
@@ -61,7 +62,7 @@ export default defineConfig({
             }
             if (cleanPath === '/careers.html') {
               res.statusCode = 302;
-              res.setHeader('Location', '/careers');
+              res.setHeader('Location', '/careers' + qs);
               res.end();
               return;
             }
@@ -76,7 +77,7 @@ export default defineConfig({
             }
             if (cleanPath === '/csr.html') {
               res.statusCode = 302;
-              res.setHeader('Location', '/csr');
+              res.setHeader('Location', '/csr' + qs);
               res.end();
               return;
             }
@@ -91,7 +92,7 @@ export default defineConfig({
             }
             if (cleanPath === '/global-presence.html') {
               res.statusCode = 302;
-              res.setHeader('Location', '/global-presence');
+              res.setHeader('Location', '/global-presence' + qs);
               res.end();
               return;
             }
@@ -106,7 +107,7 @@ export default defineConfig({
             }
             if (cleanPath === '/services.html') {
               res.statusCode = 302;
-              res.setHeader('Location', '/services');
+              res.setHeader('Location', '/services' + qs);
               res.end();
               return;
             }
@@ -121,7 +122,7 @@ export default defineConfig({
             }
             if (cleanPath === '/contact-us.html') {
               res.statusCode = 302;
-              res.setHeader('Location', '/contact-us');
+              res.setHeader('Location', '/contact-us' + qs);
               res.end();
               return;
             }
@@ -136,7 +137,7 @@ export default defineConfig({
             }
             if (cleanPath === '/about-us.html') {
               res.statusCode = 302;
-              res.setHeader('Location', '/about-us');
+              res.setHeader('Location', '/about-us' + qs);
               res.end();
               return;
             }
@@ -151,7 +152,7 @@ export default defineConfig({
             }
             if (cleanPath === '/meditations.html') {
               res.statusCode = 302;
-              res.setHeader('Location', '/meditations');
+              res.setHeader('Location', '/meditations' + qs);
               res.end();
               return;
             }
@@ -166,7 +167,7 @@ export default defineConfig({
             }
             if (cleanPath === '/product-range.html') {
               res.statusCode = 302;
-              res.setHeader('Location', '/product-range');
+              res.setHeader('Location', '/product-range' + qs);
               res.end();
               return;
             }
@@ -181,7 +182,7 @@ export default defineConfig({
             }
             if (cleanPath === '/order-medicines.html') {
               res.statusCode = 302;
-              res.setHeader('Location', '/order-medicines');
+              res.setHeader('Location', '/order-medicines' + qs);
               res.end();
               return;
             }
@@ -196,12 +197,11 @@ export default defineConfig({
             }
             if (cleanPath === '/articles.html') {
               res.statusCode = 302;
-              res.setHeader('Location', '/articles');
+              res.setHeader('Location', '/articles' + qs);
               res.end();
               return;
             }
             if (cleanPath === '/article-detail.html') {
-              const qs = (req.url || '').includes('?') ? req.url.slice(req.url.indexOf('?')) : '';
               res.statusCode = 302;
               res.setHeader('Location', '/article-detail' + qs);
               res.end();

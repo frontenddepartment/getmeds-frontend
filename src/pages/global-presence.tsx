@@ -1,7 +1,10 @@
-﻿import React, { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { injectHTML } from '../lib/injectHTML';
+import { useImageMapper } from '../lib/useSanity';
 
 export default function GlobalPresence() {
+  const { getImage } = useImageMapper('global-presence');
+
   useEffect(() => {
     const navContainer = document.getElementById('navbar-container');
     if (navContainer && navContainer.innerHTML.trim() === '') {
@@ -28,7 +31,7 @@ export default function GlobalPresence() {
       <section className="w-full mx-auto px-3 sm:px-4 md:px-6 mt-3 md:mt-4 mb-16 max-w-[1600px]">
         <div
           className="relative rounded-[1.5rem] border border-gray-100/20 overflow-hidden min-h-[450px] md:min-h-[500px] flex items-end">
-          <img src="assets/globalpresencehero.jpg" alt="Global Healthcare" data-json-src="hero.image" data-json-alt="hero.imageAlt"
+          <img src={getImage('assets/globalpresencehero.jpg', 'assets/globalpresencehero.jpg')} alt="Global Healthcare" data-json-src="hero.image" data-json-alt="hero.imageAlt"
             className="absolute inset-0 w-full h-full object-cover object-center" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
           <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent w-[100%] md:w-[70%]"></div>
@@ -242,7 +245,7 @@ export default function GlobalPresence() {
         <div className="absolute left-1/2 -top-[105px] transform -translate-x-1/2 z-20 pointer-events-none">
           <div className="w-[210px] h-[210px] rounded-full overflow-hidden mix-blend-multiply flex items-center justify-center transform transition-transform"
             style={{ boxShadow: '-47px 45px 18px rgba(0,0,0,0.1), -30px 29px 17px rgba(0,0,0,0.1), -17px 16px 14px rgba(0,0,0,0.25), -2px 2px 6px rgba(0,0,0,0.40)' }}>
-            <img src="assets/globe.jpg" id="earth-image" alt="Earth" className="w-full h-full object-cover scale-[1.2]" />
+            <img src={getImage('assets/globe.jpg', 'assets/globe.jpg')} id="earth-image" alt="Earth" className="w-full h-full object-cover scale-[1.2]" />
           </div>
         </div>
 

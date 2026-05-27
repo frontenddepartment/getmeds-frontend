@@ -80,6 +80,7 @@
 
             // Set Favicon dynamically
             injectFavicon();
+            fetchAndApplyLogo();
 
             // Inject Scroll and AI
             injectScrollToTop();
@@ -243,24 +244,28 @@
                     border-bottom-right-radius: 4px !important;
                 }
 
-                .zap-resource-link {
+                 .zap-resource-link {
                     text-decoration: none !important;
                     display: inline-flex !important;
                     align-items: center !important;
                     gap: 6px !important;
-                    padding: 5px 11px !important;
+                    padding: 6px 12px !important;
                     border-radius: 10px !important;
-                    background: rgba(255,255,255,0.15) !important;
-                    border: 1px solid rgba(255,255,255,0.25) !important;
-                    color: #ffffff !important;
-                    font-size: 11px !important;
-                    font-weight: 500 !important;
+                    background: #f1f5f9 !important;
+                    border: 1px solid #cbd5e1 !important;
+                    color: #1D9FDA !important;
+                    font-size: 11.5px !important;
+                    font-weight: 600 !important;
                     transition: all 0.2s ease !important;
                     max-width: 100% !important;
+                    margin-top: 6px !important;
+                    margin-right: 6px !important;
                 }
                 .zap-resource-link:hover {
-                    background: rgba(255,255,255,0.25) !important;
+                    background: #e2e8f0 !important;
+                    color: #0f76a8 !important;
                     transform: translateY(-1px) !important;
+                    box-shadow: 0 2px 8px rgba(0,0,0,0.05) !important;
                 }
 
                 .zap-dot {
@@ -363,8 +368,9 @@
                     <input type="text" id="zap-input" placeholder="Ask me anything..." style="width:100%;background:transparent;border:none;outline:none;font-size:13.5px;color:#1a1a1a;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;box-sizing:border-box;">
                     <div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px;">
                         <div style="display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;flex:1;margin-right:10px;">
-                            <button style="white-space:nowrap;padding:5px 13px;border-radius:20px;background:#f3f4f6;border:1px solid #e5e7eb;color:#555;font-size:11px;font-weight:500;cursor:pointer;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;transition:background 0.15s;flex-shrink:0;" onclick="document.dispatchEvent(new CustomEvent('zapAsk',{detail:'How to inquire?'}))" onmouseover="this.style.background='#e9eaec'" onmouseout="this.style.background='#f3f4f6'">How to inquire?</button>
-                            <button style="white-space:nowrap;padding:5px 13px;border-radius:20px;background:#f3f4f6;border:1px solid #e5e7eb;color:#555;font-size:11px;font-weight:500;cursor:pointer;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;transition:background 0.15s;flex-shrink:0;" onclick="document.dispatchEvent(new CustomEvent('zapAsk',{detail:'Search products'}))" onmouseover="this.style.background='#e9eaec'" onmouseout="this.style.background='#f3f4f6'">Search products</button>
+                            <button style="white-space:nowrap;padding:5px 13px;border-radius:20px;background:#f3f4f6;border:1px solid #e5e7eb;color:#555;font-size:11px;font-weight:500;cursor:pointer;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;transition:background 0.15s;flex-shrink:0;" onclick="window.location.href='/product-range'" onmouseover="this.style.background='#e9eaec'" onmouseout="this.style.background='#f3f4f6'">Search Products</button>
+                            <button style="white-space:nowrap;padding:5px 13px;border-radius:20px;background:#f3f4f6;border:1px solid #e5e7eb;color:#555;font-size:11px;font-weight:500;cursor:pointer;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;transition:background 0.15s;flex-shrink:0;" onclick="window.location.href='/order-medicines'" onmouseover="this.style.background='#e9eaec'" onmouseout="this.style.background='#f3f4f6'">Order Medicines</button>
+                            <button style="white-space:nowrap;padding:5px 13px;border-radius:20px;background:#f3f4f6;border:1px solid #e5e7eb;color:#555;font-size:11px;font-weight:500;cursor:pointer;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;transition:background 0.15s;flex-shrink:0;" onclick="window.location.href='/contact-us'" onmouseover="this.style.background='#e9eaec'" onmouseout="this.style.background='#f3f4f6'">Contact Us</button>
                         </div>
                         <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
                             <button id="zap-mic-btn" title="Speak your message" style="height:34px;width:34px;background:#f3f4f6;border:1.5px solid #e5e7eb;color:#666;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;">
@@ -401,6 +407,38 @@
             chatWindow.classList.remove('active');
             btn.classList.remove('zap-modal-open');
         });
+
+        function loadChatHistory() {
+            const sid = getChatSessionId();
+            const query = `*[_type == "chatSession" && sessionId == "${sid}"][0]{ messages }`;
+            const url = 'https://s7ocz8zp.api.sanity.io/v2021-10-21/data/query/production?query=' + encodeURIComponent(query);
+
+            fetch(url)
+                .then(res => res.json())
+                .then(data => {
+                    const messages = data?.result?.messages;
+                    if (messages && Array.isArray(messages) && messages.length > 0) {
+                        const welcome = chatWindow.querySelector('#zap-welcome');
+                        if (welcome) welcome.remove();
+
+                        messages.forEach(msg => {
+                            if (msg.user) {
+                                addMessage(msg.user, 'user');
+                            }
+                            if (msg.ai) {
+                                let html = basicMarkdownToHtml(msg.ai);
+                                if (msg.resources) {
+                                    html += buildResourcesHtml(msg.resources);
+                                }
+                                addMessage(html, 'ai', { allowHtml: true });
+                            }
+                        });
+                    }
+                })
+                .catch(err => console.warn('[GetMEDS] Failed to load chat history:', err));
+        }
+
+        loadChatHistory();
 
         function getChatbotApiUrl() {
             const explicitUrl =
@@ -443,6 +481,65 @@
                 .replace(/>/g, '&gt;')
                 .replace(/"/g, '&quot;')
                 .replace(/'/g, '&#039;');
+        }
+
+        function buildResourcesHtml(resources) {
+            if (!resources || !Array.isArray(resources) || resources.length === 0) return '';
+            let html = '<div class="zap-resources mt-3 flex flex-wrap gap-2">';
+            resources.forEach(res => {
+                let iconClass = 'fa-link';
+                if (res.type === 'product') iconClass = 'fa-pills';
+                else if (res.type === 'service') iconClass = 'fa-stethoscope';
+                else if (res.type === 'team') iconClass = 'fa-user-md';
+                else if (res.type === 'category') iconClass = 'fa-folder-open';
+
+                let url = res.url || '#';
+                // Normalize legacy relative links
+                if (!url.startsWith('/') && !url.startsWith('http') && url !== '#') {
+                    if (url.startsWith('product-range.html')) {
+                        url = '/product-range' + url.substring('product-range.html'.length);
+                    } else if (url.startsWith('order-medicines.html')) {
+                        url = '/order-medicines' + url.substring('order-medicines.html'.length);
+                    } else if (url.startsWith('contact-us.html')) {
+                        url = '/contact-us' + url.substring('contact-us.html'.length);
+                    } else {
+                        url = '/' + url;
+                    }
+                }
+
+                // Map backend routes to actual clean URLs
+                if (url.startsWith('/products/')) {
+                    const slug = url.substring('/products/'.length);
+                    url = '/product-range?product=' + slug;
+                } else if (url.startsWith('/services')) {
+                    url = '/services';
+                } else if (url.startsWith('/team')) {
+                    // Convert team member title to a slug: Mr. Naresh Bishnoi -> naresh-bishnoi
+                    const slug = res.title
+                        .toLowerCase()
+                        .replace(/^(mr\.|ms\.|dr\.|prof\.)\s+/g, '')
+                        .trim()
+                        .replace(/[^a-z0-9]+/g, '-');
+                    url = '/about-us#' + slug;
+                } else if (url.startsWith('/article-detail')) {
+                    url = '/' + url.substring(1); // e.g. /article-detail?id=0
+                } else if (url.startsWith('/articles')) {
+                    url = '/articles';
+                } else if (url === '/faq') {
+                    url = '/';
+                } else if (url.startsWith('/')) {
+                    url = '/' + url.substring(1);
+                }
+
+                html += `
+                    <a href="${escapeHtml(url)}" class="zap-resource-link">
+                        <i class="fa-solid ${iconClass}"></i>
+                        <span class="truncate">${escapeHtml(res.title)}</span>
+                    </a>
+                `;
+            });
+            html += '</div>';
+            return html;
         }
 
         function basicMarkdownToHtml(value) {
@@ -543,35 +640,7 @@
                 let answerHtml = basicMarkdownToHtml(response);
 
                 if (payload && typeof payload === 'object' && Array.isArray(payload.resources) && payload.resources.length > 0) {
-                    answerHtml += '<div class="zap-resources mt-3 flex flex-wrap gap-2">';
-                    payload.resources.forEach(res => {
-                        let iconClass = 'fa-link';
-                        if (res.type === 'product') iconClass = 'fa-pills';
-                        else if (res.type === 'service') iconClass = 'fa-stethoscope';
-                        else if (res.type === 'team') iconClass = 'fa-user-md';
-
-                        let url = res.url || '#';
-                        // Map backend routes to actual local HTML files
-                        if (url.startsWith('/products/')) {
-                            url = 'product-details.html';
-                        } else if (url.startsWith('/services')) {
-                            url = 'services.html';
-                        } else if (url.startsWith('/team')) {
-                            url = 'about-us.html';
-                        } else if (url === '/faq') {
-                            url = 'index.html'; // Fallback
-                        } else if (url.startsWith('/')) {
-                            url = url.substring(1) + '.html';
-                        }
-
-                        answerHtml += `
-                            <a href="${escapeHtml(url)}" class="zap-resource-link">
-                                <i class="fa-solid ${iconClass}"></i>
-                                <span class="truncate">${escapeHtml(res.title)}</span>
-                            </a>
-                        `;
-                    });
-                    answerHtml += '</div>';
+                    answerHtml += buildResourcesHtml(payload.resources);
                 }
 
                 // Chatbot API content may include simple HTML links generated by the backend.
@@ -670,6 +739,52 @@
             zapMicBtn.style.cursor = 'not-allowed';
             zapMicBtn.title = 'Voice input not supported in this browser';
         }
+    }
+
+    function fetchAndApplyLogo() {
+        const query = '*[_type == "siteSettings" && _id == "global-site-settings"][0]{ "logoUrl": logo.src.asset->url }';
+        const url = 'https://s7ocz8zp.api.sanity.io/v2021-10-21/data/query/production?query=' + encodeURIComponent(query);
+
+        fetch(url)
+            .then(res => res.json())
+            .then(data => {
+                const logoUrl = data?.result?.logoUrl;
+                if (logoUrl) {
+                    setupLogoObserver(logoUrl);
+                }
+            })
+            .catch(err => console.warn('[GetMEDS] Failed to fetch dynamic logo:', err));
+    }
+
+    function setupLogoObserver(logoUrl) {
+        if (!logoUrl) return;
+        
+        const apply = () => {
+            document.querySelectorAll('img').forEach(img => {
+                const src = img.getAttribute('src') || '';
+                const alt = img.getAttribute('alt') || '';
+                if (
+                    src.includes('getmedslogo.png') || 
+                    src.includes('getmedslogo') ||
+                    alt.toLowerCase().includes('getmeds logo') ||
+                    alt.toLowerCase() === 'logo'
+                ) {
+                    if (img.src !== logoUrl) {
+                        img.src = logoUrl;
+                    }
+                }
+            });
+            // Update favicon
+            let link = document.querySelector("link[rel~='icon']");
+            if (link && link.href !== logoUrl) {
+                link.href = logoUrl;
+            }
+        };
+
+        apply();
+
+        const observer = new MutationObserver(apply);
+        observer.observe(document.body, { childList: true, subtree: true });
     }
 
     function injectFavicon() {

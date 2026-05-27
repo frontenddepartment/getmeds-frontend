@@ -1,7 +1,60 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { injectHTML } from '../lib/injectHTML';
+import { useImageMapper } from '../lib/useSanity';
+import { getGoogleSpreadsheetBySlug } from '../lib/queries';
+
 
 export default function ContactUs() {
+  const { getImage } = useImageMapper('contact-us');
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    subject: '',
+    message: ''
+  });
+  const [submitState, setSubmitState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.name || !formData.email) {
+      alert('Please fill in Name and Email fields.');
+      return;
+    }
+    setSubmitState('sending');
+    try {
+      const sheetInfo = await getGoogleSpreadsheetBySlug('contact-us-list');
+      if (!sheetInfo || !sheetInfo.spreadsheetId) {
+        throw new Error('Google Spreadsheet settings not found in Sanity.');
+      }
+
+      const timestamp = new Date().toLocaleString();
+      const payload = {
+        spreadsheetId: sheetInfo.spreadsheetId,
+        row: [formData.name, formData.email, formData.phone, formData.subject, formData.message, timestamp]
+      };
+
+      const response = await fetch('http://localhost:3333/api/append-to-spreadsheet', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        throw new Error('Submission request failed.');
+      }
+
+      setSubmitState('sent');
+      setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
+      setTimeout(() => setSubmitState('idle'), 3000);
+    } catch (err: any) {
+      console.error(err);
+      setSubmitState('error');
+      setTimeout(() => setSubmitState('idle'), 3000);
+    }
+  };
+
+
   useEffect(() => {
     const navContainer = document.getElementById('navbar-container');
     if (navContainer && navContainer.innerHTML.trim() === '') {
@@ -29,7 +82,7 @@ export default function ContactUs() {
         <div
           className="relative rounded-[1.5rem] border border-gray-100/20 overflow-hidden min-h-[450px] md:min-h-[500px] flex items-end shadow-sm">
           {/* Background Image */}
-          <img src="assets/contactushero.png" alt="Contact Us" data-json-src="hero.image" data-json-alt="hero.imageAlt"
+          <img src={getImage('assets/contactushero.png', 'assets/contactushero.png')} alt="Contact Us" data-json-src="hero.image" data-json-alt="hero.imageAlt"
             className="absolute inset-0 w-full h-full object-cover object-[85%_center] md:object-center" />
           {/* Overlay for readability */}
           <div
@@ -138,17 +191,23 @@ export default function ContactUs() {
               className="text-[21px] font-bold bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent mb-7 tracking-tight">
               Get in Touch with Us</h3>
 
-            <form className="space-y-5">
+            <form className="space-y-5" onSubmit={handleSubmit}>
               {/* Row 1 */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="flex flex-col space-y-2">
                   <label className="text-[14px] font-semibold text-gray-700">Full Name *</label>
                   <input type="text" placeholder="e.g. John Doe" data-json-placeholder="form.fields.0.placeholder"
+                    value={formData.name}
+                    onChange={e => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                    required
                     className="w-full bg-[#F4F6F9] rounded-xl px-4 py-3.5 text-[13px] outline-none border-2 border-transparent focus:border-primary/20 transition-colors placeholder-gray-400 font-medium" />
                 </div>
                 <div className="flex flex-col space-y-2">
                   <label className="text-[14px] font-semibold text-gray-700">Email Address *</label>
                   <input type="email" placeholder="e.g. johndoe@email.com" data-json-placeholder="form.fields.1.placeholder"
+                    value={formData.email}
+                    onChange={e => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                    required
                     className="w-full bg-[#F4F6F9] rounded-xl px-4 py-3.5 text-[13px] outline-none border-2 border-transparent focus:border-primary/20 transition-colors placeholder-gray-400 font-medium" />
                 </div>
               </div>
@@ -158,12 +217,15 @@ export default function ContactUs() {
                 <div className="flex flex-col space-y-2">
                   <label className="text-[14px] font-semibold text-gray-700">Phone Number</label>
                   <input type="tel" placeholder="e.g. +63 912 345 6789" data-json-placeholder="form.fields.2.placeholder"
+                    value={formData.phone}
+                    onChange={e => setFormData(prev => ({ ...prev, phone: e.target.value }))}
                     className="w-full bg-[#F4F6F9] rounded-xl px-4 py-3.5 text-[13px] outline-none border-2 border-transparent focus:border-primary/20 transition-colors placeholder-gray-400 font-medium" />
                 </div>
                 <div className="flex flex-col space-y-2">
                   <label className="text-[14px] font-semibold text-gray-700">Subject</label>
                   <div className="relative">
-                    <select defaultValue=""
+                    <select value={formData.subject}
+                      onChange={e => setFormData(prev => ({ ...prev, subject: e.target.value }))}
                       className="w-full bg-[#F4F6F9] rounded-xl px-4 py-3.5 text-[13px] outline-none border-2 border-transparent focus:border-primary/20 transition-colors text-gray-400 font-medium appearance-none cursor-pointer">
                       <option value="" disabled hidden>Select Subject</option>
                       <option value="general" className="text-gray-700">General Inquiry</option>
@@ -182,14 +244,17 @@ export default function ContactUs() {
               <div className="flex flex-col space-y-2 pt-1">
                 <label className="text-[14px] font-semibold text-gray-700">Message</label>
                 <textarea placeholder="e.g. I would like to inquire about your pharmaceutical products..." data-json-placeholder="form.fields.4.placeholder" rows={4}
+                  value={formData.message}
+                  onChange={e => setFormData(prev => ({ ...prev, message: e.target.value }))}
                   className="w-full bg-[#F4F6F9] rounded-xl px-4 py-4 text-[13px] outline-none border-2 border-transparent focus:border-primary/20 transition-colors placeholder-gray-400 font-medium resize-none"></textarea>
               </div>
 
               {/* Submit Button */}
               <div className="pt-3">
-                <button type="button"
-                  className="w-full bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:from-[#1D9FDA] hover:to-[#61A644] text-white font-bold py-3.5 rounded-full text-[14px] transition shadow-md">
-                  Submit
+                <button type="submit"
+                  disabled={submitState === 'sending'}
+                  className="w-full bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:from-[#1D9FDA] hover:to-[#61A644] text-white font-bold py-3.5 rounded-full text-[14px] transition shadow-md disabled:opacity-50">
+                  {submitState === 'sending' ? 'Sending...' : submitState === 'sent' ? '✓ Submitted Successfully!' : submitState === 'error' ? 'Failed. Try Again' : 'Submit'}
                 </button>
               </div>
 

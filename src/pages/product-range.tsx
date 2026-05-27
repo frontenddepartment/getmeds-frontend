@@ -1,8 +1,10 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react';
-import { useProducts, useCategories } from '../lib/useSanity';
+import { useProducts, useCategories, useImageMapper } from '../lib/useSanity';
 import { urlFor } from '../lib/sanity';
 import type { Product as SanityProduct, Category } from '../types/sanity';
 import { injectHTML } from '../lib/injectHTML';
+import { getGoogleSpreadsheetBySlug } from '../lib/queries';
+
 
 interface ProductWithCategory extends Omit<SanityProduct, 'category'> {
   category?: Category;
@@ -45,6 +47,7 @@ const TableSkeleton = () => (
 
 
 export default function ProductRange() {
+  const { getImage } = useImageMapper('product-range');
   const { data: productsDataRaw, loading: productsLoading } = useProducts();
   const productsData = productsDataRaw as ProductWithCategory[] | null;
   const { data: categoriesData, loading: categoriesLoading } = useCategories();
@@ -156,6 +159,69 @@ export default function ProductRange() {
     document.addEventListener('click', handleClick);
     return () => document.removeEventListener('click', handleClick);
   }, []);
+
+  useEffect(() => {
+    if (!productsLoading && productsData) {
+      const urlParams = new URLSearchParams(window.location.search);
+      const productSlug = urlParams.get('product');
+      const searchQuery = urlParams.get('search');
+      
+      let targetProduct = null;
+      
+      if (productSlug) {
+        targetProduct = productsData.find(
+          p => p.slug?.current === productSlug || p.brandName?.toLowerCase() === productSlug.toLowerCase()
+        );
+      } else if (searchQuery) {
+        const cleanQuery = searchQuery.trim().toLowerCase();
+        targetProduct = productsData.find(
+          p => (p.brandName && p.brandName.toLowerCase() === cleanQuery) ||
+               (p.name && p.name.toLowerCase() === cleanQuery) ||
+               (p.brandName && p.genericName && `${p.brandName} (${p.genericName})`.toLowerCase() === cleanQuery)
+        );
+      }
+
+      if (targetProduct) {
+        setSelectedProduct(targetProduct);
+        setSearchTerm(targetProduct.brandName || targetProduct.name || '');
+        setModalOpen(true);
+        setModalVisible(true);
+      }
+    }
+  }, [productsLoading, productsData]);
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const categorySlug = urlParams.get('category');
+    if (categorySlug && categoriesData) {
+      const cleanSlug = categorySlug.toLowerCase();
+      // Check main categories first
+      const matchedCat = categoriesData.find(
+        (cat: any) =>
+          cat.slug?.current?.toLowerCase() === cleanSlug ||
+          cat.category?.toLowerCase() === cleanSlug
+      );
+      if (matchedCat) {
+        setCurrentCategory(matchedCat.category);
+        return;
+      }
+      // Check subcategories
+      for (const cat of categoriesData) {
+        if (cat.subcategory && Array.isArray(cat.subcategory)) {
+          const matchedSub = cat.subcategory.find(
+            (sub: string) => {
+              const subSlug = sub.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+              return subSlug === cleanSlug || sub.toLowerCase() === cleanSlug;
+            }
+          );
+          if (matchedSub) {
+            setCurrentCategory(matchedSub);
+            return;
+          }
+        }
+      }
+    }
+  }, [categoriesData]);
 
 
   const getProductImage = (p: ProductWithCategory) => {
@@ -298,7 +364,6 @@ export default function ProductRange() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitState('sending');
-    const SCRIPT_URL = 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE';
     const filesData: { name: string; type: string; base64: string }[] = [];
     for (const file of uploadedFiles) {
       try {
@@ -308,19 +373,41 @@ export default function ProductRange() {
         console.error('Error processing file:', file.name, err);
       }
     }
-    const payload = { productName: selectedProduct?.name, ...formData, files: filesData };
+    
     try {
-      if (!SCRIPT_URL || SCRIPT_URL.includes('YOUR_GOOGLE_APPS_SCRIPT_URL_HERE')) {
-        await new Promise(resolve => setTimeout(resolve, 1500));
-      } else {
-        await fetch(SCRIPT_URL, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-        });
+      const sheetInfo = await getGoogleSpreadsheetBySlug('product-inquiry-list');
+      if (!sheetInfo || !sheetInfo.spreadsheetId) {
+        throw new Error('Google Spreadsheet settings not found in Sanity.');
       }
+
+      const timestamp = new Date().toLocaleString();
+      const payload = {
+        spreadsheetId: sheetInfo.spreadsheetId,
+        row: [
+          formData.name,
+          formData.phone,
+          formData.email,
+          formData.message,
+          selectedProduct?.name || '',
+          '[PENDING_FILE_UPLOAD]',
+          timestamp
+        ],
+        files: filesData
+      };
+
+      const response = await fetch('http://localhost:3333/api/append-to-spreadsheet', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (!response.ok) {
+        throw new Error('Form submission failed.');
+      }
+
       setSubmitState('sent');
+      setFormData({ name: '', phone: '', email: '', message: '' });
+      setUploadedFiles([]);
       setTimeout(() => closeModal(), 1500);
     } catch (error) {
       console.error('Submission error:', error);
@@ -328,6 +415,7 @@ export default function ProductRange() {
       setTimeout(() => setSubmitState('idle'), 2000);
     }
   };
+
 
   const getPageRange = (current: number, total: number): (number | string)[] => {
     if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
@@ -857,7 +945,7 @@ export default function ProductRange() {
             {/* Modal Header */}
             <div className="bg-white border-b border-gray-100 px-6 py-4 flex justify-between items-center shrink-0">
               <div className="flex items-center space-x-4">
-                <img src="assets/getmedslogo.png" alt="Getmeds Logo" className="h-6 w-auto object-contain" />
+                <img src={getImage('assets/getmedslogo.png', 'assets/getmedslogo.png')} alt="Getmeds Logo" className="h-6 w-auto object-contain" />
                 <h3 className="text-base font-semibold text-gray-800 border-l border-gray-200 pl-4">
                   Product Details & Inquiry
                 </h3>

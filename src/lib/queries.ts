@@ -22,6 +22,7 @@ import type {
   ProductsPage,
   ServicesPage,
   UngcPage,
+  PageAsset,
 } from '../types/sanity'
 
 // ─────────────────────────────────────────────
@@ -301,3 +302,59 @@ export async function getUngcPage() {
     *[_type == "ungcPage" && _id == "ungc-page"][0]
   `)
 }
+
+// ─────────────────────────────────────────────
+// Page Assets (Materials)
+// ─────────────────────────────────────────────
+
+export async function getPageAssets() {
+  return client.fetch<PageAsset[]>(`
+    *[_type == "pageAsset"] {
+      _id,
+      _type,
+      name,
+      page,
+      location,
+      image,
+      altText,
+      assetPath,
+      images[] {
+        image,
+        altText,
+        assetPath
+      }
+    }
+  `)
+}
+
+export async function getPageAssetsByPage(page: string) {
+  return client.fetch<PageAsset[]>(`
+    *[_type == "pageAsset" && (page == $page || page == "shared")] {
+      _id,
+      _type,
+      name,
+      page,
+      location,
+      image,
+      altText,
+      assetPath,
+      images[] {
+        image,
+        altText,
+        assetPath
+      }
+    }
+  `, { page })
+}
+
+export async function getGoogleSpreadsheetBySlug(slug: string) {
+  return client.fetch<{ _id: string; spreadsheetId: string; link: string } | null>(`
+    *[_type == "googleSpreadsheet" && id.current == $slug][0] {
+      _id,
+      spreadsheetId,
+      link
+    }
+  `, { slug })
+}
+
+

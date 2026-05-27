@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { useImageMapper } from '../lib/useSanity';
+import { getGoogleSpreadsheetBySlug } from '../lib/queries';
+
 
 // Declare global tailwind interface
 declare global {
@@ -48,8 +51,80 @@ const AnimatedCounter = ({ end, duration = 2000, suffix = "" }: { end: number, d
 };
 
 export default function GetMedsHomepage() {
+  const { getImage } = useImageMapper('home');
   const [isScrolled, setIsScrolled] = useState(false);
+
   const [isInquiryOpen, setIsInquiryOpen] = useState(false);
+  const [partnershipData, setPartnershipData] = useState({
+    name: '',
+    company: '',
+    email: '',
+    phone: '',
+    message: '',
+    consent: false
+  });
+  const [submitState, setSubmitState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
+
+  const handlePartnershipSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!partnershipData.name || !partnershipData.company || !partnershipData.email || !partnershipData.phone || !partnershipData.message) {
+      alert('Please fill in all required fields.');
+      return;
+    }
+    if (!partnershipData.consent) {
+      alert('Please consent to processing your information.');
+      return;
+    }
+    setSubmitState('sending');
+    try {
+      const sheetInfo = await getGoogleSpreadsheetBySlug('partership-list');
+      if (!sheetInfo || !sheetInfo.spreadsheetId) {
+        throw new Error('Google Spreadsheet settings not found in Sanity.');
+      }
+
+      const timestamp = new Date().toLocaleString();
+      const payload = {
+        spreadsheetId: sheetInfo.spreadsheetId,
+        row: [
+          partnershipData.name,
+          partnershipData.company,
+          partnershipData.email,
+          partnershipData.phone,
+          partnershipData.message,
+          partnershipData.consent ? 'Agreed' : 'Disagreed',
+          timestamp
+        ]
+      };
+
+      const response = await fetch('http://localhost:3333/api/append-to-spreadsheet', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (!response.ok) {
+        throw new Error('Partnership submission failed.');
+      }
+
+      setSubmitState('sent');
+      setPartnershipData({
+        name: '',
+        company: '',
+        email: '',
+        phone: '',
+        message: '',
+        consent: false
+      });
+      alert('Inquiry Sent Successfully!');
+      setIsInquiryOpen(false);
+      setSubmitState('idle');
+    } catch (error) {
+      console.error('Submission error:', error);
+      setSubmitState('error');
+      setTimeout(() => setSubmitState('idle'), 2000);
+    }
+  };
+
   const [therapPage, setTherapPage] = useState(0);
   const [openFaq, setOpenFaq] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -182,7 +257,7 @@ export default function GetMedsHomepage() {
 
       {/* Hero Container - Wraps the transparent header & top-bar, matching the UI screenshot overlay concept */}
       <div className="relative min-h-[70vh] md:min-h-[600px] w-full bg-cover bg-center overflow-hidden flex flex-col justify-between"
-        style={{ backgroundImage: "url('assets/herosectiontsx.jpg')" }}>
+        style={{ backgroundImage: `url('${getImage('assets/herosectiontsx.jpg', 'assets/herosectiontsx.jpg')}')` }}>
 
         {/* Dark Blue/Violet Gradient Tint Overlay */}
         <div className="absolute inset-0 bg-gradient-to-r from-slate-900/90 via-slate-800/60 to-slate-900/70 z-0"></div>
@@ -219,11 +294,17 @@ export default function GetMedsHomepage() {
               {/* Logo */}
               <div className="w-[180px] shrink-0 flex items-center">
                 <a href="index.html" className="flex items-center">
-                  <img
-                    src="assets/getmedslogo.png"
-                    alt="Getmeds Logo"
-                    className={`h-10 w-auto object-contain transition-all duration-300 ${isScrolled ? '' : 'brightness-0 invert'}`}
-                  />
+                  {(() => {
+                    const logoUrl = getImage('assets/getmedslogo.png', 'assets/getmedslogo.png');
+                    const isCustomLogo = logoUrl && logoUrl.includes('cdn.sanity.io');
+                    return (
+                      <img
+                        src={logoUrl}
+                        alt="Getmeds Logo"
+                        className={`h-10 w-auto object-contain transition-all duration-300 ${isScrolled || isCustomLogo ? '' : 'brightness-0 invert'}`}
+                      />
+                    );
+                  })()}
                 </a>
               </div>
 
@@ -357,7 +438,7 @@ export default function GetMedsHomepage() {
                               <li><a href="global-presence.html" className="relative inline-block text-gray-700 font-semibold hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300 text-base">Global Presence</a></li>
                               <li>
                                 <a href="pap.html" className="inline-block mt-3 opacity-80 hover:opacity-100 transition transform hover:-translate-y-0.5">
-                                  <img src="assets/pap.png" alt="Patient Assistance Program" className="h-32 w-auto object-contain" />
+                                  <img src={getImage('assets/pap.png', 'assets/pap.png')} alt="Patient Assistance Program" className="h-32 w-auto object-contain" />
                                 </a>
                               </li>
                             </ul>
@@ -374,21 +455,21 @@ export default function GetMedsHomepage() {
                         </div>
                         {/* Slider Section (Cols 8-12) */}
                         <div className="lg:col-span-5 h-[260px] relative rounded-2xl overflow-hidden shadow-lg bg-gray-100">
-                          <div className="absolute inset-0 bg-cover bg-center company-slide-1 transition-opacity duration-1000" style={{ backgroundImage: "url('assets/about_us_hero.png')" }}>
+                          <div className="absolute inset-0 bg-cover bg-center company-slide-1 transition-opacity duration-1000" style={{ backgroundImage: `url('${getImage('assets/about_us_hero.png', 'assets/about_us_hero.png')}')` }}>
                             <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
                             <div className="absolute bottom-6 left-6 right-6">
                               <h3 className="text-white font-bold text-xl mb-1">About Us</h3>
                               <p className="text-white/80 text-sm">Learn more about our mission and vision.</p>
                             </div>
                           </div>
-                          <div className="absolute inset-0 bg-cover bg-center company-slide-2 transition-opacity duration-1000" style={{ backgroundImage: "url('assets/globalpresencehero.jpg')" }}>
+                          <div className="absolute inset-0 bg-cover bg-center company-slide-2 transition-opacity duration-1000" style={{ backgroundImage: `url('${getImage('assets/globalpresencehero.jpg', 'assets/globalpresencehero.jpg')}')` }}>
                             <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
                             <div className="absolute bottom-6 left-6 right-6">
                               <h3 className="text-white font-bold text-xl mb-1">Global Presence</h3>
                               <p className="text-white/80 text-sm">We are expanding healthcare solutions worldwide.</p>
                             </div>
                           </div>
-                          <div className="absolute inset-0 bg-cover bg-center company-slide-3 transition-opacity duration-1000" style={{ backgroundImage: "url('assets/careershero.png')" }}>
+                          <div className="absolute inset-0 bg-cover bg-center company-slide-3 transition-opacity duration-1000" style={{ backgroundImage: `url('${getImage('assets/careershero.png', 'assets/careershero.png')}')` }}>
                             <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
                             <div className="absolute bottom-6 left-6 right-6">
                               <h3 className="text-white font-bold text-xl mb-1">Careers</h3>
@@ -489,7 +570,7 @@ export default function GetMedsHomepage() {
                       <a href="ungc.html" className="block pl-5 py-2.5 text-[14px] font-medium text-gray-600 hover:text-primary transition">United Nations Global Compact</a>
                       <a href="/articles" className="block pl-5 py-2.5 text-[14px] font-medium text-gray-600 hover:text-primary transition">Articles</a>
                       <a href="pap.html" className="block pl-5 py-1">
-                        <img src="assets/PAPlogo.png" alt="Patient Assistance Program" className="h-12 w-auto object-contain" />
+                        <img src={getImage('assets/PAPlogo.png', 'assets/PAPlogo.png')} alt="Patient Assistance Program" className="h-12 w-auto object-contain" />
                       </a>
                     </div>
                   )}
@@ -600,14 +681,14 @@ export default function GetMedsHomepage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div className="h-[220px] md:h-[280px] lg:h-[340px]">
               <img
-                src="assets/patientfirst.jpg"
+                src={getImage('assets/patientfirst.jpg', 'assets/patientfirst.jpg')}
                 alt="Medical Professional"
                 className="w-full h-full object-cover object-center rounded-[24px] shadow-lg"
               />
             </div>
             <div className="h-[220px] md:h-[280px] lg:h-[340px]">
               <img
-                src="assets/patientsecond.jpg"
+                src={getImage('assets/patientsecond.jpg', 'assets/patientsecond.jpg')}
                 alt="Medical Facility"
                 className="w-full h-full object-cover object-center rounded-[24px] shadow-lg"
               />
@@ -706,18 +787,18 @@ export default function GetMedsHomepage() {
       {/* Therapeutic Areas Section */}
       {(() => {
         const therapCards = [
-          { name: "Oncology", badge: "50+ Products", img: "assets/oncology.jpg", marquee: "Breast Cancer • Ovarian Cancer • Non-Small Cell Lung Cancer • Prostate Cancer • Colorectal Cancer • Pancreatic Cancer • " },
-          { name: "Cardiology", badge: "35+ Products", img: "assets/cardiology.jpg", marquee: "Arrhythmia Management • Hypertension/Angina • Heart Failure • Atrial Fibrillation • Coronary Artery Disease • " },
-          { name: "Neurology", badge: "40+ Products", img: "assets/neurology.jpg", marquee: "Glioblastoma Multiforme • Chronic Pain • Inflammatory Disorders • Osteoporosis • Multiple Myeloma • Neuro-Oncology • " },
-          { name: "Hematology", badge: "60+ Products", img: "assets/hematology.jpg", marquee: "Acute Myeloid Leukemia • Chronic Myeloid Leukemia • Hodgkin/Non-Hodgkin's Lymphoma • Sickle Cell Anemia • " },
-          { name: "Anti-Infectives", badge: "45+ Products", img: "assets/anti-infectives.jpg", marquee: "Respiratory Infections • Urinary Tract Infections • Skin and Soft Tissue Infections • Bone and Joint Infections • " },
-          { name: "Endocrinology", badge: "30+ Products", img: "assets/endocrinology.jpg", marquee: "Endometriosis • Fibrocystic Breast Disease • Diabetes Management • Thyroid Disorders • Metabolic Syndrome • " },
-          { name: "Orthopedic", badge: "25+ Products", img: "assets/orthopedic.jpg", marquee: "Multiple Myeloma • Osteoporosis • Joint Replacement Support • Fracture Recovery • Bone Metastases • " },
-          { name: "Respiratory", badge: "35+ Products", img: "assets/respiratory.jpg", marquee: "Seasonal Allergic Rhinitis • Asthma • COPD • Bronchitis • Pulmonary Hypertension • Chronic Kidney Disease • " },
-          { name: "Essential Medicines", badge: "100+ Products", img: "assets/essential-medicines.jpg", marquee: "Generic Medicines • OTC Products • Vitamins & Supplements • First-line Treatments • Essential Drug List • " },
-          { name: "Biologicals & Vaccines", badge: "20+ Products", img: "assets/biologicals-vaccines.jpg", marquee: "Hepatitis B • HPV • Influenza • Pneumococcal • Monoclonal Antibodies • Biosimilars • " },
-          { name: "Medical Devices", badge: "50+ Devices", img: "assets/medical-devices.jpg", marquee: "Diagnostic Equipment • Surgical Instruments • Patient Monitoring • Infusion Devices • Wound Care • " },
-          { name: "Rare Diseases", badge: "15+ Products", img: "assets/rare-diseases.jpg", marquee: "Orphan Drugs • Enzyme Replacement Therapy • Gene Therapy • Ultra-rare Conditions • Patient Programs • " },
+          { name: "Oncology", badge: "50+ Products", img: getImage("assets/oncology.jpg", "assets/oncology.jpg"), marquee: "Breast Cancer • Ovarian Cancer • Non-Small Cell Lung Cancer • Prostate Cancer • Colorectal Cancer • Pancreatic Cancer • " },
+          { name: "Cardiology", badge: "35+ Products", img: getImage("assets/cardiology.jpg", "assets/cardiology.jpg"), marquee: "Arrhythmia Management • Hypertension/Angina • Heart Failure • Atrial Fibrillation • Coronary Artery Disease • " },
+          { name: "Neurology", badge: "40+ Products", img: getImage("assets/neurology.jpg", "assets/neurology.jpg"), marquee: "Glioblastoma Multiforme • Chronic Pain • Inflammatory Disorders • Osteoporosis • Multiple Myeloma • Neuro-Oncology • " },
+          { name: "Hematology", badge: "60+ Products", img: getImage("assets/hematology.jpg", "assets/hematology.jpg"), marquee: "Acute Myeloid Leukemia • Chronic Myeloid Leukemia • Hodgkin/Non-Hodgkin's Lymphoma • Sickle Cell Anemia • " },
+          { name: "Anti-Infectives", badge: "45+ Products", img: getImage("assets/anti-infectives.jpg", "assets/anti-infectives.jpg"), marquee: "Respiratory Infections • Urinary Tract Infections • Skin and Soft Tissue Infections • Bone and Joint Infections • " },
+          { name: "Endocrinology", badge: "30+ Products", img: getImage("assets/endocrinology.jpg", "assets/endocrinology.jpg"), marquee: "Endometriosis • Fibrocystic Breast Disease • Diabetes Management • Thyroid Disorders • Metabolic Syndrome • " },
+          { name: "Orthopedic", badge: "25+ Products", img: getImage("assets/orthopedic.jpg", "assets/orthopedic.jpg"), marquee: "Multiple Myeloma • Osteoporosis • Joint Replacement Support • Fracture Recovery • Bone Metastases • " },
+          { name: "Respiratory", badge: "35+ Products", img: getImage("assets/respiratory.jpg", "assets/respiratory.jpg"), marquee: "Seasonal Allergic Rhinitis • Asthma • COPD • Bronchitis • Pulmonary Hypertension • Chronic Kidney Disease • " },
+          { name: "Essential Medicines", badge: "100+ Products", img: getImage("assets/essential-medicines.jpg", "assets/essential-medicines.jpg"), marquee: "Generic Medicines • OTC Products • Vitamins & Supplements • First-line Treatments • Essential Drug List • " },
+          { name: "Biologicals & Vaccines", badge: "20+ Products", img: getImage("assets/biologicals-vaccines.jpg", "assets/biologicals-vaccines.jpg"), marquee: "Hepatitis B • HPV • Influenza • Pneumococcal • Monoclonal Antibodies • Biosimilars • " },
+          { name: "Medical Devices", badge: "50+ Devices", img: getImage("assets/medical-devices.jpg", "assets/medical-devices.jpg"), marquee: "Diagnostic Equipment • Surgical Instruments • Patient Monitoring • Infusion Devices • Wound Care • " },
+          { name: "Rare Diseases", badge: "15+ Products", img: getImage("assets/rare-diseases.jpg", "assets/rare-diseases.jpg"), marquee: "Orphan Drugs • Enzyme Replacement Therapy • Gene Therapy • Ultra-rare Conditions • Patient Programs • " },
         ];
         const totalPages = Math.ceil(therapCards.length / 4);
         return (
@@ -1386,25 +1467,37 @@ export default function GetMedsHomepage() {
           </div>
 
           {/* Inquiry Form */}
-          <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); setIsInquiryOpen(false); alert('Inquiry Sent Successfully!'); }}>
+          <form className="space-y-4" onSubmit={handlePartnershipSubmit}>
             <div>
               <label className="block text-xs font-semibold text-gray-600 mb-1">Name <span className="text-red-500">*</span></label>
-              <input type="text" required placeholder="e.g. Juan Dela Cruz" className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-[13px] placeholder-gray-400" />
+              <input type="text" required placeholder="e.g. Juan Dela Cruz"
+                value={partnershipData.name}
+                onChange={e => setPartnershipData(prev => ({ ...prev, name: e.target.value }))}
+                className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-[13px] placeholder-gray-400" />
             </div>
 
             <div>
               <label className="block text-xs font-semibold text-gray-600 mb-1">Company/Organization <span className="text-red-500">*</span></label>
-              <input type="text" required placeholder="e.g. General Hospital Inc." className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-[13px] placeholder-gray-400" />
+              <input type="text" required placeholder="e.g. General Hospital Inc."
+                value={partnershipData.company}
+                onChange={e => setPartnershipData(prev => ({ ...prev, company: e.target.value }))}
+                className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-[13px] placeholder-gray-400" />
             </div>
 
             <div>
               <label className="block text-xs font-semibold text-gray-600 mb-1">Email <span className="text-red-500">*</span></label>
-              <input type="email" required placeholder="e.g. juan@hospital.com" className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-[13px] placeholder-gray-400" />
+              <input type="email" required placeholder="e.g. juan@hospital.com"
+                value={partnershipData.email}
+                onChange={e => setPartnershipData(prev => ({ ...prev, email: e.target.value }))}
+                className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-[13px] placeholder-gray-400" />
             </div>
 
             <div>
               <label className="block text-xs font-semibold text-gray-600 mb-1">Mobile number <span className="text-red-500">*</span></label>
-              <input type="tel" required placeholder="e.g. +63 912 345 6789" className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-[13px] placeholder-gray-400" />
+              <input type="tel" required placeholder="e.g. +63 912 345 6789"
+                value={partnershipData.phone}
+                onChange={e => setPartnershipData(prev => ({ ...prev, phone: e.target.value }))}
+                className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-[13px] placeholder-gray-400" />
             </div>
 
             <div>
@@ -1412,13 +1505,18 @@ export default function GetMedsHomepage() {
               <textarea
                 required
                 rows={4}
+                value={partnershipData.message}
+                onChange={e => setPartnershipData(prev => ({ ...prev, message: e.target.value }))}
                 className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-[13px] resize-none placeholder-gray-400"
                 placeholder="Briefly tell us about your inquiry — whether you're a hospital, pharmacy, manufacturer, or healthcare partner."
               ></textarea>
             </div>
 
             <div className="flex items-start space-x-3 pt-1">
-              <input type="checkbox" required id="consent" className="mt-[2px] w-3.5 h-3.5 text-primary border-gray-300 rounded focus:ring-primary cursor-pointer" />
+              <input type="checkbox" required id="consent"
+                checked={partnershipData.consent}
+                onChange={e => setPartnershipData(prev => ({ ...prev, consent: e.target.checked }))}
+                className="mt-[2px] w-3.5 h-3.5 text-primary border-gray-300 rounded focus:ring-primary cursor-pointer" />
               <label htmlFor="consent" className="text-[11px] text-gray-500 leading-snug cursor-pointer select-none">
                 I consent to Getmeds processing my information in accordance with the Data Privacy Act of 2012. <span className="text-red-500">*</span>
               </label>
@@ -1427,9 +1525,10 @@ export default function GetMedsHomepage() {
             <div className="pt-2 pb-8">
               <button
                 type="submit"
-                className="w-full bg-gradient-to-r from-primary to-[#1D9FDA] hover:opacity-90 text-white font-semibold py-3.5 px-6 rounded-lg shadow-lg shadow-blue-500/30 transition-all flex items-center justify-center space-x-2 group"
+                disabled={submitState === 'sending'}
+                className="w-full bg-gradient-to-r from-primary to-[#1D9FDA] hover:opacity-90 text-white font-semibold py-3.5 px-6 rounded-lg shadow-lg shadow-blue-500/30 transition-all flex items-center justify-center space-x-2 group disabled:opacity-50"
               >
-                <span>Send inquiry</span>
+                <span>{submitState === 'sending' ? 'Sending...' : 'Send inquiry'}</span>
                 <i className="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
               </button>
             </div>

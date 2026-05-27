@@ -1,7 +1,9 @@
 import React, { useEffect, useRef } from 'react';
 import { injectHTML } from '../lib/injectHTML';
+import { useImageMapper } from '../lib/useSanity';
 
 export default function AboutUs() {
+  const { getImage } = useImageMapper('about-us');
   const valuesContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -63,6 +65,19 @@ export default function AboutUs() {
     return () => document.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
+  useEffect(() => {
+    const hash = window.location.hash;
+    if (hash) {
+      const targetId = decodeURIComponent(hash.substring(1));
+      setTimeout(() => {
+        const element = document.getElementById(targetId);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 600);
+    }
+  }, []);
+
   return (
     <div style={{ fontFamily: "'Poppins', sans-serif" }} className="bg-white text-gray-800 antialiased">
 
@@ -74,7 +89,7 @@ export default function AboutUs() {
         <div className="relative rounded-[1.5rem] overflow-hidden min-h-[450px] md:min-h-[500px] flex items-end group">
           {/* Background Image */}
           <div className="absolute inset-0 z-0">
-            <img src="assets/aboutusone.jpg" data-json-src="hero.image" data-json-alt="hero.imageAlt"
+            <img src={getImage('assets/aboutusone.jpg', 'assets/aboutusone.jpg')} data-json-src="hero.image" data-json-alt="hero.imageAlt"
               className="w-full h-full object-cover object-center transform group-hover:scale-105 transition-transform duration-[4s]"
               alt="About Getmeds" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
@@ -117,7 +132,7 @@ export default function AboutUs() {
             {/* Large Image (Left) */}
             <div className="md:col-span-8">
               <div className="relative h-[300px] md:h-[380px] rounded-[1rem] overflow-hidden shadow-xl group">
-                <img src="assets/aboutustwo.jpg" alt="Getmeds Logistics"
+                <img src={getImage('assets/aboutustwo.jpg', 'assets/aboutustwo.jpg')} alt="Getmeds Logistics"
                   className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
               </div>
@@ -125,11 +140,11 @@ export default function AboutUs() {
             {/* Stacked Images (Right) */}
             <div className="md:col-span-4 flex flex-col gap-4">
               <div className="h-[142px] md:h-[182px] rounded-[1rem] overflow-hidden shadow-lg group">
-                <img src="assets/aboutusthree.jpg" alt="Medical Technology"
+                <img src={getImage('assets/aboutusthree.jpg', 'assets/aboutusthree.jpg')} alt="Medical Technology"
                   className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700" />
               </div>
               <div className="h-[142px] md:h-[182px] rounded-[1rem] overflow-hidden shadow-lg group">
-                <img src="assets/aboutusfour.jpg" alt="Healthcare Excellence"
+                <img src={getImage('assets/aboutusfour.jpg', 'assets/aboutusfour.jpg')} alt="Healthcare Excellence"
                   className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700" />
               </div>
             </div>
@@ -451,7 +466,7 @@ export default function AboutUs() {
                 </div>
                 <div className="value-card bg-white p-3 rounded-full shadow-xl border border-gray-100 w-16 h-16 md:w-24 md:h-24 flex flex-col items-center justify-center text-center reveal z-30 bg-gradient-to-br from-white to-gray-50"
                   data-speed="2.5" style={{ transitionDelay: '700ms' }}>
-                  <img src="assets/logo.png" className="h-6 md:h-8" alt="Getmeds Logo" />
+                  <img src={getImage('assets/logo.png', 'assets/logo.png')} className="h-6 md:h-8" alt="Getmeds Logo" />
                 </div>
                 <div className="value-card bg-white p-3 rounded-full shadow-md border border-gray-100 w-16 h-16 md:w-24 md:h-24 flex flex-col items-center justify-center text-center reveal"
                   data-speed="2.1" style={{ transitionDelay: '800ms' }}>
@@ -505,7 +520,7 @@ export default function AboutUs() {
 
             {/* Supportive Hand Image (Optimized Size) */}
             <div className="relative z-0 w-full max-w-[280px] md:max-w-xs reveal mt-0">
-              <img src="assets/hand.png" alt="Supportive Hand"
+              <img src={getImage('assets/hand.png', 'assets/hand.png')} alt="Supportive Hand"
                 className="w-full h-auto object-cover transform -rotate-1 rounded-[1.5rem]" />
               <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent"></div>
             </div>
@@ -568,13 +583,13 @@ export default function AboutUs() {
           <div className="max-w-5xl mx-auto">
             {/* CEO Row */}
             <div className="flex justify-center mb-8">
-              <div className="reveal w-full max-w-[280px]">
+              <div className="reveal w-full max-w-[280px]" id="naresh-bishnoi">
                 <div className="team-card bg-gray-100 group">
                   <div className="team-ribbon">
                     <span className="vertical-text mb-16">Getmeds</span>
                   </div>
                   <div className="team-img-wrapper">
-                    <img src="assets/CEO.png" alt="Mr. Naresh Bishnoi" data-json-src="team.members.0.image" data-json-alt="team.members.0.name"
+                    <img src={getImage('assets/CEO.png', 'assets/CEO.png')} alt="Mr. Naresh Bishnoi" data-json-src="team.members.0.image" data-json-alt="team.members.0.name"
                       className="team-img transition-all duration-700" />
                   </div>
                   <div className="team-social">
@@ -596,13 +611,13 @@ export default function AboutUs() {
             {/* Row 2 */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
               {/* Leader 2 */}
-              <div className="reveal" style={{ transitionDelay: '150ms' }}>
+              <div className="reveal" style={{ transitionDelay: '150ms' }} id="elena-rodriguez">
                 <div className="team-card bg-gray-100 group">
                   <div className="team-ribbon">
                     <span className="vertical-text">Getmeds</span>
                   </div>
                   <div className="team-img-wrapper">
-                    <img src="assets/employeeone.png" alt="Dr. Elena Rodriguez"
+                    <img src={getImage('assets/employeeone.png', 'assets/employeeone.png')} alt="Dr. Elena Rodriguez"
                       className="team-img transition-all duration-700" />
                   </div>
                   <div className="team-social">
@@ -621,13 +636,13 @@ export default function AboutUs() {
               </div>
 
               {/* Leader 3 */}
-              <div className="reveal" style={{ transitionDelay: '300ms' }}>
+              <div className="reveal" style={{ transitionDelay: '300ms' }} id="michael-chen">
                 <div className="team-card bg-gray-100 group">
                   <div className="team-ribbon">
                     <span className="vertical-text">Getmeds</span>
                   </div>
                   <div className="team-img-wrapper">
-                    <img src="assets/employeetwo.png" alt="Dr. Michael Chen"
+                    <img src={getImage('assets/employeetwo.png', 'assets/employeetwo.png')} alt="Dr. Michael Chen"
                       className="team-img transition-all duration-700" />
                   </div>
                   <div className="team-social">
@@ -646,13 +661,13 @@ export default function AboutUs() {
               </div>
 
               {/* Leader 4 */}
-              <div className="reveal" style={{ transitionDelay: '450ms' }}>
+              <div className="reveal" style={{ transitionDelay: '450ms' }} id="sarah-jenkins">
                 <div className="team-card bg-gray-100 group">
                   <div className="team-ribbon">
                     <span className="vertical-text">Finance</span>
                   </div>
                   <div className="team-img-wrapper">
-                    <img src="assets/employeethree.png" alt="Dr. Sarah Jenkins"
+                    <img src={getImage('assets/employeethree.png', 'assets/employeethree.png')} alt="Dr. Sarah Jenkins"
                       className="team-img transition-all duration-700" />
                   </div>
                   <div className="team-social">
@@ -674,13 +689,13 @@ export default function AboutUs() {
             {/* Row 3 */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {/* Leader 5 */}
-              <div className="reveal" style={{ transitionDelay: '150ms' }}>
+              <div className="reveal" style={{ transitionDelay: '150ms' }} id="david-torres">
                 <div className="team-card bg-gray-100 group">
                   <div className="team-ribbon">
                     <span className="vertical-text">Technology</span>
                   </div>
                   <div className="team-img-wrapper">
-                    <img src="assets/employeefour.png" alt="Mr. David Torres"
+                    <img src={getImage('assets/employeefour.png', 'assets/employeefour.png')} alt="Mr. David Torres"
                       className="team-img transition-all duration-700" />
                   </div>
                   <div className="team-social">
@@ -699,13 +714,13 @@ export default function AboutUs() {
               </div>
 
               {/* Leader 6 */}
-              <div className="reveal" style={{ transitionDelay: '300ms' }}>
+              <div className="reveal" style={{ transitionDelay: '300ms' }} id="emily-wong">
                 <div className="team-card bg-gray-100 group">
                   <div className="team-ribbon">
                     <span className="vertical-text">Research</span>
                   </div>
                   <div className="team-img-wrapper">
-                    <img src="assets/employeefive.png" alt="Dr. Emily Wong"
+                    <img src={getImage('assets/employeefive.png', 'assets/employeefive.png')} alt="Dr. Emily Wong"
                       className="team-img transition-all duration-700" />
                   </div>
                   <div className="team-social">
@@ -724,13 +739,13 @@ export default function AboutUs() {
               </div>
 
               {/* Leader 7 */}
-              <div className="reveal" style={{ transitionDelay: '450ms' }}>
+              <div className="reveal" style={{ transitionDelay: '450ms' }} id="rachel-green">
                 <div className="team-card bg-gray-100 group">
                   <div className="team-ribbon">
                     <span className="vertical-text">People</span>
                   </div>
                   <div className="team-img-wrapper">
-                    <img src="assets/employeesix.png" alt="Ms. Rachel Green"
+                    <img src={getImage('assets/employeesix.png', 'assets/employeesix.png')} alt="Ms. Rachel Green"
                       className="team-img transition-all duration-700" />
                   </div>
                   <div className="team-social">
@@ -794,7 +809,7 @@ export default function AboutUs() {
             </div>
             <div className="flex items-center justify-center p-6 transition-all duration-300 transform hover:scale-110">
               <div className="flex items-center gap-2 opacity-60">
-                <img src="assets/UNGClogo.png" className="h-10 object-contain" alt="UNGC Logo" />
+                <img src={getImage('assets/UNGClogo.png', 'assets/UNGClogo.png')} className="h-10 object-contain" alt="UNGC Logo" />
               </div>
             </div>
           </div>

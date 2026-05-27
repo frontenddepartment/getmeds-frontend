@@ -42,7 +42,11 @@ import {
   getCsrPrograms,
   getSiteSettings,
   getNavigation,
+  getPageAssets,
+  getPageAssetsByPage,
 } from './queries'
+
+import { urlFor } from './sanity'
 
 import type {
   Product,
@@ -67,6 +71,7 @@ import type {
   ProductsPage,
   ServicesPage,
   UngcPage,
+  PageAsset,
 } from '../types/sanity'
 
 // ─────────────────────────────────────────────
@@ -262,3 +267,79 @@ export function useCountries() {
 export function useCsrPrograms() {
   return useFetch<CsrProgram[]>(getCsrPrograms)
 }
+
+// ─────────────────────────────────────────────
+// Page Assets (Materials)
+// ─────────────────────────────────────────────
+
+export function usePageAssets(page?: string) {
+  return useFetch<PageAsset[]>(() => {
+    return page ? getPageAssetsByPage(page) : getPageAssets()
+  })
+}
+
+export function useImageMapper(page: string) {
+  const { data: pageImages, loading, error } = usePageAssets(page)
+  const { data: settings } = useSiteSettings()
+
+  const getImage = (assetPath: string, fallback: string): string => {
+    // Intercept centralized logo requests from siteSettings
+    if (assetPath.includes('getmedslogo.png') && settings?.logo?.src) {
+      try {
+        return urlFor(settings.logo.src).url()
+      } catch (err) {
+        console.error('Error generating logo URL from siteSettings:', err)
+      }
+    }
+
+    if (!pageImages) return fallback
+    // Try matching by relative assetPath or name in top-level assets
+    const found = pageImages.find(
+      (img) => img.assetPath === assetPath || img.name === assetPath
+    )
+    if (found && found.image) {
+      try {
+        return urlFor(found.image).url()
+      } catch (err) {
+        console.error('Error generating URL in useImageMapper:', err)
+      }
+    }
+    // Try matching nested sliders array
+    for (const doc of pageImages) {
+      if (doc.images && Array.isArray(doc.images)) {
+        const nestedFound = doc.images.find(
+          (slide: any) => slide.assetPath === assetPath
+        )
+        if (nestedFound && nestedFound.image) {
+          try {
+            return urlFor(nestedFound.image).url()
+          } catch (err) {
+            console.error('Error generating nested URL in useImageMapper:', err)
+          }
+        }
+      }
+    }
+    return fallback
+  }
+
+  const getSliderImages = (sliderName: string, defaultPaths: string[]): string[] => {
+    if (!pageImages) return defaultPaths
+    const found = pageImages.find((img) => img.name === sliderName)
+    if (found && found.images && Array.isArray(found.images)) {
+      return found.images.map((slide: any) => {
+        if (slide.image) {
+          try {
+            return urlFor(slide.image).url()
+          } catch (err) {
+            console.error('Error in getSliderImages urlFor:', err)
+          }
+        }
+        return slide.assetPath || ''
+      }).filter(Boolean)
+    }
+    return defaultPaths
+  }
+
+  return { getImage, getSliderImages, loading, error }
+}
+

@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { injectHTML } from '../lib/injectHTML';
+import { getGoogleSpreadsheetBySlug } from '../lib/queries';
+
 
 export default function OrderMedicines() {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -8,6 +10,99 @@ export default function OrderMedicines() {
   const slideIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const uploadIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const totalSlides = 3;
+
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [formData, setFormData] = useState({
+    patientName: '',
+    email: '',
+    phone: '',
+    dob: '',
+    address: '',
+    terms: false
+  });
+  const [submitState, setSubmitState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
+
+  const fileToBase64 = (file: File): Promise<string> =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve((reader.result as string).split(',')[1]);
+      reader.onerror = reject;
+    });
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.patientName || !formData.email || !formData.phone || !formData.address) {
+      alert('Please fill in all required fields (Name, Email, Phone, and Delivery Address).');
+      return;
+    }
+    if (!formData.terms) {
+      alert('Please confirm that all provided information is authentic.');
+      return;
+    }
+    setSubmitState('sending');
+
+    const filesData: { name: string; type: string; base64: string }[] = [];
+    if (uploadedFile) {
+      try {
+        const base64 = await fileToBase64(uploadedFile);
+        filesData.push({ name: uploadedFile.name, type: uploadedFile.type, base64 });
+      } catch (err) {
+        console.error('Error processing file:', uploadedFile.name, err);
+      }
+    }
+
+    try {
+      const sheetInfo = await getGoogleSpreadsheetBySlug('order-medicine-list');
+      if (!sheetInfo || !sheetInfo.spreadsheetId) {
+        throw new Error('Google Spreadsheet settings not found in Sanity.');
+      }
+
+      const timestamp = new Date().toLocaleString();
+      const payload = {
+        spreadsheetId: sheetInfo.spreadsheetId,
+        row: [
+          formData.patientName,
+          formData.email,
+          formData.phone,
+          formData.dob,
+          formData.address,
+          '[PENDING_FILE_UPLOAD]',
+          formData.terms ? 'Confirmed' : 'Not Confirmed',
+          timestamp
+        ],
+        files: filesData
+      };
+
+      const response = await fetch('http://localhost:3333/api/append-to-spreadsheet', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (!response.ok) {
+        throw new Error('Order submission failed.');
+      }
+
+      setSubmitState('sent');
+      setFormData({
+        patientName: '',
+        email: '',
+        phone: '',
+        dob: '',
+        address: '',
+        terms: false
+      });
+      setUploadedFile(null);
+      alert('Order Submitted Successfully!');
+      setSubmitState('idle');
+    } catch (error) {
+      console.error('Submission error:', error);
+      setSubmitState('error');
+      setTimeout(() => setSubmitState('idle'), 2000);
+    }
+  };
+
 
   // Slider auto-advance
   useEffect(() => {
@@ -51,7 +146,10 @@ export default function OrderMedicines() {
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) openUploadModal();
+    if (e.target.files && e.target.files[0]) {
+      setUploadedFile(e.target.files[0]);
+      openUploadModal();
+    }
   };
 
   // Load navbar & footer
@@ -340,26 +438,38 @@ export default function OrderMedicines() {
                   <p className="text-gray-400 text-[13px]">Please provide accurate details for legal verification.</p>
                 </div>
 
-                <div className="space-y-6">
+                <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
                     <div className="space-y-2">
                       <label className="text-[13px] font-bold text-gray-800 ml-1">Patient Full Name</label>
                       <input type="text" placeholder="As written on prescription"
+                        required
+                        value={formData.patientName}
+                        onChange={e => setFormData(prev => ({ ...prev, patientName: e.target.value }))}
                         className="w-full bg-gray-50 border-none rounded-[15px] px-6 py-3.5 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition placeholder-gray-300" />
                     </div>
                     <div className="space-y-2">
                       <label className="text-[13px] font-bold text-gray-800 ml-1">Email Address</label>
                       <input type="email" placeholder="example@domain.com"
+                        required
+                        value={formData.email}
+                        onChange={e => setFormData(prev => ({ ...prev, email: e.target.value }))}
                         className="w-full bg-gray-50 border-none rounded-[15px] px-6 py-3.5 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition placeholder-gray-300" />
                     </div>
                     <div className="space-y-2">
                       <label className="text-[13px] font-bold text-gray-800 ml-1">Phone Number</label>
                       <input type="tel" placeholder="+63 9xx xxx xxxx"
+                        required
+                        value={formData.phone}
+                        onChange={e => setFormData(prev => ({ ...prev, phone: e.target.value }))}
                         className="w-full bg-gray-50 border-none rounded-[15px] px-6 py-3.5 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition placeholder-gray-300" />
                     </div>
                     <div className="space-y-2">
                       <label className="text-[13px] font-bold text-gray-800 ml-1">Date of Birth</label>
                       <input type="date"
+                        required
+                        value={formData.dob}
+                        onChange={e => setFormData(prev => ({ ...prev, dob: e.target.value }))}
                         className="w-full bg-gray-50 border-none rounded-[15px] px-6 py-3.5 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition" />
                     </div>
                   </div>
@@ -367,11 +477,17 @@ export default function OrderMedicines() {
                   <div className="space-y-2">
                     <label className="text-[13px] font-bold text-gray-800 ml-1">Delivery Address</label>
                     <textarea placeholder="Complete address for courier delivery..." rows={3}
+                      required
+                      value={formData.address}
+                      onChange={e => setFormData(prev => ({ ...prev, address: e.target.value }))}
                       className="w-full bg-gray-50 border-none rounded-[15px] px-6 py-4 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition placeholder-gray-300 resize-none" />
                   </div>
 
                   <div className="flex items-center gap-3 pt-2">
-                    <input type="checkbox" id="terms" className="w-4 h-4 rounded-md border-gray-200 text-success focus:ring-success" />
+                    <input type="checkbox" id="terms"
+                      checked={formData.terms}
+                      onChange={e => setFormData(prev => ({ ...prev, terms: e.target.checked }))}
+                      className="w-4 h-4 rounded-md border-gray-200 text-success focus:ring-success cursor-pointer" />
                     <label htmlFor="terms" className="text-[12px] text-gray-500 cursor-pointer">
                       I confirm that all provided information is authentic.
                     </label>
@@ -379,13 +495,15 @@ export default function OrderMedicines() {
 
                   <div className="pt-4">
                     <button
-                      className="hover:opacity-90 text-white font-bold py-3.5 px-10 rounded-[15px] text-[14px] transition shadow-lg shadow-blue-100"
+                      type="submit"
+                      disabled={submitState === 'sending'}
+                      className="hover:opacity-90 text-white font-bold py-3.5 px-10 rounded-[15px] text-[14px] transition shadow-lg shadow-blue-100 disabled:opacity-50"
                       style={{ background: 'linear-gradient(to right,#61A644,#1D9FDA)' }}
                     >
-                      Submit Order
+                      {submitState === 'sending' ? 'Submitting...' : 'Submit Order'}
                     </button>
                   </div>
-                </div>
+                </form>
               </div>
             </div>
 
