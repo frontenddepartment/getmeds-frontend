@@ -787,18 +787,18 @@ export default function GetMedsHomepage() {
       {/* Therapeutic Areas Section */}
       {(() => {
         const therapCards = [
-          { name: "Oncology", badge: "50+ Products", img: getImage("assets/oncology.jpg", "assets/oncology.jpg"), marquee: "Breast Cancer • Ovarian Cancer • Non-Small Cell Lung Cancer • Prostate Cancer • Colorectal Cancer • Pancreatic Cancer • " },
-          { name: "Cardiology", badge: "35+ Products", img: getImage("assets/cardiology.jpg", "assets/cardiology.jpg"), marquee: "Arrhythmia Management • Hypertension/Angina • Heart Failure • Atrial Fibrillation • Coronary Artery Disease • " },
-          { name: "Neurology", badge: "40+ Products", img: getImage("assets/neurology.jpg", "assets/neurology.jpg"), marquee: "Glioblastoma Multiforme • Chronic Pain • Inflammatory Disorders • Osteoporosis • Multiple Myeloma • Neuro-Oncology • " },
-          { name: "Hematology", badge: "60+ Products", img: getImage("assets/hematology.jpg", "assets/hematology.jpg"), marquee: "Acute Myeloid Leukemia • Chronic Myeloid Leukemia • Hodgkin/Non-Hodgkin's Lymphoma • Sickle Cell Anemia • " },
-          { name: "Anti-Infectives", badge: "45+ Products", img: getImage("assets/anti-infectives.jpg", "assets/anti-infectives.jpg"), marquee: "Respiratory Infections • Urinary Tract Infections • Skin and Soft Tissue Infections • Bone and Joint Infections • " },
-          { name: "Endocrinology", badge: "30+ Products", img: getImage("assets/endocrinology.jpg", "assets/endocrinology.jpg"), marquee: "Endometriosis • Fibrocystic Breast Disease • Diabetes Management • Thyroid Disorders • Metabolic Syndrome • " },
-          { name: "Orthopedic", badge: "25+ Products", img: getImage("assets/orthopedic.jpg", "assets/orthopedic.jpg"), marquee: "Multiple Myeloma • Osteoporosis • Joint Replacement Support • Fracture Recovery • Bone Metastases • " },
-          { name: "Respiratory", badge: "35+ Products", img: getImage("assets/respiratory.jpg", "assets/respiratory.jpg"), marquee: "Seasonal Allergic Rhinitis • Asthma • COPD • Bronchitis • Pulmonary Hypertension • Chronic Kidney Disease • " },
-          { name: "Essential Medicines", badge: "100+ Products", img: getImage("assets/essential-medicines.jpg", "assets/essential-medicines.jpg"), marquee: "Generic Medicines • OTC Products • Vitamins & Supplements • First-line Treatments • Essential Drug List • " },
-          { name: "Biologicals & Vaccines", badge: "20+ Products", img: getImage("assets/biologicals-vaccines.jpg", "assets/biologicals-vaccines.jpg"), marquee: "Hepatitis B • HPV • Influenza • Pneumococcal • Monoclonal Antibodies • Biosimilars • " },
-          { name: "Medical Devices", badge: "50+ Devices", img: getImage("assets/medical-devices.jpg", "assets/medical-devices.jpg"), marquee: "Diagnostic Equipment • Surgical Instruments • Patient Monitoring • Infusion Devices • Wound Care • " },
-          { name: "Rare Diseases", badge: "15+ Products", img: getImage("assets/rare-diseases.jpg", "assets/rare-diseases.jpg"), marquee: "Orphan Drugs • Enzyme Replacement Therapy • Gene Therapy • Ultra-rare Conditions • Patient Programs • " },
+          { name: "Oncology", badge: "50+ Products", img: getImage("assets/oncology.jpg", "assets/oncology.jpg"), marquee: "Breast Cancer • Ovarian Cancer • Non-Small Cell Lung Cancer • Prostate Cancer • Colorectal Cancer • Pancreatic Cancer • ", link: "product-range.html?category=oncology" },
+          { name: "Cardiology", badge: "35+ Products", img: getImage("assets/cardiology.jpg", "assets/cardiology.jpg"), marquee: "Arrhythmia Management • Hypertension/Angina • Heart Failure • Atrial Fibrillation • Coronary Artery Disease • ", link: "product-range.html?category=cardiology" },
+          { name: "Neurology", badge: "40+ Products", img: getImage("assets/neurology.jpg", "assets/neurology.jpg"), marquee: "Glioblastoma Multiforme • Chronic Pain • Inflammatory Disorders • Osteoporosis • Multiple Myeloma • Neuro-Oncology • ", link: "product-range.html?category=neuro-oncology" },
+          { name: "Hematology", badge: "60+ Products", img: getImage("assets/hematology.jpg", "assets/hematology.jpg"), marquee: "Acute Myeloid Leukemia • Chronic Myeloid Leukemia • Hodgkin/Non-Hodgkin's Lymphoma • Sickle Cell Anemia • ", link: "product-range.html?category=hematology" },
+          { name: "Anti-Infectives", badge: "45+ Products", img: getImage("assets/anti-infectives.jpg", "assets/anti-infectives.jpg"), marquee: "Respiratory Infections • Urinary Tract Infections • Skin and Soft Tissue Infections • Bone and Joint Infections • ", link: "product-range.html?category=anti-infectives" },
+          { name: "Endocrinology", badge: "30+ Products", img: getImage("assets/endocrinology.jpg", "assets/endocrinology.jpg"), marquee: "Endometriosis • Fibrocystic Breast Disease • Diabetes Management • Thyroid Disorders • Metabolic Syndrome • ", link: "product-range.html?category=endocrinology" },
+          { name: "Orthopedic", badge: "25+ Products", img: getImage("assets/orthopedic.jpg", "assets/orthopedic.jpg"), marquee: "Multiple Myeloma • Osteoporosis • Joint Replacement Support • Fracture Recovery • Bone Metastases • ", link: "product-range.html?category=orthopedic" },
+          { name: "Respiratory", badge: "35+ Products", img: getImage("assets/respiratory.jpg", "assets/respiratory.jpg"), marquee: "Seasonal Allergic Rhinitis • Asthma • COPD • Bronchitis • Pulmonary Hypertension • Chronic Kidney Disease • ", link: "product-range.html?category=respiratory" },
+          { name: "Essential Medicines", badge: "100+ Products", img: getImage("assets/essential-medicines.jpg", "assets/essential-medicines.jpg"), marquee: "Generic Medicines • OTC Products • Vitamins & Supplements • First-line Treatments • Essential Drug List • ", link: "product-range.html" },
+          { name: "Biologicals & Vaccines", badge: "20+ Products", img: getImage("assets/biologicals-vaccines.jpg", "assets/biologicals-vaccines.jpg"), marquee: "Hepatitis B • HPV • Influenza • Pneumococcal • Monoclonal Antibodies • Biosimilars • ", link: "product-range.html" },
+          { name: "Medical Devices", badge: "50+ Devices", img: getImage("assets/medical-devices.jpg", "assets/medical-devices.jpg"), marquee: "Diagnostic Equipment • Surgical Instruments • Patient Monitoring • Infusion Devices • Wound Care • ", link: "product-range.html" },
+          { name: "Rare Diseases", badge: "15+ Products", img: getImage("assets/rare-diseases.jpg", "assets/rare-diseases.jpg"), marquee: "Orphan Drugs • Enzyme Replacement Therapy • Gene Therapy • Ultra-rare Conditions • Patient Programs • ", link: "product-range.html" },
         ];
         const totalPages = Math.ceil(therapCards.length / 4);
         return (
@@ -833,7 +833,7 @@ export default function GetMedsHomepage() {
                                 <span className="text-white/75 text-xs pr-6">{card.marquee}</span>
                               </div>
                             </div>
-                            <button className="text-xs font-semibold text-white bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full px-3 py-1 transition-colors">See All</button>
+                            <a href={card.link} className="text-xs font-semibold text-white bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full px-3 py-1 transition-colors">See All</a>
                           </div>
                         </div>
                       ))}
@@ -888,10 +888,10 @@ export default function GetMedsHomepage() {
               {/* Row 1 — 2 wide cards */}
 
               {/* Card 1: Global Network */}
-              <div className="col-span-3 bg-gradient-to-br from-white to-sky-100/60 rounded-2xl p-6 relative overflow-hidden flex flex-col justify-between hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer" style={{ minHeight: '220px' }}>
+              <div className="col-span-6 md:col-span-3 bg-gradient-to-br from-white to-sky-100/60 rounded-2xl p-6 relative overflow-hidden flex flex-col justify-between hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer" style={{ minHeight: '220px' }}>
                 <div className="relative z-10">
                   <h3 className="text-base font-bold text-gray-900 mb-2">Global Network of Pharma Manufacturers</h3>
-                  <p className="text-gray-500 text-sm leading-relaxed max-w-[55%]">Strategic sourcing partnerships with leading manufacturers across India, China, Europe, and the US.</p>
+                  <p className="text-gray-500 text-sm leading-relaxed max-w-full md:max-w-[55%]">Strategic sourcing partnerships with leading manufacturers across India, China, Europe, and the US.</p>
                 </div>
                 <div className="absolute bottom-0 right-0 w-44 h-44 pointer-events-none">
                   <svg viewBox="0 0 176 176" className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
@@ -912,10 +912,10 @@ export default function GetMedsHomepage() {
               </div>
 
               {/* Card 2: Regulatory */}
-              <div className="col-span-3 bg-gradient-to-br from-white to-violet-100/60 rounded-2xl p-6 relative overflow-hidden flex flex-col justify-between hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer" style={{ minHeight: '220px' }}>
+              <div className="col-span-6 md:col-span-3 bg-gradient-to-br from-white to-violet-100/60 rounded-2xl p-6 relative overflow-hidden flex flex-col justify-between hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer" style={{ minHeight: '220px' }}>
                 <div className="relative z-10">
                   <h3 className="text-base font-bold text-gray-900 mb-2">Regulatory & Compliance</h3>
-                  <p className="text-gray-500 text-sm leading-relaxed max-w-[55%]">FDA Philippines, DOH, and international regulatory expertise across registration and post-market compliance.</p>
+                  <p className="text-gray-500 text-sm leading-relaxed max-w-full md:max-w-[55%]">FDA Philippines, DOH, and international regulatory expertise across registration and post-market compliance.</p>
                 </div>
                 <div className="absolute bottom-0 right-0 w-44 h-44 pointer-events-none">
                   <svg viewBox="0 0 176 176" className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
@@ -935,7 +935,7 @@ export default function GetMedsHomepage() {
               {/* Row 2 — 3 normal cards */}
 
               {/* Card 3: Supply Chain */}
-              <div className="col-span-2 bg-gradient-to-br from-white to-teal-100/60 rounded-2xl p-6 relative overflow-hidden flex flex-col justify-between hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer" style={{ minHeight: '220px' }}>
+              <div className="col-span-6 md:col-span-2 bg-gradient-to-br from-white to-teal-100/60 rounded-2xl p-6 relative overflow-hidden flex flex-col justify-between hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer" style={{ minHeight: '220px' }}>
                 <div className="relative z-10">
                   <h3 className="text-base font-bold text-gray-900 mb-2">Precision Supply Chain & Nationwide Distribution</h3>
                   <p className="text-gray-500 text-sm leading-relaxed">Temperature-controlled logistics and last-mile delivery across Luzon, Visayas, and Mindanao.</p>
@@ -953,7 +953,7 @@ export default function GetMedsHomepage() {
               </div>
 
               {/* Card 4: Sales */}
-              <div className="col-span-2 bg-gradient-to-br from-white to-orange-100/60 rounded-2xl p-6 relative overflow-hidden flex flex-col justify-between hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer" style={{ minHeight: '220px' }}>
+              <div className="col-span-6 md:col-span-2 bg-gradient-to-br from-white to-orange-100/60 rounded-2xl p-6 relative overflow-hidden flex flex-col justify-between hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer" style={{ minHeight: '220px' }}>
                 <div className="relative z-10">
                   <h3 className="text-base font-bold text-gray-900 mb-2">Sales and Distribution</h3>
                   <p className="text-gray-500 text-sm leading-relaxed">5,000+ pharmacy and 500+ hospital accounts served through dedicated nationwide sales teams.</p>
@@ -971,7 +971,7 @@ export default function GetMedsHomepage() {
               </div>
 
               {/* Card 5: Gov Bidding */}
-              <div className="col-span-2 bg-gradient-to-br from-white to-indigo-100/60 rounded-2xl p-6 relative overflow-hidden flex flex-col justify-between hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer" style={{ minHeight: '220px' }}>
+              <div className="col-span-6 md:col-span-2 bg-gradient-to-br from-white to-indigo-100/60 rounded-2xl p-6 relative overflow-hidden flex flex-col justify-between hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer" style={{ minHeight: '220px' }}>
                 <div className="relative z-10">
                   <h3 className="text-base font-bold text-gray-900 mb-2">Government Bidding & Public Sector Access</h3>
                   <p className="text-gray-500 text-sm leading-relaxed">DOH, LGU, and PhilHealth tender participation with full documentation and compliance support.</p>
@@ -991,10 +991,10 @@ export default function GetMedsHomepage() {
               {/* Row 3 — 2 wide cards */}
 
               {/* Card 6: Gov Medical */}
-              <div className="col-span-3 bg-gradient-to-br from-white to-emerald-100/60 rounded-2xl p-6 relative overflow-hidden flex flex-col justify-between hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer" style={{ minHeight: '200px' }}>
+              <div className="col-span-6 md:col-span-3 bg-gradient-to-br from-white to-emerald-100/60 rounded-2xl p-6 relative overflow-hidden flex flex-col justify-between hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer" style={{ minHeight: '200px' }}>
                 <div className="relative z-10">
                   <h3 className="text-base font-bold text-gray-900 mb-2">Government Medical Assistance & Program Accreditation</h3>
-                  <p className="text-gray-500 text-sm leading-relaxed max-w-[55%]">Accredited provider of chemotherapy and cancer medicines for DSWD, PCSO, and other national government medical assistance programs.</p>
+                  <p className="text-gray-500 text-sm leading-relaxed max-w-full md:max-w-[55%]">Accredited provider of chemotherapy and cancer medicines for DSWD, PCSO, and other national government medical assistance programs.</p>
                 </div>
                 <div className="absolute bottom-0 right-0 w-44 h-44 pointer-events-none">
                   <svg viewBox="0 0 176 176" className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
@@ -1013,10 +1013,10 @@ export default function GetMedsHomepage() {
               </div>
 
               {/* Card 7: CLIDP */}
-              <div className="col-span-3 bg-gradient-to-br from-white to-purple-100/60 rounded-2xl p-6 relative overflow-hidden flex flex-col justify-between hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer" style={{ minHeight: '200px' }}>
+              <div className="col-span-6 md:col-span-3 bg-gradient-to-br from-white to-purple-100/60 rounded-2xl p-6 relative overflow-hidden flex flex-col justify-between hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer" style={{ minHeight: '200px' }}>
                 <div className="relative z-10">
                   <h3 className="text-base font-bold text-gray-900 mb-2">Certificate of Listing of Identical Drug Product (CLIDP) Services</h3>
-                  <p className="text-gray-500 text-sm leading-relaxed max-w-[55%]">End-to-end CLIDP application, certification, and ongoing compliance management for our portfolio.</p>
+                  <p className="text-gray-500 text-sm leading-relaxed max-w-full md:max-w-[55%]">End-to-end CLIDP application, certification, and ongoing compliance management for our portfolio.</p>
                 </div>
                 <div className="absolute bottom-0 right-0 w-44 h-44 pointer-events-none">
                   <svg viewBox="0 0 176 176" className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
@@ -1036,10 +1036,10 @@ export default function GetMedsHomepage() {
               {/* Row 4 — 2 wide cards */}
 
               {/* Card 8: International */}
-              <div className="col-span-3 bg-gradient-to-br from-white to-rose-100/60 rounded-2xl p-6 relative overflow-hidden flex flex-col justify-between hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer" style={{ minHeight: '200px' }}>
+              <div className="col-span-6 md:col-span-3 bg-gradient-to-br from-white to-rose-100/60 rounded-2xl p-6 relative overflow-hidden flex flex-col justify-between hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer" style={{ minHeight: '200px' }}>
                 <div className="relative z-10">
                   <h3 className="text-base font-bold text-gray-900 mb-2">International Operations & Pharmacy Footprint</h3>
-                  <p className="text-gray-500 text-sm leading-relaxed max-w-[55%]">Cross-border operations and partner pharmacy networks across multiple regions, extending beyond Asia into global markets.</p>
+                  <p className="text-gray-500 text-sm leading-relaxed max-w-full md:max-w-[55%]">Cross-border operations and partner pharmacy networks across multiple regions, extending beyond Asia into global markets.</p>
                 </div>
                 <div className="absolute bottom-0 right-0 w-44 h-44 pointer-events-none">
                   <svg viewBox="0 0 176 176" className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
@@ -1057,10 +1057,10 @@ export default function GetMedsHomepage() {
               </div>
 
               {/* Card 9: Digital Health */}
-              <div className="col-span-3 bg-gradient-to-br from-white to-cyan-100/60 rounded-2xl p-6 relative overflow-hidden flex flex-col justify-between hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer" style={{ minHeight: '200px' }}>
+              <div className="col-span-6 md:col-span-3 bg-gradient-to-br from-white to-cyan-100/60 rounded-2xl p-6 relative overflow-hidden flex flex-col justify-between hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer" style={{ minHeight: '200px' }}>
                 <div className="relative z-10">
                   <h3 className="text-base font-bold text-gray-900 mb-2">Digital & Smart Healthcare Solutions</h3>
-                  <p className="text-gray-500 text-sm leading-relaxed max-w-[55%]">Patient adherence platforms, smart inventory systems, and healthcare data integrations supporting informed and connected healthcare experiences.</p>
+                  <p className="text-gray-500 text-sm leading-relaxed max-w-full md:max-w-[55%]">Patient adherence platforms, smart inventory systems, and healthcare data integrations supporting informed and connected healthcare experiences.</p>
                 </div>
                 <div className="absolute bottom-0 right-0 w-44 h-44 pointer-events-none">
                   <svg viewBox="0 0 176 176" className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
@@ -1131,7 +1131,7 @@ export default function GetMedsHomepage() {
                 {whyFeatures.map((item, i) => (
                   <div key={i}>
                     <h4 className="font-bold text-gray-900 text-base mb-2">{item.title}</h4>
-                    <p className="text-gray-400 text-sm leading-relaxed mb-4">{item.desc}</p>
+                    <p className="text-gray-600 md:text-gray-400 text-sm leading-relaxed mb-4">{item.desc}</p>
                     <a href="services.html" className="inline-flex items-center gap-1.5 text-sm font-semibold transition-opacity hover:opacity-70" style={{ color: item.accent }}>
                       Learn More <i className="fa-solid fa-arrow-right text-[11px]"></i>
                     </a>
@@ -1305,13 +1305,16 @@ export default function GetMedsHomepage() {
           }}>
 
             {/* Header */}
-            <div className="mb-6">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-0.5 block">Partners</span>
-              <span className="text-[10px] font-bold uppercase tracking-widest mb-1.5 block" style={{
-                background: 'linear-gradient(135deg,#1D9FDA,#61A644)',
-                WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', display: 'inline-block'
-              }}>News and Insights</span>
-              <h2 className="text-2xl font-bold text-gray-900">What's new at Getmeds.</h2>
+            <div className="flex items-end justify-between mb-6">
+              <div>
+                <span className="text-[13px] font-semibold tracking-wide text-gray-400 mb-0.5 block">Partners</span>
+                <span className="text-[13px] font-semibold tracking-wide mb-1.5 block" style={{
+                  background: 'linear-gradient(135deg,#1D9FDA,#61A644)',
+                  WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', display: 'inline-block'
+                }}>News and Insights</span>
+                <h2 className="text-2xl font-bold text-gray-900">What's new at Getmeds.</h2>
+              </div>
+              <a href="articles.html" className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:opacity-90 text-white text-sm font-medium rounded-full px-6 py-2.5 transition-opacity shrink-0">View All</a>
             </div>
 
             {/* 3 Article Cards */}
@@ -1339,7 +1342,7 @@ export default function GetMedsHomepage() {
                   desc: 'As part of our UN Global Compact commitment, Getmeds partnered with local government units in Metro Manila to provide free essential medicines to underserved patients.',
                 },
               ].map((article, i) => (
-                <div key={i} className="relative rounded-3xl overflow-hidden cursor-pointer hover:-translate-y-2 hover:shadow-2xl transition-all duration-500 group" style={{ height: '460px' }}>
+                <a key={i} href={`article-detail.html?id=${i}`} className="relative rounded-3xl overflow-hidden cursor-pointer hover:-translate-y-2 hover:shadow-2xl transition-all duration-500 group block" style={{ height: '460px' }}>
 
                   {/* Full background image */}
                   <img src={article.img} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt={article.title} />
@@ -1367,12 +1370,12 @@ export default function GetMedsHomepage() {
                     </div>
 
                     {/* Read More button */}
-                    <button className="w-full bg-white text-gray-800 font-semibold text-sm py-3 rounded-2xl hover:bg-gray-100 transition-colors duration-200">
+                    <span className="w-full font-semibold text-sm py-3 rounded-2xl transition-all duration-200 flex items-center justify-center" style={{ background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.3)', color: '#fff', boxShadow: '0 4px 16px rgba(0,0,0,0.12)' }}>
                       Read More
-                    </button>
+                    </span>
 
                   </div>
-                </div>
+                </a>
               ))}
             </div>
 

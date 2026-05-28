@@ -854,6 +854,15 @@
                 #scroll-to-top:active {
                     transform: scale(0.95) !important;
                 }
+                @media (max-width: 640px) {
+                    #scroll-to-top {
+                        bottom: 90px !important;
+                        right: 20px !important;
+                        width: 44px !important;
+                        height: 44px !important;
+                        border-radius: 12px !important;
+                    }
+                }
             `;
             document.head.appendChild(style);
         }
