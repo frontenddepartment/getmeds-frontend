@@ -355,6 +355,16 @@ export interface Testimonial {
   source?: string
 }
 
+export interface ContactGroup {
+  _key: string
+  purpose: string
+  addresses?: string[]
+  phones?: string[]
+  emails?: string[]
+  showInFooter?: boolean
+  showInTopBar?: boolean
+}
+
 export interface SiteSettings {
   _id: string
   _type: 'siteSettings'
@@ -365,8 +375,11 @@ export interface SiteSettings {
     phone?: string
     phoneHref?: string
     socialLinks?: Array<SocialLink & { _key: string }>
+    socials?: Array<SocialLink & { _key: string }>
   }
   socials?: Array<SocialLink & { _key: string }>
+  contactGroups?: ContactGroup[]
+  /** @deprecated use contactGroups instead */
   contactInfo?: {
     address?: string | string[]
     phone?: string | string[]

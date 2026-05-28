@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useImageMapper, useNews } from '../lib/useSanity';
+import { useImageMapper, useNews, useSiteSettings } from '../lib/useSanity';
 import { getGoogleSpreadsheetBySlug } from '../lib/queries';
 import { injectHTML } from '../lib/injectHTML';
 import { urlFor } from '../lib/sanity';
@@ -55,6 +55,7 @@ const AnimatedCounter = ({ end, duration = 2000, suffix = "" }: { end: number, d
 export default function GetMedsHomepage() {
   const { getImage } = useImageMapper('home');
   const { data: newsItems } = useNews();
+  const { data: settings } = useSiteSettings();
   const [isScrolled, setIsScrolled] = useState(false);
 
   const [isInquiryOpen, setIsInquiryOpen] = useState(false);
@@ -236,6 +237,8 @@ export default function GetMedsHomepage() {
     };
   }, []);
 
+  console.log(settings);
+
 
   return (
     <div style={{ fontFamily: "'Poppins', sans-serif" }} className="bg-white text-gray-800 antialiased overflow-x-hidden">
@@ -280,16 +283,55 @@ export default function GetMedsHomepage() {
           <div className="w-full bg-slate-900/40 border-b border-white/10 backdrop-blur-sm py-2.5 px-6 hidden md:block">
             <div className="max-w-7xl mx-auto flex items-center justify-between text-xs text-white/90 font-medium">
               <div className="flex items-center space-x-2">
-                <span className="font-extrabold text-[11px] uppercase tracking-wider text-white">Connect With Us</span>
+                <span className="font-extrabold text-[11px] uppercase tracking-wider text-white">
+                  {settings?.topBar?.label || 'Connect With Us'}
+                </span>
               </div>
               <div className="flex items-center space-x-6">
-                <a href="contact-us.html" className="flex items-center space-x-2 hover:text-primary transition">
-                  <i className="fa-solid fa-phone"></i>
-                  <span>+ (123) 1800-234-5678</span>
-                </a>
+                {/* Phone — from contactInfo.phones where showInTopBar is true */}
+                  {(() => {
+                    const topBarPhone =
+                      settings?.contactInfo?.phones?.find((phone: any) => phone.showInTopBar)?.value ||
+                      settings?.contactInfo?.phones?.[0]?.value ||
+                      settings?.topBar?.phone ||
+                      '+ (123) 1800-234-5678'
+
+                    const phoneHref = `tel:${topBarPhone.replace(/[^+\d]/g, '')}`
+
+                    return (
+                      <a href={phoneHref} className="flex items-center space-x-2 hover:text-primary transition">
+                        <i className="fa-solid fa-phone"></i>
+                        <span id="topbar-phone">{topBarPhone.trim()}</span>
+                      </a>
+                    )
+                  })()}
+                {/* Socials — from topBar.socials or static fallback */}
                 <div className="flex items-center space-x-4 border-l border-white/20 pl-6">
-                  <a href="#" className="hover:text-primary transition"><i className="fa-brands fa-facebook text-[14px]"></i></a>
-                  <a href="#" className="hover:text-primary transition"><i className="fa-brands fa-linkedin text-[14px]"></i></a>
+                  {settings?.topBar?.socials && (settings.topBar.socials as any[]).length > 0
+                    ? (settings.topBar.socials as any[]).map((s: any, i: number) => {
+                        const platform = s.platform?.toLowerCase() || '';
+                        let iconClass = 'fa-solid fa-link';
+                        if (platform === 'facebook') iconClass = 'fa-brands fa-facebook-f';
+                        else if (platform === 'twitter' || platform === 'x') iconClass = 'fa-brands fa-x-twitter';
+                        else if (platform === 'instagram') iconClass = 'fa-brands fa-instagram';
+                        else if (platform === 'linkedin') iconClass = 'fa-brands fa-linkedin-in';
+                        else if (platform === 'youtube') iconClass = 'fa-brands fa-youtube';
+                        else if (platform === 'tiktok') iconClass = 'fa-brands fa-tiktok';
+                        if (s.icon) iconClass = s.icon.startsWith('fa-') ? s.icon : `fa-brands fa-${s.icon}`;
+                        return (
+                          <a key={i} href={s.href || '#'} target="_blank" rel="noopener noreferrer"
+                            className="hover:text-primary transition">
+                            <i className={`${iconClass} text-[14px]`}></i>
+                          </a>
+                        );
+                      })
+                    : (
+                      <>
+                        <a href="#" className="hover:text-primary transition"><i className="fa-brands fa-facebook text-[14px]"></i></a>
+                        <a href="#" className="hover:text-primary transition"><i className="fa-brands fa-linkedin text-[14px]"></i></a>
+                      </>
+                    )
+                  }
                 </div>
               </div>
             </div>
