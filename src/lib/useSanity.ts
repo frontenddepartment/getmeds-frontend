@@ -44,6 +44,8 @@ import {
   getNavigation,
   getPageAssets,
   getPageAssetsByPage,
+  getNews,
+  getNewsById,
 } from './queries'
 
 import { urlFor } from './sanity'
@@ -72,6 +74,7 @@ import type {
   ServicesPage,
   UngcPage,
   PageAsset,
+  News,
 } from '../types/sanity'
 
 // ─────────────────────────────────────────────
@@ -341,5 +344,17 @@ export function useImageMapper(page: string) {
   }
 
   return { getImage, getSliderImages, loading, error }
+}
+
+// ─────────────────────────────────────────────
+// News & Articles Hooks
+// ─────────────────────────────────────────────
+
+export function useNews() {
+  return useFetch<News[]>(getNews)
+}
+
+export function useNewsById(id: string) {
+  return useFetchWithParam<News | null, string>(getNewsById, id)
 }
 

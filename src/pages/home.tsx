@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { useImageMapper } from '../lib/useSanity';
+import { useImageMapper, useNews, useSiteSettings } from '../lib/useSanity';
 import { getGoogleSpreadsheetBySlug } from '../lib/queries';
 import { injectHTML } from '../lib/injectHTML';
+import { urlFor } from '../lib/sanity';
 
 
 // Declare global tailwind interface
@@ -53,6 +54,8 @@ const AnimatedCounter = ({ end, duration = 2000, suffix = "" }: { end: number, d
 
 export default function GetMedsHomepage() {
   const { getImage } = useImageMapper('home');
+  const { data: newsItems } = useNews();
+  const { data: settings } = useSiteSettings();
   const [isScrolled, setIsScrolled] = useState(false);
 
   const [isInquiryOpen, setIsInquiryOpen] = useState(false);
@@ -234,6 +237,8 @@ export default function GetMedsHomepage() {
     };
   }, []);
 
+  console.log(settings);
+
 
   return (
     <div style={{ fontFamily: "'Poppins', sans-serif" }} className="bg-white text-gray-800 antialiased overflow-x-hidden">
@@ -278,16 +283,55 @@ export default function GetMedsHomepage() {
           <div className="w-full bg-slate-900/40 border-b border-white/10 backdrop-blur-sm py-2.5 px-6 hidden md:block">
             <div className="max-w-7xl mx-auto flex items-center justify-between text-xs text-white/90 font-medium">
               <div className="flex items-center space-x-2">
-                <span className="font-extrabold text-[11px] uppercase tracking-wider text-white">Connect With Us</span>
+                <span className="font-extrabold text-[11px] uppercase tracking-wider text-white">
+                  {settings?.topBar?.label || 'Connect With Us'}
+                </span>
               </div>
               <div className="flex items-center space-x-6">
-                <a href="contact-us.html" className="flex items-center space-x-2 hover:text-primary transition">
-                  <i className="fa-solid fa-phone"></i>
-                  <span>+ (123) 1800-234-5678</span>
-                </a>
+                {/* Phone — from contactInfo.phones where showInTopBar is true */}
+                  {(() => {
+                    const topBarPhone =
+                      settings?.contactInfo?.phones?.find((phone: any) => phone.showInTopBar)?.value ||
+                      settings?.contactInfo?.phones?.[0]?.value ||
+                      settings?.topBar?.phone ||
+                      '+ (123) 1800-234-5678'
+
+                    const phoneHref = `tel:${topBarPhone.replace(/[^+\d]/g, '')}`
+
+                    return (
+                      <a href={phoneHref} className="flex items-center space-x-2 hover:text-primary transition">
+                        <i className="fa-solid fa-phone"></i>
+                        <span id="topbar-phone">{topBarPhone.trim()}</span>
+                      </a>
+                    )
+                  })()}
+                {/* Socials — from topBar.socials or static fallback */}
                 <div className="flex items-center space-x-4 border-l border-white/20 pl-6">
-                  <a href="#" className="hover:text-primary transition"><i className="fa-brands fa-facebook text-[14px]"></i></a>
-                  <a href="#" className="hover:text-primary transition"><i className="fa-brands fa-linkedin text-[14px]"></i></a>
+                  {settings?.topBar?.socials && (settings.topBar.socials as any[]).length > 0
+                    ? (settings.topBar.socials as any[]).map((s: any, i: number) => {
+                        const platform = s.platform?.toLowerCase() || '';
+                        let iconClass = 'fa-solid fa-link';
+                        if (platform === 'facebook') iconClass = 'fa-brands fa-facebook-f';
+                        else if (platform === 'twitter' || platform === 'x') iconClass = 'fa-brands fa-x-twitter';
+                        else if (platform === 'instagram') iconClass = 'fa-brands fa-instagram';
+                        else if (platform === 'linkedin') iconClass = 'fa-brands fa-linkedin-in';
+                        else if (platform === 'youtube') iconClass = 'fa-brands fa-youtube';
+                        else if (platform === 'tiktok') iconClass = 'fa-brands fa-tiktok';
+                        if (s.icon) iconClass = s.icon.startsWith('fa-') ? s.icon : `fa-brands fa-${s.icon}`;
+                        return (
+                          <a key={i} href={s.href || '#'} target="_blank" rel="noopener noreferrer"
+                            className="hover:text-primary transition">
+                            <i className={`${iconClass} text-[14px]`}></i>
+                          </a>
+                        );
+                      })
+                    : (
+                      <>
+                        <a href="#" className="hover:text-primary transition"><i className="fa-brands fa-facebook text-[14px]"></i></a>
+                        <a href="#" className="hover:text-primary transition"><i className="fa-brands fa-linkedin text-[14px]"></i></a>
+                      </>
+                    )
+                  }
                 </div>
               </div>
             </div>
@@ -1326,66 +1370,51 @@ export default function GetMedsHomepage() {
               <a href="articles.html" className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:opacity-90 text-white text-sm font-medium rounded-full px-6 py-2.5 transition-opacity shrink-0">View All</a>
             </div>
 
-            {/* 3 Article Cards */}
+            {/* 3 Article Cards — Dynamic from Sanity */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {[
-                {
-                  category: 'Launch',
-                  readTime: '3 mins read',
-                  img: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&q=80&w=800',
-                  title: 'Getmeds Expands Oncology Portfolio with Next-Gen Targeted Therapies',
-                  desc: 'Getmeds announces the addition of cutting-edge targeted therapy options for Filipino cancer patients, strengthening access to innovative first-line and second-line oncology treatments nationwide.',
-                },
-                {
-                  category: 'Event',
-                  readTime: '5 mins read',
-                  img: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&q=80&w=800',
-                  title: 'Getmeds at the Philippine Oncology & Pharmacy Summit',
-                  desc: 'Our team joined oncologists, hospital pharmacists, and healthcare professionals across the Philippines to discuss expanding access to innovative and essential medicines for Filipino patients.',
-                },
-                {
-                  category: 'CSR',
-                  readTime: '4 mins read',
-                  img: 'https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?auto=format&fit=crop&q=80&w=800',
-                  title: 'Getmeds Donates Essential Medicines to Indigent Communities',
-                  desc: 'As part of our UN Global Compact commitment, Getmeds partnered with local government units in Metro Manila to provide free essential medicines to underserved patients.',
-                },
-              ].map((article, i) => (
-                <a key={i} href={`article-detail.html?id=${i}`} className="relative rounded-3xl overflow-hidden cursor-pointer hover:-translate-y-2 hover:shadow-2xl transition-all duration-500 group block" style={{ height: '460px' }}>
+              {(newsItems && newsItems.length > 0 ? newsItems.slice(0, 3) : []).map((article) => {
+                const imgUrl = article.image
+                  ? urlFor(article.image).width(800).url()
+                  : 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&q=80&w=800';
+                return (
+                  <a key={article._id} href={`/article-detail?id=${article._id}`} className="relative rounded-3xl overflow-hidden cursor-pointer hover:-translate-y-2 hover:shadow-2xl transition-all duration-500 group block" style={{ height: '460px' }}>
 
-                  {/* Full background image */}
-                  <img src={article.img} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt={article.title} />
+                    {/* Full background image */}
+                    <img src={imgUrl} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt={article.title} />
 
-                  {/* Dark gradient overlay */}
-                  <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(10,15,30,0.92) 0%, rgba(10,15,30,0.55) 45%, rgba(10,15,30,0.15) 100%)' }}></div>
+                    {/* Dark gradient overlay */}
+                    <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(10,15,30,0.92) 0%, rgba(10,15,30,0.55) 45%, rgba(10,15,30,0.15) 100%)' }}></div>
 
-                  {/* Content pinned to bottom */}
-                  <div className="absolute bottom-0 left-0 right-0 p-5">
+                    {/* Content pinned to bottom */}
+                    <div className="absolute bottom-0 left-0 right-0 p-5">
 
-                    {/* Title + read time pill */}
-                    <div className="flex items-start justify-between gap-3 mb-2">
-                      <h3 className="text-white font-bold text-base leading-snug">{article.title}</h3>
-                      <div className="flex-shrink-0 text-white text-[10px] font-semibold px-2.5 py-1 rounded-full" style={{ background: 'rgba(255,255,255,0.18)', backdropFilter: 'blur(6px)' }}>
-                        {article.readTime}
+                      {/* Title + read time pill */}
+                      <div className="flex items-start justify-between gap-3 mb-2">
+                        <h3 className="text-white font-bold text-base leading-snug">{article.title}</h3>
+                        {article.readTime && (
+                          <div className="flex-shrink-0 text-white text-[10px] font-semibold px-2.5 py-1 rounded-full" style={{ background: 'rgba(255,255,255,0.18)', backdropFilter: 'blur(6px)' }}>
+                            {article.readTime}
+                          </div>
+                        )}
                       </div>
+
+                      {/* Description */}
+                      <p className="text-white/65 text-[12px] leading-relaxed mb-3 line-clamp-2">{article.description}</p>
+
+                      {/* Category tag */}
+                      <div className="flex gap-2 mb-4">
+                        <span className="text-white text-[11px] font-semibold px-3 py-1 rounded-full" style={{ background: 'linear-gradient(135deg,#1D9FDA,#61A644)' }}>{article.tag}</span>
+                      </div>
+
+                      {/* Read More button */}
+                      <span className="w-full font-semibold text-sm py-3 rounded-2xl transition-all duration-200 flex items-center justify-center" style={{ background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.3)', color: '#fff', boxShadow: '0 4px 16px rgba(0,0,0,0.12)' }}>
+                        Read More
+                      </span>
+
                     </div>
-
-                    {/* Description */}
-                    <p className="text-white/65 text-[12px] leading-relaxed mb-3 line-clamp-2">{article.desc}</p>
-
-                    {/* Category tag */}
-                    <div className="flex gap-2 mb-4">
-                      <span className="text-white text-[11px] font-semibold px-3 py-1 rounded-full" style={{ background: 'linear-gradient(135deg,#1D9FDA,#61A644)' }}>{article.category}</span>
-                    </div>
-
-                    {/* Read More button */}
-                    <span className="w-full font-semibold text-sm py-3 rounded-2xl transition-all duration-200 flex items-center justify-center" style={{ background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.3)', color: '#fff', boxShadow: '0 4px 16px rgba(0,0,0,0.12)' }}>
-                      Read More
-                    </span>
-
-                  </div>
-                </a>
-              ))}
+                  </a>
+                );
+              })}
             </div>
 
           </div>

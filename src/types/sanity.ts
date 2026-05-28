@@ -355,6 +355,16 @@ export interface Testimonial {
   source?: string
 }
 
+export interface ContactGroup {
+  _key: string
+  purpose: string
+  addresses?: string[]
+  phones?: string[]
+  emails?: string[]
+  showInFooter?: boolean
+  showInTopBar?: boolean
+}
+
 export interface SiteSettings {
   _id: string
   _type: 'siteSettings'
@@ -365,8 +375,11 @@ export interface SiteSettings {
     phone?: string
     phoneHref?: string
     socialLinks?: Array<SocialLink & { _key: string }>
+    socials?: Array<SocialLink & { _key: string }>
   }
   socials?: Array<SocialLink & { _key: string }>
+  contactGroups?: ContactGroup[]
+  /** @deprecated use contactGroups instead */
   contactInfo?: {
     address?: string | string[]
     phone?: string | string[]
@@ -891,6 +904,27 @@ export interface PageAsset {
   }>
 }
 
+
+export interface NewsContentBlock {
+  header?: string
+  text?: string
+  bullets?: string[]
+}
+
+export interface News {
+  _id: string
+  _type: 'news'
+  tag: string
+  title: string
+  date: string
+  description: string
+  readTime?: string
+  intro?: string
+  image?: SanityImage
+  content?: NewsContentBlock[]
+  source_link?: string
+}
+
 // ─────────────────────────────────────────────
 // Union of all document types
 // ─────────────────────────────────────────────
@@ -920,3 +954,4 @@ export type SanityDocument =
   | ServicesPage
   | UngcPage
   | PageAsset
+  | News

@@ -930,7 +930,7 @@
         const dataset = document.querySelector('meta[name="getmeds-sanity-dataset"]')?.content || 'production';
         const apiVersion = document.querySelector('meta[name="getmeds-sanity-api-version"]')?.content || '2021-10-21';
         
-        const query = '*[_type == "siteSettings" && _id == "global-site-settings"][0]{ ..., topBar{ ..., socials[]-> } }';
+        const query = '*[_type == "siteSettings" && _id == "global-site-settings"][0]{ ..., topBar{ ..., socials[]-> }, contactGroups }';
         const url = `https://${projectId}.api.sanity.io/v${apiVersion}/data/query/${dataset}?query=` + encodeURIComponent(query);
 
         fetch(url)
@@ -974,7 +974,8 @@
                 }
             }
 
-            // 2. Contact List (Addresses, Phones, Emails)
+            // 2. Contact Groups → Footer Contact List
+            // Priority: use contactGroups where showInFooter===true; fallback to first group; then legacy contactInfo
             const normalizeToArray = (val) => {
                 if (!val) return [];
                 if (Array.isArray(val)) return val;
@@ -982,69 +983,86 @@
                 return [];
             };
 
-            const addresses = normalizeToArray(settings.contactInfo?.address);
-            const phones = normalizeToArray(settings.contactInfo?.phone);
-            const emails = normalizeToArray(settings.contactInfo?.email);
+            // Determine which groups to show in footer
+            let footerGroups = [];
+            if (settings.contactGroups && Array.isArray(settings.contactGroups) && settings.contactGroups.length > 0) {
+                footerGroups = settings.contactGroups.filter(g => g.showInFooter);
+                if (footerGroups.length === 0) footerGroups = [settings.contactGroups[0]]; // default to first
+            }
+
+            // Legacy fallback
+            const legacyAddresses = normalizeToArray(settings.contactInfo?.address);
+            const legacyPhones = normalizeToArray(settings.contactInfo?.phone);
+            const legacyEmails = normalizeToArray(settings.contactInfo?.email);
 
             const footerContactList = document.getElementById('footer-contact-list');
-            if (footerContactList) {
-                if (!footerContactList.dataset.populated && (addresses.length > 0 || phones.length > 0 || emails.length > 0)) {
-                    let html = '';
-                    addresses.forEach(addr => {
-                        html += `
-                            <li class="flex items-start space-x-3">
-                                <i class="fa-solid fa-location-dot mt-1 text-primary"></i>
-                                <span>${escapeHtml(addr)}</span>
-                            </li>
-                        `;
+            if (footerContactList && !footerContactList.dataset.populated) {
+                let html = '';
+
+                if (footerGroups.length > 0) {
+                    // Render from contactGroups
+                    footerGroups.forEach(group => {
+                        const addrs = normalizeToArray(group.addresses);
+                        const phones = normalizeToArray(group.phones);
+                        const emails = normalizeToArray(group.emails);
+
+                        if (addrs.length === 0 && phones.length === 0 && emails.length === 0) return;
+
+                        addrs.forEach(addr => {
+                            html += `
+                                <li class="flex items-start space-x-3">
+                                    <i class="fa-solid fa-location-dot mt-1 text-primary shrink-0"></i>
+                                    <span>${escapeHtml(addr)}</span>
+                                </li>
+                            `;
+                        });
+                        phones.forEach(ph => {
+                            const cleanPhone = ph.replace(/[^+\d]/g, '');
+                            html += `
+                                <li class="flex items-center space-x-3">
+                                    <i class="fa-solid fa-phone text-primary shrink-0"></i>
+                                    <a href="tel:${escapeHtml(cleanPhone)}" class="hover:text-primary transition">${escapeHtml(ph)}</a>
+                                </li>
+                            `;
+                        });
+                        emails.forEach(em => {
+                            html += `
+                                <li class="flex items-center space-x-3">
+                                    <i class="fa-solid fa-envelope text-primary shrink-0"></i>
+                                    <a href="mailto:${escapeHtml(em)}" class="hover:text-primary transition">${escapeHtml(em)}</a>
+                                </li>
+                            `;
+                        });
                     });
-                    phones.forEach(ph => {
+                } else {
+                    // Render from legacy contactInfo
+                    legacyAddresses.forEach(addr => {
+                        html += `<li class="flex items-start space-x-3"><i class="fa-solid fa-location-dot mt-1 text-primary shrink-0"></i><span>${escapeHtml(addr)}</span></li>`;
+                    });
+                    legacyPhones.forEach(ph => {
                         const cleanPhone = ph.replace(/[^+\d]/g, '');
-                        html += `
-                            <li class="flex items-center space-x-3">
-                                <i class="fa-solid fa-phone text-primary"></i>
-                                <a href="tel:${escapeHtml(cleanPhone)}" class="hover:text-primary transition">${escapeHtml(ph)}</a>
-                            </li>
-                        `;
+                        html += `<li class="flex items-center space-x-3"><i class="fa-solid fa-phone text-primary shrink-0"></i><a href="tel:${escapeHtml(cleanPhone)}" class="hover:text-primary transition">${escapeHtml(ph)}</a></li>`;
                     });
-                    emails.forEach(em => {
-                        html += `
-                            <li class="flex items-center space-x-3">
-                                <i class="fa-solid fa-envelope text-primary"></i>
-                                <a href="mailto:${escapeHtml(em)}" class="hover:text-primary transition">${escapeHtml(em)}</a>
-                            </li>
-                        `;
+                    legacyEmails.forEach(em => {
+                        html += `<li class="flex items-center space-x-3"><i class="fa-solid fa-envelope text-primary shrink-0"></i><a href="mailto:${escapeHtml(em)}" class="hover:text-primary transition">${escapeHtml(em)}</a></li>`;
                     });
+                }
+
+                if (html) {
                     footerContactList.innerHTML = html;
                     footerContactList.dataset.populated = 'true';
                 }
-            } else {
-                // Fallback for individual elements
-                const footerAddress = document.getElementById('footer-address');
-                if (footerAddress && addresses.length > 0) {
-                    if (footerAddress.textContent !== addresses[0]) {
-                        footerAddress.textContent = addresses[0];
-                    }
-                }
-                const footerPhone = document.getElementById('footer-phone');
-                if (footerPhone && phones.length > 0) {
-                    if (footerPhone.textContent !== phones[0]) {
-                        footerPhone.textContent = phones[0];
-                    }
-                    const telHref = `tel:${phones[0].replace(/[^+\d]/g, '')}`;
-                    if (footerPhone.getAttribute('href') !== telHref) {
-                        footerPhone.setAttribute('href', telHref);
-                    }
-                }
-                const footerEmail = document.getElementById('footer-email');
-                if (footerEmail && emails.length > 0) {
-                    if (footerEmail.textContent !== emails[0]) {
-                        footerEmail.textContent = emails[0];
-                    }
-                    const mailHref = `mailto:${emails[0]}`;
-                    if (footerEmail.getAttribute('href') !== mailHref) {
-                        footerEmail.setAttribute('href', mailHref);
-                    }
+            }
+
+            // 2b. Top bar phone — use group where showInTopBar===true, else first group
+            const topBarEl = document.getElementById('topbar-phone');
+            if (topBarEl && settings.contactGroups && Array.isArray(settings.contactGroups)) {
+                const topBarGroup = settings.contactGroups.find(g => g.showInTopBar) || settings.contactGroups[0];
+                const topPhone = normalizeToArray(topBarGroup?.phones)[0];
+                if (topPhone && topBarEl.textContent !== topPhone) {
+                    topBarEl.textContent = topPhone;
+                    const link = topBarEl.closest('a');
+                    if (link) link.href = `tel:${topPhone.replace(/[^+\d]/g, '')}`;
                 }
             }
 

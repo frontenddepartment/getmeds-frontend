@@ -1,35 +1,12 @@
 import React, { useEffect } from 'react';
 import { injectHTML } from '../lib/injectHTML';
+import { useNews } from '../lib/useSanity';
+import { urlFor } from '../lib/sanity';
 
-
-const articles = [
-  {
-    category: 'Launch',
-    readTime: '3 mins read',
-    date: 'Thursday, May 22, 2025',
-    img: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&q=80&w=800',
-    title: 'Getmeds Expands Oncology Portfolio with Next-Gen Targeted Therapies',
-    desc: 'Getmeds announces the addition of cutting-edge targeted therapy options for Filipino cancer patients, strengthening access to innovative first-line and second-line oncology treatments nationwide.',
-  },
-  {
-    category: 'Event',
-    readTime: '5 mins read',
-    date: 'Thursday, May 22, 2025',
-    img: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&q=80&w=800',
-    title: 'Getmeds at the Philippine Oncology & Pharmacy Summit',
-    desc: 'Our team joined oncologists, hospital pharmacists, and healthcare professionals across the Philippines to discuss expanding access to innovative and essential medicines for Filipino patients.',
-  },
-  {
-    category: 'CSR',
-    readTime: '4 mins read',
-    date: 'Thursday, May 22, 2025',
-    img: 'https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?auto=format&fit=crop&q=80&w=800',
-    title: 'Getmeds Donates Essential Medicines to Indigent Communities',
-    desc: 'As part of our UN Global Compact commitment, Getmeds partnered with local government units in Metro Manila to provide free essential medicines to underserved patients.',
-  },
-];
 
 export default function Articles() {
+  const { data: articles, loading } = useNews();
+
   useEffect(() => {
     const navContainer = document.getElementById('navbar-container');
     if (navContainer && navContainer.innerHTML.trim() === '') {
@@ -46,7 +23,8 @@ export default function Articles() {
     }
   }, []);
 
-  const featured = articles[0];
+  const featured = articles && articles.length > 0 ? articles[0] : null;
+  const rest = articles && articles.length > 1 ? articles.slice(1) : [];
 
   return (
     <div style={{ fontFamily: "'Poppins', sans-serif", background: 'linear-gradient(160deg, #eef4ff 0%, #f8faff 40%, #ffffff 100%)' }} className="text-gray-900 relative">
@@ -89,51 +67,70 @@ export default function Articles() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 relative z-10">
 
         {/* ===== FEATURED HERO ===== */}
-        {/* Same dimensions as about-us hero: rounded-[1.5rem], min-h-[450px] md:min-h-[500px] */}
-        <div className="relative rounded-[1.5rem] overflow-hidden min-h-[450px] md:min-h-[500px] flex items-end group mb-10">
-
-          {/* Background image */}
-          <img
-            src={featured.img}
-            alt={featured.title}
-            className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-          />
-
-          {/* Dark gradient overlay */}
-          <div
-            className="absolute inset-0"
-            style={{ background: 'linear-gradient(to top, rgba(10,15,30,0.90) 0%, rgba(10,15,30,0.45) 50%, rgba(10,15,30,0.10) 100%)' }}
-          />
-
-          {/* Bottom content card */}
-          <div className="relative z-10 w-full p-6 md:p-8">
-            <div
-              className="max-w-2xl rounded-2xl p-6"
-              style={{
-                background: 'rgba(10,15,30,0.55)',
-                backdropFilter: 'blur(16px)',
-                WebkitBackdropFilter: 'blur(16px)',
-                border: '1px solid rgba(255,255,255,0.12)',
-              }}
-            >
-              {/* Featured badge */}
-              <span className="inline-block text-white text-[11px] font-semibold px-3 py-1 rounded-full mb-4"
-                style={{ background: 'rgba(255,255,255,0.18)', backdropFilter: 'blur(6px)' }}>
-                Featured
-              </span>
-
-              {/* Title */}
-              <h2 className="text-white font-bold text-2xl md:text-3xl leading-snug mb-3">
-                {featured.title}
-              </h2>
-
-              {/* Description */}
-              <p className="text-white/75 text-sm leading-relaxed">
-                {featured.desc}
-              </p>
-            </div>
+        {loading ? (
+          <div className="relative rounded-[1.5rem] overflow-hidden min-h-[450px] md:min-h-[500px] flex items-center justify-center mb-10 bg-gray-100 animate-pulse">
+            <span className="text-gray-400 text-sm">Loading articles...</span>
           </div>
-        </div>
+        ) : featured ? (
+          <a
+            href={`/article-detail?id=${featured._id}`}
+            className="relative rounded-[1.5rem] overflow-hidden min-h-[450px] md:min-h-[500px] flex items-end group mb-10 block no-underline"
+          >
+            {/* Background image */}
+            <img
+              src={featured.image ? urlFor(featured.image).width(1200).url() : ''}
+              alt={featured.title}
+              className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+            />
+
+            {/* Dark gradient overlay */}
+            <div
+              className="absolute inset-0"
+              style={{ background: 'linear-gradient(to top, rgba(10,15,30,0.90) 0%, rgba(10,15,30,0.45) 50%, rgba(10,15,30,0.10) 100%)' }}
+            />
+
+            {/* Bottom content card */}
+            <div className="relative z-10 w-full p-6 md:p-8">
+              <div
+                className="max-w-2xl rounded-2xl p-6"
+                style={{
+                  background: 'rgba(10,15,30,0.55)',
+                  backdropFilter: 'blur(16px)',
+                  WebkitBackdropFilter: 'blur(16px)',
+                  border: '1px solid rgba(255,255,255,0.12)',
+                }}
+              >
+                {/* Featured + tag badge */}
+                <div className="flex gap-2 mb-4">
+                  <span className="inline-block text-white text-[11px] font-semibold px-3 py-1 rounded-full"
+                    style={{ background: 'rgba(255,255,255,0.18)', backdropFilter: 'blur(6px)' }}>
+                    Featured
+                  </span>
+                  <span className="inline-block text-white text-[11px] font-semibold px-3 py-1 rounded-full"
+                    style={{ background: 'linear-gradient(135deg,#1D9FDA,#61A644)' }}>
+                    {featured.tag}
+                  </span>
+                  {featured.readTime && (
+                    <span className="inline-block text-white text-[11px] font-semibold px-3 py-1 rounded-full"
+                      style={{ background: 'rgba(255,255,255,0.18)', backdropFilter: 'blur(6px)' }}>
+                      {featured.readTime}
+                    </span>
+                  )}
+                </div>
+
+                {/* Title */}
+                <h2 className="text-white font-bold text-2xl md:text-3xl leading-snug mb-3">
+                  {featured.title}
+                </h2>
+
+                {/* Description */}
+                <p className="text-white/75 text-sm leading-relaxed">
+                  {featured.description}
+                </p>
+              </div>
+            </div>
+          </a>
+        ) : null}
 
         {/* ===== RECENT ARTICLES ===== */}
         <div className="rounded-2xl p-7">
@@ -150,33 +147,55 @@ export default function Articles() {
             </div>
           </div>
 
-          {/* 3 Article Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {articles.map((article, i) => (
-              <a
-                key={i}
-                href={`/article-detail?id=${i}`}
-                className="bg-white rounded-2xl overflow-hidden cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all duration-300 group block no-underline"
-                style={{ border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}
-              >
-                {/* Image */}
-                <div className="overflow-hidden rounded-t-2xl" style={{ height: '220px' }}>
-                  <img
-                    src={article.img}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    alt={article.title}
-                  />
-                </div>
+          {/* Article Cards — all articles (or from index 1 onwards if featured is shown) */}
+          {loading ? (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {[1, 2, 3].map(n => (
+                <div key={n} className="bg-gray-100 rounded-2xl overflow-hidden animate-pulse" style={{ height: '360px' }} />
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {(rest.length > 0 ? rest : articles || []).map((article) => {
+                const imgUrl = article.image
+                  ? urlFor(article.image).width(800).url()
+                  : 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&q=80&w=800';
+                return (
+                  <a
+                    key={article._id}
+                    href={`/article-detail?id=${article._id}`}
+                    className="bg-white rounded-2xl overflow-hidden cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all duration-300 group block no-underline"
+                    style={{ border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}
+                  >
+                    {/* Image */}
+                    <div className="overflow-hidden rounded-t-2xl" style={{ height: '220px' }}>
+                      <img
+                        src={imgUrl}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        alt={article.title}
+                      />
+                    </div>
 
-                {/* Content */}
-                <div className="p-5">
-                  <p className="text-gray-400 text-xs mb-2">{article.date}</p>
-                  <h3 className="text-gray-900 font-semibold text-base leading-snug mb-3">{article.title}</h3>
-                  <p className="text-gray-500 text-sm leading-relaxed">{article.desc}</p>
-                </div>
-              </a>
-            ))}
-          </div>
+                    {/* Content */}
+                    <div className="p-5">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full text-white"
+                          style={{ background: 'linear-gradient(135deg,#1D9FDA,#61A644)' }}>
+                          {article.tag}
+                        </span>
+                        {article.readTime && (
+                          <span className="text-gray-400 text-xs">{article.readTime}</span>
+                        )}
+                      </div>
+                      <p className="text-gray-400 text-xs mb-2">{article.date}</p>
+                      <h3 className="text-gray-900 font-semibold text-base leading-snug mb-3">{article.title}</h3>
+                      <p className="text-gray-500 text-sm leading-relaxed line-clamp-3">{article.description}</p>
+                    </div>
+                  </a>
+                );
+              })}
+            </div>
+          )}
 
         </div>
       </div>
