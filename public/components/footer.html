@@ -5,13 +5,13 @@
             <!-- Branding -->
             <div class="lg:col-span-2 space-y-6">
                 <div class="flex items-center">
-                    <img src="assets/getmedslogo.png" alt="Getmeds Logo" class="h-8 w-auto object-contain brightness-0 invert opacity-90">
+                    <img id="footer-logo" src="assets/getmedslogo.png" alt="Getmeds Logo" class="h-8 w-auto object-contain brightness-0 invert opacity-90">
                 </div>
                 <p class="text-sm text-gray-400 max-w-xs">
                     Getmeds is your trusted online healthcare partner, providing access to top-quality medicines,
                     doctor consultations, and lab tests from anywhere in the world.
                 </p>
-                <div class="flex space-x-4">
+                <div id="footer-socials" class="flex space-x-4">
                     <a href="#" class="h-10 w-10 rounded-full bg-gray-800 flex items-center justify-center text-white hover:bg-primary transition"><i class="fa-brands fa-facebook-f"></i></a>
                     <a href="#" class="h-10 w-10 rounded-full bg-gray-800 flex items-center justify-center text-white hover:bg-primary transition"><i class="fa-brands fa-twitter"></i></a>
                     <a href="#" class="h-10 w-10 rounded-full bg-gray-800 flex items-center justify-center text-white hover:bg-primary transition"><i class="fa-brands fa-instagram"></i></a>
@@ -44,29 +44,30 @@
             <!-- Links 3 -->
             <div>
                 <h4 class="text-white font-bold mb-6 text-lg">Contact</h4>
-                <ul class="space-y-3 text-sm">
+                <ul id="footer-contact-list" class="space-y-3 text-sm">
                     <li class="flex items-start space-x-3">
                         <i class="fa-solid fa-location-dot mt-1 text-primary"></i>
-                        <span>123 Medical Drive, Health City, NY 10001</span>
+                        <span id="footer-address">123 Medical Drive, Health City, NY 10001</span>
                     </li>
                     <li class="flex items-center space-x-3">
                         <i class="fa-solid fa-phone text-primary"></i>
-                        <span>+1 (800) 123-4567</span>
+                        <a id="footer-phone" href="tel:+18001234567" class="hover:text-primary transition">+1 (800) 123-4567</a>
                     </li>
                     <li class="flex items-center space-x-3">
                         <i class="fa-solid fa-envelope text-primary"></i>
-                        <span>support@getmeds.com</span>
+                        <a id="footer-email" href="mailto:support@getmeds.com" class="hover:text-primary transition">support@getmeds.com</a>
                     </li>
                 </ul>
             </div>
         </div>
 
         <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-gray-500">
-            <p>&copy; 2023 Getmeds. All rights reserved.</p>
-            <div class="flex space-x-6 mt-4 md:mt-0">
+            <p id="footer-copyright">&copy; 2023 Getmeds. All rights reserved.</p>
+            <div id="footer-legal-links" class="flex space-x-6 mt-4 md:mt-0">
                 <a href="#" class="hover:text-white transition">Privacy Policy</a>
                 <a href="#" class="hover:text-white transition">Terms of Service</a>
             </div>
         </div>
     </div>
 </footer>
+

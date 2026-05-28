@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useImageMapper } from '../lib/useSanity';
 import { getGoogleSpreadsheetBySlug } from '../lib/queries';
+import { injectHTML } from '../lib/injectHTML';
 
 
 // Declare global tailwind interface
@@ -96,7 +97,7 @@ export default function GetMedsHomepage() {
         ]
       };
 
-      const response = await fetch('http://localhost:3333/api/append-to-spreadsheet', {
+      const response = await fetch(import.meta.env.VITE_SPREADSHEET_API_URL || '/api/append-to-spreadsheet', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
@@ -218,6 +219,14 @@ export default function GetMedsHomepage() {
 
     const revealElements = document.querySelectorAll('.reveal');
     revealElements.forEach(el => observer.observe(el));
+
+    // 6. Dynamically load the footer component
+    const footerContainer = document.getElementById('footer-container');
+    if (footerContainer && footerContainer.innerHTML.trim() === '') {
+      fetch('/components/footer.html')
+        .then(res => res.text())
+        .then(html => { injectHTML(footerContainer, html); });
+    }
 
     return () => {
       window.removeEventListener('scroll', handleScroll);
@@ -1385,61 +1394,7 @@ export default function GetMedsHomepage() {
 
 
       {/* Footer Component Placeholder */}
-      <footer className="bg-slate-900 text-white/70 py-16 border-t border-white/5">
-        <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-12">
-
-          <div className="space-y-4">
-            <div className="flex items-center space-x-2 text-white">
-              <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center font-black text-white text-lg">G</div>
-              <span className="text-xl font-extrabold tracking-tight">
-                Get<span className="text-accent underline underline-offset-4">MEDS</span>
-              </span>
-            </div>
-            <p className="text-xs font-semibold leading-relaxed">
-              Your Compassionate Health Ally. Access crucial therapies, oncological medicines, and complete guidance on government medical assistance.
-            </p>
-          </div>
-
-          <div className="space-y-4">
-            <h4 className="font-bold text-white text-sm uppercase tracking-wider">Quick Links</h4>
-            <ul className="space-y-2 text-xs font-semibold">
-              <li><a href="index.html" className="hover:text-primary transition-colors">Home</a></li>
-              <li><a href="order-medicines.html" className="hover:text-primary transition-colors">Order Medicines</a></li>
-              <li><a href="product-range.html" className="hover:text-primary transition-colors">Product Range</a></li>
-              <li><a href="pap.html" className="hover:text-primary transition-colors">Patient Assistance Program</a></li>
-            </ul>
-          </div>
-
-          <div className="space-y-4">
-            <h4 className="font-bold text-white text-sm uppercase tracking-wider">Corporate info</h4>
-            <ul className="space-y-2 text-xs font-semibold">
-              <li><a href="about-us.html" className="hover:text-primary transition-colors">About Us</a></li>
-              <li><a href="services.html" className="hover:text-primary transition-colors">Our Services</a></li>
-              <li><a href="global-presence.html" className="hover:text-primary transition-colors">Global Presence</a></li>
-              <li><a href="csr.html" className="hover:text-primary transition-colors">CSR & Social Impact</a></li>
-            </ul>
-          </div>
-
-          <div className="space-y-4">
-            <h4 className="font-bold text-white text-sm uppercase tracking-wider">Contact Info</h4>
-            <p className="text-xs font-semibold leading-relaxed">
-              Unit 305, 17 Vatican Bldg., BF Resort Village, Las Piñas City, Metro Manila
-            </p>
-            <p className="text-xs font-semibold">
-              Viber Inquiry: +63 999 888 7766
-            </p>
-          </div>
-
-        </div>
-
-        <div className="max-w-7xl mx-auto px-6 mt-12 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between text-xs text-white/40">
-          <p>© 2026 Getmeds. All Rights Reserved.</p>
-          <div className="flex space-x-6 mt-4 md:mt-0">
-            <a href="#" className="hover:text-white transition">Privacy Policy</a>
-            <a href="#" className="hover:text-white transition">Terms & Conditions</a>
-          </div>
-        </div>
-      </footer>
+      <div id="footer-container" />
 
       {/* Slide-out Drawer Overlay */}
       <div

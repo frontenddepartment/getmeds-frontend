@@ -81,6 +81,7 @@
             // Set Favicon dynamically
             injectFavicon();
             fetchAndApplyLogo();
+            fetchAndApplyFooterSettings();
 
             // Inject Scroll and AI
             injectScrollToTop();
@@ -411,7 +412,10 @@
         function loadChatHistory() {
             const sid = getChatSessionId();
             const query = `*[_type == "chatSession" && sessionId == "${sid}"][0]{ messages }`;
-            const url = 'https://s7ocz8zp.api.sanity.io/v2021-10-21/data/query/production?query=' + encodeURIComponent(query);
+            const projectId = document.querySelector('meta[name="getmeds-sanity-project-id"]')?.content || 's7ocz8zp';
+            const dataset = document.querySelector('meta[name="getmeds-sanity-dataset"]')?.content || 'production';
+            const apiVersion = document.querySelector('meta[name="getmeds-sanity-api-version"]')?.content || '2021-10-21';
+            const url = `https://${projectId}.api.sanity.io/v${apiVersion}/data/query/${dataset}?query=` + encodeURIComponent(query);
 
             fetch(url)
                 .then(res => res.json())
@@ -743,7 +747,10 @@
 
     function fetchAndApplyLogo() {
         const query = '*[_type == "siteSettings" && _id == "global-site-settings"][0]{ "logoUrl": logo.src.asset->url }';
-        const url = 'https://s7ocz8zp.api.sanity.io/v2021-10-21/data/query/production?query=' + encodeURIComponent(query);
+        const projectId = document.querySelector('meta[name="getmeds-sanity-project-id"]')?.content || 's7ocz8zp';
+        const dataset = document.querySelector('meta[name="getmeds-sanity-dataset"]')?.content || 'production';
+        const apiVersion = document.querySelector('meta[name="getmeds-sanity-api-version"]')?.content || '2021-10-21';
+        const url = `https://${projectId}.api.sanity.io/v${apiVersion}/data/query/${dataset}?query=` + encodeURIComponent(query);
 
         fetch(url)
             .then(res => res.json())
@@ -784,6 +791,211 @@
         apply();
 
         const observer = new MutationObserver(apply);
+        observer.observe(document.body, { childList: true, subtree: true });
+    }
+
+    function fetchAndApplyFooterSettings() {
+        const projectId = document.querySelector('meta[name="getmeds-sanity-project-id"]')?.content || 's7ocz8zp';
+        const dataset = document.querySelector('meta[name="getmeds-sanity-dataset"]')?.content || 'production';
+        const apiVersion = document.querySelector('meta[name="getmeds-sanity-api-version"]')?.content || '2021-10-21';
+        
+        const query = '*[_type == "siteSettings" && _id == "global-site-settings"][0]{ ..., topBar{ ..., socials[]-> } }';
+        const url = `https://${projectId}.api.sanity.io/v${apiVersion}/data/query/${dataset}?query=` + encodeURIComponent(query);
+
+        fetch(url)
+            .then(res => res.json())
+            .then(data => {
+                const settings = data?.result;
+                if (settings) {
+                    setupFooterObserver(settings, projectId, dataset, apiVersion);
+                }
+            })
+            .catch(err => console.warn('[GetMEDS] Failed to fetch dynamic footer settings:', err));
+    }
+
+    function setupFooterObserver(settings, projectId, dataset, apiVersion) {
+        const escapeHtml = (value) => {
+            return String(value ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        };
+
+        const applySettings = () => {
+            // 1. Logo
+            const footerLogo = document.getElementById('footer-logo');
+            if (footerLogo && settings.logo?.src?.asset?._ref) {
+                const ref = settings.logo.src.asset._ref;
+                const parts = ref.split('-');
+                if (parts.length >= 4) {
+                    const id = parts[1];
+                    const dims = parts[2];
+                    const ext = parts[3];
+                    const url = `https://cdn.sanity.io/images/${projectId}/${dataset}/${id}-${dims}.${ext}`;
+                    if (footerLogo.src !== url) {
+                        footerLogo.src = url;
+                    }
+                }
+                if (settings.logo.alt && footerLogo.alt !== settings.logo.alt) {
+                    footerLogo.alt = settings.logo.alt;
+                }
+            }
+
+            // 2. Contact List (Addresses, Phones, Emails)
+            const normalizeToArray = (val) => {
+                if (!val) return [];
+                if (Array.isArray(val)) return val;
+                if (typeof val === 'string') return [val];
+                return [];
+            };
+
+            const addresses = normalizeToArray(settings.contactInfo?.address);
+            const phones = normalizeToArray(settings.contactInfo?.phone);
+            const emails = normalizeToArray(settings.contactInfo?.email);
+
+            const footerContactList = document.getElementById('footer-contact-list');
+            if (footerContactList) {
+                if (!footerContactList.dataset.populated && (addresses.length > 0 || phones.length > 0 || emails.length > 0)) {
+                    let html = '';
+                    addresses.forEach(addr => {
+                        html += `
+                            <li class="flex items-start space-x-3">
+                                <i class="fa-solid fa-location-dot mt-1 text-primary"></i>
+                                <span>${escapeHtml(addr)}</span>
+                            </li>
+                        `;
+                    });
+                    phones.forEach(ph => {
+                        const cleanPhone = ph.replace(/[^+\d]/g, '');
+                        html += `
+                            <li class="flex items-center space-x-3">
+                                <i class="fa-solid fa-phone text-primary"></i>
+                                <a href="tel:${escapeHtml(cleanPhone)}" class="hover:text-primary transition">${escapeHtml(ph)}</a>
+                            </li>
+                        `;
+                    });
+                    emails.forEach(em => {
+                        html += `
+                            <li class="flex items-center space-x-3">
+                                <i class="fa-solid fa-envelope text-primary"></i>
+                                <a href="mailto:${escapeHtml(em)}" class="hover:text-primary transition">${escapeHtml(em)}</a>
+                            </li>
+                        `;
+                    });
+                    footerContactList.innerHTML = html;
+                    footerContactList.dataset.populated = 'true';
+                }
+            } else {
+                // Fallback for individual elements
+                const footerAddress = document.getElementById('footer-address');
+                if (footerAddress && addresses.length > 0) {
+                    if (footerAddress.textContent !== addresses[0]) {
+                        footerAddress.textContent = addresses[0];
+                    }
+                }
+                const footerPhone = document.getElementById('footer-phone');
+                if (footerPhone && phones.length > 0) {
+                    if (footerPhone.textContent !== phones[0]) {
+                        footerPhone.textContent = phones[0];
+                    }
+                    const telHref = `tel:${phones[0].replace(/[^+\d]/g, '')}`;
+                    if (footerPhone.getAttribute('href') !== telHref) {
+                        footerPhone.setAttribute('href', telHref);
+                    }
+                }
+                const footerEmail = document.getElementById('footer-email');
+                if (footerEmail && emails.length > 0) {
+                    if (footerEmail.textContent !== emails[0]) {
+                        footerEmail.textContent = emails[0];
+                    }
+                    const mailHref = `mailto:${emails[0]}`;
+                    if (footerEmail.getAttribute('href') !== mailHref) {
+                        footerEmail.setAttribute('href', mailHref);
+                    }
+                }
+            }
+
+            // 5. Copyright
+            const footerCopyright = document.getElementById('footer-copyright');
+            if (footerCopyright && settings.copyright) {
+                if (footerCopyright.textContent !== settings.copyright) {
+                    footerCopyright.textContent = settings.copyright;
+                }
+            }
+
+            // 6. Socials
+            const footerSocials = document.getElementById('footer-socials');
+            if (footerSocials && settings.topBar?.socials && Array.isArray(settings.topBar.socials)) {
+                if (!footerSocials.dataset.populated) {
+                    footerSocials.innerHTML = '';
+                    settings.topBar.socials.forEach(socialRef => {
+                        if (!socialRef || !socialRef.platform || !socialRef.href) return;
+                        
+                        let iconClass = 'fa-link';
+                        if (socialRef.icon) {
+                            if (socialRef.icon.startsWith('fa-')) {
+                                iconClass = socialRef.icon;
+                            } else {
+                                iconClass = `fa-brands fa-${socialRef.icon}`;
+                            }
+                        } else {
+                            if (socialRef.platform === 'facebook') iconClass = 'fa-brands fa-facebook-f';
+                            else if (socialRef.platform === 'twitter' || socialRef.platform === 'x') iconClass = 'fa-brands fa-x-twitter';
+                            else if (socialRef.platform === 'instagram') iconClass = 'fa-brands fa-instagram';
+                            else if (socialRef.platform === 'linkedin') iconClass = 'fa-brands fa-linkedin-in';
+                            else if (socialRef.platform === 'youtube') iconClass = 'fa-brands fa-youtube';
+                            else if (socialRef.platform === 'tiktok') iconClass = 'fa-brands fa-tiktok';
+                        }
+                        
+                        if (iconClass === 'fa-facebook') iconClass = 'fa-brands fa-facebook-f';
+                        if (iconClass === 'fa-twitter') iconClass = 'fa-brands fa-twitter';
+                        if (iconClass === 'fa-linkedin') iconClass = 'fa-brands fa-linkedin-in';
+                        
+                        if (!iconClass.includes(' ')) {
+                            if (iconClass.startsWith('fa-')) {
+                                iconClass = `fa-brands ${iconClass}`;
+                            }
+                        }
+
+                        const a = document.createElement('a');
+                        a.href = socialRef.href;
+                        a.target = '_blank';
+                        a.rel = 'noopener noreferrer';
+                        a.className = 'h-10 w-10 rounded-full bg-gray-800 flex items-center justify-center text-white hover:bg-primary transition';
+                        a.innerHTML = `<i class="${iconClass}"></i>`;
+                        footerSocials.appendChild(a);
+                    });
+                    footerSocials.dataset.populated = 'true';
+                }
+            }
+
+            // 7. Legal Links
+            const footerLegal = document.getElementById('footer-legal-links');
+            if (footerLegal && settings.legalLinks && Array.isArray(settings.legalLinks)) {
+                if (!footerLegal.dataset.populated) {
+                    footerLegal.innerHTML = '';
+                    settings.legalLinks.forEach(link => {
+                        if (!link || !link.label) return;
+                        const a = document.createElement('a');
+                        a.href = link.href || '#';
+                        a.className = 'hover:text-white transition';
+                        a.textContent = link.label;
+                        if (link.openInNewTab) {
+                            a.target = '_blank';
+                            a.rel = 'noopener noreferrer';
+                        }
+                        footerLegal.appendChild(a);
+                    });
+                    footerLegal.dataset.populated = 'true';
+                }
+            }
+        };
+
+        applySettings();
+
+        const observer = new MutationObserver(applySettings);
         observer.observe(document.body, { childList: true, subtree: true });
     }
 

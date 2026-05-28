@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite';
+import { defineConfig, loadEnv } from 'vite';
 import fs from 'fs';
 import path from 'path';
 
@@ -14,13 +14,49 @@ const getHtmlInputs = () => {
   return inputs;
 };
 
-export default defineConfig({
-  build: {
-    rollupOptions: {
-      input: getHtmlInputs()
-    }
-  },
-  plugins: [
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), '');
+  const deploymentMode = env.VITE_DEPLOYMENT || env.DEPLOYMENT || 'development';
+  const isProduction = deploymentMode === 'production';
+
+  const chatbotUrl = isProduction
+    ? (env.VITE_CHATBOT_API_URL && !env.VITE_CHATBOT_API_URL.includes('localhost') ? env.VITE_CHATBOT_API_URL : '/api/chatbot/ask')
+    : (env.VITE_CHATBOT_API_URL || 'http://localhost:8000/api/chatbot/ask');
+
+  const spreadsheetUrl = isProduction
+    ? (env.VITE_SPREADSHEET_API_URL && !env.VITE_SPREADSHEET_API_URL.includes('localhost') ? env.VITE_SPREADSHEET_API_URL : '/api/append-to-spreadsheet')
+    : (env.VITE_SPREADSHEET_API_URL || 'http://localhost:3333/api/append-to-spreadsheet');
+
+  const sanityProjectId = env.VITE_SANITY_PROJECT_ID || 's7ocz8zp';
+  const sanityDataset = env.VITE_SANITY_DATASET || 'production';
+  const sanityApiVersion = env.VITE_SANITY_API_VERSION || '2024-01-01';
+
+  return {
+    define: {
+      'import.meta.env.VITE_DEPLOYMENT': JSON.stringify(deploymentMode),
+      'import.meta.env.VITE_SPREADSHEET_API_URL': JSON.stringify(spreadsheetUrl),
+      'import.meta.env.VITE_SANITY_PROJECT_ID': JSON.stringify(sanityProjectId),
+      'import.meta.env.VITE_SANITY_DATASET': JSON.stringify(sanityDataset),
+      'import.meta.env.VITE_SANITY_API_VERSION': JSON.stringify(sanityApiVersion)
+    },
+    build: {
+      rollupOptions: {
+        input: getHtmlInputs()
+      }
+    },
+    plugins: [
+      {
+        name: 'inject-chatbot-meta',
+        transformIndexHtml(html) {
+          return html.replace(
+            '</head>',
+            `  <meta name="getmeds-chatbot-api" content="${chatbotUrl}" />
+  <meta name="getmeds-sanity-project-id" content="${sanityProjectId}" />
+  <meta name="getmeds-sanity-dataset" content="${sanityDataset}" />
+  <meta name="getmeds-sanity-api-version" content="${sanityApiVersion}" />\n</head>`
+          );
+        }
+      },
     {
       name: 'pap-tsx-rewrite',
       configureServer(server) {
@@ -240,4 +276,5 @@ export default defineConfig({
       }
     }
   ]
+};
 });

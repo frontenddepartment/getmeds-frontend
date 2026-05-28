@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react';
-import { useProducts, useCategories, useImageMapper } from '../lib/useSanity';
-import { urlFor } from '../lib/sanity';
+import { useProducts, useCategories, useImageMapper, useSiteSettings } from '../lib/useSanity';
+import { urlFor, client } from '../lib/sanity';
 import type { Product as SanityProduct, Category } from '../types/sanity';
 import { injectHTML } from '../lib/injectHTML';
 import { getGoogleSpreadsheetBySlug } from '../lib/queries';
@@ -51,6 +51,18 @@ export default function ProductRange() {
   const { data: productsDataRaw, loading: productsLoading } = useProducts();
   const productsData = productsDataRaw as ProductWithCategory[] | null;
   const { data: categoriesData, loading: categoriesLoading } = useCategories();
+  const { data: settings } = useSiteSettings();
+  const [imageAssets, setImageAssets] = useState<any[]>([]);
+
+  useEffect(() => {
+    client.fetch('*[_type == "sanity.imageAsset"]{ _id, originalFilename }')
+      .then(assets => {
+        setImageAssets(assets || []);
+      })
+      .catch(err => {
+        console.error('Error fetching image assets on frontend:', err);
+      });
+  }, []);
 
   const [openCategories, setOpenCategories] = useState<Set<string>>(new Set());
   const [currentCategory, setCurrentCategory] = useState('All');
@@ -61,11 +73,23 @@ export default function ProductRange() {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<ProductWithCategory | null>(null);
+  const [zoomedImageOpen, setZoomedImageOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<'description' | 'usage' | 'precautions'>('description');
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [formData, setFormData] = useState({ name: '', phone: '', email: '', message: '' });
   const [submitState, setSubmitState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
-  const [searchHistoryCleared, setSearchHistoryCleared] = useState(false);
+  const [searchHistory, setSearchHistory] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem('getmeds-search-history');
+      return saved ? JSON.parse(saved) : [];
+    } catch { return []; }
+  });
+  const [categoryCounts, setCategoryCounts] = useState<Record<string, number>>(() => {
+    try {
+      const saved = localStorage.getItem('getmeds-category-counts');
+      return saved ? JSON.parse(saved) : {};
+    } catch { return {}; }
+  });
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [activeFlyoutCat, setActiveFlyoutCat] = useState<any | null>(null);
   const [flyoutVisible, setFlyoutVisible] = useState(false);
@@ -224,35 +248,152 @@ export default function ProductRange() {
   }, [categoriesData]);
 
 
-  const getProductImage = (p: ProductWithCategory) => {
+  const brandNameCounts = useMemo(() => {
+    const counts = new Map<string, number>()
+    if (productsData) {
+      productsData.forEach(p => {
+        const brand = (p.brandName || '').toLowerCase().trim()
+        if (brand) {
+          counts.set(brand, (counts.get(brand) || 0) + 1)
+        }
+      })
+    }
+    return counts
+  }, [productsData])
+
+  const getProductImage = (p: ProductWithCategory, size?: number) => {
     if (p.image && p.image.asset) {
       try {
-        return urlFor(p.image).width(120).height(120).url();
+        if (size) {
+          return urlFor(p.image).width(size).height(size).url();
+        }
+        return urlFor(p.image).url();
       } catch (err) {
         console.error('Error generating image URL:', err);
       }
     }
+
+    if (settings && imageAssets.length > 0) {
+      const primaryImageFormat = settings.primaryImageNamingFormat || '{brandName}'
+      const secondaryImageFormat = settings.fallbackImageNamingFormat || '{brandName}-{strength}'
+      const brandNameKey = (p.brandName || '').toLowerCase().trim()
+      const hasMultipleOutputs = (brandNameCounts.get(brandNameKey) || 0) > 1
+
+      const formatFilenameLocal = (pattern: string, doc: any) => {
+        let name = pattern
+        const fields = ['brandName', 'genericName', 'strength', 'form']
+        for (const field of fields) {
+          const val = String(doc[field] || '').trim()
+          const lowerPlaceholder = `{${field.toLowerCase()}}`
+          const upperPlaceholder = `{${field.toUpperCase()}}`
+          const mixedPlaceholder = `{${field}}`
+          name = name.split(lowerPlaceholder).join(val.toLowerCase())
+          name = name.split(upperPlaceholder).join(val.toUpperCase())
+          name = name.split(mixedPlaceholder).join(val)
+          name = name.replace(new RegExp(`{${field}}`, 'gi'), val)
+        }
+        return name
+      }
+
+      const cleanNameLocal = (str: string) => str.toLowerCase().replace(/[^a-z0-9]/g, '')
+
+      // Try both formats: preferred first, then alternate
+      const formatsToTry = hasMultipleOutputs
+        ? [secondaryImageFormat, primaryImageFormat]
+        : [primaryImageFormat, secondaryImageFormat]
+
+      let matchedAsset: any = null
+
+      // Pass 1: Exact match with each format
+      for (const fmt of formatsToTry) {
+        if (matchedAsset) break
+        const targetNormalized = cleanNameLocal(formatFilenameLocal(fmt, p))
+        if (!targetNormalized) continue
+        matchedAsset = imageAssets.find((asset: any) => {
+          if (!asset.originalFilename) return false
+          const baseName = asset.originalFilename.replace(/\.[^/.]+$/, '')
+          return cleanNameLocal(baseName) === targetNormalized
+        })
+      }
+
+      // Pass 2: Fuzzy startsWith fallback (asset starts with target or target starts with asset)
+      if (!matchedAsset) {
+        for (const fmt of formatsToTry) {
+          if (matchedAsset) break
+          const targetNormalized = cleanNameLocal(formatFilenameLocal(fmt, p))
+          if (!targetNormalized || targetNormalized.length < 3) continue
+          matchedAsset = imageAssets.find((asset: any) => {
+            if (!asset.originalFilename) return false
+            const assetNormalized = cleanNameLocal(asset.originalFilename.replace(/\.[^/.]+$/, ''))
+            return assetNormalized.startsWith(targetNormalized) || targetNormalized.startsWith(assetNormalized)
+          })
+        }
+      }
+
+      if (matchedAsset) {
+        try {
+          const imageObj = {
+            _type: 'image',
+            asset: {
+              _type: 'reference',
+              _ref: matchedAsset._id,
+            }
+          }
+          if (size) {
+            return urlFor(imageObj).width(size).height(size).url();
+          }
+          return urlFor(imageObj).url();
+        } catch (err) {
+          console.error('Error generating dynamic image URL:', err);
+        }
+      }
+    }
+
+    const brandLower = (p.brandName || '').toLowerCase().trim()
+    if (brandLower) {
+      return `assets/${brandLower}.png`
+    }
+
     return 'assets/no-image.png';
+  };
+
+  const getProductSubcategories = (p: ProductWithCategory) => {
+    if (!p.subCategory) return [];
+    const parts = p.subCategory.split('/').map(s => s.trim().replace(/,$/, '')).filter(Boolean);
+    const catDoc = categoriesData?.find(c => c._id === p.category?._id || c.category === p.category?.category);
+    const masterSubcategories = catDoc?.subcategory || [];
+    if (masterSubcategories.length === 0) return parts;
+    return parts.map(part => {
+      const matched = masterSubcategories.find(m => m.toLowerCase() === part.toLowerCase());
+      return matched || part;
+    });
+  };
+
+  const getCategorizationDisplay = (p: ProductWithCategory) => {
+    const subcats = getProductSubcategories(p);
+    if (subcats.length === 0) {
+      return p.category?.category || 'General';
+    }
+    if (currentCategory !== 'All' && categoriesData) {
+      const isSubcategory = categoriesData.some(c => 
+        c.subcategory?.some(sub => sub.toLowerCase() === currentCategory.toLowerCase())
+      );
+      if (isSubcategory) {
+        const matched = subcats.find(sub => sub.toLowerCase() === currentCategory.toLowerCase());
+        if (matched) {
+          return matched;
+        }
+      }
+    }
+    return subcats.join(' / ');
   };
 
   const sidebarCategories = useMemo(() => {
     if (!categoriesData || !productsData) return [];
 
-    const subCategoriesByCategoryId = new Map<string, Set<string>>();
-    productsData.forEach(p => {
-      const catId = p.category?._id;
-      if (catId && p.subCategory) {
-        if (!subCategoriesByCategoryId.has(catId)) {
-          subCategoriesByCategoryId.set(catId, new Set());
-        }
-        subCategoriesByCategoryId.get(catId)!.add(p.subCategory);
-      }
-    });
-
     return categoriesData.map(cat => {
-      const subSet = subCategoriesByCategoryId.get(cat._id);
-      const subItems = subSet
-        ? Array.from(subSet).sort().map(sub => ({ label: sub }))
+      const subItems = cat.subcategory && Array.isArray(cat.subcategory)
+        ? cat.subcategory.map(sub => ({ label: sub }))
         : [];
       return {
         _id: cat._id,
@@ -264,10 +405,14 @@ export default function ProductRange() {
 
   const getFiltered = (category: string) => {
     if (!productsData) return [];
+    const cleanCategory = category.trim().toLowerCase();
     return productsData.filter(p => {
       if (category === 'All') return true;
-      if (p.category?.category === category) return true;
-      if (p.subCategory === category) return true;
+      if (p.category?.category?.trim().toLowerCase() === cleanCategory) return true;
+      
+      const subcats = getProductSubcategories(p);
+      if (subcats.some(part => part.toLowerCase() === cleanCategory)) return true;
+      
       return false;
     });
   };
@@ -314,6 +459,106 @@ export default function ProductRange() {
     if (sortBy === 'Form: A → Z') return (a.form || '').localeCompare(b.form || '');
     return 0;
   });
+
+  // ── Search History & Suggestions Logic ──────────────────
+  const onEnterSearch = (query: string) => {
+    const trimmed = query.trim();
+    if (!trimmed || !productsData) return;
+
+    // 1. Save to search history (deduped, most recent first, max 10)
+    setSearchHistory(prev => {
+      const filtered = prev.filter(h => h.toLowerCase() !== trimmed.toLowerCase());
+      const next = [trimmed, ...filtered].slice(0, 10);
+      localStorage.setItem('getmeds-search-history', JSON.stringify(next));
+      return next;
+    });
+
+    // 2. Find matching products and increment their category counts
+    const lowerQuery = trimmed.toLowerCase();
+    const matchedProducts = productsData.filter(p =>
+      p.name?.toLowerCase().includes(lowerQuery) ||
+      (p.brandName && p.brandName.toLowerCase().includes(lowerQuery)) ||
+      (p.genericName && p.genericName.toLowerCase().includes(lowerQuery))
+    );
+
+    if (matchedProducts.length > 0) {
+      setCategoryCounts(prev => {
+        const next = { ...prev };
+        const seenCats = new Set<string>();
+        matchedProducts.forEach(p => {
+          const cat = p.category?.category;
+          if (cat && !seenCats.has(cat)) {
+            seenCats.add(cat);
+            next[cat] = (next[cat] || 0) + 1;
+          }
+        });
+        localStorage.setItem('getmeds-category-counts', JSON.stringify(next));
+        return next;
+      });
+    }
+  };
+
+  const removeSearchHistoryItem = (item: string) => {
+    setSearchHistory(prev => {
+      const next = prev.filter(h => h !== item);
+      localStorage.setItem('getmeds-search-history', JSON.stringify(next));
+      return next;
+    });
+  };
+
+  const clearSearchHistory = () => {
+    setSearchHistory([]);
+    setCategoryCounts({});
+    localStorage.removeItem('getmeds-search-history');
+    localStorage.removeItem('getmeds-category-counts');
+  };
+
+  const suggestedProducts = useMemo(() => {
+    if (!productsData || productsData.length === 0) return [];
+
+    const MAX_SUGGESTIONS = 5;
+
+    // If no category counts, show 5 random products
+    if (Object.keys(categoryCounts).length === 0) {
+      const shuffled = [...productsData].sort(() => Math.random() - 0.5);
+      return shuffled.slice(0, MAX_SUGGESTIONS);
+    }
+
+    // Sort categories by count descending
+    const sortedCats = Object.entries(categoryCounts)
+      .sort((a, b) => b[1] - a[1])
+      .map(([cat]) => cat);
+
+    const suggestions: ProductWithCategory[] = [];
+    const usedIds = new Set<string>();
+
+    for (const cat of sortedCats) {
+      if (suggestions.length >= MAX_SUGGESTIONS) break;
+      const catProducts = productsData.filter(
+        p => p.category?.category === cat && !usedIds.has(p._id)
+      );
+      // Shuffle within category so it's not always the same order
+      const shuffled = [...catProducts].sort(() => Math.random() - 0.5);
+      const remaining = MAX_SUGGESTIONS - suggestions.length;
+      const toAdd = shuffled.slice(0, remaining);
+      toAdd.forEach(p => {
+        suggestions.push(p);
+        usedIds.add(p._id);
+      });
+    }
+
+    // If still fewer than MAX, fill with random products from other categories
+    if (suggestions.length < MAX_SUGGESTIONS) {
+      const remaining = MAX_SUGGESTIONS - suggestions.length;
+      const others = productsData
+        .filter(p => !usedIds.has(p._id))
+        .sort(() => Math.random() - 0.5)
+        .slice(0, remaining);
+      suggestions.push(...others);
+    }
+
+    return suggestions;
+  }, [productsData, categoryCounts]);
 
   const totalPages = Math.ceil(sorted.length / ITEMS_PER_PAGE);
   const paginated = sorted.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
@@ -395,7 +640,7 @@ export default function ProductRange() {
         files: filesData
       };
 
-      const response = await fetch('http://localhost:3333/api/append-to-spreadsheet', {
+      const response = await fetch(import.meta.env.VITE_SPREADSHEET_API_URL || '/api/append-to-spreadsheet', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
@@ -488,7 +733,7 @@ export default function ProductRange() {
               sidebarCategories.map(cat => (
                 <button
                   key={cat.name}
-                  onClick={() => openFlyout(cat)}
+                  onClick={() => { selectCategory(cat.name); openFlyout(cat); }}
                   className="w-full flex items-center justify-between px-4 py-2.5 rounded-[10px] text-[13px] font-semibold transition-all duration-200 hover:bg-gray-50 group"
                   style={(flyoutVisible ? activeFlyoutCat?.name === cat.name : isCatParentActive(cat))
                     ? { background: 'linear-gradient(to right, #61A644, #1D9FDA)', color: '#fff' }
@@ -617,6 +862,12 @@ export default function ProductRange() {
                       value={searchTerm}
                       onChange={e => { setSearchTerm(e.target.value); setCurrentPage(1); }}
                       onFocus={() => setShowSuggestions(true)}
+                      onKeyDown={e => {
+                        if (e.key === 'Enter') {
+                          onEnterSearch(searchTerm);
+                          setShowSuggestions(false);
+                        }
+                      }}
                       className="w-full bg-transparent border-none pl-2.5 pr-2 py-1.5 text-[13px] text-gray-700 outline-none placeholder-gray-400"
                     />
                   </div>
@@ -706,22 +957,39 @@ export default function ProductRange() {
                   <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-xl border border-gray-100 p-4 z-50">
                     <div className="flex items-center justify-between mb-3 px-1">
                       <h4 className="text-[12px] font-medium text-gray-500">Recent Searches</h4>
-                      <button
-                        onClick={() => setSearchHistoryCleared(true)}
-                        className="text-[11px] font-bold text-primary hover:text-blue-700 transition"
-                      >
-                        Clear All
-                      </button>
+                      {searchHistory.length > 0 && (
+                        <button
+                          onClick={() => clearSearchHistory()}
+                          className="text-[11px] font-bold text-primary hover:text-blue-700 transition"
+                        >
+                          Clear All
+                        </button>
+                      )}
                     </div>
                     <div className="grid grid-cols-1 gap-1 mb-4">
-                      {!searchHistoryCleared ? (
-                        <div className="flex items-center justify-between p-2 hover:bg-blue-50/50 rounded-xl cursor-pointer group transition">
-                          <div className="flex items-center gap-2">
-                            <i className="fa-solid fa-clock-rotate-left text-gray-300 text-[11px]" />
-                            <span className="text-[13px] text-gray-600 font-medium">Oncology Medicines</span>
+                      {searchHistory.length > 0 ? (
+                        searchHistory.map((term, idx) => (
+                          <div
+                            key={`${term}-${idx}`}
+                            className="flex items-center justify-between p-2 hover:bg-blue-50/50 rounded-xl cursor-pointer group transition"
+                            onClick={() => {
+                              setSearchTerm(term);
+                              setCurrentPage(1);
+                              setShowSuggestions(false);
+                            }}
+                          >
+                            <div className="flex items-center gap-2">
+                              <i className="fa-solid fa-clock-rotate-left text-gray-300 text-[11px]" />
+                              <span className="text-[13px] text-gray-600 font-medium">{term}</span>
+                            </div>
+                            <button
+                              onClick={e => { e.stopPropagation(); removeSearchHistoryItem(term); }}
+                              className="p-1"
+                            >
+                              <i className="fa-solid fa-xmark text-gray-300 hover:text-red-500 text-[10px] transition opacity-0 group-hover:opacity-100" />
+                            </button>
                           </div>
-                          <i className="fa-solid fa-xmark text-gray-300 hover:text-red-500 text-[10px] transition opacity-0 group-hover:opacity-100" />
-                        </div>
+                        ))
                       ) : (
                         <div className="col-span-full py-8 text-center bg-gray-50 rounded-2xl border-2 border-dashed border-gray-100">
                           <i className="fa-solid fa-ghost text-gray-300 text-2xl mb-3 block" />
@@ -732,16 +1000,31 @@ export default function ProductRange() {
                     <div className="flex items-center justify-between mb-3 px-1">
                       <h4 className="text-[12px] font-medium text-gray-500">Suggested</h4>
                     </div>
-                    <div className="grid grid-cols-1 gap-2">
-                      <div className="flex items-center gap-3 p-2 hover:bg-blue-50/50 rounded-xl cursor-pointer transition group">
-                        <div className="w-10 h-10 bg-white border border-gray-100 p-1.5 rounded-lg flex items-center justify-center overflow-hidden">
-                          <img src="assets/CYTAGET.png" className="w-full h-full object-contain mix-blend-multiply group-hover:scale-110 transition duration-300" alt="Cytarabine" />
+                    <div className="grid grid-cols-1 gap-2 max-h-[280px] overflow-y-auto">
+                      {suggestedProducts.map(sp => (
+                        <div
+                          key={sp._id}
+                          className="flex items-center gap-3 p-2 hover:bg-blue-50/50 rounded-xl cursor-pointer transition group"
+                          onClick={() => {
+                            setSearchTerm(sp.brandName || sp.name || '');
+                            setCurrentPage(1);
+                            setShowSuggestions(false);
+                          }}
+                        >
+                          <div className="w-10 h-10 bg-white border border-gray-100 p-1.5 rounded-lg flex items-center justify-center overflow-hidden">
+                            <img
+                              src={getProductImage(sp, 80)}
+                              className="w-full h-full object-contain mix-blend-multiply group-hover:scale-110 transition duration-300"
+                              alt={sp.brandName || sp.name || 'Product'}
+                              onError={(e) => { (e.target as HTMLImageElement).src = 'assets/no-image.png'; }}
+                            />
+                          </div>
+                          <div className="min-w-0">
+                            <p className="text-[13px] font-bold text-gray-800 truncate">{sp.brandName || sp.name}</p>
+                            <p className="text-[10px] text-gray-400 mt-0.5">{sp.category?.category || 'General'}</p>
+                          </div>
                         </div>
-                        <div>
-                          <p className="text-[13px] font-bold text-gray-800">Cytarabine</p>
-                          <p className="text-[10px] text-gray-400 mt-0.5">₱ 1,840.00</p>
-                        </div>
-                      </div>
+                      ))}
                     </div>
                   </div>
                 )}
@@ -784,10 +1067,10 @@ export default function ProductRange() {
                         <div key={p._id || i} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 flex gap-3">
                           <div className="w-14 h-14 bg-gray-50 rounded-xl overflow-hidden flex-shrink-0 border border-gray-100 p-1">
                             <img
-                              src={getProductImage(p)}
+                              src={getProductImage(p, 120)}
                               alt={displayName}
                               className="w-full h-full object-contain mix-blend-multiply"
-                              onError={(e) => { (e.target as HTMLImageElement).src = 'https://placehold.co/100x100?text=PHARMA'; }}
+                              onError={(e) => { (e.target as HTMLImageElement).src = 'assets/no-image.png'; }}
                             />
                           </div>
                           <div className="flex-1 min-w-0">
@@ -803,7 +1086,7 @@ export default function ProductRange() {
                                 : <span className="shrink-0 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-green-50 text-green-600 border border-green-100">In Stock</span>
                               }
                             </div>
-                            <p className="text-[11px] text-primary font-medium mb-2">{p.subCategory || p.category?.category || 'General'}</p>
+                            <p className="text-[11px] text-primary font-medium mb-2">{getCategorizationDisplay(p)}</p>
                             <div className="flex flex-wrap gap-x-4 gap-y-1 mb-3">
                               {p.strength && <span className="text-[11px] text-gray-500"><span className="font-semibold text-gray-400 uppercase tracking-wide">Strength</span> · {p.strength}</span>}
                               {p.form && <span className="text-[11px] text-gray-500"><span className="font-semibold text-gray-400 uppercase tracking-wide">Form</span> · {p.form}</span>}
@@ -845,10 +1128,10 @@ export default function ProductRange() {
                                 <div className="flex items-center gap-4">
                                   <div className="w-12 h-12 bg-gray-50 rounded-xl overflow-hidden flex-shrink-0 border border-gray-100 p-1">
                                     <img
-                                      src={getProductImage(p)}
+                                      src={getProductImage(p, 120)}
                                       alt={displayName}
                                       className="w-full h-full object-contain mix-blend-multiply"
-                                      onError={(e) => { (e.target as HTMLImageElement).src = 'https://placehold.co/100x100?text=PHARMA'; }}
+                                      onError={(e) => { (e.target as HTMLImageElement).src = 'assets/no-image.png'; }}
                                     />
                                   </div>
                                   <span
@@ -860,7 +1143,7 @@ export default function ProductRange() {
                                 </div>
                               </td>
                               <td className="px-6 py-4 text-[13px] text-gray-600 font-medium">
-                                {p.subCategory || p.category?.category || 'General'}
+                                {getCategorizationDisplay(p)}
                               </td>
                               <td className="px-6 py-4 text-[13px] text-gray-700">
                                 {p.strength || <span className="text-gray-400">—</span>}
@@ -977,7 +1260,7 @@ export default function ProductRange() {
                       </span>
                       <span className="text-gray-300 whitespace-nowrap">|</span>
                       <span className="capitalize font-medium leading-snug" style={{ color: '#0D99FF' }}>
-                        {selectedProduct?.subCategory || selectedProduct?.category?.category || 'General'}
+                        {selectedProduct ? getCategorizationDisplay(selectedProduct) : 'General'}
                       </span>
                     </div>
                     <h1 className="text-xl font-bold text-gray-900 mb-4 leading-tight">
@@ -990,19 +1273,35 @@ export default function ProductRange() {
                     </p>
                   </div>
                   <div className="w-full md:w-1/2 flex items-center justify-center">
-                    <div className="w-full max-w-[200px] aspect-square flex flex-col items-center justify-center bg-gray-50 rounded-[15px] border border-gray-100 p-2 overflow-hidden text-gray-300 group transition hover:bg-gray-100/50">
-                      {selectedProduct && selectedProduct.image && selectedProduct.image.asset ? (
-                        <img
-                          src={getProductImage(selectedProduct)}
-                          className="w-full h-full object-contain mix-blend-multiply group-hover:scale-110 transition-transform duration-300"
-                          alt={selectedProduct.name}
-                        />
-                      ) : (
-                        <>
-                          <i className="fa-regular fa-image text-4xl mb-3 group-hover:scale-110 transition-transform" />
-                          <span className="text-xs font-medium uppercase tracking-wider">No Image</span>
-                        </>
-                      )}
+                    <div 
+                      onClick={() => setZoomedImageOpen(true)}
+                      className="w-full max-w-[320px] aspect-square flex flex-col items-center justify-center bg-gray-50 rounded-[15px] border border-gray-100 p-4 overflow-hidden relative cursor-zoom-in group/zoom hover:shadow-md transition-all duration-300"
+                    >
+                      {(() => {
+                        const resolvedImageUrl = selectedProduct ? getProductImage(selectedProduct) : null;
+                        const hasImage = resolvedImageUrl && !resolvedImageUrl.endsWith('no-image.png');
+                        return hasImage ? (
+                          <>
+                            <img
+                              src={resolvedImageUrl}
+                              className="w-full h-full object-contain mix-blend-multiply group-hover/zoom:scale-105 transition-transform duration-500"
+                              alt={selectedProduct?.name}
+                              onError={(e) => { (e.target as HTMLImageElement).src = 'assets/no-image.png'; }}
+                            />
+                            <div className="absolute inset-0 bg-black/5 opacity-0 group-hover/zoom:opacity-100 flex items-center justify-center transition-opacity duration-300">
+                              <div className="bg-white/95 backdrop-blur-sm text-gray-800 rounded-full px-3 py-1.5 flex items-center gap-1.5 shadow-sm text-xs font-semibold">
+                                <i className="fa-solid fa-magnifying-glass-plus text-primary" />
+                                Click to Zoom
+                              </div>
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <i className="fa-regular fa-image text-4xl mb-3" />
+                            <span className="text-xs font-medium uppercase tracking-wider text-gray-400">No Image</span>
+                          </>
+                        );
+                      })()}
                     </div>
                   </div>
                 </div>
@@ -1202,6 +1501,31 @@ export default function ProductRange() {
                 </form>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {zoomedImageOpen && selectedProduct && (
+        <div 
+          className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/85 backdrop-blur-md transition-all duration-300"
+          onClick={() => setZoomedImageOpen(false)}
+        >
+          <button 
+            className="absolute top-6 right-6 w-12 h-12 bg-white/10 hover:bg-white/20 text-white rounded-full flex items-center justify-center transition-colors cursor-pointer"
+            onClick={() => setZoomedImageOpen(false)}
+          >
+            <i className="fa-solid fa-xmark text-xl" />
+          </button>
+          <div 
+            className="max-w-[90vw] max-h-[90vh] overflow-hidden rounded-2xl bg-white p-4 shadow-2xl relative"
+            onClick={e => e.stopPropagation()}
+          >
+            <img
+              src={getProductImage(selectedProduct)}
+              className="max-w-full max-h-[80vh] object-contain transition-transform duration-300 hover:scale-150 cursor-zoom-in"
+              alt={selectedProduct.name}
+              onError={(e) => { (e.target as HTMLImageElement).src = 'assets/no-image.png'; }}
+            />
           </div>
         </div>
       )}
