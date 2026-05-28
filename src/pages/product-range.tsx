@@ -1070,7 +1070,7 @@ export default function ProductRange() {
                               src={getProductImage(p, 120)}
                               alt={displayName}
                               className="w-full h-full object-contain mix-blend-multiply"
-                              onError={(e) => { (e.target as HTMLImageElement).src = 'https://placehold.co/100x100?text=PHARMA'; }}
+                              onError={(e) => { (e.target as HTMLImageElement).src = 'assets/no-image.png'; }}
                             />
                           </div>
                           <div className="flex-1 min-w-0">
@@ -1131,7 +1131,7 @@ export default function ProductRange() {
                                       src={getProductImage(p, 120)}
                                       alt={displayName}
                                       className="w-full h-full object-contain mix-blend-multiply"
-                                      onError={(e) => { (e.target as HTMLImageElement).src = 'https://placehold.co/100x100?text=PHARMA'; }}
+                                      onError={(e) => { (e.target as HTMLImageElement).src = 'assets/no-image.png'; }}
                                     />
                                   </div>
                                   <span
@@ -1286,6 +1286,7 @@ export default function ProductRange() {
                               src={resolvedImageUrl}
                               className="w-full h-full object-contain mix-blend-multiply group-hover/zoom:scale-105 transition-transform duration-500"
                               alt={selectedProduct?.name}
+                              onError={(e) => { (e.target as HTMLImageElement).src = 'assets/no-image.png'; }}
                             />
                             <div className="absolute inset-0 bg-black/5 opacity-0 group-hover/zoom:opacity-100 flex items-center justify-center transition-opacity duration-300">
                               <div className="bg-white/95 backdrop-blur-sm text-gray-800 rounded-full px-3 py-1.5 flex items-center gap-1.5 shadow-sm text-xs font-semibold">
@@ -1523,6 +1524,7 @@ export default function ProductRange() {
               src={getProductImage(selectedProduct)}
               className="max-w-full max-h-[80vh] object-contain transition-transform duration-300 hover:scale-150 cursor-zoom-in"
               alt={selectedProduct.name}
+              onError={(e) => { (e.target as HTMLImageElement).src = 'assets/no-image.png'; }}
             />
           </div>
         </div>
