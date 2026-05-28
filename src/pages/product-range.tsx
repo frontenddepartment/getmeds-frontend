@@ -46,6 +46,17 @@ const TableSkeleton = () => (
 
 
 
+const formatFieldWithLineBreaks = (text: string | undefined | null) => {
+  if (!text) return null;
+  const parts = text.split(/\\n|\n/g);
+  return parts.map((part, i) => (
+    <React.Fragment key={i}>
+      {part.trim()}
+      {i < parts.length - 1 && <br />}
+    </React.Fragment>
+  ));
+};
+
 export default function ProductRange() {
   const { getImage } = useImageMapper('product-range');
   const { data: productsDataRaw, loading: productsLoading } = useProducts();
@@ -1088,8 +1099,8 @@ export default function ProductRange() {
                             </div>
                             <p className="text-[11px] text-primary font-medium mb-2">{getCategorizationDisplay(p)}</p>
                             <div className="flex flex-wrap gap-x-4 gap-y-1 mb-3">
-                              {p.strength && <span className="text-[11px] text-gray-500"><span className="font-semibold text-gray-400 uppercase tracking-wide">Strength</span> · {p.strength}</span>}
-                              {p.form && <span className="text-[11px] text-gray-500"><span className="font-semibold text-gray-400 uppercase tracking-wide">Form</span> · {p.form}</span>}
+                              {p.strength && <span className="text-[11px] text-gray-500"><span className="font-semibold text-gray-400 uppercase tracking-wide">Strength</span> · {formatFieldWithLineBreaks(p.strength)}</span>}
+                              {p.form && <span className="text-[11px] text-gray-500"><span className="font-semibold text-gray-400 uppercase tracking-wide">Form</span> · {formatFieldWithLineBreaks(p.form)}</span>}
                             </div>
                             <button
                               onClick={() => openModal(p)}
@@ -1146,10 +1157,10 @@ export default function ProductRange() {
                                 {getCategorizationDisplay(p)}
                               </td>
                               <td className="px-6 py-4 text-[13px] text-gray-700">
-                                {p.strength || <span className="text-gray-400">—</span>}
+                                {formatFieldWithLineBreaks(p.strength) || <span className="text-gray-400">—</span>}
                               </td>
                               <td className="px-6 py-4 text-[13px] text-gray-700">
-                                {p.form || <span className="text-gray-400">—</span>}
+                                {formatFieldWithLineBreaks(p.form) || <span className="text-gray-400">—</span>}
                               </td>
                               <td className="px-6 py-4 text-center">
                                 {p.availability === false
@@ -1335,13 +1346,13 @@ export default function ProductRange() {
                           {selectedProduct?.strength && (
                             <div>
                               <span className="block text-[11px] text-gray-400 uppercase font-semibold">Strength</span>
-                              <span className="text-gray-800 font-medium text-[13px]">{selectedProduct.strength}</span>
+                              <span className="text-gray-800 font-medium text-[13px]">{formatFieldWithLineBreaks(selectedProduct.strength)}</span>
                             </div>
                           )}
                           {selectedProduct?.form && (
                             <div>
                               <span className="block text-[11px] text-gray-400 uppercase font-semibold">Form</span>
-                              <span className="text-gray-800 font-medium text-[13px]">{selectedProduct.form}</span>
+                              <span className="text-gray-800 font-medium text-[13px]">{formatFieldWithLineBreaks(selectedProduct.form)}</span>
                             </div>
                           )}
                           {selectedProduct?.packaging && (
