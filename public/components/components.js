@@ -374,6 +374,10 @@
                             <button style="white-space:nowrap;padding:5px 13px;border-radius:20px;background:#f3f4f6;border:1px solid #e5e7eb;color:#555;font-size:11px;font-weight:500;cursor:pointer;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;transition:background 0.15s;flex-shrink:0;" onclick="window.location.href='/contact-us'" onmouseover="this.style.background='#e9eaec'" onmouseout="this.style.background='#f3f4f6'">Contact Us</button>
                         </div>
                         <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
+                            <button id="zap-auto-toggle" title="Toggle Auto-Send" style="height:34px;padding:0 8px;background:#e5f7ed;border:1.5px solid #b7ebd0;color:#15803d;border-radius:17px;cursor:pointer;display:flex;align-items:center;gap:4px;font-size:10px;font-weight:600;transition:all 0.2s;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;outline:none;">
+                                <i id="zap-auto-icon" class="fa-solid fa-bolt" style="font-size:10px;"></i>
+                                <span id="zap-auto-text">Auto</span>
+                            </button>
                             <button id="zap-mic-btn" title="Speak your message" style="height:34px;width:34px;background:#f3f4f6;border:1.5px solid #e5e7eb;color:#666;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;">
                                 <i class="fa-solid fa-microphone" style="font-size:12px;"></i>
                             </button>
@@ -549,6 +553,7 @@
         function basicMarkdownToHtml(value) {
             return escapeHtml(value)
                 .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')
+                .replace(/\\n/g, '<br>')
                 .replace(/\n/g, '<br>');
         }
 
@@ -601,10 +606,67 @@
             return typing;
         }
 
+        // ── Speech-to-Text state declaration (needs to be accessed by handleResponse) ──
+        const zapMicBtn = chatWindow.querySelector('#zap-mic-btn');
+        const zapAutoToggle = chatWindow.querySelector('#zap-auto-toggle');
+        const zapAutoIcon = chatWindow.querySelector('#zap-auto-icon');
+        const zapAutoText = chatWindow.querySelector('#zap-auto-text');
+        
+        let autoSendVoice = localStorage.getItem('zap-auto-send-voice') !== 'false';
+        
+        function updateAutoToggleUI() {
+            if (!zapAutoToggle) return;
+            if (autoSendVoice) {
+                zapAutoToggle.style.background = '#e5f7ed';
+                zapAutoToggle.style.borderColor = '#b7ebd0';
+                zapAutoToggle.style.color = '#15803d';
+                if (zapAutoIcon) zapAutoIcon.className = 'fa-solid fa-bolt';
+                if (zapAutoText) zapAutoText.textContent = 'Auto';
+                zapAutoToggle.title = 'Auto-send voice input: ON';
+            } else {
+                zapAutoToggle.style.background = '#f3f4f6';
+                zapAutoToggle.style.borderColor = '#e5e7eb';
+                zapAutoToggle.style.color = '#666';
+                if (zapAutoIcon) zapAutoIcon.className = 'fa-solid fa-hand';
+                if (zapAutoText) zapAutoText.textContent = 'Manual';
+                zapAutoToggle.title = 'Auto-send voice input: OFF (Microphone keeps recording until manually stopped)';
+            }
+        }
+        
+        if (zapAutoToggle) {
+            updateAutoToggleUI();
+            zapAutoToggle.addEventListener('click', () => {
+                autoSendVoice = !autoSendVoice;
+                localStorage.setItem('zap-auto-send-voice', autoSendVoice);
+                updateAutoToggleUI();
+            });
+        }
+
+        const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
+        let recognition = null;
+        let isListening = false;
+
         async function handleResponse(query) {
             const typing = showTyping();
             zapSend.disabled = true;
             zapInput.disabled = true;
+
+            // Stop voice input active listening if the request is starting
+            if (recognition && isListening) {
+                try { recognition.stop(); } catch(e) {}
+            }
+
+            if (SpeechRecognitionAPI && zapMicBtn) {
+                zapMicBtn.disabled = true;
+                zapMicBtn.style.opacity = '0.35';
+                zapMicBtn.style.cursor = 'not-allowed';
+            }
+
+            if (zapAutoToggle) {
+                zapAutoToggle.disabled = true;
+                zapAutoToggle.style.opacity = '0.35';
+                zapAutoToggle.style.cursor = 'not-allowed';
+            }
 
             try {
                 const res = await fetch(getChatbotApiUrl(), {
@@ -660,11 +722,23 @@
             } finally {
                 zapSend.disabled = false;
                 zapInput.disabled = false;
+                if (SpeechRecognitionAPI && zapMicBtn) {
+                    zapMicBtn.disabled = false;
+                    zapMicBtn.style.opacity = '1';
+                    zapMicBtn.style.cursor = 'pointer';
+                }
+                if (zapAutoToggle) {
+                    zapAutoToggle.disabled = false;
+                    zapAutoToggle.style.opacity = '1';
+                    zapAutoToggle.style.cursor = 'pointer';
+                    updateAutoToggleUI();
+                }
                 zapInput.focus();
             }
         }
 
         const sendMessage = () => {
+            if (zapInput.disabled) return; // Block sending if already waiting for response
             const val = zapInput.value.trim();
             if (!val) return;
 
@@ -684,28 +758,79 @@
 
         // Listen for internal chips
         document.addEventListener('zapAsk', e => {
+            if (zapInput.disabled) return; // Block triggering if already waiting for response
             const welcome = chatWindow.querySelector('#zap-welcome');
             if (welcome) welcome.remove();
             addMessage(e.detail, 'user');
             handleResponse(e.detail);
         });
 
-        // ── Speech-to-Text ────────────────────────────────────────────
-        const zapMicBtn = chatWindow.querySelector('#zap-mic-btn');
-        const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
-
+        // ── Speech-to-Text Initialization ────────────────────────────
         if (SpeechRecognitionAPI && zapMicBtn) {
-            const recognition = new SpeechRecognitionAPI();
-            recognition.continuous = false;
+            recognition = new SpeechRecognitionAPI();
+            recognition.continuous = true; // Use continuous to avoid browser cut-off on pauses
             recognition.interimResults = true;
-            recognition.lang = 'en-US';
-            let isListening = false;
+            recognition.lang = 'fil-PH';
+
+            let silenceTimeout = null;
+            let countdownInterval = null;
+            let secondsLeft = 5;
+
+            function setMicBtnContent(content) {
+                if (!zapMicBtn) return;
+                if (typeof content === 'number') {
+                    zapMicBtn.innerHTML = `<span style="font-size:13px;font-weight:800;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;line-height:1;">${content}</span>`;
+                } else {
+                    zapMicBtn.innerHTML = `<i class="fa-solid fa-microphone" style="font-size:12px;"></i>`;
+                }
+            }
+
+            function clearSilenceTimer() {
+                if (silenceTimeout) clearTimeout(silenceTimeout);
+                if (countdownInterval) clearInterval(countdownInterval);
+                silenceTimeout = null;
+                countdownInterval = null;
+            }
+
+            function resetSilenceTimer() {
+                clearSilenceTimer();
+                if (!autoSendVoice) {
+                    setMicBtnContent('mic');
+                    return;
+                }
+                
+                secondsLeft = 5;
+                setMicBtnContent('mic'); // Microphone icon when actively speaking
+                zapInput.placeholder = 'Listening…';
+                
+                countdownInterval = setInterval(() => {
+                    secondsLeft--;
+                    if (secondsLeft > 0) {
+                        zapInput.placeholder = `Listening (${secondsLeft}s)…`;
+                        setMicBtnContent(secondsLeft); // Display countdown number (4, 3, 2, 1) on mic button
+                    } else {
+                        clearInterval(countdownInterval);
+                    }
+                }, 1000);
+
+                silenceTimeout = setTimeout(() => {
+                    if (isListening) {
+                        recognition.stop();
+                        setTimeout(() => sendMessage(), 300);
+                    }
+                }, 5000);
+            }
 
             zapMicBtn.addEventListener('click', () => {
+                if (zapInput.disabled) return; // Prevent mic input activation while API is loading
                 if (isListening) {
                     recognition.stop();
+                    if (autoSendVoice) {
+                        setTimeout(() => sendMessage(), 300);
+                    }
                 } else {
                     window.speechSynthesis && window.speechSynthesis.cancel();
+                    recognition.continuous = true;
                     try { recognition.start(); } catch(e) {}
                 }
             });
@@ -715,21 +840,25 @@
                 zapMicBtn.classList.add('zap-listening');
                 zapInput.placeholder = 'Listening…';
                 zapInput.value = '';
+                setMicBtnContent('mic');
+                resetSilenceTimer();
             };
 
             recognition.onend = () => {
                 isListening = false;
                 zapMicBtn.classList.remove('zap-listening');
                 zapInput.placeholder = 'Ask me anything...';
+                setMicBtnContent('mic');
+                clearSilenceTimer();
             };
 
             recognition.onresult = (e) => {
                 const transcript = Array.from(e.results)
                     .map(r => r[0].transcript).join('');
                 zapInput.value = transcript;
-                if (e.results[e.results.length - 1].isFinal) {
-                    recognition.stop();
-                    setTimeout(() => sendMessage(), 300);
+                
+                if (autoSendVoice) {
+                    resetSilenceTimer();
                 }
             };
 
@@ -737,6 +866,8 @@
                 isListening = false;
                 zapMicBtn.classList.remove('zap-listening');
                 zapInput.placeholder = 'Ask me anything...';
+                setMicBtnContent('mic');
+                clearSilenceTimer();
             };
         } else if (zapMicBtn) {
             zapMicBtn.style.opacity = '0.35';
