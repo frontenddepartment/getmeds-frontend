@@ -52,14 +52,14 @@ const Careers: React.FC = () => {
       </section>
 
       {/* BENEFITS SECTION */}
-      <section className="py-16 bg-white">
+      <section className="py-8 lg:py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col lg:flex-row gap-12 lg:gap-20">
-            <div className="lg:w-[40%]">
+          <div className="flex flex-col lg:flex-row gap-4 lg:gap-8 items-center">
+            <div className="shrink-0 lg:w-[42%]">
               <span className="inline-block bg-[#E8F5E3] text-[#61A644] text-[11px] font-bold px-4 py-1.5 rounded-full mb-5 tracking-wider">
                 Our Benefits
               </span>
-              <h2 className="text-[24px] md:text-[28px] font-bold text-dark leading-snug">
+              <h2 className="text-3xl md:text-4xl font-semibold text-dark leading-snug">
                 Getmeds Has Been Present For<br />
                 Over A Decade In{' '}
                 <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">
@@ -67,7 +67,7 @@ const Careers: React.FC = () => {
                 </span>
               </h2>
             </div>
-            <div className="lg:w-[60%] flex items-center">
+            <div className="flex-1 flex items-center">
               <div>
                 <p className="text-gray-500 text-[14px] leading-[1.8] mb-4">
                   Join a team of dedicated professionals working to make healthcare

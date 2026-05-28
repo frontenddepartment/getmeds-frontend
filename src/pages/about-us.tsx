@@ -290,7 +290,7 @@ export default function AboutUs() {
             </div>
 
             <div className="relative z-10">
-              <span className="text-primary font-bold text-xs uppercase tracking-widest mb-1 block">Our Drive</span>
+              <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent font-bold text-xs uppercase tracking-widest mb-1 block">Our Drive</span>
               <h3
                 className="text-2xl md:text-3xl font-extrabold uppercase tracking-widest mb-3 bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent inline-block">
                 Mission</h3>
@@ -321,7 +321,7 @@ export default function AboutUs() {
             </div>
 
             <div className="relative z-10">
-              <span className="text-primary font-bold text-xs uppercase tracking-widest mb-1 block">Our Goal</span>
+              <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent font-bold text-xs uppercase tracking-widest mb-1 block">Our Goal</span>
               <h3
                 className="text-2xl md:text-3xl font-extrabold uppercase tracking-widest mb-3 bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent inline-block">
                 Vision</h3>
@@ -347,7 +347,7 @@ export default function AboutUs() {
             </div>
             {/* Right: eyebrow + description */}
             <div>
-              <span className="text-primary font-bold text-sm uppercase tracking-widest mb-4 block">OUR COMMITMENTS</span>
+              <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent font-bold text-sm uppercase tracking-widest mb-4 block">OUR COMMITMENTS</span>
               <p className="text-gray-500 text-[15px] leading-relaxed">
                 With relentless dedication to innovation, empathy, and accessible global healthcare solutions.
               </p>
@@ -405,115 +405,118 @@ export default function AboutUs() {
       </section>
 
       {/* Core Values Section */}
-      <section className="pt-32 pb-12 bg-white overflow-hidden relative">
+      <section className="pt-10 md:pt-32 pb-12 bg-white overflow-hidden relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-          <div className="text-center mb-24 reveal">
-            <span className="text-primary font-bold text-sm uppercase tracking-widest mb-4 block">Core Values</span>
-            <h2 className="text-[28px] md:text-[38px] leading-tight font-semibold text-dark mb-3 tracking-tight">The Heart of Our Purpose</h2>
+          <div className="text-center mb-1 md:mb-24 reveal">
+            <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent font-bold text-sm uppercase tracking-widest mb-4 block">Core Values</span>
+            <h2 className="text-[28px] md:text-[38px] leading-tight font-semibold text-dark mb-3 tracking-tight">
+              The Heart of Our{' '}
+              <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">Purpose</span>
+            </h2>
           </div>
 
-          <div className="relative min-h-[600px] flex flex-col items-center justify-center py-8" id="values-container" ref={valuesContainerRef}>
+          <div className="relative min-h-[600px] flex flex-col items-center justify-center py-0 md:py-8" id="values-container" ref={valuesContainerRef}>
             {/* 15-Card Diamond Cluster (Optimized Scale) */}
-            <div className="relative z-10 flex items-center justify-center gap-2 md:gap-4 mb-2 px-4">
+            <div className="relative z-10 flex items-center justify-center gap-1 md:gap-4 mb-2 px-1 md:px-4">
               {/* Col 1 (1 Card) */}
-              <div className="flex flex-col gap-3">
-                <div className="value-card bg-white p-3 rounded-full shadow-md border border-gray-100 w-16 h-16 md:w-24 md:h-24 flex flex-col items-center justify-center text-center reveal"
+              <div className="flex flex-col gap-1 md:gap-3">
+                <div className="value-card bg-white p-1.5 md:p-3 rounded-full shadow-md border border-gray-100 w-10 h-10 md:w-24 md:h-24 flex flex-col items-center justify-center text-center reveal"
                   data-speed="1.2">
-                  <i className="fa-solid fa-heart text-[#EC4899] text-lg md:text-xl mb-1"></i>
-                  <span className="text-[8px] md:text-[10px] font-bold uppercase tracking-tighter text-[#2A2A2A]">Compassion</span>
+                  <i className="fa-solid fa-heart text-[#EC4899] text-[10px] md:text-xl md:mb-1"></i>
+                  <span className="text-[5px] md:text-[10px] font-bold uppercase tracking-tighter text-[#2A2A2A]">Compassion</span>
                 </div>
               </div>
 
               {/* Col 2 (2 Cards) */}
-              <div className="flex flex-col gap-3">
-                <div className="value-card bg-white p-3 rounded-full shadow-md border border-gray-100 w-16 h-16 md:w-24 md:h-24 flex flex-col items-center justify-center text-center reveal"
+              <div className="flex flex-col gap-1 md:gap-3">
+                <div className="value-card bg-white p-1.5 md:p-3 rounded-full shadow-md border border-gray-100 w-10 h-10 md:w-24 md:h-24 flex flex-col items-center justify-center text-center reveal"
                   data-speed="1.5" style={{ transitionDelay: '100ms' }}>
-                  <i className="fa-solid fa-shield-heart text-[#8B5CF6] text-lg md:text-xl mb-1"></i>
-                  <span className="text-[8px] md:text-[10px] font-bold uppercase tracking-tighter text-[#2A2A2A]">Integrity</span>
+                  <i className="fa-solid fa-shield-heart text-[#8B5CF6] text-[10px] md:text-xl md:mb-1"></i>
+                  <span className="text-[5px] md:text-[10px] font-bold uppercase tracking-tighter text-[#2A2A2A]">Integrity</span>
                 </div>
-                <div className="value-card bg-white p-3 rounded-full shadow-md border border-gray-100 w-16 h-16 md:w-24 md:h-24 flex flex-col items-center justify-center text-center reveal"
+                <div className="value-card bg-white p-1.5 md:p-3 rounded-full shadow-md border border-gray-100 w-10 h-10 md:w-24 md:h-24 flex flex-col items-center justify-center text-center reveal"
                   data-speed="1.4" style={{ transitionDelay: '200ms' }}>
-                  <i className="fa-solid fa-truck-fast text-[#F59E0B] text-lg md:text-xl mb-1"></i>
-                  <span className="text-[8px] md:text-[10px] font-bold uppercase tracking-tighter text-[#2A2A2A]">Speed</span>
+                  <i className="fa-solid fa-truck-fast text-[#F59E0B] text-[10px] md:text-xl md:mb-1"></i>
+                  <span className="text-[5px] md:text-[10px] font-bold uppercase tracking-tighter text-[#2A2A2A]">Speed</span>
                 </div>
               </div>
 
               {/* Col 3 (3 Cards) */}
-              <div className="flex flex-col gap-3">
-                <div className="value-card bg-white p-3 rounded-full shadow-md border border-gray-100 w-16 h-16 md:w-24 md:h-24 flex flex-col items-center justify-center text-center reveal"
+              <div className="flex flex-col gap-1 md:gap-3">
+                <div className="value-card bg-white p-1.5 md:p-3 rounded-full shadow-md border border-gray-100 w-10 h-10 md:w-24 md:h-24 flex flex-col items-center justify-center text-center reveal"
                   data-speed="1.8" style={{ transitionDelay: '300ms' }}>
-                  <i className="fa-solid fa-microscope text-[#1D9FDA] text-lg md:text-xl mb-1"></i>
-                  <span className="text-[8px] md:text-[10px] font-bold uppercase tracking-tighter text-[#2A2A2A]">Precision</span>
+                  <i className="fa-solid fa-microscope text-[#1D9FDA] text-[10px] md:text-xl md:mb-1"></i>
+                  <span className="text-[5px] md:text-[10px] font-bold uppercase tracking-tighter text-[#2A2A2A]">Precision</span>
                 </div>
-                <div className="value-card bg-white p-3 rounded-full shadow-md border border-gray-100 w-16 h-16 md:w-24 md:h-24 flex flex-col items-center justify-center text-center reveal"
+                <div className="value-card bg-white p-1.5 md:p-3 rounded-full shadow-md border border-gray-100 w-10 h-10 md:w-24 md:h-24 flex flex-col items-center justify-center text-center reveal"
                   data-speed="1.7" style={{ transitionDelay: '400ms' }}>
-                  <i className="fa-solid fa-user-doctor text-[#14B8A6] text-lg md:text-xl mb-1"></i>
-                  <span className="text-[8px] md:text-[10px] font-bold uppercase tracking-tighter text-[#2A2A2A]">Expertise</span>
+                  <i className="fa-solid fa-user-doctor text-[#14B8A6] text-[10px] md:text-xl md:mb-1"></i>
+                  <span className="text-[5px] md:text-[10px] font-bold uppercase tracking-tighter text-[#2A2A2A]">Expertise</span>
                 </div>
-                <div className="value-card bg-white p-3 rounded-full shadow-md border border-gray-100 w-16 h-16 md:w-24 md:h-24 flex flex-col items-center justify-center text-center reveal"
+                <div className="value-card bg-white p-1.5 md:p-3 rounded-full shadow-md border border-gray-100 w-10 h-10 md:w-24 md:h-24 flex flex-col items-center justify-center text-center reveal"
                   data-speed="1.9" style={{ transitionDelay: '500ms' }}>
-                  <i className="fa-solid fa-hand-holding-medical text-[#F43F5E] text-lg md:text-xl mb-1"></i>
-                  <span className="text-[8px] md:text-[10px] font-bold uppercase tracking-tighter text-[#2A2A2A]">Care</span>
+                  <i className="fa-solid fa-hand-holding-medical text-[#F43F5E] text-[10px] md:text-xl md:mb-1"></i>
+                  <span className="text-[5px] md:text-[10px] font-bold uppercase tracking-tighter text-[#2A2A2A]">Care</span>
                 </div>
               </div>
 
               {/* Col 4 (3 Cards - CENTER) */}
-              <div className="flex flex-col gap-3">
-                <div className="value-card bg-white p-3 rounded-full shadow-md border border-gray-100 w-16 h-16 md:w-24 md:h-24 flex flex-col items-center justify-center text-center reveal"
+              <div className="flex flex-col gap-1 md:gap-3">
+                <div className="value-card bg-white p-1.5 md:p-3 rounded-full shadow-md border border-gray-100 w-10 h-10 md:w-24 md:h-24 flex flex-col items-center justify-center text-center reveal"
                   data-speed="2.2" style={{ transitionDelay: '600ms' }}>
-                  <i className="fa-solid fa-lightbulb text-[#EAB308] text-lg md:text-xl mb-1"></i>
-                  <span className="text-[8px] md:text-[10px] font-bold uppercase tracking-tighter text-[#2A2A2A]">Innovation</span>
+                  <i className="fa-solid fa-lightbulb text-[#EAB308] text-[10px] md:text-xl md:mb-1"></i>
+                  <span className="text-[5px] md:text-[10px] font-bold uppercase tracking-tighter text-[#2A2A2A]">Innovation</span>
                 </div>
-                <div className="value-card bg-white p-3 rounded-full shadow-xl border border-gray-100 w-16 h-16 md:w-24 md:h-24 flex flex-col items-center justify-center text-center reveal z-30 bg-gradient-to-br from-white to-gray-50"
+                <div className="value-card bg-white p-1.5 md:p-3 rounded-full shadow-xl border border-gray-100 w-10 h-10 md:w-24 md:h-24 flex flex-col items-center justify-center text-center reveal z-30 bg-gradient-to-br from-white to-gray-50"
                   data-speed="2.5" style={{ transitionDelay: '700ms' }}>
-                  <img src={getImage('assets/logo.png', 'assets/logo.png')} className="h-6 md:h-8" alt="Getmeds Logo" />
+                  <img src={getImage('assets/logo.png', 'assets/logo.png')} className="h-3 md:h-8" alt="Getmeds Logo" />
                 </div>
-                <div className="value-card bg-white p-3 rounded-full shadow-md border border-gray-100 w-16 h-16 md:w-24 md:h-24 flex flex-col items-center justify-center text-center reveal"
+                <div className="value-card bg-white p-1.5 md:p-3 rounded-full shadow-md border border-gray-100 w-10 h-10 md:w-24 md:h-24 flex flex-col items-center justify-center text-center reveal"
                   data-speed="2.1" style={{ transitionDelay: '800ms' }}>
-                  <i className="fa-solid fa-earth-asia text-[#06B6D4] text-lg md:text-xl mb-1"></i>
-                  <span className="text-[8px] md:text-[10px] font-bold uppercase tracking-tighter text-[#2A2A2A]">Global</span>
+                  <i className="fa-solid fa-earth-asia text-[#06B6D4] text-[10px] md:text-xl md:mb-1"></i>
+                  <span className="text-[5px] md:text-[10px] font-bold uppercase tracking-tighter text-[#2A2A2A]">Global</span>
                 </div>
               </div>
 
               {/* Col 5 (3 Cards) */}
-              <div className="flex flex-col gap-3">
-                <div className="value-card bg-white p-3 rounded-full shadow-md border border-gray-100 w-16 h-16 md:w-24 md:h-24 flex flex-col items-center justify-center text-center reveal"
+              <div className="flex flex-col gap-1 md:gap-3">
+                <div className="value-card bg-white p-1.5 md:p-3 rounded-full shadow-md border border-gray-100 w-10 h-10 md:w-24 md:h-24 flex flex-col items-center justify-center text-center reveal"
                   data-speed="1.8" style={{ transitionDelay: '900ms' }}>
-                  <i className="fa-solid fa-lock text-[#6366F1] text-lg md:text-xl mb-1"></i>
-                  <span className="text-[8px] md:text-[10px] font-bold uppercase tracking-tighter text-[#2A2A2A]">Security</span>
+                  <i className="fa-solid fa-lock text-[#6366F1] text-[10px] md:text-xl md:mb-1"></i>
+                  <span className="text-[5px] md:text-[10px] font-bold uppercase tracking-tighter text-[#2A2A2A]">Security</span>
                 </div>
-                <div className="value-card bg-white p-3 rounded-full shadow-md border border-gray-100 w-16 h-16 md:w-24 md:h-24 flex flex-col items-center justify-center text-center reveal"
+                <div className="value-card bg-white p-1.5 md:p-3 rounded-full shadow-md border border-gray-100 w-10 h-10 md:w-24 md:h-24 flex flex-col items-center justify-center text-center reveal"
                   data-speed="1.7" style={{ transitionDelay: '1000ms' }}>
-                  <i className="fa-solid fa-vial-circle-check text-[#10B981] text-lg md:text-xl mb-1"></i>
-                  <span className="text-[8px] md:text-[10px] font-bold uppercase tracking-tighter text-[#2A2A2A]">Safety</span>
+                  <i className="fa-solid fa-vial-circle-check text-[#10B981] text-[10px] md:text-xl md:mb-1"></i>
+                  <span className="text-[5px] md:text-[10px] font-bold uppercase tracking-tighter text-[#2A2A2A]">Safety</span>
                 </div>
-                <div className="value-card bg-white p-3 rounded-full shadow-md border border-gray-100 w-16 h-16 md:w-24 md:h-24 flex flex-col items-center justify-center text-center reveal"
+                <div className="value-card bg-white p-1.5 md:p-3 rounded-full shadow-md border border-gray-100 w-10 h-10 md:w-24 md:h-24 flex flex-col items-center justify-center text-center reveal"
                   data-speed="1.9" style={{ transitionDelay: '1100ms' }}>
-                  <i className="fa-solid fa-people-group text-[#F97316] text-lg md:text-xl mb-1"></i>
-                  <span className="text-[8px] md:text-[10px] font-bold uppercase tracking-tighter text-[#2A2A2A]">Community</span>
+                  <i className="fa-solid fa-people-group text-[#F97316] text-[10px] md:text-xl md:mb-1"></i>
+                  <span className="text-[5px] md:text-[10px] font-bold uppercase tracking-tighter text-[#2A2A2A]">Community</span>
                 </div>
               </div>
 
               {/* Col 6 (2 Cards) */}
-              <div className="flex flex-col gap-3">
-                <div className="value-card bg-white p-3 rounded-full shadow-md border border-gray-100 w-16 h-16 md:w-24 md:h-24 flex flex-col items-center justify-center text-center reveal"
+              <div className="flex flex-col gap-1 md:gap-3">
+                <div className="value-card bg-white p-1.5 md:p-3 rounded-full shadow-md border border-gray-100 w-10 h-10 md:w-24 md:h-24 flex flex-col items-center justify-center text-center reveal"
                   data-speed="1.5" style={{ transitionDelay: '1200ms' }}>
-                  <i className="fa-solid fa-tags text-[#8B5CF6] text-lg md:text-xl mb-1"></i>
-                  <span className="text-[8px] md:text-[10px] font-bold uppercase tracking-tighter text-[#2A2A2A]">Affordable</span>
+                  <i className="fa-solid fa-tags text-[#8B5CF6] text-[10px] md:text-xl md:mb-1"></i>
+                  <span className="text-[5px] md:text-[10px] font-bold uppercase tracking-tighter text-[#2A2A2A]">Affordable</span>
                 </div>
-                <div className="value-card bg-white p-3 rounded-full shadow-md border border-gray-100 w-16 h-16 md:w-24 md:h-24 flex flex-col items-center justify-center text-center reveal"
+                <div className="value-card bg-white p-1.5 md:p-3 rounded-full shadow-md border border-gray-100 w-10 h-10 md:w-24 md:h-24 flex flex-col items-center justify-center text-center reveal"
                   data-speed="1.4" style={{ transitionDelay: '1300ms' }}>
-                  <i className="fa-solid fa-clipboard-check text-[#3B82F6] text-lg md:text-xl mb-1"></i>
-                  <span className="text-[8px] md:text-[10px] font-bold uppercase tracking-tighter text-[#2A2A2A]">Reliable</span>
+                  <i className="fa-solid fa-clipboard-check text-[#3B82F6] text-[10px] md:text-xl md:mb-1"></i>
+                  <span className="text-[5px] md:text-[10px] font-bold uppercase tracking-tighter text-[#2A2A2A]">Reliable</span>
                 </div>
               </div>
 
               {/* Col 7 (1 Card) */}
-              <div className="flex flex-col gap-3">
-                <div className="value-card bg-white p-3 rounded-full shadow-md border border-gray-100 w-16 h-16 md:w-24 md:h-24 flex flex-col items-center justify-center text-center reveal"
+              <div className="flex flex-col gap-1 md:gap-3">
+                <div className="value-card bg-white p-1.5 md:p-3 rounded-full shadow-md border border-gray-100 w-10 h-10 md:w-24 md:h-24 flex flex-col items-center justify-center text-center reveal"
                   data-speed="1.2" style={{ transitionDelay: '1400ms' }}>
-                  <i className="fa-solid fa-award text-[#EAB308] text-lg md:text-xl mb-1"></i>
-                  <span className="text-[8px] md:text-[10px] font-bold uppercase tracking-tighter text-[#2A2A2A]">Excellence</span>
+                  <i className="fa-solid fa-award text-[#EAB308] text-[10px] md:text-xl md:mb-1"></i>
+                  <span className="text-[5px] md:text-[10px] font-bold uppercase tracking-tighter text-[#2A2A2A]">Excellence</span>
                 </div>
               </div>
             </div>
@@ -532,7 +535,7 @@ export default function AboutUs() {
       <section className="pt-12 pb-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-16 reveal">
-            <span className="text-primary font-bold text-sm uppercase tracking-wider mb-2 block">Our Advantages</span>
+            <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent font-bold text-sm uppercase tracking-wider mb-2 block">Our Advantages</span>
             <h2 className="text-3xl md:text-4xl font-semibold text-dark mb-4">Why Choose <span
               className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent inline-block">Getmeds</span>?
             </h2>
@@ -572,7 +575,7 @@ export default function AboutUs() {
       <section className="py-24 bg-white relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center max-w-2xl mx-auto mb-20 reveal">
-            <span className="text-primary font-bold text-sm uppercase tracking-[0.2em] mb-4 block">Executive Team</span>
+            <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent font-bold text-sm uppercase tracking-[0.2em] mb-4 block">Executive Team</span>
             <h2 className="text-3xl md:text-4xl font-semibold text-dark mb-4">The Minds Behind <span
               className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent inline-block">Getmeds</span>
             </h2>
@@ -771,7 +774,7 @@ export default function AboutUs() {
       <section className="py-24 bg-white relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16 reveal">
-            <span className="text-primary font-bold text-sm uppercase tracking-[0.2em] mb-4 block">Trust Network</span>
+            <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent font-bold text-sm uppercase tracking-[0.2em] mb-4 block">Trust Network</span>
             <h2 className="text-3xl font-semibold text-dark mb-4">Strategic Partners &amp; Affiliates</h2>
             <div className="w-20 h-1 bg-gradient-to-r from-primary to-accent mx-auto rounded-full"></div>
           </div>

@@ -41,15 +41,18 @@ export default function PatientAssistanceProgram() {
   return (
     <div className="bg-white text-gray-800 antialiased">
 
-      {/* Navbar */}
+      {/* Navbar — outside overflow wrapper so sticky works */}
       <div id="navbar-container" className="sticky top-0 z-[50]" />
 
+      {/* overflow-x-hidden wrapper starts AFTER navbar to preserve sticky */}
+      <div className="overflow-x-hidden">
+
       {/* 1. Hero Banner Section */}
-      <section className="relative w-full aspect-[21/9] md:aspect-[24/7] overflow-hidden">
+      <section className="relative w-full overflow-hidden">
         <img
           src={getImage('assets/papbanner.png', 'assets/papbanner.png')}
           data-json-src="hero.image" data-json-alt="hero.imageAlt"
-          className="w-full h-full object-cover brightness-90"
+          className="w-full h-auto brightness-90"
           alt="Medical Support"
         />
       </section>
@@ -58,41 +61,25 @@ export default function PatientAssistanceProgram() {
       <section className="w-full overflow-hidden reveal relative bg-white">
 
         {/* Top — pap.png logo + subtitle side by side */}
-        <div className="max-w-7xl mx-auto px-6 pt-1 pb-0 flex items-center gap-6 justify-center mb-0">
+        <div className="max-w-7xl mx-auto px-4 pt-1 pb-0 flex items-center gap-3 justify-center mb-0">
           <img
             src={getImage('assets/pap.png', 'assets/pap.png')}
             alt="Patient Assistance Program"
-            className="w-52 md:w-64 object-contain shrink-0"
+            className="w-28 sm:w-40 md:w-64 object-contain shrink-0"
           />
-          <div>
-            <p data-json="intro.subheading" className="text-xl md:text-2xl lg:text-3xl font-semibold uppercase tracking-widest whitespace-nowrap bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">
+          <div className="min-w-0">
+            <p data-json="intro.subheading" className="text-sm sm:text-lg md:text-2xl lg:text-3xl font-semibold uppercase tracking-normal sm:tracking-widest bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent leading-snug">
               Chemotherapy at Mga Gamot sa Cancer
             </p>
             <div className="mt-2 w-10 h-1 bg-gradient-to-r from-[#61A644] to-[#1D9FDA] rounded-full" />
           </div>
         </div>
 
-        {/* Body — patient image left, text right */}
-        <div className="max-w-7xl mx-auto px-6 flex flex-col lg:flex-row items-center gap-6 -mt-10">
+        {/* Body — text full-width on mobile, image centered below; side-by-side on desktop */}
+        <div className="max-w-7xl mx-auto px-4 flex flex-col lg:flex-row items-center gap-4 mt-2 lg:-mt-10">
 
-          {/* Left — patientpap.png anchored to bottom */}
-          <div className="shrink-0 flex items-end self-end w-72 md:w-96 lg:w-[420px] xl:w-[480px] -mb-1">
-            <div className="relative inline-block">
-              <div className="absolute inset-0 shadow-[inset_0_0_120px_60px_white] rounded-[20px] pointer-events-none z-10"></div>
-              <img
-                src={getImage('assets/patientpap.png', 'assets/patientpap.png')}
-                alt="Cancer Patient"
-                className="w-full object-contain object-bottom rounded-[20px]"
-                style={{
-                  maskImage: 'radial-gradient(ellipse at center, black 40%, transparent 75%)',
-                  WebkitMaskImage: 'radial-gradient(ellipse at center, black 40%, transparent 75%)',
-                }}
-              />
-            </div>
-          </div>
-
-          {/* Right — paragraphs only */}
-          <div className="flex-1 py-2 space-y-2 text-gray-700 font-medium leading-normal text-sm md:text-base max-w-xl">
+          {/* Text — first on mobile (full width), right on desktop */}
+          <div className="order-1 lg:order-2 flex-1 py-2 space-y-2 text-gray-700 font-medium leading-normal text-sm md:text-base max-w-xl w-full">
             <p data-json="intro.paragraphs.0">
               Ang Getmeds ay nakatuon sa pagsuporta sa kalusugan at kapakanan ng bawat Pilipinong lumalaban sa cancer. Sa pamamagitan ng aming Patient Assistance Program, nakikipagtulungan kami sa mga ahensya ng gobyerno tulad ng DSWD (AICS) at PCSO (MAP) upang makapagbigay ng tulong medikal, partikular na ang libreng chemotherapy at iba pang gamot sa cancer, sa mga higit na nangangailangan.
             </p>
@@ -103,16 +90,39 @@ export default function PatientAssistanceProgram() {
             {/* Partner agencies */}
             <div className="pt-2 space-y-2">
               <p className="text-gray-900 font-semibold text-sm">Mga katuwang na ahensya:</p>
-              <div className="flex items-center gap-6 flex-nowrap">
-                <div className="flex items-center gap-2 shrink-0">
-                  <span className="w-2 h-2 rounded-full bg-gradient-to-r from-[#61A644] to-[#1D9FDA] shrink-0"></span>
-                  <p className="text-gray-900 text-sm font-semibold whitespace-nowrap">DSWD – AICS (Assistance to Individuals in Crisis Situation)</p>
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6">
+                <div className="flex items-start gap-2">
+                  <span className="w-2 h-2 rounded-full bg-gradient-to-r from-[#61A644] to-[#1D9FDA] shrink-0 mt-1"></span>
+                  <p className="text-gray-900 text-sm font-semibold">DSWD – AICS (Assistance to Individuals in Crisis Situation)</p>
                 </div>
-                <div className="flex items-center gap-2 shrink-0">
-                  <span className="w-2 h-2 rounded-full bg-gradient-to-r from-[#61A644] to-[#1D9FDA] shrink-0"></span>
-                  <p className="text-gray-900 text-sm font-semibold whitespace-nowrap">PCSO – Medical Assistance Program</p>
+                <div className="flex items-start gap-2">
+                  <span className="w-2 h-2 rounded-full bg-gradient-to-r from-[#61A644] to-[#1D9FDA] shrink-0 mt-1"></span>
+                  <p className="text-gray-900 text-sm font-semibold">PCSO – Medical Assistance Program</p>
                 </div>
               </div>
+            </div>
+          </div>
+
+          {/* Patient image — centered below text on mobile, left on desktop */}
+          <div className="order-2 lg:order-1 shrink-0 flex items-end self-end w-56 sm:w-64 lg:w-[420px] xl:w-[480px] mx-auto lg:mx-0 -mb-1">
+            <div className="relative inline-block w-full">
+              <div className="hidden lg:block absolute inset-0 shadow-[inset_0_0_120px_60px_white] rounded-[20px] pointer-events-none z-10"></div>
+              {/* Mobile: no mask */}
+              <img
+                src={getImage('assets/patientpap.png', 'assets/patientpap.png')}
+                alt="Cancer Patient"
+                className="lg:hidden w-full object-contain object-bottom rounded-xl"
+              />
+              {/* Desktop: radial fade */}
+              <img
+                src={getImage('assets/patientpap.png', 'assets/patientpap.png')}
+                alt="Cancer Patient"
+                className="hidden lg:block w-full object-contain object-bottom rounded-[20px]"
+                style={{
+                  maskImage: 'radial-gradient(ellipse at center, black 40%, transparent 75%)',
+                  WebkitMaskImage: 'radial-gradient(ellipse at center, black 40%, transparent 75%)',
+                }}
+              />
             </div>
           </div>
 
@@ -131,23 +141,23 @@ export default function PatientAssistanceProgram() {
       <section className="pt-6 pb-0 max-w-7xl mx-auto px-6">
         <div className="max-w-6xl mx-auto">
           {/* Bar */}
-          <div className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] py-4 px-8 rounded-[15px] flex items-center gap-6 overflow-hidden relative reveal">
-            <span className="text-white text-4xl font-semibold shrink-0">1</span>
-            <h3 data-json="steps.0.title" className="text-white text-xl md:text-2xl font-semibold uppercase leading-tight tracking-tight flex-1">
+          <div className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] py-3 sm:py-4 px-4 sm:px-8 rounded-[15px] flex items-center gap-3 sm:gap-6 overflow-hidden relative reveal">
+            <span className="text-white text-2xl sm:text-4xl font-semibold shrink-0">1</span>
+            <h3 data-json="steps.0.title" className="text-white text-xs sm:text-xl md:text-2xl font-semibold uppercase leading-tight tracking-tight flex-1">
               KUMONSULTA SA IYONG DOKTOR
             </h3>
-            <div className="ml-auto shrink-0 flex items-end h-14 relative">
-              <i className="fa-solid fa-user-doctor text-white/30 text-[80px] absolute -bottom-2 right-0 leading-none pointer-events-none" />
-              <i className="fa-solid fa-user-doctor text-white/90 text-5xl relative z-10" />
+            <div className="ml-auto shrink-0 flex items-end h-10 sm:h-14 relative">
+              <i className="fa-solid fa-user-doctor text-white/30 text-[44px] sm:text-[80px] absolute -bottom-2 right-0 leading-none pointer-events-none" />
+              <i className="fa-solid fa-user-doctor text-white/90 text-2xl sm:text-5xl relative z-10" />
             </div>
           </div>
           {/* Content row: connector left + content right */}
           <div className="flex items-stretch">
             {/* Connector column */}
-            <div className="flex flex-col items-center shrink-0 w-[88px]">
+            <div className="flex flex-col items-center shrink-0 w-10 sm:w-[88px]">
               <div className="w-0.5 flex-1 bg-gradient-to-b from-[#61A644] to-[#1D9FDA] min-h-[24px]" />
-              <div className="w-16 h-16 rounded-full bg-gradient-to-b from-[#61A644] to-[#1D9FDA] flex items-center justify-center shadow-md shrink-0 my-3">
-                <i className="fa-solid fa-file-medical text-white text-xl" />
+              <div className="w-8 h-8 sm:w-16 sm:h-16 rounded-full bg-gradient-to-b from-[#61A644] to-[#1D9FDA] flex items-center justify-center shadow-md shrink-0 my-2 sm:my-3">
+                <i className="fa-solid fa-file-medical text-white text-[10px] sm:text-xl" />
               </div>
               <div className="w-0.5 flex-1 bg-gradient-to-b from-[#61A644] to-[#1D9FDA] min-h-[24px]" />
             </div>
@@ -170,17 +180,15 @@ export default function PatientAssistanceProgram() {
                     </p>
                   </div>
                 </div>
-                <div className="shrink-0 w-72 lg:w-96 flex items-center justify-center">
+                <div className="shrink-0 w-full max-w-[220px] sm:w-72 lg:w-96 flex items-center justify-center mx-auto">
                   <img
                     src={getImage('assets/stepone.png', 'assets/stepone.png')}
                     alt="Kumonsulta sa Doktor"
                     className="w-full object-contain"
                     style={{
-                      maskImage: 'linear-gradient(to right, transparent 0%, black 18%, black 82%, transparent 100%), linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%)',
-                      WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 18%, black 82%, transparent 100%), linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%)',
-                      maskComposite: 'intersect',
-                      WebkitMaskComposite: 'destination-in',
-                    }}
+                      maskImage: 'radial-gradient(ellipse at center, black 50%, transparent 80%)',
+                      WebkitMaskImage: 'radial-gradient(ellipse at center, black 50%, transparent 80%)',
+                    } as React.CSSProperties}
                   />
                 </div>
               </div>
@@ -193,24 +201,24 @@ export default function PatientAssistanceProgram() {
       <section className="pt-0 pb-0 max-w-7xl mx-auto px-6">
         <div className="max-w-6xl mx-auto">
           {/* Bar */}
-          <div className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] py-4 px-8 rounded-[15px] flex items-center gap-6 overflow-hidden relative reveal">
-            <span className="text-white text-4xl font-semibold shrink-0">2</span>
-            <h3 data-json="steps.1.title" className="text-white text-xl md:text-2xl font-semibold uppercase leading-tight tracking-tight flex-1">
+          <div className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] py-3 sm:py-4 px-4 sm:px-8 rounded-[15px] flex items-center gap-3 sm:gap-6 overflow-hidden relative reveal">
+            <span className="text-white text-2xl sm:text-4xl font-semibold shrink-0">2</span>
+            <h3 data-json="steps.1.title" className="text-white text-xs sm:text-xl md:text-2xl font-semibold uppercase leading-tight tracking-tight flex-1">
               IHANDA ANG IYONG MEDICAL DOCUMENTS
             </h3>
-            <div className="ml-auto shrink-0 flex items-end h-14 relative">
-              <i className="fa-solid fa-folder-open text-white/30 text-[80px] absolute -bottom-2 right-0 leading-none pointer-events-none" />
-              <i className="fa-solid fa-folder-open text-white/90 text-5xl relative z-10" />
+            <div className="ml-auto shrink-0 flex items-end h-10 sm:h-14 relative">
+              <i className="fa-solid fa-folder-open text-white/30 text-[44px] sm:text-[80px] absolute -bottom-2 right-0 leading-none pointer-events-none" />
+              <i className="fa-solid fa-folder-open text-white/90 text-2xl sm:text-5xl relative z-10" />
             </div>
           </div>
 
           {/* Content row */}
           <div className="flex items-stretch">
             {/* Connector column */}
-            <div className="flex flex-col items-center shrink-0 w-[88px]">
+            <div className="flex flex-col items-center shrink-0 w-10 sm:w-[88px]">
               <div className="w-0.5 flex-1 bg-gradient-to-b from-[#61A644] to-[#1D9FDA] min-h-[24px]" />
-              <div className="w-16 h-16 rounded-full bg-gradient-to-b from-[#61A644] to-[#1D9FDA] flex items-center justify-center shadow-md shrink-0 my-3">
-                <i className="fa-solid fa-clipboard-list text-white text-xl" />
+              <div className="w-8 h-8 sm:w-16 sm:h-16 rounded-full bg-gradient-to-b from-[#61A644] to-[#1D9FDA] flex items-center justify-center shadow-md shrink-0 my-2 sm:my-3">
+                <i className="fa-solid fa-clipboard-list text-white text-[10px] sm:text-xl" />
               </div>
               <div className="w-0.5 flex-1 bg-gradient-to-b from-[#61A644] to-[#1D9FDA] min-h-[24px]" />
             </div>
@@ -350,24 +358,24 @@ export default function PatientAssistanceProgram() {
       <section className="pt-0 pb-10 max-w-7xl mx-auto px-6">
         <div className="max-w-6xl mx-auto">
           {/* Bar */}
-          <div className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] py-4 px-8 rounded-[15px] flex items-center gap-6 overflow-hidden relative reveal">
-            <span className="text-white text-4xl font-semibold shrink-0">3</span>
-            <h3 className="text-white text-xl md:text-2xl font-semibold uppercase leading-tight tracking-tight flex-1">
+          <div className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] py-3 sm:py-4 px-4 sm:px-8 rounded-[15px] flex items-center gap-3 sm:gap-6 overflow-hidden relative reveal">
+            <span className="text-white text-2xl sm:text-4xl font-semibold shrink-0">3</span>
+            <h3 className="text-white text-xs sm:text-xl md:text-2xl font-semibold uppercase leading-tight tracking-tight flex-1">
               KUMPLETUHIN ANG IYONG APPLICATION DOCUMENTS
             </h3>
-            <div className="ml-auto shrink-0 flex items-end h-14 relative">
-              <i className="fa-solid fa-pen-to-square text-white/30 text-[80px] absolute -bottom-2 right-0 leading-none pointer-events-none" />
-              <i className="fa-solid fa-pen-to-square text-white/90 text-5xl relative z-10" />
+            <div className="ml-auto shrink-0 flex items-end h-10 sm:h-14 relative">
+              <i className="fa-solid fa-pen-to-square text-white/30 text-[44px] sm:text-[80px] absolute -bottom-2 right-0 leading-none pointer-events-none" />
+              <i className="fa-solid fa-pen-to-square text-white/90 text-2xl sm:text-5xl relative z-10" />
             </div>
           </div>
 
           {/* Content row */}
           <div className="flex items-stretch">
             {/* Connector column */}
-            <div className="flex flex-col items-center shrink-0 w-[88px]">
+            <div className="flex flex-col items-center shrink-0 w-10 sm:w-[88px]">
               <div className="w-0.5 flex-1 bg-gradient-to-b from-[#61A644] to-[#1D9FDA] min-h-[24px]" />
-              <div className="w-16 h-16 rounded-full bg-gradient-to-b from-[#61A644] to-[#1D9FDA] flex items-center justify-center shadow-md shrink-0 my-3">
-                <i className="fa-solid fa-headset text-white text-xl" />
+              <div className="w-8 h-8 sm:w-16 sm:h-16 rounded-full bg-gradient-to-b from-[#61A644] to-[#1D9FDA] flex items-center justify-center shadow-md shrink-0 my-2 sm:my-3">
+                <i className="fa-solid fa-headset text-white text-[10px] sm:text-xl" />
               </div>
               <div className="w-0.5 flex-1 bg-gradient-to-b from-[#61A644] to-[#1D9FDA] min-h-[24px]" />
             </div>
@@ -435,13 +443,13 @@ export default function PatientAssistanceProgram() {
                     <div className="bg-white p-1.5 rounded-[15px] shadow-sm flex gap-2 border border-gray-100">
                       <button
                         onClick={() => setActiveTab('dswd')}
-                        className={`px-8 py-3 rounded-[12px] text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'dswd' ? 'bg-primary text-white shadow-lg shadow-blue-500/20' : 'text-gray-400 hover:text-gray-600'}`}
+                        className={`px-4 sm:px-8 py-2.5 sm:py-3 rounded-[12px] text-xs font-black uppercase tracking-wider sm:tracking-widest transition-all ${activeTab === 'dswd' ? 'bg-primary text-white shadow-lg shadow-blue-500/20' : 'text-gray-400 hover:text-gray-600'}`}
                       >
                         DSWD (AICS)
                       </button>
                       <button
                         onClick={() => setActiveTab('pcso')}
-                        className={`px-8 py-3 rounded-[12px] text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'pcso' ? 'bg-accent text-white shadow-lg shadow-green-500/20' : 'text-gray-400 hover:text-gray-600'}`}
+                        className={`px-4 sm:px-8 py-2.5 sm:py-3 rounded-[12px] text-xs font-black uppercase tracking-wider sm:tracking-widest transition-all ${activeTab === 'pcso' ? 'bg-accent text-white shadow-lg shadow-green-500/20' : 'text-gray-400 hover:text-gray-600'}`}
                       >
                         PCSO (MAP)
                       </button>
@@ -450,7 +458,7 @@ export default function PatientAssistanceProgram() {
 
                   <div className="bg-white rounded-[15px] shadow-xl overflow-hidden border border-gray-100">
                     {activeTab === 'dswd' && (
-                      <div className="p-8 space-y-6">
+                      <div className="p-4 sm:p-8 space-y-6">
                         <h4 className="text-lg font-semibold tracking-tight text-primary">DSWD Medical Assistance (AICS)</h4>
                         <ul className="grid sm:grid-cols-2 gap-x-8 gap-y-5">
                           {[
@@ -476,7 +484,7 @@ export default function PatientAssistanceProgram() {
                       </div>
                     )}
                     {activeTab === 'pcso' && (
-                      <div className="p-8 space-y-6">
+                      <div className="p-4 sm:p-8 space-y-6">
                         <h4 className="text-lg font-semibold tracking-tight text-accent">PCSO Medical Assistance Program (MAP/IMAP)</h4>
                         <ul className="grid sm:grid-cols-2 gap-x-8 gap-y-5">
                           {[
@@ -511,24 +519,24 @@ export default function PatientAssistanceProgram() {
       <section className="pt-0 pb-0 max-w-7xl mx-auto px-6">
         <div className="max-w-6xl mx-auto">
           {/* Bar */}
-          <div className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] py-4 px-8 rounded-[15px] flex items-center gap-6 overflow-hidden relative reveal">
-            <span className="text-white text-4xl font-semibold shrink-0">4</span>
-            <h3 className="text-white text-xl md:text-2xl font-semibold uppercase leading-tight tracking-tight flex-1">
+          <div className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] py-3 sm:py-4 px-4 sm:px-8 rounded-[15px] flex items-center gap-3 sm:gap-6 overflow-hidden relative reveal">
+            <span className="text-white text-2xl sm:text-4xl font-semibold shrink-0">4</span>
+            <h3 className="text-white text-xs sm:text-xl md:text-2xl font-semibold uppercase leading-tight tracking-tight flex-1">
               MAKIPAG-UGNAYAN SA AMING PATIENT ASSISTANCE OFFICER
             </h3>
-            <div className="ml-auto shrink-0 flex items-end h-14 relative">
-              <i className="fa-solid fa-headset text-white/30 text-[80px] absolute -bottom-2 right-0 leading-none pointer-events-none" />
-              <i className="fa-solid fa-headset text-white/90 text-5xl relative z-10" />
+            <div className="ml-auto shrink-0 flex items-end h-10 sm:h-14 relative">
+              <i className="fa-solid fa-headset text-white/30 text-[44px] sm:text-[80px] absolute -bottom-2 right-0 leading-none pointer-events-none" />
+              <i className="fa-solid fa-headset text-white/90 text-2xl sm:text-5xl relative z-10" />
             </div>
           </div>
 
           {/* Content row */}
           <div className="flex items-stretch">
             {/* Connector column */}
-            <div className="flex flex-col items-center shrink-0 w-[88px]">
+            <div className="flex flex-col items-center shrink-0 w-10 sm:w-[88px]">
               <div className="w-0.5 flex-1 bg-gradient-to-b from-[#61A644] to-[#1D9FDA] min-h-[24px]" />
-              <div className="w-16 h-16 rounded-full bg-gradient-to-b from-[#61A644] to-[#1D9FDA] flex items-center justify-center shadow-md shrink-0 my-3">
-                <i className="fa-solid fa-paper-plane text-white text-xl" />
+              <div className="w-8 h-8 sm:w-16 sm:h-16 rounded-full bg-gradient-to-b from-[#61A644] to-[#1D9FDA] flex items-center justify-center shadow-md shrink-0 my-2 sm:my-3">
+                <i className="fa-solid fa-paper-plane text-white text-[10px] sm:text-xl" />
               </div>
               <div className="w-0.5 flex-1 bg-gradient-to-b from-[#61A644] to-[#1D9FDA] min-h-[24px]" />
             </div>
@@ -548,19 +556,21 @@ export default function PatientAssistanceProgram() {
                     <p className="text-gray-900 text-base md:text-lg font-semibold leading-snug">Ang aming Getmeds Patient Assistance Officer ay narito para gabayan kayo.</p>
                     <p className="text-gray-500 text-[15px] italic leading-relaxed">— Our Getmeds Patient Assistance Officer is here to guide you.</p>
                   </div>
-                  <div className="flex items-start gap-0 pt-2">
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-start gap-3 sm:gap-0 pt-2">
                     {[
                       'Gagabay sa buong proseso ng iyong aplikasyon.',
                       'Susuri sa inyong mga requirements bago ang submission.',
                       'Magbibigay ng opisyal na quotation para sa inyong gamot sa cancer.',
                     ].map((text, i, arr) => (
                       <React.Fragment key={i}>
-                        <div className="flex-1 flex flex-col gap-2 min-w-0">
-                          <span className="text-4xl font-black text-primary leading-none">{String(i + 1).padStart(2, '0')}</span>
+                        {/* Mobile: number + text in a row; Desktop: stacked column */}
+                        <div className="flex sm:flex-col items-center sm:items-start gap-3 sm:gap-2 flex-1 min-w-0 bg-gray-50 sm:bg-transparent rounded-xl sm:rounded-none px-3 py-2 sm:p-0">
+                          <span className="text-3xl sm:text-4xl font-black text-primary leading-none shrink-0">{String(i + 1).padStart(2, '0')}</span>
                           <p className="font-bold text-gray-900 text-sm leading-snug">{text}</p>
                         </div>
+                        {/* Arrow: hidden on mobile, shown on desktop */}
                         {i < arr.length - 1 && (
-                          <div className="pt-3 px-1 shrink-0">
+                          <div className="hidden sm:flex pt-3 px-1 shrink-0">
                             <svg width="24" height="14" viewBox="0 0 24 14" fill="none">
                               <path d="M0 7H20M20 7L14 1M20 7L14 13" stroke="#1D9FDA" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                             </svg>
@@ -580,24 +590,24 @@ export default function PatientAssistanceProgram() {
       <section className="pt-0 pb-0 max-w-7xl mx-auto px-6">
         <div className="max-w-6xl mx-auto">
           {/* Bar */}
-          <div className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] py-4 px-8 rounded-[15px] flex items-center gap-6 overflow-hidden relative reveal">
-            <span className="text-white text-4xl font-semibold shrink-0">5</span>
-            <h3 className="text-white text-xl md:text-2xl font-semibold uppercase leading-tight tracking-tight flex-1">
+          <div className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] py-3 sm:py-4 px-4 sm:px-8 rounded-[15px] flex items-center gap-3 sm:gap-6 overflow-hidden relative reveal">
+            <span className="text-white text-2xl sm:text-4xl font-semibold shrink-0">5</span>
+            <h3 className="text-white text-xs sm:text-xl md:text-2xl font-semibold uppercase leading-tight tracking-tight flex-1">
               I-SUBMIT ANG IYONG REQUIREMENTS
             </h3>
-            <div className="ml-auto shrink-0 flex items-end h-14 relative">
-              <i className="fa-solid fa-paper-plane text-white/30 text-[80px] absolute -bottom-2 right-0 leading-none pointer-events-none" />
-              <i className="fa-solid fa-paper-plane text-white/90 text-5xl relative z-10" />
+            <div className="ml-auto shrink-0 flex items-end h-10 sm:h-14 relative">
+              <i className="fa-solid fa-paper-plane text-white/30 text-[44px] sm:text-[80px] absolute -bottom-2 right-0 leading-none pointer-events-none" />
+              <i className="fa-solid fa-paper-plane text-white/90 text-2xl sm:text-5xl relative z-10" />
             </div>
           </div>
 
           {/* Content row */}
           <div className="flex items-stretch">
             {/* Connector column */}
-            <div className="flex flex-col items-center shrink-0 w-[88px]">
+            <div className="flex flex-col items-center shrink-0 w-10 sm:w-[88px]">
               <div className="w-0.5 flex-1 bg-gradient-to-b from-[#61A644] to-[#1D9FDA] min-h-[24px]" />
-              <div className="w-16 h-16 rounded-full bg-gradient-to-b from-[#61A644] to-[#1D9FDA] flex items-center justify-center shadow-md shrink-0 my-3">
-                <i className="fa-solid fa-envelope-open-text text-white text-xl" />
+              <div className="w-8 h-8 sm:w-16 sm:h-16 rounded-full bg-gradient-to-b from-[#61A644] to-[#1D9FDA] flex items-center justify-center shadow-md shrink-0 my-2 sm:my-3">
+                <i className="fa-solid fa-envelope-open-text text-white text-[10px] sm:text-xl" />
               </div>
               <div className="w-0.5 flex-1 bg-gradient-to-b from-[#61A644] to-[#1D9FDA] min-h-[24px]" />
             </div>
@@ -679,31 +689,31 @@ export default function PatientAssistanceProgram() {
       <section className="pt-0 pb-10 max-w-7xl mx-auto px-6">
         <div className="max-w-6xl mx-auto">
           {/* Bar */}
-          <div className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] py-4 px-8 rounded-[15px] flex items-center gap-6 overflow-hidden relative reveal">
-            <span className="text-white text-4xl font-semibold shrink-0">6</span>
-            <h3 className="text-white text-xl md:text-2xl font-semibold uppercase leading-tight tracking-tight flex-1">
+          <div className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] py-3 sm:py-4 px-4 sm:px-8 rounded-[15px] flex items-center gap-3 sm:gap-6 overflow-hidden relative reveal">
+            <span className="text-white text-2xl sm:text-4xl font-semibold shrink-0">6</span>
+            <h3 className="text-white text-xs sm:text-xl md:text-2xl font-semibold uppercase leading-tight tracking-tight flex-1">
               HINTAYIN ANG IYONG GUARANTEE LETTER (GL)
             </h3>
-            <div className="ml-auto shrink-0 flex items-end h-14 relative">
-              <i className="fa-solid fa-envelope-open-text text-white/30 text-[80px] absolute -bottom-2 right-0 leading-none pointer-events-none" />
-              <i className="fa-solid fa-envelope-open-text text-white/90 text-5xl relative z-10" />
+            <div className="ml-auto shrink-0 flex items-end h-10 sm:h-14 relative">
+              <i className="fa-solid fa-envelope-open-text text-white/30 text-[44px] sm:text-[80px] absolute -bottom-2 right-0 leading-none pointer-events-none" />
+              <i className="fa-solid fa-envelope-open-text text-white/90 text-2xl sm:text-5xl relative z-10" />
             </div>
           </div>
 
           {/* Content row — no bottom connector line (last step) */}
           <div className="flex items-stretch">
             {/* Connector column — top line only, ends with checkmark */}
-            <div className="flex flex-col items-center shrink-0 w-[88px]">
-              <div className="w-0.5 h-8 bg-gradient-to-b from-[#61A644] to-[#1D9FDA]" />
-              <div className="w-16 h-16 rounded-full bg-gradient-to-b from-[#61A644] to-[#1D9FDA] flex items-center justify-center shadow-md shrink-0 my-3">
-                <i className="fa-solid fa-circle-check text-white text-2xl" />
+            <div className="flex flex-col items-center shrink-0 w-10 sm:w-[88px]">
+              <div className="w-0.5 h-6 sm:h-8 bg-gradient-to-b from-[#61A644] to-[#1D9FDA]" />
+              <div className="w-8 h-8 sm:w-16 sm:h-16 rounded-full bg-gradient-to-b from-[#61A644] to-[#1D9FDA] flex items-center justify-center shadow-md shrink-0 my-2 sm:my-3">
+                <i className="fa-solid fa-circle-check text-white text-sm sm:text-2xl" />
               </div>
             </div>
 
             {/* Step 6 content */}
             <div className="flex-1 py-8">
               <div className="flex flex-col lg:flex-row items-center gap-10 reveal">
-                <div className="shrink-0 w-56 lg:w-64 flex items-center justify-center">
+                <div className="shrink-0 w-40 sm:w-56 lg:w-64 flex items-center justify-center mx-auto lg:mx-0">
                   <svg viewBox="0 0 240 240" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
                     {/* Background blob */}
                     <path d="M32 24C66 0 176 2 208 40C240 78 234 162 202 192C170 222 60 232 28 206C-4 180 0 148 4 112C8 76 -2 48 32 24Z" fill="#dbeafe" opacity="0.65"/>
@@ -764,7 +774,7 @@ export default function PatientAssistanceProgram() {
                       <p className="text-gray-500 text-[15px] italic leading-relaxed">— When approved, the agency will provide the GL as proof that they will cover the medication.</p>
                     </div>
                   </div>
-                  <div className="pl-14 space-y-1">
+                  <div className="pl-0 sm:pl-14 space-y-1">
                     <p className="text-gray-900 text-base md:text-lg font-semibold leading-snug">Dalhin ito sa nakasaad na medicine distributor o supplier upang makuha ang gamot. Para sa gabay, makipag-ugnayan sa aming Patient Assistance Officer.</p>
                     <p className="text-gray-500 text-[15px] italic leading-relaxed">— Bring it to the designated medicine distributor or supplier to get the medicine. For guidance, contact our Patient Assistance Officer.</p>
                   </div>
@@ -785,7 +795,7 @@ export default function PatientAssistanceProgram() {
             </h3>
             <div className="grid sm:grid-cols-2 gap-6">
               {/* Location card */}
-              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300 p-8 relative overflow-hidden">
+              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300 p-5 sm:p-8 relative overflow-hidden">
                 <div className="absolute bottom-0 left-0 w-36 h-36 rounded-full bg-gradient-to-tr from-[#1D9FDA]/20 via-[#1D9FDA]/5 to-transparent -translate-x-10 translate-y-10 pointer-events-none" />
                 <div className="flex items-center gap-2 mb-6">
                   <i className="fa-solid fa-location-dot text-[26px] text-[#1D9FDA]"></i>
@@ -797,7 +807,7 @@ export default function PatientAssistanceProgram() {
                 </p>
               </div>
               {/* Hours card */}
-              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300 p-8 relative overflow-hidden">
+              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300 p-5 sm:p-8 relative overflow-hidden">
                 <div className="absolute bottom-0 left-0 w-36 h-36 rounded-full bg-gradient-to-tr from-[#61A644]/20 via-[#61A644]/5 to-transparent -translate-x-10 translate-y-10 pointer-events-none" />
                 <div className="flex items-center gap-2 mb-6">
                   <i className="fa-solid fa-clock text-[26px] text-[#61A644]"></i>
@@ -895,6 +905,7 @@ export default function PatientAssistanceProgram() {
       {/* Footer */}
       <div id="footer-container" />
 
+      </div>{/* end overflow-x-hidden wrapper */}
     </div>
   );
 }

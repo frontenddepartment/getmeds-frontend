@@ -149,9 +149,10 @@ const Csr: React.FC = () => {
 
   return (
     <div style={{ fontFamily: "'Poppins', sans-serif" }} className="bg-white text-gray-800 antialiased">
-      {/* Navbar */}
+      {/* Navbar — outside overflow wrapper so sticky works */}
       <div id="navbar-container" className="sticky top-0 z-[50]" />
 
+      <div className="overflow-x-hidden">
       {/* HERO SECTION */}
       <section className="w-full mx-auto px-3 sm:px-4 md:px-6 mt-3 md:mt-4 mb-16 max-w-[1600px]">
         <div className="relative rounded-[1.5rem] border border-gray-100/20 overflow-hidden min-h-[450px] md:min-h-[500px] flex items-end">
@@ -171,7 +172,9 @@ const Csr: React.FC = () => {
               we ensure no patient navigates their journey alone.
             </p>
             <div className="flex gap-4">
-              <button className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:from-[#1D9FDA] hover:to-[#61A644] text-white font-semibold py-2 px-6 rounded-full text-[13px] inline-block transition shadow-md">
+              <button
+                onClick={() => document.getElementById('csr-content-start')?.scrollIntoView({ behavior: 'smooth' })}
+                className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:from-[#1D9FDA] hover:to-[#61A644] text-white font-semibold py-2 px-6 rounded-full text-[13px] inline-block transition shadow-md">
                 Read More
               </button>
             </div>
@@ -180,7 +183,7 @@ const Csr: React.FC = () => {
       </section>
 
       {/* FREE CANCER MEDICINES PROGRAM */}
-      <section className="py-16 bg-white">
+      <section id="csr-content-start" className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col lg:flex-row gap-12 mb-12 items-end">
             <div className="lg:w-[28%]">
@@ -190,11 +193,9 @@ const Csr: React.FC = () => {
               <span className="bg-[#1D9FDA] text-white text-[10px] font-bold px-4 py-1.5 rounded-full mb-6 inline-block tracking-widest uppercase">
                 Patient Support Initiatives
               </span>
-              <h2 className="text-2xl md:text-3xl font-bold mb-6 tracking-tight text-[#2A2A2A]">
-                <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">
-                  Free
-                </span>
-                {' '}Cancer Medicines Program
+              <h2 className="text-3xl md:text-4xl font-semibold mb-6 tracking-tight text-[#2A2A2A]">
+                Free Cancer Medicines{' '}
+                <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">Program</span>
               </h2>
               <p className="text-gray-500 text-[14px] leading-[1.8] mb-8">
                 Getmeds runs an ongoing online campaign dedicated to providing free cancer medicines to
@@ -249,7 +250,7 @@ const Csr: React.FC = () => {
       {/* GALLERY SLIDER */}
       <section className="py-10 bg-white overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 text-center mb-16 reveal">
-          <h2 className="text-dark font-bold text-2xl md:text-3xl tracking-tight mb-4">Free Cancer Medicines Program</h2>
+          <h2 className="text-dark font-semibold text-3xl md:text-4xl tracking-tight mb-4">Free Cancer Medicines{' '}<span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">Program</span></h2>
           <p className="text-gray-500 text-[14px] md:text-[16px] max-w-2xl mx-auto leading-relaxed">
             Discover exciting opportunities to grow your career with us. We are looking for passionate individuals
             to join our mission-driven team.
@@ -267,7 +268,7 @@ const Csr: React.FC = () => {
       {/* PATIENT ASSISTANCE PROGRAM */}
       <section className="py-16 bg-white overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 text-center mb-12 reveal">
-          <h2 className="text-dark font-bold text-2xl md:text-3xl tracking-tight mb-4">Patient Assistance Program</h2>
+          <h2 className="text-dark font-semibold text-3xl md:text-4xl tracking-tight mb-4">Patient Assistance{' '}<span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">Program</span></h2>
           <p className="text-gray-500 text-[14px] md:text-[15px] max-w-2xl mx-auto leading-relaxed">
             Discover exciting opportunities to grow your career with us. We are looking for passionate individuals
             to join our mission-driven team.
@@ -317,9 +318,9 @@ const Csr: React.FC = () => {
               <img src={getImage('assets/cancerpatient.png', 'assets/cancerpatient.png')} alt="Christmas Promo Hug" className="w-full rounded-3xl shadow-2xl" />
             </div>
             <div className="lg:w-1/2 reveal">
-              <h2 className="text-2xl md:text-3xl font-bold text-dark leading-tight mb-8">
+              <h2 className="text-3xl md:text-4xl font-semibold text-dark leading-tight mb-8">
                 Christmas Promo For<br />
-                Cancer Patients
+                Cancer{' '}<span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">Patients</span>
               </h2>
               <div className="space-y-8">
                 <div className="flex gap-5 items-start">
@@ -364,9 +365,9 @@ const Csr: React.FC = () => {
                   PARTNERSHIPS</span>
                 <span className="bg-[#1D9FDA] text-white text-[10px] font-bold px-4 py-1.5 rounded-full uppercase">COLLABORATION</span>
               </div>
-              <h2 className="text-2xl md:text-3xl font-bold text-dark leading-tight mb-6">
+              <h2 className="text-3xl md:text-4xl font-semibold text-dark leading-tight mb-6">
                 The Beautiful One Dhe<br />
-                Breast Cancer Warriors
+                Breast Cancer{' '}<span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">Warriors</span>
               </h2>
               <p className="text-gray-500 text-[15px] leading-[1.8] mb-8">
                 The Beautiful One Dhe is dedicated to supporting breast cancer warriors in their fight against
@@ -403,8 +404,8 @@ const Csr: React.FC = () => {
                 className="w-full h-[350px] object-cover rounded-[1rem] shadow-lg" />
             </div>
             <div className="md:w-1/2 reveal">
-              <h2 className="text-2xl md:text-3xl font-bold text-dark mb-6 tracking-tight">
-                Epcalm Adult Leukimia<br />Foundation
+              <h2 className="text-3xl md:text-4xl font-semibold text-dark mb-6 tracking-tight">
+                Epcalm Adult Leukimia<br /><span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">Foundation</span>
               </h2>
               <p className="text-gray-500 text-[15px] leading-[1.8] mb-6">
                 In partnership with EPCALM, Getmeds provides free cancer medications to adult patients with
@@ -470,8 +471,8 @@ const Csr: React.FC = () => {
                   HEALTH PROMOTION EVENTS
                 </span>
               </div>
-              <h2 className="text-3xl md:text-4xl font-extrabold text-dark leading-tight mb-8">
-                Pink Run Breast Cancer Awareness
+              <h2 className="text-3xl md:text-4xl font-semibold text-dark leading-tight mb-8">
+                Pink Run Breast Cancer{' '}<span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">Awareness</span>
               </h2>
               <div className="space-y-6">
                 <p className="text-gray-400 text-[15px] leading-[1.8]">
@@ -529,6 +530,7 @@ const Csr: React.FC = () => {
 
       {/* Footer */}
       <div id="footer-container" />
+      </div>{/* end overflow-x-hidden */}
     </div>
   );
 };

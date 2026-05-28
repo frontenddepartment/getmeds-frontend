@@ -11,6 +11,13 @@ export default function Services() {
         .then(r => r.text())
         .then(html => { injectHTML(navContainer, html); });
     }
+
+    const footerContainer = document.getElementById('footer-container');
+    if (footerContainer && footerContainer.innerHTML.trim() === '') {
+      fetch('/components/footer.html')
+        .then(r => r.text())
+        .then(html => { injectHTML(footerContainer, html); });
+    }
   }, []);
 
   useEffect(() => {
@@ -482,88 +489,8 @@ export default function Services() {
         </div>
       </section>
 
-      {/* Footer (Dark Theme) */}
-      <footer className="bg-[#1A1D2B] text-gray-300 pt-16 pb-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-12 relative">
-            {/* Branding */}
-            <div className="lg:col-span-2 space-y-6">
-              <div className="flex items-center">
-                <img src={getImage('assets/getmedslogo.png', 'assets/getmedslogo.png')} alt="Getmeds Logo"
-                  className="h-8 w-auto object-contain brightness-0 invert opacity-90" />
-              </div>
-              <p className="text-sm text-gray-400 max-w-xs">
-                Getmeds is your trusted online healthcare partner, providing access to top-quality medicines,
-                doctor consultations, and lab tests from anywhere in the world.
-              </p>
-              <div className="flex space-x-4">
-                <a href="#"
-                  className="h-10 w-10 rounded-full bg-gray-800 flex items-center justify-center text-white hover:bg-primary transition"><i
-                    className="fa-brands fa-facebook-f"></i></a>
-                <a href="#"
-                  className="h-10 w-10 rounded-full bg-gray-800 flex items-center justify-center text-white hover:bg-primary transition"><i
-                    className="fa-brands fa-twitter"></i></a>
-                <a href="#"
-                  className="h-10 w-10 rounded-full bg-gray-800 flex items-center justify-center text-white hover:bg-primary transition"><i
-                    className="fa-brands fa-instagram"></i></a>
-                <a href="#"
-                  className="h-10 w-10 rounded-full bg-gray-800 flex items-center justify-center text-white hover:bg-primary transition"><i
-                    className="fa-brands fa-linkedin-in"></i></a>
-              </div>
-            </div>
-
-            {/* Links 1 */}
-            <div>
-              <h4 className="text-white font-bold mb-6 text-lg">About</h4>
-              <ul className="space-y-3 text-sm">
-                <li><a href="about-us.html" className="hover:text-primary transition">About Us</a></li>
-                <li><a href="#" className="hover:text-primary transition">Our Leadership</a></li>
-                <li><a href="#" className="hover:text-primary transition">Careers</a></li>
-                <li><a href="#" className="hover:text-primary transition">News &amp; Media</a></li>
-              </ul>
-            </div>
-
-            {/* Links 2 */}
-            <div>
-              <h4 className="text-white font-bold mb-6 text-lg">Delivery</h4>
-              <ul className="space-y-3 text-sm">
-                <li><a href="#" className="hover:text-primary transition">Track Order</a></li>
-                <li><a href="#" className="hover:text-primary transition">Return Policy</a></li>
-                <li><a href="#" className="hover:text-primary transition">Delivery Info</a></li>
-                <li><a href="#" className="hover:text-primary transition">FAQs</a></li>
-              </ul>
-            </div>
-
-            {/* Links 3 */}
-            <div>
-              <h4 className="text-white font-bold mb-6 text-lg">Contact</h4>
-              <ul className="space-y-3 text-sm">
-                <li className="flex items-start space-x-3">
-                  <i className="fa-solid fa-location-dot mt-1 text-primary"></i>
-                  <span>123 Medical Drive, Health City, NY 10001</span>
-                </li>
-                <li className="flex items-center space-x-3">
-                  <i className="fa-solid fa-phone text-primary"></i>
-                  <span>+1 (800) 123-4567</span>
-                </li>
-                <li className="flex items-center space-x-3">
-                  <i className="fa-solid fa-envelope text-primary"></i>
-                  <span>support@getmeds.com</span>
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          <div
-            className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-gray-500">
-            <p>&copy; 2023 Getmeds. All rights reserved.</p>
-            <div className="flex space-x-6 mt-4 md:mt-0">
-              <a href="#" className="hover:text-white transition">Privacy Policy</a>
-              <a href="#" className="hover:text-white transition">Terms of Service</a>
-            </div>
-          </div>
-        </div>
-      </footer>
+      {/* Footer */}
+      <div id="footer-container" />
 
     </div>
   );

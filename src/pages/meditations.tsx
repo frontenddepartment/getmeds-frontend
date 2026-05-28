@@ -21,6 +21,15 @@ export default function Meditations() {
   const [defaultBoxSecs, setDefaultBoxSecs] = useState(4);
   const [mockAudioSecs, setMockAudioSecs] = useState(324);
 
+  // Phone carousel (mobile only)
+  const [activePhone, setActivePhone] = useState(1);
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setActivePhone(prev => (prev + 1) % 3);
+    }, 3000);
+    return () => clearInterval(timer);
+  }, []);
+
   // Web Audio API refs (mutable, not state)
   const audioCtxRef = useRef<AudioContext | null>(null);
   const ambientOscsRef = useRef<OscillatorNode[]>([]);
@@ -296,33 +305,89 @@ export default function Meditations() {
             </p>
           </div>
 
-          {/* Phone Mockups (Overlapping the blue banner) */}
-          <div className="max-w-[700px] mx-auto grid grid-cols-1 md:grid-cols-3 gap-4 relative z-20 -mt-32 md:-mt-48 px-4 lg:px-0 pb-2 items-center">
+          {/* Phone Mockups — Desktop: 3-col grid | Mobile: auto-sliding carousel */}
 
-            {/* Phone 1 (Left) */}
+          {/* DESKTOP ONLY (md+): unchanged 3-col layout */}
+          <div className="hidden md:grid max-w-[700px] mx-auto grid-cols-3 gap-4 relative z-20 md:-mt-48 px-4 lg:px-0 pb-2 items-center">
             <div className="relative w-full max-w-[190px] mx-auto h-[380px] bg-slate-900 rounded-[30px] p-1.5 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.3)] border-2 border-slate-700/80 overflow-hidden flex flex-col items-center z-10 transition-transform duration-500 hover:scale-[1.02] transform md:translate-y-2">
               <div className="w-full h-full bg-white rounded-[20px] overflow-hidden relative shadow-inner">
                 <img src={getImage('assets/categories.png', 'assets/categories.png')} alt="App Screen Left" className="w-full h-[calc(100%-1.25rem)] mt-5 object-contain" />
                 <div className="w-20 h-3.5 bg-black rounded-full absolute left-1/2 -translate-x-1/2 top-1.5 z-20" />
               </div>
             </div>
-
-            {/* Phone 2 (Center - Elevated) */}
             <div className="relative w-full max-w-[225px] mx-auto h-[450px] bg-slate-900 rounded-[35px] p-1.5 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.6)] border-2 border-slate-700/80 overflow-hidden flex flex-col items-center z-20 transition-transform duration-500 hover:scale-[1.02] transform md:-translate-y-6">
               <div className="w-full h-full bg-white rounded-[25px] overflow-hidden relative shadow-inner">
                 <img src={getImage('assets/workbook.png', 'assets/workbook.png')} alt="App Screen Center" className="w-full h-[calc(100%-1.5rem)] mt-6 object-contain" />
                 <div className="w-24 h-4 bg-black rounded-full absolute left-1/2 -translate-x-1/2 top-1.5 z-20" />
               </div>
             </div>
-
-            {/* Phone 3 (Right) */}
             <div className="relative w-full max-w-[190px] mx-auto h-[380px] bg-slate-900 rounded-[30px] p-1.5 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.3)] border-2 border-slate-700/80 overflow-hidden flex flex-col items-center z-10 transition-transform duration-500 hover:scale-[1.02] transform md:translate-y-2">
               <div className="w-full h-full bg-white rounded-[20px] overflow-hidden relative shadow-inner">
                 <img src={getImage('assets/profile.png', 'assets/profile.png')} alt="App Screen Right" className="w-full h-[calc(100%-1.25rem)] mt-5 object-contain" />
                 <div className="w-20 h-3.5 bg-black rounded-full absolute left-1/2 -translate-x-1/2 top-1.5 z-20" />
               </div>
             </div>
+          </div>
 
+          {/* MOBILE ONLY (<md): auto-sliding carousel with peek effect */}
+          <div className="md:hidden relative z-20 -mt-32 pb-6 overflow-x-hidden pt-4">
+            {/* Track */}
+            <div
+              className="flex items-center transition-transform duration-700 ease-in-out"
+              style={{ transform: `translateX(calc(${15 - activePhone * 70}vw))` }}
+            >
+              {[
+                { img: 'assets/categories.png', alt: 'App Screen Left' },
+                { img: 'assets/workbook.png', alt: 'App Screen Center' },
+                { img: 'assets/profile.png', alt: 'App Screen Right' },
+              ].map((phone, i) => {
+                const isActive = i === activePhone;
+                return (
+                  <div
+                    key={i}
+                    onClick={() => setActivePhone(i)}
+                    className="shrink-0 flex items-center justify-center cursor-pointer"
+                    style={{ width: '70vw', height: '380px', padding: '0 5vw' }}
+                  >
+                    <div
+                      className="bg-slate-900 border-2 border-slate-700/80 overflow-hidden flex flex-col items-center transition-all duration-700"
+                      style={{
+                        width: isActive ? '180px' : '130px',
+                        height: isActive ? '360px' : '260px',
+                        borderRadius: isActive ? '32px' : '24px',
+                        boxShadow: isActive
+                          ? '0 30px 60px -15px rgba(0,0,0,0.6)'
+                          : '0 10px 30px -10px rgba(0,0,0,0.25)',
+                        opacity: isActive ? 1 : 0.55,
+                        transform: isActive ? 'translateY(-12px)' : 'translateY(0)',
+                        padding: '6px',
+                      }}
+                    >
+                      <div className="w-full h-full bg-white overflow-hidden relative shadow-inner" style={{ borderRadius: isActive ? '26px' : '18px' }}>
+                        <img src={getImage(phone.img, phone.img)} alt={phone.alt} className="w-full h-[calc(100%-1.25rem)] mt-5 object-contain" />
+                        <div className="bg-black rounded-full absolute left-1/2 -translate-x-1/2 top-1.5 z-20" style={{ width: isActive ? '72px' : '52px', height: isActive ? '14px' : '10px' }} />
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Dot indicators */}
+            <div className="flex justify-center gap-2 mt-4">
+              {[0, 1, 2].map(i => (
+                <button
+                  key={i}
+                  onClick={() => setActivePhone(i)}
+                  className="transition-all duration-300 rounded-full"
+                  style={{
+                    width: i === activePhone ? '20px' : '8px',
+                    height: '8px',
+                    background: i === activePhone ? '#ffffff' : 'rgba(255,255,255,0.4)',
+                  }}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -453,10 +518,10 @@ export default function Meditations() {
         style={{ background: 'linear-gradient(to bottom, #1D9FDA 75%, #ffffff 75%)' }}
       >
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start">
 
             {/* Left: Title, Description, Button */}
-            <div className="text-white pl-12">
+            <div className="text-white px-4 lg:pl-12">
               <h2 className="text-4xl md:text-5xl font-semibold mb-6 leading-tight">Features</h2>
               <p className="text-white/75 text-[15px] leading-relaxed max-w-md mb-10">
                 Discover a comprehensive suite of tools designed to support your mental well-being. From guided
@@ -472,7 +537,7 @@ export default function Meditations() {
             </div>
 
             {/* Right: 2x3 Feature Cards Grid */}
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 px-4 lg:px-0">
 
               {/* Card 1: Mindfulness */}
               <div className="group bg-white rounded-[20px] p-5 shadow-[0_10px_25px_rgba(0,0,0,0.05)] hover:shadow-[0_18px_35px_rgba(0,0,0,0.1)] hover:-translate-y-1.5 hover:scale-[1.02] transition-all duration-300 ease-out cursor-pointer border border-slate-100/80">

@@ -49,6 +49,7 @@ export default function GlobalPresence() {
               linking you with top care continuously.
             </p>
             <button
+              onClick={() => document.getElementById('gp-content-start')?.scrollIntoView({ behavior: 'smooth' })}
               className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:from-[#1D9FDA] hover:to-[#61A644] text-white font-semibold py-2 px-6 rounded-full text-[13px] inline-block transition shadow-md">
               Explore Now
             </button>
@@ -57,7 +58,7 @@ export default function GlobalPresence() {
       </section>
 
       {/* Where We Operate — 3 Categorised Sections */}
-      <section className="pb-20 bg-white">
+      <section id="gp-content-start" className="pb-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
 
           {/* ── SECTION 1: The Foundation ─────────────────────────── */}
