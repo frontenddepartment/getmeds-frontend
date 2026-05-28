@@ -1,9 +1,132 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { injectHTML } from '../lib/injectHTML';
 import { useImageMapper } from '../lib/useSanity';
 
+const JOB_LISTINGS = [
+  {
+    title: 'Human Resource Head',
+    desc: 'Lead HR initiatives, talent acquisition, and employee development. Drive organizational culture and ensure compliance with Philippine labor laws.',
+    responsibilities: [
+      'Lead end-to-end recruitment, selection, and onboarding processes',
+      'Develop and implement HR policies, procedures, and programs',
+      'Manage employee relations, performance reviews, and career development plans',
+      'Ensure compliance with Philippine Labor Code and DOLE regulations',
+      'Drive organizational culture, engagement, and retention initiatives',
+      'Partner with leadership on workforce planning and succession management',
+    ],
+    requirements: [
+      "Bachelor's degree in Human Resources, Psychology, or related field",
+      'Minimum 5 years of HR experience, at least 2 years in a leadership role',
+      'Strong knowledge of Philippine Labor Code and employment regulations',
+      'Excellent interpersonal, communication, and conflict-resolution skills',
+      'Experience in the pharmaceutical or healthcare industry is a plus',
+    ],
+  },
+  {
+    title: 'B2B Telemarketer',
+    desc: 'Build and maintain business relationships over the phone. Generate leads, present Getmeds products, and coordinate with the sales team to close deals.',
+    responsibilities: [
+      'Prospect and qualify new B2B leads through outbound calls and email',
+      'Present Getmeds products and value propositions to potential clients',
+      'Schedule meetings and product demos for the field sales team',
+      'Maintain accurate CRM records of all client interactions and follow-ups',
+      'Meet or exceed weekly and monthly lead generation targets',
+      'Collaborate with the marketing team on campaign follow-ups',
+    ],
+    requirements: [
+      "Bachelor's degree in Business, Marketing, or a related field",
+      'At least 1 year of telemarketing or inside sales experience',
+      'Strong verbal communication and persuasion skills',
+      'Proficiency in CRM tools and MS Office',
+      'Resilient, target-driven, and comfortable with high-volume calling',
+    ],
+  },
+  {
+    title: 'Government Bidding Associate',
+    desc: 'Prepare and manage government procurement bid documents. Coordinate with agencies and ensure full compliance with PhilGEPS requirements.',
+    responsibilities: [
+      'Monitor and evaluate government procurement opportunities via PhilGEPS',
+      'Prepare, compile, and submit complete bid documents and proposals',
+      'Coordinate with internal teams to gather technical and financial bid requirements',
+      'Liaise with government agencies for bid clarifications and post-award activities',
+      'Maintain a tracker for all active, awarded, and pending bids',
+      'Ensure adherence to RA 9184 (Government Procurement Reform Act)',
+    ],
+    requirements: [
+      "Bachelor's degree in Business Administration, Public Administration, or related field",
+      'At least 2 years of experience in government procurement or bidding',
+      'Solid understanding of PhilGEPS processes and RA 9184',
+      'Detail-oriented with strong document management skills',
+      'Ability to work under tight deadlines and manage multiple submissions',
+    ],
+  },
+  {
+    title: 'Sales Admin Assistant',
+    desc: 'Provide administrative support to the sales team. Handle order processing, documentation, and client coordination to keep operations running smoothly.',
+    responsibilities: [
+      'Process and monitor sales orders, delivery receipts, and invoices',
+      'Maintain and update client databases, sales reports, and dashboards',
+      'Coordinate with logistics, finance, and warehouse for order fulfillment',
+      'Assist in preparing sales presentations, proposals, and quotations',
+      'Handle client inquiries and escalate issues to the appropriate team',
+      'Support the sales team with scheduling and administrative tasks',
+    ],
+    requirements: [
+      "Bachelor's degree in Business Administration or a related course",
+      '1–2 years of experience in sales administration or operations support',
+      'Proficient in MS Excel, Word, and Google Workspace',
+      'Strong organizational skills and high attention to detail',
+      'Excellent written and verbal communication skills',
+    ],
+  },
+  {
+    title: 'Sales Manager (CLIP)',
+    desc: 'Lead and manage the CLIP sales division. Develop strategies to grow market share and consistently achieve sales targets in the healthcare sector.',
+    responsibilities: [
+      'Develop and execute strategic sales plans for the CLIP product line',
+      'Lead, coach, and motivate the CLIP sales team to hit monthly and quarterly targets',
+      'Identify and pursue new business opportunities in the healthcare sector',
+      'Build and nurture key accounts with hospitals, clinics, and distributors',
+      'Analyze sales data to identify trends, gaps, and growth opportunities',
+      'Report sales performance to senior management with actionable insights',
+    ],
+    requirements: [
+      "Bachelor's degree in Business, Marketing, Pharmacy, or related field",
+      'Minimum 5 years of pharmaceutical or healthcare sales experience',
+      'At least 2 years in a managerial or team lead role',
+      'Strong leadership, negotiation, and client-relationship skills',
+      'Proven track record of achieving and exceeding sales targets',
+    ],
+  },
+  {
+    title: 'District Sales Manager',
+    desc: 'Oversee sales operations within an assigned district. Coach field agents, monitor performance metrics, and drive revenue growth.',
+    responsibilities: [
+      'Manage and supervise field sales representatives across an assigned district',
+      'Set individual and team sales targets aligned with company goals',
+      'Conduct regular field visits, coaching sessions, and performance reviews',
+      'Analyze district sales data and implement corrective action plans when needed',
+      'Build and maintain relationships with key accounts and distributors in the district',
+      'Report district performance and market intelligence to the national sales head',
+    ],
+    requirements: [
+      "Bachelor's degree in Business, Marketing, or a related field",
+      'Minimum 4 years of field sales experience in pharmaceuticals or FMCG',
+      'At least 2 years of experience managing a sales team',
+      'Strong analytical, leadership, and territory management skills',
+      'Willingness to travel extensively within the assigned district',
+    ],
+  },
+];
+
 const Careers: React.FC = () => {
   const { getImage } = useImageMapper('careers');
+  const [applyModalOpen, setApplyModalOpen] = useState(false);
+  const [applyingFor, setApplyingFor] = useState('');
+  const [applyForm, setApplyForm] = useState({ name: '', email: '', phone: '', message: '' });
+  const [jobDescOpen, setJobDescOpen] = useState(false);
+  const activeJob = JOB_LISTINGS.find(j => j.title === applyingFor);
+
   // Navbar / Footer injection
   useEffect(() => {
     fetch('/components/navbar.html')
@@ -56,7 +179,7 @@ const Careers: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col lg:flex-row gap-4 lg:gap-8 items-center">
             <div className="shrink-0 lg:w-[42%]">
-              <span className="inline-block bg-[#E8F5E3] text-[#61A644] text-[11px] font-bold px-4 py-1.5 rounded-full mb-5 tracking-wider">
+              <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent font-bold uppercase tracking-widest text-lg block mb-4">
                 Our Benefits
               </span>
               <h2 className="text-3xl md:text-4xl font-semibold text-dark leading-snug">
@@ -196,8 +319,8 @@ const Careers: React.FC = () => {
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <span className="text-primary font-bold text-sm uppercase tracking-wider mb-2 block">Career Advantages</span>
-            <h2 className="text-3xl md:text-4xl font-bold text-dark mb-4">
+            <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent font-bold uppercase tracking-widest text-lg block mb-4">Career Advantages</span>
+            <h2 className="text-3xl md:text-4xl font-semibold text-dark mb-4">
               Why professionals choose{' '}
               <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent inline-block">Getmeds</span>?
             </h2>
@@ -299,96 +422,224 @@ const Careers: React.FC = () => {
         </div>
       </section>
 
-      {/* JOB LISTINGS + APPLICATION FORM */}
+      {/* JOB LISTINGS */}
       <section id="join-form" className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-14">
-            <h2 className="text-[28px] md:text-[34px] font-extrabold text-dark mb-3">Join Our Team</h2>
+            <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent font-bold uppercase tracking-widest text-lg block mb-4">Open Positions</span>
+            <h2 className="text-3xl md:text-4xl font-semibold text-dark mb-3">Join Our{' '}<span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">Team</span></h2>
             <p className="text-gray-400 text-[14px] max-w-xl mx-auto leading-relaxed">
               Discover exciting opportunities to grow your career with us. We are looking for passionate
               individuals to join our mission-driven team.
             </p>
           </div>
 
-          <div className="flex flex-col lg:flex-row gap-10">
-            {/* Job Listings */}
-            <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-6 content-start">
-              <div className="border border-gray-100 rounded-2xl p-6 hover:shadow-md transition-shadow duration-300">
-                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-2">Full time</span>
-                <h4 className="text-[16px] font-extrabold text-dark mb-3">Marketing Advisor</h4>
-                <p className="text-gray-400 text-[12.5px] leading-[1.7] mb-5">
-                  Drive our brand growth by developing innovative marketing strategies. Analyze market trends
-                  and help connect our healthcare solutions with those who need them most.
-                </p>
-                <button className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] text-white text-[11px] font-bold px-5 py-2 rounded-full tracking-wider hover:opacity-90 transition">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {JOB_LISTINGS.map((job) => (
+              <div key={job.title} className="border border-gray-100 rounded-2xl p-6 hover:shadow-md transition-shadow duration-300 flex flex-col">
+                <span className="text-[12px] font-semibold text-gray-400 tracking-widest block mb-2">Full Time</span>
+                <h4 className="text-[16px] font-semibold text-dark mb-3">{job.title}</h4>
+                <p className="text-gray-400 text-[12.5px] leading-[1.7] mb-5 flex-1">{job.desc}</p>
+                <button
+                  onClick={() => { setApplyingFor(job.title); setApplyModalOpen(true); setJobDescOpen(true); }}
+                  className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] text-white text-[11px] font-bold px-5 py-2 rounded-full tracking-wider hover:opacity-90 transition self-start"
+                >
                   APPLY NOW
                 </button>
               </div>
-
-              <div className="border border-gray-100 rounded-2xl p-6 hover:shadow-md transition-shadow duration-300">
-                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-2">Full time</span>
-                <h4 className="text-[16px] font-extrabold text-dark mb-3">Supervisor</h4>
-                <p className="text-gray-400 text-[12.5px] leading-[1.7] mb-5">
-                  Lead and inspire our daily operations team. Ensure seamless service delivery, manage staff
-                  performance, and uphold our high standards of healthcare excellence.
-                </p>
-                <button className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] text-white text-[11px] font-bold px-5 py-2 rounded-full tracking-wider hover:opacity-90 transition">
-                  APPLY NOW
-                </button>
-              </div>
-
-              <div className="border border-gray-100 rounded-2xl p-6 hover:shadow-md transition-shadow duration-300">
-                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-2">Full time</span>
-                <h4 className="text-[16px] font-extrabold text-dark mb-3">Field Agent</h4>
-                <p className="text-gray-400 text-[12.5px] leading-[1.7] mb-5">
-                  Be the face of Getmeds in the community. Handle local deliveries, assist with on-site
-                  customer inquiries, and ensure timely distribution of medical supplies.
-                </p>
-                <button className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] text-white text-[11px] font-bold px-5 py-2 rounded-full tracking-wider hover:opacity-90 transition">
-                  APPLY NOW
-                </button>
-              </div>
-
-              <div className="border border-gray-100 rounded-2xl p-6 hover:shadow-md transition-shadow duration-300">
-                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-2">Full time</span>
-                <h4 className="text-[16px] font-extrabold text-dark mb-3">Receptionist</h4>
-                <p className="text-gray-400 text-[12.5px] leading-[1.7] mb-5">
-                  Create a welcoming first impression for our clients. Manage front-desk operations, handle
-                  patient inquiries, and coordinate appointments with empathy and professionalism.
-                </p>
-                <button className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] text-white text-[11px] font-bold px-5 py-2 rounded-full tracking-wider hover:opacity-90 transition">
-                  APPLY NOW
-                </button>
-              </div>
-            </div>
-
-            {/* Application Form */}
-            <div className="lg:w-[340px] flex-shrink-0">
-              <div className="border border-gray-100 rounded-2xl overflow-hidden shadow-sm sticky top-24">
-                <div className="bg-dark text-white px-6 py-4">
-                  <h4 className="text-[15px] font-bold text-center">Join Our Team</h4>
-                </div>
-                <div className="p-6 space-y-3 bg-white">
-                  <input type="text" placeholder="Your Name"
-                    className="w-full border border-gray-200 rounded-lg px-4 py-3 text-[13px] text-gray-700 outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition placeholder-gray-300" />
-                  <input type="email" placeholder="Your Email"
-                    className="w-full border border-gray-200 rounded-lg px-4 py-3 text-[13px] text-gray-700 outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition placeholder-gray-300" />
-                  <input type="text" placeholder="Your Position"
-                    className="w-full border border-gray-200 rounded-lg px-4 py-3 text-[13px] text-gray-700 outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition placeholder-gray-300" />
-                  <textarea placeholder="Enter Your Message" rows={4}
-                    className="w-full border border-gray-200 rounded-lg px-4 py-3 text-[13px] text-gray-700 outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition placeholder-gray-300 resize-none"></textarea>
-                  <button className="w-full bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:opacity-90 text-white font-bold py-3 rounded-lg text-[13px] transition mt-1">
-                    Send Application
-                  </button>
-                </div>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </section>
 
       {/* Footer */}
       <div id="footer-container" />
+
+      {/* Backdrop */}
+      <div
+        className={`fixed inset-0 z-50 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ${applyModalOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+        onClick={() => { setApplyModalOpen(false); setJobDescOpen(false); }}
+      />
+
+      {/* Job Description Panel */}
+      <div
+        className={`fixed bottom-0 left-0 right-0 md:bottom-auto md:left-auto md:top-4 md:right-4 h-[calc(100vh-2rem)] w-full md:w-[calc(100%-2rem)] max-w-full md:max-w-md bg-white shadow-2xl rounded-t-[20px] md:rounded-[15px] z-[65] transform transition-transform duration-500 ease-[cubic-bezier(0.2,0.8,0.2,1)] overflow-y-auto flex flex-col ${jobDescOpen ? 'translate-y-0 md:translate-x-0' : 'translate-y-full md:translate-y-0 md:translate-x-[calc(100%+2rem)]'}`}
+      >
+            {/* Drag handle — mobile only */}
+            <div className="md:hidden flex justify-center pt-3 pb-1 shrink-0">
+              <div className="w-10 h-1 bg-gray-200 rounded-full"></div>
+            </div>
+            {/* Sticky header — always visible, scrollbar space reserved */}
+            <div className="sticky top-0 z-10 bg-white rounded-t-[20px] md:rounded-t-[15px] flex items-center justify-between px-8 pt-4 md:pt-6 pb-4 border-b border-gray-100 shrink-0">
+              <div className="flex-1 pr-4">
+                <span className="text-[11px] font-bold uppercase tracking-widest bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent block mb-1">Job Description</span>
+                <h2 className="text-[22px] font-bold text-slate-900 leading-tight tracking-tight">{activeJob?.title}</h2>
+                <span className="inline-block text-[11px] font-semibold text-gray-400 tracking-wider mt-1">Full Time</span>
+              </div>
+              <button
+                onClick={() => { setJobDescOpen(false); setApplyModalOpen(false); }}
+                className="shrink-0 text-gray-400 hover:text-gray-900 transition-colors w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200"
+              >
+                <i className="fa-solid fa-xmark text-lg"></i>
+              </button>
+            </div>
+
+            {/* Scrollable content with right padding for scrollbar */}
+            <div className="flex-1 px-8 pr-14 pb-8 overflow-y-auto">
+              {activeJob && (
+                <div className="space-y-6 pt-6">
+                  <div>
+                    <p className="text-[13.5px] text-gray-500 leading-relaxed">{activeJob.desc}</p>
+                  </div>
+                  <div>
+                    <h4 className="text-[15px] font-semibold text-slate-800 mb-3">Key Responsibilities</h4>
+                    <ul className="space-y-2">
+                      {activeJob.responsibilities.map((r, i) => (
+                        <li key={i} className="flex items-start gap-2 text-[12.5px] text-gray-500 leading-relaxed">
+                          <i className="fa-solid fa-circle-check text-[#61A644] text-[11px] mt-[3px] shrink-0"></i>
+                          {r}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div>
+                    <h4 className="text-[15px] font-semibold text-slate-800 mb-3">Qualifications & Requirements</h4>
+                    <ul className="space-y-2">
+                      {activeJob.requirements.map((r, i) => (
+                        <li key={i} className="flex items-start gap-2 text-[12.5px] text-gray-500 leading-relaxed">
+                          <i className="fa-solid fa-circle-check text-[#1D9FDA] text-[11px] mt-[3px] shrink-0"></i>
+                          {r}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div className="pt-2 pb-4">
+                    <button
+                      onClick={() => {
+                        setJobDescOpen(false);
+                        setTimeout(() => {
+                          const modal = document.getElementById('apply-form-modal');
+                          if (modal) modal.scrollTo({ top: 0, behavior: 'smooth' });
+                        }, 100);
+                      }}
+                      className="w-full bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:opacity-90 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transition-all text-[13px] flex items-center justify-center gap-2"
+                    >
+                      <i className="fa-solid fa-pen-to-square"></i>
+                      <span>Fill Out Application</span>
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+      </div>
+
+      {/* Slide-out Application Drawer */}
+      <div
+        id="apply-form-modal"
+        className={`fixed bottom-0 left-0 right-0 md:bottom-auto md:left-auto md:top-4 md:right-4 h-[calc(100vh-2rem)] w-full md:w-[calc(100%-2rem)] max-w-full md:max-w-md bg-white shadow-2xl rounded-t-[20px] md:rounded-[15px] z-[60] transform transition-transform duration-500 ease-[cubic-bezier(0.2,0.8,0.2,1)] overflow-y-auto ${applyModalOpen && !jobDescOpen ? 'translate-y-0 md:translate-x-0' : 'translate-y-full md:translate-y-0 md:translate-x-[calc(100%+2rem)]'}`}
+      >
+        {/* Drag handle — mobile only */}
+        <div className="md:hidden flex justify-center pt-3 pb-1">
+          <div className="w-10 h-1 bg-gray-200 rounded-full"></div>
+        </div>
+        <div className="p-8 pt-4 md:pt-8">
+          {/* Header row — title + X aligned */}
+          <div className="flex items-center justify-between mb-1 mt-2">
+            <h2 className="text-[24px] font-bold text-slate-900 leading-tight tracking-tight">Apply for this Position</h2>
+            <button
+              onClick={() => { setApplyModalOpen(false); setJobDescOpen(false); }}
+              className="shrink-0 ml-3 text-gray-400 hover:text-gray-900 transition-colors w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200"
+            >
+              <i className="fa-solid fa-xmark text-lg"></i>
+            </button>
+          </div>
+
+          <div className="mb-6">
+            <h3 className="text-sm font-semibold text-primary mb-3">{applyingFor}</h3>
+            <button
+              type="button"
+              onClick={() => setJobDescOpen(true)}
+              className="inline-flex items-center gap-1.5 text-[12px] font-semibold text-gray-500 hover:text-primary transition-colors mb-3 group"
+            >
+              <i className="fa-solid fa-arrow-left text-[11px] text-gray-400 group-hover:text-primary transition-colors"></i>
+              <span>View Job Description</span>
+            </button>
+            <p className="text-[13px] text-gray-500 leading-relaxed">
+              Fill out the form below and our HR team will get back to you as soon as possible.
+            </p>
+          </div>
+
+          <form className="space-y-4" onSubmit={e => { e.preventDefault(); setApplyModalOpen(false); setApplyForm({ name: '', email: '', phone: '', message: '' }); }}>
+            <div>
+              <label className="block text-xs font-semibold text-gray-600 mb-1">Full Name <span className="text-red-500">*</span></label>
+              <input type="text" required placeholder="e.g. Juan Dela Cruz"
+                value={applyForm.name}
+                onChange={e => setApplyForm(prev => ({ ...prev, name: e.target.value }))}
+                className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-[13px] placeholder-gray-400" />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-gray-600 mb-1">Email Address <span className="text-red-500">*</span></label>
+              <input type="email" required placeholder="e.g. juan@email.com"
+                value={applyForm.email}
+                onChange={e => setApplyForm(prev => ({ ...prev, email: e.target.value }))}
+                className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-[13px] placeholder-gray-400" />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-gray-600 mb-1">Mobile Number <span className="text-red-500">*</span></label>
+              <input type="tel" required placeholder="e.g. +63 912 345 6789"
+                value={applyForm.phone}
+                onChange={e => setApplyForm(prev => ({ ...prev, phone: e.target.value }))}
+                className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-[13px] placeholder-gray-400" />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-gray-600 mb-1">Position Applying For</label>
+              <input type="text" readOnly value={applyingFor}
+                className="w-full px-3 py-2.5 bg-gray-100 border border-gray-200 rounded-lg text-[13px] text-gray-500 cursor-not-allowed" />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-gray-600 mb-1">Cover Letter / Message <span className="text-red-500">*</span></label>
+              <textarea required rows={4}
+                value={applyForm.message}
+                onChange={e => setApplyForm(prev => ({ ...prev, message: e.target.value }))}
+                className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-[13px] resize-none placeholder-gray-400"
+                placeholder="Tell us why you're a great fit for this role."
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-gray-600 mb-1">Upload Resume <span className="text-red-500">*</span></label>
+              <label className="flex flex-col items-center justify-center w-full border-2 border-dashed border-gray-200 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer py-5 px-4 gap-2">
+                <i className="fa-solid fa-cloud-arrow-up text-2xl text-gray-400"></i>
+                <span className="text-[12px] text-gray-500 font-medium">Click to upload or drag and drop</span>
+                <span className="text-[11px] text-gray-400">PDF, DOC, DOCX, PNG, JPG (max 10MB)</span>
+                <input
+                  type="file"
+                  required
+                  accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"
+                  className="hidden"
+                  onChange={e => {
+                    const file = e.target.files?.[0];
+                    if (file) setApplyForm(prev => ({ ...prev, resumeName: file.name }));
+                  }}
+                />
+                {(applyForm as any).resumeName && (
+                  <span className="text-[11px] text-primary font-semibold mt-1">
+                    <i className="fa-solid fa-paperclip mr-1"></i>{(applyForm as any).resumeName}
+                  </span>
+                )}
+              </label>
+            </div>
+            <div className="pt-2 pb-8">
+              <button
+                type="submit"
+                className="w-full bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:opacity-90 text-white font-semibold py-3.5 px-6 rounded-lg shadow-lg transition-all flex items-center justify-center space-x-2 group"
+              >
+                <span>Send Application</span>
+                <i className="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
   );
 };
