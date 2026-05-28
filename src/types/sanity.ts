@@ -368,9 +368,9 @@ export interface SiteSettings {
   }
   socials?: Array<SocialLink & { _key: string }>
   contactInfo?: {
-    address?: string
-    phone?: string
-    email?: string
+    address?: string | string[]
+    phone?: string | string[]
+    email?: string | string[]
   }
   mainNavigation?: SanityReference<Navigation>
   copyright?: string
