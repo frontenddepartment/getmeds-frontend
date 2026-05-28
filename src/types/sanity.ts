@@ -891,6 +891,27 @@ export interface PageAsset {
   }>
 }
 
+
+export interface NewsContentBlock {
+  header?: string
+  text?: string
+  bullets?: string[]
+}
+
+export interface News {
+  _id: string
+  _type: 'news'
+  tag: string
+  title: string
+  date: string
+  description: string
+  readTime?: string
+  intro?: string
+  image?: SanityImage
+  content?: NewsContentBlock[]
+  source_link?: string
+}
+
 // ─────────────────────────────────────────────
 // Union of all document types
 // ─────────────────────────────────────────────
@@ -920,3 +941,4 @@ export type SanityDocument =
   | ServicesPage
   | UngcPage
   | PageAsset
+  | News

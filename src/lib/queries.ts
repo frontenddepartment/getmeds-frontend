@@ -23,6 +23,7 @@ import type {
   ServicesPage,
   UngcPage,
   PageAsset,
+  News,
 } from '../types/sanity'
 
 // ─────────────────────────────────────────────
@@ -355,6 +356,42 @@ export async function getGoogleSpreadsheetBySlug(slug: string) {
       link
     }
   `, { slug })
+}
+
+// ─────────────────────────────────────────────
+// News & Articles
+// ─────────────────────────────────────────────
+
+export async function getNews() {
+  return client.fetch<News[]>(`
+    *[_type == "news"] | order(date desc) {
+      _id,
+      tag,
+      title,
+      date,
+      description,
+      readTime,
+      intro,
+      image,
+      content
+    }
+  `)
+}
+
+export async function getNewsById(id: string) {
+  return client.fetch<News | null>(`
+    *[_type == "news" && _id == $id][0] {
+      _id,
+      tag,
+      title,
+      date,
+      description,
+      readTime,
+      intro,
+      image,
+      content
+    }
+  `, { id })
 }
 
 
