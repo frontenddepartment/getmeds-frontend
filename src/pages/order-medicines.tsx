@@ -358,7 +358,7 @@ export default function OrderMedicines() {
       <div id="navbar-container" className="sticky top-0 z-[50]" />
 
       {/* Sticky Step Progress Bar */}
-      <div className={`fixed top-[90px] left-0 right-0 z-[49] flex justify-end pr-2 sm:pr-6 pointer-events-none transition-all duration-500 ease-in-out ${stepperVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}`}>
+      <div className={`fixed top-[90px] left-0 right-0 z-[49] flex justify-center sm:justify-end sm:pr-6 pointer-events-none transition-all duration-500 ease-in-out ${stepperVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}`}>
         <div className="pointer-events-auto bg-white rounded-xl sm:rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-gray-100 px-3 py-2 sm:px-8 sm:py-3">
             <div className="flex items-start gap-0">
 
@@ -414,6 +414,9 @@ export default function OrderMedicines() {
             </div>
         </div>
       </div>
+
+      {/* Main content — overflow-x-hidden prevents any child from expanding layout viewport */}
+      <div className="overflow-x-hidden">
 
       {/* Hero Banner */}
       <section className="w-full px-4 md:px-6 pt-5 pb-4">
@@ -869,6 +872,8 @@ export default function OrderMedicines() {
 
       {/* Footer */}
       <div id="footer-container" />
+
+      </div>{/* end overflow-x-hidden wrapper */}
 
       {/* Image Lightbox */}
       {viewingFileUrl && (
