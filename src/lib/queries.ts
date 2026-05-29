@@ -389,9 +389,22 @@ export async function getNewsById(id: string) {
       readTime,
       intro,
       image,
-      content
     }
   `, { id })
 }
+
+export async function getCareers() {
+  return client.fetch<any[]>(`
+    *[_type == "career"] | order(title asc) {
+      _id,
+      title,
+      "desc": description,
+      "responsibilities": keyResponsibilities,
+      "requirements": qualificationRequirements,
+      image
+    }
+  `)
+}
+
 
 

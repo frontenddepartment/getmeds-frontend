@@ -1,134 +1,105 @@
 import React, { useEffect, useState } from 'react';
 import { injectHTML } from '../lib/injectHTML';
 import { useImageMapper } from '../lib/useSanity';
-
-const JOB_LISTINGS = [
-  {
-    title: 'Human Resource Head',
-    desc: 'Lead HR initiatives, talent acquisition, and employee development. Drive organizational culture and ensure compliance with Philippine labor laws.',
-    responsibilities: [
-      'Lead end-to-end recruitment, selection, and onboarding processes',
-      'Develop and implement HR policies, procedures, and programs',
-      'Manage employee relations, performance reviews, and career development plans',
-      'Ensure compliance with Philippine Labor Code and DOLE regulations',
-      'Drive organizational culture, engagement, and retention initiatives',
-      'Partner with leadership on workforce planning and succession management',
-    ],
-    requirements: [
-      "Bachelor's degree in Human Resources, Psychology, or related field",
-      'Minimum 5 years of HR experience, at least 2 years in a leadership role',
-      'Strong knowledge of Philippine Labor Code and employment regulations',
-      'Excellent interpersonal, communication, and conflict-resolution skills',
-      'Experience in the pharmaceutical or healthcare industry is a plus',
-    ],
-  },
-  {
-    title: 'B2B Telemarketer',
-    desc: 'Build and maintain business relationships over the phone. Generate leads, present Getmeds products, and coordinate with the sales team to close deals.',
-    responsibilities: [
-      'Prospect and qualify new B2B leads through outbound calls and email',
-      'Present Getmeds products and value propositions to potential clients',
-      'Schedule meetings and product demos for the field sales team',
-      'Maintain accurate CRM records of all client interactions and follow-ups',
-      'Meet or exceed weekly and monthly lead generation targets',
-      'Collaborate with the marketing team on campaign follow-ups',
-    ],
-    requirements: [
-      "Bachelor's degree in Business, Marketing, or a related field",
-      'At least 1 year of telemarketing or inside sales experience',
-      'Strong verbal communication and persuasion skills',
-      'Proficiency in CRM tools and MS Office',
-      'Resilient, target-driven, and comfortable with high-volume calling',
-    ],
-  },
-  {
-    title: 'Government Bidding Associate',
-    desc: 'Prepare and manage government procurement bid documents. Coordinate with agencies and ensure full compliance with PhilGEPS requirements.',
-    responsibilities: [
-      'Monitor and evaluate government procurement opportunities via PhilGEPS',
-      'Prepare, compile, and submit complete bid documents and proposals',
-      'Coordinate with internal teams to gather technical and financial bid requirements',
-      'Liaise with government agencies for bid clarifications and post-award activities',
-      'Maintain a tracker for all active, awarded, and pending bids',
-      'Ensure adherence to RA 9184 (Government Procurement Reform Act)',
-    ],
-    requirements: [
-      "Bachelor's degree in Business Administration, Public Administration, or related field",
-      'At least 2 years of experience in government procurement or bidding',
-      'Solid understanding of PhilGEPS processes and RA 9184',
-      'Detail-oriented with strong document management skills',
-      'Ability to work under tight deadlines and manage multiple submissions',
-    ],
-  },
-  {
-    title: 'Sales Admin Assistant',
-    desc: 'Provide administrative support to the sales team. Handle order processing, documentation, and client coordination to keep operations running smoothly.',
-    responsibilities: [
-      'Process and monitor sales orders, delivery receipts, and invoices',
-      'Maintain and update client databases, sales reports, and dashboards',
-      'Coordinate with logistics, finance, and warehouse for order fulfillment',
-      'Assist in preparing sales presentations, proposals, and quotations',
-      'Handle client inquiries and escalate issues to the appropriate team',
-      'Support the sales team with scheduling and administrative tasks',
-    ],
-    requirements: [
-      "Bachelor's degree in Business Administration or a related course",
-      '1–2 years of experience in sales administration or operations support',
-      'Proficient in MS Excel, Word, and Google Workspace',
-      'Strong organizational skills and high attention to detail',
-      'Excellent written and verbal communication skills',
-    ],
-  },
-  {
-    title: 'Sales Manager (CLIP)',
-    desc: 'Lead and manage the CLIP sales division. Develop strategies to grow market share and consistently achieve sales targets in the healthcare sector.',
-    responsibilities: [
-      'Develop and execute strategic sales plans for the CLIP product line',
-      'Lead, coach, and motivate the CLIP sales team to hit monthly and quarterly targets',
-      'Identify and pursue new business opportunities in the healthcare sector',
-      'Build and nurture key accounts with hospitals, clinics, and distributors',
-      'Analyze sales data to identify trends, gaps, and growth opportunities',
-      'Report sales performance to senior management with actionable insights',
-    ],
-    requirements: [
-      "Bachelor's degree in Business, Marketing, Pharmacy, or related field",
-      'Minimum 5 years of pharmaceutical or healthcare sales experience',
-      'At least 2 years in a managerial or team lead role',
-      'Strong leadership, negotiation, and client-relationship skills',
-      'Proven track record of achieving and exceeding sales targets',
-    ],
-  },
-  {
-    title: 'District Sales Manager',
-    desc: 'Oversee sales operations within an assigned district. Coach field agents, monitor performance metrics, and drive revenue growth.',
-    responsibilities: [
-      'Manage and supervise field sales representatives across an assigned district',
-      'Set individual and team sales targets aligned with company goals',
-      'Conduct regular field visits, coaching sessions, and performance reviews',
-      'Analyze district sales data and implement corrective action plans when needed',
-      'Build and maintain relationships with key accounts and distributors in the district',
-      'Report district performance and market intelligence to the national sales head',
-    ],
-    requirements: [
-      "Bachelor's degree in Business, Marketing, or a related field",
-      'Minimum 4 years of field sales experience in pharmaceuticals or FMCG',
-      'At least 2 years of experience managing a sales team',
-      'Strong analytical, leadership, and territory management skills',
-      'Willingness to travel extensively within the assigned district',
-    ],
-  },
-];
+import { getGoogleSpreadsheetBySlug, getCareers } from '../lib/queries';
 
 const Careers: React.FC = () => {
   const { getImage } = useImageMapper('careers');
+  const [jobs, setJobs] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const [applyModalOpen, setApplyModalOpen] = useState(false);
   const [applyingFor, setApplyingFor] = useState('');
-  const [applyForm, setApplyForm] = useState({ name: '', email: '', phone: '', message: '' });
+  const [applyForm, setApplyForm] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    message: '',
+    resumeName: '',
+    resumeType: '',
+    resumeBase64: ''
+  });
+  const [submitState, setSubmitState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
   const [jobDescOpen, setJobDescOpen] = useState(false);
-  const activeJob = JOB_LISTINGS.find(j => j.title === applyingFor);
+  const activeJob = jobs.find(j => j.title === applyingFor);
 
-  // Navbar / Footer injection
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!applyForm.name || !applyForm.email || !applyForm.resumeBase64) {
+      alert('Please fill in all required fields and upload your resume.');
+      return;
+    }
+    setSubmitState('sending');
+    try {
+      const sheetInfo = await getGoogleSpreadsheetBySlug('careers-inquiry-list');
+      if (!sheetInfo || !sheetInfo.spreadsheetId) {
+        throw new Error('Google Spreadsheet settings not found in Sanity.');
+      }
+
+      const timestamp = new Date().toLocaleString();
+      const payload = {
+        spreadsheetId: sheetInfo.spreadsheetId,
+        row: [
+          applyForm.name,
+          applyForm.email,
+          applyForm.phone,
+          applyingFor,
+          applyForm.message,
+          '[PENDING_FILE_UPLOAD]',
+          timestamp
+        ],
+        files: [
+          {
+            name: applyForm.resumeName,
+            type: applyForm.resumeType || 'application/pdf',
+            base64: applyForm.resumeBase64
+          }
+        ]
+      };
+
+      const response = await fetch(import.meta.env.VITE_SPREADSHEET_API_URL || '/api/append-to-spreadsheet', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        throw new Error('Application submission request failed.');
+      }
+
+      setSubmitState('sent');
+      setApplyForm({
+        name: '',
+        email: '',
+        phone: '',
+        message: '',
+        resumeName: '',
+        resumeType: '',
+        resumeBase64: ''
+      });
+      
+      setTimeout(() => {
+        setApplyModalOpen(false);
+        setSubmitState('idle');
+      }, 2000);
+    } catch (err: any) {
+      console.error(err);
+      setSubmitState('error');
+      setTimeout(() => setSubmitState('idle'), 3000);
+    }
+  };
+
   useEffect(() => {
+    // Fetch careers from Sanity
+    getCareers()
+      .then(data => {
+        setJobs(data || []);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error('Error fetching careers:', err);
+        setLoading(false);
+      });
+
     fetch('/components/navbar.html')
       .then(r => r.text())
       .then(html => {
@@ -435,19 +406,25 @@ const Careers: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {JOB_LISTINGS.map((job) => (
-              <div key={job.title} className="border border-gray-100 rounded-2xl p-6 hover:shadow-md transition-shadow duration-300 flex flex-col">
-                <span className="text-[12px] font-semibold text-gray-400 tracking-widest block mb-2">Full Time</span>
-                <h4 className="text-[16px] font-semibold text-dark mb-3">{job.title}</h4>
-                <p className="text-gray-400 text-[12.5px] leading-[1.7] mb-5 flex-1">{job.desc}</p>
-                <button
-                  onClick={() => { setApplyingFor(job.title); setApplyModalOpen(true); setJobDescOpen(true); }}
-                  className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] text-white text-[11px] font-bold px-5 py-2 rounded-full tracking-wider hover:opacity-90 transition self-start"
-                >
-                  APPLY NOW
-                </button>
-              </div>
-            ))}
+            {loading ? (
+              <p className="text-gray-400 text-center col-span-full">Loading positions...</p>
+            ) : jobs.length === 0 ? (
+              <p className="text-gray-400 text-center col-span-full">No open positions at the moment.</p>
+            ) : (
+              jobs.map((job) => (
+                <div key={job.title} className="border border-gray-100 rounded-2xl p-6 hover:shadow-md transition-shadow duration-300 flex flex-col">
+                  <span className="text-[12px] font-semibold text-gray-400 tracking-widest block mb-2">Full Time</span>
+                  <h4 className="text-[16px] font-semibold text-dark mb-3">{job.title}</h4>
+                  <p className="text-gray-400 text-[12.5px] leading-[1.7] mb-5 flex-1">{job.desc}</p>
+                  <button
+                    onClick={() => { setApplyingFor(job.title); setApplyModalOpen(true); setJobDescOpen(true); }}
+                    className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] text-white text-[11px] font-bold px-5 py-2 rounded-full tracking-wider hover:opacity-90 transition self-start"
+                  >
+                    APPLY NOW
+                  </button>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </section>
@@ -569,7 +546,7 @@ const Careers: React.FC = () => {
             </p>
           </div>
 
-          <form className="space-y-4" onSubmit={e => { e.preventDefault(); setApplyModalOpen(false); setApplyForm({ name: '', email: '', phone: '', message: '' }); }}>
+          <form className="space-y-4" onSubmit={handleSubmit}>
             <div>
               <label className="block text-xs font-semibold text-gray-600 mb-1">Full Name <span className="text-red-500">*</span></label>
               <input type="text" required placeholder="e.g. Juan Dela Cruz"
@@ -618,12 +595,24 @@ const Careers: React.FC = () => {
                   className="hidden"
                   onChange={e => {
                     const file = e.target.files?.[0];
-                    if (file) setApplyForm(prev => ({ ...prev, resumeName: file.name }));
+                    if (file) {
+                      const reader = new FileReader();
+                      reader.onload = (event) => {
+                        const base64String = (event.target?.result as string).split(',')[1];
+                        setApplyForm(prev => ({
+                          ...prev,
+                          resumeName: file.name,
+                          resumeType: file.type,
+                          resumeBase64: base64String
+                        }));
+                      };
+                      reader.readAsDataURL(file);
+                    }
                   }}
                 />
-                {(applyForm as any).resumeName && (
+                {applyForm.resumeName && (
                   <span className="text-[11px] text-primary font-semibold mt-1">
-                    <i className="fa-solid fa-paperclip mr-1"></i>{(applyForm as any).resumeName}
+                    <i className="fa-solid fa-paperclip mr-1"></i>{applyForm.resumeName}
                   </span>
                 )}
               </label>
@@ -631,10 +620,11 @@ const Careers: React.FC = () => {
             <div className="pt-2 pb-8">
               <button
                 type="submit"
-                className="w-full bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:opacity-90 text-white font-semibold py-3.5 px-6 rounded-lg shadow-lg transition-all flex items-center justify-center space-x-2 group"
+                disabled={submitState === 'sending'}
+                className="w-full bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:opacity-90 text-white font-semibold py-3.5 px-6 rounded-lg shadow-lg transition-all flex items-center justify-center space-x-2 group disabled:opacity-50"
               >
-                <span>Send Application</span>
-                <i className="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                <span>{submitState === 'sending' ? 'Sending...' : submitState === 'sent' ? '✓ Applied Successfully!' : submitState === 'error' ? 'Failed. Try Again' : 'Send Application'}</span>
+                {submitState === 'idle' && <i className="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>}
               </button>
             </div>
           </form>
