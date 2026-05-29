@@ -751,7 +751,7 @@ export default function OrderMedicines() {
                           ref={phoneInputRef}
                           type="tel"
                           required
-                          placeholder={phoneCountry.mask.replace(/#/g, '0')}
+                          placeholder={(() => { const d = '9123456789'; let i = 0; return phoneCountry.mask.replace(/#/g, () => d[i++ % d.length]); })()}
                           value={formData.phone}
                           onChange={handlePhoneChange}
                           className="flex-1 bg-transparent px-4 py-3.5 text-[13px] text-gray-700 outline-none placeholder-gray-300"

@@ -832,19 +832,7 @@ export default function ProductRange() {
               <div className="absolute pointer-events-none hidden md:block" style={{ width: 85, height: 85, borderRadius: '50%', top: '-15px', right: '38%', background: 'radial-gradient(circle at 38% 32%, rgba(80,220,210,0.55), rgba(30,170,200,0.30))', backdropFilter: 'blur(2px)', border: '1px solid rgba(255,255,255,0.22)' }} />
               {/* Wide shallow blue ellipse bottom */}
               <div className="absolute pointer-events-none" style={{ width: 280, height: 80, borderRadius: '50%', bottom: '-48px', left: '22%', background: 'radial-gradient(ellipse at 50% 40%, rgba(40,160,230,0.38), rgba(20,130,210,0.18))', backdropFilter: 'blur(2px)' }} />
-              {!sidebarOpen && (
-                <div className="absolute left-4 top-1/2 -translate-y-1/2 z-20 hidden lg:flex flex-col items-center gap-1.5">
-                  <span className="text-white font-semibold text-[11px] leading-tight text-center whitespace-nowrap drop-shadow">Check Products</span>
-                  <button
-                    onClick={() => setSidebarOpen(true)}
-                    className="w-14 h-14 rounded-full bg-white/25 hover:bg-white/40 flex items-center justify-center transition-colors shadow-lg"
-                    title="Expand sidebar"
-                  >
-                    <i className="fa-solid fa-chevron-right text-[20px] text-white" />
-                  </button>
-                </div>
-              )}
-              <div className={`relative z-10 transition-all duration-300 ${!sidebarOpen ? 'lg:pl-24' : ''}`}>
+              <div className="relative z-10 transition-all duration-300">
                 <h1 className="text-xl sm:text-2xl md:text-3xl font-semibold text-white tracking-tight leading-tight">
                   Getmeds Products
                 </h1>
@@ -861,6 +849,17 @@ export default function ProductRange() {
                 {currentCategory === 'All' ? 'All Products' : currentCategory}{' '}
                 <span className="text-gray-400 font-normal text-sm ml-2">({sorted.length} Items)</span>
               </h2>
+
+              {/* Check Products — opens category sidebar */}
+              {!sidebarOpen && (
+                <button
+                  onClick={() => setSidebarOpen(true)}
+                  className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-full bg-primary hover:bg-blue-600 text-white text-[13px] font-bold transition-all whitespace-nowrap shadow-sm"
+                >
+                  <i className="fa-solid fa-list text-[12px]" />
+                  Check Products
+                </button>
+              )}
 
               {/* Search Bar — full width on mobile, flex-1 on desktop */}
               <div className="relative w-full sm:flex-1 sm:min-w-0" ref={searchWrapperRef}>
@@ -1245,7 +1244,15 @@ export default function ProductRange() {
                 </h3>
               </div>
               <div className="flex items-center space-x-4">
-                <button className="hidden sm:flex items-center text-gray-500 hover:text-primary transition text-sm space-x-1.5">
+                <button
+                  className="hidden sm:flex items-center text-gray-500 hover:text-primary transition text-sm space-x-1.5"
+                  onClick={() => {
+                    const chatWindow = document.getElementById('zap-chat-window');
+                    if (chatWindow) chatWindow.classList.add('active');
+                    const trigger = document.getElementById('zap-ai-trigger');
+                    if (trigger) trigger.classList.remove('zap-modal-open');
+                  }}
+                >
                   <i className="fa-regular fa-circle-question" />
                   <span>Do you need help?</span>
                 </button>
