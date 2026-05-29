@@ -515,27 +515,27 @@ export default function GetMedsHomepage() {
                         </div>
                         {/* Slider Section (Cols 8-12) */}
                         <div className="lg:col-span-5 h-[260px] relative rounded-2xl overflow-hidden shadow-lg bg-gray-100">
-                          <div className="absolute inset-0 bg-cover bg-center company-slide-1 transition-opacity duration-1000" style={{ backgroundImage: `url('${getImage('assets/about_us_hero.png', 'assets/about_us_hero.png')}')` }}>
+                          <a href="about-us.html" className="absolute inset-0 bg-cover bg-center company-slide-1 transition-opacity duration-1000 cursor-pointer" style={{ backgroundImage: `url('${getImage('assets/about_us_hero.png', 'assets/about_us_hero.png')}')` }}>
                             <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
                             <div className="absolute bottom-6 left-6 right-6">
                               <h3 className="text-white font-bold text-xl mb-1">About Us</h3>
                               <p className="text-white/80 text-sm">Learn more about our mission and vision.</p>
                             </div>
-                          </div>
-                          <div className="absolute inset-0 bg-cover bg-center company-slide-2 transition-opacity duration-1000" style={{ backgroundImage: `url('${getImage('assets/globalpresencehero.jpg', 'assets/globalpresencehero.jpg')}')` }}>
+                          </a>
+                          <a href="global-presence.html" className="absolute inset-0 bg-cover bg-center company-slide-2 transition-opacity duration-1000 cursor-pointer" style={{ backgroundImage: `url('${getImage('assets/globalpresencehero.jpg', 'assets/globalpresencehero.jpg')}')` }}>
                             <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
                             <div className="absolute bottom-6 left-6 right-6">
                               <h3 className="text-white font-bold text-xl mb-1">Global Presence</h3>
                               <p className="text-white/80 text-sm">We are expanding healthcare solutions worldwide.</p>
                             </div>
-                          </div>
-                          <div className="absolute inset-0 bg-cover bg-center company-slide-3 transition-opacity duration-1000" style={{ backgroundImage: `url('${getImage('assets/careershero.png', 'assets/careershero.png')}')` }}>
+                          </a>
+                          <a href="careers.html" className="absolute inset-0 bg-cover bg-center company-slide-3 transition-opacity duration-1000 cursor-pointer" style={{ backgroundImage: `url('${getImage('assets/careershero.png', 'assets/careershero.png')}')` }}>
                             <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
                             <div className="absolute bottom-6 left-6 right-6">
                               <h3 className="text-white font-bold text-xl mb-1">Careers</h3>
                               <p className="text-white/80 text-sm">Join our team and make a difference.</p>
                             </div>
-                          </div>
+                          </a>
                         </div>
                       </div>
                     </div>

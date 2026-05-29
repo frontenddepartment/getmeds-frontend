@@ -190,6 +190,25 @@ export default function Articles() {
                       <p className="text-gray-400 text-xs mb-2">{article.date}</p>
                       <h3 className="text-gray-900 font-semibold text-base leading-snug mb-3">{article.title}</h3>
                       <p className="text-gray-500 text-sm leading-relaxed line-clamp-3">{article.description}</p>
+
+                      {/* Social Share */}
+                      <div className="flex items-center gap-3 mt-4 pt-3 border-t border-gray-100">
+                        <span className="text-[11px] text-gray-400">Share:</span>
+                        {[
+                          { icon: 'fa-brands fa-facebook-f', color: '#1877F2', url: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.origin + '/article-detail?id=' + article._id)}` },
+                          { icon: 'fa-brands fa-x-twitter', color: '#111111', url: `https://twitter.com/intent/tweet?url=${encodeURIComponent(window.location.origin + '/article-detail?id=' + article._id)}&text=${encodeURIComponent(article.title)}` },
+                          { icon: 'fa-brands fa-linkedin-in', color: '#0A66C2', url: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.origin + '/article-detail?id=' + article._id)}` },
+                        ].map((s) => (
+                          <button
+                            key={s.icon}
+                            onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.open(s.url, '_blank', 'noopener,noreferrer,width=620,height=450'); }}
+                            className="transition-opacity hover:opacity-70"
+                            style={{ color: s.color, background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}
+                          >
+                            <i className={`${s.icon} text-[16px]`}></i>
+                          </button>
+                        ))}
+                      </div>
                     </div>
                   </a>
                 );
