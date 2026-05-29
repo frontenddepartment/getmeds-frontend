@@ -1069,8 +1069,9 @@
             // 5. Copyright
             const footerCopyright = document.getElementById('footer-copyright');
             if (footerCopyright && settings.copyright) {
-                if (footerCopyright.textContent !== settings.copyright) {
-                    footerCopyright.textContent = settings.copyright;
+                const normalizedCopyright = settings.copyright.replace(/GetMEDS/g, 'Getmeds');
+                if (footerCopyright.textContent !== normalizedCopyright) {
+                    footerCopyright.textContent = normalizedCopyright;
                 }
             }
 

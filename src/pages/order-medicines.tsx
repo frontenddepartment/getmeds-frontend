@@ -11,7 +11,152 @@ export default function OrderMedicines() {
   const uploadIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const totalSlides = 3;
 
-  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
+  const [phoneCountryOpen, setPhoneCountryOpen] = useState(false);
+  const [phoneCountry, setPhoneCountry] = useState({ code: '+63', flag: '🇵🇭', name: 'Philippines', mask: '### ### ####' });
+  const [phoneSearch, setPhoneSearch] = useState('');
+
+  const PHONE_COUNTRIES = [
+    // Asia Pacific
+    { code: '+63', flag: '🇵🇭', name: 'Philippines',    mask: '### ### ####' },
+    { code: '+61', flag: '🇦🇺', name: 'Australia',      mask: '### ### ###' },
+    { code: '+880',flag: '🇧🇩', name: 'Bangladesh',     mask: '####-######' },
+    { code: '+855',flag: '🇰🇭', name: 'Cambodia',       mask: '## ### ###' },
+    { code: '+86', flag: '🇨🇳', name: 'China',          mask: '### #### ####' },
+    { code: '+852',flag: '🇭🇰', name: 'Hong Kong',      mask: '#### ####' },
+    { code: '+91', flag: '🇮🇳', name: 'India',          mask: '##### #####' },
+    { code: '+62', flag: '🇮🇩', name: 'Indonesia',      mask: '###-####-####' },
+    { code: '+81', flag: '🇯🇵', name: 'Japan',          mask: '##-####-####' },
+    { code: '+82', flag: '🇰🇷', name: 'South Korea',    mask: '##-####-####' },
+    { code: '+856',flag: '🇱🇦', name: 'Laos',           mask: '## ### ###' },
+    { code: '+60', flag: '🇲🇾', name: 'Malaysia',       mask: '##-#### ####' },
+    { code: '+960',flag: '🇲🇻', name: 'Maldives',       mask: '###-####' },
+    { code: '+976',flag: '🇲🇳', name: 'Mongolia',       mask: '#### ####' },
+    { code: '+95', flag: '🇲🇲', name: 'Myanmar',        mask: '## ### ####' },
+    { code: '+977',flag: '🇳🇵', name: 'Nepal',          mask: '##-###-####' },
+    { code: '+64', flag: '🇳🇿', name: 'New Zealand',    mask: '### ### ####' },
+    { code: '+92', flag: '🇵🇰', name: 'Pakistan',       mask: '###-#######' },
+    { code: '+65', flag: '🇸🇬', name: 'Singapore',      mask: '#### ####' },
+    { code: '+94', flag: '🇱🇰', name: 'Sri Lanka',      mask: '## ### ####' },
+    { code: '+886',flag: '🇹🇼', name: 'Taiwan',         mask: '#### ######' },
+    { code: '+66', flag: '🇹🇭', name: 'Thailand',       mask: '##-####-####' },
+    { code: '+84', flag: '🇻🇳', name: 'Vietnam',        mask: '### ### ####' },
+    // Middle East
+    { code: '+973',flag: '🇧🇭', name: 'Bahrain',        mask: '#### ####' },
+    { code: '+964',flag: '🇮🇶', name: 'Iraq',           mask: '### ### ####' },
+    { code: '+972',flag: '🇮🇱', name: 'Israel',         mask: '##-###-####' },
+    { code: '+962',flag: '🇯🇴', name: 'Jordan',         mask: '## #### ####' },
+    { code: '+965',flag: '🇰🇼', name: 'Kuwait',         mask: '#### ####' },
+    { code: '+961',flag: '🇱🇧', name: 'Lebanon',        mask: '## ### ###' },
+    { code: '+968',flag: '🇴🇲', name: 'Oman',           mask: '#### ####' },
+    { code: '+974',flag: '🇶🇦', name: 'Qatar',          mask: '#### ####' },
+    { code: '+966',flag: '🇸🇦', name: 'Saudi Arabia',   mask: '## ### ####' },
+    { code: '+90', flag: '🇹🇷', name: 'Turkey',         mask: '### ### ####' },
+    { code: '+971',flag: '🇦🇪', name: 'UAE',            mask: '## ### ####' },
+    { code: '+967',flag: '🇾🇪', name: 'Yemen',          mask: '### ### ###' },
+    // Europe
+    { code: '+355',flag: '🇦🇱', name: 'Albania',        mask: '## ### ####' },
+    { code: '+43', flag: '🇦🇹', name: 'Austria',        mask: '### #######' },
+    { code: '+32', flag: '🇧🇪', name: 'Belgium',        mask: '### ## ## ##' },
+    { code: '+387',flag: '🇧🇦', name: 'Bosnia',         mask: '## ###-###' },
+    { code: '+359',flag: '🇧🇬', name: 'Bulgaria',       mask: '## ### ####' },
+    { code: '+385',flag: '🇭🇷', name: 'Croatia',        mask: '## ### ####' },
+    { code: '+357',flag: '🇨🇾', name: 'Cyprus',         mask: '## ######' },
+    { code: '+420',flag: '🇨🇿', name: 'Czech Republic', mask: '### ### ###' },
+    { code: '+45', flag: '🇩🇰', name: 'Denmark',        mask: '## ## ## ##' },
+    { code: '+372',flag: '🇪🇪', name: 'Estonia',        mask: '#### ####' },
+    { code: '+358',flag: '🇫🇮', name: 'Finland',        mask: '## ### ####' },
+    { code: '+33', flag: '🇫🇷', name: 'France',         mask: '## ## ## ## ##' },
+    { code: '+49', flag: '🇩🇪', name: 'Germany',        mask: '#### #######' },
+    { code: '+30', flag: '🇬🇷', name: 'Greece',         mask: '### ### ####' },
+    { code: '+36', flag: '🇭🇺', name: 'Hungary',        mask: '## ### ####' },
+    { code: '+354',flag: '🇮🇸', name: 'Iceland',        mask: '### ####' },
+    { code: '+353',flag: '🇮🇪', name: 'Ireland',        mask: '## ### ####' },
+    { code: '+39', flag: '🇮🇹', name: 'Italy',          mask: '### ### ####' },
+    { code: '+371',flag: '🇱🇻', name: 'Latvia',         mask: '## ### ###' },
+    { code: '+370',flag: '🇱🇹', name: 'Lithuania',      mask: '### #####' },
+    { code: '+352',flag: '🇱🇺', name: 'Luxembourg',     mask: '### ### ###' },
+    { code: '+356',flag: '🇲🇹', name: 'Malta',          mask: '#### ####' },
+    { code: '+31', flag: '🇳🇱', name: 'Netherlands',    mask: '## ### ####' },
+    { code: '+47', flag: '🇳🇴', name: 'Norway',         mask: '### ## ###' },
+    { code: '+48', flag: '🇵🇱', name: 'Poland',         mask: '### ### ###' },
+    { code: '+351',flag: '🇵🇹', name: 'Portugal',       mask: '### ### ###' },
+    { code: '+40', flag: '🇷🇴', name: 'Romania',        mask: '### ### ###' },
+    { code: '+7',  flag: '🇷🇺', name: 'Russia',         mask: '### ###-##-##' },
+    { code: '+381',flag: '🇷🇸', name: 'Serbia',         mask: '## ### ####' },
+    { code: '+421',flag: '🇸🇰', name: 'Slovakia',       mask: '### ### ###' },
+    { code: '+386',flag: '🇸🇮', name: 'Slovenia',       mask: '## ### ###' },
+    { code: '+34', flag: '🇪🇸', name: 'Spain',          mask: '### ### ###' },
+    { code: '+46', flag: '🇸🇪', name: 'Sweden',         mask: '##-### ## ##' },
+    { code: '+41', flag: '🇨🇭', name: 'Switzerland',    mask: '## ### ## ##' },
+    { code: '+380',flag: '🇺🇦', name: 'Ukraine',        mask: '## ### ## ##' },
+    { code: '+44', flag: '🇬🇧', name: 'United Kingdom', mask: '#### ######' },
+    // Americas
+    { code: '+1',  flag: '🇺🇸', name: 'USA / Canada',   mask: '(###) ###-####' },
+    { code: '+54', flag: '🇦🇷', name: 'Argentina',      mask: '## ####-####' },
+    { code: '+591',flag: '🇧🇴', name: 'Bolivia',        mask: '#### ####' },
+    { code: '+55', flag: '🇧🇷', name: 'Brazil',         mask: '(##) #####-####' },
+    { code: '+56', flag: '🇨🇱', name: 'Chile',          mask: '## #### ####' },
+    { code: '+57', flag: '🇨🇴', name: 'Colombia',       mask: '### ### ####' },
+    { code: '+506',flag: '🇨🇷', name: 'Costa Rica',     mask: '#### ####' },
+    { code: '+53', flag: '🇨🇺', name: 'Cuba',           mask: '## ###-####' },
+    { code: '+593',flag: '🇪🇨', name: 'Ecuador',        mask: '## ### ####' },
+    { code: '+503',flag: '🇸🇻', name: 'El Salvador',    mask: '#### ####' },
+    { code: '+502',flag: '🇬🇹', name: 'Guatemala',      mask: '#### ####' },
+    { code: '+504',flag: '🇭🇳', name: 'Honduras',       mask: '#### ####' },
+    { code: '+52', flag: '🇲🇽', name: 'Mexico',         mask: '## #### ####' },
+    { code: '+505',flag: '🇳🇮', name: 'Nicaragua',      mask: '#### ####' },
+    { code: '+507',flag: '🇵🇦', name: 'Panama',         mask: '#### ####' },
+    { code: '+595',flag: '🇵🇾', name: 'Paraguay',       mask: '### ### ###' },
+    { code: '+51', flag: '🇵🇪', name: 'Peru',           mask: '### ### ###' },
+    { code: '+1787',flag:'🇵🇷', name: 'Puerto Rico',    mask: '###-####' },
+    { code: '+598',flag: '🇺🇾', name: 'Uruguay',        mask: '## ### ####' },
+    { code: '+58', flag: '🇻🇪', name: 'Venezuela',      mask: '###-#######' },
+    // Africa
+    { code: '+213',flag: '🇩🇿', name: 'Algeria',        mask: '### ## ## ##' },
+    { code: '+244',flag: '🇦🇴', name: 'Angola',         mask: '### ### ###' },
+    { code: '+229',flag: '🇧🇯', name: 'Benin',          mask: '## ## ## ##' },
+    { code: '+267',flag: '🇧🇼', name: 'Botswana',       mask: '## ### ###' },
+    { code: '+226',flag: '🇧🇫', name: 'Burkina Faso',   mask: '## ## ## ##' },
+    { code: '+237',flag: '🇨🇲', name: 'Cameroon',       mask: '#### ####' },
+    { code: '+225',flag: '🇨🇮', name: "Côte d'Ivoire",  mask: '## ## ## ##' },
+    { code: '+20', flag: '🇪🇬', name: 'Egypt',          mask: '### ### ####' },
+    { code: '+251',flag: '🇪🇹', name: 'Ethiopia',       mask: '## ### ####' },
+    { code: '+233',flag: '🇬🇭', name: 'Ghana',          mask: '## ### ####' },
+    { code: '+254',flag: '🇰🇪', name: 'Kenya',          mask: '### ######' },
+    { code: '+261',flag: '🇲🇬', name: 'Madagascar',     mask: '## ## ### ##' },
+    { code: '+265',flag: '🇲🇼', name: 'Malawi',         mask: '#### ####' },
+    { code: '+223',flag: '🇲🇱', name: 'Mali',           mask: '## ## ## ##' },
+    { code: '+212',flag: '🇲🇦', name: 'Morocco',        mask: '###-######' },
+    { code: '+258',flag: '🇲🇿', name: 'Mozambique',     mask: '## ### ####' },
+    { code: '+264',flag: '🇳🇦', name: 'Namibia',        mask: '## ### ####' },
+    { code: '+234',flag: '🇳🇬', name: 'Nigeria',        mask: '### ### ####' },
+    { code: '+250',flag: '🇷🇼', name: 'Rwanda',         mask: '### ### ###' },
+    { code: '+221',flag: '🇸🇳', name: 'Senegal',        mask: '## ### ## ##' },
+    { code: '+27', flag: '🇿🇦', name: 'South Africa',   mask: '## ### ####' },
+    { code: '+249',flag: '🇸🇩', name: 'Sudan',          mask: '## ### ####' },
+    { code: '+255',flag: '🇹🇿', name: 'Tanzania',       mask: '### ### ###' },
+    { code: '+216',flag: '🇹🇳', name: 'Tunisia',        mask: '## ### ###' },
+    { code: '+256',flag: '🇺🇬', name: 'Uganda',         mask: '### ######' },
+    { code: '+260',flag: '🇿🇲', name: 'Zambia',         mask: '## #######' },
+    { code: '+263',flag: '🇿🇼', name: 'Zimbabwe',       mask: '## ### ####' },
+  ];
+
+  const formatPhoneNumber = (raw: string, mask: string) => {
+    const digits = raw.replace(/\D/g, '');
+    let result = '';
+    let di = 0;
+    for (let i = 0; i < mask.length && di < digits.length; i++) {
+      if (mask[i] === '#') { result += digits[di++]; }
+      else { result += mask[i]; }
+    }
+    return result;
+  };
+  const [viewingFileUrl, setViewingFileUrl] = useState<string | null>(null);
+  const [uploadComplete, setUploadComplete] = useState(false);
+  const [validationSubmitted, setValidationSubmitted] = useState(false);
+  const [stepperVisible, setStepperVisible] = useState(false);
+  const howToOrderRef = useRef<HTMLDivElement>(null);
   const [formData, setFormData] = useState({
     patientName: '',
     email: '',
@@ -43,12 +188,12 @@ export default function OrderMedicines() {
     setSubmitState('sending');
 
     const filesData: { name: string; type: string; base64: string }[] = [];
-    if (uploadedFile) {
+    for (const file of uploadedFiles) {
       try {
-        const base64 = await fileToBase64(uploadedFile);
-        filesData.push({ name: uploadedFile.name, type: uploadedFile.type, base64 });
+        const base64 = await fileToBase64(file);
+        filesData.push({ name: file.name, type: file.type, base64 });
       } catch (err) {
-        console.error('Error processing file:', uploadedFile.name, err);
+        console.error('Error processing file:', file.name, err);
       }
     }
 
@@ -85,17 +230,8 @@ export default function OrderMedicines() {
       }
 
       setSubmitState('sent');
-      setFormData({
-        patientName: '',
-        email: '',
-        phone: '',
-        dob: '',
-        address: '',
-        terms: false
-      });
-      setUploadedFile(null);
-      alert('Order Submitted Successfully!');
-      setSubmitState('idle');
+      setValidationSubmitted(true);
+      setTimeout(() => window.location.reload(), 1500);
     } catch (error) {
       console.error('Submission error:', error);
       setSubmitState('error');
@@ -131,7 +267,7 @@ export default function OrderMedicines() {
         prog = 100;
         if (uploadIntervalRef.current) clearInterval(uploadIntervalRef.current);
         setTimeout(() => {
-          alert('Prescription Uploaded Successfully!');
+          setUploadComplete(true);
           closeUploadModal();
         }, 500);
       }
@@ -146,11 +282,32 @@ export default function OrderMedicines() {
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setUploadedFile(e.target.files[0]);
+    if (e.target.files && e.target.files.length > 0) {
+      const newFiles = Array.from(e.target.files);
+      setUploadedFiles(prev => [...prev, ...newFiles]);
       openUploadModal();
+      e.target.value = '';
     }
   };
+
+  // Close phone country dropdown on outside click
+  useEffect(() => {
+    if (!phoneCountryOpen) return;
+    const close = () => setPhoneCountryOpen(false);
+    document.addEventListener('click', close);
+    return () => document.removeEventListener('click', close);
+  }, [phoneCountryOpen]);
+
+  // Stepper visibility — show when "How to Order" scrolls out of view OR a step is completed
+  useEffect(() => {
+    if (uploadComplete || validationSubmitted) { setStepperVisible(true); return; }
+    const el = howToOrderRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(([e]) => setStepperVisible(!e.isIntersecting), { threshold: 0 });
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [uploadComplete, validationSubmitted]);
+
 
   // Load navbar & footer
   useEffect(() => {
@@ -173,6 +330,62 @@ export default function OrderMedicines() {
 
       {/* Navbar */}
       <div id="navbar-container" className="sticky top-0 z-[50]" />
+
+      {/* Sticky Step Progress Bar */}
+      <div className={`fixed top-[90px] left-0 right-0 z-[49] flex justify-center pointer-events-none transition-all duration-500 ease-in-out ${stepperVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}`}>
+        <div className="pointer-events-auto bg-white rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-gray-100 px-8 py-3">
+            <div className="flex items-center justify-center gap-0">
+
+              {/* Step 1 — Upload */}
+              <div className="flex flex-col items-center gap-1.5 min-w-[80px]">
+                <div className={`w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold border-2 transition-all duration-300 ${
+                  uploadComplete ? 'bg-[#61A644] border-[#61A644] text-white' : 'border-gray-200 text-gray-300 bg-white'
+                }`}>
+                  {uploadComplete ? <i className="fa-solid fa-check text-[13px]"></i> : <span>1</span>}
+                </div>
+                <span className={`text-[10px] font-semibold tracking-wide ${uploadComplete ? 'text-[#61A644]' : 'text-gray-400'}`}>UPLOAD</span>
+                <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-medium ${uploadComplete ? 'bg-green-50 text-green-600' : 'bg-gray-50 text-gray-300'}`}>
+                  {uploadComplete ? 'Completed' : 'Pending'}
+                </span>
+              </div>
+
+              {/* Line */}
+              <div className={`h-[2px] w-16 md:w-24 mb-5 rounded-full transition-all duration-500 ${uploadComplete ? 'bg-[#61A644]' : 'bg-gray-100'}`} />
+
+              {/* Step 2 — Validation */}
+              <div className="flex flex-col items-center gap-1.5 min-w-[80px]">
+                <div className={`w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold border-2 transition-all duration-300 ${
+                  validationSubmitted ? 'bg-[#61A644] border-[#61A644] text-white'
+                  : uploadComplete ? 'border-[#61A644] text-[#61A644] bg-white'
+                  : 'border-gray-200 text-gray-300 bg-white'
+                }`}>
+                  {validationSubmitted ? <i className="fa-solid fa-check text-[13px]"></i> : <span>2</span>}
+                </div>
+                <span className={`text-[10px] font-semibold tracking-wide ${validationSubmitted || uploadComplete ? 'text-[#61A644]' : 'text-gray-400'}`}>VALIDATION</span>
+                <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-medium ${
+                  validationSubmitted ? 'bg-green-50 text-green-600' : uploadComplete ? 'bg-blue-50 text-blue-500' : 'bg-gray-50 text-gray-300'
+                }`}>{validationSubmitted ? 'Completed' : uploadComplete ? 'In Progress' : 'Pending'}</span>
+              </div>
+
+              {/* Line */}
+              <div className={`h-[2px] w-16 md:w-24 mb-5 rounded-full transition-all duration-500 ${validationSubmitted ? 'bg-[#61A644]' : 'bg-gray-100'}`} />
+
+              {/* Step 3 — Confirmation (always awaiting) */}
+              <div className="flex flex-col items-center gap-1.5 min-w-[80px]">
+                <div className={`w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold border-2 transition-all duration-300 ${
+                  validationSubmitted ? 'border-[#1D9FDA] text-[#1D9FDA] bg-white' : 'border-gray-200 text-gray-300 bg-white'
+                }`}>
+                  {validationSubmitted ? <i className="fa-solid fa-bell text-[13px]"></i> : <span>3</span>}
+                </div>
+                <span className={`text-[10px] font-semibold tracking-wide text-center leading-tight ${validationSubmitted ? 'text-[#1D9FDA]' : 'text-gray-400'}`}>AWAIT EMAIL<br/>OR CALL</span>
+                <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-medium ${validationSubmitted ? 'bg-blue-50 text-blue-500' : 'bg-gray-50 text-gray-300'}`}>
+                  {validationSubmitted ? 'Awaiting' : 'Pending'}
+                </span>
+              </div>
+
+            </div>
+        </div>
+      </div>
 
       {/* Hero Banner */}
       <section className="w-full px-4 md:px-6 pt-5 pb-4">
@@ -205,7 +418,7 @@ export default function OrderMedicines() {
           <div className="flex flex-col gap-8">
 
             {/* How It Works */}
-            <div className="mb-12">
+            <div className="mb-12" ref={howToOrderRef}>
               <div className="text-center mb-10">
                 <h2 className="text-2xl font-bold text-dark">How to Order with Prescription</h2>
                 <p className="text-gray-500 text-sm mt-1">A simple 3-step process designed for your convenience</p>
@@ -269,27 +482,60 @@ export default function OrderMedicines() {
                 <div className="grid grid-cols-1 gap-6 flex-grow">
                   {/* Upload New */}
                   <label className="group relative cursor-pointer">
-                    <input type="file" className="hidden" onChange={handleFileChange} />
+                    <input type="file" multiple accept="image/*,.pdf" className="hidden" onChange={handleFileChange} />
                     <div className="h-full border-2 border-dashed border-gray-100 rounded-[15px] p-6 flex flex-col items-center justify-center text-center transition-all group-hover:border-primary/40 group-hover:bg-blue-50/30">
                       <div className="w-14 h-14 rounded-full bg-blue-50 text-primary flex items-center justify-center mb-3 transition-transform group-hover:scale-110 group-hover:bg-primary group-hover:text-white">
                         <i className="fa-solid fa-cloud-arrow-up text-xl"></i>
                       </div>
-                      <span className="text-[14px] font-semibold text-dark mb-1">Upload New</span>
-                      <span className="text-gray-400 text-[11px]">Click to browse files</span>
+                      <span className="text-[14px] font-semibold text-dark mb-1">Upload Files</span>
+                      <span className="text-gray-400 text-[11px]">Click to browse — multiple allowed</span>
                     </div>
                   </label>
 
-                  {/* Past Prescriptions */}
-                  <div className="group relative cursor-pointer">
-                    <div className="h-full border border-gray-100 rounded-[15px] p-5 flex items-center gap-4 transition-all bg-gray-50/50 hover:bg-white hover:border-[#61A644]/40 hover:shadow-md">
-                      <div className="w-10 h-10 rounded-full bg-[#E8F5E3] text-[#61A644] flex items-center justify-center transition-transform group-hover:rotate-12 group-hover:bg-[#61A644] group-hover:text-white">
-                        <i className="fa-solid fa-clock-rotate-left text-lg"></i>
+                  {/* Uploaded Files Preview */}
+                  <div className="border border-gray-100 rounded-[15px] bg-gray-50/50 overflow-hidden" style={{ minHeight: '110px' }}>
+                    {uploadedFiles.length > 0 ? (
+                      <div className="p-3 grid grid-cols-3 gap-2">
+                        {uploadedFiles.map((file, idx) => (
+                          <div key={idx} className="relative group/thumb">
+                            {file.type.startsWith('image/') ? (
+                              <button
+                                type="button"
+                                onClick={() => setViewingFileUrl(URL.createObjectURL(file))}
+                                className="w-full aspect-square rounded-[10px] overflow-hidden border border-gray-100 bg-white block"
+                              >
+                                <img
+                                  src={URL.createObjectURL(file)}
+                                  alt={file.name}
+                                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-200"
+                                />
+                              </button>
+                            ) : (
+                              <div className="w-full aspect-square rounded-[10px] border border-gray-100 bg-white flex flex-col items-center justify-center gap-1 px-1">
+                                <i className="fa-solid fa-file-pdf text-red-400 text-xl"></i>
+                                <span className="text-[9px] text-gray-400 text-center truncate w-full px-1 leading-tight">{file.name}</span>
+                              </div>
+                            )}
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const updated = uploadedFiles.filter((_, i) => i !== idx);
+                                setUploadedFiles(updated);
+                                if (updated.length === 0) setUploadComplete(false);
+                              }}
+                              className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-white rounded-full border border-gray-200 shadow-sm flex items-center justify-center text-gray-400 hover:text-red-500 transition opacity-0 group-hover/thumb:opacity-100"
+                            >
+                              <i className="fa-solid fa-xmark text-[9px]"></i>
+                            </button>
+                          </div>
+                        ))}
                       </div>
-                      <div className="text-left">
-                        <span className="text-[14px] font-semibold text-dark block">Use Past Record</span>
-                        <span className="text-gray-400 text-[10px]">Select from history</span>
+                    ) : (
+                      <div className="flex flex-col items-center justify-center text-center px-4 py-6 h-full">
+                        <i className="fa-regular fa-images text-3xl text-gray-200 mb-2"></i>
+                        <span className="text-gray-300 text-[11px]">Uploaded files appear here</span>
                       </div>
-                    </div>
+                    )}
                   </div>
                 </div>
 
@@ -441,7 +687,7 @@ export default function OrderMedicines() {
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
                     <div className="space-y-2">
-                      <label className="text-[13px] font-bold text-gray-800 ml-1">Patient Full Name</label>
+                      <label className="text-[14px] font-semibold text-gray-700">Patient Full Name</label>
                       <input type="text" placeholder="As written on prescription"
                         required
                         value={formData.patientName}
@@ -449,7 +695,7 @@ export default function OrderMedicines() {
                         className="w-full bg-gray-50 border-none rounded-[15px] px-6 py-3.5 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition placeholder-gray-300" />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-[13px] font-bold text-gray-800 ml-1">Email Address</label>
+                      <label className="text-[14px] font-semibold text-gray-700">Email Address</label>
                       <input type="email" placeholder="example@domain.com"
                         required
                         value={formData.email}
@@ -457,25 +703,65 @@ export default function OrderMedicines() {
                         className="w-full bg-gray-50 border-none rounded-[15px] px-6 py-3.5 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition placeholder-gray-300" />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-[13px] font-bold text-gray-800 ml-1">Phone Number</label>
-                      <input type="tel" placeholder="+63 9xx xxx xxxx"
-                        required
-                        value={formData.phone}
-                        onChange={e => setFormData(prev => ({ ...prev, phone: e.target.value }))}
-                        className="w-full bg-gray-50 border-none rounded-[15px] px-6 py-3.5 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition placeholder-gray-300" />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-[13px] font-bold text-gray-800 ml-1">Date of Birth</label>
-                      <input type="date"
-                        required
-                        value={formData.dob}
-                        onChange={e => setFormData(prev => ({ ...prev, dob: e.target.value }))}
-                        className="w-full bg-gray-50 border-none rounded-[15px] px-6 py-3.5 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition" />
+                      <label className="text-[14px] font-semibold text-gray-700">Phone Number</label>
+                      <div className="relative flex items-center bg-gray-50 rounded-[15px] overflow-visible focus-within:ring-2 focus-within:ring-primary/20 transition">
+                        {/* Country dropdown trigger */}
+                        <button
+                          type="button"
+                          onClick={() => setPhoneCountryOpen(o => !o)}
+                          className="flex items-center gap-1.5 pl-4 pr-2 py-3.5 shrink-0 border-r border-gray-200 text-[13px] text-gray-700 hover:bg-gray-100 rounded-l-[15px] transition"
+                        >
+                          <span>{phoneCountry.flag}</span>
+                          <span className="font-semibold text-gray-600">{phoneCountry.code}</span>
+                          <i className="fa-solid fa-chevron-down text-[9px] text-gray-400"></i>
+                        </button>
+                        {/* Number input */}
+                        <input
+                          type="tel"
+                          required
+                          placeholder={phoneCountry.mask.replace(/#/g, '0')}
+                          value={formData.phone}
+                          onChange={e => setFormData(prev => ({ ...prev, phone: formatPhoneNumber(e.target.value, phoneCountry.mask) }))}
+                          className="flex-1 bg-transparent px-4 py-3.5 text-[13px] text-gray-700 outline-none placeholder-gray-300"
+                        />
+                        {/* Country list dropdown */}
+                        {phoneCountryOpen && (
+                          <div className="absolute top-full left-0 mt-1 w-72 bg-white rounded-[12px] shadow-xl border border-gray-100 z-[60] overflow-hidden" onClick={e => e.stopPropagation()}>
+                            <div className="p-2 border-b border-gray-100">
+                              <input
+                                autoFocus
+                                type="text"
+                                placeholder="Search country..."
+                                value={phoneSearch}
+                                onChange={e => setPhoneSearch(e.target.value)}
+                                className="w-full px-3 py-2 text-[12px] bg-gray-50 rounded-[8px] outline-none placeholder-gray-300 text-gray-700"
+                              />
+                            </div>
+                            <div className="max-h-52 overflow-y-auto">
+                              {PHONE_COUNTRIES.filter(c =>
+                                c.name.toLowerCase().includes(phoneSearch.toLowerCase()) ||
+                                c.code.includes(phoneSearch)
+                              ).map(c => (
+                                <button
+                                  key={c.code + c.name}
+                                  type="button"
+                                  onClick={() => { setPhoneCountry(c); setPhoneCountryOpen(false); setPhoneSearch(''); setFormData(prev => ({ ...prev, phone: '' })); }}
+                                  className={`w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-gray-50 transition text-[13px] ${phoneCountry.code === c.code && phoneCountry.name === c.name ? 'bg-green-50 text-[#61A644] font-semibold' : 'text-gray-700'}`}
+                                >
+                                  <span className="text-base">{c.flag}</span>
+                                  <span className="flex-1">{c.name}</span>
+                                  <span className="text-gray-400 text-[12px]">{c.code}</span>
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-[13px] font-bold text-gray-800 ml-1">Delivery Address</label>
+                    <label className="text-[14px] font-semibold text-gray-700">Delivery Address</label>
                     <textarea placeholder="Complete address for courier delivery..." rows={3}
                       required
                       value={formData.address}
@@ -554,6 +840,27 @@ export default function OrderMedicines() {
 
       {/* Footer */}
       <div id="footer-container" />
+
+      {/* Image Lightbox */}
+      {viewingFileUrl && (
+        <div
+          className="fixed inset-0 z-[200] bg-black/90 flex items-center justify-center p-4 backdrop-blur-sm"
+          onClick={() => setViewingFileUrl(null)}
+        >
+          <img
+            src={viewingFileUrl}
+            alt="Prescription preview"
+            className="max-w-full max-h-full object-contain rounded-xl shadow-2xl"
+            onClick={e => e.stopPropagation()}
+          />
+          <button
+            onClick={() => setViewingFileUrl(null)}
+            className="absolute top-5 right-5 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white transition"
+          >
+            <i className="fa-solid fa-xmark text-xl"></i>
+          </button>
+        </div>
+      )}
 
     </div>
   );

@@ -296,7 +296,7 @@ export default function ContactUs() {
               {/* Row 1 */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="flex flex-col space-y-2">
-                  <label className="text-[14px] font-semibold text-gray-700">Full Name *</label>
+                  <label className="text-[14px] font-semibold text-gray-700">Full Name</label>
                   <input type="text" placeholder="e.g. John Doe"
                     value={formData.name}
                     onChange={e => setFormData(prev => ({ ...prev, name: e.target.value }))}
@@ -304,7 +304,7 @@ export default function ContactUs() {
                     className="w-full bg-[#F4F6F9] rounded-xl px-4 py-3.5 text-[13px] outline-none border-2 border-transparent focus:border-primary/20 transition-colors placeholder-gray-400 font-medium" />
                 </div>
                 <div className="flex flex-col space-y-2">
-                  <label className="text-[14px] font-semibold text-gray-700">Email Address *</label>
+                  <label className="text-[14px] font-semibold text-gray-700">Email Address</label>
                   <input type="email" placeholder="e.g. johndoe@email.com"
                     value={formData.email}
                     onChange={e => setFormData(prev => ({ ...prev, email: e.target.value }))}

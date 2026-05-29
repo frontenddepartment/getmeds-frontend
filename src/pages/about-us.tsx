@@ -599,9 +599,6 @@ export default function AboutUs() {
                     <a href="#"
                       className="h-9 w-9 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-primary transition shadow-lg"><i
                         className="fa-brands fa-linkedin-in"></i></a>
-                    <a href="#"
-                      className="h-9 w-9 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-primary transition shadow-lg"><i
-                        className="fa-brands fa-twitter"></i></a>
                   </div>
                   <div className="team-content">
                     <h4 data-json="team.members.0.name" className="team-name">Mr. Naresh Bishnoi</h4>
@@ -627,9 +624,6 @@ export default function AboutUs() {
                     <a href="#"
                       className="h-9 w-9 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-primary transition shadow-lg"><i
                         className="fa-brands fa-linkedin-in"></i></a>
-                    <a href="#"
-                      className="h-9 w-9 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-primary transition shadow-lg"><i
-                        className="fa-brands fa-twitter"></i></a>
                   </div>
                   <div className="team-content">
                     <h4 data-json="team.members.1.name" className="team-name">Dr. Elena Rodriguez</h4>
@@ -652,9 +646,6 @@ export default function AboutUs() {
                     <a href="#"
                       className="h-9 w-9 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-primary transition shadow-lg"><i
                         className="fa-brands fa-linkedin-in"></i></a>
-                    <a href="#"
-                      className="h-9 w-9 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-primary transition shadow-lg"><i
-                        className="fa-brands fa-twitter"></i></a>
                   </div>
                   <div className="team-content">
                     <h4 data-json="team.members.2.name" className="team-name">Dr. Michael Chen</h4>
@@ -667,7 +658,7 @@ export default function AboutUs() {
               <div className="reveal" style={{ transitionDelay: '450ms' }} id="sarah-jenkins">
                 <div className="team-card bg-gray-100 group">
                   <div className="team-ribbon">
-                    <span className="vertical-text">Finance</span>
+                    <span className="vertical-text">Getmeds</span>
                   </div>
                   <div className="team-img-wrapper">
                     <img src={getImage('assets/employeethree.png', 'assets/employeethree.png')} alt="Dr. Sarah Jenkins"
@@ -677,9 +668,6 @@ export default function AboutUs() {
                     <a href="#"
                       className="h-9 w-9 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-primary transition shadow-lg"><i
                         className="fa-brands fa-linkedin-in"></i></a>
-                    <a href="#"
-                      className="h-9 w-9 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-primary transition shadow-lg"><i
-                        className="fa-brands fa-twitter"></i></a>
                   </div>
                   <div className="team-content">
                     <h4 data-json="team.members.3.name" className="team-name">Dr. Sarah Jenkins</h4>
@@ -695,7 +683,7 @@ export default function AboutUs() {
               <div className="reveal" style={{ transitionDelay: '150ms' }} id="david-torres">
                 <div className="team-card bg-gray-100 group">
                   <div className="team-ribbon">
-                    <span className="vertical-text">Technology</span>
+                    <span className="vertical-text">Getmeds</span>
                   </div>
                   <div className="team-img-wrapper">
                     <img src={getImage('assets/employeefour.png', 'assets/employeefour.png')} alt="Mr. David Torres"
@@ -705,9 +693,6 @@ export default function AboutUs() {
                     <a href="#"
                       className="h-9 w-9 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-primary transition shadow-lg"><i
                         className="fa-brands fa-linkedin-in"></i></a>
-                    <a href="#"
-                      className="h-9 w-9 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-primary transition shadow-lg"><i
-                        className="fa-brands fa-twitter"></i></a>
                   </div>
                   <div className="team-content">
                     <h4 data-json="team.members.4.name" className="team-name">Mr. David Torres</h4>
@@ -720,7 +705,7 @@ export default function AboutUs() {
               <div className="reveal" style={{ transitionDelay: '300ms' }} id="emily-wong">
                 <div className="team-card bg-gray-100 group">
                   <div className="team-ribbon">
-                    <span className="vertical-text">Research</span>
+                    <span className="vertical-text">Getmeds</span>
                   </div>
                   <div className="team-img-wrapper">
                     <img src={getImage('assets/employeefive.png', 'assets/employeefive.png')} alt="Dr. Emily Wong"
@@ -730,9 +715,6 @@ export default function AboutUs() {
                     <a href="#"
                       className="h-9 w-9 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-primary transition shadow-lg"><i
                         className="fa-brands fa-linkedin-in"></i></a>
-                    <a href="#"
-                      className="h-9 w-9 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-primary transition shadow-lg"><i
-                        className="fa-brands fa-twitter"></i></a>
                   </div>
                   <div className="team-content">
                     <h4 data-json="team.members.5.name" className="team-name">Dr. Emily Wong</h4>
@@ -745,7 +727,7 @@ export default function AboutUs() {
               <div className="reveal" style={{ transitionDelay: '450ms' }} id="rachel-green">
                 <div className="team-card bg-gray-100 group">
                   <div className="team-ribbon">
-                    <span className="vertical-text">People</span>
+                    <span className="vertical-text">Getmeds</span>
                   </div>
                   <div className="team-img-wrapper">
                     <img src={getImage('assets/employeesix.png', 'assets/employeesix.png')} alt="Ms. Rachel Green"
@@ -755,9 +737,6 @@ export default function AboutUs() {
                     <a href="#"
                       className="h-9 w-9 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-primary transition shadow-lg"><i
                         className="fa-brands fa-linkedin-in"></i></a>
-                    <a href="#"
-                      className="h-9 w-9 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-primary transition shadow-lg"><i
-                        className="fa-brands fa-twitter"></i></a>
                   </div>
                   <div className="team-content">
                     <h4 data-json="team.members.6.name" className="team-name">Ms. Rachel Green</h4>
