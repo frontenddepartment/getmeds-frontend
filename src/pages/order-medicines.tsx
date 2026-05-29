@@ -142,7 +142,7 @@ export default function OrderMedicines() {
     { code: '+263',flag: '🇿🇼', name: 'Zimbabwe',       mask: '## ### ####' },
   ];
 
-  const formatPhoneNumber = (raw: string, mask: string) => {
+  const applyMask = (raw: string, mask: string) => {
     const digits = raw.replace(/\D/g, '');
     let result = '';
     let di = 0;
@@ -152,6 +152,32 @@ export default function OrderMedicines() {
     }
     return result;
   };
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value;
+    const cursorPos = e.target.selectionStart ?? raw.length;
+    const digitsBeforeCursor = raw.slice(0, cursorPos).replace(/\D/g, '').length;
+    const formatted = applyMask(raw, phoneCountry.mask);
+    setFormData(prev => ({ ...prev, phone: formatted }));
+    requestAnimationFrame(() => {
+      const el = phoneInputRef.current;
+      if (!el) return;
+      let count = 0;
+      let newPos = formatted.length;
+      if (digitsBeforeCursor === 0) {
+        newPos = 0;
+      } else {
+        for (let i = 0; i < formatted.length; i++) {
+          if (/\d/.test(formatted[i])) {
+            count++;
+            if (count === digitsBeforeCursor) { newPos = i + 1; break; }
+          }
+        }
+      }
+      el.setSelectionRange(newPos, newPos);
+    });
+  };
+  const phoneInputRef = useRef<HTMLInputElement>(null);
   const [viewingFileUrl, setViewingFileUrl] = useState<string | null>(null);
   const [uploadComplete, setUploadComplete] = useState(false);
   const [validationSubmitted, setValidationSubmitted] = useState(false);
@@ -332,55 +358,57 @@ export default function OrderMedicines() {
       <div id="navbar-container" className="sticky top-0 z-[50]" />
 
       {/* Sticky Step Progress Bar */}
-      <div className={`fixed top-[90px] left-0 right-0 z-[49] flex justify-center pointer-events-none transition-all duration-500 ease-in-out ${stepperVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}`}>
-        <div className="pointer-events-auto bg-white rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-gray-100 px-8 py-3">
-            <div className="flex items-center justify-center gap-0">
+      <div className={`fixed top-[90px] left-0 right-0 z-[49] flex justify-end pr-2 sm:pr-6 pointer-events-none transition-all duration-500 ease-in-out ${stepperVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}`}>
+        <div className="pointer-events-auto bg-white rounded-xl sm:rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-gray-100 px-3 py-2 sm:px-8 sm:py-3">
+            <div className="flex items-start gap-0">
 
               {/* Step 1 — Upload */}
-              <div className="flex flex-col items-center gap-1.5 min-w-[80px]">
-                <div className={`w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold border-2 transition-all duration-300 ${
+              <div className="flex flex-col items-center gap-1 sm:gap-1.5 min-w-[52px] sm:min-w-[80px]">
+                <div className={`w-7 h-7 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold border-2 transition-all duration-300 ${
                   uploadComplete ? 'bg-[#61A644] border-[#61A644] text-white' : 'border-gray-200 text-gray-300 bg-white'
                 }`}>
-                  {uploadComplete ? <i className="fa-solid fa-check text-[13px]"></i> : <span>1</span>}
+                  {uploadComplete ? <i className="fa-solid fa-check text-[11px] sm:text-[13px]"></i> : <span>1</span>}
                 </div>
-                <span className={`text-[10px] font-semibold tracking-wide ${uploadComplete ? 'text-[#61A644]' : 'text-gray-400'}`}>UPLOAD</span>
-                <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-medium ${uploadComplete ? 'bg-green-50 text-green-600' : 'bg-gray-50 text-gray-300'}`}>
+                <span className={`text-[8px] sm:text-[10px] font-semibold ${uploadComplete ? 'text-gray-900' : 'text-gray-400'}`}>Upload</span>
+                <span className={`text-[7px] sm:text-[9px] px-1 sm:px-1.5 py-0.5 rounded-full font-medium ${uploadComplete ? 'bg-green-50 text-green-600' : 'bg-gray-50 text-gray-300'}`}>
                   {uploadComplete ? 'Completed' : 'Pending'}
                 </span>
               </div>
 
               {/* Line */}
-              <div className={`h-[2px] w-16 md:w-24 mb-5 rounded-full transition-all duration-500 ${uploadComplete ? 'bg-[#61A644]' : 'bg-gray-100'}`} />
+              <div className={`h-[2px] w-8 sm:w-16 md:w-24 mt-[13px] sm:mt-[17px] rounded-full transition-all duration-500 ${uploadComplete ? 'bg-[#61A644]' : 'bg-gray-100'}`} />
 
               {/* Step 2 — Validation */}
-              <div className="flex flex-col items-center gap-1.5 min-w-[80px]">
-                <div className={`w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold border-2 transition-all duration-300 ${
+              <div className="flex flex-col items-center gap-1 sm:gap-1.5 min-w-[52px] sm:min-w-[80px]">
+                <div className={`w-7 h-7 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold border-2 transition-all duration-300 ${
                   validationSubmitted ? 'bg-[#61A644] border-[#61A644] text-white'
                   : uploadComplete ? 'border-[#61A644] text-[#61A644] bg-white'
                   : 'border-gray-200 text-gray-300 bg-white'
                 }`}>
-                  {validationSubmitted ? <i className="fa-solid fa-check text-[13px]"></i> : <span>2</span>}
+                  {validationSubmitted ? <i className="fa-solid fa-check text-[11px] sm:text-[13px]"></i> : <span>2</span>}
                 </div>
-                <span className={`text-[10px] font-semibold tracking-wide ${validationSubmitted || uploadComplete ? 'text-[#61A644]' : 'text-gray-400'}`}>VALIDATION</span>
-                <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-medium ${
+                <span className={`text-[8px] sm:text-[10px] font-semibold ${validationSubmitted || uploadComplete ? 'text-gray-900' : 'text-gray-400'}`}>Validation</span>
+                <span className={`text-[7px] sm:text-[9px] px-1 sm:px-1.5 py-0.5 rounded-full font-medium ${
                   validationSubmitted ? 'bg-green-50 text-green-600' : uploadComplete ? 'bg-blue-50 text-blue-500' : 'bg-gray-50 text-gray-300'
                 }`}>{validationSubmitted ? 'Completed' : uploadComplete ? 'In Progress' : 'Pending'}</span>
               </div>
 
               {/* Line */}
-              <div className={`h-[2px] w-16 md:w-24 mb-5 rounded-full transition-all duration-500 ${validationSubmitted ? 'bg-[#61A644]' : 'bg-gray-100'}`} />
+              <div className={`h-[2px] w-8 sm:w-16 md:w-24 mt-[13px] sm:mt-[17px] rounded-full transition-all duration-500 ${validationSubmitted ? 'bg-[#61A644]' : 'bg-gray-100'}`} />
 
               {/* Step 3 — Confirmation (always awaiting) */}
-              <div className="flex flex-col items-center gap-1.5 min-w-[80px]">
-                <div className={`w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold border-2 transition-all duration-300 ${
+              <div className="flex flex-col items-center gap-1 sm:gap-1.5 min-w-[52px] sm:min-w-[80px]">
+                <div className={`w-7 h-7 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold border-2 transition-all duration-300 ${
                   validationSubmitted ? 'border-[#1D9FDA] text-[#1D9FDA] bg-white' : 'border-gray-200 text-gray-300 bg-white'
                 }`}>
-                  {validationSubmitted ? <i className="fa-solid fa-bell text-[13px]"></i> : <span>3</span>}
+                  {validationSubmitted ? <i className="fa-solid fa-bell text-[11px] sm:text-[13px]"></i> : <span>3</span>}
                 </div>
-                <span className={`text-[10px] font-semibold tracking-wide text-center leading-tight ${validationSubmitted ? 'text-[#1D9FDA]' : 'text-gray-400'}`}>AWAIT EMAIL<br/>OR CALL</span>
-                <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-medium ${validationSubmitted ? 'bg-blue-50 text-blue-500' : 'bg-gray-50 text-gray-300'}`}>
-                  {validationSubmitted ? 'Awaiting' : 'Pending'}
-                </span>
+                <span className={`text-[8px] sm:text-[10px] font-semibold text-center leading-tight ${validationSubmitted ? 'text-[#1D9FDA]' : 'text-gray-400'}`}>Await Email<br/>or Call</span>
+                {validationSubmitted && (
+                  <span className="text-[7px] sm:text-[9px] px-1 sm:px-1.5 py-0.5 rounded-full font-medium bg-blue-50 text-blue-500">
+                    Awaiting
+                  </span>
+                )}
               </div>
 
             </div>
@@ -717,11 +745,12 @@ export default function OrderMedicines() {
                         </button>
                         {/* Number input */}
                         <input
+                          ref={phoneInputRef}
                           type="tel"
                           required
                           placeholder={phoneCountry.mask.replace(/#/g, '0')}
                           value={formData.phone}
-                          onChange={e => setFormData(prev => ({ ...prev, phone: formatPhoneNumber(e.target.value, phoneCountry.mask) }))}
+                          onChange={handlePhoneChange}
                           className="flex-1 bg-transparent px-4 py-3.5 text-[13px] text-gray-700 outline-none placeholder-gray-300"
                         />
                         {/* Country list dropdown */}

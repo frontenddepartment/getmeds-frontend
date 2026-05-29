@@ -342,11 +342,11 @@ export default function GetMedsHomepage() {
             ? 'bg-white border-b border-gray-100 text-gray-800 fixed top-0 left-0 animate-slide-down'
             : 'bg-transparent text-white absolute top-full left-0 transition-colors duration-300'
             }`}>
-            <div className="max-w-7xl mx-auto px-6 flex items-center justify-between h-20 relative">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between h-20 relative">
 
               {/* Logo */}
-              <div className="w-[180px] shrink-0 flex items-center">
-                <a href="index.html" className="flex items-center">
+              <div className="w-auto sm:w-[180px] shrink-0 flex items-center">
+                <a href="/" className="flex items-center">
                   {(() => {
                     const logoUrl = getImage('assets/getmedslogo.png', 'assets/getmedslogo.png');
                     const isCustomLogo = logoUrl && logoUrl.includes('cdn.sanity.io');
@@ -363,7 +363,7 @@ export default function GetMedsHomepage() {
 
               {/* Navigation Links */}
               <div className="hidden lg:flex flex-1 justify-center items-center space-x-8 text-sm font-semibold font-['Poppins']">
-                <a href="index.html" className="transition-colors duration-300 text-primary">Home</a>
+                <a href="/" className="transition-colors duration-300 text-primary">Home</a>
                 <a href="order-medicines.html" className={`transition-colors duration-300 whitespace-nowrap ${isScrolled ? 'text-gray-700 hover:text-primary' : 'text-white/90 hover:text-primary'}`}>Order Medicines</a>
 
                 {/* Product Range Dropdown */}
@@ -503,6 +503,13 @@ export default function GetMedsHomepage() {
                               <li><a href="careers.html" className="relative inline-block text-gray-700 font-semibold hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300 text-base">Careers</a></li>
                               <li><a href="ungc.html" className="relative inline-block text-gray-700 font-semibold hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300 text-base">United Nations Global Compact</a></li>
                               <li><a href="/articles" className="relative inline-block text-gray-700 font-semibold hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300 text-base">Articles</a></li>
+                              <li className="pt-2">
+                                <a href="careers.html#join-form"
+                                  className="inline-flex items-center px-5 py-2.5 rounded-full text-sm font-semibold text-white transition-all hover:opacity-90 hover:-translate-y-0.5 shadow-md"
+                                  style={{ background: 'linear-gradient(135deg, #61A644, #1D9FDA)' }}>
+                                  Join Us
+                                </a>
+                              </li>
                             </ul>
                           </div>
                         </div>
@@ -537,7 +544,7 @@ export default function GetMedsHomepage() {
               </div>
 
               {/* Right side — hamburger on mobile, empty spacer on desktop */}
-              <div className="w-[180px] shrink-0 flex items-center justify-end">
+              <div className="w-auto sm:w-[180px] shrink-0 flex items-center justify-end">
                 <button
                   className={`lg:hidden p-2 rounded-md transition-colors duration-300 ${isScrolled ? 'text-gray-600 hover:text-primary' : 'text-white hover:text-white/70'}`}
                   onClick={() => setIsMobileMenuOpen(o => !o)}
@@ -553,7 +560,7 @@ export default function GetMedsHomepage() {
           {isMobileMenuOpen && (
             <div className="lg:hidden fixed top-[80px] left-0 w-full bg-white shadow-xl border-t border-gray-100 z-[200] overflow-y-auto" style={{ height: 'calc(100vh - 80px)' }}>
               <div className="flex flex-col px-4 py-4 pb-12">
-                <a href="index.html" className="flex items-center px-3 py-3.5 text-[15px] font-semibold text-primary border-b border-gray-100">Home</a>
+                <a href="/" className="flex items-center px-3 py-3.5 text-[15px] font-semibold text-primary border-b border-gray-100">Home</a>
                 <a href="order-medicines.html" className="flex items-center px-3 py-3.5 text-[15px] font-semibold text-gray-700 border-b border-gray-100 hover:text-primary transition">Order Medicines</a>
 
                 {/* Product Range accordion */}
@@ -622,6 +629,13 @@ export default function GetMedsHomepage() {
                       <a href="careers.html" className="block pl-5 py-2.5 text-[14px] font-medium text-gray-600 hover:text-primary transition">Careers</a>
                       <a href="ungc.html" className="block pl-5 py-2.5 text-[14px] font-medium text-gray-600 hover:text-primary transition">United Nations Global Compact</a>
                       <a href="/articles" className="block pl-5 py-2.5 text-[14px] font-medium text-gray-600 hover:text-primary transition">Articles</a>
+                      <div className="pl-5 pt-2 pb-1">
+                        <a href="careers.html#join-form"
+                          className="inline-flex items-center px-5 py-2.5 rounded-full text-sm font-semibold text-white shadow-md"
+                          style={{ background: 'linear-gradient(135deg, #61A644, #1D9FDA)' }}>
+                          Join Us
+                        </a>
+                      </div>
                       <a href="pap.html" className="block pl-5 py-1">
                         <img src={getImage('assets/PAPlogo.png', 'assets/PAPlogo.png')} alt="Patient Assistance Program" className="h-12 w-auto object-contain" />
                       </a>
