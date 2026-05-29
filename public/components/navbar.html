@@ -54,7 +54,7 @@
                     <div
                         class="fixed top-[80px] left-0 w-full bg-white rounded-b-[30px] border-b border-gray-100 shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-[100] max-h-[calc(100vh-80px)] overflow-y-auto">
                         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 font-medium">
-                            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 text-left">
+                            <div id="desktop-dropdown-grid" class="grid grid-cols-1 md:grid-cols-4 gap-8 text-left">
                                 <!-- Column 1 -->
                                 <div>
                                     <h4 class="font-semibold text-gray-900 mb-4 border-b pb-2 text-sm">Oncology (Solid
@@ -687,4 +687,264 @@
             container.classList.add('hidden');
         }
     });
+
+    // Dynamically populate Product Range dropdown and mobile accordion from Sanity Category schema
+    function fetchAndPopulateDropdown() {
+        const query = '*[_type == "category"] { category, "slug": slug.current, subcategory }';
+        const projectId = document.querySelector('meta[name="getmeds-sanity-project-id"]')?.content || 's7ocz8zp';
+        const dataset = document.querySelector('meta[name="getmeds-sanity-dataset"]')?.content || 'production';
+        const apiVersion = document.querySelector('meta[name="getmeds-sanity-api-version"]')?.content || '2021-10-21';
+        const url = `https://${projectId}.api.sanity.io/v${apiVersion}/data/query/${dataset}?query=` + encodeURIComponent(query);
+
+        fetch(url)
+            .then(res => res.json())
+            .then(data => {
+                const categories = data?.result || [];
+                if (categories.length === 0) return;
+                
+                // Grouping config to keep the static layout and style
+                const categoryConfig = {
+                    'oncology': { col: 0, title: 'Oncology' },
+                    'hematology': { col: 1, title: 'Hematology' },
+                    'anti-infectives': { col: 1, title: 'Anti-Infectives' },
+                    'endocrinology': { col: 2, title: 'Endocrinology' },
+                    'orthopedic': { col: 2, title: 'Orthopedic' },
+                    'cardiology': { col: 2, title: 'Cardiology' },
+                    'neuro-oncology': { col: 3, title: 'Neuro-Oncology' },
+                    'respiratory': { col: 3, title: 'Respiratory / Allergy', mergeWith: 'allergy' },
+                    'allergy': { col: 3, title: 'Respiratory / Allergy', mergeWith: 'respiratory' },
+                    'renal': { col: 3, title: 'Nephrology / Renal', mergeWith: 'nephrology' },
+                    'nephrology': { col: 3, title: 'Nephrology / Renal', mergeWith: 'renal' },
+                    'pain-management': { col: 3, title: 'Pain Mgt.' },
+                    'rheumatology': { col: 3, title: 'Rheumatology' },
+                    'gynecology': { col: 2, title: 'Gynecology' },
+                    'obstetrician': { col: 2, title: 'Obstetrician' },
+                    'radiology': { col: 1, title: 'Radiology' }
+                };
+
+                const subcategorySpecials = {
+                    'non-small-cell-lung-cancer': 'lung-cancer',
+                    'acute-myeloid-leukemia': 'aml',
+                    'chronic-myeloid-leukemia': 'cml',
+                    'hodgkin-non-hodgkins-lymphoma': 'lymphoma',
+                    'hodgkin-non-hodgkin-s-lymphoma': 'lymphoma',
+                    'sickle-cell-anemia': 'sickle-cell',
+                    'respiratory-infections': 'respiratory',
+                    'urinary-tract-infections': 'uti',
+                    'skin-and-soft-tissue-infections': 'skin-infections',
+                    'bone-and-joint-infections': 'bone-infections',
+                    'fibrocystic-breast-disease': 'fibrocystic',
+                    'arrhythmia-management': 'arrhythmia',
+                    'hypertension-angina': 'hypertension',
+                    'hypertension-and-angina': 'hypertension',
+                    'seasonal-allergic-rhinitis': 'allergic-rhinitis',
+                    'chronic-kidney-disease': 'kidney-disease',
+                    'chronic-pain': 'pain',
+                    'inflammatory-disorders': 'rheumatology',
+                    'inflammatory-and-rheumatic-disorders': 'rheumatology'
+                };
+
+                const getSubcategorySlug = (name) => {
+                    const slug = name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+                    return subcategorySpecials[slug] || slug;
+                };
+
+                // Group categories that have overlapping subcategories using Jaccard Similarity Graph Grouping (sim >= 0.5)
+                const validCats = categories.filter(cat => cat.subcategory && Array.isArray(cat.subcategory) && cat.subcategory.length > 0);
+
+                const jaccardSimilarity = (arr1, arr2) => {
+                    const setA = new Set(arr1.map(x => x.trim().toLowerCase()));
+                    const setB = new Set(arr2.map(x => x.trim().toLowerCase()));
+                    const intersection = new Set([...setA].filter(x => setB.has(x)));
+                    const union = new Set([...setA, ...setB]);
+                    return union.size === 0 ? 0 : (intersection.size / union.size);
+                };
+
+                const visited = new Set();
+                const groups = [];
+
+                for (let i = 0; i < validCats.length; i++) {
+                    if (visited.has(i)) continue;
+                    
+                    const component = [];
+                    const queue = [i];
+                    visited.add(i);
+                    
+                    while (queue.length > 0) {
+                        const currIdx = queue.shift();
+                        const currCat = validCats[currIdx];
+                        component.push(currCat);
+                        
+                        for (let j = 0; j < validCats.length; j++) {
+                            if (visited.has(j)) continue;
+                            
+                            const sim = jaccardSimilarity(currCat.subcategory, validCats[j].subcategory);
+                            if (sim >= 0.5) {
+                                visited.add(j);
+                                queue.push(j);
+                            }
+                        }
+                    }
+                    groups.push(component);
+                }
+
+                const processedCategories = [];
+                groups.forEach(groupCats => {
+                    if (groupCats.length === 1) {
+                        processedCategories.push({
+                            category: groupCats[0].category,
+                            slugs: [groupCats[0].slug],
+                            slug: groupCats[0].slug,
+                            subcategory: groupCats[0].subcategory
+                        });
+                    } else {
+                        const sortedCats = [...groupCats].sort((a, b) => a.category.localeCompare(b.category));
+                        const combinedName = sortedCats.map(c => c.category).join(' / ');
+                        
+                        // Find shared subcategories
+                        const subMaps = sortedCats.map(cat => {
+                            const map = new Map();
+                            cat.subcategory.forEach(sub => {
+                                map.set(sub.trim().toLowerCase(), sub);
+                            });
+                            return map;
+                        });
+
+                        const firstMap = subMaps[0];
+                        const sharedKeys = [];
+                        for (const key of firstMap.keys()) {
+                            let inAll = true;
+                            for (let k = 1; k < subMaps.length; k++) {
+                                if (!subMaps[k].has(key)) {
+                                    inAll = false;
+                                    break;
+                                }
+                            }
+                            if (inAll) {
+                                sharedKeys.push(key);
+                            }
+                        }
+
+                        const sharedSubcategories = sharedKeys.map(key => firstMap.get(key));
+
+                        if (sharedSubcategories.length > 0) {
+                            processedCategories.push({
+                                category: combinedName,
+                                slugs: sortedCats.map(c => c.slug),
+                                slug: sortedCats[0].slug,
+                                subcategory: sharedSubcategories
+                            });
+                        }
+
+                        // Add unique subcategories for each category in the group
+                        sortedCats.forEach(cat => {
+                            const uniqueSubs = cat.subcategory.filter(sub => {
+                                const norm = sub.trim().toLowerCase();
+                                return !sharedKeys.includes(norm);
+                            });
+
+                            if (uniqueSubs.length > 0) {
+                                processedCategories.push({
+                                    category: cat.category,
+                                    slugs: [cat.slug],
+                                    slug: cat.slug,
+                                    subcategory: uniqueSubs
+                                });
+                            }
+                        });
+                    }
+                });
+
+                const sections = {};
+                processedCategories.forEach(cat => {
+                    const slugsToCheck = cat.slugs;
+                    let minCol = 3;
+                    let confTitle = null;
+
+                    for (const s of slugsToCheck) {
+                        if (categoryConfig[s]) {
+                            if (categoryConfig[s].col < minCol) {
+                                minCol = categoryConfig[s].col;
+                            }
+                            if (!confTitle) {
+                                confTitle = categoryConfig[s].title;
+                            }
+                        }
+                    }
+
+                    const title = (slugsToCheck.length > 1) ? cat.category : (confTitle || cat.category);
+                    const col = minCol;
+
+                    if (!sections[title]) {
+                        sections[title] = {
+                            title: title,
+                            col: col,
+                            subcategories: []
+                        };
+                    }
+
+                    cat.subcategory.forEach(sub => {
+                        if (sub && !sections[title].subcategories.includes(sub)) {
+                            sections[title].subcategories.push(sub);
+                        }
+                    });
+                });
+
+                const desktopColumns = [[], [], [], []];
+                Object.values(sections).forEach(sec => {
+                    if (sec.subcategories.length > 0) {
+                        desktopColumns[sec.col].push(sec);
+                    }
+                });
+
+                const desktopGrid = document.getElementById('desktop-dropdown-grid');
+                if (desktopGrid) {
+                    let gridHtml = '';
+                    desktopColumns.forEach((colSections, colIdx) => {
+                        gridHtml += '<div>';
+                        colSections.forEach((sec, secIdx) => {
+                            const h4Class = secIdx > 0 ? 'font-semibold text-gray-900 mb-4 border-b pb-2 text-sm mt-6' : 'font-semibold text-gray-900 mb-4 border-b pb-2 text-sm';
+                            gridHtml += `<h4 class="${h4Class}">${sec.title}</h4>`;
+                            const ulClass = secIdx < colSections.length - 1 ? 'space-y-2 text-[13px] mb-6' : 'space-y-2 text-[13px]';
+                            gridHtml += `<ul class="${ulClass}">`;
+                            
+                            sec.subcategories.forEach(sub => {
+                                const subslug = getSubcategorySlug(sub);
+                                gridHtml += `
+                                    <li>
+                                        <a href="product-range.html?category=${subslug}" 
+                                           class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">
+                                            ${sub}
+                                        </a>
+                                    </li>
+                                `;
+                            });
+                            
+                            gridHtml += '</ul>';
+                        });
+                        gridHtml += '</div>';
+                    });
+                    desktopGrid.innerHTML = gridHtml;
+                }
+
+                const mobileAccordion = document.getElementById('mobile-products');
+                if (mobileAccordion) {
+                    let mobileHtml = '';
+                    Object.values(sections).forEach(sec => {
+                        if (sec.subcategories.length > 0) {
+                            mobileHtml += `<p class="px-3 pt-3 pb-1 text-[10px] font-black uppercase text-gray-400 tracking-wider">${sec.title}</p>`;
+                            sec.subcategories.forEach(sub => {
+                                const subslug = getSubcategorySlug(sub);
+                                mobileHtml += `<a href="product-range.html?category=${subslug}" class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">${sub}</a>`;
+                            });
+                        }
+                    });
+                    mobileAccordion.innerHTML = mobileHtml;
+                }
+            })
+            .catch(err => console.warn('[GetMEDS] Failed to populate dropdown with dynamic categories:', err));
+    }
+
+    // Run dynamic populate
+    fetchAndPopulateDropdown();
 </script>

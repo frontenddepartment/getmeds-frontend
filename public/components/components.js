@@ -281,6 +281,10 @@
                 .zap-dot:nth-child(2) { animation-delay: 0.2s; }
                 .zap-dot:nth-child(3) { animation-delay: 0.4s; }
 
+                .zap-msg.typing span {
+                    transition: opacity 0.3s ease;
+                }
+
                 #zap-welcome-orb { display: none !important; }
 
                 @keyframes zap-mic-pulse {
@@ -598,11 +602,45 @@
         }
 
         function showTyping() {
+            const anticipationMessages = [
+                "Let me look that up for you…",
+                "Searching our records…",
+                "Checking our product database…",
+                "Finding the best answer for you…",
+                "Just a moment, gathering details…",
+                "Almost there, pulling up the info…",
+                "Looking through our catalog…",
+                "Getting everything ready for you…"
+            ];
+
             const typing = document.createElement('div');
             typing.className = 'zap-msg ai typing';
-            typing.innerHTML = '<span class="zap-dot"></span><span class="zap-dot"></span><span class="zap-dot"></span>';
+            const randomMsg = anticipationMessages[Math.floor(Math.random() * anticipationMessages.length)];
+            typing.innerHTML = `<span style="color:#888;font-style:italic;font-size:12.5px;">${randomMsg}</span>`;
             zapMessages.appendChild(typing);
             zapMessages.scrollTop = zapMessages.scrollHeight;
+
+            // Cycle through messages every 3 seconds to keep it feeling alive
+            let msgIndex = anticipationMessages.indexOf(randomMsg);
+            typing._interval = setInterval(() => {
+                msgIndex = (msgIndex + 1) % anticipationMessages.length;
+                const span = typing.querySelector('span');
+                if (span) {
+                    span.style.opacity = '0';
+                    setTimeout(() => {
+                        span.textContent = anticipationMessages[msgIndex];
+                        span.style.opacity = '1';
+                    }, 300);
+                }
+            }, 3000);
+
+            // Override remove to clean up the interval
+            const originalRemove = typing.remove.bind(typing);
+            typing.remove = () => {
+                if (typing._interval) clearInterval(typing._interval);
+                originalRemove();
+            };
+
             return typing;
         }
 
@@ -646,6 +684,60 @@
         let recognition = null;
         let isListening = false;
 
+        function extractPageText() {
+            try {
+                const mainElement = document.querySelector('main') || 
+                                    document.querySelector('#main') || 
+                                    document.querySelector('#root') || 
+                                    document.body;
+                
+                if (!mainElement) return '';
+
+                const clone = mainElement.cloneNode(true);
+                
+                const excludeSelectors = [
+                    'script', 'style', 'noscript', 'iframe', 'svg',
+                    'nav', 'header', 'footer', '#navbar-container', '#footer-container',
+                    '#zap-chat-window', '#zap-chat-toggle', '.chatbot', '.chat-window',
+                    '#auth-modal-container', '.auth-modal', '[role="dialog"]', '.modal'
+                ];
+                
+                excludeSelectors.forEach(selector => {
+                    const elements = clone.querySelectorAll(selector);
+                    elements.forEach(el => el.remove());
+                });
+
+                let text = '';
+                const tempContainer = document.createElement('div');
+                tempContainer.style.position = 'absolute';
+                tempContainer.style.left = '-9999px';
+                tempContainer.style.top = '-9999px';
+                tempContainer.style.width = '1px';
+                tempContainer.style.height = '1px';
+                tempContainer.style.overflow = 'hidden';
+                
+                document.body.appendChild(tempContainer);
+                tempContainer.appendChild(clone);
+                text = clone.innerText || clone.textContent || '';
+                document.body.removeChild(tempContainer);
+
+                text = text
+                    .replace(/\s+/g, ' ')
+                    .replace(/\n\s*\n+/g, '\n')
+                    .trim();
+
+                const charLimit = 3000;
+                if (text.length > charLimit) {
+                    text = text.substring(0, charLimit) + '... [text truncated]';
+                }
+                
+                return text;
+            } catch (e) {
+                console.warn('[GetMEDS] Failed to extract page text:', e);
+                return '';
+            }
+        }
+
         async function handleResponse(query) {
             const typing = showTyping();
             zapSend.disabled = true;
@@ -677,7 +769,8 @@
                     },
                     body: JSON.stringify({
                         message: query,
-                        session_id: getChatSessionId()
+                        session_id: getChatSessionId(),
+                        page_context: extractPageText()
                     })
                 });
 

@@ -57,6 +57,33 @@ const formatFieldWithLineBreaks = (text: string | undefined | null) => {
   ));
 };
 
+const subcategorySpecials: Record<string, string> = {
+  'non-small-cell-lung-cancer': 'lung-cancer',
+  'acute-myeloid-leukemia': 'aml',
+  'chronic-myeloid-leukemia': 'cml',
+  'hodgkin-non-hodgkins-lymphoma': 'lymphoma',
+  'hodgkin-non-hodgkin-s-lymphoma': 'lymphoma',
+  'sickle-cell-anemia': 'sickle-cell',
+  'respiratory-infections': 'respiratory',
+  'urinary-tract-infections': 'uti',
+  'skin-and-soft-tissue-infections': 'skin-infections',
+  'bone-and-joint-infections': 'bone-infections',
+  'fibrocystic-breast-disease': 'fibrocystic',
+  'arrhythmia-management': 'arrhythmia',
+  'hypertension-angina': 'hypertension',
+  'hypertension-and-angina': 'hypertension',
+  'seasonal-allergic-rhinitis': 'allergic-rhinitis',
+  'chronic-kidney-disease': 'kidney-disease',
+  'chronic-pain': 'pain',
+  'inflammatory-disorders': 'rheumatology',
+  'inflammatory-and-rheumatic-disorders': 'rheumatology'
+};
+
+const getSubcategorySlug = (name: string) => {
+  const slug = name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+  return subcategorySpecials[slug] || slug;
+};
+
 export default function ProductRange() {
   const { getImage } = useImageMapper('product-range');
   const { data: productsDataRaw, loading: productsLoading } = useProducts();
@@ -150,39 +177,6 @@ export default function ProductRange() {
     const query = urlParams.get('search');
     if (query) setSearchTerm(query);
 
-    const categorySlug = urlParams.get('category');
-    if (categorySlug) {
-      const slugMap: Record<string, string> = {
-        'breast-cancer': 'Breast Cancer',
-        'ovarian-cancer': 'Ovarian Cancer',
-        'lung-cancer': 'Non-Small Cell Lung Cancer',
-        'prostate-cancer': 'Prostate Cancer',
-        'colorectal-cancer': 'Colorectal Cancer',
-        'pancreatic-cancer': 'Pancreatic Cancer',
-        'aml': 'Acute Myeloid Leukemia',
-        'cml': 'Chronic Myeloid Leukemia',
-        'lymphoma': "Hodgkin/Non-Hodgkin's Lymphoma",
-        'sickle-cell': 'Sickle Cell Anemia',
-        'respiratory': 'Respiratory Infections',
-        'uti': 'Urinary Tract Infections',
-        'skin-infections': 'Skin and Soft Tissue Infections',
-        'bone-infections': 'Bone and Joint Infections',
-        'endometriosis': 'Endometriosis',
-        'fibrocystic': 'Fibrocystic Breast Disease',
-        'multiple-myeloma': 'Multiple Myeloma',
-        'osteoporosis': 'Osteoporosis',
-        'arrhythmia': 'Arrhythmia management',
-        'hypertension': 'Hypertension/Angina',
-        'glioblastoma': 'Glioblastoma Multiforme',
-        'allergic-rhinitis': 'Seasonal Allergic Rhinitis',
-        'kidney-disease': 'Chronic Kidney Disease',
-        'pain': 'Chronic Pain',
-        'rheumatology': 'Inflammatory Disorders',
-      };
-      const mapped = slugMap[categorySlug];
-      if (mapped) setCurrentCategory(mapped);
-    }
-
     const handleClick = (e: MouseEvent) => {
       if (searchWrapperRef.current && !searchWrapperRef.current.contains(e.target as Node)) {
         setShowSuggestions(false);
@@ -225,38 +219,157 @@ export default function ProductRange() {
     }
   }, [productsLoading, productsData]);
 
+  // Process dynamic categories into 4 columns using Jaccard Similarity Graph Grouping (sim >= 0.5)
+  const processedCats = useMemo(() => {
+    if (!categoriesData) return [];
+
+    const validCats = categoriesData.filter(
+      (cat) => cat.subcategory && Array.isArray(cat.subcategory) && cat.subcategory.length > 0
+    );
+
+    const jaccardSimilarity = (arr1: string[], arr2: string[]) => {
+      const setA = new Set(arr1.map(x => x.trim().toLowerCase()));
+      const setB = new Set(arr2.map(x => x.trim().toLowerCase()));
+      const intersection = new Set([...setA].filter(x => setB.has(x)));
+      const union = new Set([...setA, ...setB]);
+      return union.size === 0 ? 0 : (intersection.size / union.size);
+    };
+
+    const visited = new Set<number>();
+    const groups: Array<typeof validCats> = [];
+
+    for (let i = 0; i < validCats.length; i++) {
+      if (visited.has(i)) continue;
+      
+      const component: typeof validCats = [];
+      const queue = [i];
+      visited.add(i);
+      
+      while (queue.length > 0) {
+        const currIdx = queue.shift()!;
+        const currCat = validCats[currIdx];
+        component.push(currCat);
+        
+        for (let j = 0; j < validCats.length; j++) {
+          if (visited.has(j)) continue;
+          
+          const sim = jaccardSimilarity(currCat.subcategory!, validCats[j].subcategory!);
+          if (sim >= 0.5) {
+            visited.add(j);
+            queue.push(j);
+          }
+        }
+      }
+      groups.push(component);
+    }
+
+    const result: Array<{
+      category: string;
+      slugs: string[];
+      slug: string;
+      subcategory: string[];
+    }> = [];
+
+    groups.forEach((groupCats) => {
+      if (groupCats.length === 1) {
+        result.push({
+          category: groupCats[0].category,
+          slugs: [groupCats[0].slug?.current || ''],
+          slug: groupCats[0].slug?.current || '',
+          subcategory: groupCats[0].subcategory!
+        });
+      } else {
+        const sortedCats = [...groupCats].sort((a, b) => a.category.localeCompare(b.category));
+        const combinedName = sortedCats.map((c) => c.category).join(' / ');
+        
+        // Find shared subcategories
+        const subMaps = sortedCats.map(cat => {
+          const map = new Map<string, string>();
+          cat.subcategory!.forEach(sub => {
+            map.set(sub.trim().toLowerCase(), sub);
+          });
+          return map;
+        });
+
+        const firstMap = subMaps[0];
+        const sharedKeys: string[] = [];
+        for (const key of firstMap.keys()) {
+          let inAll = true;
+          for (let k = 1; k < subMaps.length; k++) {
+            if (!subMaps[k].has(key)) {
+              inAll = false;
+              break;
+            }
+          }
+          if (inAll) {
+            sharedKeys.push(key);
+          }
+        }
+
+        const sharedSubcategories = sharedKeys.map(key => firstMap.get(key)!);
+
+        if (sharedSubcategories.length > 0) {
+          result.push({
+            category: combinedName,
+            slugs: sortedCats.map((c) => c.slug?.current || ''),
+            slug: sortedCats[0].slug?.current || '',
+            subcategory: sharedSubcategories
+          });
+        }
+
+        // Add unique subcategories for each category in the group
+        sortedCats.forEach(cat => {
+          const uniqueSubs = cat.subcategory!.filter(sub => {
+            const norm = sub.trim().toLowerCase();
+            return !sharedKeys.includes(norm);
+          });
+
+          if (uniqueSubs.length > 0) {
+            result.push({
+              category: cat.category,
+              slugs: [cat.slug?.current || ''],
+              slug: cat.slug?.current || '',
+              subcategory: uniqueSubs
+            });
+          }
+        });
+      }
+    });
+
+    return result;
+  }, [categoriesData]);
+
+  // Synchronize URL Category param with dynamic categories data
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const categorySlug = urlParams.get('category');
-    if (categorySlug && categoriesData) {
-      const cleanSlug = categorySlug.toLowerCase();
-      // Check main categories first
-      const matchedCat = categoriesData.find(
-        (cat: any) =>
-          cat.slug?.current?.toLowerCase() === cleanSlug ||
-          cat.category?.toLowerCase() === cleanSlug
-      );
+    if (categorySlug && processedCats.length > 0) {
+      const cleanSlug = categorySlug.toLowerCase().trim();
+      
+      // 1. Check if cleanSlug matches any category slugs
+      const matchedCat = processedCats.find(c => {
+        const hasSlugMatch = c.slugs.some(s => s.toLowerCase() === cleanSlug) || c.slug.toLowerCase() === cleanSlug;
+        const hasNameMatch = c.category.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') === cleanSlug;
+        return hasSlugMatch || hasNameMatch;
+      });
       if (matchedCat) {
         setCurrentCategory(matchedCat.category);
         return;
       }
-      // Check subcategories
-      for (const cat of categoriesData) {
-        if (cat.subcategory && Array.isArray(cat.subcategory)) {
-          const matchedSub = cat.subcategory.find(
-            (sub: string) => {
-              const subSlug = sub.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
-              return subSlug === cleanSlug || sub.toLowerCase() === cleanSlug;
-            }
-          );
-          if (matchedSub) {
-            setCurrentCategory(matchedSub);
-            return;
-          }
+      
+      // 2. Check if cleanSlug matches any subcategory
+      for (const cat of processedCats) {
+        const matchedSub = cat.subcategory.find(sub => {
+          const subSlug = getSubcategorySlug(sub);
+          return subSlug === cleanSlug || sub.toLowerCase() === cleanSlug;
+        });
+        if (matchedSub) {
+          setCurrentCategory(matchedSub);
+          return;
         }
       }
     }
-  }, [categoriesData]);
+  }, [processedCats]);
 
 
   const brandNameCounts = useMemo(() => {
@@ -400,30 +513,35 @@ export default function ProductRange() {
   };
 
   const sidebarCategories = useMemo(() => {
-    if (!categoriesData || !productsData) return [];
-
-    return categoriesData.map(cat => {
-      const subItems = cat.subcategory && Array.isArray(cat.subcategory)
-        ? cat.subcategory.map(sub => ({ label: sub }))
-        : [];
-      return {
-        _id: cat._id,
-        name: cat.category,
-        subItems
-      };
-    }).filter(cat => cat.subItems.length > 0 || productsData.some(p => p.category?._id === cat._id));
-  }, [categoriesData, productsData]);
+    return processedCats.map(cat => ({
+      _id: cat.slug,
+      name: cat.category,
+      subItems: cat.subcategory.map(sub => ({ label: sub }))
+    }));
+  }, [processedCats]);
 
   const getFiltered = (category: string) => {
     if (!productsData) return [];
+    if (category === 'All') return productsData;
+    
     const cleanCategory = category.trim().toLowerCase();
+    
+    // Find if the selected category is one of our processed categories
+    const matchedProcessed = processedCats.find(
+      c => c.category.trim().toLowerCase() === cleanCategory
+    );
+    
+    if (matchedProcessed) {
+      return productsData.filter(p => {
+        const subcats = getProductSubcategories(p);
+        return subcats.some(sub => matchedProcessed.subcategory.some(s => s.trim().toLowerCase() === sub.toLowerCase()));
+      });
+    }
+    
+    // Fallback: search by subcategory name directly
     return productsData.filter(p => {
-      if (category === 'All') return true;
-      if (p.category?.category?.trim().toLowerCase() === cleanCategory) return true;
-      
       const subcats = getProductSubcategories(p);
       if (subcats.some(part => part.toLowerCase() === cleanCategory)) return true;
-      
       return false;
     });
   };

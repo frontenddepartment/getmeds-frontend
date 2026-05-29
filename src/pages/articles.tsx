@@ -4,6 +4,21 @@ import { useNews } from '../lib/useSanity';
 import { urlFor } from '../lib/sanity';
 
 
+const formatDate = (dateStr: string | undefined | null) => {
+  if (!dateStr) return '';
+  try {
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return dateStr;
+    return d.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+  } catch {
+    return dateStr;
+  }
+};
+
 export default function Articles() {
   const { data: articles, loading } = useNews();
 
@@ -187,7 +202,7 @@ export default function Articles() {
                           <span className="text-gray-400 text-xs">{article.readTime}</span>
                         )}
                       </div>
-                      <p className="text-gray-400 text-xs mb-2">{article.date}</p>
+                      <p className="text-gray-400 text-xs mb-2">{formatDate(article.date)}</p>
                       <h3 className="text-gray-900 font-semibold text-base leading-snug mb-3">{article.title}</h3>
                       <p className="text-gray-500 text-sm leading-relaxed line-clamp-3">{article.description}</p>
                     </div>

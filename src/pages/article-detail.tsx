@@ -3,6 +3,21 @@ import { injectHTML } from '../lib/injectHTML';
 import { useNewsById } from '../lib/useSanity';
 import { urlFor } from '../lib/sanity';
 
+const formatDate = (dateStr: string | undefined | null) => {
+  if (!dateStr) return '';
+  try {
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return dateStr;
+    return d.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+  } catch {
+    return dateStr;
+  }
+};
+
 export default function ArticleDetail() {
   const [articleId, setArticleId] = useState<string>('');
   const [activeSection, setActiveSection] = useState(0);
@@ -151,7 +166,7 @@ export default function ArticleDetail() {
 
             {/* Date + read time */}
             <p className="text-xs text-gray-400">
-              {article.date}
+              {formatDate(article.date)}
               {article.readTime && <>&nbsp;•&nbsp;{article.readTime}</>}
             </p>
           </div>
