@@ -99,15 +99,15 @@
         "required": false,
         "options": [
           {
-            "value": "general",
+            "value": "General Inquiry",
             "label": "General Inquiry"
           },
           {
-            "value": "support",
+            "value": "Customer Support",
             "label": "Customer Support"
           },
           {
-            "value": "sales",
+            "value": "Sales & Pricing",
             "label": "Sales & Pricing"
           }
         ]
