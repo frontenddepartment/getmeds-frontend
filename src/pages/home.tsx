@@ -551,11 +551,11 @@ export default function GetMedsHomepage() {
             ? 'bg-white border-b border-gray-100 text-gray-800 fixed top-0 left-0 animate-slide-down'
             : 'bg-transparent text-white absolute top-full left-0 transition-colors duration-300'
             }`}>
-            <div className="max-w-7xl mx-auto px-6 flex items-center justify-between h-20 relative">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between h-20 relative">
 
               {/* Logo */}
-              <div className="w-[180px] shrink-0 flex items-center">
-                <a href="index.html" className="flex items-center">
+              <div className="w-auto sm:w-[180px] shrink-0 flex items-center">
+                <a href="/" className="flex items-center">
                   {(() => {
                     const logoUrl = getImage('assets/getmedslogo.png', 'assets/getmedslogo.png');
                     const isCustomLogo = logoUrl && logoUrl.includes('cdn.sanity.io');
@@ -572,7 +572,7 @@ export default function GetMedsHomepage() {
 
               {/* Navigation Links */}
               <div className="hidden lg:flex flex-1 justify-center items-center space-x-8 text-sm font-semibold font-['Poppins']">
-                <a href="index.html" className="transition-colors duration-300 text-primary">Home</a>
+                <a href="/" className="transition-colors duration-300 text-primary">Home</a>
                 <a href="order-medicines.html" className={`transition-colors duration-300 whitespace-nowrap ${isScrolled ? 'text-gray-700 hover:text-primary' : 'text-white/90 hover:text-primary'}`}>Order Medicines</a>
 
                 {/* Product Range Dropdown */}
@@ -742,32 +742,39 @@ export default function GetMedsHomepage() {
                               <li><a href="careers.html" className="relative inline-block text-gray-700 font-semibold hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300 text-base">Careers</a></li>
                               <li><a href="ungc.html" className="relative inline-block text-gray-700 font-semibold hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300 text-base">United Nations Global Compact</a></li>
                               <li><a href="/articles" className="relative inline-block text-gray-700 font-semibold hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300 text-base">Articles</a></li>
+                              <li className="pt-2">
+                                <a href="careers.html#join-form"
+                                  className="inline-flex items-center px-5 py-2.5 rounded-full text-sm font-semibold text-white transition-all hover:opacity-90 hover:-translate-y-0.5 shadow-md"
+                                  style={{ background: 'linear-gradient(135deg, #61A644, #1D9FDA)' }}>
+                                  Join Us
+                                </a>
+                              </li>
                             </ul>
                           </div>
                         </div>
                         {/* Slider Section (Cols 8-12) */}
                         <div className="lg:col-span-5 h-[260px] relative rounded-2xl overflow-hidden shadow-lg bg-gray-100">
-                          <div className="absolute inset-0 bg-cover bg-center company-slide-1 transition-opacity duration-1000" style={{ backgroundImage: `url('${getImage('assets/about_us_hero.png', 'assets/about_us_hero.png')}')` }}>
+                          <a href="about-us.html" className="absolute inset-0 bg-cover bg-center company-slide-1 transition-opacity duration-1000 cursor-pointer" style={{ backgroundImage: `url('${getImage('assets/about_us_hero.png', 'assets/about_us_hero.png')}')` }}>
                             <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
                             <div className="absolute bottom-6 left-6 right-6">
                               <h3 className="text-white font-bold text-xl mb-1">About Us</h3>
                               <p className="text-white/80 text-sm">Learn more about our mission and vision.</p>
                             </div>
-                          </div>
-                          <div className="absolute inset-0 bg-cover bg-center company-slide-2 transition-opacity duration-1000" style={{ backgroundImage: `url('${getImage('assets/globalpresencehero.jpg', 'assets/globalpresencehero.jpg')}')` }}>
+                          </a>
+                          <a href="global-presence.html" className="absolute inset-0 bg-cover bg-center company-slide-2 transition-opacity duration-1000 cursor-pointer" style={{ backgroundImage: `url('${getImage('assets/globalpresencehero.jpg', 'assets/globalpresencehero.jpg')}')` }}>
                             <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
                             <div className="absolute bottom-6 left-6 right-6">
                               <h3 className="text-white font-bold text-xl mb-1">Global Presence</h3>
                               <p className="text-white/80 text-sm">We are expanding healthcare solutions worldwide.</p>
                             </div>
-                          </div>
-                          <div className="absolute inset-0 bg-cover bg-center company-slide-3 transition-opacity duration-1000" style={{ backgroundImage: `url('${getImage('assets/careershero.png', 'assets/careershero.png')}')` }}>
+                          </a>
+                          <a href="careers.html" className="absolute inset-0 bg-cover bg-center company-slide-3 transition-opacity duration-1000 cursor-pointer" style={{ backgroundImage: `url('${getImage('assets/careershero.png', 'assets/careershero.png')}')` }}>
                             <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
                             <div className="absolute bottom-6 left-6 right-6">
                               <h3 className="text-white font-bold text-xl mb-1">Careers</h3>
                               <p className="text-white/80 text-sm">Join our team and make a difference.</p>
                             </div>
-                          </div>
+                          </a>
                         </div>
                       </div>
                     </div>
@@ -776,7 +783,7 @@ export default function GetMedsHomepage() {
               </div>
 
               {/* Right side — hamburger on mobile, empty spacer on desktop */}
-              <div className="w-[180px] shrink-0 flex items-center justify-end">
+              <div className="w-auto sm:w-[180px] shrink-0 flex items-center justify-end">
                 <button
                   className={`lg:hidden p-2 rounded-md transition-colors duration-300 ${isScrolled ? 'text-gray-600 hover:text-primary' : 'text-white hover:text-white/70'}`}
                   onClick={() => setIsMobileMenuOpen(o => !o)}
@@ -792,7 +799,7 @@ export default function GetMedsHomepage() {
           {isMobileMenuOpen && (
             <div className="lg:hidden fixed top-[80px] left-0 w-full bg-white shadow-xl border-t border-gray-100 z-[200] overflow-y-auto" style={{ height: 'calc(100vh - 80px)' }}>
               <div className="flex flex-col px-4 py-4 pb-12">
-                <a href="index.html" className="flex items-center px-3 py-3.5 text-[15px] font-semibold text-primary border-b border-gray-100">Home</a>
+                <a href="/" className="flex items-center px-3 py-3.5 text-[15px] font-semibold text-primary border-b border-gray-100">Home</a>
                 <a href="order-medicines.html" className="flex items-center px-3 py-3.5 text-[15px] font-semibold text-gray-700 border-b border-gray-100 hover:text-primary transition">Order Medicines</a>
 
                 {/* Product Range accordion */}
@@ -879,6 +886,13 @@ export default function GetMedsHomepage() {
                       <a href="careers.html" className="block pl-5 py-2.5 text-[14px] font-medium text-gray-600 hover:text-primary transition">Careers</a>
                       <a href="ungc.html" className="block pl-5 py-2.5 text-[14px] font-medium text-gray-600 hover:text-primary transition">United Nations Global Compact</a>
                       <a href="/articles" className="block pl-5 py-2.5 text-[14px] font-medium text-gray-600 hover:text-primary transition">Articles</a>
+                      <div className="pl-5 pt-2 pb-1">
+                        <a href="careers.html#join-form"
+                          className="inline-flex items-center px-5 py-2.5 rounded-full text-sm font-semibold text-white shadow-md"
+                          style={{ background: 'linear-gradient(135deg, #61A644, #1D9FDA)' }}>
+                          Join Us
+                        </a>
+                      </div>
                       <a href="pap.html" className="block pl-5 py-1">
                         <img src={getImage('assets/PAPlogo.png', 'assets/PAPlogo.png')} alt="Patient Assistance Program" className="h-12 w-auto object-contain" />
                       </a>
@@ -1066,28 +1080,28 @@ export default function GetMedsHomepage() {
             {/* Card 1: Foundation */}
             <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
               <i className="fa-solid fa-pills text-3xl text-[#1D9FDA] mb-4 block"></i>
-              <h4 className="text-lg font-bold text-gray-900 mb-2">Foundation</h4>
+              <h4 className="text-lg font-semibold text-gray-900 mb-2">Foundation</h4>
               <p className="text-sm text-gray-500"><span className="font-bold text-gray-500">Everyday medicines, never out of reach.</span> Branded generics and essential medicines.</p>
             </div>
 
             {/* Card 2: Acceleration */}
             <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
               <i className="fa-solid fa-bolt text-3xl text-[#61A644] mb-4 block"></i>
-              <h4 className="text-lg font-bold text-gray-900 mb-2">Acceleration</h4>
+              <h4 className="text-lg font-semibold text-gray-900 mb-2">Acceleration</h4>
               <p className="text-sm text-gray-500"><span className="font-bold text-gray-500">Smarter therapies, faster access.</span> Off-patent molecules, fixed-dose combinations, and new delivery systems.</p>
             </div>
 
             {/* Card 3: Frontier */}
             <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
               <i className="fa-solid fa-microscope text-3xl text-[#5533FF] mb-4 block"></i>
-              <h4 className="text-lg font-bold text-gray-900 mb-2">Frontier</h4>
+              <h4 className="text-lg font-semibold text-gray-900 mb-2">Frontier</h4>
               <p className="text-sm text-gray-500"><span className="font-bold text-gray-500">Advanced therapies, within reach.</span> Oncology, hematology, specialty medicines and rare disease.</p>
             </div>
 
             {/* Card 4: Beyond the molecule */}
             <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
               <i className="fa-solid fa-network-wired text-3xl text-[#FFB020] mb-4 block"></i>
-              <h4 className="text-lg font-bold text-gray-900 mb-2">Beyond the molecule</h4>
+              <h4 className="text-lg font-semibold text-gray-900 mb-2">Beyond the molecule</h4>
               <p className="text-sm text-gray-500"><span className="font-bold text-gray-500">The access infrastructure.</span> Cold-chain logistics, last-mile delivery, and patient programs.</p>
             </div>
           </div>

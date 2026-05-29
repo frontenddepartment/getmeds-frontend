@@ -68,16 +68,72 @@
         </div>
 
         <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-gray-500">
-            <p id="footer-copyright">&copy; 2025 Getmeds. All rights reserved.</p>
-            <div id="footer-legal-links" class="flex space-x-6 mt-4 md:mt-0">
+            <p id="footer-copyright">&copy; <span id="footer-year"></span> Getmeds. All rights reserved.</p>
+            <div id="footer-legal-links" class="flex flex-wrap justify-center gap-x-6 gap-y-2 mt-4 md:mt-0">
                 <a href="#" class="footer-link text-gray-500 hover:!text-white">Privacy Policy</a>
                 <a href="#" class="footer-link text-gray-500 hover:!text-white">Terms of Service</a>
+                <button onclick="document.getElementById('medical-disclaimer-modal').classList.remove('hidden')"
+                    class="footer-link text-gray-500 hover:!text-white bg-transparent border-none cursor-pointer text-xs p-0">
+                    Medical Disclaimer
+                </button>
             </div>
         </div>
     </div>
 </footer>
 
+<!-- Medical Disclaimer Modal -->
+<div id="medical-disclaimer-modal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[85vh] flex flex-col overflow-hidden">
+        <!-- Header -->
+        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 flex-shrink-0">
+            <h2 class="text-[15px] font-semibold text-gray-900">Medical Disclaimer</h2>
+            <button onclick="document.getElementById('medical-disclaimer-modal').classList.add('hidden')"
+                class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 transition">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+        </div>
+        <!-- Content -->
+        <div class="overflow-y-auto px-6 py-5 space-y-5 text-[13px] text-gray-600 leading-relaxed" style="scrollbar-width:thin;scrollbar-color:#e5e7eb transparent;">
+            <div>
+                <p class="font-semibold text-gray-800 mb-1">Informational Purpose Only</p>
+                <p>All content on this website is provided for general informational purposes and is not intended as medical advice. It is not a substitute for professional healthcare guidance.</p>
+            </div>
+            <div>
+                <p class="font-semibold text-gray-800 mb-1">No Doctor-Patient Relationship</p>
+                <p>Use of this website does not establish a doctor-patient relationship. For diagnosis, treatment, or medical concerns, consult a qualified healthcare professional.</p>
+            </div>
+            <div>
+                <p class="font-semibold text-gray-800 mb-1">Product Information</p>
+                <p>Descriptions of pharmaceutical products, therapies, or treatments are for informational purposes. Availability, dosage, and usage may vary. Always follow the advice of your healthcare provider and refer to the product's official labeling.</p>
+            </div>
+            <div>
+                <p class="font-semibold text-gray-800 mb-1">Health Risks</p>
+                <p>Use of any medication or therapy mentioned on this website carries potential risks and side effects. We are not responsible for any consequences arising from self-medication or misinterpretation of the information provided.</p>
+            </div>
+            <div>
+                <p class="font-semibold text-gray-800 mb-1">Updates</p>
+                <p>Medical information is subject to change. Always verify details with authoritative sources or healthcare professionals.</p>
+            </div>
+        </div>
+        <!-- Footer -->
+        <div class="px-6 py-4 border-t border-gray-100 flex-shrink-0">
+            <button onclick="document.getElementById('medical-disclaimer-modal').classList.add('hidden')"
+                class="w-full py-2.5 rounded-xl text-sm font-semibold text-white transition"
+                style="background: linear-gradient(135deg, #61A644, #1D9FDA);">
+                I Understand
+            </button>
+        </div>
+    </div>
+</div>
+
 <style>
+    .footer-nav-grid {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 0.6rem;
+        font-size: 0.8125rem;
+    }
     .footer-link {
         position: relative;
         display: inline-block;
@@ -102,4 +158,30 @@
     .footer-link:hover::after {
         transform: scaleX(1);
     }
+    #medical-disclaimer-modal .overflow-y-auto::-webkit-scrollbar {
+        width: 4px;
+    }
+    #medical-disclaimer-modal .overflow-y-auto::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    #medical-disclaimer-modal .overflow-y-auto::-webkit-scrollbar-thumb {
+        background: #e5e7eb;
+        border-radius: 4px;
+    }
+    #medical-disclaimer-modal .overflow-y-auto::-webkit-scrollbar-button {
+        display: none;
+    }
 </style>
+
+<script>
+    // Dynamic copyright year
+    (function () {
+        var el = document.getElementById('footer-year');
+        if (el) el.textContent = new Date().getFullYear();
+    })();
+
+    // Close modal on backdrop click
+    document.getElementById('medical-disclaimer-modal').addEventListener('click', function (e) {
+        if (e.target === this) this.classList.add('hidden');
+    });
+</script>

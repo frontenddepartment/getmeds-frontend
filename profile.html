@@ -1,9 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
+﻿<!DOCTYPE html>
+<html lang="en" class="overflow-x-hidden">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Profile - GetMEDS</title>
+    <title>My Profile - Getmeds</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -81,7 +81,7 @@
                     <i class="fa-solid fa-ticket text-center text-lg w-5 text-gray-400"></i> My Vouchers
                 </a>
                 <a href="javascript:void(0)" onclick="switchProfileTab('coins', this)" class="sidebar-link flex items-center gap-3 px-4 py-3 text-[13px] font-medium text-gray-600 rounded-r-lg hover:bg-gray-50 transition border-l-3 border-transparent">
-                    <i class="fa-solid fa-coins text-center text-lg w-5 text-yellow-500"></i> My GetMEDS Coins
+                    <i class="fa-solid fa-coins text-center text-lg w-5 text-yellow-500"></i> My Getmeds Coins
                 </a>
                 
                 <hr class="border-gray-100 my-3 mx-2">
@@ -125,7 +125,7 @@
                         <div class="bg-white px-6 py-4 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                             <div class="flex items-center gap-3">
                                 <span class="bg-green-100 text-success text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">Official Pharmacy</span>
-                                <span class="font-bold text-gray-800 text-sm">GetMEDS Supply</span>
+                                <span class="font-bold text-gray-800 text-sm">Getmeds Supply</span>
                             </div>
                             <div class="flex items-center gap-3 self-end sm:self-auto">
                                 <span class="text-gray-500 text-xs font-semibold"><i class="fa-solid fa-truck-fast mr-1"></i> Delivered on Apr 10, 2026</span>
@@ -191,7 +191,7 @@
                 <div class="h-24 w-24 bg-yellow-50 text-yellow-500 rounded-full flex items-center justify-center mb-6 shadow-inner">
                     <i class="fa-solid fa-coins text-4xl"></i>
                 </div>
-                <h3 class="text-2xl font-bold text-gray-800 mb-2">0 GetMEDS Coins</h3>
+                <h3 class="text-2xl font-bold text-gray-800 mb-2">0 Getmeds Coins</h3>
                 <p class="text-[15px] text-gray-500 text-center max-w-sm">Buy more products and leave reviews to earn coins that you can use for direct discounts.</p>
             </div>
         </div>
@@ -210,11 +210,12 @@
             <!-- Modal Header -->
             <div class="bg-white border-b border-gray-100 px-6 py-4 flex justify-between items-center shrink-0">
                 <div class="flex items-center space-x-4">
-                    <img src="assets/getmedslogo.png" alt="GetMEDS Logo" class="h-6 w-auto object-contain">
+                    <img src="assets/getmedslogo.png" alt="Getmeds Logo" class="h-6 w-auto object-contain">
                     <h3 class="text-base font-semibold text-gray-800 border-l border-gray-200 pl-4">Product Details & Inquiry</h3>
                 </div>
                 <div class="flex items-center space-x-4">
-                    <button class="hidden sm:flex items-center text-gray-500 hover:text-primary transition text-sm space-x-1.5">
+                    <button class="hidden sm:flex items-center text-gray-500 hover:text-primary transition text-sm space-x-1.5"
+                        onclick="(function(){ var c=document.getElementById('zap-chat-window'); if(c) c.classList.add('active'); })()">
                         <i class="fa-regular fa-circle-question"></i>
                         <span>Do you need help?</span>
                     </button>

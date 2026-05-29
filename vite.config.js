@@ -66,6 +66,15 @@ export default defineConfig(({ mode }) => {
             const cleanPath = urlPath.startsWith('/') ? urlPath : '/' + urlPath;
             const qs = (req.url || '').includes('?') ? req.url.slice(req.url.indexOf('?')) : '';
             
+            if (cleanPath === '/index.html') {
+              const htmlPath = path.join(process.cwd(), 'home-preview.html');
+              if (fs.existsSync(htmlPath)) {
+                const htmlContent = fs.readFileSync(htmlPath, 'utf-8');
+                res.setHeader('Content-Type', 'text/html');
+                res.end(htmlContent);
+                return;
+              }
+            }
             if (cleanPath === '/pap.html') {
               res.statusCode = 302;
               res.setHeader('Location', '/pap' + qs);

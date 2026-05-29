@@ -610,14 +610,14 @@ export default function AboutUs() {
 
             {/* Row 2 */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-              {/* Leader 2 */}
-              <div className="reveal" style={{ transitionDelay: '150ms' }} id="elena-rodriguez">
+              {/* Member 2 */}
+              <div className="reveal" style={{ transitionDelay: '150ms' }} id="subir-dey">
                 <div className="team-card bg-gray-100 group">
                   <div className="team-ribbon">
                     <span className="vertical-text">Getmeds</span>
                   </div>
                   <div className="team-img-wrapper">
-                    <img src={getImage('assets/employeeone.png', 'assets/employeeone.png')} alt="Dr. Elena Rodriguez"
+                    <img src={getImage('assets/employeeone.png', 'assets/employeeone.png')} alt="Mr. Subir Dey"
                       className="team-img transition-all duration-700" />
                   </div>
                   <div className="team-social">
@@ -626,20 +626,20 @@ export default function AboutUs() {
                         className="fa-brands fa-linkedin-in"></i></a>
                   </div>
                   <div className="team-content">
-                    <h4 data-json="team.members.1.name" className="team-name">Dr. Elena Rodriguez</h4>
-                    <p data-json="team.members.1.role" className="team-role">Chief Operations Officer</p>
+                    <h4 className="team-name">Mr. Subir Dey</h4>
+                    <p className="team-role">Sales and Marketing Coach</p>
                   </div>
                 </div>
               </div>
 
-              {/* Leader 3 */}
-              <div className="reveal" style={{ transitionDelay: '300ms' }} id="michael-chen">
+              {/* Member 3 */}
+              <div className="reveal" style={{ transitionDelay: '300ms' }} id="mira-verango">
                 <div className="team-card bg-gray-100 group">
                   <div className="team-ribbon">
                     <span className="vertical-text">Getmeds</span>
                   </div>
                   <div className="team-img-wrapper">
-                    <img src={getImage('assets/employeetwo.png', 'assets/employeetwo.png')} alt="Dr. Michael Chen"
+                    <img src={getImage('assets/employeetwo.png', 'assets/employeetwo.png')} alt="Ms. Mira Verango"
                       className="team-img transition-all duration-700" />
                   </div>
                   <div className="team-social">
@@ -648,20 +648,20 @@ export default function AboutUs() {
                         className="fa-brands fa-linkedin-in"></i></a>
                   </div>
                   <div className="team-content">
-                    <h4 data-json="team.members.2.name" className="team-name">Dr. Michael Chen</h4>
-                    <p data-json="team.members.2.role" className="team-role">Medical Director</p>
+                    <h4 className="team-name">Ms. Mira Verango</h4>
+                    <p className="team-role">Executive and Admin Coach</p>
                   </div>
                 </div>
               </div>
 
-              {/* Leader 4 */}
-              <div className="reveal" style={{ transitionDelay: '450ms' }} id="sarah-jenkins">
+              {/* Member 4 */}
+              <div className="reveal" style={{ transitionDelay: '450ms' }} id="vanessa-escalderon">
                 <div className="team-card bg-gray-100 group">
                   <div className="team-ribbon">
                     <span className="vertical-text">Getmeds</span>
                   </div>
                   <div className="team-img-wrapper">
-                    <img src={getImage('assets/employeethree.png', 'assets/employeethree.png')} alt="Dr. Sarah Jenkins"
+                    <img src={getImage('assets/employeethree.png', 'assets/employeethree.png')} alt="Ms. Vanessa Escalderon"
                       className="team-img transition-all duration-700" />
                   </div>
                   <div className="team-social">
@@ -670,23 +670,92 @@ export default function AboutUs() {
                         className="fa-brands fa-linkedin-in"></i></a>
                   </div>
                   <div className="team-content">
-                    <h4 data-json="team.members.3.name" className="team-name">Dr. Sarah Jenkins</h4>
-                    <p data-json="team.members.3.role" className="team-role">Chief Financial Officer</p>
+                    <h4 className="team-name">Ms. Vanessa Escalderon</h4>
+                    <p className="team-role">Hospital Division Coach, Talent Development &amp; Growth Mentor</p>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Row 3 */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+              {/* Member 5 */}
+              <div className="reveal" style={{ transitionDelay: '150ms' }} id="javed-shaikh">
+                <div className="team-card bg-gray-100 group">
+                  <div className="team-ribbon">
+                    <span className="vertical-text">Getmeds</span>
+                  </div>
+                  <div className="team-img-wrapper">
+                    <img src={getImage('assets/employeefour.png', 'assets/employeefour.png')} alt="Mr. Javed Shaikh"
+                      className="team-img transition-all duration-700" />
+                  </div>
+                  <div className="team-social">
+                    <a href="#"
+                      className="h-9 w-9 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-primary transition shadow-lg"><i
+                        className="fa-brands fa-linkedin-in"></i></a>
+                  </div>
+                  <div className="team-content">
+                    <h4 className="team-name">Mr. Javed Shaikh</h4>
+                    <p className="team-role">Sales and Marketing Coach</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Member 6 */}
+              <div className="reveal" style={{ transitionDelay: '300ms' }} id="beatrice-ampaso">
+                <div className="team-card bg-gray-100 group">
+                  <div className="team-ribbon">
+                    <span className="vertical-text">Getmeds</span>
+                  </div>
+                  <div className="team-img-wrapper">
+                    <img src={getImage('assets/employeefive.png', 'assets/employeefive.png')} alt="Ms. Beatrice Shane Ampaso"
+                      className="team-img transition-all duration-700" />
+                  </div>
+                  <div className="team-social">
+                    <a href="#"
+                      className="h-9 w-9 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-primary transition shadow-lg"><i
+                        className="fa-brands fa-linkedin-in"></i></a>
+                  </div>
+                  <div className="team-content">
+                    <h4 className="team-name">Ms. Beatrice Shane Ampaso</h4>
+                    <p className="team-role">Sales &amp; Business Dev't Mentor</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Member 7 */}
+              <div className="reveal" style={{ transitionDelay: '450ms' }} id="esther-chiong">
+                <div className="team-card bg-gray-100 group">
+                  <div className="team-ribbon">
+                    <span className="vertical-text">Getmeds</span>
+                  </div>
+                  <div className="team-img-wrapper">
+                    <img src={getImage('assets/employeesix.png', 'assets/employeesix.png')} alt="Ms. Esther Roselle Chiong"
+                      className="team-img transition-all duration-700" />
+                  </div>
+                  <div className="team-social">
+                    <a href="#"
+                      className="h-9 w-9 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-primary transition shadow-lg"><i
+                        className="fa-brands fa-linkedin-in"></i></a>
+                  </div>
+                  <div className="team-content">
+                    <h4 className="team-name">Ms. Esther Roselle Chiong</h4>
+                    <p className="team-role">In-Licensing Mentor</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Row 4 */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {/* Leader 5 */}
-              <div className="reveal" style={{ transitionDelay: '150ms' }} id="david-torres">
+              {/* Member 8 */}
+              <div className="reveal" style={{ transitionDelay: '150ms' }} id="ivy-varias">
                 <div className="team-card bg-gray-100 group">
                   <div className="team-ribbon">
                     <span className="vertical-text">Getmeds</span>
                   </div>
                   <div className="team-img-wrapper">
-                    <img src={getImage('assets/employeefour.png', 'assets/employeefour.png')} alt="Mr. David Torres"
+                    <img src={getImage('assets/employeeseven.png', 'assets/employeeseven.png')} alt="Ms. Ivy Marcel Varias"
                       className="team-img transition-all duration-700" />
                   </div>
                   <div className="team-social">
@@ -695,20 +764,20 @@ export default function AboutUs() {
                         className="fa-brands fa-linkedin-in"></i></a>
                   </div>
                   <div className="team-content">
-                    <h4 data-json="team.members.4.name" className="team-name">Mr. David Torres</h4>
-                    <p data-json="team.members.4.role" className="team-role">Chief Technology Officer</p>
+                    <h4 className="team-name">Ms. Ivy Marcel Varias</h4>
+                    <p className="team-role">Regulatory Affairs Mentor</p>
                   </div>
                 </div>
               </div>
 
-              {/* Leader 6 */}
-              <div className="reveal" style={{ transitionDelay: '300ms' }} id="emily-wong">
+              {/* Member 9 */}
+              <div className="reveal" style={{ transitionDelay: '300ms' }} id="malou-jagonoy">
                 <div className="team-card bg-gray-100 group">
                   <div className="team-ribbon">
                     <span className="vertical-text">Getmeds</span>
                   </div>
                   <div className="team-img-wrapper">
-                    <img src={getImage('assets/employeefive.png', 'assets/employeefive.png')} alt="Dr. Emily Wong"
+                    <img src={getImage('assets/employeeeight.png', 'assets/employeeeight.png')} alt="Ms. Malou Jagonoy"
                       className="team-img transition-all duration-700" />
                   </div>
                   <div className="team-social">
@@ -717,20 +786,20 @@ export default function AboutUs() {
                         className="fa-brands fa-linkedin-in"></i></a>
                   </div>
                   <div className="team-content">
-                    <h4 data-json="team.members.5.name" className="team-name">Dr. Emily Wong</h4>
-                    <p data-json="team.members.5.role" className="team-role">Head of R&amp;D</p>
+                    <h4 className="team-name">Ms. Malou Jagonoy</h4>
+                    <p className="team-role">Finance Mentor</p>
                   </div>
                 </div>
               </div>
 
-              {/* Leader 7 */}
-              <div className="reveal" style={{ transitionDelay: '450ms' }} id="rachel-green">
+              {/* Member 10 */}
+              <div className="reveal" style={{ transitionDelay: '450ms' }} id="sarla-devi">
                 <div className="team-card bg-gray-100 group">
                   <div className="team-ribbon">
                     <span className="vertical-text">Getmeds</span>
                   </div>
                   <div className="team-img-wrapper">
-                    <img src={getImage('assets/employeesix.png', 'assets/employeesix.png')} alt="Ms. Rachel Green"
+                    <img src={getImage('assets/employeenine.png', 'assets/employeenine.png')} alt="Ms. Sarla Devi"
                       className="team-img transition-all duration-700" />
                   </div>
                   <div className="team-social">
@@ -739,8 +808,8 @@ export default function AboutUs() {
                         className="fa-brands fa-linkedin-in"></i></a>
                   </div>
                   <div className="team-content">
-                    <h4 data-json="team.members.6.name" className="team-name">Ms. Rachel Green</h4>
-                    <p data-json="team.members.6.role" className="team-role">VP of Human Resources</p>
+                    <h4 className="team-name">Ms. Sarla Devi</h4>
+                    <p className="team-role">Finance Coach</p>
                   </div>
                 </div>
               </div>

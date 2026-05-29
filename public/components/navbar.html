@@ -1,7 +1,6 @@
 <style>
     /* Active nav link — keyed off data-page attribute on each page's <body> */
-    body[data-page="home"] a[href="/"],
-    body[data-page="home"] a[href="index.html"] { color: #0D99FF; }
+    body[data-page="home"] a[href="/"] { color: #0D99FF; }
     body[data-page="order-medicines"] a[href="order-medicines.html"] { color: #0D99FF; }
     body[data-page="product-range"] a[href="product-range.html"] { color: #0D99FF; }
     body[data-page="meditations"] a[href="meditations.html"] { color: #0D99FF; }
@@ -33,7 +32,7 @@
         <div class="flex items-center justify-between h-20 relative">
             <!-- Logo (Left) -->
             <div class="w-[140px] lg:w-[200px] flex-shrink-0 flex items-center">
-                <a href="index.html" class="flex items-center">
+                <a href="/" class="flex items-center">
                     <img src="assets/getmedslogo.png" alt="Getmeds Logo" class="h-10 w-auto object-contain">
                 </a>
             </div>
@@ -324,41 +323,43 @@
                                                     Nations Global Compact</a></li>
                                             <li><a href="/articles"
                                                     class="relative inline-block text-gray-700 font-semibold hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300 text-base">Articles</a></li>
+                                            <li class="pt-2">
+                                                <a href="careers.html#join-form"
+                                                    class="inline-flex items-center px-5 py-2.5 rounded-full text-sm font-semibold text-white transition-all hover:opacity-90 hover:-translate-y-0.5 shadow-md"
+                                                    style="background: linear-gradient(135deg, #61A644, #1D9FDA);">
+                                                    Join Us
+                                                </a>
+                                            </li>
                                         </ul>
                                     </div>
                                 </div>
                                 <!-- Slider Section (Cols 8-12) -->
                                 <div
                                     class="lg:col-span-5 h-[260px] relative rounded-2xl overflow-hidden shadow-lg bg-gray-100">
-                                    <div class="absolute inset-0 bg-cover bg-center company-slide-1 transition-opacity duration-1000"
+                                    <a href="about-us.html" class="absolute inset-0 bg-cover bg-center company-slide-1 transition-opacity duration-1000 cursor-pointer"
                                         style="background-image: url('assets/about_us_hero.png');">
-                                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent">
-                                        </div>
+                                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
                                         <div class="absolute bottom-6 left-6 right-6">
                                             <h3 class="text-white font-bold text-xl mb-1">About Us</h3>
-                                            <p class="text-white/80 text-sm">Learn more about our mission and vision.
-                                            </p>
+                                            <p class="text-white/80 text-sm">Learn more about our mission and vision.</p>
                                         </div>
-                                    </div>
-                                    <div class="absolute inset-0 bg-cover bg-center company-slide-2 transition-opacity duration-1000"
+                                    </a>
+                                    <a href="global-presence.html" class="absolute inset-0 bg-cover bg-center company-slide-2 transition-opacity duration-1000 cursor-pointer"
                                         style="background-image: url('assets/globalpresencehero.jpg');">
-                                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent">
-                                        </div>
+                                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
                                         <div class="absolute bottom-6 left-6 right-6">
                                             <h3 class="text-white font-bold text-xl mb-1">Global Presence</h3>
-                                            <p class="text-white/80 text-sm">We are expanding healthcare solutions
-                                                worldwide.</p>
+                                            <p class="text-white/80 text-sm">We are expanding healthcare solutions worldwide.</p>
                                         </div>
-                                    </div>
-                                    <div class="absolute inset-0 bg-cover bg-center company-slide-3 transition-opacity duration-1000"
+                                    </a>
+                                    <a href="careers.html" class="absolute inset-0 bg-cover bg-center company-slide-3 transition-opacity duration-1000 cursor-pointer"
                                         style="background-image: url('assets/careershero.png');">
-                                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent">
-                                        </div>
+                                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
                                         <div class="absolute bottom-6 left-6 right-6">
                                             <h3 class="text-white font-bold text-xl mb-1">Careers</h3>
                                             <p class="text-white/80 text-sm">Join our team and make a difference.</p>
                                         </div>
-                                    </div>
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -393,7 +394,7 @@
         <div class="flex flex-col px-4 py-4 pb-12">
 
             <!-- Home -->
-            <a href="index.html"
+            <a href="/"
                 class="flex items-center px-3 py-3.5 text-[15px] font-semibold text-gray-700 border-b border-gray-100 hover:text-primary transition">
                 Home
             </a>
@@ -493,6 +494,13 @@
                     <a href="careers.html" class="block pl-5 py-2.5 text-[14px] font-medium text-gray-600 hover:text-primary transition">Careers</a>
                     <a href="ungc.html" class="block pl-5 py-2.5 text-[14px] font-medium text-gray-600 hover:text-primary transition">United Nations Global Compact</a>
                     <a href="/articles" class="block pl-5 py-2.5 text-[14px] font-medium text-gray-600 hover:text-primary transition">Articles</a>
+                    <div class="pl-5 pt-2 pb-1">
+                        <a href="careers.html#join-form"
+                            class="inline-flex items-center px-5 py-2.5 rounded-full text-sm font-semibold text-white transition-all active:opacity-80 shadow-md"
+                            style="background: linear-gradient(135deg, #61A644, #1D9FDA);">
+                            Join Us
+                        </a>
+                    </div>
                     <a href="/pap" class="block pl-5 py-2 mt-2">
                         <img src="assets/pap.png" alt="Patient Assistance Program" class="h-16 w-auto object-contain">
                     </a>

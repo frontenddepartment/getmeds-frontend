@@ -1159,12 +1159,15 @@
                 }
             }
 
-            // 5. Copyright
+            // 5. Copyright — always use the current year
             const footerCopyright = document.getElementById('footer-copyright');
-            if (footerCopyright && settings.copyright) {
-                const normalizedCopyright = settings.copyright.replace(/GetMEDS/g, 'Getmeds');
-                if (footerCopyright.textContent !== normalizedCopyright) {
-                    footerCopyright.textContent = normalizedCopyright;
+            if (footerCopyright) {
+                const currentYear = new Date().getFullYear().toString();
+                const base = settings.copyright
+                    ? settings.copyright.replace(/GetMEDS/g, 'Getmeds').replace(/\b\d{4}\b/, currentYear)
+                    : `© ${currentYear} Getmeds. All rights reserved.`;
+                if (footerCopyright.textContent.trim() !== base.trim()) {
+                    footerCopyright.textContent = base;
                 }
             }
 
@@ -1214,7 +1217,7 @@
                 }
             }
 
-            // 7. Legal Links
+            // 7. Legal Links — always include Medical Disclaimer
             const footerLegal = document.getElementById('footer-legal-links');
             if (footerLegal && settings.legalLinks && Array.isArray(settings.legalLinks)) {
                 if (!footerLegal.dataset.populated) {
@@ -1231,6 +1234,15 @@
                         }
                         footerLegal.appendChild(a);
                     });
+                    // Always append Medical Disclaimer regardless of Sanity config
+                    const disclaimerBtn = document.createElement('button');
+                    disclaimerBtn.className = 'footer-link text-gray-500 hover:text-white bg-transparent border-none cursor-pointer text-xs p-0';
+                    disclaimerBtn.textContent = 'Medical Disclaimer';
+                    disclaimerBtn.addEventListener('click', function () {
+                        var modal = document.getElementById('medical-disclaimer-modal');
+                        if (modal) modal.classList.remove('hidden');
+                    });
+                    footerLegal.appendChild(disclaimerBtn);
                     footerLegal.dataset.populated = 'true';
                 }
             }

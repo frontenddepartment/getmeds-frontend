@@ -89,6 +89,17 @@ const Careers: React.FC = () => {
   };
 
   useEffect(() => {
+    const hash = window.location.hash;
+    if (hash) {
+      const id = decodeURIComponent(hash.substring(1));
+      setTimeout(() => {
+        const el = document.getElementById(id);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 600);
+    }
+  }, []);
+
+  useEffect(() => {
     // Fetch careers from Sanity
     getCareers()
       .then(data => {
@@ -304,7 +315,7 @@ const Careers: React.FC = () => {
               <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center mb-5">
                 <i className="fa-solid fa-microscope text-2xl text-primary"></i>
               </div>
-              <h4 className="text-[15px] font-bold text-dark mb-2">Major Portfolio</h4>
+              <h4 className="text-[15px] font-semibold text-dark mb-2">Major Portfolio</h4>
               <p className="text-[13px] text-gray-500 leading-relaxed">One of the largest Hematology &amp; Oncology
                 portfolios in the Philippines.</p>
             </div>
@@ -313,7 +324,7 @@ const Careers: React.FC = () => {
               <div className="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center mb-5">
                 <i className="fa-solid fa-certificate text-2xl text-success"></i>
               </div>
-              <h4 className="text-[15px] font-bold text-dark mb-2">Exclusive Products</h4>
+              <h4 className="text-[15px] font-semibold text-dark mb-2">Exclusive Products</h4>
               <p className="text-[13px] text-gray-500 leading-relaxed">Exclusive CSP products available to Filipino
                 patients only through Getmeds.</p>
             </div>
@@ -322,7 +333,7 @@ const Careers: React.FC = () => {
               <div className="w-12 h-12 rounded-xl bg-purple-50 flex items-center justify-center mb-5">
                 <i className="fa-solid fa-route text-2xl text-[#8B5CF6]"></i>
               </div>
-              <h4 className="text-[15px] font-bold text-dark mb-2">Structured Path</h4>
+              <h4 className="text-[15px] font-semibold text-dark mb-2">Structured Path</h4>
               <p className="text-[13px] text-gray-500 leading-relaxed">Structured Career Development Path within the
                 first 6 months of joining.</p>
             </div>
@@ -331,7 +342,7 @@ const Careers: React.FC = () => {
               <div className="w-12 h-12 rounded-xl bg-orange-50 flex items-center justify-center mb-5">
                 <i className="fa-solid fa-arrow-up-right-dots text-2xl text-[#F59E0B]"></i>
               </div>
-              <h4 className="text-[15px] font-bold text-dark mb-2">Fast Promotion</h4>
+              <h4 className="text-[15px] font-semibold text-dark mb-2">Fast Promotion</h4>
               <p className="text-[13px] text-gray-500 leading-relaxed">Fast-track Promotions &amp; Annual Salary
                 Increments for high performers.</p>
             </div>
@@ -340,7 +351,7 @@ const Careers: React.FC = () => {
               <div className="w-12 h-12 rounded-xl bg-red-50 flex items-center justify-center mb-5">
                 <i className="fa-solid fa-money-bill-trend-up text-2xl text-[#EF4444]"></i>
               </div>
-              <h4 className="text-[15px] font-bold text-dark mb-2">Top Compensation</h4>
+              <h4 className="text-[15px] font-semibold text-dark mb-2">Top Compensation</h4>
               <p className="text-[13px] text-gray-500 leading-relaxed">Competitive Compensation Package with
                 Attractive Monthly Incentives.</p>
             </div>
@@ -349,7 +360,7 @@ const Careers: React.FC = () => {
               <div className="w-12 h-12 rounded-xl bg-indigo-50 flex items-center justify-center mb-5">
                 <i className="fa-solid fa-car-side text-2xl text-[#6366F1]"></i>
               </div>
-              <h4 className="text-[15px] font-bold text-dark mb-2">Company Car</h4>
+              <h4 className="text-[15px] font-semibold text-dark mb-2">Company Car</h4>
               <p className="text-[13px] text-gray-500 leading-relaxed">Free Company Car Program — vehicle ownership
                 under the employee's name.</p>
             </div>
@@ -358,7 +369,7 @@ const Careers: React.FC = () => {
               <div className="w-12 h-12 rounded-xl bg-cyan-50 flex items-center justify-center mb-5">
                 <i className="fa-solid fa-plane-departure text-2xl text-[#06B6D4]"></i>
               </div>
-              <h4 className="text-[15px] font-bold text-dark mb-2">Travel Incentives</h4>
+              <h4 className="text-[15px] font-semibold text-dark mb-2">Travel Incentives</h4>
               <p className="text-[13px] text-gray-500 leading-relaxed">All-Expense-Paid International Travel
                 Incentives after 2 years of service.</p>
             </div>
@@ -367,7 +378,7 @@ const Careers: React.FC = () => {
               <div className="w-12 h-12 rounded-xl bg-pink-50 flex items-center justify-center mb-5">
                 <i className="fa-solid fa-heart-pulse text-2xl text-[#EC4899]"></i>
               </div>
-              <h4 className="text-[15px] font-bold text-dark mb-2">Wellness Focus</h4>
+              <h4 className="text-[15px] font-semibold text-dark mb-2">Wellness Focus</h4>
               <p className="text-[13px] text-gray-500 leading-relaxed">Employee Wellness &amp; Meditation Programs to
                 support mental health.</p>
             </div>
@@ -376,7 +387,7 @@ const Careers: React.FC = () => {
               <div className="w-12 h-12 rounded-xl bg-yellow-50 flex items-center justify-center mb-5">
                 <i className="fa-solid fa-award text-2xl text-[#EAB308]"></i>
               </div>
-              <h4 className="text-[15px] font-bold text-dark mb-2">Recognition</h4>
+              <h4 className="text-[15px] font-semibold text-dark mb-2">Recognition</h4>
               <p className="text-[13px] text-gray-500 leading-relaxed">Recognition, Awards, and Employee Engagement
                 Initiatives year-round.</p>
             </div>
@@ -385,7 +396,7 @@ const Careers: React.FC = () => {
               <div className="w-12 h-12 rounded-xl bg-teal-50 flex items-center justify-center mb-5">
                 <i className="fa-solid fa-bolt-lightning text-2xl text-[#14B8A6]"></i>
               </div>
-              <h4 className="text-[15px] font-bold text-dark mb-2">Growth Environment</h4>
+              <h4 className="text-[15px] font-semibold text-dark mb-2">Growth Environment</h4>
               <p className="text-[13px] text-gray-500 leading-relaxed">Dynamic, high-performing, and growth-oriented
                 work environment.</p>
             </div>
