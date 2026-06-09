@@ -200,15 +200,11 @@ const Careers: React.FC = () => {
                   <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">Healthcare</span>
                 </h3>
               </div>
-              <p className="text-gray-400 text-[13px] leading-[1.7] mb-5">
+              <p className="text-gray-400 text-[13px] leading-[1.7]">
                 Your career has no boundaries at Getmeds. Leverage our global footprint to build a fulfilling
                 legacy in an environment that rewards merit and thrives on lifelong learning. We provide the
                 experiences you need to become a leader of tomorrow.
               </p>
-              <a href="#"
-                className="mt-auto inline-flex items-center gap-1.5 text-[#61A644] text-[13px] font-semibold hover:gap-2.5 transition-all">
-                Read more <i className="fa-solid fa-arrow-right text-[10px]"></i>
-              </a>
             </div>
 
             <div className="p-7 rounded-2xl border border-gray-100 hover:shadow-lg transition-shadow duration-300 flex flex-col h-full">
@@ -221,15 +217,11 @@ const Careers: React.FC = () => {
                   <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">Yourself</span>
                 </h3>
               </div>
-              <p className="text-gray-400 text-[13px] leading-[1.7] mb-5">
+              <p className="text-gray-400 text-[13px] leading-[1.7]">
                 Break boundaries, not just ground. At Getmeds, we encourage you to look beyond your role and
                 lead with thoughtful, decisive action. Your fresh perspectives are exactly what fuel our next
                 breakthrough.
               </p>
-              <a href="#"
-                className="mt-auto inline-flex items-center gap-1.5 text-[#61A644] text-[13px] font-semibold hover:gap-2.5 transition-all">
-                Read more <i className="fa-solid fa-arrow-right text-[10px]"></i>
-              </a>
             </div>
 
             <div className="p-7 rounded-2xl border border-gray-100 hover:shadow-lg transition-shadow duration-300 flex flex-col h-full">
@@ -242,14 +234,10 @@ const Careers: React.FC = () => {
                   <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">With Us</span>
                 </h3>
               </div>
-              <p className="text-gray-400 text-[13px] leading-[1.7] mb-5">
+              <p className="text-gray-400 text-[13px] leading-[1.7]">
                 Success is a team sport at Getmeds. We've built a culture of radical transparency and
                 professional support, ensuring you have a team that stands behind you — no matter the challenge.
               </p>
-              <a href="#"
-                className="mt-auto inline-flex items-center gap-1.5 text-[#61A644] text-[13px] font-semibold hover:gap-2.5 transition-all">
-                Read more <i className="fa-solid fa-arrow-right text-[10px]"></i>
-              </a>
             </div>
           </div>
         </div>
