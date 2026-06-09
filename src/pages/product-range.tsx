@@ -963,9 +963,9 @@ export default function ProductRange() {
           <section className="px-4 sm:px-6 lg:px-8 mb-24">
             {/* Toolbar: stacks vertically on mobile */}
             <div className="flex flex-col gap-3 mb-6 sm:flex-row sm:items-center sm:justify-between sm:mb-8">
-              <h2 className="text-xl font-semibold text-gray-900 whitespace-nowrap">
+              <h2 className="text-xl font-semibold text-gray-900 leading-snug">
                 {currentCategory === 'All' ? 'All Products' : currentCategory}{' '}
-                <span className="text-gray-400 font-normal text-sm ml-2">({sorted.length} Items)</span>
+                <span className="text-gray-400 font-normal text-sm ml-2 whitespace-nowrap">({sorted.length} Items)</span>
               </h2>
 
               {/* Check Products — opens category sidebar */}
