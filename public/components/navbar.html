@@ -50,128 +50,139 @@
                         Product Range <i class="fa-solid fa-chevron-down ml-1.5 text-[10px]"></i>
                     </a>
                     <!-- Mega Menu Container -->
-                    <div class="fixed top-[80px] left-0 w-full bg-white rounded-b-[30px] border-b border-gray-100 shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-[100]">
-                        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 font-medium">
-                            <!-- Search + Pagination controls -->
-                            <div class="flex items-center gap-3 mb-4">
-                                <div class="relative">
-                                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-[11px] pointer-events-none"></i>
-                                    <input id="dropdown-search" type="text" placeholder="Search categories..."
-                                        oninput="filterDropdown(this.value)"
-                                        class="pl-8 pr-8 py-1.5 text-sm border border-gray-200 rounded-full w-52 focus:outline-none focus:border-primary transition">
-                                    <button id="dropdown-search-clear" onclick="clearDropdownSearch()" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
-                                        <i class="fa-solid fa-xmark text-[10px]"></i>
-                                    </button>
+                    <div
+                        class="fixed top-[80px] left-0 w-full bg-white rounded-b-[30px] border-b border-gray-100 shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-[100] max-h-[calc(100vh-80px)] overflow-y-auto">
+                        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 font-medium">
+                            <div id="desktop-dropdown-grid" class="grid grid-cols-1 md:grid-cols-4 gap-8 text-left">
+                                <!-- Column 1 -->
+                                <div>
+                                    <h4 class="font-semibold text-gray-900 mb-4 border-b pb-2 text-sm">Oncology (Solid Tumors)</h4>
+                                    <ul class="space-y-2 text-[13px]">
+                                        <li><a href="product-range.html?category=breast-cancer" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Breast Cancer</a></li>
+                                        <li><a href="product-range.html?category=ovarian-cancer" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Ovarian Cancer</a></li>
+                                        <li><a href="product-range.html?category=lung-cancer" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Non-Small Cell Lung Cancer</a></li>
+                                        <li><a href="product-range.html?category=prostate-cancer" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Prostate Cancer</a></li>
+                                        <li><a href="product-range.html?category=colorectal-cancer" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Colorectal Cancer</a></li>
+                                        <li><a href="product-range.html?category=pancreatic-cancer" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Pancreatic Cancer</a></li>
+                                        <li><a href="product-range.html?category=gastric-cancer" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Gastric Cancer / Gastric Adenocarcinoma</a></li>
+                                        <li><a href="product-range.html?category=head-and-neck-cancer" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Head and Neck Cancer</a></li>
+                                        <li><a href="product-range.html?category=malignant-pleural-mesothelioma" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Malignant Pleural Mesothelioma</a></li>
+                                        <li><a href="product-range.html?category=malignant-pleural-effusion" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Malignant Pleural Effusion</a></li>
+                                        <li><a href="product-range.html?category=gastrointestinal-stromal-tumors" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Gastrointestinal Stromal Tumors</a></li>
+                                    </ul>
                                 </div>
-                                <div id="dropdown-pagination" class="flex items-center gap-2 ml-auto">
-                                    <button id="dropdown-prev" onclick="dropdownPage(-1)"
-                                        class="w-7 h-7 flex items-center justify-center rounded-full bg-gray-100 hover:bg-primary hover:text-white text-gray-500 transition disabled:opacity-30 disabled:pointer-events-none" disabled>
-                                        <i class="fa-solid fa-chevron-left text-[10px]"></i>
-                                    </button>
-                                    <span id="dropdown-page-info" class="text-xs text-gray-400 min-w-[2.5rem] text-center">1 / 2</span>
-                                    <button id="dropdown-next" onclick="dropdownPage(1)"
-                                        class="w-7 h-7 flex items-center justify-center rounded-full bg-gray-100 hover:bg-primary hover:text-white text-gray-500 transition disabled:opacity-30 disabled:pointer-events-none">
-                                        <i class="fa-solid fa-chevron-right text-[10px]"></i>
-                                    </button>
+
+                                <!-- Column 2 -->
+                                <div>
+                                    <h4 class="font-semibold text-gray-900 mb-4 border-b pb-2 text-sm">Oncology / Hematology</h4>
+                                    <ul class="space-y-2 text-[13px] mb-6">
+                                        <li><a href="product-range.html?category=aml" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Acute Myeloid Leukemia</a></li>
+                                        <li><a href="product-range.html?category=cml" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Chronic Myeloid Leukemia</a></li>
+                                        <li><a href="product-range.html?category=acute-lymphocytic-leukemia" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Acute Lymphocytic Leukemia</a></li>
+                                        <li><a href="product-range.html?category=chronic-lymphocytic-leukemia" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Chronic Lymphocytic Leukemia</a></li>
+                                        <li><a href="product-range.html?category=lymphoma" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Hodgkin/Non-Hodgkin's Lymphoma</a></li>
+                                        <li><a href="product-range.html?category=mantle-cell-lymphoma" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Mantle Cell Lymphoma</a></li>
+                                        <li><a href="product-range.html?category=chronic-myelocytic-leukemia" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Chronic Myelocytic Leukemia</a></li>
+                                        <li><a href="product-range.html?category=meningeal-leukemia" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Meningeal Leukemia</a></li>
+                                        <li><a href="product-range.html?category=acute-lymphoblastic-leukemia" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Acute Lymphoblastic Leukemia</a></li>
+                                        <li><a href="product-range.html?category=acute-promyelocytic-leukemia" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Acute Promyelocytic Leukemia</a></li>
+                                        <li><a href="product-range.html?category=sickle-cell" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Sickle Cell Anemia</a></li>
+                                    </ul>
+                                    <h4 class="font-semibold text-gray-900 mb-4 border-b pb-2 text-sm">Anti-Infectives
+                                    </h4>
+                                    <ul class="space-y-2 text-[13px]">
+                                        <li><a href="product-range.html?category=respiratory"
+                                                class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Respiratory
+                                                Infections</a></li>
+                                        <li><a href="product-range.html?category=uti"
+                                                class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Urinary
+                                                Tract Infections</a></li>
+                                        <li><a href="product-range.html?category=skin-infections"
+                                                class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Skin
+                                                and Soft Tissue Infections</a></li>
+                                        <li><a href="product-range.html?category=bone-infections"
+                                                class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Bone
+                                                and Joint Infections</a></li>
+                                    </ul>
                                 </div>
-                            </div>
-                            <!-- Paginated viewport -->
-                            <div id="dropdown-viewport" class="overflow-hidden">
-                                <div id="desktop-dropdown-track" class="flex transition-transform duration-300 ease-in-out" style="transform:translateX(0)">
-                                    <!-- Page 1: Oncology + Hematology -->
-                                    <div class="dropdown-page flex-shrink-0 w-full grid grid-cols-2 gap-8 text-left">
-                                        <div id="desktop-col-0">
-                                            <h4 class="font-semibold text-gray-900 mb-4 border-b pb-2 text-sm">Oncology (Solid Tumors)</h4>
+
+                                <!-- Column 3 -->
+                                <div>
+                                    <h4 class="font-semibold text-gray-900 mb-4 border-b pb-2 text-sm">Endocrinology
+                                    </h4>
+                                    <ul class="space-y-2 text-[13px] mb-6">
+                                        <li><a href="product-range.html?category=endometriosis"
+                                                class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Endometriosis</a>
+                                        </li>
+                                        <li><a href="product-range.html?category=fibrocystic"
+                                                class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Fibrocystic
+                                                Breast Disease</a></li>
+                                    </ul>
+                                    <h4 class="font-semibold text-gray-900 mb-4 border-b pb-2 text-sm">Orthopedic</h4>
+                                    <ul class="space-y-2 text-[13px] mb-6">
+                                        <li><a href="product-range.html?category=multiple-myeloma"
+                                                class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Multiple
+                                                Myeloma</a></li>
+                                        <li><a href="product-range.html?category=osteoporosis"
+                                                class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Osteoporosis</a>
+                                        </li>
+                                    </ul>
+                                    <h4 class="font-semibold text-gray-900 mb-4 border-b pb-2 text-sm">Cardiology</h4>
+                                    <ul class="space-y-2 text-[13px]">
+                                        <li><a href="product-range.html?category=arrhythmia"
+                                                class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Arrhythmia
+                                                management</a></li>
+                                        <li><a href="product-range.html?category=hypertension"
+                                                class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Hypertension/Angina</a>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                <!-- Column 4 -->
+                                <div>
+                                    <h4 class="font-semibold text-gray-900 mb-4 border-b pb-2 text-sm">Neuro-Oncology
+                                    </h4>
+                                    <ul class="space-y-2 text-[13px] mb-6">
+                                        <li><a href="product-range.html?category=glioblastoma"
+                                                class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Glioblastoma
+                                                Multiforme</a></li>
+                                    </ul>
+                                    <h4 class="font-semibold text-gray-900 mb-4 border-b pb-2 text-sm">Respiratory /
+                                        Allergy</h4>
+                                    <ul class="space-y-2 text-[13px] mb-6">
+                                        <li><a href="product-range.html?category=allergic-rhinitis"
+                                                class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Seasonal
+                                                Allergic Rhinitis</a></li>
+                                    </ul>
+                                    <h4 class="font-semibold text-gray-900 mb-4 border-b pb-2 text-sm">Nephrology /
+                                        Renal</h4>
+                                    <ul class="space-y-2 text-[13px] mb-6">
+                                        <li><a href="product-range.html?category=kidney-disease"
+                                                class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Chronic
+                                                Kidney Disease</a></li>
+                                    </ul>
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <h4 class="font-semibold text-gray-900 mb-2 border-b pb-1 text-sm">Pain Mgt.
+                                            </h4>
                                             <ul class="space-y-2 text-[13px]">
-                                                <li><a href="product-range.html?category=breast-cancer" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Breast Cancer</a></li>
-                                                <li><a href="product-range.html?category=ovarian-cancer" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Ovarian Cancer</a></li>
-                                                <li><a href="product-range.html?category=lung-cancer" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Non-Small Cell Lung Cancer</a></li>
-                                                <li><a href="product-range.html?category=prostate-cancer" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Prostate Cancer</a></li>
-                                                <li><a href="product-range.html?category=colorectal-cancer" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Colorectal Cancer</a></li>
-                                                <li><a href="product-range.html?category=pancreatic-cancer" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Pancreatic Cancer</a></li>
-                                                <li><a href="product-range.html?category=gastric-cancer" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Gastric Cancer / Gastric Adenocarcinoma</a></li>
-                                                <li><a href="product-range.html?category=head-and-neck-cancer" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Head and Neck Cancer</a></li>
-                                                <li><a href="product-range.html?category=malignant-pleural-mesothelioma" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Malignant Pleural Mesothelioma</a></li>
-                                                <li><a href="product-range.html?category=malignant-pleural-effusion" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Malignant Pleural Effusion</a></li>
-                                                <li><a href="product-range.html?category=gastrointestinal-stromal-tumors" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Gastrointestinal Stromal Tumors</a></li>
+                                                <li><a href="product-range.html?category=pain"
+                                                        class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Chronic
+                                                        Pain</a></li>
                                             </ul>
                                         </div>
-                                        <div id="desktop-col-1">
-                                            <h4 class="font-semibold text-gray-900 mb-4 border-b pb-2 text-sm">Oncology / Hematology</h4>
-                                            <ul class="space-y-2 text-[13px] mb-6">
-                                                <li><a href="product-range.html?category=aml" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Acute Myeloid Leukemia</a></li>
-                                                <li><a href="product-range.html?category=cml" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Chronic Myeloid Leukemia</a></li>
-                                                <li><a href="product-range.html?category=acute-lymphocytic-leukemia" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Acute Lymphocytic Leukemia</a></li>
-                                                <li><a href="product-range.html?category=chronic-lymphocytic-leukemia" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Chronic Lymphocytic Leukemia</a></li>
-                                                <li><a href="product-range.html?category=lymphoma" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Hodgkin/Non-Hodgkin's Lymphoma</a></li>
-                                                <li><a href="product-range.html?category=mantle-cell-lymphoma" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Mantle Cell Lymphoma</a></li>
-                                                <li><a href="product-range.html?category=chronic-myelocytic-leukemia" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Chronic Myelocytic Leukemia</a></li>
-                                                <li><a href="product-range.html?category=meningeal-leukemia" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Meningeal Leukemia</a></li>
-                                                <li><a href="product-range.html?category=acute-lymphoblastic-leukemia" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Acute Lymphoblastic Leukemia</a></li>
-                                                <li><a href="product-range.html?category=acute-promyelocytic-leukemia" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Acute Promyelocytic Leukemia</a></li>
-                                                <li><a href="product-range.html?category=sickle-cell" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Sickle Cell Anemia</a></li>
-                                            </ul>
-                                            <h4 class="font-semibold text-gray-900 mb-4 border-b pb-2 text-sm">Anti-Infectives</h4>
+                                        <div>
+                                            <h4 class="font-semibold text-gray-900 mb-2 border-b pb-1 text-sm">
+                                                Rheumatology</h4>
                                             <ul class="space-y-2 text-[13px]">
-                                                <li><a href="product-range.html?category=respiratory" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Respiratory Infections</a></li>
-                                                <li><a href="product-range.html?category=uti" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Urinary Tract Infections</a></li>
-                                                <li><a href="product-range.html?category=skin-infections" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Skin and Soft Tissue Infections</a></li>
-                                                <li><a href="product-range.html?category=bone-infections" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Bone and Joint Infections</a></li>
+                                                <li><a href="product-range.html?category=rheumatology"
+                                                        class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Inflammatory
+                                                        Disorders</a></li>
                                             </ul>
                                         </div>
                                     </div>
-                                    <!-- Page 2: Endocrinology etc + Neuro-Oncology etc -->
-                                    <div class="dropdown-page flex-shrink-0 w-full grid grid-cols-2 gap-8 text-left">
-                                        <div id="desktop-col-2">
-                                            <h4 class="font-semibold text-gray-900 mb-4 border-b pb-2 text-sm">Endocrinology</h4>
-                                            <ul class="space-y-2 text-[13px] mb-6">
-                                                <li><a href="product-range.html?category=endometriosis" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Endometriosis</a></li>
-                                                <li><a href="product-range.html?category=fibrocystic" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Fibrocystic Breast Disease</a></li>
-                                            </ul>
-                                            <h4 class="font-semibold text-gray-900 mb-4 border-b pb-2 text-sm">Orthopedic</h4>
-                                            <ul class="space-y-2 text-[13px] mb-6">
-                                                <li><a href="product-range.html?category=multiple-myeloma" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Multiple Myeloma</a></li>
-                                                <li><a href="product-range.html?category=osteoporosis" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Osteoporosis</a></li>
-                                            </ul>
-                                            <h4 class="font-semibold text-gray-900 mb-4 border-b pb-2 text-sm">Cardiology</h4>
-                                            <ul class="space-y-2 text-[13px]">
-                                                <li><a href="product-range.html?category=arrhythmia" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Arrhythmia management</a></li>
-                                                <li><a href="product-range.html?category=hypertension" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Hypertension/Angina</a></li>
-                                            </ul>
-                                        </div>
-                                        <div id="desktop-col-3">
-                                            <h4 class="font-semibold text-gray-900 mb-4 border-b pb-2 text-sm">Neuro-Oncology</h4>
-                                            <ul class="space-y-2 text-[13px] mb-6">
-                                                <li><a href="product-range.html?category=glioblastoma" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Glioblastoma Multiforme</a></li>
-                                            </ul>
-                                            <h4 class="font-semibold text-gray-900 mb-4 border-b pb-2 text-sm">Respiratory / Allergy</h4>
-                                            <ul class="space-y-2 text-[13px] mb-6">
-                                                <li><a href="product-range.html?category=allergic-rhinitis" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Seasonal Allergic Rhinitis</a></li>
-                                            </ul>
-                                            <h4 class="font-semibold text-gray-900 mb-4 border-b pb-2 text-sm">Nephrology / Renal</h4>
-                                            <ul class="space-y-2 text-[13px] mb-6">
-                                                <li><a href="product-range.html?category=kidney-disease" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Chronic Kidney Disease</a></li>
-                                            </ul>
-                                            <div class="grid grid-cols-2 gap-4">
-                                                <div>
-                                                    <h4 class="font-semibold text-gray-900 mb-2 border-b pb-1 text-sm">Pain Mgt.</h4>
-                                                    <ul class="space-y-2 text-[13px]">
-                                                        <li><a href="product-range.html?category=pain" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Chronic Pain</a></li>
-                                                    </ul>
-                                                </div>
-                                                <div>
-                                                    <h4 class="font-semibold text-gray-900 mb-2 border-b pb-1 text-sm">Rheumatology</h4>
-                                                    <ul class="space-y-2 text-[13px]">
-                                                        <li><a href="product-range.html?category=rheumatology" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Inflammatory Disorders</a></li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
-                            <!-- Search results panel (shown during search, hidden otherwise) -->
-                            <div id="dropdown-search-results" class="hidden text-left"></div>
                         </div>
                     </div>
                 </div>
@@ -687,60 +698,6 @@
         }
     });
 
-    // --- Desktop dropdown pagination & search ---
-    var _ddPage = 0;
-    var _ddTotalPages = 2;
-
-    window.dropdownPage = function(dir) {
-        _ddPage = Math.max(0, Math.min(_ddTotalPages - 1, _ddPage + dir));
-        var track = document.getElementById('desktop-dropdown-track');
-        if (track) track.style.transform = 'translateX(-' + (_ddPage * 100) + '%)';
-        var prev = document.getElementById('dropdown-prev');
-        var next = document.getElementById('dropdown-next');
-        var info = document.getElementById('dropdown-page-info');
-        if (prev) prev.disabled = _ddPage === 0;
-        if (next) next.disabled = _ddPage === _ddTotalPages - 1;
-        if (info) info.textContent = (_ddPage + 1) + ' / ' + _ddTotalPages;
-    };
-
-    window.filterDropdown = function(q) {
-        var query = q.toLowerCase().trim();
-        var clearBtn = document.getElementById('dropdown-search-clear');
-        var pagination = document.getElementById('dropdown-pagination');
-        var viewport = document.getElementById('dropdown-viewport');
-        var resultsDiv = document.getElementById('dropdown-search-results');
-        if (clearBtn) clearBtn.classList.toggle('hidden', !q);
-        if (!query) {
-            if (viewport) viewport.classList.remove('hidden');
-            if (pagination) pagination.classList.remove('hidden');
-            if (resultsDiv) resultsDiv.classList.add('hidden');
-            return;
-        }
-        if (viewport) viewport.classList.add('hidden');
-        if (pagination) pagination.classList.add('hidden');
-        if (resultsDiv) resultsDiv.classList.remove('hidden');
-        var allLinks = document.querySelectorAll('[id^="desktop-col-"] a');
-        var matched = [];
-        allLinks.forEach(function(a) {
-            if (a.textContent.toLowerCase().includes(query)) {
-                matched.push({ text: a.textContent.trim(), href: a.getAttribute('href') });
-            }
-        });
-        var linkCls = "relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300";
-        if (matched.length === 0) {
-            resultsDiv.innerHTML = '<p class="text-sm text-gray-400 py-3">No categories found for "' + q + '".</p>';
-        } else {
-            resultsDiv.innerHTML = '<ul class="flex flex-wrap gap-x-8 gap-y-2 py-2 text-[13px]">'
-                + matched.map(function(m) { return '<li><a href="' + m.href + '" class="' + linkCls + '">' + m.text + '</a></li>'; }).join('')
-                + '</ul>';
-        }
-    };
-
-    window.clearDropdownSearch = function() {
-        var input = document.getElementById('dropdown-search');
-        if (input) { input.value = ''; filterDropdown(''); }
-    };
-
     // Dynamically populate Product Range dropdown and mobile accordion from Sanity Category schema
     function fetchAndPopulateDropdown() {
         const query = '*[_type == "category"] { category, "slug": slug.current, subcategory }';
@@ -985,40 +942,45 @@
                 // Slugs that belong to hardcoded cols — exclude from Sanity-driven cols 2 & 3
                 const hardcodedSlugs = new Set(['oncology', 'hematology', 'oncology-hematology', 'hematology-oncology']);
 
-                // Populate individual column divs for paginated layout
-                const col0 = document.getElementById('desktop-col-0');
-                if (col0) {
-                    col0.innerHTML = '<h4 class="font-semibold text-gray-900 mb-4 border-b pb-2 text-sm">Oncology (Solid Tumors)</h4>'
-                        + '<ul class="space-y-2 text-[13px]">' + hardcodedOncology.map(buildLi).join('') + '</ul>';
-                }
+                const desktopGrid = document.getElementById('desktop-dropdown-grid');
+                if (desktopGrid) {
+                    let gridHtml = '';
 
-                const col1 = document.getElementById('desktop-col-1');
-                if (col1) {
+                    // Col 0: Hardcoded Oncology (Solid Tumors)
+                    gridHtml += '<div>';
+                    gridHtml += '<h4 class="font-semibold text-gray-900 mb-4 border-b pb-2 text-sm">Oncology (Solid Tumors)</h4>';
+                    gridHtml += '<ul class="space-y-2 text-[13px]">' + hardcodedOncology.map(buildLi).join('') + '</ul>';
+                    gridHtml += '</div>';
+
+                    // Col 1: Hardcoded Oncology / Hematology + Anti-Infectives from Sanity if present
                     const antiInfSanity = (desktopColumns[1] || []).filter(s => !hardcodedSlugs.has((s.title || '').toLowerCase().replace(/[\s/]+/g, '-')));
-                    let h = '<h4 class="font-semibold text-gray-900 mb-4 border-b pb-2 text-sm">Oncology / Hematology</h4>';
-                    h += '<ul class="space-y-2 text-[13px]' + (antiInfSanity.length ? ' mb-6' : '') + '">' + hardcodedHematology.map(buildLi).join('') + '</ul>';
+                    gridHtml += '<div>';
+                    gridHtml += '<h4 class="font-semibold text-gray-900 mb-4 border-b pb-2 text-sm">Oncology / Hematology</h4>';
+                    gridHtml += '<ul class="space-y-2 text-[13px]' + (antiInfSanity.length ? ' mb-6' : '') + '">' + hardcodedHematology.map(buildLi).join('') + '</ul>';
                     antiInfSanity.forEach(sec => {
-                        h += `<h4 class="font-semibold text-gray-900 mb-4 border-b pb-2 text-sm mt-6">${sec.title}</h4><ul class="space-y-2 text-[13px]">`;
-                        sec.subcategories.forEach(sub => { h += `<li><a href="product-range.html?category=${getSubcategorySlug(sub)}" class="${linkCls}">${sub}</a></li>`; });
-                        h += '</ul>';
+                        gridHtml += `<h4 class="font-semibold text-gray-900 mb-4 border-b pb-2 text-sm mt-6">${sec.title}</h4>`;
+                        gridHtml += '<ul class="space-y-2 text-[13px]">';
+                        sec.subcategories.forEach(sub => { gridHtml += `<li><a href="product-range.html?category=${getSubcategorySlug(sub)}" class="${linkCls}">${sub}</a></li>`; });
+                        gridHtml += '</ul>';
                     });
-                    col1.innerHTML = h;
-                }
+                    gridHtml += '</div>';
 
-                [2, 3].forEach(colIdx => {
-                    const col = document.getElementById('desktop-col-' + colIdx);
-                    if (!col) return;
-                    const colSections = (desktopColumns[colIdx] || []).filter(s => !hardcodedSlugs.has((s.title || '').toLowerCase().replace(/[\s/]+/g, '-')));
-                    let h = '';
-                    colSections.forEach((sec, secIdx) => {
-                        const h4Cls = secIdx > 0 ? 'font-semibold text-gray-900 mb-4 border-b pb-2 text-sm mt-6' : 'font-semibold text-gray-900 mb-4 border-b pb-2 text-sm';
-                        const ulCls = secIdx < colSections.length - 1 ? 'space-y-2 text-[13px] mb-6' : 'space-y-2 text-[13px]';
-                        h += `<h4 class="${h4Cls}">${sec.title}</h4><ul class="${ulCls}">`;
-                        sec.subcategories.forEach(sub => { h += `<li><a href="product-range.html?category=${getSubcategorySlug(sub)}" class="${linkCls}">${sub}</a></li>`; });
-                        h += '</ul>';
+                    // Cols 2 & 3: Sanity data only (skip oncology/hematology slugs)
+                    [2, 3].forEach(colIdx => {
+                        const colSections = (desktopColumns[colIdx] || []).filter(s => !hardcodedSlugs.has((s.title || '').toLowerCase().replace(/[\s/]+/g, '-')));
+                        gridHtml += '<div>';
+                        colSections.forEach((sec, secIdx) => {
+                            const h4Class = secIdx > 0 ? 'font-semibold text-gray-900 mb-4 border-b pb-2 text-sm mt-6' : 'font-semibold text-gray-900 mb-4 border-b pb-2 text-sm';
+                            const ulClass = secIdx < colSections.length - 1 ? 'space-y-2 text-[13px] mb-6' : 'space-y-2 text-[13px]';
+                            gridHtml += `<h4 class="${h4Class}">${sec.title}</h4><ul class="${ulClass}">`;
+                            sec.subcategories.forEach(sub => { gridHtml += `<li><a href="product-range.html?category=${getSubcategorySlug(sub)}" class="${linkCls}">${sub}</a></li>`; });
+                            gridHtml += '</ul>';
+                        });
+                        gridHtml += '</div>';
                     });
-                    if (h) col.innerHTML = h;
-                });
+
+                    desktopGrid.innerHTML = gridHtml;
+                }
 
                 const mobileAccordion = document.getElementById('mobile-products');
                 if (mobileAccordion) {
