@@ -559,19 +559,26 @@ export default function ProductRange() {
       })
     : categoryFiltered;
 
-  const availableForms = useMemo(() => {
-    if (!productsData) return [];
-    const forms = new Set<string>();
-    productsData.forEach(p => { if (p.form) forms.add(p.form); });
-    return Array.from(forms).sort();
-  }, [productsData]);
+  const FORM_GROUPS: { label: string; match: (f: string) => boolean }[] = [
+    { label: 'Capsule', match: f => /capsule/i.test(f) },
+    { label: 'Tablet',  match: f => /tablet/i.test(f) },
+    { label: 'Vial',    match: f => /inject|infus|lyophil|powder\s+for|concentrate|ampoule|vial/i.test(f) },
+    { label: 'Bottle',  match: f => /bottle|syrup|oral\s+sol|oral\s+susp|drops/i.test(f) },
+  ];
 
   const activeFilterCount = (filterAvailability !== 'all' ? 1 : 0) + filterForms.size;
 
   const fullyFiltered = searchFiltered.filter(p => {
     if (filterAvailability === 'instock' && p.availability === false) return false;
     if (filterAvailability === 'outofstock' && p.availability !== false) return false;
-    if (filterForms.size > 0 && (!p.form || !filterForms.has(p.form))) return false;
+    if (filterForms.size > 0) {
+      const form = p.form || '';
+      const matched = Array.from(filterForms).some(label => {
+        const group = FORM_GROUPS.find(g => g.label === label);
+        return group ? group.match(form) : false;
+      });
+      if (!matched) return false;
+    }
     return true;
   });
 
@@ -1048,33 +1055,31 @@ export default function ProductRange() {
                         </div>
 
                         {/* Form */}
-                        {availableForms.length > 0 && (
-                          <div>
-                            <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-2">Form</p>
-                            <div className="flex flex-wrap gap-2">
-                              {availableForms.map(form => (
-                                <button
-                                  key={form}
-                                  onClick={() => {
-                                    setFilterForms(prev => {
-                                      const next = new Set(prev);
-                                      next.has(form) ? next.delete(form) : next.add(form);
-                                      return next;
-                                    });
-                                    setCurrentPage(1);
-                                  }}
-                                  className={`px-3 py-1.5 rounded-full text-[11px] font-semibold border transition-all ${
-                                    filterForms.has(form)
-                                      ? 'bg-primary text-white border-primary'
-                                      : 'bg-white text-gray-600 border-gray-200 hover:border-primary hover:text-primary'
-                                  }`}
-                                >
-                                  {form}
-                                </button>
-                              ))}
-                            </div>
+                        <div>
+                          <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-2">Form</p>
+                          <div className="flex flex-wrap gap-2">
+                            {FORM_GROUPS.map(({ label }) => (
+                              <button
+                                key={label}
+                                onClick={() => {
+                                  setFilterForms(prev => {
+                                    const next = new Set(prev);
+                                    next.has(label) ? next.delete(label) : next.add(label);
+                                    return next;
+                                  });
+                                  setCurrentPage(1);
+                                }}
+                                className={`px-3 py-1.5 rounded-full text-[11px] font-semibold border transition-all ${
+                                  filterForms.has(label)
+                                    ? 'bg-primary text-white border-primary'
+                                    : 'bg-white text-gray-600 border-gray-200 hover:border-primary hover:text-primary'
+                                }`}
+                              >
+                                {label}
+                              </button>
+                            ))}
                           </div>
-                        )}
+                        </div>
                       </div>
                     )}
                   </div>
