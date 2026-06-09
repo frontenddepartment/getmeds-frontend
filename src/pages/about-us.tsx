@@ -111,6 +111,7 @@ export default function AboutUs() {
             </p>
             <div className="flex flex-wrap gap-4">
               <a href="#our-story"
+                onClick={e => { e.preventDefault(); document.getElementById('our-story')?.scrollIntoView({ behavior: 'smooth' }); }}
                 className="btn-gradient text-white font-semibold py-2 px-6 rounded-full text-[13px] inline-flex items-center gap-2 shadow-md">
                 Discover Our Story <i className="fa-solid fa-arrow-down text-xs"></i>
               </a>
