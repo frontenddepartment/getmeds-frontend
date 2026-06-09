@@ -962,10 +962,10 @@ export default function ProductRange() {
           {/* PRODUCTS LIST */}
           <section className="px-4 sm:px-6 lg:px-8 mb-24">
             {/* Toolbar: stacks vertically on mobile */}
-            <div className="flex flex-col gap-3 mb-6 sm:flex-row sm:items-center sm:justify-between sm:mb-8">
-              <h2 className="text-xl font-semibold text-gray-900 leading-snug">
+            <div className="flex flex-col gap-3 mb-6 sm:flex-row sm:items-start sm:justify-between sm:mb-8">
+              <h2 className="text-xl font-semibold text-gray-900 leading-snug sm:max-w-[55%]">
                 {currentCategory === 'All' ? 'All Products' : currentCategory}{' '}
-                <span className="text-gray-400 font-normal text-sm ml-2 whitespace-nowrap">({sorted.length} Items)</span>
+                <span className="text-gray-400 font-normal text-sm ml-1 whitespace-nowrap">({sorted.length} Items)</span>
               </h2>
 
               {/* Check Products — opens category sidebar */}
