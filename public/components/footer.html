@@ -152,10 +152,12 @@
         transform-origin: left;
         transition: transform 0.3s ease;
     }
-    .footer-link:hover {
+    .footer-link:hover,
+    .footer-link.active {
         color: #1D9FDA;
     }
-    .footer-link:hover::after {
+    .footer-link:hover::after,
+    .footer-link.active::after {
         transform: scaleX(1);
     }
     #medical-disclaimer-modal .overflow-y-auto::-webkit-scrollbar {
@@ -178,6 +180,16 @@
     (function () {
         var el = document.getElementById('footer-year');
         if (el) el.textContent = new Date().getFullYear();
+    })();
+
+    // Highlight active footer nav link
+    (function () {
+        var path = window.location.pathname.replace(/^\//, '').replace(/\.html$/, '').replace(/\/$/, '') || 'index';
+        document.querySelectorAll('footer a.footer-link[href]').forEach(function (a) {
+            var href = a.getAttribute('href');
+            var norm = href.replace(/^\//, '').replace(/\.html$/, '').replace(/\/$/, '') || 'index';
+            if (norm === path) a.classList.add('active');
+        });
     })();
 
     // Close modal on backdrop click
