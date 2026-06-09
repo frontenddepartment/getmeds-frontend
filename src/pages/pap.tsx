@@ -143,7 +143,7 @@ export default function PatientAssistanceProgram() {
           {/* Bar */}
           <div className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] py-3 sm:py-4 px-4 sm:px-8 rounded-[15px] flex items-center gap-3 sm:gap-6 overflow-hidden relative reveal">
             <span className="text-white text-2xl sm:text-4xl font-semibold shrink-0">1</span>
-            <h3 data-json="steps.0.title" className="text-white text-xs sm:text-xl md:text-2xl font-semibold uppercase leading-tight tracking-tight flex-1">
+            <h3 data-json="steps.0.title" className="text-white text-xs sm:text-xl md:text-2xl font-bold uppercase leading-tight tracking-tight flex-1">
               KUMONSULTA SA IYONG DOKTOR
             </h3>
             <div className="ml-auto shrink-0 flex items-end h-10 sm:h-14 relative">
@@ -203,7 +203,7 @@ export default function PatientAssistanceProgram() {
           {/* Bar */}
           <div className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] py-3 sm:py-4 px-4 sm:px-8 rounded-[15px] flex items-center gap-3 sm:gap-6 overflow-hidden relative reveal">
             <span className="text-white text-2xl sm:text-4xl font-semibold shrink-0">2</span>
-            <h3 data-json="steps.1.title" className="text-white text-xs sm:text-xl md:text-2xl font-semibold uppercase leading-tight tracking-tight flex-1">
+            <h3 data-json="steps.1.title" className="text-white text-xs sm:text-xl md:text-2xl font-bold uppercase leading-tight tracking-tight flex-1">
               IHANDA ANG IYONG MEDICAL DOCUMENTS
             </h3>
             <div className="ml-auto shrink-0 flex items-end h-10 sm:h-14 relative">
@@ -360,7 +360,7 @@ export default function PatientAssistanceProgram() {
           {/* Bar */}
           <div className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] py-3 sm:py-4 px-4 sm:px-8 rounded-[15px] flex items-center gap-3 sm:gap-6 overflow-hidden relative reveal">
             <span className="text-white text-2xl sm:text-4xl font-semibold shrink-0">3</span>
-            <h3 className="text-white text-xs sm:text-xl md:text-2xl font-semibold uppercase leading-tight tracking-tight flex-1">
+            <h3 className="text-white text-xs sm:text-xl md:text-2xl font-bold uppercase leading-tight tracking-tight flex-1">
               KUMPLETUHIN ANG IYONG APPLICATION DOCUMENTS
             </h3>
             <div className="ml-auto shrink-0 flex items-end h-10 sm:h-14 relative">
@@ -521,7 +521,7 @@ export default function PatientAssistanceProgram() {
           {/* Bar */}
           <div className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] py-3 sm:py-4 px-4 sm:px-8 rounded-[15px] flex items-center gap-3 sm:gap-6 overflow-hidden relative reveal">
             <span className="text-white text-2xl sm:text-4xl font-semibold shrink-0">4</span>
-            <h3 className="text-white text-xs sm:text-xl md:text-2xl font-semibold uppercase leading-tight tracking-tight flex-1">
+            <h3 className="text-white text-xs sm:text-xl md:text-2xl font-bold uppercase leading-tight tracking-tight flex-1">
               MAKIPAG-UGNAYAN SA AMING PATIENT ASSISTANCE OFFICER
             </h3>
             <div className="ml-auto shrink-0 flex items-end h-10 sm:h-14 relative">
@@ -592,7 +592,7 @@ export default function PatientAssistanceProgram() {
           {/* Bar */}
           <div className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] py-3 sm:py-4 px-4 sm:px-8 rounded-[15px] flex items-center gap-3 sm:gap-6 overflow-hidden relative reveal">
             <span className="text-white text-2xl sm:text-4xl font-semibold shrink-0">5</span>
-            <h3 className="text-white text-xs sm:text-xl md:text-2xl font-semibold uppercase leading-tight tracking-tight flex-1">
+            <h3 className="text-white text-xs sm:text-xl md:text-2xl font-bold uppercase leading-tight tracking-tight flex-1">
               I-SUBMIT ANG IYONG REQUIREMENTS
             </h3>
             <div className="ml-auto shrink-0 flex items-end h-10 sm:h-14 relative">
@@ -691,7 +691,7 @@ export default function PatientAssistanceProgram() {
           {/* Bar */}
           <div className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] py-3 sm:py-4 px-4 sm:px-8 rounded-[15px] flex items-center gap-3 sm:gap-6 overflow-hidden relative reveal">
             <span className="text-white text-2xl sm:text-4xl font-semibold shrink-0">6</span>
-            <h3 className="text-white text-xs sm:text-xl md:text-2xl font-semibold uppercase leading-tight tracking-tight flex-1">
+            <h3 className="text-white text-xs sm:text-xl md:text-2xl font-bold uppercase leading-tight tracking-tight flex-1">
               HINTAYIN ANG IYONG GUARANTEE LETTER (GL)
             </h3>
             <div className="ml-auto shrink-0 flex items-end h-10 sm:h-14 relative">
