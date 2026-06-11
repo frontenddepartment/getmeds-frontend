@@ -1081,28 +1081,32 @@ export default function GetMedsHomepage() {
             <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
               <i className="fa-solid fa-pills text-3xl text-[#1D9FDA] mb-4 block"></i>
               <h4 className="text-lg font-semibold text-gray-900 mb-2">Foundation</h4>
-              <p className="text-sm text-gray-500"><span className="font-bold text-gray-500">Everyday medicines, never out of reach.</span> Branded generics and essential medicines.</p>
+              <p className="text-sm font-bold text-gray-500 mb-1">Everyday medicines, never out of reach.</p>
+              <p className="text-sm text-gray-500">Branded generics and essential medicines.</p>
             </div>
 
             {/* Card 2: Acceleration */}
             <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
               <i className="fa-solid fa-bolt text-3xl text-[#61A644] mb-4 block"></i>
               <h4 className="text-lg font-semibold text-gray-900 mb-2">Acceleration</h4>
-              <p className="text-sm text-gray-500"><span className="font-bold text-gray-500">Smarter therapies, faster access.</span> Off-patent molecules, fixed-dose combinations, and new delivery systems.</p>
+              <p className="text-sm font-bold text-gray-500 mb-1">Smarter therapies, faster access.</p>
+              <p className="text-sm text-gray-500">Off-patent molecules, fixed-dose combinations, and new delivery systems.</p>
             </div>
 
             {/* Card 3: Frontier */}
             <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
               <i className="fa-solid fa-microscope text-3xl text-[#5533FF] mb-4 block"></i>
               <h4 className="text-lg font-semibold text-gray-900 mb-2">Frontier</h4>
-              <p className="text-sm text-gray-500"><span className="font-bold text-gray-500">Advanced therapies, within reach.</span> Oncology, hematology, specialty medicines and rare disease.</p>
+              <p className="text-sm font-bold text-gray-500 mb-1">Advanced therapies, within reach.</p>
+              <p className="text-sm text-gray-500">Oncology, hematology, specialty medicines and rare disease.</p>
             </div>
 
             {/* Card 4: Beyond the molecule */}
             <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
               <i className="fa-solid fa-network-wired text-3xl text-[#FFB020] mb-4 block"></i>
               <h4 className="text-lg font-semibold text-gray-900 mb-2">Beyond the molecule</h4>
-              <p className="text-sm text-gray-500"><span className="font-bold text-gray-500">The access infrastructure.</span> Cold-chain logistics, last-mile delivery, and patient programs.</p>
+              <p className="text-sm font-bold text-gray-500 mb-1">The access infrastructure.</p>
+              <p className="text-sm text-gray-500">Cold-chain logistics, last-mile delivery, and patient programs.</p>
             </div>
           </div>
         </div>
