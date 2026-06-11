@@ -18,128 +18,128 @@ export default function OrderMedicines() {
 
   const PHONE_COUNTRIES = [
     // Asia Pacific
-    { code: '+63', flag: '🇵🇭', name: 'Philippines',    mask: '### ### ####' },
-    { code: '+61', flag: '🇦🇺', name: 'Australia',      mask: '### ### ###' },
-    { code: '+880',flag: '🇧🇩', name: 'Bangladesh',     mask: '####-######' },
-    { code: '+855',flag: '🇰🇭', name: 'Cambodia',       mask: '## ### ###' },
-    { code: '+86', flag: '🇨🇳', name: 'China',          mask: '### #### ####' },
-    { code: '+852',flag: '🇭🇰', name: 'Hong Kong',      mask: '#### ####' },
-    { code: '+91', flag: '🇮🇳', name: 'India',          mask: '##### #####' },
-    { code: '+62', flag: '🇮🇩', name: 'Indonesia',      mask: '###-####-####' },
-    { code: '+81', flag: '🇯🇵', name: 'Japan',          mask: '##-####-####' },
-    { code: '+82', flag: '🇰🇷', name: 'South Korea',    mask: '##-####-####' },
-    { code: '+856',flag: '🇱🇦', name: 'Laos',           mask: '## ### ###' },
-    { code: '+60', flag: '🇲🇾', name: 'Malaysia',       mask: '##-#### ####' },
-    { code: '+960',flag: '🇲🇻', name: 'Maldives',       mask: '###-####' },
-    { code: '+976',flag: '🇲🇳', name: 'Mongolia',       mask: '#### ####' },
-    { code: '+95', flag: '🇲🇲', name: 'Myanmar',        mask: '## ### ####' },
-    { code: '+977',flag: '🇳🇵', name: 'Nepal',          mask: '##-###-####' },
-    { code: '+64', flag: '🇳🇿', name: 'New Zealand',    mask: '### ### ####' },
-    { code: '+92', flag: '🇵🇰', name: 'Pakistan',       mask: '###-#######' },
-    { code: '+65', flag: '🇸🇬', name: 'Singapore',      mask: '#### ####' },
-    { code: '+94', flag: '🇱🇰', name: 'Sri Lanka',      mask: '## ### ####' },
-    { code: '+886',flag: '🇹🇼', name: 'Taiwan',         mask: '#### ######' },
-    { code: '+66', flag: '🇹🇭', name: 'Thailand',       mask: '##-####-####' },
-    { code: '+84', flag: '🇻🇳', name: 'Vietnam',        mask: '### ### ####' },
+    { code: '+63', flag: '🇵🇭', name: 'Philippines', mask: '### ### ####' },
+    { code: '+61', flag: '🇦🇺', name: 'Australia', mask: '### ### ###' },
+    { code: '+880', flag: '🇧🇩', name: 'Bangladesh', mask: '####-######' },
+    { code: '+855', flag: '🇰🇭', name: 'Cambodia', mask: '## ### ###' },
+    { code: '+86', flag: '🇨🇳', name: 'China', mask: '### #### ####' },
+    { code: '+852', flag: '🇭🇰', name: 'Hong Kong', mask: '#### ####' },
+    { code: '+91', flag: '🇮🇳', name: 'India', mask: '##### #####' },
+    { code: '+62', flag: '🇮🇩', name: 'Indonesia', mask: '###-####-####' },
+    { code: '+81', flag: '🇯🇵', name: 'Japan', mask: '##-####-####' },
+    { code: '+82', flag: '🇰🇷', name: 'South Korea', mask: '##-####-####' },
+    { code: '+856', flag: '🇱🇦', name: 'Laos', mask: '## ### ###' },
+    { code: '+60', flag: '🇲🇾', name: 'Malaysia', mask: '##-#### ####' },
+    { code: '+960', flag: '🇲🇻', name: 'Maldives', mask: '###-####' },
+    { code: '+976', flag: '🇲🇳', name: 'Mongolia', mask: '#### ####' },
+    { code: '+95', flag: '🇲🇲', name: 'Myanmar', mask: '## ### ####' },
+    { code: '+977', flag: '🇳🇵', name: 'Nepal', mask: '##-###-####' },
+    { code: '+64', flag: '🇳🇿', name: 'New Zealand', mask: '### ### ####' },
+    { code: '+92', flag: '🇵🇰', name: 'Pakistan', mask: '###-#######' },
+    { code: '+65', flag: '🇸🇬', name: 'Singapore', mask: '#### ####' },
+    { code: '+94', flag: '🇱🇰', name: 'Sri Lanka', mask: '## ### ####' },
+    { code: '+886', flag: '🇹🇼', name: 'Taiwan', mask: '#### ######' },
+    { code: '+66', flag: '🇹🇭', name: 'Thailand', mask: '##-####-####' },
+    { code: '+84', flag: '🇻🇳', name: 'Vietnam', mask: '### ### ####' },
     // Middle East
-    { code: '+973',flag: '🇧🇭', name: 'Bahrain',        mask: '#### ####' },
-    { code: '+964',flag: '🇮🇶', name: 'Iraq',           mask: '### ### ####' },
-    { code: '+972',flag: '🇮🇱', name: 'Israel',         mask: '##-###-####' },
-    { code: '+962',flag: '🇯🇴', name: 'Jordan',         mask: '## #### ####' },
-    { code: '+965',flag: '🇰🇼', name: 'Kuwait',         mask: '#### ####' },
-    { code: '+961',flag: '🇱🇧', name: 'Lebanon',        mask: '## ### ###' },
-    { code: '+968',flag: '🇴🇲', name: 'Oman',           mask: '#### ####' },
-    { code: '+974',flag: '🇶🇦', name: 'Qatar',          mask: '#### ####' },
-    { code: '+966',flag: '🇸🇦', name: 'Saudi Arabia',   mask: '## ### ####' },
-    { code: '+90', flag: '🇹🇷', name: 'Turkey',         mask: '### ### ####' },
-    { code: '+971',flag: '🇦🇪', name: 'UAE',            mask: '## ### ####' },
-    { code: '+967',flag: '🇾🇪', name: 'Yemen',          mask: '### ### ###' },
+    { code: '+973', flag: '🇧🇭', name: 'Bahrain', mask: '#### ####' },
+    { code: '+964', flag: '🇮🇶', name: 'Iraq', mask: '### ### ####' },
+    { code: '+972', flag: '🇮🇱', name: 'Israel', mask: '##-###-####' },
+    { code: '+962', flag: '🇯🇴', name: 'Jordan', mask: '## #### ####' },
+    { code: '+965', flag: '🇰🇼', name: 'Kuwait', mask: '#### ####' },
+    { code: '+961', flag: '🇱🇧', name: 'Lebanon', mask: '## ### ###' },
+    { code: '+968', flag: '🇴🇲', name: 'Oman', mask: '#### ####' },
+    { code: '+974', flag: '🇶🇦', name: 'Qatar', mask: '#### ####' },
+    { code: '+966', flag: '🇸🇦', name: 'Saudi Arabia', mask: '## ### ####' },
+    { code: '+90', flag: '🇹🇷', name: 'Turkey', mask: '### ### ####' },
+    { code: '+971', flag: '🇦🇪', name: 'UAE', mask: '## ### ####' },
+    { code: '+967', flag: '🇾🇪', name: 'Yemen', mask: '### ### ###' },
     // Europe
-    { code: '+355',flag: '🇦🇱', name: 'Albania',        mask: '## ### ####' },
-    { code: '+43', flag: '🇦🇹', name: 'Austria',        mask: '### #######' },
-    { code: '+32', flag: '🇧🇪', name: 'Belgium',        mask: '### ## ## ##' },
-    { code: '+387',flag: '🇧🇦', name: 'Bosnia',         mask: '## ###-###' },
-    { code: '+359',flag: '🇧🇬', name: 'Bulgaria',       mask: '## ### ####' },
-    { code: '+385',flag: '🇭🇷', name: 'Croatia',        mask: '## ### ####' },
-    { code: '+357',flag: '🇨🇾', name: 'Cyprus',         mask: '## ######' },
-    { code: '+420',flag: '🇨🇿', name: 'Czech Republic', mask: '### ### ###' },
-    { code: '+45', flag: '🇩🇰', name: 'Denmark',        mask: '## ## ## ##' },
-    { code: '+372',flag: '🇪🇪', name: 'Estonia',        mask: '#### ####' },
-    { code: '+358',flag: '🇫🇮', name: 'Finland',        mask: '## ### ####' },
-    { code: '+33', flag: '🇫🇷', name: 'France',         mask: '## ## ## ## ##' },
-    { code: '+49', flag: '🇩🇪', name: 'Germany',        mask: '#### #######' },
-    { code: '+30', flag: '🇬🇷', name: 'Greece',         mask: '### ### ####' },
-    { code: '+36', flag: '🇭🇺', name: 'Hungary',        mask: '## ### ####' },
-    { code: '+354',flag: '🇮🇸', name: 'Iceland',        mask: '### ####' },
-    { code: '+353',flag: '🇮🇪', name: 'Ireland',        mask: '## ### ####' },
-    { code: '+39', flag: '🇮🇹', name: 'Italy',          mask: '### ### ####' },
-    { code: '+371',flag: '🇱🇻', name: 'Latvia',         mask: '## ### ###' },
-    { code: '+370',flag: '🇱🇹', name: 'Lithuania',      mask: '### #####' },
-    { code: '+352',flag: '🇱🇺', name: 'Luxembourg',     mask: '### ### ###' },
-    { code: '+356',flag: '🇲🇹', name: 'Malta',          mask: '#### ####' },
-    { code: '+31', flag: '🇳🇱', name: 'Netherlands',    mask: '## ### ####' },
-    { code: '+47', flag: '🇳🇴', name: 'Norway',         mask: '### ## ###' },
-    { code: '+48', flag: '🇵🇱', name: 'Poland',         mask: '### ### ###' },
-    { code: '+351',flag: '🇵🇹', name: 'Portugal',       mask: '### ### ###' },
-    { code: '+40', flag: '🇷🇴', name: 'Romania',        mask: '### ### ###' },
-    { code: '+7',  flag: '🇷🇺', name: 'Russia',         mask: '### ###-##-##' },
-    { code: '+381',flag: '🇷🇸', name: 'Serbia',         mask: '## ### ####' },
-    { code: '+421',flag: '🇸🇰', name: 'Slovakia',       mask: '### ### ###' },
-    { code: '+386',flag: '🇸🇮', name: 'Slovenia',       mask: '## ### ###' },
-    { code: '+34', flag: '🇪🇸', name: 'Spain',          mask: '### ### ###' },
-    { code: '+46', flag: '🇸🇪', name: 'Sweden',         mask: '##-### ## ##' },
-    { code: '+41', flag: '🇨🇭', name: 'Switzerland',    mask: '## ### ## ##' },
-    { code: '+380',flag: '🇺🇦', name: 'Ukraine',        mask: '## ### ## ##' },
+    { code: '+355', flag: '🇦🇱', name: 'Albania', mask: '## ### ####' },
+    { code: '+43', flag: '🇦🇹', name: 'Austria', mask: '### #######' },
+    { code: '+32', flag: '🇧🇪', name: 'Belgium', mask: '### ## ## ##' },
+    { code: '+387', flag: '🇧🇦', name: 'Bosnia', mask: '## ###-###' },
+    { code: '+359', flag: '🇧🇬', name: 'Bulgaria', mask: '## ### ####' },
+    { code: '+385', flag: '🇭🇷', name: 'Croatia', mask: '## ### ####' },
+    { code: '+357', flag: '🇨🇾', name: 'Cyprus', mask: '## ######' },
+    { code: '+420', flag: '🇨🇿', name: 'Czech Republic', mask: '### ### ###' },
+    { code: '+45', flag: '🇩🇰', name: 'Denmark', mask: '## ## ## ##' },
+    { code: '+372', flag: '🇪🇪', name: 'Estonia', mask: '#### ####' },
+    { code: '+358', flag: '🇫🇮', name: 'Finland', mask: '## ### ####' },
+    { code: '+33', flag: '🇫🇷', name: 'France', mask: '## ## ## ## ##' },
+    { code: '+49', flag: '🇩🇪', name: 'Germany', mask: '#### #######' },
+    { code: '+30', flag: '🇬🇷', name: 'Greece', mask: '### ### ####' },
+    { code: '+36', flag: '🇭🇺', name: 'Hungary', mask: '## ### ####' },
+    { code: '+354', flag: '🇮🇸', name: 'Iceland', mask: '### ####' },
+    { code: '+353', flag: '🇮🇪', name: 'Ireland', mask: '## ### ####' },
+    { code: '+39', flag: '🇮🇹', name: 'Italy', mask: '### ### ####' },
+    { code: '+371', flag: '🇱🇻', name: 'Latvia', mask: '## ### ###' },
+    { code: '+370', flag: '🇱🇹', name: 'Lithuania', mask: '### #####' },
+    { code: '+352', flag: '🇱🇺', name: 'Luxembourg', mask: '### ### ###' },
+    { code: '+356', flag: '🇲🇹', name: 'Malta', mask: '#### ####' },
+    { code: '+31', flag: '🇳🇱', name: 'Netherlands', mask: '## ### ####' },
+    { code: '+47', flag: '🇳🇴', name: 'Norway', mask: '### ## ###' },
+    { code: '+48', flag: '🇵🇱', name: 'Poland', mask: '### ### ###' },
+    { code: '+351', flag: '🇵🇹', name: 'Portugal', mask: '### ### ###' },
+    { code: '+40', flag: '🇷🇴', name: 'Romania', mask: '### ### ###' },
+    { code: '+7', flag: '🇷🇺', name: 'Russia', mask: '### ###-##-##' },
+    { code: '+381', flag: '🇷🇸', name: 'Serbia', mask: '## ### ####' },
+    { code: '+421', flag: '🇸🇰', name: 'Slovakia', mask: '### ### ###' },
+    { code: '+386', flag: '🇸🇮', name: 'Slovenia', mask: '## ### ###' },
+    { code: '+34', flag: '🇪🇸', name: 'Spain', mask: '### ### ###' },
+    { code: '+46', flag: '🇸🇪', name: 'Sweden', mask: '##-### ## ##' },
+    { code: '+41', flag: '🇨🇭', name: 'Switzerland', mask: '## ### ## ##' },
+    { code: '+380', flag: '🇺🇦', name: 'Ukraine', mask: '## ### ## ##' },
     { code: '+44', flag: '🇬🇧', name: 'United Kingdom', mask: '#### ######' },
     // Americas
-    { code: '+1',  flag: '🇺🇸', name: 'USA / Canada',   mask: '(###) ###-####' },
-    { code: '+54', flag: '🇦🇷', name: 'Argentina',      mask: '## ####-####' },
-    { code: '+591',flag: '🇧🇴', name: 'Bolivia',        mask: '#### ####' },
-    { code: '+55', flag: '🇧🇷', name: 'Brazil',         mask: '(##) #####-####' },
-    { code: '+56', flag: '🇨🇱', name: 'Chile',          mask: '## #### ####' },
-    { code: '+57', flag: '🇨🇴', name: 'Colombia',       mask: '### ### ####' },
-    { code: '+506',flag: '🇨🇷', name: 'Costa Rica',     mask: '#### ####' },
-    { code: '+53', flag: '🇨🇺', name: 'Cuba',           mask: '## ###-####' },
-    { code: '+593',flag: '🇪🇨', name: 'Ecuador',        mask: '## ### ####' },
-    { code: '+503',flag: '🇸🇻', name: 'El Salvador',    mask: '#### ####' },
-    { code: '+502',flag: '🇬🇹', name: 'Guatemala',      mask: '#### ####' },
-    { code: '+504',flag: '🇭🇳', name: 'Honduras',       mask: '#### ####' },
-    { code: '+52', flag: '🇲🇽', name: 'Mexico',         mask: '## #### ####' },
-    { code: '+505',flag: '🇳🇮', name: 'Nicaragua',      mask: '#### ####' },
-    { code: '+507',flag: '🇵🇦', name: 'Panama',         mask: '#### ####' },
-    { code: '+595',flag: '🇵🇾', name: 'Paraguay',       mask: '### ### ###' },
-    { code: '+51', flag: '🇵🇪', name: 'Peru',           mask: '### ### ###' },
-    { code: '+1787',flag:'🇵🇷', name: 'Puerto Rico',    mask: '###-####' },
-    { code: '+598',flag: '🇺🇾', name: 'Uruguay',        mask: '## ### ####' },
-    { code: '+58', flag: '🇻🇪', name: 'Venezuela',      mask: '###-#######' },
+    { code: '+1', flag: '🇺🇸', name: 'USA / Canada', mask: '(###) ###-####' },
+    { code: '+54', flag: '🇦🇷', name: 'Argentina', mask: '## ####-####' },
+    { code: '+591', flag: '🇧🇴', name: 'Bolivia', mask: '#### ####' },
+    { code: '+55', flag: '🇧🇷', name: 'Brazil', mask: '(##) #####-####' },
+    { code: '+56', flag: '🇨🇱', name: 'Chile', mask: '## #### ####' },
+    { code: '+57', flag: '🇨🇴', name: 'Colombia', mask: '### ### ####' },
+    { code: '+506', flag: '🇨🇷', name: 'Costa Rica', mask: '#### ####' },
+    { code: '+53', flag: '🇨🇺', name: 'Cuba', mask: '## ###-####' },
+    { code: '+593', flag: '🇪🇨', name: 'Ecuador', mask: '## ### ####' },
+    { code: '+503', flag: '🇸🇻', name: 'El Salvador', mask: '#### ####' },
+    { code: '+502', flag: '🇬🇹', name: 'Guatemala', mask: '#### ####' },
+    { code: '+504', flag: '🇭🇳', name: 'Honduras', mask: '#### ####' },
+    { code: '+52', flag: '🇲🇽', name: 'Mexico', mask: '## #### ####' },
+    { code: '+505', flag: '🇳🇮', name: 'Nicaragua', mask: '#### ####' },
+    { code: '+507', flag: '🇵🇦', name: 'Panama', mask: '#### ####' },
+    { code: '+595', flag: '🇵🇾', name: 'Paraguay', mask: '### ### ###' },
+    { code: '+51', flag: '🇵🇪', name: 'Peru', mask: '### ### ###' },
+    { code: '+1787', flag: '🇵🇷', name: 'Puerto Rico', mask: '###-####' },
+    { code: '+598', flag: '🇺🇾', name: 'Uruguay', mask: '## ### ####' },
+    { code: '+58', flag: '🇻🇪', name: 'Venezuela', mask: '###-#######' },
     // Africa
-    { code: '+213',flag: '🇩🇿', name: 'Algeria',        mask: '### ## ## ##' },
-    { code: '+244',flag: '🇦🇴', name: 'Angola',         mask: '### ### ###' },
-    { code: '+229',flag: '🇧🇯', name: 'Benin',          mask: '## ## ## ##' },
-    { code: '+267',flag: '🇧🇼', name: 'Botswana',       mask: '## ### ###' },
-    { code: '+226',flag: '🇧🇫', name: 'Burkina Faso',   mask: '## ## ## ##' },
-    { code: '+237',flag: '🇨🇲', name: 'Cameroon',       mask: '#### ####' },
-    { code: '+225',flag: '🇨🇮', name: "Côte d'Ivoire",  mask: '## ## ## ##' },
-    { code: '+20', flag: '🇪🇬', name: 'Egypt',          mask: '### ### ####' },
-    { code: '+251',flag: '🇪🇹', name: 'Ethiopia',       mask: '## ### ####' },
-    { code: '+233',flag: '🇬🇭', name: 'Ghana',          mask: '## ### ####' },
-    { code: '+254',flag: '🇰🇪', name: 'Kenya',          mask: '### ######' },
-    { code: '+261',flag: '🇲🇬', name: 'Madagascar',     mask: '## ## ### ##' },
-    { code: '+265',flag: '🇲🇼', name: 'Malawi',         mask: '#### ####' },
-    { code: '+223',flag: '🇲🇱', name: 'Mali',           mask: '## ## ## ##' },
-    { code: '+212',flag: '🇲🇦', name: 'Morocco',        mask: '###-######' },
-    { code: '+258',flag: '🇲🇿', name: 'Mozambique',     mask: '## ### ####' },
-    { code: '+264',flag: '🇳🇦', name: 'Namibia',        mask: '## ### ####' },
-    { code: '+234',flag: '🇳🇬', name: 'Nigeria',        mask: '### ### ####' },
-    { code: '+250',flag: '🇷🇼', name: 'Rwanda',         mask: '### ### ###' },
-    { code: '+221',flag: '🇸🇳', name: 'Senegal',        mask: '## ### ## ##' },
-    { code: '+27', flag: '🇿🇦', name: 'South Africa',   mask: '## ### ####' },
-    { code: '+249',flag: '🇸🇩', name: 'Sudan',          mask: '## ### ####' },
-    { code: '+255',flag: '🇹🇿', name: 'Tanzania',       mask: '### ### ###' },
-    { code: '+216',flag: '🇹🇳', name: 'Tunisia',        mask: '## ### ###' },
-    { code: '+256',flag: '🇺🇬', name: 'Uganda',         mask: '### ######' },
-    { code: '+260',flag: '🇿🇲', name: 'Zambia',         mask: '## #######' },
-    { code: '+263',flag: '🇿🇼', name: 'Zimbabwe',       mask: '## ### ####' },
+    { code: '+213', flag: '🇩🇿', name: 'Algeria', mask: '### ## ## ##' },
+    { code: '+244', flag: '🇦🇴', name: 'Angola', mask: '### ### ###' },
+    { code: '+229', flag: '🇧🇯', name: 'Benin', mask: '## ## ## ##' },
+    { code: '+267', flag: '🇧🇼', name: 'Botswana', mask: '## ### ###' },
+    { code: '+226', flag: '🇧🇫', name: 'Burkina Faso', mask: '## ## ## ##' },
+    { code: '+237', flag: '🇨🇲', name: 'Cameroon', mask: '#### ####' },
+    { code: '+225', flag: '🇨🇮', name: "Côte d'Ivoire", mask: '## ## ## ##' },
+    { code: '+20', flag: '🇪🇬', name: 'Egypt', mask: '### ### ####' },
+    { code: '+251', flag: '🇪🇹', name: 'Ethiopia', mask: '## ### ####' },
+    { code: '+233', flag: '🇬🇭', name: 'Ghana', mask: '## ### ####' },
+    { code: '+254', flag: '🇰🇪', name: 'Kenya', mask: '### ######' },
+    { code: '+261', flag: '🇲🇬', name: 'Madagascar', mask: '## ## ### ##' },
+    { code: '+265', flag: '🇲🇼', name: 'Malawi', mask: '#### ####' },
+    { code: '+223', flag: '🇲🇱', name: 'Mali', mask: '## ## ## ##' },
+    { code: '+212', flag: '🇲🇦', name: 'Morocco', mask: '###-######' },
+    { code: '+258', flag: '🇲🇿', name: 'Mozambique', mask: '## ### ####' },
+    { code: '+264', flag: '🇳🇦', name: 'Namibia', mask: '## ### ####' },
+    { code: '+234', flag: '🇳🇬', name: 'Nigeria', mask: '### ### ####' },
+    { code: '+250', flag: '🇷🇼', name: 'Rwanda', mask: '### ### ###' },
+    { code: '+221', flag: '🇸🇳', name: 'Senegal', mask: '## ### ## ##' },
+    { code: '+27', flag: '🇿🇦', name: 'South Africa', mask: '## ### ####' },
+    { code: '+249', flag: '🇸🇩', name: 'Sudan', mask: '## ### ####' },
+    { code: '+255', flag: '🇹🇿', name: 'Tanzania', mask: '### ### ###' },
+    { code: '+216', flag: '🇹🇳', name: 'Tunisia', mask: '## ### ###' },
+    { code: '+256', flag: '🇺🇬', name: 'Uganda', mask: '### ######' },
+    { code: '+260', flag: '🇿🇲', name: 'Zambia', mask: '## #######' },
+    { code: '+263', flag: '🇿🇼', name: 'Zimbabwe', mask: '## ### ####' },
   ];
 
   const applyMask = (raw: string, mask: string) => {
@@ -360,518 +360,511 @@ export default function OrderMedicines() {
       {/* Sticky Step Progress Bar */}
       <div className={`fixed top-[90px] left-0 right-0 z-[49] flex justify-center sm:justify-end sm:pr-6 pointer-events-none transition-all duration-500 ease-in-out ${stepperVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}`}>
         <div className="pointer-events-auto bg-white rounded-xl sm:rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-gray-100 px-3 py-2 sm:px-8 sm:py-3">
-            <div className="flex items-start gap-0">
+          <div className="flex items-start gap-0">
 
-              {/* Step 1 — Upload */}
-              <div className="flex flex-col items-center gap-1 sm:gap-1.5 min-w-[52px] sm:min-w-[80px]">
-                <div className={`w-7 h-7 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold border-2 transition-all duration-300 ${
-                  uploadComplete ? 'bg-[#61A644] border-[#61A644] text-white' : 'border-gray-200 text-gray-300 bg-white'
+            {/* Step 1 — Upload */}
+            <div className="flex flex-col items-center gap-1 sm:gap-1.5 min-w-[52px] sm:min-w-[80px]">
+              <div className={`w-7 h-7 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold border-2 transition-all duration-300 ${uploadComplete ? 'bg-[#61A644] border-[#61A644] text-white' : 'border-gray-200 text-gray-300 bg-white'
                 }`}>
-                  {uploadComplete ? <i className="fa-solid fa-check text-[11px] sm:text-[13px]"></i> : <span>1</span>}
-                </div>
-                <span className={`text-[8px] sm:text-[10px] font-semibold ${uploadComplete ? 'text-gray-900' : 'text-gray-400'}`}>Upload</span>
-                <span className={`text-[7px] sm:text-[9px] px-1 sm:px-1.5 py-0.5 rounded-full font-medium ${uploadComplete ? 'bg-green-50 text-green-600' : 'bg-gray-50 text-gray-300'}`}>
-                  {uploadComplete ? 'Completed' : 'Pending'}
-                </span>
+                {uploadComplete ? <i className="fa-solid fa-check text-[11px] sm:text-[13px]"></i> : <span>1</span>}
               </div>
+              <span className={`text-[8px] sm:text-[10px] font-semibold ${uploadComplete ? 'text-gray-900' : 'text-gray-400'}`}>Upload</span>
+              <span className={`text-[7px] sm:text-[9px] px-1 sm:px-1.5 py-0.5 rounded-full font-medium ${uploadComplete ? 'bg-green-50 text-green-600' : 'bg-gray-50 text-gray-300'}`}>
+                {uploadComplete ? 'Completed' : 'Pending'}
+              </span>
+            </div>
 
-              {/* Line */}
-              <div className={`h-[2px] w-8 sm:w-16 md:w-24 mt-[13px] sm:mt-[17px] rounded-full transition-all duration-500 ${uploadComplete ? 'bg-[#61A644]' : 'bg-gray-100'}`} />
+            {/* Line */}
+            <div className={`h-[2px] w-8 sm:w-16 md:w-24 mt-[13px] sm:mt-[17px] rounded-full transition-all duration-500 ${uploadComplete ? 'bg-[#61A644]' : 'bg-gray-100'}`} />
 
-              {/* Step 2 — Validation */}
-              <div className="flex flex-col items-center gap-1 sm:gap-1.5 min-w-[52px] sm:min-w-[80px]">
-                <div className={`w-7 h-7 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold border-2 transition-all duration-300 ${
-                  validationSubmitted ? 'bg-[#61A644] border-[#61A644] text-white'
-                  : uploadComplete ? 'border-[#61A644] text-[#61A644] bg-white'
+            {/* Step 2 — Validation */}
+            <div className="flex flex-col items-center gap-1 sm:gap-1.5 min-w-[52px] sm:min-w-[80px]">
+              <div className={`w-7 h-7 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold border-2 transition-all duration-300 ${validationSubmitted ? 'bg-[#61A644] border-[#61A644] text-white'
+                : uploadComplete ? 'border-[#61A644] text-[#61A644] bg-white'
                   : 'border-gray-200 text-gray-300 bg-white'
                 }`}>
-                  {validationSubmitted ? <i className="fa-solid fa-check text-[11px] sm:text-[13px]"></i> : <span>2</span>}
-                </div>
-                <span className={`text-[8px] sm:text-[10px] font-semibold ${validationSubmitted || uploadComplete ? 'text-gray-900' : 'text-gray-400'}`}>Validation</span>
-                <span className={`text-[7px] sm:text-[9px] px-1 sm:px-1.5 py-0.5 rounded-full font-medium ${
-                  validationSubmitted ? 'bg-green-50 text-green-600' : uploadComplete ? 'bg-blue-50 text-blue-500' : 'bg-gray-50 text-gray-300'
+                {validationSubmitted ? <i className="fa-solid fa-check text-[11px] sm:text-[13px]"></i> : <span>2</span>}
+              </div>
+              <span className={`text-[8px] sm:text-[10px] font-semibold ${validationSubmitted || uploadComplete ? 'text-gray-900' : 'text-gray-400'}`}>Validation</span>
+              <span className={`text-[7px] sm:text-[9px] px-1 sm:px-1.5 py-0.5 rounded-full font-medium ${validationSubmitted ? 'bg-green-50 text-green-600' : uploadComplete ? 'bg-blue-50 text-blue-500' : 'bg-gray-50 text-gray-300'
                 }`}>{validationSubmitted ? 'Completed' : uploadComplete ? 'In Progress' : 'Pending'}</span>
-              </div>
-
-              {/* Line */}
-              <div className={`h-[2px] w-8 sm:w-16 md:w-24 mt-[13px] sm:mt-[17px] rounded-full transition-all duration-500 ${validationSubmitted ? 'bg-[#61A644]' : 'bg-gray-100'}`} />
-
-              {/* Step 3 — Confirmation (always awaiting) */}
-              <div className="flex flex-col items-center gap-1 sm:gap-1.5 min-w-[52px] sm:min-w-[80px]">
-                <div className={`w-7 h-7 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold border-2 transition-all duration-300 ${
-                  validationSubmitted ? 'border-[#1D9FDA] text-[#1D9FDA] bg-white' : 'border-gray-200 text-gray-300 bg-white'
-                }`}>
-                  {validationSubmitted ? <i className="fa-solid fa-bell text-[11px] sm:text-[13px]"></i> : <span>3</span>}
-                </div>
-                <span className={`text-[8px] sm:text-[10px] font-semibold text-center leading-tight ${validationSubmitted ? 'text-[#1D9FDA]' : 'text-gray-400'}`}>Await Email<br/>or Call</span>
-                {validationSubmitted && (
-                  <span className="text-[7px] sm:text-[9px] px-1 sm:px-1.5 py-0.5 rounded-full font-medium bg-blue-50 text-blue-500">
-                    Awaiting
-                  </span>
-                )}
-              </div>
-
             </div>
+
+            {/* Line */}
+            <div className={`h-[2px] w-8 sm:w-16 md:w-24 mt-[13px] sm:mt-[17px] rounded-full transition-all duration-500 ${validationSubmitted ? 'bg-[#61A644]' : 'bg-gray-100'}`} />
+
+            {/* Step 3 — Confirmation (always awaiting) */}
+            <div className="flex flex-col items-center gap-1 sm:gap-1.5 min-w-[52px] sm:min-w-[80px]">
+              <div className={`w-7 h-7 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold border-2 transition-all duration-300 ${validationSubmitted ? 'border-[#1D9FDA] text-[#1D9FDA] bg-white' : 'border-gray-200 text-gray-300 bg-white'
+                }`}>
+                {validationSubmitted ? <i className="fa-solid fa-bell text-[11px] sm:text-[13px]"></i> : <span>3</span>}
+              </div>
+              <span className={`text-[8px] sm:text-[10px] font-semibold text-center leading-tight ${validationSubmitted ? 'text-[#1D9FDA]' : 'text-gray-400'}`}>Await Email<br />or Call</span>
+              {validationSubmitted && (
+                <span className="text-[7px] sm:text-[9px] px-1 sm:px-1.5 py-0.5 rounded-full font-medium bg-blue-50 text-blue-500">
+                  Awaiting
+                </span>
+              )}
+            </div>
+
+          </div>
         </div>
       </div>
 
       {/* Main content — overflow-x-hidden prevents any child from expanding layout viewport */}
       <div className="overflow-x-hidden">
 
-      {/* Hero Banner */}
-      <section className="w-full px-4 md:px-6 pt-5 pb-4">
-        <div
-          className="relative rounded-[15px] overflow-hidden flex items-center px-8 md:px-12"
-          style={{ background: 'linear-gradient(135deg, #3aaf5c 0%, #1ab8c4 45%, #1a99d6 100%)', minHeight: '130px' }}
-        >
-          {/* Glassy circles */}
-          <div className="absolute pointer-events-none" style={{ width: 160, height: 160, borderRadius: '50%', bottom: '-55px', left: '28%', background: 'radial-gradient(circle at 40% 35%, rgba(100,240,200,0.55), rgba(30,180,210,0.30))', backdropFilter: 'blur(2px)', border: '1px solid rgba(255,255,255,0.25)' }} />
-          <div className="absolute pointer-events-none" style={{ width: 130, height: 130, borderRadius: '50%', bottom: '-42px', left: '45%', background: 'radial-gradient(circle at 38% 30%, rgba(120,100,240,0.55), rgba(60,80,220,0.35))', backdropFilter: 'blur(2px)', border: '1px solid rgba(255,255,255,0.20)' }} />
-          <div className="absolute pointer-events-none hidden md:block" style={{ width: 180, height: 180, borderRadius: '50%', bottom: '-70px', right: '8%', background: 'radial-gradient(circle at 42% 38%, rgba(130,230,230,0.45), rgba(60,190,210,0.22))', backdropFilter: 'blur(2px)', border: '1px solid rgba(255,255,255,0.22)' }} />
-          <div className="absolute pointer-events-none hidden md:block" style={{ width: 90, height: 90, borderRadius: '50%', bottom: '-20px', left: '18%', background: 'radial-gradient(circle at 35% 30%, rgba(160,240,120,0.60), rgba(40,210,130,0.35))', backdropFilter: 'blur(2px)', border: '1px solid rgba(255,255,255,0.25)' }} />
-          <div className="absolute pointer-events-none hidden md:block" style={{ width: 52, height: 52, borderRadius: '50%', top: '10px', right: '28%', background: 'radial-gradient(circle at 35% 30%, rgba(170,110,240,0.70), rgba(100,60,210,0.45))', backdropFilter: 'blur(2px)', border: '1px solid rgba(255,255,255,0.25)' }} />
-          <div className="absolute pointer-events-none hidden md:block" style={{ width: 85, height: 85, borderRadius: '50%', top: '-15px', right: '38%', background: 'radial-gradient(circle at 38% 32%, rgba(80,220,210,0.55), rgba(30,170,200,0.30))', backdropFilter: 'blur(2px)', border: '1px solid rgba(255,255,255,0.22)' }} />
-          <div className="absolute pointer-events-none" style={{ width: 280, height: 80, borderRadius: '50%', bottom: '-48px', left: '22%', background: 'radial-gradient(ellipse at 50% 40%, rgba(40,160,230,0.38), rgba(20,130,210,0.18))', backdropFilter: 'blur(2px)' }} />
-          <div className="relative z-10">
-            <h1 className="text-xl sm:text-2xl md:text-3xl font-semibold text-white tracking-tight leading-tight">
-              Order Medicines
-            </h1>
-            <p className="text-white/75 text-[12px] sm:text-[13px] mt-1 font-medium">Order your medicines with ease. Upload your prescription and we'll handle the rest.</p>
+        {/* Hero Banner */}
+        <section className="w-full px-4 md:px-6 pt-5 pb-4">
+          <div
+            className="relative rounded-[15px] overflow-hidden flex items-center px-8 md:px-12"
+            style={{ background: 'linear-gradient(135deg, #3aaf5c 0%, #1ab8c4 45%, #1a99d6 100%)', minHeight: '130px' }}
+          >
+            {/* Glassy circles */}
+            <div className="absolute pointer-events-none" style={{ width: 160, height: 160, borderRadius: '50%', bottom: '-55px', left: '28%', background: 'radial-gradient(circle at 40% 35%, rgba(100,240,200,0.55), rgba(30,180,210,0.30))', backdropFilter: 'blur(2px)', border: '1px solid rgba(255,255,255,0.25)' }} />
+            <div className="absolute pointer-events-none" style={{ width: 130, height: 130, borderRadius: '50%', bottom: '-42px', left: '45%', background: 'radial-gradient(circle at 38% 30%, rgba(120,100,240,0.55), rgba(60,80,220,0.35))', backdropFilter: 'blur(2px)', border: '1px solid rgba(255,255,255,0.20)' }} />
+            <div className="absolute pointer-events-none hidden md:block" style={{ width: 180, height: 180, borderRadius: '50%', bottom: '-70px', right: '8%', background: 'radial-gradient(circle at 42% 38%, rgba(130,230,230,0.45), rgba(60,190,210,0.22))', backdropFilter: 'blur(2px)', border: '1px solid rgba(255,255,255,0.22)' }} />
+            <div className="absolute pointer-events-none hidden md:block" style={{ width: 90, height: 90, borderRadius: '50%', bottom: '-20px', left: '18%', background: 'radial-gradient(circle at 35% 30%, rgba(160,240,120,0.60), rgba(40,210,130,0.35))', backdropFilter: 'blur(2px)', border: '1px solid rgba(255,255,255,0.25)' }} />
+            <div className="absolute pointer-events-none hidden md:block" style={{ width: 52, height: 52, borderRadius: '50%', top: '10px', right: '28%', background: 'radial-gradient(circle at 35% 30%, rgba(170,110,240,0.70), rgba(100,60,210,0.45))', backdropFilter: 'blur(2px)', border: '1px solid rgba(255,255,255,0.25)' }} />
+            <div className="absolute pointer-events-none hidden md:block" style={{ width: 85, height: 85, borderRadius: '50%', top: '-15px', right: '38%', background: 'radial-gradient(circle at 38% 32%, rgba(80,220,210,0.55), rgba(30,170,200,0.30))', backdropFilter: 'blur(2px)', border: '1px solid rgba(255,255,255,0.22)' }} />
+            <div className="absolute pointer-events-none" style={{ width: 280, height: 80, borderRadius: '50%', bottom: '-48px', left: '22%', background: 'radial-gradient(ellipse at 50% 40%, rgba(40,160,230,0.38), rgba(20,130,210,0.18))', backdropFilter: 'blur(2px)' }} />
+            <div className="relative z-10">
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-semibold text-white tracking-tight leading-tight">
+                Order Medicines
+              </h1>
+              <p className="text-white/75 text-[12px] sm:text-[13px] mt-1 font-medium">Order your medicines with ease. Upload your prescription and we'll handle the rest.</p>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* ============================================================
+        {/* ============================================================
           ORDER PROCESS SECTION
       ============================================================ */}
-      <section className="py-10 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col gap-8">
+        <section className="py-10 bg-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex flex-col gap-8">
 
-            {/* How It Works */}
-            <div className="mb-12" ref={howToOrderRef}>
-              <div className="text-center mb-10">
-                <h2 className="text-2xl font-bold text-dark">How to Order with Prescription</h2>
-                <p className="text-gray-500 text-sm mt-1">A simple 3-step process designed for your convenience</p>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                {/* Step 1 */}
-                <div className="relative flex flex-col items-center">
-                  <div className="w-16 h-16 rounded-[15px] bg-blue-50 text-primary flex items-center justify-center text-2xl mb-5 shadow-sm border border-blue-100/50">
-                    <i className="fa-solid fa-camera-retro"></i>
-                  </div>
-                  <div className="text-center">
-                    <h3 className="font-bold text-dark mb-2">1. Upload</h3>
-                    <p className="text-[12px] text-gray-500 leading-relaxed px-4">Take a clear photo or upload a digital copy of your valid prescription.</p>
-                  </div>
-                  <div className="hidden md:block absolute top-8 -right-4 text-gray-200">
-                    <i className="fa-solid fa-chevron-right"></i>
-                  </div>
+              {/* How It Works */}
+              <div className="mb-12" ref={howToOrderRef}>
+                <div className="text-center mb-10">
+                  <h2 className="text-2xl font-bold text-dark">How to Order with Prescription</h2>
+                  <p className="text-gray-500 text-sm mt-1">A simple 3-step process designed for your convenience</p>
                 </div>
-                {/* Step 2 */}
-                <div className="relative flex flex-col items-center">
-                  <div className="w-16 h-16 rounded-[15px] bg-green-50 text-green-600 flex items-center justify-center text-2xl mb-5 shadow-sm border border-green-100/50">
-                    <i className="fa-solid fa-user-check"></i>
-                  </div>
-                  <div className="text-center">
-                    <h3 className="font-bold text-dark mb-2">2. Verification</h3>
-                    <p className="text-[12px] text-gray-500 leading-relaxed px-4">Our licensed pharmacists will verify the details within minutes.</p>
-                  </div>
-                  <div className="hidden md:block absolute top-8 -right-4 text-gray-200">
-                    <i className="fa-solid fa-chevron-right"></i>
-                  </div>
-                </div>
-                {/* Step 3 */}
-                <div className="relative flex flex-col items-center">
-                  <div className="w-16 h-16 rounded-[15px] bg-purple-50 text-purple-600 flex items-center justify-center text-2xl mb-5 shadow-sm border border-purple-100/50">
-                    <i className="fa-solid fa-clipboard-check"></i>
-                  </div>
-                  <div className="text-center">
-                    <h3 className="font-bold text-dark mb-2">3. Confirmation</h3>
-                    <p className="text-[12px] text-gray-500 leading-relaxed px-4">You'll receive a notification once your order is confirmed and ready.</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* TOP ROW: Tools & Assistance Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
-
-              {/* Upload Prescription Card (Col Span 4) */}
-              <div className="lg:col-span-4 bg-white rounded-[15px] border border-gray-100 p-8 shadow-sm flex flex-col h-full hover:shadow-md transition">
-                <div className="flex items-center gap-4 mb-8">
-                  <div className="w-10 h-10 rounded-[12px] flex items-center justify-center text-white shadow-lg shadow-blue-100"
-                    style={{ background: 'linear-gradient(to right,#61A644,#1D9FDA)' }}>
-                    <i className="fa-solid fa-file-prescription text-lg"></i>
-                  </div>
-                  <div>
-                    <h2 className="text-lg font-bold text-dark tracking-tight">Upload Prescription</h2>
-                    <p className="text-gray-400 text-[11px] mt-0.5">JPEG, PNG, or PDF formats</p>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 gap-6 flex-grow">
-                  {/* Upload New */}
-                  <label className="group relative cursor-pointer">
-                    <input type="file" multiple accept="image/*,.pdf" className="hidden" onChange={handleFileChange} />
-                    <div className="h-full border-2 border-dashed border-gray-100 rounded-[15px] p-6 flex flex-col items-center justify-center text-center transition-all group-hover:border-primary/40 group-hover:bg-blue-50/30">
-                      <div className="w-14 h-14 rounded-full bg-blue-50 text-primary flex items-center justify-center mb-3 transition-transform group-hover:scale-110 group-hover:bg-primary group-hover:text-white">
-                        <i className="fa-solid fa-cloud-arrow-up text-xl"></i>
-                      </div>
-                      <span className="text-[14px] font-semibold text-dark mb-1">Upload Files</span>
-                      <span className="text-gray-400 text-[11px]">Click to browse — multiple allowed</span>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                  {/* Step 1 */}
+                  <div className="relative flex flex-col items-center">
+                    <div className="w-16 h-16 rounded-[15px] bg-blue-50 text-primary flex items-center justify-center text-2xl mb-5 shadow-sm border border-blue-100/50">
+                      <i className="fa-solid fa-camera-retro"></i>
                     </div>
-                  </label>
+                    <div className="text-center">
+                      <h3 className="font-bold text-dark mb-2">1. Upload</h3>
+                      <p className="text-[12px] text-gray-500 leading-relaxed px-4">Take a clear photo or upload a digital copy of your valid prescription.</p>
+                    </div>
+                    <div className="hidden md:block absolute top-8 -right-4 text-gray-200">
+                      <i className="fa-solid fa-chevron-right"></i>
+                    </div>
+                  </div>
+                  {/* Step 2 */}
+                  <div className="relative flex flex-col items-center">
+                    <div className="w-16 h-16 rounded-[15px] bg-green-50 text-green-600 flex items-center justify-center text-2xl mb-5 shadow-sm border border-green-100/50">
+                      <i className="fa-solid fa-user-check"></i>
+                    </div>
+                    <div className="text-center">
+                      <h3 className="font-bold text-dark mb-2">2. Verification</h3>
+                      <p className="text-[12px] text-gray-500 leading-relaxed px-4">Our licensed pharmacists will verify the details within minutes.</p>
+                    </div>
+                    <div className="hidden md:block absolute top-8 -right-4 text-gray-200">
+                      <i className="fa-solid fa-chevron-right"></i>
+                    </div>
+                  </div>
+                  {/* Step 3 */}
+                  <div className="relative flex flex-col items-center">
+                    <div className="w-16 h-16 rounded-[15px] bg-purple-50 text-purple-600 flex items-center justify-center text-2xl mb-5 shadow-sm border border-purple-100/50">
+                      <i className="fa-solid fa-clipboard-check"></i>
+                    </div>
+                    <div className="text-center">
+                      <h3 className="font-bold text-dark mb-2">3. Confirmation</h3>
+                      <p className="text-[12px] text-gray-500 leading-relaxed px-4">You'll receive a notification once your order is confirmed and ready.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
 
-                  {/* Uploaded Files Preview */}
-                  <div className="border border-gray-100 rounded-[15px] bg-gray-50/50 overflow-hidden" style={{ minHeight: '110px' }}>
-                    {uploadedFiles.length > 0 ? (
-                      <div className="p-3 grid grid-cols-3 gap-2">
-                        {uploadedFiles.map((file, idx) => (
-                          <div key={idx} className="relative group/thumb">
-                            {file.type.startsWith('image/') ? (
+              {/* TOP ROW: Tools & Assistance Grid */}
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+
+                {/* Upload Prescription Card (Col Span 4) */}
+                <div className="lg:col-span-4 bg-white rounded-[15px] border border-gray-100 p-8 shadow-sm flex flex-col h-full hover:shadow-md transition">
+                  <div className="flex items-center gap-4 mb-8">
+                    <div className="w-10 h-10 rounded-[12px] flex items-center justify-center text-white shadow-lg shadow-blue-100"
+                      style={{ background: 'linear-gradient(to right,#61A644,#1D9FDA)' }}>
+                      <i className="fa-solid fa-file-prescription text-lg"></i>
+                    </div>
+                    <div>
+                      <h2 className="text-lg font-bold text-dark tracking-tight">Upload Prescription</h2>
+                      <p className="text-gray-400 text-[11px] mt-0.5">JPEG, PNG, or PDF formats</p>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 gap-6 flex-grow">
+                    {/* Upload New */}
+                    <label className="group relative cursor-pointer">
+                      <input type="file" multiple accept="image/*,.pdf" className="hidden" onChange={handleFileChange} />
+                      <div className="h-full border-2 border-dashed border-gray-100 rounded-[15px] p-6 flex flex-col items-center justify-center text-center transition-all group-hover:border-primary/40 group-hover:bg-blue-50/30">
+                        <div className="w-14 h-14 rounded-full bg-blue-50 text-primary flex items-center justify-center mb-3 transition-transform group-hover:scale-110 group-hover:bg-primary group-hover:text-white">
+                          <i className="fa-solid fa-cloud-arrow-up text-xl"></i>
+                        </div>
+                        <span className="text-[14px] font-semibold text-dark mb-1">Upload Files</span>
+                        <span className="text-gray-400 text-[11px]">Click to browse — multiple allowed</span>
+                      </div>
+                    </label>
+
+                    {/* Uploaded Files Preview */}
+                    <div className="border border-gray-100 rounded-[15px] bg-gray-50/50 overflow-hidden" style={{ minHeight: '110px' }}>
+                      {uploadedFiles.length > 0 ? (
+                        <div className="p-3 grid grid-cols-3 gap-2">
+                          {uploadedFiles.map((file, idx) => (
+                            <div key={idx} className="relative group/thumb">
+                              {file.type.startsWith('image/') ? (
+                                <button
+                                  type="button"
+                                  onClick={() => setViewingFileUrl(URL.createObjectURL(file))}
+                                  className="w-full aspect-square rounded-[10px] overflow-hidden border border-gray-100 bg-white block"
+                                >
+                                  <img
+                                    src={URL.createObjectURL(file)}
+                                    alt={file.name}
+                                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-200"
+                                  />
+                                </button>
+                              ) : (
+                                <div className="w-full aspect-square rounded-[10px] border border-gray-100 bg-white flex flex-col items-center justify-center gap-1 px-1">
+                                  <i className="fa-solid fa-file-pdf text-red-400 text-xl"></i>
+                                  <span className="text-[9px] text-gray-400 text-center truncate w-full px-1 leading-tight">{file.name}</span>
+                                </div>
+                              )}
                               <button
                                 type="button"
-                                onClick={() => setViewingFileUrl(URL.createObjectURL(file))}
-                                className="w-full aspect-square rounded-[10px] overflow-hidden border border-gray-100 bg-white block"
+                                onClick={() => {
+                                  const updated = uploadedFiles.filter((_, i) => i !== idx);
+                                  setUploadedFiles(updated);
+                                  if (updated.length === 0) setUploadComplete(false);
+                                }}
+                                className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-white rounded-full border border-gray-200 shadow-sm flex items-center justify-center text-gray-400 hover:text-red-500 transition opacity-0 group-hover/thumb:opacity-100"
                               >
-                                <img
-                                  src={URL.createObjectURL(file)}
-                                  alt={file.name}
-                                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-200"
-                                />
+                                <i className="fa-solid fa-xmark text-[9px]"></i>
                               </button>
-                            ) : (
-                              <div className="w-full aspect-square rounded-[10px] border border-gray-100 bg-white flex flex-col items-center justify-center gap-1 px-1">
-                                <i className="fa-solid fa-file-pdf text-red-400 text-xl"></i>
-                                <span className="text-[9px] text-gray-400 text-center truncate w-full px-1 leading-tight">{file.name}</span>
-                              </div>
-                            )}
-                            <button
-                              type="button"
-                              onClick={() => {
-                                const updated = uploadedFiles.filter((_, i) => i !== idx);
-                                setUploadedFiles(updated);
-                                if (updated.length === 0) setUploadComplete(false);
-                              }}
-                              className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-white rounded-full border border-gray-200 shadow-sm flex items-center justify-center text-gray-400 hover:text-red-500 transition opacity-0 group-hover/thumb:opacity-100"
-                            >
-                              <i className="fa-solid fa-xmark text-[9px]"></i>
-                            </button>
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="flex flex-col items-center justify-center text-center px-4 py-6 h-full">
-                        <i className="fa-regular fa-images text-3xl text-gray-200 mb-2"></i>
-                        <span className="text-gray-300 text-[11px]">Uploaded files appear here</span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                <div className="mt-8 flex items-start gap-4 p-4 bg-blue-50/50 rounded-[12px] border border-blue-100/50">
-                  <i className="fa-solid fa-circle-info text-[#1D9FDA] mt-1 text-sm"></i>
-                  <p className="text-[12px] text-gray-500 leading-relaxed">
-                    <span className="font-bold text-[#1A202C]">Note:</span> Always upload a clean version for faster verification.
-                  </p>
-                </div>
-              </div>
-
-              {/* Guide Slider (Col Span 5) */}
-              <div className="lg:col-span-5 rounded-[15px] overflow-hidden flex flex-col h-full relative border-none shadow-lg"
-                style={{ background: 'linear-gradient(to right,#61A644,#1D9FDA)' }}>
-                <div className="p-6 border-b border-white/10 bg-black/5">
-                  <h2 className="text-lg font-semibold text-white tracking-tight">Guide for a Valid Prescription</h2>
-                  <p className="text-white/70 text-[11px] mt-1">Make sure your upload includes these critical details</p>
-                </div>
-
-                <div className="relative flex-grow overflow-hidden group">
-                  <div
-                    className="flex transition-transform duration-700 ease-in-out h-full"
-                    style={{ transform: `translateX(-${currentSlide * 100}%)` }}
-                  >
-                    {/* Slide 1 */}
-                    <div className="w-full flex-shrink-0 flex flex-col items-center justify-center p-6">
-                      <div className="relative group/img overflow-hidden rounded-[15px] shadow-2xl border border-white/20 w-full max-w-[260px] aspect-[4/5] bg-white">
-                        <img src="assets/clinicdetails.png" alt="Doctor Information Guide" className="w-full h-full object-cover transition duration-500 group-hover/img:scale-110" />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-                      </div>
-                      <div className="mt-4 text-center">
-                        <h3 className="text-[13px] font-bold text-white">Clinic Details</h3>
-                        <p className="text-white/70 text-[11px] mt-1 max-w-[200px]">The clinic address and doctor's license number must be visible.</p>
-                      </div>
-                    </div>
-                    {/* Slide 2 */}
-                    <div className="w-full flex-shrink-0 flex flex-col items-center justify-center p-6">
-                      <div className="relative group/img overflow-hidden rounded-[15px] shadow-2xl border border-white/20 w-full max-w-[260px] aspect-[4/5] bg-white">
-                        <img src="assets/medicationinfo.png" alt="Medication Details Guide" className="w-full h-full object-cover transition duration-500 group-hover/img:scale-110" />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-                      </div>
-                      <div className="mt-4 text-center">
-                        <h3 className="text-[13px] font-bold text-white">Medication Info</h3>
-                        <p className="text-white/70 text-[11px] mt-1 max-w-[200px]">Clearly list medicine name, strength, and frequency.</p>
-                      </div>
-                    </div>
-                    {/* Slide 3 */}
-                    <div className="w-full flex-shrink-0 flex flex-col items-center justify-center p-6">
-                      <div className="relative group/img overflow-hidden rounded-[15px] shadow-2xl border border-white/20 w-full max-w-[260px] aspect-[4/5] bg-white">
-                        <img src="assets/legalvalidation.png" alt="Signature and Stamp Guide" className="w-full h-full object-cover transition duration-500 group-hover/img:scale-110" />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-                      </div>
-                      <div className="mt-4 text-center">
-                        <h3 className="text-[13px] font-bold text-white">Legal Validation</h3>
-                        <p className="text-white/70 text-[11px] mt-1 max-w-[200px]">Physical signature and clinic stamp are mandatory.</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Dots */}
-                  <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
-                    {[0, 1, 2].map(i => (
-                      <button
-                        key={i}
-                        onClick={() => goToSlide(i)}
-                        className="rounded-full transition-all duration-300"
-                        style={{
-                          width: currentSlide === i ? '16px' : '6px',
-                          height: '6px',
-                          background: currentSlide === i ? 'white' : 'rgba(255,255,255,0.4)',
-                        }}
-                      />
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* Column C: Guidance & Trust (Col Span 3) */}
-              <div className="lg:col-span-3 flex flex-col gap-6">
-                {/* Assistance Card */}
-                <div className="bg-white p-6 rounded-[15px] border border-gray-100 flex flex-col h-full shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-md transition">
-                  <p className="text-[10px] font-semibold uppercase tracking-widest mb-2 px-1"
-                    style={{ background: 'linear-gradient(to right,#61A644,#1D9FDA)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
-                    Need Assistance?
-                  </p>
-                  <h3 className="text-sm font-semibold mb-4 px-1"
-                    style={{ background: 'linear-gradient(to right,#61A644,#1D9FDA)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
-                    Chat with our Pharmacist
-                  </h3>
-
-                  <div className="space-y-4">
-                    <a href="tel:(02)8888-8888" className="flex items-center gap-3 group">
-                      <div className="w-9 h-9 rounded-[10px] bg-gray-50 flex items-center justify-center text-dark text-xs group-hover:bg-primary group-hover:text-white transition shadow-sm">
-                        <i className="fa-solid fa-phone"></i>
-                      </div>
-                      <div className="text-left">
-                        <p className="text-[10px] text-gray-400 font-medium">Customer Support</p>
-                        <p className="text-[12px] font-bold text-dark">(02) 8888-8888</p>
-                      </div>
-                    </a>
-                    <a href="mailto:support@getmeds.ph" className="flex items-center gap-3 group">
-                      <div className="w-9 h-9 rounded-[10px] bg-gray-50 flex items-center justify-center text-dark text-xs group-hover:bg-primary group-hover:text-white transition shadow-sm">
-                        <i className="fa-solid fa-envelope"></i>
-                      </div>
-                      <div className="text-left">
-                        <p className="text-[10px] text-gray-400 font-medium">Email Address</p>
-                        <p className="text-[11px] font-bold text-dark">support@getmeds.ph</p>
-                      </div>
-                    </a>
-                  </div>
-
-                  <div className="mt-auto pt-6">
-                    <div className="bg-white p-4 rounded-[12px] border border-gray-100 flex flex-col items-center text-center shadow-sm">
-                      <div className="w-10 h-10 rounded-full bg-green-50 text-green-500 flex items-center justify-center mb-2">
-                        <i className="fa-solid fa-shield-halved"></i>
-                      </div>
-                      <p className="text-[11px] font-bold text-dark mb-1 leading-tight">Secure Prescription Storage</p>
-                      <p className="text-[9px] text-gray-400 leading-relaxed px-1">Your data is stored with bank-level encryption.</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Data Protection */}
-                <div className="bg-white p-6 rounded-[15px] border border-gray-100 shadow-sm flex flex-col relative overflow-hidden group h-full hover:shadow-md transition">
-                  <div className="absolute -bottom-6 -right-6 opacity-[0.03] group-hover:scale-125 transition duration-700 pointer-events-none">
-                    <i className="fa-solid fa-user-shield text-8xl text-dark"></i>
-                  </div>
-                  <div className="w-9 h-9 rounded-[10px] bg-green-50 flex items-center justify-center text-green-500 text-xs mb-4">
-                    <i className="fa-solid fa-check-double"></i>
-                  </div>
-                  <h3 className="text-sm font-bold text-dark mb-2">Pharmacy Verified</h3>
-                  <p className="text-[11px] text-gray-400 leading-relaxed z-10">We strictly follow FDA standards for medication dispensing and privacy.</p>
-                  <div className="mt-auto pt-4 flex items-center gap-2">
-                    <span className="h-1.5 w-1.5 rounded-full bg-green-500"></span>
-                    <span className="text-[9px] font-bold text-green-600 uppercase tracking-tight">HIPAA Compliant</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* BOTTOM ROW: Validation Form */}
-            <div className="w-full">
-              <div className="bg-white rounded-[15px] border border-gray-100 p-8 md:p-12 shadow-sm">
-                <div className="mb-8">
-                  <h2 className="text-2xl font-semibold text-gray-900 mb-1">Customer Validation</h2>
-                  <p className="text-gray-400 text-[13px]">Please provide accurate details for legal verification.</p>
-                </div>
-
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
-                    <div className="space-y-2">
-                      <label className="text-[14px] font-semibold text-gray-700">Patient Full Name</label>
-                      <input type="text" placeholder="As written on prescription"
-                        required
-                        value={formData.patientName}
-                        onChange={e => setFormData(prev => ({ ...prev, patientName: e.target.value }))}
-                        className="w-full bg-gray-50 border-none rounded-[15px] px-6 py-3.5 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition placeholder-gray-300" />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-[14px] font-semibold text-gray-700">Email Address</label>
-                      <input type="email" placeholder="example@domain.com"
-                        required
-                        value={formData.email}
-                        onChange={e => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                        className="w-full bg-gray-50 border-none rounded-[15px] px-6 py-3.5 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition placeholder-gray-300" />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-[14px] font-semibold text-gray-700">Phone Number</label>
-                      <div className="relative flex items-center bg-gray-50 rounded-[15px] overflow-visible focus-within:ring-2 focus-within:ring-primary/20 transition">
-                        {/* Country dropdown trigger */}
-                        <button
-                          type="button"
-                          onClick={() => setPhoneCountryOpen(o => !o)}
-                          className="flex items-center gap-1.5 pl-4 pr-2 py-3.5 shrink-0 border-r border-gray-200 text-[13px] text-gray-700 hover:bg-gray-100 rounded-l-[15px] transition"
-                        >
-                          <span>{phoneCountry.flag}</span>
-                          <span className="font-semibold text-gray-600">{phoneCountry.code}</span>
-                          <i className="fa-solid fa-chevron-down text-[9px] text-gray-400"></i>
-                        </button>
-                        {/* Number input */}
-                        <input
-                          ref={phoneInputRef}
-                          type="tel"
-                          required
-                          placeholder={(() => { const d = '9123456789'; let i = 0; return phoneCountry.mask.replace(/#/g, () => d[i++ % d.length]); })()}
-                          value={formData.phone}
-                          onChange={handlePhoneChange}
-                          className="flex-1 bg-transparent px-4 py-3.5 text-[13px] text-gray-700 outline-none placeholder-gray-300"
-                        />
-                        {/* Country list dropdown */}
-                        {phoneCountryOpen && (
-                          <div className="absolute top-full left-0 mt-1 w-72 bg-white rounded-[12px] shadow-xl border border-gray-100 z-[60] overflow-hidden" onClick={e => e.stopPropagation()}>
-                            <div className="p-2 border-b border-gray-100">
-                              <input
-                                autoFocus
-                                type="text"
-                                placeholder="Search country..."
-                                value={phoneSearch}
-                                onChange={e => setPhoneSearch(e.target.value)}
-                                className="w-full px-3 py-2 text-[12px] bg-gray-50 rounded-[8px] outline-none placeholder-gray-300 text-gray-700"
-                              />
                             </div>
-                            <div className="max-h-52 overflow-y-auto">
-                              {PHONE_COUNTRIES.filter(c =>
-                                c.name.toLowerCase().includes(phoneSearch.toLowerCase()) ||
-                                c.code.includes(phoneSearch)
-                              ).map(c => (
-                                <button
-                                  key={c.code + c.name}
-                                  type="button"
-                                  onClick={() => { setPhoneCountry(c); setPhoneCountryOpen(false); setPhoneSearch(''); setFormData(prev => ({ ...prev, phone: '' })); }}
-                                  className={`w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-gray-50 transition text-[13px] ${phoneCountry.code === c.code && phoneCountry.name === c.name ? 'bg-green-50 text-[#61A644] font-semibold' : 'text-gray-700'}`}
-                                >
-                                  <span className="text-base">{c.flag}</span>
-                                  <span className="flex-1">{c.name}</span>
-                                  <span className="text-gray-400 text-[12px]">{c.code}</span>
-                                </button>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-                      </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="flex flex-col items-center justify-center text-center px-4 py-6 h-full">
+                          <i className="fa-regular fa-images text-3xl text-gray-200 mb-2"></i>
+                          <span className="text-gray-300 text-[11px]">Uploaded files appear here</span>
+                        </div>
+                      )}
                     </div>
                   </div>
 
-                  <div className="space-y-2">
-                    <label className="text-[14px] font-semibold text-gray-700">Delivery Address</label>
-                    <textarea placeholder="Complete address for courier delivery..." rows={3}
-                      required
-                      value={formData.address}
-                      onChange={e => setFormData(prev => ({ ...prev, address: e.target.value }))}
-                      className="w-full bg-gray-50 border-none rounded-[15px] px-6 py-4 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition placeholder-gray-300 resize-none" />
+                  <div className="mt-8 flex items-start gap-4 p-4 bg-blue-50/50 rounded-[12px] border border-blue-100/50">
+                    <i className="fa-solid fa-circle-info text-[#1D9FDA] mt-1 text-sm"></i>
+                    <p className="text-[12px] text-gray-500 leading-relaxed">
+                      <span className="font-bold text-[#1A202C]">Note:</span> Always upload a clean version for faster verification.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Guide Slider (Col Span 5) */}
+                <div className="lg:col-span-5 rounded-[15px] overflow-hidden flex flex-col h-full relative border-none shadow-lg"
+                  style={{ background: 'linear-gradient(to right,#61A644,#1D9FDA)' }}>
+                  <div className="p-6 border-b border-white/10 bg-black/5">
+                    <h2 className="text-lg font-semibold text-white tracking-tight">Guide for a Valid Prescription</h2>
+                    <p className="text-white/70 text-[11px] mt-1">Make sure your upload includes these critical details</p>
                   </div>
 
-                  <div className="flex items-center gap-3 pt-2">
-                    <input type="checkbox" id="terms"
-                      checked={formData.terms}
-                      onChange={e => setFormData(prev => ({ ...prev, terms: e.target.checked }))}
-                      className="w-4 h-4 rounded-md border-gray-200 text-success focus:ring-success cursor-pointer" />
-                    <label htmlFor="terms" className="text-[12px] text-gray-500 cursor-pointer">
-                      I confirm that all provided information is authentic.
-                    </label>
-                  </div>
-
-                  <div className="pt-4">
-                    <button
-                      type="submit"
-                      disabled={submitState === 'sending'}
-                      className="hover:opacity-90 text-white font-bold py-3.5 px-10 rounded-[15px] text-[14px] transition shadow-lg shadow-blue-100 disabled:opacity-50"
-                      style={{ background: 'linear-gradient(to right,#61A644,#1D9FDA)' }}
+                  <div className="relative flex-grow overflow-hidden group">
+                    <div
+                      className="flex transition-transform duration-700 ease-in-out h-full"
+                      style={{ transform: `translateX(-${currentSlide * 100}%)` }}
                     >
-                      {submitState === 'sending' ? 'Submitting...' : 'Submit Order'}
-                    </button>
+                      {/* Slide 1 */}
+                      <div className="w-full flex-shrink-0 flex flex-col items-center justify-center p-6">
+                        <div className="relative group/img overflow-hidden rounded-[15px] shadow-2xl border border-white/20 w-full max-w-[260px] aspect-[4/5] bg-white">
+                          <img src="assets/clinicdetails.png" alt="Doctor Information Guide" className="w-full h-full object-cover transition duration-500 group-hover/img:scale-110" />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+                        </div>
+                        <div className="mt-4 text-center">
+                          <h3 className="text-[13px] font-bold text-white">Clinic Details</h3>
+                          <p className="text-white/70 text-[11px] mt-1 max-w-[200px]">The clinic address and doctor's license number must be visible.</p>
+                        </div>
+                      </div>
+                      {/* Slide 2 */}
+                      <div className="w-full flex-shrink-0 flex flex-col items-center justify-center p-6">
+                        <div className="relative group/img overflow-hidden rounded-[15px] shadow-2xl border border-white/20 w-full max-w-[260px] aspect-[4/5] bg-white">
+                          <img src="assets/medicationinfo.png" alt="Medication Details Guide" className="w-full h-full object-cover transition duration-500 group-hover/img:scale-110" />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+                        </div>
+                        <div className="mt-4 text-center">
+                          <h3 className="text-[13px] font-bold text-white">Medication Info</h3>
+                          <p className="text-white/70 text-[11px] mt-1 max-w-[200px]">Clearly list medicine name, strength, and frequency.</p>
+                        </div>
+                      </div>
+                      {/* Slide 3 */}
+                      <div className="w-full flex-shrink-0 flex flex-col items-center justify-center p-6">
+                        <div className="relative group/img overflow-hidden rounded-[15px] shadow-2xl border border-white/20 w-full max-w-[260px] aspect-[4/5] bg-white">
+                          <img src="assets/legalvalidation.png" alt="Signature and Stamp Guide" className="w-full h-full object-cover transition duration-500 group-hover/img:scale-110" />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+                        </div>
+                        <div className="mt-4 text-center">
+                          <h3 className="text-[13px] font-bold text-white">Legal Validation</h3>
+                          <p className="text-white/70 text-[11px] mt-1 max-w-[200px]">Physical signature and clinic stamp are mandatory.</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Dots */}
+                    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
+                      {[0, 1, 2].map(i => (
+                        <button
+                          key={i}
+                          onClick={() => goToSlide(i)}
+                          className="rounded-full transition-all duration-300"
+                          style={{
+                            width: currentSlide === i ? '16px' : '6px',
+                            height: '6px',
+                            background: currentSlide === i ? 'white' : 'rgba(255,255,255,0.4)',
+                          }}
+                        />
+                      ))}
+                    </div>
                   </div>
-                </form>
+                </div>
+
+                {/* Column C: Guidance & Trust (Col Span 3) */}
+                <div className="lg:col-span-3 flex flex-col gap-6">
+                  {/* Assistance Card */}
+                  <div className="bg-white p-6 rounded-[15px] border border-gray-100 flex flex-col h-full shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-md transition">
+                    <p className="text-[10px] font-semibold uppercase tracking-widest mb-2 px-1"
+                      style={{ background: 'linear-gradient(to right,#61A644,#1D9FDA)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+                      Need Assistance?
+                    </p>
+                    <h3 className="text-sm font-semibold mb-4 px-1"
+                      style={{ background: 'linear-gradient(to right,#61A644,#1D9FDA)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+                      Chat with our Pharmacist
+                    </h3>
+
+                    <div className="space-y-4">
+                      <a href="tel:(02)8888-8888" className="flex items-center gap-3 group">
+                        <div className="w-9 h-9 rounded-[10px] bg-gray-50 flex items-center justify-center text-dark text-xs group-hover:bg-primary group-hover:text-white transition shadow-sm">
+                          <i className="fa-solid fa-phone"></i>
+                        </div>
+                        <div className="text-left">
+                          <p className="text-[10px] text-gray-400 font-medium">Customer Support</p>
+                          <p className="text-[12px] font-bold text-dark">0919-076-9105</p>
+                        </div>
+                      </a>
+                      <a href="mailto:support@getmeds.ph" className="flex items-center gap-3 group">
+                        <div className="w-9 h-9 rounded-[10px] bg-gray-50 flex items-center justify-center text-dark text-xs group-hover:bg-primary group-hover:text-white transition shadow-sm">
+                          <i className="fa-solid fa-envelope"></i>
+                        </div>
+                        <div className="text-left">
+                          <p className="text-[10px] text-gray-400 font-medium">Email Address</p>
+                          <p className="text-[11px] font-bold text-dark">info@getmeds.ph</p>
+                        </div>
+                      </a>
+                    </div>
+
+                    <div className="mt-auto pt-6">
+                      <div className="bg-white p-4 rounded-[12px] border border-gray-100 flex flex-col items-center text-center shadow-sm">
+                        <div className="w-10 h-10 rounded-full bg-green-50 text-green-500 flex items-center justify-center mb-2">
+                          <i className="fa-solid fa-shield-halved"></i>
+                        </div>
+                        <p className="text-[11px] font-bold text-dark mb-1 leading-tight">Secure Prescription Storage</p>
+                        <p className="text-[9px] text-gray-400 leading-relaxed px-1">Your data is stored with bank-level encryption.</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Data Protection */}
+                  <div className="bg-white p-6 rounded-[15px] border border-gray-100 shadow-sm flex flex-col relative overflow-hidden group h-full hover:shadow-md transition">
+                    <div className="absolute -bottom-6 -right-6 opacity-[0.03] group-hover:scale-125 transition duration-700 pointer-events-none">
+                      <i className="fa-solid fa-user-shield text-8xl text-dark"></i>
+                    </div>
+                    <div className="w-9 h-9 rounded-[10px] bg-green-50 flex items-center justify-center text-green-500 text-xs mb-4">
+                      <i className="fa-solid fa-check-double"></i>
+                    </div>
+                    <h3 className="text-sm font-bold text-dark mb-2">Pharmacy Verified</h3>
+                    <p className="text-[11px] text-gray-400 leading-relaxed z-10">We strictly follow FDA Philippines standards for medication dispensing and patient privacy.
+                      <span className="text-[12px] font-bold text-dark uppercase tracking-tight">DATA PRIVACY ACT (RA 10173) COMPLIANT</span></p>
+                  </div>
+                </div>
               </div>
+
+              {/* BOTTOM ROW: Validation Form */}
+              <div className="w-full">
+                <div className="bg-white rounded-[15px] border border-gray-100 p-8 md:p-12 shadow-sm">
+                  <div className="mb-8">
+                    <h2 className="text-2xl font-semibold text-gray-900 mb-1">Customer Validation</h2>
+                    <p className="text-gray-400 text-[13px]">Please provide accurate details for legal verification.</p>
+                  </div>
+
+                  <form onSubmit={handleSubmit} className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                      <div className="space-y-2">
+                        <label className="text-[14px] font-semibold text-gray-700">Patient Full Name</label>
+                        <input type="text" placeholder="As written on prescription"
+                          required
+                          value={formData.patientName}
+                          onChange={e => setFormData(prev => ({ ...prev, patientName: e.target.value }))}
+                          className="w-full bg-gray-50 border-none rounded-[15px] px-6 py-3.5 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition placeholder-gray-300" />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[14px] font-semibold text-gray-700">Email Address</label>
+                        <input type="email" placeholder="example@domain.com"
+                          required
+                          value={formData.email}
+                          onChange={e => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                          className="w-full bg-gray-50 border-none rounded-[15px] px-6 py-3.5 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition placeholder-gray-300" />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[14px] font-semibold text-gray-700">Phone Number</label>
+                        <div className="relative flex items-center bg-gray-50 rounded-[15px] overflow-visible focus-within:ring-2 focus-within:ring-primary/20 transition">
+                          {/* Country dropdown trigger */}
+                          <button
+                            type="button"
+                            onClick={() => setPhoneCountryOpen(o => !o)}
+                            className="flex items-center gap-1.5 pl-4 pr-2 py-3.5 shrink-0 border-r border-gray-200 text-[13px] text-gray-700 hover:bg-gray-100 rounded-l-[15px] transition"
+                          >
+                            <span>{phoneCountry.flag}</span>
+                            <span className="font-semibold text-gray-600">{phoneCountry.code}</span>
+                            <i className="fa-solid fa-chevron-down text-[9px] text-gray-400"></i>
+                          </button>
+                          {/* Number input */}
+                          <input
+                            ref={phoneInputRef}
+                            type="tel"
+                            required
+                            placeholder={(() => { const d = '9123456789'; let i = 0; return phoneCountry.mask.replace(/#/g, () => d[i++ % d.length]); })()}
+                            value={formData.phone}
+                            onChange={handlePhoneChange}
+                            className="flex-1 bg-transparent px-4 py-3.5 text-[13px] text-gray-700 outline-none placeholder-gray-300"
+                          />
+                          {/* Country list dropdown */}
+                          {phoneCountryOpen && (
+                            <div className="absolute top-full left-0 mt-1 w-72 bg-white rounded-[12px] shadow-xl border border-gray-100 z-[60] overflow-hidden" onClick={e => e.stopPropagation()}>
+                              <div className="p-2 border-b border-gray-100">
+                                <input
+                                  autoFocus
+                                  type="text"
+                                  placeholder="Search country..."
+                                  value={phoneSearch}
+                                  onChange={e => setPhoneSearch(e.target.value)}
+                                  className="w-full px-3 py-2 text-[12px] bg-gray-50 rounded-[8px] outline-none placeholder-gray-300 text-gray-700"
+                                />
+                              </div>
+                              <div className="max-h-52 overflow-y-auto">
+                                {PHONE_COUNTRIES.filter(c =>
+                                  c.name.toLowerCase().includes(phoneSearch.toLowerCase()) ||
+                                  c.code.includes(phoneSearch)
+                                ).map(c => (
+                                  <button
+                                    key={c.code + c.name}
+                                    type="button"
+                                    onClick={() => { setPhoneCountry(c); setPhoneCountryOpen(false); setPhoneSearch(''); setFormData(prev => ({ ...prev, phone: '' })); }}
+                                    className={`w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-gray-50 transition text-[13px] ${phoneCountry.code === c.code && phoneCountry.name === c.name ? 'bg-green-50 text-[#61A644] font-semibold' : 'text-gray-700'}`}
+                                  >
+                                    <span className="text-base">{c.flag}</span>
+                                    <span className="flex-1">{c.name}</span>
+                                    <span className="text-gray-400 text-[12px]">{c.code}</span>
+                                  </button>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="text-[14px] font-semibold text-gray-700">Delivery Address</label>
+                      <textarea placeholder="Complete address for courier delivery..." rows={3}
+                        required
+                        value={formData.address}
+                        onChange={e => setFormData(prev => ({ ...prev, address: e.target.value }))}
+                        className="w-full bg-gray-50 border-none rounded-[15px] px-6 py-4 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition placeholder-gray-300 resize-none" />
+                    </div>
+
+                    <div className="flex items-center gap-3 pt-2">
+                      <input type="checkbox" id="terms"
+                        checked={formData.terms}
+                        onChange={e => setFormData(prev => ({ ...prev, terms: e.target.checked }))}
+                        className="w-4 h-4 rounded-md border-gray-200 text-success focus:ring-success cursor-pointer" />
+                      <label htmlFor="terms" className="text-[12px] text-gray-500 cursor-pointer">
+                        I confirm that all provided information is authentic.
+                      </label>
+                    </div>
+
+                    <div className="pt-4">
+                      <button
+                        type="submit"
+                        disabled={submitState === 'sending'}
+                        className="hover:opacity-90 text-white font-bold py-3.5 px-10 rounded-[15px] text-[14px] transition shadow-lg shadow-blue-100 disabled:opacity-50"
+                        style={{ background: 'linear-gradient(to right,#61A644,#1D9FDA)' }}
+                      >
+                        {submitState === 'sending' ? 'Submitting...' : 'Submit Order'}
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+
             </div>
-
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* ============================================================
+        {/* ============================================================
           UPLOAD MODAL
       ============================================================ */}
-      <div
-        className="fixed inset-0 z-[100] flex items-center justify-center bg-dark/60 backdrop-blur-sm transition-opacity duration-300"
-        style={{ opacity: modalOpen ? 1 : 0, pointerEvents: modalOpen ? 'all' : 'none' }}
-      >
         <div
-          className="bg-[#1A1C1E] w-full max-w-[340px] rounded-[15px] p-8 text-center shadow-2xl relative transform transition-transform duration-300"
-          style={{ transform: modalOpen ? 'scale(1)' : 'scale(0.95)' }}
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-dark/60 backdrop-blur-sm transition-opacity duration-300"
+          style={{ opacity: modalOpen ? 1 : 0, pointerEvents: modalOpen ? 'all' : 'none' }}
         >
-          <button onClick={closeUploadModal} className="absolute top-4 right-4 text-gray-500 hover:text-white transition">
-            <i className="fa-solid fa-xmark text-lg"></i>
-          </button>
+          <div
+            className="bg-[#1A1C1E] w-full max-w-[340px] rounded-[15px] p-8 text-center shadow-2xl relative transform transition-transform duration-300"
+            style={{ transform: modalOpen ? 'scale(1)' : 'scale(0.95)' }}
+          >
+            <button onClick={closeUploadModal} className="absolute top-4 right-4 text-gray-500 hover:text-white transition">
+              <i className="fa-solid fa-xmark text-lg"></i>
+            </button>
 
-          <div className="w-16 h-16 bg-[#5E5CE6]/20 text-[#5E5CE6] rounded-2xl flex items-center justify-center mx-auto mb-6">
-            <i className="fa-solid fa-file-arrow-up text-3xl"></i>
-          </div>
-
-          <h3 className="text-white text-lg font-bold mb-2">Just a minute....</h3>
-          <p className="text-gray-400 text-[12px] leading-relaxed mb-8 px-4">
-            Your file is uploading right now. Just<br />please wait for a few moments
-          </p>
-
-          <div className="mb-8">
-            <div className="w-full h-1.5 bg-gray-800 rounded-full overflow-hidden mb-3">
-              <div
-                className="h-full transition-all duration-300"
-                style={{ width: `${progress}%`, background: 'linear-gradient(to right,#61A644,#1D9FDA)' }}
-              />
+            <div className="w-16 h-16 bg-[#5E5CE6]/20 text-[#5E5CE6] rounded-2xl flex items-center justify-center mx-auto mb-6">
+              <i className="fa-solid fa-file-arrow-up text-3xl"></i>
             </div>
-            <div className="text-[#5E5CE6] text-sm font-bold">{progress}%</div>
+
+            <h3 className="text-white text-lg font-bold mb-2">Just a minute....</h3>
+            <p className="text-gray-400 text-[12px] leading-relaxed mb-8 px-4">
+              Your file is uploading right now. Just<br />please wait for a few moments
+            </p>
+
+            <div className="mb-8">
+              <div className="w-full h-1.5 bg-gray-800 rounded-full overflow-hidden mb-3">
+                <div
+                  className="h-full transition-all duration-300"
+                  style={{ width: `${progress}%`, background: 'linear-gradient(to right,#61A644,#1D9FDA)' }}
+                />
+              </div>
+              <div className="text-[#5E5CE6] text-sm font-bold">{progress}%</div>
+            </div>
+
+            <button onClick={closeUploadModal}
+              className="w-full py-4 bg-gray-800 hover:bg-gray-700 text-white font-bold rounded-[12px] text-[13px] transition">
+              Cancel
+            </button>
           </div>
-
-          <button onClick={closeUploadModal}
-            className="w-full py-4 bg-gray-800 hover:bg-gray-700 text-white font-bold rounded-[12px] text-[13px] transition">
-            Cancel
-          </button>
         </div>
-      </div>
 
-      {/* Footer */}
-      <div id="footer-container" />
+        {/* Footer */}
+        <div id="footer-container" />
 
       </div>{/* end overflow-x-hidden wrapper */}
 

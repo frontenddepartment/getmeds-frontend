@@ -164,15 +164,7 @@ export default function AboutUs() {
                   Getmeds, established in 2020, is a global pharmaceutical company based in the Philippines with a diverse portfolio spanning Oncology, Hematology, Anesthesiology, and Rare Diseases. It is driven by innovation, science, and a deep commitment to improving access and affordability of life-changing therapies for Filipino patients and healthcare partners.
                   At its core, Getmeds is guided by compassion — ensuring that every medicine delivered reflects care, dignity, and hope for patients and families in need. With a strong focus on accessibility and cost-effective healthcare solutions, the company works to make high-quality treatments more reachable, especially for underserved communities.
                   With its continuing expansion across the Asia-Pacific region and beyond, Getmeds is poised to create an even greater impact on global healthcare.
-
                 </p>
-                <p className="text-gray-600 text-[15px] leading-[1.8]">
-                  We've refined every detail to perfection, from enhanced patient distribution models to more
-                  sophisticated logistics treatments. Our new dashboard layouts, expanded messaging
-                  interfaces, and innovative data visualizations provide even more tools for managing health
-                  experiences effectively.
-                </p>
-
                 <div className="pt-6">
                   <p className="text-dark font-black text-[13px] uppercase tracking-widest mb-4">Dedicated to:</p>
                   <ul className="grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-8 text-[14px] text-gray-500 font-medium">

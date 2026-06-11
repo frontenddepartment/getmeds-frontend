@@ -110,28 +110,28 @@ export default function ContactUs() {
   const contactGroups: ContactGroup[] = settings?.contactGroups && settings.contactGroups.length > 0
     ? settings.contactGroups
     : [
-        {
-          _key: 'general',
-          purpose: 'General',
-          addresses: ['Unit 305, 17 Vatican Bldg., Vatican Drive, BF Resort Village, Las Piñas City, Metro Manila 1747'],
-          phones: ['+63 919 076 9105'],
-          emails: ['info@getmeds.ph'],
-          showInFooter: true,
-          showInTopBar: true,
-        },
-        {
-          _key: 'hr',
-          purpose: 'HR / Careers',
-          phones: ['+63 919 076 9106'],
-          emails: ['careers@getmeds.ph', 'hr@getmeds.ph'],
-        },
-        {
-          _key: 'medical',
-          purpose: 'Medical Inquiries',
-          phones: ['+63 919 076 9107'],
-          emails: ['medical@getmeds.ph'],
-        },
-      ];
+      {
+        _key: 'general',
+        purpose: 'General',
+        addresses: ['Unit 305, 17 Vatican Bldg., Vatican Drive, BF Resort Village, Las Piñas City, Metro Manila 1747'],
+        phones: ['+63 919 076 9105'],
+        emails: ['info@getmeds.ph'],
+        showInFooter: true,
+        showInTopBar: true,
+      },
+      {
+        _key: 'hr',
+        purpose: 'HR / Careers',
+        phones: ['+63 919 076 9106'],
+        emails: ['careers@getmeds.ph', 'hr@getmeds.ph', 'hr2@getmeds.ph'],
+      },
+      {
+        _key: 'medical',
+        purpose: 'Medical Inquiries',
+        phones: ['+63 919 076 9107'],
+        emails: ['medical@getmeds.ph'],
+      },
+    ];
 
   // Socials from settings.topBar.socials
   const socials = settings?.topBar?.socials || [];
