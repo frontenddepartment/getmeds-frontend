@@ -1067,11 +1067,11 @@ export default function GetMedsHomepage() {
 
         <div className="max-w-7xl mx-auto px-6 relative z-10">
           <div className="text-center max-w-2xl mx-auto mb-16">
-            <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent font-bold uppercase tracking-widest text-lg">Our Portfolio</span>
-            <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 mb-4">
-              Our pharmaceutical portfolio —<span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent inline-block">from essential medicines to advanced therapies.</span>
+            <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent font-bold uppercase tracking-widest text-xs mb-3 block">Our Pharmaceutical Portfolio</span>
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              From Essential Medicines to Advanced Therapies.
             </h2>
-            <p className="text-gray-500 text-[15px]">
+            <p className="text-gray-500 text-[13px]">
               Most distributors operate in one layer of the market. Getmeds is built for all four layers.
             </p>
           </div>
