@@ -1200,7 +1200,7 @@ export default function GetMedsHomepage() {
           <div className="text-center max-w-3xl mx-auto mb-12">
             <h2 className="text-3xl md:text-4xl font-semibold mb-4 leading-tight">
               Capabilities that move{' '}
-              <span className="bg-gradient-to-r from-primary via-green-400 to-blue-500 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">
                 medicines, partnerships, and patients forward.
               </span>
             </h2>
@@ -1634,7 +1634,6 @@ export default function GetMedsHomepage() {
             {/* Header */}
             <div className="flex items-end justify-between mb-6">
               <div>
-                <span className="text-[13px] font-semibold tracking-wide text-gray-400 mb-0.5 block">Partners</span>
                 <span className="text-[13px] font-semibold tracking-wide mb-1.5 block" style={{
                   background: 'linear-gradient(135deg,#1D9FDA,#61A644)',
                   WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', display: 'inline-block'
