@@ -123,7 +123,7 @@ export default function ContactUs() {
           _key: 'hr',
           purpose: 'HR / Careers',
           phones: ['+63 919 076 9106'],
-          emails: ['careers@getmeds.ph'],
+          emails: ['careers@getmeds.ph', 'hr@getmeds.ph'],
         },
         {
           _key: 'medical',
