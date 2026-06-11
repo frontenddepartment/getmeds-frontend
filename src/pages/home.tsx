@@ -480,10 +480,9 @@ export default function GetMedsHomepage() {
 
       {/* Hero Container - Wraps the transparent header & top-bar, matching the UI screenshot overlay concept */}
       <div className="relative min-h-[70vh] md:min-h-[600px] w-full bg-cover bg-center overflow-hidden flex flex-col justify-between"
-        style={{ backgroundImage: `url('${getImage('assets/herosectiontsx.jpg', 'assets/herosectiontsx.jpg')}')` }}>
+        style={{ backgroundImage: `url('${getImage('assets/imagebanner.jpg', 'assets/imagebanner.jpg')}')` }}>
 
-        {/* Dark Blue/Violet Gradient Tint Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-r from-slate-900/90 via-slate-800/60 to-slate-900/70 z-0"></div>
+        {/* No overlay */}
 
         {/* Header (Top-bar + Nav) Group */}
         <div className="relative w-full z-50">
@@ -573,11 +572,11 @@ export default function GetMedsHomepage() {
               {/* Navigation Links */}
               <div className="hidden lg:flex flex-1 justify-center items-center space-x-8 text-sm font-semibold font-['Poppins']">
                 <a href="/" className="transition-colors duration-300 text-primary">Home</a>
-                <a href="order-medicines.html" className={`transition-colors duration-300 whitespace-nowrap ${isScrolled ? 'text-gray-700 hover:text-primary' : 'text-white/90 hover:text-primary'}`}>Order Medicines</a>
+                <a href="order-medicines.html" className={`transition-colors duration-300 whitespace-nowrap ${isScrolled ? 'text-gray-700 hover:text-primary' : 'text-[#000b5d] hover:text-primary'}`}>Order Medicines</a>
 
                 {/* Product Range Dropdown */}
                 <div className="group h-20 flex items-center">
-                  <a href="product-range.html" className={`flex items-center transition-colors duration-300 whitespace-nowrap focus:outline-none ${isScrolled ? 'text-gray-700 hover:text-primary' : 'text-white/90 hover:text-primary'}`}>
+                  <a href="product-range.html" className={`flex items-center transition-colors duration-300 whitespace-nowrap focus:outline-none ${isScrolled ? 'text-gray-700 hover:text-primary' : 'text-[#000b5d] hover:text-primary'}`}>
                     Product Range <i className="fa-solid fa-chevron-down ml-1.5 text-[10px]"></i>
                   </a>
                   {/* Mega Menu Container */}
@@ -698,13 +697,14 @@ export default function GetMedsHomepage() {
                   </div>
                 </div>
 
-                <a href="meditations.html" className={`transition-colors duration-300 whitespace-nowrap ${isScrolled ? 'text-gray-700 hover:text-primary' : 'text-white/90 hover:text-primary'}`}>Meditations</a>
-                <a href="about-us.html" className={`transition-colors duration-300 whitespace-nowrap ${isScrolled ? 'text-gray-700 hover:text-primary' : 'text-white/90 hover:text-primary'}`}>About Us</a>
-                <a href="contact-us.html" className={`transition-colors duration-300 whitespace-nowrap ${isScrolled ? 'text-gray-700 hover:text-primary' : 'text-white/90 hover:text-primary'}`}>Contact Us</a>
+                <a href="about-us.html" className={`transition-colors duration-300 whitespace-nowrap ${isScrolled ? 'text-gray-700 hover:text-primary' : 'text-[#000b5d] hover:text-primary'}`}>About Us</a>
+                <a href="pap.html" className="inline-flex items-center opacity-80 hover:opacity-100 transition-all duration-200 hover:-translate-y-0.5 transform">
+                  <img src={getImage('assets/pap.png', 'assets/pap.png')} alt="Patient Assistance Program" className="h-16 w-auto object-contain" />
+                </a>
 
                 {/* Company Dropdown */}
                 <div className="group h-20 flex items-center">
-                  <button className={`flex items-center transition-colors duration-300 whitespace-nowrap focus:outline-none ${isScrolled ? 'text-gray-700 hover:text-primary' : 'text-white/90 hover:text-primary'}`}>
+                  <button className={`flex items-center transition-colors duration-300 whitespace-nowrap focus:outline-none ${isScrolled ? 'text-gray-700 hover:text-primary' : 'text-[#000b5d] hover:text-primary'}`}>
                     Company <i className="fa-solid fa-chevron-down ml-1.5 text-[9px] opacity-75"></i>
                   </button>
                   {/* Mega Menu Container */}
@@ -728,11 +728,7 @@ export default function GetMedsHomepage() {
                             <ul className="space-y-4">
                               <li><a href="services.html" className="relative inline-block text-gray-700 font-semibold hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300 text-base">Our Services</a></li>
                               <li><a href="global-presence.html" className="relative inline-block text-gray-700 font-semibold hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300 text-base">Global Presence</a></li>
-                              <li>
-                                <a href="pap.html" className="inline-block mt-3 opacity-80 hover:opacity-100 transition transform hover:-translate-y-0.5">
-                                  <img src={getImage('assets/pap.png', 'assets/pap.png')} alt="Patient Assistance Program" className="h-32 w-auto object-contain" />
-                                </a>
-                              </li>
+                              <li><a href="meditations.html" className="relative inline-block text-gray-700 font-semibold hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300 text-base">Meditations</a></li>
                             </ul>
                           </div>
                           <div>
@@ -780,12 +776,13 @@ export default function GetMedsHomepage() {
                     </div>
                   </div>
                 </div>
+                <a href="contact-us.html" className={`transition-colors duration-300 whitespace-nowrap ${isScrolled ? 'text-gray-700 hover:text-primary' : 'text-[#000b5d] hover:text-primary'}`}>Contact Us</a>
               </div>
 
               {/* Right side — hamburger on mobile, empty spacer on desktop */}
               <div className="w-auto sm:w-[180px] shrink-0 flex items-center justify-end">
                 <button
-                  className={`lg:hidden p-2 rounded-md transition-colors duration-300 ${isScrolled ? 'text-gray-600 hover:text-primary' : 'text-white hover:text-white/70'}`}
+                  className={`lg:hidden p-2 rounded-md transition-colors duration-300 ${isScrolled ? 'text-gray-600 hover:text-primary' : 'text-[#000b5d] hover:text-[#000b5d]/70'}`}
                   onClick={() => setIsMobileMenuOpen(o => !o)}
                   aria-label="Toggle menu"
                 >
@@ -868,9 +865,10 @@ export default function GetMedsHomepage() {
                   )}
                 </div>
 
-                <a href="meditations.html" className="flex items-center px-3 py-3.5 text-[15px] font-semibold text-gray-700 border-b border-gray-100 hover:text-primary transition">Meditations</a>
                 <a href="about-us.html" className="flex items-center px-3 py-3.5 text-[15px] font-semibold text-gray-700 border-b border-gray-100 hover:text-primary transition">About Us</a>
-                <a href="contact-us.html" className="flex items-center px-3 py-3.5 text-[15px] font-semibold text-gray-700 border-b border-gray-100 hover:text-primary transition">Contact Us</a>
+                <a href="pap.html" className="flex items-center px-3 py-2 border-b border-gray-100">
+                  <img src={getImage('assets/PAPlogo.png', 'assets/PAPlogo.png')} alt="Patient Assistance Program" className="h-10 w-auto object-contain opacity-80 hover:opacity-100 transition" />
+                </a>
 
                 {/* Company accordion */}
                 <div className="border-b border-gray-100">
@@ -882,6 +880,7 @@ export default function GetMedsHomepage() {
                     <div className="px-2 pb-3 space-y-0.5">
                       <a href="services.html" className="block pl-5 py-2.5 text-[14px] font-medium text-gray-600 hover:text-primary transition">Our Services</a>
                       <a href="global-presence.html" className="block pl-5 py-2.5 text-[14px] font-medium text-gray-600 hover:text-primary transition">Global Presence</a>
+                      <a href="meditations.html" className="block pl-5 py-2.5 text-[14px] font-medium text-gray-600 hover:text-primary transition">Meditations</a>
                       <a href="csr.html" className="block pl-5 py-2.5 text-[14px] font-medium text-gray-600 hover:text-primary transition">CSR</a>
                       <a href="careers.html" className="block pl-5 py-2.5 text-[14px] font-medium text-gray-600 hover:text-primary transition">Careers</a>
                       <a href="ungc.html" className="block pl-5 py-2.5 text-[14px] font-medium text-gray-600 hover:text-primary transition">United Nations Global Compact</a>
@@ -893,39 +892,34 @@ export default function GetMedsHomepage() {
                           Join Us
                         </a>
                       </div>
-                      <a href="pap.html" className="block pl-5 py-1">
-                        <img src={getImage('assets/PAPlogo.png', 'assets/PAPlogo.png')} alt="Patient Assistance Program" className="h-12 w-auto object-contain" />
-                      </a>
                     </div>
                   )}
                 </div>
+                <a href="contact-us.html" className="flex items-center px-3 py-3.5 text-[15px] font-semibold text-gray-700 border-b border-gray-100 hover:text-primary transition">Contact Us</a>
               </div>
             </div>
           )}
         </div>
 
         {/* Hero Content Area */}
-        <div className="max-w-7xl mx-auto px-6 w-full relative z-10 flex-grow flex items-center justify-center pt-20 md:pt-36 pb-12 md:pb-20 text-center">
-          <div className="max-w-3xl space-y-6 reveal active mx-auto flex flex-col items-center">
-            <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent font-bold uppercase tracking-widest text-[10px] md:text-xs">
-              Best For Your Health & Recovery.
-            </span>
-            <h1 className="text-3xl md:text-[42px] lg:text-5xl font-semibold text-white leading-tight tracking-tight">
+        <div className="max-w-7xl mx-auto px-6 w-full relative z-10 flex-grow flex items-center justify-center md:justify-start pt-20 md:pt-28 pb-10 md:pb-14 text-center md:text-left">
+          <div className="max-w-2xl space-y-3 reveal active mx-auto md:mx-0 flex flex-col items-center md:items-start">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-[1.1] tracking-tight bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">
               Life-Saving Access. <br />
-              <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent md:whitespace-nowrap">Redefining Healthcare Possibilities.</span>
+              Redefining Healthcare Possibilities.
             </h1>
-            <p className="text-white/85 text-sm md:text-base font-medium leading-relaxed max-w-2xl mx-auto">
+            <p className="text-[#000b5d] text-sm md:text-base font-medium leading-relaxed max-w-xl mx-auto md:mx-0">
               Getmeds is a global pharmaceutical company advancing healthcare access in the Philippines through high-quality medicines from essential therapies to advanced hospital treatments.
-
             </p>
 
             {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row justify-center gap-4 pt-4">
+            <div className="flex flex-col sm:flex-row justify-center md:justify-start gap-3 pt-2">
               <a href="order-medicines.html" className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:opacity-90 text-white text-center font-bold uppercase tracking-wider text-[11px] px-6 py-3 rounded-lg shadow-2xl shadow-blue-500/40 transition-all flex items-center justify-center gap-2 group">
                 Our Solutions <i className="fa-solid fa-chevron-right group-hover:translate-x-1 transition-transform"></i>
               </a>
-              <button onClick={() => setIsInquiryOpen(true)} className="bg-white/10 hover:bg-white hover:text-dark backdrop-blur-sm border border-white text-center font-bold uppercase tracking-wider text-[11px] px-6 py-3 rounded-lg text-white transition-all flex items-center justify-center gap-2">
-                Become a Partner <i className="fa-solid fa-phone"></i>
+              <button onClick={() => setIsInquiryOpen(true)} className="bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/40 text-center font-bold uppercase tracking-wider text-[11px] px-6 py-3 rounded-lg transition-all flex items-center justify-center gap-2">
+                <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">Become a Partner</span>
+                <i className="fa-solid fa-phone text-[#1D9FDA]"></i>
               </button>
             </div>
           </div>

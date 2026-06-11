@@ -26,17 +26,6 @@ function getPurposeIcon(purpose: string): string {
 }
 
 
-// Social icon map
-const SOCIAL_ICON_COLORS: Record<string, { icon: string; color: string }> = {
-  facebook: { icon: 'fa-brands fa-facebook', color: '#1877F2' },
-  twitter: { icon: 'fa-brands fa-twitter', color: '#1DA1F2' },
-  x: { icon: 'fa-brands fa-x-twitter', color: '#000' },
-  linkedin: { icon: 'fa-brands fa-linkedin', color: '#0A66C2' },
-  telegram: { icon: 'fa-brands fa-telegram', color: '#2AABEE' },
-  youtube: { icon: 'fa-brands fa-youtube', color: '#FF0000' },
-  instagram: { icon: 'fa-brands fa-instagram', color: '#E1306C' },
-  tiktok: { icon: 'fa-brands fa-tiktok', color: '#000' },
-};
 
 
 export default function ContactUs() {
@@ -133,8 +122,6 @@ export default function ContactUs() {
       },
     ];
 
-  // Socials from settings.topBar.socials
-  const socials = settings?.topBar?.socials || [];
 
   return (
     <div style={{ fontFamily: "'Poppins', sans-serif" }} className="bg-white text-gray-800 antialiased">
@@ -256,31 +243,11 @@ export default function ContactUs() {
                   <h4 className="font-bold text-gray-900 text-base">Social Network</h4>
                 </div>
                 <div className="flex space-x-4 items-center flex-wrap gap-y-2">
-                  {socials.length > 0 ? (
-                    socials.map((s, i) => {
-                      const platform = s.platform?.toLowerCase() || '';
-                      const iconData = SOCIAL_ICON_COLORS[platform] || { icon: 'fa-solid fa-link', color: '#6B7280' };
-                      const iconClass = s.icon
-                        ? (s.icon.startsWith('fa-') ? s.icon : `fa-brands fa-${s.icon}`)
-                        : iconData.icon;
-                      return (
-                        <a key={i} href={s.href || '#'} target="_blank" rel="noopener noreferrer"
-                          style={{ color: iconData.color }}
-                          className="hover:scale-110 transition-transform duration-300 text-[22px] drop-shadow-sm">
-                          <i className={iconClass}></i>
-                        </a>
-                      );
-                    })
-                  ) : (
-                    // Static fallback socials
-                    <>
-                      <a href="#" title="Facebook" className="text-[#1877F2] hover:scale-110 transition-transform duration-300 text-[22px] drop-shadow-sm"><i className="fa-brands fa-facebook"></i></a>
-                      <a href="#" title="Twitter" className="text-[#1DA1F2] hover:scale-110 transition-transform duration-300 text-[22px] drop-shadow-sm"><i className="fa-brands fa-twitter"></i></a>
-                      <a href="#" title="LinkedIn" className="text-[#0A66C2] hover:scale-110 transition-transform duration-300 text-[22px] drop-shadow-sm"><i className="fa-brands fa-linkedin"></i></a>
-                      <a href="#" title="Telegram" className="text-[#2AABEE] hover:scale-110 transition-transform duration-300 text-[22px] drop-shadow-sm"><i className="fa-brands fa-telegram"></i></a>
-                      <a href="#" title="YouTube" className="text-[#FF0000] hover:scale-110 transition-transform duration-300 text-[22px] drop-shadow-sm"><i className="fa-brands fa-youtube"></i></a>
-                    </>
-                  )}
+                  <a href="#" title="Facebook" className="text-[#1877F2] hover:scale-110 transition-transform duration-300 text-[22px] drop-shadow-sm"><i className="fa-brands fa-facebook"></i></a>
+                  <a href="#" title="Twitter" className="text-[#1DA1F2] hover:scale-110 transition-transform duration-300 text-[22px] drop-shadow-sm"><i className="fa-brands fa-twitter"></i></a>
+                  <a href="#" title="LinkedIn" className="text-[#0A66C2] hover:scale-110 transition-transform duration-300 text-[22px] drop-shadow-sm"><i className="fa-brands fa-linkedin"></i></a>
+                  <a href="#" title="Telegram" className="text-[#2AABEE] hover:scale-110 transition-transform duration-300 text-[22px] drop-shadow-sm"><i className="fa-brands fa-telegram"></i></a>
+                  <a href="#" title="YouTube" className="text-[#FF0000] hover:scale-110 transition-transform duration-300 text-[22px] drop-shadow-sm"><i className="fa-brands fa-youtube"></i></a>
                 </div>
               </div>
             </div>
