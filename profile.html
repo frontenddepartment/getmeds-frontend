@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" class="overflow-x-hidden">
 <head>
     <meta charset="UTF-8">
@@ -419,8 +419,11 @@
                     btn.disabled = true;
                     btn.innerText = 'Sending...';
 
-                    // IMPORTANT: Replace this placeholder with your deployed Google Web App URL (ends in /exec)
-                    const SCRIPT_URL = 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE';
+                    const getApiUrl = () => {
+                        return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+                            ? 'http://localhost:8000/api/inquiry/submit'
+                            : 'https://getmeds-admin.vercel.app/api/inquiry/submit';
+                    };
 
                     const productName = document.getElementById('inquiry-product-name').value;
                     const fullName = document.getElementById('inquiry-name').value;
@@ -448,28 +451,29 @@
                     }
 
                     const payload = {
-                        productName,
-                        fullName,
-                        phone,
-                        email,
-                        message,
+                        inquiryType: 'Product Inquiry',
+                        fullName: fullName,
+                        email: email,
+                        phone: phone,
+                        message: message,
+                        additionalData: {
+                            productName: productName
+                        },
                         files: filesData
                     };
 
                     try {
-                        if (!SCRIPT_URL || SCRIPT_URL.includes('YOUR_GOOGLE_APPS_SCRIPT_URL_HERE')) {
-                            console.warn('Google Apps Script URL is not configured. Simulating form submission.');
-                            await new Promise(resolve => setTimeout(resolve, 1500));
-                        } else {
-                            // Send to Google Spreadsheet Apps Script
-                            await fetch(SCRIPT_URL, {
-                                method: 'POST',
-                                mode: 'no-cors', // Avoids CORS blocker on cross-origin App Script Web App redirects
-                                headers: {
-                                    'Content-Type': 'application/json'
-                                },
-                                body: JSON.stringify(payload)
-                            });
+                        const res = await fetch(getApiUrl(), {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(payload)
+                        });
+
+                        if (!res.ok) {
+                            const errorText = await res.text();
+                            throw new Error(errorText || 'Server returned error status');
                         }
 
                         btn.innerHTML = '<i class="fa-solid fa-check mr-2"></i> Inquiry Sent Successfully!';
@@ -479,7 +483,8 @@
                         setTimeout(() => {
                             closeInquiryModal();
                             this.reset();
-                            document.getElementById('file-upload-preview').innerHTML = '';
+                            const previewContainer = document.getElementById('file-upload-preview');
+                            if (previewContainer) previewContainer.innerHTML = '';
                             btn.disabled = false;
                             btn.innerText = originalText;
                             btn.classList.add('bg-gradient-to-r', 'from-success', 'to-primary');

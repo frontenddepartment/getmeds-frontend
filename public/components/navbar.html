@@ -1,11 +1,28 @@
 <style>
     /* Active nav link — keyed off data-page attribute on each page's <body> */
-    body[data-page="home"] a[href="/"] { color: #0D99FF; }
-    body[data-page="order-medicines"] a[href="order-medicines.html"] { color: #0D99FF; }
-    body[data-page="product-range"] a[href="product-range.html"] { color: #0D99FF; }
-    body[data-page="meditations"] a[href="meditations.html"] { color: #0D99FF; }
-    body[data-page="about-us"] a[href="about-us.html"] { color: #0D99FF; }
-    body[data-page="contact-us"] a[href="contact-us.html"] { color: #0D99FF; }
+    body[data-page="home"] a[href="/"] {
+        color: #0D99FF;
+    }
+
+    body[data-page="order-medicines"] a[href="order-medicines.html"] {
+        color: #0D99FF;
+    }
+
+    body[data-page="product-range"] a[href="product-range.html"] {
+        color: #0D99FF;
+    }
+
+    body[data-page="meditations"] a[href="meditations.html"] {
+        color: #0D99FF;
+    }
+
+    body[data-page="about-us"] a[href="about-us.html"] {
+        color: #0D99FF;
+    }
+
+    body[data-page="contact-us"] a[href="contact-us.html"] {
+        color: #0D99FF;
+    }
 
     body[data-page="services"] #company-nav-btn,
     body[data-page="global-presence"] #company-nav-btn,
@@ -14,7 +31,9 @@
     body[data-page="ungc"] #company-nav-btn,
     body[data-page="articles"] #company-nav-btn,
     body[data-page="article-detail"] #company-nav-btn,
-    body[data-page="pap"] #company-nav-btn { color: #0D99FF; }
+    body[data-page="pap"] #company-nav-btn {
+        color: #0D99FF;
+    }
 
     body[data-page="services"] #mobile-company-label,
     body[data-page="global-presence"] #mobile-company-label,
@@ -23,7 +42,9 @@
     body[data-page="ungc"] #mobile-company-label,
     body[data-page="articles"] #mobile-company-label,
     body[data-page="article-detail"] #mobile-company-label,
-    body[data-page="pap"] #mobile-company-label { color: #0D99FF; }
+    body[data-page="pap"] #mobile-company-label {
+        color: #0D99FF;
+    }
 </style>
 
 <!-- Navbar -->
@@ -56,37 +77,83 @@
                             <div id="desktop-dropdown-grid" class="grid grid-cols-1 md:grid-cols-4 gap-8 text-left">
                                 <!-- Column 1 -->
                                 <div>
-                                    <h4 class="font-semibold text-gray-900 mb-4 border-b pb-2 text-sm">Oncology (Solid Tumors)</h4>
+                                    <h4 class="font-semibold text-gray-900 mb-4 border-b pb-2 text-sm">Oncology (Solid
+                                        Tumors)</h4>
                                     <ul class="space-y-2 text-[13px]">
-                                        <li><a href="product-range.html?category=breast-cancer" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Breast Cancer</a></li>
-                                        <li><a href="product-range.html?category=ovarian-cancer" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Ovarian Cancer</a></li>
-                                        <li><a href="product-range.html?category=lung-cancer" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Non-Small Cell Lung Cancer</a></li>
-                                        <li><a href="product-range.html?category=prostate-cancer" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Prostate Cancer</a></li>
-                                        <li><a href="product-range.html?category=colorectal-cancer" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Colorectal Cancer</a></li>
-                                        <li><a href="product-range.html?category=pancreatic-cancer" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Pancreatic Cancer</a></li>
-                                        <li><a href="product-range.html?category=gastric-cancer" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Gastric Cancer / Gastric Adenocarcinoma</a></li>
-                                        <li><a href="product-range.html?category=head-and-neck-cancer" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Head and Neck Cancer</a></li>
-                                        <li><a href="product-range.html?category=malignant-pleural-mesothelioma" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Malignant Pleural Mesothelioma</a></li>
-                                        <li><a href="product-range.html?category=malignant-pleural-effusion" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Malignant Pleural Effusion</a></li>
-                                        <li><a href="product-range.html?category=gastrointestinal-stromal-tumors" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Gastrointestinal Stromal Tumors</a></li>
+                                        <li><a href="product-range.html?category=breast-cancer"
+                                                class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Breast
+                                                Cancer</a></li>
+                                        <li><a href="product-range.html?category=ovarian-cancer"
+                                                class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Ovarian
+                                                Cancer</a></li>
+                                        <li><a href="product-range.html?category=lung-cancer"
+                                                class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Non-Small
+                                                Cell Lung Cancer</a></li>
+                                        <li><a href="product-range.html?category=prostate-cancer"
+                                                class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Prostate
+                                                Cancer</a></li>
+                                        <li><a href="product-range.html?category=colorectal-cancer"
+                                                class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Colorectal
+                                                Cancer</a></li>
+                                        <li><a href="product-range.html?category=pancreatic-cancer"
+                                                class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Pancreatic
+                                                Cancer</a></li>
+                                        <li><a href="product-range.html?category=gastric-cancer"
+                                                class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Gastric
+                                                Cancer / Gastric Adenocarcinoma</a></li>
+                                        <li><a href="product-range.html?category=head-and-neck-cancer"
+                                                class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Head
+                                                and Neck Cancer</a></li>
+                                        <li><a href="product-range.html?category=malignant-pleural-mesothelioma"
+                                                class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Malignant
+                                                Pleural Mesothelioma</a></li>
+                                        <li><a href="product-range.html?category=malignant-pleural-effusion"
+                                                class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Malignant
+                                                Pleural Effusion</a></li>
+                                        <li><a href="product-range.html?category=gastrointestinal-stromal-tumors"
+                                                class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Gastrointestinal
+                                                Stromal Tumors</a></li>
                                     </ul>
                                 </div>
 
                                 <!-- Column 2 -->
                                 <div>
-                                    <h4 class="font-semibold text-gray-900 mb-4 border-b pb-2 text-sm">Oncology / Hematology</h4>
+                                    <h4 class="font-semibold text-gray-900 mb-4 border-b pb-2 text-sm">Oncology /
+                                        Hematology</h4>
                                     <ul class="space-y-2 text-[13px] mb-6">
-                                        <li><a href="product-range.html?category=aml" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Acute Myeloid Leukemia</a></li>
-                                        <li><a href="product-range.html?category=cml" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Chronic Myeloid Leukemia</a></li>
-                                        <li><a href="product-range.html?category=acute-lymphocytic-leukemia" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Acute Lymphocytic Leukemia</a></li>
-                                        <li><a href="product-range.html?category=chronic-lymphocytic-leukemia" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Chronic Lymphocytic Leukemia</a></li>
-                                        <li><a href="product-range.html?category=lymphoma" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Hodgkin/Non-Hodgkin's Lymphoma</a></li>
-                                        <li><a href="product-range.html?category=mantle-cell-lymphoma" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Mantle Cell Lymphoma</a></li>
-                                        <li><a href="product-range.html?category=chronic-myelocytic-leukemia" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Chronic Myelocytic Leukemia</a></li>
-                                        <li><a href="product-range.html?category=meningeal-leukemia" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Meningeal Leukemia</a></li>
-                                        <li><a href="product-range.html?category=acute-lymphoblastic-leukemia" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Acute Lymphoblastic Leukemia</a></li>
-                                        <li><a href="product-range.html?category=acute-promyelocytic-leukemia" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Acute Promyelocytic Leukemia</a></li>
-                                        <li><a href="product-range.html?category=sickle-cell" class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Sickle Cell Anemia</a></li>
+                                        <li><a href="product-range.html?category=aml"
+                                                class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Acute
+                                                Myeloid Leukemia</a></li>
+                                        <li><a href="product-range.html?category=cml"
+                                                class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Chronic
+                                                Myeloid Leukemia</a></li>
+                                        <li><a href="product-range.html?category=acute-lymphocytic-leukemia"
+                                                class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Acute
+                                                Lymphocytic Leukemia</a></li>
+                                        <li><a href="product-range.html?category=chronic-lymphocytic-leukemia"
+                                                class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Chronic
+                                                Lymphocytic Leukemia</a></li>
+                                        <li><a href="product-range.html?category=lymphoma"
+                                                class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Hodgkin/Non-Hodgkin's
+                                                Lymphoma</a></li>
+                                        <li><a href="product-range.html?category=mantle-cell-lymphoma"
+                                                class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Mantle
+                                                Cell Lymphoma</a></li>
+                                        <li><a href="product-range.html?category=chronic-myelocytic-leukemia"
+                                                class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Chronic
+                                                Myelocytic Leukemia</a></li>
+                                        <li><a href="product-range.html?category=meningeal-leukemia"
+                                                class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Meningeal
+                                                Leukemia</a></li>
+                                        <li><a href="product-range.html?category=acute-lymphoblastic-leukemia"
+                                                class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Acute
+                                                Lymphoblastic Leukemia</a></li>
+                                        <li><a href="product-range.html?category=acute-promyelocytic-leukemia"
+                                                class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Acute
+                                                Promyelocytic Leukemia</a></li>
+                                        <li><a href="product-range.html?category=sickle-cell"
+                                                class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Sickle
+                                                Cell Anemia</a></li>
                                     </ul>
                                     <h4 class="font-semibold text-gray-900 mb-4 border-b pb-2 text-sm">Anti-Infectives
                                     </h4>
@@ -187,7 +254,8 @@
                     </div>
                 </div>
                 <a href="about-us.html" class="hover:text-primary transition whitespace-nowrap">About Us</a>
-                <a href="pap.html" class="inline-flex items-center opacity-80 hover:opacity-100 transition-all duration-200 hover:-translate-y-0.5 transform">
+                <a href="pap.html"
+                    class="inline-flex items-center opacity-80 hover:opacity-100 transition-all duration-200 hover:-translate-y-0.5 transform">
                     <img src="assets/pap.png" alt="Patient Assistance Program" class="h-16 w-auto object-contain">
                 </a>
 
@@ -290,7 +358,8 @@
                                                     class="relative inline-block text-gray-700 font-semibold hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300 text-base">Global
                                                     Presence</a></li>
                                             <li><a href="meditations.html"
-                                                    class="relative inline-block text-gray-700 font-semibold hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300 text-base">Meditations</a></li>
+                                                    class="relative inline-block text-gray-700 font-semibold hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300 text-base">Meditations</a>
+                                            </li>
                                         </ul>
                                     </div>
                                     <div>
@@ -308,7 +377,8 @@
                                                     class="relative inline-block text-gray-700 font-semibold hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300 text-base">United
                                                     Nations Global Compact</a></li>
                                             <li><a href="/articles"
-                                                    class="relative inline-block text-gray-700 font-semibold hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300 text-base">Articles</a></li>
+                                                    class="relative inline-block text-gray-700 font-semibold hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300 text-base">Articles</a>
+                                            </li>
                                             <li class="pt-2">
                                                 <a href="careers.html#join-form"
                                                     class="inline-flex items-center px-5 py-2.5 rounded-full text-sm font-semibold text-white transition-all hover:opacity-90 hover:-translate-y-0.5 shadow-md"
@@ -322,25 +392,33 @@
                                 <!-- Slider Section (Cols 8-12) -->
                                 <div
                                     class="lg:col-span-5 h-[260px] relative rounded-2xl overflow-hidden shadow-lg bg-gray-100">
-                                    <a href="about-us.html" class="absolute inset-0 bg-cover bg-center company-slide-1 transition-opacity duration-1000 cursor-pointer"
+                                    <a href="about-us.html"
+                                        class="absolute inset-0 bg-cover bg-center company-slide-1 transition-opacity duration-1000 cursor-pointer"
                                         style="background-image: url('assets/about_us_hero.png');">
-                                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+                                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent">
+                                        </div>
                                         <div class="absolute bottom-6 left-6 right-6">
                                             <h3 class="text-white font-bold text-xl mb-1">About Us</h3>
-                                            <p class="text-white/80 text-sm">Learn more about our mission and vision.</p>
+                                            <p class="text-white/80 text-sm">Learn more about our mission and vision.
+                                            </p>
                                         </div>
                                     </a>
-                                    <a href="global-presence.html" class="absolute inset-0 bg-cover bg-center company-slide-2 transition-opacity duration-1000 cursor-pointer"
+                                    <a href="global-presence.html"
+                                        class="absolute inset-0 bg-cover bg-center company-slide-2 transition-opacity duration-1000 cursor-pointer"
                                         style="background-image: url('assets/globalpresencehero.jpg');">
-                                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+                                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent">
+                                        </div>
                                         <div class="absolute bottom-6 left-6 right-6">
                                             <h3 class="text-white font-bold text-xl mb-1">Global Presence</h3>
-                                            <p class="text-white/80 text-sm">We are expanding healthcare solutions worldwide.</p>
+                                            <p class="text-white/80 text-sm">We are expanding healthcare solutions
+                                                worldwide.</p>
                                         </div>
                                     </a>
-                                    <a href="careers.html" class="absolute inset-0 bg-cover bg-center company-slide-3 transition-opacity duration-1000 cursor-pointer"
+                                    <a href="careers.html"
+                                        class="absolute inset-0 bg-cover bg-center company-slide-3 transition-opacity duration-1000 cursor-pointer"
                                         style="background-image: url('assets/careershero.png');">
-                                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+                                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent">
+                                        </div>
                                         <div class="absolute bottom-6 left-6 right-6">
                                             <h3 class="text-white font-bold text-xl mb-1">Careers</h3>
                                             <p class="text-white/80 text-sm">Join our team and make a difference.</p>
@@ -397,67 +475,150 @@
                 <button onclick="toggleAccordion('mobile-products')"
                     class="w-full flex items-center justify-between px-3 py-3.5 text-[15px] font-semibold text-gray-700 hover:text-primary transition">
                     <span>Product Range</span>
-                    <i id="mobile-products-icon" class="fa-solid fa-chevron-down text-[11px] text-gray-400 transition-transform duration-300"></i>
+                    <i id="mobile-products-icon"
+                        class="fa-solid fa-chevron-down text-[11px] text-gray-400 transition-transform duration-300"></i>
                 </button>
                 <div id="mobile-products" class="hidden px-2 pb-3">
                     <!-- Oncology -->
-                    <p class="px-3 pt-3 pb-1 text-[10px] font-black uppercase text-gray-400 tracking-wider">Oncology (Solid Tumors)</p>
-                    <a href="product-range.html?category=breast-cancer" class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Breast Cancer</a>
-                    <a href="product-range.html?category=ovarian-cancer" class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Ovarian Cancer</a>
-                    <a href="product-range.html?category=lung-cancer" class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Non-Small Cell Lung Cancer</a>
-                    <a href="product-range.html?category=prostate-cancer" class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Prostate Cancer</a>
-                    <a href="product-range.html?category=colorectal-cancer" class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Colorectal Cancer</a>
-                    <a href="product-range.html?category=pancreatic-cancer" class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Pancreatic Cancer</a>
-                    <a href="product-range.html?category=gastric-cancer" class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Gastric Cancer / Gastric Adenocarcinoma</a>
-                    <a href="product-range.html?category=head-and-neck-cancer" class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Head and Neck Cancer</a>
-                    <a href="product-range.html?category=malignant-pleural-mesothelioma" class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Malignant Pleural Mesothelioma</a>
-                    <a href="product-range.html?category=malignant-pleural-effusion" class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Malignant Pleural Effusion</a>
-                    <a href="product-range.html?category=gastrointestinal-stromal-tumors" class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Gastrointestinal Stromal Tumors</a>
+                    <p class="px-3 pt-3 pb-1 text-[10px] font-black uppercase text-gray-400 tracking-wider">Oncology
+                        (Solid Tumors)</p>
+                    <a href="product-range.html?category=breast-cancer"
+                        class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Breast
+                        Cancer</a>
+                    <a href="product-range.html?category=ovarian-cancer"
+                        class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Ovarian
+                        Cancer</a>
+                    <a href="product-range.html?category=lung-cancer"
+                        class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Non-Small Cell
+                        Lung Cancer</a>
+                    <a href="product-range.html?category=prostate-cancer"
+                        class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Prostate
+                        Cancer</a>
+                    <a href="product-range.html?category=colorectal-cancer"
+                        class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Colorectal
+                        Cancer</a>
+                    <a href="product-range.html?category=pancreatic-cancer"
+                        class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Pancreatic
+                        Cancer</a>
+                    <a href="product-range.html?category=gastric-cancer"
+                        class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Gastric Cancer /
+                        Gastric Adenocarcinoma</a>
+                    <a href="product-range.html?category=head-and-neck-cancer"
+                        class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Head and Neck
+                        Cancer</a>
+                    <a href="product-range.html?category=malignant-pleural-mesothelioma"
+                        class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Malignant
+                        Pleural Mesothelioma</a>
+                    <a href="product-range.html?category=malignant-pleural-effusion"
+                        class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Malignant
+                        Pleural Effusion</a>
+                    <a href="product-range.html?category=gastrointestinal-stromal-tumors"
+                        class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Gastrointestinal
+                        Stromal Tumors</a>
                     <!-- Oncology / Hematology -->
-                    <p class="px-3 pt-3 pb-1 text-[10px] font-black uppercase text-gray-400 tracking-wider">Oncology / Hematology</p>
-                    <a href="product-range.html?category=aml" class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Acute Myeloid Leukemia</a>
-                    <a href="product-range.html?category=cml" class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Chronic Myeloid Leukemia</a>
-                    <a href="product-range.html?category=acute-lymphocytic-leukemia" class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Acute Lymphocytic Leukemia</a>
-                    <a href="product-range.html?category=chronic-lymphocytic-leukemia" class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Chronic Lymphocytic Leukemia</a>
-                    <a href="product-range.html?category=lymphoma" class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Hodgkin/Non-Hodgkin's Lymphoma</a>
-                    <a href="product-range.html?category=mantle-cell-lymphoma" class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Mantle Cell Lymphoma</a>
-                    <a href="product-range.html?category=chronic-myelocytic-leukemia" class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Chronic Myelocytic Leukemia</a>
-                    <a href="product-range.html?category=meningeal-leukemia" class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Meningeal Leukemia</a>
-                    <a href="product-range.html?category=acute-lymphoblastic-leukemia" class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Acute Lymphoblastic Leukemia</a>
-                    <a href="product-range.html?category=acute-promyelocytic-leukemia" class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Acute Promyelocytic Leukemia</a>
-                    <a href="product-range.html?category=sickle-cell" class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Sickle Cell Anemia</a>
+                    <p class="px-3 pt-3 pb-1 text-[10px] font-black uppercase text-gray-400 tracking-wider">Oncology /
+                        Hematology</p>
+                    <a href="product-range.html?category=aml"
+                        class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Acute Myeloid
+                        Leukemia</a>
+                    <a href="product-range.html?category=cml"
+                        class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Chronic Myeloid
+                        Leukemia</a>
+                    <a href="product-range.html?category=acute-lymphocytic-leukemia"
+                        class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Acute
+                        Lymphocytic Leukemia</a>
+                    <a href="product-range.html?category=chronic-lymphocytic-leukemia"
+                        class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Chronic
+                        Lymphocytic Leukemia</a>
+                    <a href="product-range.html?category=lymphoma"
+                        class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Hodgkin/Non-Hodgkin's
+                        Lymphoma</a>
+                    <a href="product-range.html?category=mantle-cell-lymphoma"
+                        class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Mantle Cell
+                        Lymphoma</a>
+                    <a href="product-range.html?category=chronic-myelocytic-leukemia"
+                        class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Chronic
+                        Myelocytic Leukemia</a>
+                    <a href="product-range.html?category=meningeal-leukemia"
+                        class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Meningeal
+                        Leukemia</a>
+                    <a href="product-range.html?category=acute-lymphoblastic-leukemia"
+                        class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Acute
+                        Lymphoblastic Leukemia</a>
+                    <a href="product-range.html?category=acute-promyelocytic-leukemia"
+                        class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Acute
+                        Promyelocytic Leukemia</a>
+                    <a href="product-range.html?category=sickle-cell"
+                        class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Sickle Cell
+                        Anemia</a>
                     <!-- Anti-Infectives -->
-                    <p class="px-3 pt-3 pb-1 text-[10px] font-black uppercase text-gray-400 tracking-wider">Anti-Infectives</p>
-                    <a href="product-range.html?category=respiratory" class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Respiratory Infections</a>
-                    <a href="product-range.html?category=uti" class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Urinary Tract Infections</a>
-                    <a href="product-range.html?category=skin-infections" class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Skin and Soft Tissue Infections</a>
-                    <a href="product-range.html?category=bone-infections" class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Bone and Joint Infections</a>
+                    <p class="px-3 pt-3 pb-1 text-[10px] font-black uppercase text-gray-400 tracking-wider">
+                        Anti-Infectives</p>
+                    <a href="product-range.html?category=respiratory"
+                        class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Respiratory
+                        Infections</a>
+                    <a href="product-range.html?category=uti"
+                        class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Urinary Tract
+                        Infections</a>
+                    <a href="product-range.html?category=skin-infections"
+                        class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Skin and Soft
+                        Tissue Infections</a>
+                    <a href="product-range.html?category=bone-infections"
+                        class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Bone and Joint
+                        Infections</a>
                     <!-- Endocrinology -->
-                    <p class="px-3 pt-3 pb-1 text-[10px] font-black uppercase text-gray-400 tracking-wider">Endocrinology</p>
-                    <a href="product-range.html?category=endometriosis" class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Endometriosis</a>
-                    <a href="product-range.html?category=fibrocystic" class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Fibrocystic Breast Disease</a>
+                    <p class="px-3 pt-3 pb-1 text-[10px] font-black uppercase text-gray-400 tracking-wider">
+                        Endocrinology</p>
+                    <a href="product-range.html?category=endometriosis"
+                        class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Endometriosis</a>
+                    <a href="product-range.html?category=fibrocystic"
+                        class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Fibrocystic
+                        Breast Disease</a>
                     <!-- Orthopedic -->
-                    <p class="px-3 pt-3 pb-1 text-[10px] font-black uppercase text-gray-400 tracking-wider">Orthopedic</p>
-                    <a href="product-range.html?category=multiple-myeloma" class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Multiple Myeloma</a>
-                    <a href="product-range.html?category=osteoporosis" class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Osteoporosis</a>
+                    <p class="px-3 pt-3 pb-1 text-[10px] font-black uppercase text-gray-400 tracking-wider">Orthopedic
+                    </p>
+                    <a href="product-range.html?category=multiple-myeloma"
+                        class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Multiple
+                        Myeloma</a>
+                    <a href="product-range.html?category=osteoporosis"
+                        class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Osteoporosis</a>
                     <!-- Cardiology -->
-                    <p class="px-3 pt-3 pb-1 text-[10px] font-black uppercase text-gray-400 tracking-wider">Cardiology</p>
-                    <a href="product-range.html?category=arrhythmia" class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Arrhythmia Management</a>
-                    <a href="product-range.html?category=hypertension" class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Hypertension / Angina</a>
+                    <p class="px-3 pt-3 pb-1 text-[10px] font-black uppercase text-gray-400 tracking-wider">Cardiology
+                    </p>
+                    <a href="product-range.html?category=arrhythmia"
+                        class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Arrhythmia
+                        Management</a>
+                    <a href="product-range.html?category=hypertension"
+                        class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Hypertension /
+                        Angina</a>
                     <!-- Neuro-Oncology -->
-                    <p class="px-3 pt-3 pb-1 text-[10px] font-black uppercase text-gray-400 tracking-wider">Neuro-Oncology</p>
-                    <a href="product-range.html?category=glioblastoma" class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Glioblastoma Multiforme</a>
+                    <p class="px-3 pt-3 pb-1 text-[10px] font-black uppercase text-gray-400 tracking-wider">
+                        Neuro-Oncology</p>
+                    <a href="product-range.html?category=glioblastoma"
+                        class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Glioblastoma
+                        Multiforme</a>
                     <!-- Respiratory / Allergy -->
-                    <p class="px-3 pt-3 pb-1 text-[10px] font-black uppercase text-gray-400 tracking-wider">Respiratory - Allergy</p>
-                    <a href="product-range.html?category=allergic-rhinitis" class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Seasonal Allergic Rhinitis</a>
+                    <p class="px-3 pt-3 pb-1 text-[10px] font-black uppercase text-gray-400 tracking-wider">Respiratory
+                        - Allergy</p>
+                    <a href="product-range.html?category=allergic-rhinitis"
+                        class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Seasonal
+                        Allergic Rhinitis</a>
                     <!-- Nephrology -->
-                    <p class="px-3 pt-3 pb-1 text-[10px] font-black uppercase text-gray-400 tracking-wider">Nephrology - Renal</p>
-                    <a href="product-range.html?category=kidney-disease" class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Chronic Kidney Disease</a>
+                    <p class="px-3 pt-3 pb-1 text-[10px] font-black uppercase text-gray-400 tracking-wider">Nephrology -
+                        Renal</p>
+                    <a href="product-range.html?category=kidney-disease"
+                        class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Chronic Kidney
+                        Disease</a>
                     <!-- Pain / Rheumatology -->
-                    <p class="px-3 pt-3 pb-1 text-[10px] font-black uppercase text-gray-400 tracking-wider">Pain Management</p>
-                    <a href="product-range.html?category=pain" class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Chronic Pain</a>
-                    <p class="px-3 pt-3 pb-1 text-[10px] font-black uppercase text-gray-400 tracking-wider">Rheumatology</p>
-                    <a href="product-range.html?category=rheumatology" class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Inflammatory Disorders</a>
+                    <p class="px-3 pt-3 pb-1 text-[10px] font-black uppercase text-gray-400 tracking-wider">Pain
+                        Management</p>
+                    <a href="product-range.html?category=pain"
+                        class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Chronic Pain</a>
+                    <p class="px-3 pt-3 pb-1 text-[10px] font-black uppercase text-gray-400 tracking-wider">Rheumatology
+                    </p>
+                    <a href="product-range.html?category=rheumatology"
+                        class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Inflammatory
+                        Disorders</a>
                 </div>
             </div>
 
@@ -469,7 +630,8 @@
 
             <!-- Patient Assistance Program -->
             <a href="pap.html" class="flex items-center px-3 py-2 border-b border-gray-100">
-                <img src="assets/pap.png" alt="Patient Assistance Program" class="h-10 w-auto object-contain opacity-80 hover:opacity-100 transition">
+                <img src="assets/pap.png" alt="Patient Assistance Program"
+                    class="h-10 w-auto object-contain opacity-80 hover:opacity-100 transition">
             </a>
 
             <!-- Company accordion -->
@@ -477,16 +639,27 @@
                 <button onclick="toggleAccordion('mobile-company')"
                     class="w-full flex items-center justify-between px-3 py-3.5 text-[15px] font-semibold text-gray-700 hover:text-primary transition">
                     <span id="mobile-company-label">Company</span>
-                    <i id="mobile-company-icon" class="fa-solid fa-chevron-down text-[11px] text-gray-400 transition-transform duration-300"></i>
+                    <i id="mobile-company-icon"
+                        class="fa-solid fa-chevron-down text-[11px] text-gray-400 transition-transform duration-300"></i>
                 </button>
                 <div id="mobile-company" class="hidden px-2 pb-3 space-y-0.5">
-                    <a href="services.html" class="block pl-5 py-2.5 text-[14px] font-medium text-gray-600 hover:text-primary transition">Our Services</a>
-                    <a href="global-presence.html" class="block pl-5 py-2.5 text-[14px] font-medium text-gray-600 hover:text-primary transition">Global Presence</a>
-                    <a href="meditations.html" class="block pl-5 py-2.5 text-[14px] font-medium text-gray-600 hover:text-primary transition">Meditations</a>
-                    <a href="csr.html" class="block pl-5 py-2.5 text-[14px] font-medium text-gray-600 hover:text-primary transition">CSR</a>
-                    <a href="careers.html" class="block pl-5 py-2.5 text-[14px] font-medium text-gray-600 hover:text-primary transition">Careers</a>
-                    <a href="ungc.html" class="block pl-5 py-2.5 text-[14px] font-medium text-gray-600 hover:text-primary transition">United Nations Global Compact</a>
-                    <a href="/articles" class="block pl-5 py-2.5 text-[14px] font-medium text-gray-600 hover:text-primary transition">Articles</a>
+                    <a href="services.html"
+                        class="block pl-5 py-2.5 text-[14px] font-medium text-gray-600 hover:text-primary transition">Our
+                        Services</a>
+                    <a href="global-presence.html"
+                        class="block pl-5 py-2.5 text-[14px] font-medium text-gray-600 hover:text-primary transition">Global
+                        Presence</a>
+                    <a href="meditations.html"
+                        class="block pl-5 py-2.5 text-[14px] font-medium text-gray-600 hover:text-primary transition">Meditations</a>
+                    <a href="csr.html"
+                        class="block pl-5 py-2.5 text-[14px] font-medium text-gray-600 hover:text-primary transition">CSR</a>
+                    <a href="careers.html"
+                        class="block pl-5 py-2.5 text-[14px] font-medium text-gray-600 hover:text-primary transition">Careers</a>
+                    <a href="ungc.html"
+                        class="block pl-5 py-2.5 text-[14px] font-medium text-gray-600 hover:text-primary transition">United
+                        Nations Global Compact</a>
+                    <a href="/articles"
+                        class="block pl-5 py-2.5 text-[14px] font-medium text-gray-600 hover:text-primary transition">Articles</a>
                     <div class="pl-5 pt-2 pb-1">
                         <a href="careers.html#join-form"
                             class="inline-flex items-center px-5 py-2.5 rounded-full text-sm font-semibold text-white transition-all active:opacity-80 shadow-md"
@@ -503,14 +676,16 @@
                 Contact Us
             </a>
 
-            <div id="mobile-user-profile" class="hidden flex-col space-y-2 pt-4 px-2 pb-4 border-t border-gray-100 mt-2">
+            <div id="mobile-user-profile"
+                class="hidden flex-col space-y-2 pt-4 px-2 pb-4 border-t border-gray-100 mt-2">
                 <a href="profile.html"
                     class="flex items-center gap-3 px-2 mb-2 hover:bg-gray-50 rounded-lg py-2 transition">
                     <div class="h-10 w-10 rounded-full bg-primary text-white flex items-center justify-center font-bold text-lg shadow-md"
                         id="mobile-user-avatar-text">U</div>
                     <div class="overflow-hidden">
                         <div id="mobile-user-name-display" class="font-bold text-gray-800 text-sm truncate">User</div>
-                        <div id="mobile-user-email-display" class="text-xs text-gray-500 truncate">user@example.com</div>
+                        <div id="mobile-user-email-display" class="text-xs text-gray-500 truncate">user@example.com
+                        </div>
                     </div>
                     <i class="fa-solid fa-chevron-right ml-auto text-gray-400 text-sm"></i>
                 </a>
@@ -522,7 +697,7 @@
 </nav>
 
 <script>
-    console.log('[GetMEDS] Navbar Script initializing...');
+    console.log('[Getmeds] Navbar Script initializing...');
     // Mark active nav link based on current page
     (function () {
         const rawPath = window.location.pathname;
@@ -705,7 +880,7 @@
             .then(data => {
                 const categories = data?.result || [];
                 if (categories.length === 0) return;
-                
+
                 // Grouping config to keep the static layout and style
                 const categoryConfig = {
                     'oncology': { col: 0, title: 'Oncology' },
@@ -769,19 +944,19 @@
 
                 for (let i = 0; i < validCats.length; i++) {
                     if (visited.has(i)) continue;
-                    
+
                     const component = [];
                     const queue = [i];
                     visited.add(i);
-                    
+
                     while (queue.length > 0) {
                         const currIdx = queue.shift();
                         const currCat = validCats[currIdx];
                         component.push(currCat);
-                        
+
                         for (let j = 0; j < validCats.length; j++) {
                             if (visited.has(j)) continue;
-                            
+
                             const sim = jaccardSimilarity(currCat.subcategory, validCats[j].subcategory);
                             if (sim >= 0.5) {
                                 visited.add(j);
@@ -804,7 +979,7 @@
                     } else {
                         const sortedCats = [...groupCats].sort((a, b) => a.category.localeCompare(b.category));
                         const combinedName = sortedCats.map(c => c.category).join(' / ');
-                        
+
                         // Find shared subcategories
                         const subMaps = sortedCats.map(cat => {
                             const map = new Map();
@@ -999,7 +1174,7 @@
                     mobileAccordion.innerHTML = mobileHtml;
                 }
             })
-            .catch(err => console.warn('[GetMEDS] Failed to populate dropdown with dynamic categories:', err));
+            .catch(err => console.warn('[Getmeds] Failed to populate dropdown with dynamic categories:', err));
     }
 
     // Run dynamic populate

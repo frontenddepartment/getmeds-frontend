@@ -1,5 +1,5 @@
 /**
- * GetMEDS Data Loader
+ * Getmeds Data Loader
  * Fetches page-specific JSON from /data/ and binds values to DOM elements.
  *
  * HTML attribute API:
@@ -71,7 +71,7 @@
     fetch('data/' + dataKey + '.json')
       .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
       .then(applyData)
-      .catch(function (err) { console.warn('[GetMEDS DataLoader]', err); });
+      .catch(function (err) { console.warn('[Getmeds DataLoader]', err); });
   }
 
   if (document.readyState === 'loading') {

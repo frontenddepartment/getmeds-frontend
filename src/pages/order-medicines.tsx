@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { injectHTML } from '../lib/injectHTML';
 import { getGoogleSpreadsheetBySlug } from '../lib/queries';
+import { getApiUrl } from '../lib/api';
 
 
 export default function OrderMedicines() {
@@ -220,28 +221,20 @@ export default function OrderMedicines() {
     }
 
     try {
-      const sheetInfo = await getGoogleSpreadsheetBySlug('order-medicine-list');
-      if (!sheetInfo || !sheetInfo.spreadsheetId) {
-        throw new Error('Google Spreadsheet settings not found in Sanity.');
-      }
-
-      const timestamp = new Date().toLocaleString();
       const payload = {
-        spreadsheetId: sheetInfo.spreadsheetId,
-        row: [
-          formData.patientName,
-          formData.email,
-          formData.phone,
-          formData.dob,
-          formData.address,
-          '[PENDING_FILE_UPLOAD]',
-          formData.terms ? 'Confirmed' : 'Not Confirmed',
-          timestamp
-        ],
+        inquiryType: 'Order Medicine',
+        fullName: formData.patientName,
+        email: formData.email,
+        phone: formData.phone,
+        message: `Medicine Order Request. DOB: ${formData.dob}, Address: ${formData.address}`,
+        additionalData: {
+          dob: formData.dob,
+          address: formData.address
+        },
         files: filesData
       };
 
-      const response = await fetch(import.meta.env.VITE_SPREADSHEET_API_URL || '/api/append-to-spreadsheet', {
+      const response = await fetch(getApiUrl(), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)

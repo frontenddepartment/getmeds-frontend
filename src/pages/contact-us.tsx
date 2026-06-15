@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { injectHTML } from '../lib/injectHTML';
 import { useImageMapper, useSiteSettings } from '../lib/useSanity';
 import { getGoogleSpreadsheetBySlug } from '../lib/queries';
+import { getApiUrl } from '../lib/api';
 import type { ContactGroup } from '../types/sanity';
 
 
@@ -48,18 +49,29 @@ export default function ContactUs() {
     }
     setSubmitState('sending');
     try {
-      const sheetInfo = await getGoogleSpreadsheetBySlug('contact-us-list');
-      if (!sheetInfo || !sheetInfo.spreadsheetId) {
-        throw new Error('Google Spreadsheet settings not found in Sanity.');
-      }
+      const inquiryType = formData.subject === 'partnership' ? 'Partnership' : 'Contact Us';
+      
+      const subjectMap: Record<string, string> = {
+        general: 'General Inquiry',
+        support: 'Customer Support',
+        sales: 'Sales & Pricing',
+        hr: 'HR / Careers',
+        medical: 'Medical Inquiry',
+        partnership: 'Partnership'
+      };
+      const subjectText = subjectMap[formData.subject] || formData.subject;
 
-      const timestamp = new Date().toLocaleString();
       const payload = {
-        spreadsheetId: sheetInfo.spreadsheetId,
-        row: [formData.name, formData.email, formData.phone, formData.subject, formData.message, timestamp]
+        inquiryType: inquiryType,
+        fullName: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        subject: subjectText,
+        message: formData.message,
+        files: []
       };
 
-      const response = await fetch(import.meta.env.VITE_SPREADSHEET_API_URL || '/api/append-to-spreadsheet', {
+      const response = await fetch(getApiUrl(), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),

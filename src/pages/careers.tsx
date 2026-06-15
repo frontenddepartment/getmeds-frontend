@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { injectHTML } from '../lib/injectHTML';
 import { useImageMapper } from '../lib/useSanity';
 import { getGoogleSpreadsheetBySlug, getCareers } from '../lib/queries';
+import { getApiUrl } from '../lib/api';
 
 const Careers: React.FC = () => {
   const { getImage } = useImageMapper('careers');
@@ -31,23 +32,15 @@ const Careers: React.FC = () => {
     }
     setSubmitState('sending');
     try {
-      const sheetInfo = await getGoogleSpreadsheetBySlug('careers-inquiry-list');
-      if (!sheetInfo || !sheetInfo.spreadsheetId) {
-        throw new Error('Google Spreadsheet settings not found in Sanity.');
-      }
-
-      const timestamp = new Date().toLocaleString();
       const payload = {
-        spreadsheetId: sheetInfo.spreadsheetId,
-        row: [
-          applyForm.name,
-          applyForm.email,
-          applyForm.phone,
-          applyingFor,
-          applyForm.message,
-          '[PENDING_FILE_UPLOAD]',
-          timestamp
-        ],
+        inquiryType: 'Career Inquiry',
+        fullName: applyForm.name,
+        email: applyForm.email,
+        phone: applyForm.phone,
+        message: applyForm.message,
+        additionalData: {
+          position: applyingFor
+        },
         files: [
           {
             name: applyForm.resumeName,
@@ -57,7 +50,7 @@ const Careers: React.FC = () => {
         ]
       };
 
-      const response = await fetch(import.meta.env.VITE_SPREADSHEET_API_URL || '/api/append-to-spreadsheet', {
+      const response = await fetch(getApiUrl(), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
