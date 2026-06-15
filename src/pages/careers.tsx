@@ -5,6 +5,7 @@ import { getGoogleSpreadsheetBySlug, getCareers } from '../lib/queries';
 
 const Careers: React.FC = () => {
   const { getImage } = useImageMapper('careers');
+  const [activeCareersPanel, setActiveCareersPanel] = useState(0);
   const [jobs, setJobs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [applyModalOpen, setApplyModalOpen] = useState(false);
@@ -186,6 +187,66 @@ const Careers: React.FC = () => {
                 </p>
               </div>
             </div>
+          </div>
+
+          {/* Expanding Panels */}
+          <div className="flex gap-3 h-[340px] md:h-[400px] mt-12"
+            onMouseLeave={() => setActiveCareersPanel(0)}>
+
+            {/* Panel 1 — Left */}
+            <div className="relative rounded-2xl overflow-hidden cursor-pointer"
+              style={{ flex: activeCareersPanel === 0 ? 3 : 0.8, minWidth: 0, transition: 'flex 0.5s ease' }}
+              onMouseEnter={() => setActiveCareersPanel(0)}>
+              <img src={getImage('assets/aboutussix.jpg', 'assets/aboutussix.jpg')}
+                alt="Getmeds Team"
+                className="w-full h-full object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+              <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
+                <h3 className="text-white text-xl md:text-2xl font-bold leading-snug mb-2">
+                  Build Your Career With Us
+                </h3>
+                <p className={`text-white/80 text-[13px] md:text-[14px] leading-relaxed max-w-sm transition-opacity duration-300 ${activeCareersPanel === 0 ? 'opacity-100' : 'opacity-0'}`}>
+                  Join a team of passionate professionals dedicated to transforming healthcare access across the Philippines and beyond.
+                </p>
+              </div>
+            </div>
+
+            {/* Panel 2 — Center */}
+            <div className="relative rounded-2xl overflow-hidden cursor-pointer"
+              style={{ flex: activeCareersPanel === 1 ? 3 : 0.8, minWidth: 0, transition: 'flex 0.5s ease' }}
+              onMouseEnter={() => setActiveCareersPanel(1)}>
+              <img src={getImage('assets/aboutusseven.jpg', 'assets/aboutusseven.jpg')}
+                alt="Getmeds Learning"
+                className="w-full h-full object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent"></div>
+              <div className="absolute bottom-0 left-0 right-0 p-6">
+                <h3 className="text-white text-lg md:text-xl font-bold leading-snug whitespace-nowrap">
+                  Grow &amp; Learn
+                </h3>
+                <p className={`text-white/70 text-[13px] leading-relaxed mt-2 max-w-xs transition-opacity duration-300 delay-150 ${activeCareersPanel === 1 ? 'opacity-100' : 'opacity-0'}`}>
+                  We invest in our people through continuous learning, mentorship, and professional development programs that fuel long-term growth.
+                </p>
+              </div>
+            </div>
+
+            {/* Panel 3 — Right */}
+            <div className="relative rounded-2xl overflow-hidden cursor-pointer"
+              style={{ flex: activeCareersPanel === 2 ? 3 : 0.8, minWidth: 0, transition: 'flex 0.5s ease' }}
+              onMouseEnter={() => setActiveCareersPanel(2)}>
+              <img src={getImage('assets/aboutuseight.jpg', 'assets/aboutuseight.jpg')}
+                alt="Getmeds Impact"
+                className="w-full h-full object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent"></div>
+              <div className="absolute bottom-0 left-0 right-0 p-6">
+                <h3 className="text-white text-lg md:text-xl font-bold leading-snug whitespace-nowrap">
+                  Make Real Impact
+                </h3>
+                <p className={`text-white/70 text-[13px] leading-relaxed mt-2 max-w-xs transition-opacity duration-300 delay-150 ${activeCareersPanel === 2 ? 'opacity-100' : 'opacity-0'}`}>
+                  Your work directly shapes patient lives. Be part of a mission-driven company where every contribution makes a meaningful difference.
+                </p>
+              </div>
+            </div>
+
           </div>
 
           {/* 3 Pillar Cards */}
@@ -562,9 +623,9 @@ const Careers: React.FC = () => {
             </div>
             <div>
               <label className="block text-xs font-semibold text-gray-600 mb-1">Mobile Number <span className="text-red-500">*</span></label>
-              <input type="tel" required placeholder="e.g. +63 912 345 6789"
+              <input type="tel" inputMode="numeric" required placeholder="e.g. +63 912 345 6789"
                 value={applyForm.phone}
-                onChange={e => setApplyForm(prev => ({ ...prev, phone: e.target.value }))}
+                onChange={e => setApplyForm(prev => ({ ...prev, phone: e.target.value.replace(/[^\d+\s\-()]/g, '') }))}
                 className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-[13px] placeholder-gray-400" />
             </div>
             <div>

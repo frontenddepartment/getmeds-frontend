@@ -442,7 +442,7 @@ export default function OrderMedicines() {
                       <i className={`fa-solid ${step.icon} text-white text-xl`}></i>
                     </div>
                     <h3 className="text-white font-bold text-[15px] mb-3">{step.label}</h3>
-                    <p className="text-white/75 text-[12px] leading-relaxed">{step.desc}</p>
+                    <p className="text-white text-[12px] leading-relaxed">{step.desc}</p>
                   </div>
                 ))}
               </div>
@@ -556,28 +556,28 @@ export default function OrderMedicines() {
 
                 {/* Need Assistance */}
                 <div className="bg-white p-6 rounded-[15px] border border-gray-100 shadow-sm">
-                  <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-1.5">Need Assistance?</p>
-                  <p className="text-[15px] font-semibold mb-5"
+                  <p className="text-[11px] font-semibold uppercase tracking-widest text-gray-400 mb-1.5">Need Assistance?</p>
+                  <p className="text-[17px] font-semibold mb-5"
                     style={{ background: 'linear-gradient(to right,#61A644,#1D9FDA)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
                     Chat with our pharmacist
                   </p>
                   <div className="space-y-4">
-                    <a href="tel:09190769105" className="flex items-center gap-3 group">
+                    <a href="tel:+639190769105" className="flex items-center gap-3 group">
                       <div className="w-9 h-9 rounded-[10px] bg-gray-50 flex items-center justify-center text-dark text-xs group-hover:bg-primary group-hover:text-white transition shadow-sm flex-shrink-0">
                         <i className="fa-solid fa-phone"></i>
                       </div>
                       <div>
-                        <p className="text-[10px] text-gray-400 font-medium">Customer Support</p>
-                        <p className="text-[13px] font-semibold text-dark">0919-876-9105</p>
+                        <p className="text-[13px] text-gray-400 font-medium">Customer Support</p>
+                        <p className="text-[15px] font-semibold text-dark">+639190769105</p>
                       </div>
                     </a>
-                    <a href="mailto:info@getmeds.ph" className="flex items-center gap-3 group">
+                    <a href="mailto:[EMAIL_ADDRESS]" className="flex items-center gap-3 group">
                       <div className="w-9 h-9 rounded-[10px] bg-gray-50 flex items-center justify-center text-dark text-xs group-hover:bg-primary group-hover:text-white transition shadow-sm flex-shrink-0">
                         <i className="fa-solid fa-envelope"></i>
                       </div>
                       <div>
-                        <p className="text-[10px] text-gray-400 font-medium">Email Address</p>
-                        <p className="text-[13px] font-semibold text-dark">info@getmeds.ph</p>
+                        <p className="text-[13px] text-gray-400 font-medium">Email Address</p>
+                        <p className="text-[15px] font-semibold text-dark">info@getmeds.ph</p>
                       </div>
                     </a>
                   </div>
@@ -589,25 +589,48 @@ export default function OrderMedicines() {
                     <i className="fa-solid fa-lock text-lg"></i>
                   </div>
                   <div>
-                    <h3 className="text-sm font-semibold text-dark mb-2">Secure prescription storage</h3>
-                    <p className="text-[12px] text-gray-400 leading-relaxed">All uploads are encrypted and handled with strict confidentiality.</p>
+                    <h3 className="text-[15px] font-semibold text-dark mb-2">Secure prescription storage</h3>
+                    <p className="text-[13px] text-gray-400 leading-relaxed">All uploads are encrypted and handled with strict confidentiality.</p>
                   </div>
                 </div>
 
-                {/* Pharmacy Verified */}
-                <div className="bg-white p-6 rounded-[15px] border border-gray-100 shadow-sm">
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="w-10 h-10 rounded-[12px] bg-green-50 flex items-center justify-center text-green-600 flex-shrink-0">
-                      <i className="fa-solid fa-shield-halved text-lg"></i>
+                {/* Compliance & Standards */}
+                <div className="bg-white p-6 rounded-[15px] border border-gray-100 shadow-sm space-y-5">
+                  <div className="flex items-start gap-3">
+                    <div className="w-9 h-9 rounded-[10px] bg-green-50 flex items-center justify-center text-green-600 flex-shrink-0 mt-0.5">
+                      <i className="fa-solid fa-certificate text-base"></i>
                     </div>
-                    <h3 className="text-sm font-semibold text-dark">Pharmacy verified</h3>
+                    <div>
+                      <h3 className="text-[15px] font-semibold text-dark mb-1">Licensed Pharmacy Operations</h3>
+                      <p className="text-[13px] text-gray-400 leading-relaxed">
+                        <span className="font-semibold text-gray-500">FDA Philippines Licensed — </span>
+                        Operating under valid Food and Drug Administration of the Philippines licenses as a wholesaler, distributor, and retail pharmacy.
+                      </p>
+                    </div>
                   </div>
-                  <p className="text-[12px] text-gray-400 leading-relaxed mb-4">
-                    We follow Philippine pharmacy standards for medication dispensing.
-                  </p>
-                  <div className="flex items-center gap-2 px-3 py-2.5 bg-green-50 border border-green-100 rounded-[10px]">
-                    <i className="fa-solid fa-shield-check text-green-600 text-sm flex-shrink-0"></i>
-                    <span className="text-[11px] font-bold text-green-700 uppercase tracking-wide">Data Privacy Act (RA 10173) Compliant</span>
+                  <div className="h-px bg-gray-100" />
+                  <div className="flex items-start gap-3">
+                    <div className="w-9 h-9 rounded-[10px] bg-green-50 flex items-center justify-center text-green-600 flex-shrink-0 mt-0.5">
+                      <i className="fa-solid fa-user-doctor text-base"></i>
+                    </div>
+                    <div>
+                      <h3 className="text-[15px] font-semibold text-dark mb-1">Pharmacist-Verified Dispensing</h3>
+                      <p className="text-[13px] text-gray-400 leading-relaxed">
+                        All medications reviewed and dispensed under the supervision of PRC-licensed Filipino pharmacists, in accordance with the Philippine Pharmacy Act (RA 10918).
+                      </p>
+                    </div>
+                  </div>
+                  <div className="h-px bg-gray-100" />
+                  <div className="flex items-start gap-3">
+                    <div className="w-9 h-9 rounded-[10px] bg-green-50 flex items-center justify-center text-green-600 flex-shrink-0 mt-0.5">
+                      <i className="fa-solid fa-shield-halved text-base"></i>
+                    </div>
+                    <div>
+                      <h3 className="text-[15px] font-semibold text-dark mb-1">Patient Privacy Commitment</h3>
+                      <p className="text-[13px] text-gray-400 leading-relaxed">
+                        Personal and prescription information is handled with care, in line with Philippine Data Privacy Act principles.
+                      </p>
+                    </div>
                   </div>
                 </div>
 
@@ -700,7 +723,7 @@ export default function OrderMedicines() {
                 {/* After-submit informational note */}
                 <div className="flex items-start gap-2 text-[12px] text-gray-400">
                   <i className="fa-solid fa-circle-info mt-0.5 flex-shrink-0"></i>
-                  <span>After submitting, our team will reach out using the contact number you provided.</span>
+                  <span>After submitting, our pharmacists will reach out using the contact number you provided.</span>
                 </div>
 
                 {/* Action Buttons */}
@@ -717,7 +740,7 @@ export default function OrderMedicines() {
                   <button type="submit" disabled={submitState === 'sending'}
                     className="hover:opacity-90 text-white font-bold py-3.5 px-10 rounded-[15px] text-[14px] transition disabled:opacity-50"
                     style={{ background: 'linear-gradient(to right,#61A644,#1D9FDA)' }}>
-                    {submitState === 'sending' ? 'Submitting...' : 'Submit Prescription Request'}
+                    {submitState === 'sending' ? 'Submitting...' : 'Submit  '}
                   </button>
                 </div>
               </form>
@@ -727,7 +750,7 @@ export default function OrderMedicines() {
                 <i className="fa-solid fa-triangle-exclamation text-amber-500 mt-0.5 flex-shrink-0"></i>
                 <p className="text-[11px] text-amber-800 leading-relaxed">
                   <span className="font-bold">Medical Disclaimer: </span>
-                  GetMEDS dispenses prescription medicines only upon receipt of a valid prescription from a licensed physician. This service does not replace professional medical advice, diagnosis, or treatment. Always consult your healthcare provider for any medical concerns.
+                  Getmeds dispenses prescription medicines only upon receipt of a valid prescription from a licensed physician. This service does not replace professional medical advice, diagnosis, or treatment. Always consult your healthcare provider for any medical concerns.
                 </p>
               </div>
             </div>

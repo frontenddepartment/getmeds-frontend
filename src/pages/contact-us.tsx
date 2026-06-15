@@ -111,13 +111,13 @@ export default function ContactUs() {
       {
         _key: 'hr',
         purpose: 'HR / Careers',
-        phones: ['+63 919 076 9106'],
+        phones: ['+63 919 076 9105'],
         emails: ['careers@getmeds.ph', 'hr@getmeds.ph', 'hr2@getmeds.ph'],
       },
       {
         _key: 'medical',
         purpose: 'Medical Inquiries',
-        phones: ['+63 919 076 9107'],
+        phones: ['+63 919 076 9105'],
         emails: ['medical@getmeds.ph'],
       },
     ];
@@ -136,9 +136,6 @@ export default function ContactUs() {
           {/* Background Image */}
           <img src={getImage('assets/contactushero.png', 'assets/contactushero.png')} alt="Contact Us"
             className="absolute inset-0 w-full h-full object-cover object-[85%_center] md:object-center" />
-          {/* Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent w-[100%] md:w-[70%] z-0" />
-
           {/* Floating icons */}
           <div className="absolute top-[12%] right-[25%] md:top-[18%] md:right-[30%] lg:right-[25%] flex items-center justify-center bg-white/20 backdrop-blur-lg border border-white/30 shadow-[0_8px_32px_rgba(0,0,0,0.15)] rounded-2xl w-12 h-12 md:w-[70px] md:h-[70px] animate-float-1 z-20">
             <i className="fa-solid fa-envelope text-white text-xl md:text-3xl drop-shadow-md"></i>
@@ -243,11 +240,12 @@ export default function ContactUs() {
                   <h4 className="font-bold text-gray-900 text-base">Social Network</h4>
                 </div>
                 <div className="flex space-x-4 items-center flex-wrap gap-y-2">
-                  <a href="#" title="Facebook" className="text-[#1877F2] hover:scale-110 transition-transform duration-300 text-[22px] drop-shadow-sm"><i className="fa-brands fa-facebook"></i></a>
-                  <a href="#" title="Twitter" className="text-[#1DA1F2] hover:scale-110 transition-transform duration-300 text-[22px] drop-shadow-sm"><i className="fa-brands fa-twitter"></i></a>
-                  <a href="#" title="LinkedIn" className="text-[#0A66C2] hover:scale-110 transition-transform duration-300 text-[22px] drop-shadow-sm"><i className="fa-brands fa-linkedin"></i></a>
-                  <a href="#" title="Telegram" className="text-[#2AABEE] hover:scale-110 transition-transform duration-300 text-[22px] drop-shadow-sm"><i className="fa-brands fa-telegram"></i></a>
-                  <a href="#" title="YouTube" className="text-[#FF0000] hover:scale-110 transition-transform duration-300 text-[22px] drop-shadow-sm"><i className="fa-brands fa-youtube"></i></a>
+                  <a href="https://www.facebook.com/getmedsphilippines/" target="_blank" rel="noopener noreferrer" title="Facebook" className="text-[#1877F2] hover:scale-110 transition-transform duration-300 text-[22px] drop-shadow-sm"><i className="fa-brands fa-facebook"></i></a>
+                  <a href="https://twitter.com/getmeds_ph" target="_blank" rel="noopener noreferrer" title="Twitter" className="text-[#1DA1F2] hover:scale-110 transition-transform duration-300 text-[22px] drop-shadow-sm"><i className="fa-brands fa-twitter"></i></a>
+                  <a href="https://www.linkedin.com/company/getmeds" target="_blank" rel="noopener noreferrer" title="LinkedIn" className="text-[#0A66C2] hover:scale-110 transition-transform duration-300 text-[22px] drop-shadow-sm"><i className="fa-brands fa-linkedin"></i></a>
+                  <a href="https://www.tiktok.com/@getmedsph?_t=8lQqwFgifZJ&_r=1" target="_blank" rel="noopener noreferrer" title="TikTok" className="text-[#010101] hover:scale-110 transition-transform duration-300 text-[22px] drop-shadow-sm"><i className="fa-brands fa-tiktok"></i></a>
+                  <a href="https://www.instagram.com/getmeds_ph/" target="_blank" rel="noopener noreferrer" title="Instagram" className="text-[#E1306C] hover:scale-110 transition-transform duration-300 text-[22px] drop-shadow-sm"><i className="fa-brands fa-instagram"></i></a>
+                  <a href="https://www.youtube.com/channel/UC9cpdBilPaA8xQHBzs_ezvA" target="_blank" rel="noopener noreferrer" title="YouTube" className="text-[#FF0000] hover:scale-110 transition-transform duration-300 text-[22px] drop-shadow-sm"><i className="fa-brands fa-youtube"></i></a>
                 </div>
               </div>
             </div>
@@ -284,9 +282,9 @@ export default function ContactUs() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="flex flex-col space-y-2">
                   <label className="text-[14px] font-semibold text-gray-700">Phone Number</label>
-                  <input type="tel" placeholder="e.g. +63 912 345 6789"
+                  <input type="tel" inputMode="numeric" placeholder="e.g. +63 912 345 6789"
                     value={formData.phone}
-                    onChange={e => setFormData(prev => ({ ...prev, phone: e.target.value }))}
+                    onChange={e => setFormData(prev => ({ ...prev, phone: e.target.value.replace(/[^\d+\s\-()\s]/g, '') }))}
                     className="w-full bg-[#F4F6F9] rounded-xl px-4 py-3.5 text-[13px] outline-none border-2 border-transparent focus:border-primary/20 transition-colors placeholder-gray-400 font-medium" />
                 </div>
                 <div className="flex flex-col space-y-2">

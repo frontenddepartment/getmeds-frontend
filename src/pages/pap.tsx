@@ -44,6 +44,7 @@ export default function PatientAssistanceProgram() {
   const tabBarRef = useRef<HTMLDivElement>(null);
   const tabBarPassedRef = useRef(false);
   const lastScrollYRef = useRef(0);
+  const sectionRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const navContainer = document.getElementById('navbar-container');
@@ -68,8 +69,15 @@ export default function PatientAssistanceProgram() {
     const el = tabBarRef.current;
     if (!el) return;
     const obs = new IntersectionObserver(([e]) => {
-      tabBarPassedRef.current = !e.isIntersecting;
-      if (e.isIntersecting) setTabBarFloating(false);
+      if (e.isIntersecting) {
+        tabBarPassedRef.current = false;
+        setTabBarFloating(false);
+      } else {
+        // Only treat as "passed" if element is above the viewport (scrolled past it),
+        // not when it's below the fold on initial page load.
+        tabBarPassedRef.current = e.boundingClientRect.top < 0;
+        if (!tabBarPassedRef.current) setTabBarFloating(false);
+      }
     }, { threshold: 0 });
     obs.observe(el);
     return () => obs.disconnect();
@@ -85,6 +93,14 @@ export default function PatientAssistanceProgram() {
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const switchTab = (id: SectionTab) => {
+    setActiveSection(id);
+    if (sectionRef.current) {
+      const top = sectionRef.current.getBoundingClientRect().top + window.scrollY - 90;
+      window.scrollTo({ top, behavior: 'smooth' });
+    }
+  };
 
   const toggleFaq = (index: number) => setActiveFaq(activeFaq === index ? null : index);
 
@@ -147,7 +163,7 @@ export default function PatientAssistanceProgram() {
             {TABS.map(tab => (
               <button
                 key={tab.id}
-                onClick={() => setActiveSection(tab.id)}
+                onClick={() => switchTab(tab.id)}
                 className={`cursor-pointer shrink-0 min-w-[150px] sm:flex-1 rounded-xl px-4 py-3.5 flex items-center justify-between gap-3 transition-all duration-200 text-left ${
                   activeSection === tab.id ? 'shadow-md' : 'hover:bg-gray-50'
                 }`}
@@ -241,7 +257,7 @@ export default function PatientAssistanceProgram() {
         <section className="max-w-5xl mx-auto px-4 sm:px-6 pt-8 pb-16">
 
           {/* Heading */}
-          <div className="text-center mb-7">
+          <div ref={sectionRef} className="text-center mb-7">
             <h2 className="text-2xl md:text-3xl font-semibold text-gray-900">
               Mga Hakbang Para Makakuha ng{' '}
               <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">Cancer Assistance</span>
@@ -254,7 +270,7 @@ export default function PatientAssistanceProgram() {
               {TABS.map(tab => (
                 <button
                   key={tab.id}
-                  onClick={() => setActiveSection(tab.id)}
+                  onClick={() => switchTab(tab.id)}
                   className={`cursor-pointer shrink-0 min-w-[150px] sm:flex-1 rounded-xl px-4 py-3.5 flex items-center justify-between gap-3 transition-all duration-200 text-left ${
                     activeSection === tab.id ? 'shadow-md' : 'hover:bg-gray-50'
                   }`}

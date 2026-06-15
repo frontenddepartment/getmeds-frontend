@@ -86,10 +86,6 @@ export default function Services() {
             <img src={getImage('assets/services_hero_new.png', 'assets/services_hero_new.png')} data-json-src="hero.image" data-json-alt="hero.imageAlt"
               className="w-full h-full object-cover object-center transform group-hover:scale-105 transition-transform duration-[4s]"
               alt="Healthcare Services" />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
-            <div
-              className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent w-full md:w-[70%]">
-            </div>
           </div>
 
           {/* Content */}

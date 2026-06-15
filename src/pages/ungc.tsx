@@ -40,7 +40,8 @@ const Ungc: React.FC = () => {
   return (
     <div style={{ fontFamily: "'Poppins', sans-serif" }} className="bg-white text-gray-800 antialiased">
       {/* Navbar */}
-      <div id="navbar-container" className="sticky top-0 z-[50]" />
+      <div id="navbar-container" className="fixed top-0 left-0 right-0 z-[50]" />
+      <div className="h-20" />
 
       {/* UNGC Hero Section */}
       <section className="w-full mx-auto px-3 sm:px-4 md:px-6 mt-3 md:mt-4 mb-16 max-w-[1600px]">

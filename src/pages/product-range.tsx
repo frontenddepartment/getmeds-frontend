@@ -1577,7 +1577,8 @@ export default function ProductRange() {
                       required
                       placeholder="+63 900 000 0000"
                       value={formData.phone}
-                      onChange={e => setFormData(f => ({ ...f, phone: e.target.value }))}
+                      onChange={e => setFormData(f => ({ ...f, phone: e.target.value.replace(/[^\d+\s\-()]/g, '') }))}
+                      inputMode="numeric"
                       className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2.5 text-[13px] text-gray-700 outline-none focus:border-primary transition"
                     />
                   </div>

@@ -1,10 +1,11 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { injectHTML } from '../lib/injectHTML';
 import { useImageMapper } from '../lib/useSanity';
 
 export default function AboutUs() {
   const { getImage } = useImageMapper('about-us');
   const valuesContainerRef = useRef<HTMLDivElement>(null);
+  const [activePanel, setActivePanel] = useState(0);
 
   useEffect(() => {
     const navContainer = document.getElementById('navbar-container');
@@ -78,6 +79,35 @@ export default function AboutUs() {
     }
   }, []);
 
+  const teamTrackRef = useRef<HTMLDivElement>(null);
+
+  const TEAM_MEMBERS: { img: string; name: string; role: string; isCeo?: boolean }[] = [
+    { img: 'employeeone.png', name: 'Mr. Subir Dey', role: 'Sales & Marketing Coach' },
+    { img: 'employeetwo.png', name: 'Ms. Mira Verango', role: 'Executive & Admin Coach' },
+    { img: 'employeethree.png', name: 'Ms. Vanessa Escalderon', role: 'Hospital Division Coach' },
+    { img: 'employeefour.png', name: 'Mr. Javed Shaikh', role: 'Sales & Marketing Coach' },
+    { img: 'CEO.png', name: 'Mr. Naresh Bishnoi', role: 'Founder & CEO', isCeo: true },
+    { img: 'employeefive.png', name: 'Ms. Beatrice Ampaso', role: "Sales & Business Dev't" },
+    { img: 'employeesix.png', name: 'Ms. Esther Chiong', role: 'In-Licensing Mentor' },
+    { img: 'employeeseven.png', name: 'Ms. Ivy Varias', role: 'Regulatory Affairs Mentor' },
+    { img: 'employeeeight.png', name: 'Ms. Malou Jagonoy', role: 'Finance Mentor' },
+    { img: 'employeenine.png', name: 'Ms. Sarla Devi', role: 'Finance Coach' },
+  ];
+
+  useEffect(() => {
+    const el = teamTrackRef.current;
+    if (!el) return;
+    setTimeout(() => {
+      const ceoCard = el.children[4] as HTMLElement;
+      if (ceoCard) ceoCard.scrollIntoView({ behavior: 'instant' as ScrollBehavior, inline: 'center', block: 'nearest' });
+    }, 80);
+  }, []);
+
+  const scrollTeam = (dir: 'left' | 'right') => {
+    if (!teamTrackRef.current) return;
+    teamTrackRef.current.scrollBy({ left: dir === 'left' ? -216 : 216, behavior: 'smooth' });
+  };
+
   return (
     <div style={{ fontFamily: "'Poppins', sans-serif" }} className="bg-white text-gray-800 antialiased">
 
@@ -92,8 +122,6 @@ export default function AboutUs() {
             <img src={getImage('assets/aboutusone.jpg', 'assets/aboutusone.jpg')} data-json-src="hero.image" data-json-alt="hero.imageAlt"
               className="w-full h-full object-cover object-center transform group-hover:scale-105 transition-transform duration-[4s]"
               alt="About Getmeds" />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
-            <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent w-full md:w-[70%]"></div>
           </div>
 
           {/* Content */}
@@ -128,27 +156,84 @@ export default function AboutUs() {
       <section id="our-story" className="pt-10 pb-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-          {/* Image Grid (Top) */}
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-4 mb-20 reveal">
-            {/* Large Image (Left) */}
-            <div className="md:col-span-8">
-              <div className="relative h-[300px] md:h-[380px] rounded-[1rem] overflow-hidden shadow-xl group">
-                <img src={getImage('assets/aboutustwo.jpg', 'assets/aboutustwo.jpg')} alt="Getmeds Logistics"
-                  className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+          {/* Header Row */}
+          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-8 reveal">
+            <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 leading-tight max-w-lg">
+              Inside Getmeds: Our People &amp; Culture
+            </h2>
+            <div className="flex flex-col items-start gap-3 md:max-w-sm">
+              <p className="text-gray-500 text-[14px] leading-relaxed line-clamp-2">
+                From training rooms to international conferences, our team is united by one shared mission — making life-saving medicine accessible to all.
+              </p>
+              <a href="/careers"
+                className="inline-flex items-center gap-2 bg-primary text-white text-[13px] font-semibold px-5 py-2.5 rounded-full hover:opacity-90 transition-opacity">
+                Explore Careers
+              </a>
+            </div>
+          </div>
+
+          {/* Expanding Panels */}
+          <div className="flex gap-3 h-[340px] md:h-[400px] mb-20 reveal"
+            onMouseLeave={() => setActivePanel(0)}>
+
+            {/* Panel 1 — Left */}
+            <div className="relative rounded-2xl overflow-hidden cursor-pointer"
+              style={{ flex: activePanel === 0 ? 3 : 0.8, minWidth: 0, transition: 'flex 0.5s ease' }}
+              onMouseEnter={() => setActivePanel(0)}>
+              <img src={getImage('assets/aboutussix.jpg', 'assets/aboutussix.jpg')}
+                alt="Getmeds Team Gathering"
+                className="w-full h-full object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+              <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
+                <h3 className="text-white text-xl md:text-2xl font-bold leading-snug mb-2">
+                  One Team, One Mission
+                </h3>
+                <p className={`text-white/80 text-[13px] md:text-[14px] leading-relaxed mb-4 max-w-sm transition-opacity duration-300 ${activePanel === 0 ? 'opacity-100' : 'opacity-0'}`}>
+                  United by compassion — our team works together to deliver life-changing medicines across the Philippines and beyond.
+                </p>
+                <a href="/careers"
+                  className={`inline-flex items-center gap-2 bg-white text-gray-900 text-[12px] font-semibold px-4 py-2 rounded-full hover:bg-gray-100 transition-all duration-300 ${activePanel === 0 ? 'opacity-100' : 'opacity-0'}`}>
+                  More Detail <i className="fa-solid fa-arrow-right text-[10px]"></i>
+                </a>
               </div>
             </div>
-            {/* Stacked Images (Right) */}
-            <div className="md:col-span-4 flex flex-col gap-4">
-              <div className="h-[142px] md:h-[182px] rounded-[1rem] overflow-hidden shadow-lg group">
-                <img src={getImage('assets/aboutusthree.jpg', 'assets/aboutusthree.jpg')} alt="Medical Technology"
-                  className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700" />
-              </div>
-              <div className="h-[142px] md:h-[182px] rounded-[1rem] overflow-hidden shadow-lg group">
-                <img src={getImage('assets/aboutusfour.jpg', 'assets/aboutusfour.jpg')} alt="Healthcare Excellence"
-                  className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700" />
+
+            {/* Panel 2 — Center */}
+            <div className="relative rounded-2xl overflow-hidden cursor-pointer"
+              style={{ flex: activePanel === 1 ? 3 : 0.8, minWidth: 0, transition: 'flex 0.5s ease' }}
+              onMouseEnter={() => setActivePanel(1)}>
+              <img src={getImage('assets/aboutusseven.jpg', 'assets/aboutusseven.jpg')}
+                alt="Getmeds Training & Development"
+                className="w-full h-full object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent"></div>
+              <div className="absolute bottom-0 left-0 right-0 p-6">
+                <h3 className="text-white text-lg md:text-xl font-bold leading-snug whitespace-nowrap">
+                  Learning &amp; Development
+                </h3>
+                <p className={`text-white/70 text-[13px] leading-relaxed mt-2 max-w-xs transition-opacity duration-300 delay-150 ${activePanel === 1 ? 'opacity-100' : 'opacity-0'}`}>
+                  Continuous growth through training, certification, and professional development programs that empower every member of our team.
+                </p>
               </div>
             </div>
+
+            {/* Panel 3 — Right */}
+            <div className="relative rounded-2xl overflow-hidden cursor-pointer"
+              style={{ flex: activePanel === 2 ? 3 : 0.8, minWidth: 0, transition: 'flex 0.5s ease' }}
+              onMouseEnter={() => setActivePanel(2)}>
+              <img src={getImage('assets/aboutuseight.jpg', 'assets/aboutuseight.jpg')}
+                alt="Getmeds Strategy & Innovation"
+                className="w-full h-full object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent"></div>
+              <div className="absolute bottom-0 left-0 right-0 p-6">
+                <h3 className="text-white text-lg md:text-xl font-bold leading-snug whitespace-nowrap">
+                  Strategy &amp; Innovation
+                </h3>
+                <p className={`text-white/70 text-[13px] leading-relaxed mt-2 max-w-xs transition-opacity duration-300 delay-150 ${activePanel === 2 ? 'opacity-100' : 'opacity-0'}`}>
+                  Data-driven decisions and strategic partnerships that advance pharmaceutical access across Asia-Pacific and beyond.
+                </p>
+              </div>
+            </div>
+
           </div>
 
           {/* Content Section (Bottom) */}
@@ -169,32 +254,25 @@ export default function AboutUs() {
                   <p className="text-dark font-black text-[13px] uppercase tracking-widest mb-4">Dedicated to:</p>
                   <ul className="grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-8 text-[14px] text-gray-500 font-medium">
                     <li className="flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-primary"></div> Precision Distribution
+                      <div className="w-1.5 h-1.5 rounded-full bg-primary"></div> Precision Pharmaceutical Distribution
                     </li>
                     <li className="flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-primary"></div> Patient Support Systems
+                      <div className="w-1.5 h-1.5 rounded-full bg-primary"></div> Patient Access Programs
                     </li>
                     <li className="flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-primary"></div> Strategic Global
-                      Partnerships
+                      <div className="w-1.5 h-1.5 rounded-full bg-primary"></div> Strategic Global Sourcing
                     </li>
                     <li className="flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-primary"></div> Digital Oncology Care
+                      <div className="w-1.5 h-1.5 rounded-full bg-primary"></div> Cold-Chain & Last-Mile Delivery
                     </li>
                     <li className="flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-primary"></div> Regulatory Compliance
+                      <div className="w-1.5 h-1.5 rounded-full bg-primary"></div> Regulatory Compliance & FDA Philippines Licensing
                     </li>
                     <li className="flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-primary"></div> Public Hospital Logistics
+                      <div className="w-1.5 h-1.5 rounded-full bg-primary"></div> Hospital & Pharmacy Partnerships
                     </li>
                   </ul>
                 </div>
-
-                <p className="text-gray-600 text-[15px] leading-[1.8] pt-6">
-                  Transform your healthcare journey with our most comprehensive pharmaceutical release yet.
-                  Whether you're navigating complex treatments, social platforms, or enterprise health
-                  applications, Getmeds delivers the precision you deserve.
-                </p>
               </div>
             </div>
 
@@ -327,7 +405,7 @@ export default function AboutUs() {
       </section>
 
       {/* Our Commitments Section */}
-      <section className="py-20 bg-white">
+      <section className="pt-20 pb-6 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
           {/* Header */}
@@ -398,9 +476,9 @@ export default function AboutUs() {
       </section>
 
       {/* Core Values Section */}
-      <section className="pt-10 md:pt-32 pb-12 bg-white overflow-hidden relative">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-          <div className="text-center mb-1 md:mb-24 reveal">
+      <section className="pt-10 md:pt-14 pb-16 bg-white overflow-hidden relative">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+          <div className="text-center mb-10 md:mb-14 reveal">
             <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent font-bold text-sm uppercase tracking-widest mb-4 block">Core Values</span>
             <h2 className="text-[28px] md:text-[38px] leading-tight font-semibold text-dark mb-3 tracking-tight">
               The Heart of Our{' '}
@@ -408,124 +486,110 @@ export default function AboutUs() {
             </h2>
           </div>
 
-          <div className="relative min-h-[600px] flex flex-col items-center justify-center py-0 md:py-8" id="values-container" ref={valuesContainerRef}>
-            {/* 15-Card Diamond Cluster (Optimized Scale) */}
-            <div className="relative z-10 flex items-center justify-center gap-1 md:gap-4 mb-2 px-1 md:px-4">
-              {/* Col 1 (1 Card) */}
-              <div className="flex flex-col gap-1 md:gap-3">
-                <div className="value-card bg-white p-1.5 md:p-3 rounded-full shadow-md border border-gray-100 w-10 h-10 md:w-24 md:h-24 flex flex-col items-center justify-center text-center reveal"
-                  data-speed="1.2">
-                  <i className="fa-solid fa-heart text-[#EC4899] text-[10px] md:text-xl md:mb-1"></i>
-                  <span className="text-[5px] md:text-[10px] font-bold uppercase tracking-tighter text-[#2A2A2A]">Compassion</span>
-                </div>
-              </div>
-
-              {/* Col 2 (2 Cards) */}
-              <div className="flex flex-col gap-1 md:gap-3">
-                <div className="value-card bg-white p-1.5 md:p-3 rounded-full shadow-md border border-gray-100 w-10 h-10 md:w-24 md:h-24 flex flex-col items-center justify-center text-center reveal"
-                  data-speed="1.5" style={{ transitionDelay: '100ms' }}>
-                  <i className="fa-solid fa-shield-heart text-[#8B5CF6] text-[10px] md:text-xl md:mb-1"></i>
-                  <span className="text-[5px] md:text-[10px] font-bold uppercase tracking-tighter text-[#2A2A2A]">Integrity</span>
-                </div>
-                <div className="value-card bg-white p-1.5 md:p-3 rounded-full shadow-md border border-gray-100 w-10 h-10 md:w-24 md:h-24 flex flex-col items-center justify-center text-center reveal"
-                  data-speed="1.4" style={{ transitionDelay: '200ms' }}>
-                  <i className="fa-solid fa-truck-fast text-[#F59E0B] text-[10px] md:text-xl md:mb-1"></i>
-                  <span className="text-[5px] md:text-[10px] font-bold uppercase tracking-tighter text-[#2A2A2A]">Speed</span>
-                </div>
-              </div>
-
-              {/* Col 3 (3 Cards) */}
-              <div className="flex flex-col gap-1 md:gap-3">
-                <div className="value-card bg-white p-1.5 md:p-3 rounded-full shadow-md border border-gray-100 w-10 h-10 md:w-24 md:h-24 flex flex-col items-center justify-center text-center reveal"
-                  data-speed="1.8" style={{ transitionDelay: '300ms' }}>
-                  <i className="fa-solid fa-microscope text-[#1D9FDA] text-[10px] md:text-xl md:mb-1"></i>
-                  <span className="text-[5px] md:text-[10px] font-bold uppercase tracking-tighter text-[#2A2A2A]">Precision</span>
-                </div>
-                <div className="value-card bg-white p-1.5 md:p-3 rounded-full shadow-md border border-gray-100 w-10 h-10 md:w-24 md:h-24 flex flex-col items-center justify-center text-center reveal"
-                  data-speed="1.7" style={{ transitionDelay: '400ms' }}>
-                  <i className="fa-solid fa-user-doctor text-[#14B8A6] text-[10px] md:text-xl md:mb-1"></i>
-                  <span className="text-[5px] md:text-[10px] font-bold uppercase tracking-tighter text-[#2A2A2A]">Expertise</span>
-                </div>
-                <div className="value-card bg-white p-1.5 md:p-3 rounded-full shadow-md border border-gray-100 w-10 h-10 md:w-24 md:h-24 flex flex-col items-center justify-center text-center reveal"
-                  data-speed="1.9" style={{ transitionDelay: '500ms' }}>
-                  <i className="fa-solid fa-hand-holding-medical text-[#F43F5E] text-[10px] md:text-xl md:mb-1"></i>
-                  <span className="text-[5px] md:text-[10px] font-bold uppercase tracking-tighter text-[#2A2A2A]">Care</span>
-                </div>
-              </div>
-
-              {/* Col 4 (3 Cards - CENTER) */}
-              <div className="flex flex-col gap-1 md:gap-3">
-                <div className="value-card bg-white p-1.5 md:p-3 rounded-full shadow-md border border-gray-100 w-10 h-10 md:w-24 md:h-24 flex flex-col items-center justify-center text-center reveal"
-                  data-speed="2.2" style={{ transitionDelay: '600ms' }}>
-                  <i className="fa-solid fa-lightbulb text-[#EAB308] text-[10px] md:text-xl md:mb-1"></i>
-                  <span className="text-[5px] md:text-[10px] font-bold uppercase tracking-tighter text-[#2A2A2A]">Innovation</span>
-                </div>
-                <div className="value-card bg-white p-1.5 md:p-3 rounded-full shadow-xl border border-gray-100 w-10 h-10 md:w-24 md:h-24 flex flex-col items-center justify-center text-center reveal z-30 bg-gradient-to-br from-white to-gray-50"
-                  data-speed="2.5" style={{ transitionDelay: '700ms' }}>
-                  <img src={getImage('assets/logo.png', 'assets/logo.png')} className="h-3 md:h-8" alt="Getmeds Logo" />
-                </div>
-                <div className="value-card bg-white p-1.5 md:p-3 rounded-full shadow-md border border-gray-100 w-10 h-10 md:w-24 md:h-24 flex flex-col items-center justify-center text-center reveal"
-                  data-speed="2.1" style={{ transitionDelay: '800ms' }}>
-                  <i className="fa-solid fa-earth-asia text-[#06B6D4] text-[10px] md:text-xl md:mb-1"></i>
-                  <span className="text-[5px] md:text-[10px] font-bold uppercase tracking-tighter text-[#2A2A2A]">Global</span>
-                </div>
-              </div>
-
-              {/* Col 5 (3 Cards) */}
-              <div className="flex flex-col gap-1 md:gap-3">
-                <div className="value-card bg-white p-1.5 md:p-3 rounded-full shadow-md border border-gray-100 w-10 h-10 md:w-24 md:h-24 flex flex-col items-center justify-center text-center reveal"
-                  data-speed="1.8" style={{ transitionDelay: '900ms' }}>
-                  <i className="fa-solid fa-lock text-[#6366F1] text-[10px] md:text-xl md:mb-1"></i>
-                  <span className="text-[5px] md:text-[10px] font-bold uppercase tracking-tighter text-[#2A2A2A]">Security</span>
-                </div>
-                <div className="value-card bg-white p-1.5 md:p-3 rounded-full shadow-md border border-gray-100 w-10 h-10 md:w-24 md:h-24 flex flex-col items-center justify-center text-center reveal"
-                  data-speed="1.7" style={{ transitionDelay: '1000ms' }}>
-                  <i className="fa-solid fa-vial-circle-check text-[#10B981] text-[10px] md:text-xl md:mb-1"></i>
-                  <span className="text-[5px] md:text-[10px] font-bold uppercase tracking-tighter text-[#2A2A2A]">Safety</span>
-                </div>
-                <div className="value-card bg-white p-1.5 md:p-3 rounded-full shadow-md border border-gray-100 w-10 h-10 md:w-24 md:h-24 flex flex-col items-center justify-center text-center reveal"
-                  data-speed="1.9" style={{ transitionDelay: '1100ms' }}>
-                  <i className="fa-solid fa-people-group text-[#F97316] text-[10px] md:text-xl md:mb-1"></i>
-                  <span className="text-[5px] md:text-[10px] font-bold uppercase tracking-tighter text-[#2A2A2A]">Community</span>
-                </div>
-              </div>
-
-              {/* Col 6 (2 Cards) */}
-              <div className="flex flex-col gap-1 md:gap-3">
-                <div className="value-card bg-white p-1.5 md:p-3 rounded-full shadow-md border border-gray-100 w-10 h-10 md:w-24 md:h-24 flex flex-col items-center justify-center text-center reveal"
-                  data-speed="1.5" style={{ transitionDelay: '1200ms' }}>
-                  <i className="fa-solid fa-tags text-[#8B5CF6] text-[10px] md:text-xl md:mb-1"></i>
-                  <span className="text-[5px] md:text-[10px] font-bold uppercase tracking-tighter text-[#2A2A2A]">Affordable</span>
-                </div>
-                <div className="value-card bg-white p-1.5 md:p-3 rounded-full shadow-md border border-gray-100 w-10 h-10 md:w-24 md:h-24 flex flex-col items-center justify-center text-center reveal"
-                  data-speed="1.4" style={{ transitionDelay: '1300ms' }}>
-                  <i className="fa-solid fa-clipboard-check text-[#3B82F6] text-[10px] md:text-xl md:mb-1"></i>
-                  <span className="text-[5px] md:text-[10px] font-bold uppercase tracking-tighter text-[#2A2A2A]">Reliable</span>
-                </div>
-              </div>
-
-              {/* Col 7 (1 Card) */}
-              <div className="flex flex-col gap-1 md:gap-3">
-                <div className="value-card bg-white p-1.5 md:p-3 rounded-full shadow-md border border-gray-100 w-10 h-10 md:w-24 md:h-24 flex flex-col items-center justify-center text-center reveal"
-                  data-speed="1.2" style={{ transitionDelay: '1400ms' }}>
-                  <i className="fa-solid fa-award text-[#EAB308] text-[10px] md:text-xl md:mb-1"></i>
-                  <span className="text-[5px] md:text-[10px] font-bold uppercase tracking-tighter text-[#2A2A2A]">Excellence</span>
-                </div>
-              </div>
+          <div className="flex flex-wrap justify-center gap-3" id="values-container" ref={valuesContainerRef}>
+            <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default reveal">
+              <i className="fa-solid fa-heart text-[#EC4899] text-sm"></i>
+              <span className="text-[13px] font-medium text-gray-600">Compassion</span>
             </div>
-
-            {/* Supportive Hand Image (Optimized Size) */}
-            <div className="relative z-0 w-full max-w-[280px] md:max-w-xs reveal mt-0">
-              <img src={getImage('assets/hand.png', 'assets/hand.png')} alt="Supportive Hand"
-                className="w-full h-auto object-cover transform -rotate-1 rounded-[1.5rem]" />
-              <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent"></div>
+            <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default reveal">
+              <i className="fa-solid fa-shield-heart text-[#8B5CF6] text-sm"></i>
+              <span className="text-[13px] font-medium text-gray-600">Integrity</span>
+            </div>
+            <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default reveal">
+              <i className="fa-solid fa-microscope text-[#1D9FDA] text-sm"></i>
+              <span className="text-[13px] font-medium text-gray-600">Precision</span>
+            </div>
+            <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default reveal">
+              <i className="fa-solid fa-lightbulb text-[#EAB308] text-sm"></i>
+              <span className="text-[13px] font-medium text-gray-600">Innovation</span>
+            </div>
+            <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default reveal">
+              <i className="fa-solid fa-lock text-[#6366F1] text-sm"></i>
+              <span className="text-[13px] font-medium text-gray-600">Security</span>
+            </div>
+            <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default reveal">
+              <i className="fa-solid fa-truck-fast text-[#F59E0B] text-sm"></i>
+              <span className="text-[13px] font-medium text-gray-600">Speed</span>
+            </div>
+            <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default reveal">
+              <i className="fa-solid fa-user-doctor text-[#14B8A6] text-sm"></i>
+              <span className="text-[13px] font-medium text-gray-600">Expertise</span>
+            </div>
+            <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default reveal">
+              <i className="fa-solid fa-earth-asia text-[#06B6D4] text-sm"></i>
+              <span className="text-[13px] font-medium text-gray-600">Global</span>
+            </div>
+            <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default reveal">
+              <i className="fa-solid fa-vial-circle-check text-[#10B981] text-sm"></i>
+              <span className="text-[13px] font-medium text-gray-600">Safety</span>
+            </div>
+            <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default reveal">
+              <i className="fa-solid fa-hand-holding-medical text-[#F43F5E] text-sm"></i>
+              <span className="text-[13px] font-medium text-gray-600">Care</span>
+            </div>
+            <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default reveal">
+              <i className="fa-solid fa-tags text-[#8B5CF6] text-sm"></i>
+              <span className="text-[13px] font-medium text-gray-600">Affordable</span>
+            </div>
+            <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default reveal">
+              <i className="fa-solid fa-clipboard-check text-[#3B82F6] text-sm"></i>
+              <span className="text-[13px] font-medium text-gray-600">Reliable</span>
+            </div>
+            <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default reveal">
+              <i className="fa-solid fa-people-group text-[#F97316] text-sm"></i>
+              <span className="text-[13px] font-medium text-gray-600">Community</span>
+            </div>
+            <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default reveal">
+              <i className="fa-solid fa-award text-[#EAB308] text-sm"></i>
+              <span className="text-[13px] font-medium text-gray-600">Excellence</span>
             </div>
           </div>
         </div>
       </section>
 
       {/* Why Choose Us */}
-      <section className="pt-12 pb-20 bg-white">
+      <section className="pt-12 pb-20 bg-white relative overflow-hidden">
+        {/* Left gradient decoration */}
+        <div className="absolute left-0 top-0 h-full w-56 pointer-events-none">
+          <svg className="w-full h-full" viewBox="0 0 224 600" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <radialGradient id="whyChooseLeftGrad" cx="0%" cy="100%" r="100%">
+                <stop offset="0%" stopColor="#61A644" stopOpacity="0.9" />
+                <stop offset="55%" stopColor="#1D9FDA" stopOpacity="0.55" />
+                <stop offset="100%" stopColor="#FFF7ED" stopOpacity="0" />
+              </radialGradient>
+            </defs>
+            <rect width="224" height="600" fill="url(#whyChooseLeftGrad)" />
+            <path d="M 0 520 A 80 80 0 0 1 80 600" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="1.5" />
+            <path d="M 0 440 A 160 160 0 0 1 160 600" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="1.5" />
+            <path d="M 0 360 A 240 240 0 0 1 224 514" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="1.5" />
+            <path d="M 0 280 A 320 320 0 0 1 224 372" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="1.5" />
+            <path d="M 0 200 A 400 400 0 0 1 224 269" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="1.5" />
+            <path d="M 0 120 A 480 480 0 0 1 224 176" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="1.5" />
+            <path d="M 0 40 A 560 560 0 0 1 224 87" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="1.5" />
+          </svg>
+        </div>
+        {/* Right gradient decoration */}
+        <div className="absolute right-0 top-0 h-full w-56 pointer-events-none">
+          <svg className="w-full h-full" viewBox="0 0 224 600" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <radialGradient id="whyChooseRightGrad" cx="100%" cy="100%" r="100%">
+                <stop offset="0%" stopColor="#61A644" stopOpacity="0.8" />
+                <stop offset="55%" stopColor="#1D9FDA" stopOpacity="0.5" />
+                <stop offset="100%" stopColor="#FFF1F2" stopOpacity="0" />
+              </radialGradient>
+            </defs>
+            <rect width="224" height="600" fill="url(#whyChooseRightGrad)" />
+            <path d="M 224 520 A 80 80 0 0 0 144 600" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="1.5" />
+            <path d="M 224 440 A 160 160 0 0 0 64 600" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="1.5" />
+            <path d="M 224 360 A 240 240 0 0 0 0 514" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="1.5" />
+            <path d="M 224 280 A 320 320 0 0 0 0 372" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="1.5" />
+            <path d="M 224 200 A 400 400 0 0 0 0 269" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="1.5" />
+            <path d="M 224 120 A 480 480 0 0 0 0 176" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="1.5" />
+            <path d="M 224 40 A 560 560 0 0 0 0 87" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="1.5" />
+          </svg>
+        </div>
+
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-16 reveal">
             <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent font-bold text-sm uppercase tracking-wider mb-2 block">Our Advantages</span>
@@ -564,10 +628,10 @@ export default function AboutUs() {
         </div>
       </section>
 
-      {/* Our Leaders */}
+      {/* Our Leaders — Horizontal Carousel */}
       <section className="py-24 bg-white relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="text-center max-w-2xl mx-auto mb-20 reveal">
+        <div className="relative z-10">
+          <div className="text-center max-w-2xl mx-auto mb-16 px-4 reveal">
             <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent font-bold text-sm uppercase tracking-[0.2em] mb-4 block">Executive Team</span>
             <h2 className="text-3xl md:text-4xl font-semibold text-dark mb-4">The Minds Behind <span
               className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent inline-block">Getmeds</span>
@@ -576,238 +640,76 @@ export default function AboutUs() {
               technology, and logistics to revolutionize patient care.</p>
           </div>
 
-          <div className="max-w-5xl mx-auto">
-            {/* CEO Row */}
-            <div className="flex justify-center mb-8">
-              <div className="reveal w-full max-w-[280px]" id="naresh-bishnoi">
-                <div className="team-card bg-gray-100 group">
-                  <div className="team-ribbon">
-                    <span className="vertical-text mb-16">Getmeds</span>
+          {/* Carousel */}
+          <div className="relative">
+            {/* Left arrow */}
+            <button
+              onClick={() => scrollTeam('left')}
+              className="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-white shadow-lg border border-gray-100 flex items-center justify-center text-gray-500 hover:text-primary hover:border-primary/30 transition"
+            >
+              <i className="fa-solid fa-chevron-left text-sm"></i>
+            </button>
+
+            {/* Scroll track */}
+            <div
+              ref={teamTrackRef}
+              className="flex gap-4 overflow-x-auto"
+              style={{
+                scrollSnapType: 'x mandatory',
+                scrollbarWidth: 'none',
+                msOverflowStyle: 'none',
+                paddingLeft: '32px',
+                paddingRight: '32px',
+                paddingTop: '16px',
+                paddingBottom: '28px',
+              } as React.CSSProperties}
+            >
+              {TEAM_MEMBERS.map((member, i) => (
+                <div
+                  key={i}
+                  className="flex-shrink-0 relative overflow-hidden rounded-[1.3rem] group transition-all duration-500 hover:-translate-y-2"
+                  style={{
+                    width: 200,
+                    height: 275,
+                    scrollSnapAlign: 'center',
+                    background: 'linear-gradient(180deg,#61A644,#1D9FDA)',
+                    ...(member.isCeo ? { boxShadow: '0 8px 32px rgba(29,159,218,0.35)', outline: '2.5px solid rgba(29,159,218,0.4)' } : {}),
+                  }}
+                >
+                  {/* GETMEDS watermark behind photo */}
+                  <div className="absolute top-0 left-0 z-[1] flex items-start justify-center overflow-hidden" style={{ width: '42px', height: '100%', paddingTop: '16px' }}>
+                    <span style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)', color: 'rgba(255,255,255,0.22)', fontSize: '1.4rem', fontWeight: 900, letterSpacing: '0.25em', textTransform: 'uppercase', whiteSpace: 'nowrap', userSelect: 'none' }}>Getmeds</span>
                   </div>
-                  <div className="team-img-wrapper">
-                    <img src={getImage('assets/CEO.png', 'assets/CEO.png')} alt="Mr. Naresh Bishnoi" data-json-src="team.members.0.image" data-json-alt="team.members.0.name"
-                      className="team-img transition-all duration-700" />
+                  {/* Photo sits on top of gradient background */}
+                  <img src={getImage(`assets/${member.img}`, `assets/${member.img}`)} alt={member.name} className="absolute inset-0 w-full h-full object-cover object-top rounded-[1.3rem] transition-all duration-700 z-[2]" />
+                  {/* LinkedIn hover */}
+                  <div className="absolute top-3 right-3 z-20 opacity-0 translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
+                    <a href="#" className="h-7 w-7 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-primary transition shadow-lg">
+                      <i className="fa-brands fa-linkedin-in text-[10px]"></i>
+                    </a>
                   </div>
-                  <div className="team-social">
-                    <a href="#"
-                      className="h-9 w-9 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-primary transition shadow-lg"><i
-                        className="fa-brands fa-linkedin-in"></i></a>
-                  </div>
-                  <div className="team-content">
-                    <h4 data-json="team.members.0.name" className="team-name">Mr. Naresh Bishnoi</h4>
-                    <p data-json="team.members.0.role" className="team-role">Founder &amp; CEO</p>
+                  {/* Name overlay */}
+                  <div className="absolute bottom-0 left-0 w-full px-3 py-3 z-10" style={{ background: 'linear-gradient(to top,rgba(29,159,218,0.95) 0%,rgba(97,166,68,0.1) 70%,transparent 100%)' }}>
+                    <h4 className="text-white font-semibold leading-tight" style={{ fontSize: '0.92rem', textShadow: '0 2px 10px rgba(0,0,0,0.5)', marginBottom: '2px' }}>{member.name}</h4>
+                    <p className="text-white/90 font-semibold uppercase tracking-wider" style={{ fontSize: '0.62rem' }}>{member.role}</p>
                   </div>
                 </div>
-              </div>
+              ))}
             </div>
 
-            {/* Row 2 */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-              {/* Member 2 */}
-              <div className="reveal" style={{ transitionDelay: '150ms' }} id="subir-dey">
-                <div className="team-card bg-gray-100 group">
-                  <div className="team-ribbon">
-                    <span className="vertical-text">Getmeds</span>
-                  </div>
-                  <div className="team-img-wrapper">
-                    <img src={getImage('assets/employeeone.png', 'assets/employeeone.png')} alt="Mr. Subir Dey"
-                      className="team-img transition-all duration-700" />
-                  </div>
-                  <div className="team-social">
-                    <a href="#"
-                      className="h-9 w-9 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-primary transition shadow-lg"><i
-                        className="fa-brands fa-linkedin-in"></i></a>
-                  </div>
-                  <div className="team-content">
-                    <h4 className="team-name">Mr. Subir Dey</h4>
-                    <p className="team-role">Sales and Marketing Coach</p>
-                  </div>
-                </div>
-              </div>
+            {/* Right arrow */}
+            <button
+              onClick={() => scrollTeam('right')}
+              className="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-white shadow-lg border border-gray-100 flex items-center justify-center text-gray-500 hover:text-primary hover:border-primary/30 transition"
+            >
+              <i className="fa-solid fa-chevron-right text-sm"></i>
+            </button>
 
-              {/* Member 3 */}
-              <div className="reveal" style={{ transitionDelay: '300ms' }} id="mira-verango">
-                <div className="team-card bg-gray-100 group">
-                  <div className="team-ribbon">
-                    <span className="vertical-text">Getmeds</span>
-                  </div>
-                  <div className="team-img-wrapper">
-                    <img src={getImage('assets/employeetwo.png', 'assets/employeetwo.png')} alt="Ms. Mira Verango"
-                      className="team-img transition-all duration-700" />
-                  </div>
-                  <div className="team-social">
-                    <a href="#"
-                      className="h-9 w-9 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-primary transition shadow-lg"><i
-                        className="fa-brands fa-linkedin-in"></i></a>
-                  </div>
-                  <div className="team-content">
-                    <h4 className="team-name">Ms. Mira Verango</h4>
-                    <p className="team-role">Executive and Admin Coach</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Member 4 */}
-              <div className="reveal" style={{ transitionDelay: '450ms' }} id="vanessa-escalderon">
-                <div className="team-card bg-gray-100 group">
-                  <div className="team-ribbon">
-                    <span className="vertical-text">Getmeds</span>
-                  </div>
-                  <div className="team-img-wrapper">
-                    <img src={getImage('assets/employeethree.png', 'assets/employeethree.png')} alt="Ms. Vanessa Escalderon"
-                      className="team-img transition-all duration-700" />
-                  </div>
-                  <div className="team-social">
-                    <a href="#"
-                      className="h-9 w-9 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-primary transition shadow-lg"><i
-                        className="fa-brands fa-linkedin-in"></i></a>
-                  </div>
-                  <div className="team-content">
-                    <h4 className="team-name">Ms. Vanessa Escalderon</h4>
-                    <p className="team-role">Hospital Division Coach, Talent Development &amp; Growth Mentor</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Row 3 */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-              {/* Member 5 */}
-              <div className="reveal" style={{ transitionDelay: '150ms' }} id="javed-shaikh">
-                <div className="team-card bg-gray-100 group">
-                  <div className="team-ribbon">
-                    <span className="vertical-text">Getmeds</span>
-                  </div>
-                  <div className="team-img-wrapper">
-                    <img src={getImage('assets/employeefour.png', 'assets/employeefour.png')} alt="Mr. Javed Shaikh"
-                      className="team-img transition-all duration-700" />
-                  </div>
-                  <div className="team-social">
-                    <a href="#"
-                      className="h-9 w-9 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-primary transition shadow-lg"><i
-                        className="fa-brands fa-linkedin-in"></i></a>
-                  </div>
-                  <div className="team-content">
-                    <h4 className="team-name">Mr. Javed Shaikh</h4>
-                    <p className="team-role">Sales and Marketing Coach</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Member 6 */}
-              <div className="reveal" style={{ transitionDelay: '300ms' }} id="beatrice-ampaso">
-                <div className="team-card bg-gray-100 group">
-                  <div className="team-ribbon">
-                    <span className="vertical-text">Getmeds</span>
-                  </div>
-                  <div className="team-img-wrapper">
-                    <img src={getImage('assets/employeefive.png', 'assets/employeefive.png')} alt="Ms. Beatrice Shane Ampaso"
-                      className="team-img transition-all duration-700" />
-                  </div>
-                  <div className="team-social">
-                    <a href="#"
-                      className="h-9 w-9 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-primary transition shadow-lg"><i
-                        className="fa-brands fa-linkedin-in"></i></a>
-                  </div>
-                  <div className="team-content">
-                    <h4 className="team-name">Ms. Beatrice Shane Ampaso</h4>
-                    <p className="team-role">Sales &amp; Business Dev't Mentor</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Member 7 */}
-              <div className="reveal" style={{ transitionDelay: '450ms' }} id="esther-chiong">
-                <div className="team-card bg-gray-100 group">
-                  <div className="team-ribbon">
-                    <span className="vertical-text">Getmeds</span>
-                  </div>
-                  <div className="team-img-wrapper">
-                    <img src={getImage('assets/employeesix.png', 'assets/employeesix.png')} alt="Ms. Esther Roselle Chiong"
-                      className="team-img transition-all duration-700" />
-                  </div>
-                  <div className="team-social">
-                    <a href="#"
-                      className="h-9 w-9 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-primary transition shadow-lg"><i
-                        className="fa-brands fa-linkedin-in"></i></a>
-                  </div>
-                  <div className="team-content">
-                    <h4 className="team-name">Ms. Esther Roselle Chiong</h4>
-                    <p className="team-role">In-Licensing Mentor</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Row 4 */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {/* Member 8 */}
-              <div className="reveal" style={{ transitionDelay: '150ms' }} id="ivy-varias">
-                <div className="team-card bg-gray-100 group">
-                  <div className="team-ribbon">
-                    <span className="vertical-text">Getmeds</span>
-                  </div>
-                  <div className="team-img-wrapper">
-                    <img src={getImage('assets/employeeseven.png', 'assets/employeeseven.png')} alt="Ms. Ivy Marcel Varias"
-                      className="team-img transition-all duration-700" />
-                  </div>
-                  <div className="team-social">
-                    <a href="#"
-                      className="h-9 w-9 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-primary transition shadow-lg"><i
-                        className="fa-brands fa-linkedin-in"></i></a>
-                  </div>
-                  <div className="team-content">
-                    <h4 className="team-name">Ms. Ivy Marcel Varias</h4>
-                    <p className="team-role">Regulatory Affairs Mentor</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Member 9 */}
-              <div className="reveal" style={{ transitionDelay: '300ms' }} id="malou-jagonoy">
-                <div className="team-card bg-gray-100 group">
-                  <div className="team-ribbon">
-                    <span className="vertical-text">Getmeds</span>
-                  </div>
-                  <div className="team-img-wrapper">
-                    <img src={getImage('assets/employeeeight.png', 'assets/employeeeight.png')} alt="Ms. Malou Jagonoy"
-                      className="team-img transition-all duration-700" />
-                  </div>
-                  <div className="team-social">
-                    <a href="#"
-                      className="h-9 w-9 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-primary transition shadow-lg"><i
-                        className="fa-brands fa-linkedin-in"></i></a>
-                  </div>
-                  <div className="team-content">
-                    <h4 className="team-name">Ms. Malou Jagonoy</h4>
-                    <p className="team-role">Finance Mentor</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Member 10 */}
-              <div className="reveal" style={{ transitionDelay: '450ms' }} id="sarla-devi">
-                <div className="team-card bg-gray-100 group">
-                  <div className="team-ribbon">
-                    <span className="vertical-text">Getmeds</span>
-                  </div>
-                  <div className="team-img-wrapper">
-                    <img src={getImage('assets/employeenine.png', 'assets/employeenine.png')} alt="Ms. Sarla Devi"
-                      className="team-img transition-all duration-700" />
-                  </div>
-                  <div className="team-social">
-                    <a href="#"
-                      className="h-9 w-9 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-primary transition shadow-lg"><i
-                        className="fa-brands fa-linkedin-in"></i></a>
-                  </div>
-                  <div className="team-content">
-                    <h4 className="team-name">Ms. Sarla Devi</h4>
-                    <p className="team-role">Finance Coach</p>
-                  </div>
-                </div>
-              </div>
-            </div>
+            {/* Gradient edge fades */}
+            <div className="absolute left-0 inset-y-0 w-28 bg-gradient-to-r from-white to-transparent pointer-events-none z-10" />
+            <div className="absolute right-0 inset-y-0 w-28 bg-gradient-to-l from-white to-transparent pointer-events-none z-10" />
           </div>
+
         </div>
       </section>
 

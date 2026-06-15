@@ -1713,10 +1713,10 @@ export default function GetMedsHomepage() {
 
           {/* Drawer Header */}
           <div className="mb-6 pr-8 mt-2">
-            <h2 className="text-[28px] font-bold text-slate-900 mb-1 leading-tight tracking-tight">Partner with Getmeds</h2>
+            <h2 className="text-[28px] font-semibold text-slate-900 mb-1 leading-tight tracking-tight">Partner with Getmeds</h2>
             <h3 className="text-sm font-medium text-primary mb-4">Advancing Healthcare Together</h3>
             <p className="text-[13px] text-gray-600 leading-relaxed text-justify">
-              Join Getmeds in expanding access to quality medicines and innovative healthcare solutions across the Philippines and beyond. We'd like to hear from you.
+              Join Getmeds in expanding access to quality medicines and innovative healthcare solutions across the Philippines and beyond.<br />We'd like to hear from you.
             </p>
           </div>
 
@@ -1748,9 +1748,9 @@ export default function GetMedsHomepage() {
 
             <div>
               <label className="block text-xs font-semibold text-gray-600 mb-1">Mobile number <span className="text-red-500">*</span></label>
-              <input type="tel" required placeholder="e.g. +63 912 345 6789"
+              <input type="tel" inputMode="numeric" required placeholder="e.g. +63 912 345 6789"
                 value={partnershipData.phone}
-                onChange={e => setPartnershipData(prev => ({ ...prev, phone: e.target.value }))}
+                onChange={e => setPartnershipData(prev => ({ ...prev, phone: e.target.value.replace(/[^\d+\s\-()]/g, '') }))}
                 className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-[13px] placeholder-gray-400" />
             </div>
 
