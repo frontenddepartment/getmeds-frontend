@@ -77,7 +77,7 @@ export default function Meditations() {
       if (trainerIntervalRef.current) clearInterval(trainerIntervalRef.current);
       waveIntervalRefs.current.forEach(id => clearInterval(id));
       oscGainIntervalRefs.current.forEach(id => clearInterval(id));
-      if (audioCtxRef.current) audioCtxRef.current.close().catch(() => {});
+      if (audioCtxRef.current) audioCtxRef.current.close().catch(() => { });
     };
   }, []);
 
@@ -104,10 +104,10 @@ export default function Meditations() {
 
     setTimeout(() => {
       if (isPlayingRef.current) return;
-      ambientOscsRef.current.forEach(o => { try { o.stop(); } catch (e) {} });
+      ambientOscsRef.current.forEach(o => { try { o.stop(); } catch (e) { } });
       ambientOscsRef.current = [];
       if (noiseNodeRef.current) {
-        try { noiseNodeRef.current.stop(); } catch (e) {}
+        try { noiseNodeRef.current.stop(); } catch (e) { }
         noiseNodeRef.current = null;
       }
     }, 850);
@@ -502,7 +502,7 @@ export default function Meditations() {
               The Benefits
             </h2>
             <p className="text-slate-500 text-[15px] leading-relaxed max-w-md">
-              The GetMEDS Meditation App is designed to seamlessly integrate into your daily routine, offering
+              The Getmeds Meditation App is designed to seamlessly integrate into your daily routine, offering
               deep mental restoration through our custom-designed programs. By prioritizing long-term growth, the
               app helps you build lasting habits of mindfulness that naturally improve your focus throughout the
               day. To complement your practice, it also provides tranquil soundscapes entirely tailored to your

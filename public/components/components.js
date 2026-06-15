@@ -1,5 +1,5 @@
 (function () {
-    console.log('[GetMEDS] Global Component Loader v3 active');
+    console.log('[Getmeds] Global Component Loader v3 active');
 
     function executeScripts(container) {
         const scripts = Array.from(container.querySelectorAll('script'));
@@ -64,10 +64,10 @@
                     document.body.appendChild(newScript);
                 });
 
-                console.log(`[GetMEDS] Successfully loaded and executed ${componentPath}`);
+                console.log(`[Getmeds] Successfully loaded and executed ${componentPath}`);
             })
             .catch(function (err) {
-                console.warn(`[GetMEDS] Failed to load ${componentPath}:`, err);
+                console.warn(`[Getmeds] Failed to load ${componentPath}:`, err);
             });
     }
 
@@ -76,7 +76,7 @@
         window.getmeds_inited_hardened = true;
 
         try {
-            console.log('[GetMEDS] Initializing UI components (Hardened)...');
+            console.log('[Getmeds] Initializing UI components (Hardened)...');
 
             // Set Favicon dynamically
             injectFavicon();
@@ -107,10 +107,10 @@
                     authContainer.innerHTML = html;
                     executeScripts(authContainer);
                 })
-                .catch(err => console.warn('[GetMEDS] Auth Modal failed:', err));
+                .catch(err => console.warn('[Getmeds] Auth Modal failed:', err));
 
         } catch (e) {
-            console.error('[GetMEDS] Loader Initialization Error:', e);
+            console.error('[Getmeds] Loader Initialization Error:', e);
         }
     }
 
@@ -447,7 +447,7 @@
                         });
                     }
                 })
-                .catch(err => console.warn('[GetMEDS] Failed to load chat history:', err));
+                .catch(err => console.warn('[Getmeds] Failed to load chat history:', err));
         }
 
         loadChatHistory();
@@ -649,9 +649,9 @@
         const zapAutoToggle = chatWindow.querySelector('#zap-auto-toggle');
         const zapAutoIcon = chatWindow.querySelector('#zap-auto-icon');
         const zapAutoText = chatWindow.querySelector('#zap-auto-text');
-        
+
         let autoSendVoice = localStorage.getItem('zap-auto-send-voice') !== 'false';
-        
+
         function updateAutoToggleUI() {
             if (!zapAutoToggle) return;
             if (autoSendVoice) {
@@ -670,7 +670,7 @@
                 zapAutoToggle.title = 'Auto-send voice input: OFF (Microphone keeps recording until manually stopped)';
             }
         }
-        
+
         if (zapAutoToggle) {
             updateAutoToggleUI();
             zapAutoToggle.addEventListener('click', () => {
@@ -686,22 +686,22 @@
 
         function extractPageText() {
             try {
-                const mainElement = document.querySelector('main') || 
-                                    document.querySelector('#main') || 
-                                    document.querySelector('#root') || 
-                                    document.body;
-                
+                const mainElement = document.querySelector('main') ||
+                    document.querySelector('#main') ||
+                    document.querySelector('#root') ||
+                    document.body;
+
                 if (!mainElement) return '';
 
                 const clone = mainElement.cloneNode(true);
-                
+
                 const excludeSelectors = [
                     'script', 'style', 'noscript', 'iframe', 'svg',
                     'nav', 'header', 'footer', '#navbar-container', '#footer-container',
                     '#zap-chat-window', '#zap-chat-toggle', '.chatbot', '.chat-window',
                     '#auth-modal-container', '.auth-modal', '[role="dialog"]', '.modal'
                 ];
-                
+
                 excludeSelectors.forEach(selector => {
                     const elements = clone.querySelectorAll(selector);
                     elements.forEach(el => el.remove());
@@ -715,7 +715,7 @@
                 tempContainer.style.width = '1px';
                 tempContainer.style.height = '1px';
                 tempContainer.style.overflow = 'hidden';
-                
+
                 document.body.appendChild(tempContainer);
                 tempContainer.appendChild(clone);
                 text = clone.innerText || clone.textContent || '';
@@ -730,10 +730,10 @@
                 if (text.length > charLimit) {
                     text = text.substring(0, charLimit) + '... [text truncated]';
                 }
-                
+
                 return text;
             } catch (e) {
-                console.warn('[GetMEDS] Failed to extract page text:', e);
+                console.warn('[Getmeds] Failed to extract page text:', e);
                 return '';
             }
         }
@@ -745,7 +745,7 @@
 
             // Stop voice input active listening if the request is starting
             if (recognition && isListening) {
-                try { recognition.stop(); } catch(e) {}
+                try { recognition.stop(); } catch (e) { }
             }
 
             if (SpeechRecognitionAPI && zapMicBtn) {
@@ -806,7 +806,7 @@
                 // User messages are still rendered with textContent in addMessage().
                 addMessage(answerHtml, 'ai', { allowHtml: true });
             } catch (err) {
-                console.error('[GetMEDS] Chatbot API error:', err);
+                console.error('[Getmeds] Chatbot API error:', err);
                 typing.remove();
                 addMessage(
                     "Sorry, I couldn't connect to GetAssist right now. Please make sure the chatbot API is running and the frontend is using the correct /ask endpoint.",
@@ -891,11 +891,11 @@
                     setMicBtnContent('mic');
                     return;
                 }
-                
+
                 secondsLeft = 5;
                 setMicBtnContent('mic'); // Microphone icon when actively speaking
                 zapInput.placeholder = 'Listening…';
-                
+
                 countdownInterval = setInterval(() => {
                     secondsLeft--;
                     if (secondsLeft > 0) {
@@ -924,7 +924,7 @@
                 } else {
                     window.speechSynthesis && window.speechSynthesis.cancel();
                     recognition.continuous = true;
-                    try { recognition.start(); } catch(e) {}
+                    try { recognition.start(); } catch (e) { }
                 }
             });
 
@@ -949,7 +949,7 @@
                 const transcript = Array.from(e.results)
                     .map(r => r[0].transcript).join('');
                 zapInput.value = transcript;
-                
+
                 if (autoSendVoice) {
                     resetSilenceTimer();
                 }
@@ -984,18 +984,18 @@
                     setupLogoObserver(logoUrl);
                 }
             })
-            .catch(err => console.warn('[GetMEDS] Failed to fetch dynamic logo:', err));
+            .catch(err => console.warn('[Getmeds] Failed to fetch dynamic logo:', err));
     }
 
     function setupLogoObserver(logoUrl) {
         if (!logoUrl) return;
-        
+
         const apply = () => {
             document.querySelectorAll('img').forEach(img => {
                 const src = img.getAttribute('src') || '';
                 const alt = img.getAttribute('alt') || '';
                 if (
-                    src.includes('getmedslogo.png') || 
+                    src.includes('getmedslogo.png') ||
                     src.includes('getmedslogo') ||
                     alt.toLowerCase().includes('getmeds logo') ||
                     alt.toLowerCase() === 'logo'
@@ -1022,7 +1022,7 @@
         const projectId = document.querySelector('meta[name="getmeds-sanity-project-id"]')?.content || 's7ocz8zp';
         const dataset = document.querySelector('meta[name="getmeds-sanity-dataset"]')?.content || 'production';
         const apiVersion = document.querySelector('meta[name="getmeds-sanity-api-version"]')?.content || '2021-10-21';
-        
+
         const query = '*[_type == "siteSettings" && _id == "global-site-settings"][0]{ ..., topBar{ ..., socials[]-> }, contactGroups }';
         const url = `https://${projectId}.api.sanity.io/v${apiVersion}/data/query/${dataset}?query=` + encodeURIComponent(query);
 
@@ -1034,7 +1034,7 @@
                     setupFooterObserver(settings, projectId, dataset, apiVersion);
                 }
             })
-            .catch(err => console.warn('[GetMEDS] Failed to fetch dynamic footer settings:', err));
+            .catch(err => console.warn('[Getmeds] Failed to fetch dynamic footer settings:', err));
     }
 
     function setupFooterObserver(settings, projectId, dataset, apiVersion) {
@@ -1164,7 +1164,7 @@
             if (footerCopyright) {
                 const currentYear = new Date().getFullYear().toString();
                 const base = settings.copyright
-                    ? settings.copyright.replace(/GetMEDS/g, 'Getmeds').replace(/\b\d{4}\b/, currentYear)
+                    ? settings.copyright.replace(/Getmeds/g, 'Getmeds').replace(/\b\d{4}\b/, currentYear)
                     : `© ${currentYear} Getmeds. All rights reserved.`;
                 if (footerCopyright.textContent.trim() !== base.trim()) {
                     footerCopyright.textContent = base;
@@ -1178,7 +1178,7 @@
                     footerSocials.innerHTML = '';
                     settings.topBar.socials.forEach(socialRef => {
                         if (!socialRef || !socialRef.platform || !socialRef.href) return;
-                        
+
                         let iconClass = 'fa-link';
                         if (socialRef.icon) {
                             if (socialRef.icon.startsWith('fa-')) {
@@ -1194,11 +1194,11 @@
                             else if (socialRef.platform === 'youtube') iconClass = 'fa-brands fa-youtube';
                             else if (socialRef.platform === 'tiktok') iconClass = 'fa-brands fa-tiktok';
                         }
-                        
+
                         if (iconClass === 'fa-facebook') iconClass = 'fa-brands fa-facebook-f';
                         if (iconClass === 'fa-twitter') iconClass = 'fa-brands fa-twitter';
                         if (iconClass === 'fa-linkedin') iconClass = 'fa-brands fa-linkedin-in';
-                        
+
                         if (!iconClass.includes(' ')) {
                             if (iconClass.startsWith('fa-')) {
                                 iconClass = `fa-brands ${iconClass}`;
@@ -1263,9 +1263,9 @@
             document.head.appendChild(link);
         }
 
-        // Always force the GetMEDS logo
+        // Always force the Getmeds logo
         link.href = 'assets/getmedslogo.png';
-        console.log('[GetMEDS] Favicon standardized');
+        console.log('[Getmeds] Favicon standardized');
     }
 
     function injectScrollToTop() {
@@ -1382,7 +1382,7 @@
             });
         });
 
-        console.log('[GetMEDS] Scroll-to-top button injected and secured');
+        console.log('[Getmeds] Scroll-to-top button injected and secured');
     }
 
     // Run loader

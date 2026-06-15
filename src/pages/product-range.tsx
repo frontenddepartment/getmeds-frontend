@@ -4,6 +4,7 @@ import { urlFor, client } from '../lib/sanity';
 import type { Product as SanityProduct, Category } from '../types/sanity';
 import { injectHTML } from '../lib/injectHTML';
 import { getGoogleSpreadsheetBySlug } from '../lib/queries';
+import { getApiUrl } from '../lib/api';
 
 
 interface ProductWithCategory extends Omit<SanityProduct, 'category'> {
@@ -756,27 +757,19 @@ export default function ProductRange() {
     }
     
     try {
-      const sheetInfo = await getGoogleSpreadsheetBySlug('product-inquiry-list');
-      if (!sheetInfo || !sheetInfo.spreadsheetId) {
-        throw new Error('Google Spreadsheet settings not found in Sanity.');
-      }
-
-      const timestamp = new Date().toLocaleString();
       const payload = {
-        spreadsheetId: sheetInfo.spreadsheetId,
-        row: [
-          formData.name,
-          formData.phone,
-          formData.email,
-          formData.message,
-          selectedProduct?.name || '',
-          '[PENDING_FILE_UPLOAD]',
-          timestamp
-        ],
+        inquiryType: 'Product Inquiry',
+        fullName: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        message: formData.message,
+        additionalData: {
+          productName: selectedProduct?.brandName || selectedProduct?.name || ''
+        },
         files: filesData
       };
 
-      const response = await fetch(import.meta.env.VITE_SPREADSHEET_API_URL || '/api/append-to-spreadsheet', {
+      const response = await fetch(getApiUrl(), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
