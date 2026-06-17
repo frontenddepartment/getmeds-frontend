@@ -238,6 +238,13 @@ export default function ArticleDetail() {
               {/* Right: Article content */}
               <article className="flex-1 min-w-0">
 
+                {/* Description — always shown at top */}
+                {article.description && (
+                  <p className="text-gray-600 text-[15px] leading-relaxed mb-6 font-medium">
+                    {article.description}
+                  </p>
+                )}
+
                 {/* Intro paragraph */}
                 {article.intro && (
                   <p className="text-gray-500 text-sm leading-relaxed mb-8">

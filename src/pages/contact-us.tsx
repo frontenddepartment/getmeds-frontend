@@ -160,15 +160,13 @@ export default function ContactUs() {
           </div>
 
           <div className="relative z-10 w-full px-8 md:px-14 pb-12 md:pb-16 pt-20 max-w-4xl">
-            <h1 className="text-[28px] md:text-[38px] leading-tight font-bold mb-3 tracking-tight">
-              <span className="text-white">Get in Touch</span><br />
-              <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent leading-tight tracking-tight drop-shadow-sm">
-                CONTACT US
-              </span>
+            <span className="text-white/70 font-bold text-sm uppercase tracking-[0.2em] mb-3 block">Contact Us</span>
+            <h1 className="text-[28px] md:text-[42px] leading-tight font-bold mb-4 tracking-tight">
+              <span className="text-white">For patients, partners,</span><br />
+              <span className="text-white">and providers.</span>
             </h1>
-            <p className="text-white/90 text-[13px] md:text-[14px] max-w-[650px] mb-5 leading-relaxed font-normal">
-              We'd love to hear from you. Whether you have a question about services, pricing, need a
-              consultation, or anything else, our team is ready to answer all your questions.
+            <p className="text-white/90 text-[13px] md:text-[15px] max-w-[620px] mb-5 leading-relaxed font-normal">
+              For inquiries about our pharmaceutical portfolio, partnership opportunities, careers, or patient access programs — our team is ready to help.
             </p>
           </div>
         </div>
@@ -180,13 +178,11 @@ export default function ContactUs() {
 
           {/* Left Info Area */}
           <div className="w-full lg:w-[45%] lg:pt-2">
-            <span className="text-gray-500 font-medium text-[13px] block mb-3 italic">I get in touch!</span>
-            <h2 className="text-3xl md:text-[36px] font-bold bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent mb-5 leading-[1.15] tracking-tight">
-              We are always ready to help you and answer your questions
+            <h2 className="text-2xl md:text-[28px] font-bold text-dark mb-3 leading-tight tracking-tight">
+              How to Reach Us
             </h2>
             <p className="text-gray-500 text-[14px] mb-10 leading-relaxed max-w-[90%]">
-              We're here to assist you and provide the answers you need. Your well-being is our priority, and
-              we're just a message away.
+              Pick the channel that fits your need. General inquiries, careers, and partnerships are routed directly to the right team for faster response.
             </p>
 
             {/* Dynamic contact groups grid */}
@@ -199,7 +195,7 @@ export default function ContactUs() {
                       style={{ background: 'linear-gradient(135deg, #61A644, #1D9FDA)' }}>
                       <i className={`${getPurposeIcon(group.purpose)} text-white text-xs`}></i>
                     </div>
-                    <h4 className="font-bold text-gray-900 text-base">{group.purpose}</h4>
+                    <h4 className="font-semibold text-gray-900 text-base">{group.purpose}</h4>
                   </div>
 
                   {/* Addresses */}
@@ -249,7 +245,7 @@ export default function ContactUs() {
                     style={{ background: 'linear-gradient(135deg, #61A644, #1D9FDA)' }}>
                     <i className="fa-solid fa-share-nodes text-white text-xs"></i>
                   </div>
-                  <h4 className="font-bold text-gray-900 text-base">Social Network</h4>
+                  <h4 className="font-semibold text-gray-900 text-base">Social Network</h4>
                 </div>
                 <div className="flex space-x-4 items-center flex-wrap gap-y-2">
                   <a href="https://www.facebook.com/getmedsphilippines/" target="_blank" rel="noopener noreferrer" title="Facebook" className="text-[#1877F2] hover:scale-110 transition-transform duration-300 text-[22px] drop-shadow-sm"><i className="fa-brands fa-facebook"></i></a>

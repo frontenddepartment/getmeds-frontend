@@ -237,10 +237,10 @@ export default function AboutUs() {
           </div>
 
           {/* Content Section (Bottom) */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
+          <div className="flex flex-col gap-10">
 
-            {/* Left side: Introduction about getmeds */}
-            <div className="lg:col-span-8 reveal">
+            {/* Introduction about getmeds */}
+            <div className="reveal">
               <h3
                 className="inline-block text-3xl md:text-4xl lg:text-[35px] leading-tight font-semibold mb-8 tracking-tight text-gray-900">
                 About Us</h3>
@@ -250,85 +250,79 @@ export default function AboutUs() {
                   At its core, Getmeds is guided by compassion — ensuring that every medicine delivered reflects care, dignity, and hope for patients and families in need. With a strong focus on accessibility and cost-effective healthcare solutions, the company works to make high-quality treatments more reachable, especially for underserved communities.
                   With its continuing expansion across the Asia-Pacific region and beyond, Getmeds is poised to create an even greater impact on global healthcare.
                 </p>
-                <div className="pt-6">
-                  <p className="text-dark font-black text-[13px] uppercase tracking-widest mb-4">Dedicated to:</p>
-                  <ul className="grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-8 text-[14px] text-gray-500 font-medium">
+
+                {/* Highlights */}
+                <div className="bg-white border border-gray-100 rounded-2xl shadow-sm p-6">
+                  <p className="text-dark font-semibold text-[16px] mb-5">Highlights</p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                    {[
+                      {
+                        title: 'FDA Philippines Licensed Distributor',
+                        desc: 'Licensed by the Food and Drug Administration of the Philippines for pharmaceutical importation, wholesale, and distribution.',
+                      },
+                      {
+                        title: 'UN Global Compact Member & SDG Driver',
+                        desc: "Aligned with the United Nations' ten principles and actively contributing to the UN Sustainable Development Goals through ethical, responsible business practices.",
+                      },
+                      {
+                        title: 'WHO Good Storage and Distribution Practices Compliant',
+                        desc: 'Operating to World Health Organization standards for pharmaceutical storage, handling, and distribution.',
+                      },
+                      {
+                        title: 'PDEA Licensed (S-4 and S-5)',
+                        desc: 'Philippine Drug Enforcement Agency licensed for the handling and distribution of dangerous drugs (S-4) and controlled precursor chemicals (S-5).',
+                      },
+                      {
+                        title: 'BOC Compliant',
+                        desc: 'Fully compliant with Bureau of Customs requirements for pharmaceutical importation and clearance.',
+                      },
+                      {
+                        title: 'EDPMS Compliant',
+                        desc: 'Electronic Drug Price Monitoring System compliant — fulfilling DOH price reporting and transparency requirements.',
+                      },
+                      {
+                        title: 'PCO Accredited',
+                        desc: 'Pollution Control Officer accredited under DENR Environmental Management Bureau standards.',
+                      },
+                    ].map((item) => (
+                      <div key={item.title} className="flex items-start gap-3">
+                        <div className="w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center text-white text-[10px] mt-0.5" style={{ background: '#61A644' }}>
+                          <i className="fa-solid fa-check"></i>
+                        </div>
+                        <div>
+                          <p className="font-bold text-[15px] bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent leading-snug mb-1">
+                            {item.title}
+                          </p>
+                          <p className="text-[13px] text-gray-400 leading-relaxed">{item.desc}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Dedicated To */}
+                <div className="bg-white border border-gray-100 rounded-2xl shadow-sm p-6">
+                  <p className="text-dark font-semibold text-[16px] mb-4">Dedicated to:</p>
+                  <ul className="grid grid-cols-3 gap-y-3 gap-x-8 text-[14px] text-gray-500 font-medium">
                     <li className="flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-primary"></div> Precision Pharmaceutical Distribution
+                      <div className="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"></div> Precision Pharmaceutical Distribution
                     </li>
                     <li className="flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-primary"></div> Patient Access Programs
+                      <div className="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"></div> Patient Access Programs
                     </li>
                     <li className="flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-primary"></div> Strategic Global Sourcing
+                      <div className="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"></div> Strategic Global Sourcing
                     </li>
                     <li className="flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-primary"></div> Cold-Chain & Last-Mile Delivery
+                      <div className="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"></div> Cold-Chain & Last-Mile Delivery
                     </li>
                     <li className="flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-primary"></div> Regulatory Compliance & FDA Philippines Licensing
+                      <div className="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"></div> Regulatory Compliance & FDA Philippines Licensing
                     </li>
                     <li className="flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-primary"></div> Hospital & Pharmacy Partnerships
+                      <div className="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"></div> Hospital & Pharmacy Partnerships
                     </li>
                   </ul>
-                </div>
-              </div>
-            </div>
-
-            {/* Right side: Highlights section list of certifications */}
-            <div className="lg:col-span-4 reveal">
-              <h3
-                className="inline-block text-3xl md:text-3xl lg:text-[35px] leading-tight font-semibold mb-8 tracking-tight text-gray-900">
-                Highlights</h3>
-              <div className="space-y-6">
-                {/* Cert 1 */}
-                <div className="flex items-center gap-4 group">
-                  <div className="w-6 h-6 rounded-full bg-dark flex items-center justify-center text-white text-[10px]">
-                    <i className="fa-solid fa-check"></i>
-                  </div>
-                  <p className="inline-block font-bold text-[15px] bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">
-                    FDA Licensed Distributor</p>
-                </div>
-                <div className="h-[1px] w-full bg-gray-100"></div>
-
-                {/* Cert 2 */}
-                <div className="flex items-center gap-4 group">
-                  <div className="w-6 h-6 rounded-full bg-dark flex items-center justify-center text-white text-[10px]">
-                    <i className="fa-solid fa-check"></i>
-                  </div>
-                  <p className="inline-block font-bold text-[15px] bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">
-                    UN Global Compact Member</p>
-                </div>
-                <div className="h-[1px] w-full bg-gray-100"></div>
-
-                {/* Cert 3 */}
-                <div className="flex items-center gap-4 group">
-                  <div className="w-6 h-6 rounded-full bg-dark flex items-center justify-center text-white text-[10px]">
-                    <i className="fa-solid fa-check"></i>
-                  </div>
-                  <p className="inline-block font-bold text-[15px] bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">
-                    ISO 9001:2015 Certified</p>
-                </div>
-                <div className="h-[1px] w-full bg-gray-100"></div>
-
-                {/* Cert 4 */}
-                <div className="flex items-center gap-4 group">
-                  <div className="w-6 h-6 rounded-full bg-dark flex items-center justify-center text-white text-[10px]">
-                    <i className="fa-solid fa-check"></i>
-                  </div>
-                  <p className="inline-block font-bold text-[15px] bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">
-                    GDSP Compliant Logistics</p>
-                </div>
-                <div className="h-[1px] w-full bg-gray-100"></div>
-
-                {/* Cert 5 */}
-                <div className="flex items-center gap-4 group">
-                  <div className="w-6 h-6 rounded-full bg-dark flex items-center justify-center text-white text-[10px]">
-                    <i className="fa-solid fa-check"></i>
-                  </div>
-                  <p className="inline-block font-bold text-[15px] bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">
-                    Verified ESG Performance</p>
                 </div>
               </div>
             </div>
@@ -632,12 +626,11 @@ export default function AboutUs() {
       <section className="py-24 bg-white relative overflow-hidden">
         <div className="relative z-10">
           <div className="text-center max-w-2xl mx-auto mb-16 px-4 reveal">
-            <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent font-bold text-sm uppercase tracking-[0.2em] mb-4 block">Executive Team</span>
-            <h2 className="text-3xl md:text-4xl font-semibold text-dark mb-4">The Minds Behind <span
+            <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent font-bold text-sm uppercase tracking-[0.2em] mb-4 block">Our Leaders</span>
+            <h2 className="text-3xl md:text-4xl font-semibold text-dark mb-4">The People Behind <span
               className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent inline-block">Getmeds</span>
             </h2>
-            <p className="text-gray-500 text-[15px]">Our leadership team brings decades of experience in healthcare,
-              technology, and logistics to revolutionize patient care.</p>
+            <p className="text-gray-500 text-[15px]">With combined expertise across pharmaceutical operations, sales and business development, in-licensing, regulatory affairs, finance, and supply chain, our team brings decades of experience guided by compassion, driven by innovation, and grounded in quality.</p>
           </div>
 
           {/* Carousel */}

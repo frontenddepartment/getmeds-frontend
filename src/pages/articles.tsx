@@ -134,12 +134,12 @@ export default function Articles() {
                 </div>
 
                 {/* Title */}
-                <h2 className="text-white font-bold text-2xl md:text-3xl leading-snug mb-3">
+                <h2 className="text-white font-bold text-2xl md:text-3xl leading-snug mb-3 line-clamp-2">
                   {featured.title}
                 </h2>
 
                 {/* Description */}
-                <p className="text-white/75 text-sm leading-relaxed">
+                <p className="text-white/75 text-sm leading-relaxed line-clamp-2">
                   {featured.description}
                 </p>
               </div>

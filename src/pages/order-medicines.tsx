@@ -595,10 +595,8 @@ export default function OrderMedicines() {
                     </div>
                     <div>
                       <h3 className="text-[15px] font-semibold text-dark mb-1">Licensed Pharmacy Operations</h3>
-                      <p className="text-[13px] text-gray-400 leading-relaxed">
-                        <span className="font-semibold text-gray-500">FDA Philippines Licensed — </span>
-                        Operating under valid Food and Drug Administration of the Philippines licenses as a wholesaler, distributor, and retail pharmacy.
-                      </p>
+                      <p className="text-[13px] font-semibold text-gray-500 leading-relaxed">FDA Philippines Licensed</p>
+                      <p className="text-[13px] text-gray-400 leading-relaxed">Operating under valid Food and Drug Administration of the Philippines licenses as a wholesaler, distributor, and retail pharmacy.</p>
                     </div>
                   </div>
                   <div className="h-px bg-gray-100" />
