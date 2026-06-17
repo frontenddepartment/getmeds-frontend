@@ -154,11 +154,12 @@ const Csr: React.FC = () => {
 
       <div className="overflow-x-hidden">
       {/* HERO SECTION */}
-      <section className="relative w-full overflow-hidden mb-0" style={{ height: '505px' }}>
+      <section className="w-full mx-auto px-3 sm:px-4 md:px-6 mt-3 md:mt-4 mb-0 max-w-[1600px]">
+      <div className="relative rounded-[1.5rem] overflow-hidden min-h-[450px] md:min-h-[500px] flex items-end group">
         <img
           src={getImage('assets/patienthand.jpg', 'assets/patienthand.jpg')}
           alt="Corporate Social Responsibility"
-          className="w-full h-full object-cover object-center brightness-90"
+          className="absolute inset-0 w-full h-full object-cover object-center brightness-90 transform group-hover:scale-105 transition-transform duration-[4s]"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
 
@@ -190,7 +191,7 @@ const Csr: React.FC = () => {
           </svg>
         </div>
 
-        <div className="absolute bottom-0 left-0 px-8 md:px-14 pb-12 md:pb-16 max-w-4xl reveal z-[3]">
+        <div className="relative z-10 w-full px-8 md:px-14 pb-12 md:pb-16 pt-20 max-w-4xl reveal z-[3]">
           <h1 className="text-[28px] md:text-[38px] leading-tight font-bold mb-3 tracking-tight">
             <span className="text-white">Corporate Social</span><br />
             <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent leading-tight tracking-tight">
@@ -207,6 +208,7 @@ const Csr: React.FC = () => {
             Read More
           </button>
         </div>
+      </div>
       </section>
 
       {/* FREE CANCER MEDICINES PROGRAM */}
@@ -244,14 +246,28 @@ const Csr: React.FC = () => {
 
           {/* Beating Cancer Twice Section */}
           <div className="max-w-5xl mx-auto mb-24 reveal">
-            <h4 className="text-dark font-semibold text-[16px] mb-6 tracking-tight">Watch some of our patients' journeys here:</h4>
-            <div className="flex items-center gap-6">
-              <a href="https://youtu.be/aIKzCDi2NGA" target="_blank" rel="noreferrer"
-                className="text-[#0D99FF] text-[13px] font-medium flex flex-col items-center gap-2 hover:underline shrink-0 w-28 text-center">
-                <i className="fa-brands fa-youtube text-red-500 text-2xl"></i>
-                https://youtu.be/aIKzCDi2NGA
-              </a>
-              <div className="flex-1 overflow-hidden rounded-2xl shadow-lg aspect-video">
+            <div className="flex flex-col md:flex-row gap-10 items-center">
+              {/* Left: description + links */}
+              <div className="md:w-1/2">
+                <p className="text-gray-500 text-[15px] leading-relaxed mb-6">
+                  Dorie, a breast cancer warrior diagnosed twice, made the difficult decision to treat both breasts to prevent her condition from worsening. She shares her story of struggles and triumphs in her battle against cancer.
+                </p>
+                <h4 className="text-dark font-semibold text-[16px] mb-4 tracking-tight">Watch some of our patients' journeys here:</h4>
+                <div className="space-y-3">
+                  <a href="https://youtu.be/aIKzCDi2NGA" target="_blank" rel="noreferrer"
+                    className="text-[#0D99FF] text-[13px] font-medium flex items-center gap-3 hover:underline">
+                    <i className="fa-brands fa-youtube text-red-500 text-lg"></i>
+                    https://youtu.be/aIKzCDi2NGA
+                  </a>
+                  <a href="https://www.facebook.com/reel/971664227768897" target="_blank" rel="noreferrer"
+                    className="text-[#0D99FF] text-[13px] font-medium flex items-center gap-3 hover:underline">
+                    <i className="fa-brands fa-facebook text-blue-600 text-lg"></i>
+                    https://www.facebook.com/reel/971664227768897
+                  </a>
+                </div>
+              </div>
+              {/* Right: smaller video */}
+              <div className="md:w-1/2 overflow-hidden rounded-2xl shadow-lg aspect-video">
                 <iframe
                   className="w-full h-full"
                   src="https://www.youtube.com/embed/aIKzCDi2NGA"
@@ -262,11 +278,6 @@ const Csr: React.FC = () => {
                   allowFullScreen
                 ></iframe>
               </div>
-              <a href="https://www.facebook.com/reel/971664227768897" target="_blank" rel="noreferrer"
-                className="text-[#0D99FF] text-[13px] font-medium flex flex-col items-center gap-2 hover:underline shrink-0 w-28 text-center">
-                <i className="fa-brands fa-facebook text-blue-600 text-2xl"></i>
-                https://www.facebook.com/reel/971664227768897
-              </a>
             </div>
           </div>
         </div>

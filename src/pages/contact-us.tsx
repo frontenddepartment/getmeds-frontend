@@ -50,7 +50,7 @@ export default function ContactUs() {
     setSubmitState('sending');
     try {
       const inquiryType = formData.subject === 'partnership' ? 'Partnership' : 'Contact Us';
-      
+
       const subjectMap: Record<string, string> = {
         general: 'General Inquiry',
         support: 'Customer Support',
@@ -113,9 +113,9 @@ export default function ContactUs() {
     : [
       {
         _key: 'general',
-        purpose: 'General',
+        purpose: 'Medicine Inquiries',
         addresses: ['Unit 305, 17 Vatican Bldg., Vatican Drive, BF Resort Village, Las Piñas City, Metro Manila 1747'],
-        phones: ['+63 919 076 9105'],
+        phones: ['+63 919 076 9103'],
         emails: ['info@getmeds.ph'],
         showInFooter: true,
         showInTopBar: true,
@@ -123,14 +123,14 @@ export default function ContactUs() {
       {
         _key: 'hr',
         purpose: 'HR / Careers',
-        phones: ['+63 919 076 9105'],
-        emails: ['careers@getmeds.ph', 'hr@getmeds.ph', 'hr2@getmeds.ph'],
+        phones: ['+63 917 154 5029'],
+        emails: ['hr@getmeds.ph', 'hr2@getmeds.ph'],
       },
       {
         _key: 'medical',
-        purpose: 'Medical Inquiries',
-        phones: ['+63 919 076 9105'],
-        emails: ['medical@getmeds.ph'],
+        purpose: 'Partnerships',
+        phones: ['+63 919 076 9103'],
+        emails: ['care@getmeds.ph'],
       },
     ];
 

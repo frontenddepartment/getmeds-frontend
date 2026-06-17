@@ -524,7 +524,7 @@ const Careers: React.FC = () => {
                   <div>
                     <h4 className="text-[15px] font-semibold text-slate-800 mb-3">Key Responsibilities</h4>
                     <ul className="space-y-2">
-                      {activeJob.responsibilities.map((r, i) => (
+                      {activeJob.responsibilities.map((r: string, i: number) => (
                         <li key={i} className="flex items-start gap-2 text-[12.5px] text-gray-500 leading-relaxed">
                           <i className="fa-solid fa-circle-check text-[#61A644] text-[11px] mt-[3px] shrink-0"></i>
                           {r}
@@ -535,7 +535,7 @@ const Careers: React.FC = () => {
                   <div>
                     <h4 className="text-[15px] font-semibold text-slate-800 mb-3">Qualifications & Requirements</h4>
                     <ul className="space-y-2">
-                      {activeJob.requirements.map((r, i) => (
+                      {activeJob.requirements.map((r: string, i: number) => (
                         <li key={i} className="flex items-start gap-2 text-[12.5px] text-gray-500 leading-relaxed">
                           <i className="fa-solid fa-circle-check text-[#1D9FDA] text-[11px] mt-[3px] shrink-0"></i>
                           {r}
