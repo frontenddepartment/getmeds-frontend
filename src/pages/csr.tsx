@@ -283,66 +283,58 @@ const Csr: React.FC = () => {
         </div>
       </section>
 
-      {/* GALLERY SLIDER */}
-      <section className="py-10 bg-white overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 text-center mb-16 reveal">
-          <h2 className="text-dark font-semibold text-3xl md:text-4xl tracking-tight mb-4">Free Cancer Medicines{' '}<span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">Program</span></h2>
-          <p className="text-gray-500 text-[14px] md:text-[16px] max-w-2xl mx-auto leading-relaxed">
-            Discover exciting opportunities to grow your career with us. We are looking for passionate individuals
-            to join our mission-driven team.
-          </p>
-        </div>
-        <div className="gallery-container" ref={galleryRef}>
-          {csrSliderImages.map((src, idx) => (
-            <div key={idx} className={`gallery-item pos-${idx}`}>
-              <img src={src} alt="" />
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* PATIENT ASSISTANCE PROGRAM */}
-      <section className="py-16 bg-white overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 text-center mb-12 reveal">
-          <h2 className="text-dark font-semibold text-3xl md:text-4xl tracking-tight mb-4">Patient Assistance{' '}<span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">Program</span></h2>
-          <p className="text-gray-500 text-[14px] md:text-[15px] max-w-2xl mx-auto leading-relaxed">
-            Discover exciting opportunities to grow your career with us. We are looking for passionate individuals
-            to join our mission-driven team.
-          </p>
-        </div>
-        <div className="relative w-full max-w-[1200px] mx-auto px-4">
-          <div
-            id="assist-3d-viewport"
-            ref={assistViewportRef}
-            className="relative h-[280px] md:h-[400px] w-full flex items-center justify-center [perspective:1200px] overflow-visible"
-          >
-            {papSliderImages.map((src, idx) => {
-              const posMap = ['0', '1', '-1'];
-              const extraMap = ['z-20 opacity-100', 'z-10 opacity-60', 'z-10 opacity-60'];
-              const shadowMap = ['shadow-2xl', 'shadow-lg', 'shadow-lg'];
-              return (
-                <div
-                  key={idx}
-                  className={`assist-card absolute w-[280px] md:w-[750px] transition-all duration-700 ease-out cursor-pointer ${extraMap[idx]}`}
-                  data-pos={posMap[idx]}
-                >
-                  <img
-                    src={src}
-                    alt=""
-                    className={`w-full h-[220px] md:h-[360px] object-cover rounded-[1rem] ${shadowMap[idx]}`}
-                  />
-                </div>
-              );
-            })}
-            <button id="assist-prev"
-              className="absolute left-0 md:-left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white shadow-xl rounded-full flex items-center justify-center text-gray-400 hover:text-primary transition-all z-40 hover:scale-110">
-              <i className="fa-solid fa-chevron-left"></i>
-            </button>
-            <button id="assist-next"
-              className="absolute right-0 md:-right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white shadow-xl rounded-full flex items-center justify-center text-gray-400 hover:text-primary transition-all z-40 hover:scale-110">
-              <i className="fa-solid fa-chevron-right"></i>
-            </button>
+      {/* COMBINED BENTO GALLERY */}
+      <section className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-10 reveal">
+            <h2 className="text-dark font-semibold text-2xl md:text-3xl tracking-tight">
+              Free Cancer Medicines & Patient Assistance <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">Programs</span>
+            </h2>
           </div>
+
+          {/* Bento grid: 3 cols × 3 rows */}
+          <div
+            className="grid gap-3 reveal"
+            style={{
+              gridTemplateColumns: '1fr 1fr 1fr',
+              gridTemplateRows: '240px 240px 240px',
+            }}
+          >
+            {/* Portrait 1 — tall, spans rows 1–2, col 1 */}
+            <div className="relative rounded-2xl overflow-hidden group" style={{ gridColumn: '1', gridRow: '1 / 3' }}>
+              <img src={csrSliderImages[0]} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+              <span className="absolute bottom-4 left-4 text-white text-[11px] font-semibold px-3 py-1 rounded-full" style={{ background: 'linear-gradient(135deg,#61A644,#1D9FDA)' }}>Free Cancer Medicines</span>
+            </div>
+
+            {/* Portrait 2 — top-middle */}
+            <div className="relative rounded-2xl overflow-hidden group" style={{ gridColumn: '2', gridRow: '1' }}>
+              <img src={csrSliderImages[1]} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+            </div>
+
+            {/* Portrait 3 — top-right */}
+            <div className="relative rounded-2xl overflow-hidden group" style={{ gridColumn: '3', gridRow: '1' }}>
+              <img src={csrSliderImages[2]} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+            </div>
+
+            {/* Landscape 1 — wide, spans cols 2–3, row 2 */}
+            <div className="relative rounded-2xl overflow-hidden group" style={{ gridColumn: '2 / 4', gridRow: '2' }}>
+              <img src={papSliderImages[0]} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+              <span className="absolute bottom-4 left-4 text-white text-[11px] font-semibold px-3 py-1 rounded-full" style={{ background: 'linear-gradient(135deg,#61A644,#1D9FDA)' }}>Patient Assistance</span>
+            </div>
+
+            {/* Portrait 4 — bottom-left */}
+            <div className="relative rounded-2xl overflow-hidden group" style={{ gridColumn: '1', gridRow: '3' }}>
+              <img src={csrSliderImages[3]} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+            </div>
+
+            {/* Landscape 2 — wide, spans cols 2–3, row 3 */}
+            <div className="relative rounded-2xl overflow-hidden group" style={{ gridColumn: '2 / 4', gridRow: '3' }}>
+              <img src={papSliderImages[1]} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+            </div>
+          </div>
+
         </div>
       </section>
 

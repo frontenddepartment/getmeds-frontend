@@ -75,7 +75,7 @@ export default function ArticleDetail() {
   const imgUrl = article?.image ? urlFor(article.image).width(1200).url() : '';
 
   return (
-    <div style={{ fontFamily: "'Poppins', sans-serif", background: 'linear-gradient(160deg, #eef4ff 0%, #f8faff 40%, #ffffff 100%)' }} className="min-h-screen relative">
+    <div style={{ fontFamily: "'Poppins', sans-serif", background: 'linear-gradient(160deg, #edf8ea 0%, #f0f8fd 40%, #ffffff 100%)' }} className="min-h-screen relative">
 
       {/* Glassy sphere background */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none" style={{ zIndex: 0 }}>
@@ -83,29 +83,29 @@ export default function ArticleDetail() {
           position: 'absolute', top: '-18%', right: '-8%',
           width: '52vw', height: '52vw', maxWidth: '680px', maxHeight: '680px',
           borderRadius: '50%',
-          background: 'radial-gradient(circle at 33% 33%, rgba(255,255,255,0.35) 0%, rgba(210,228,255,0.18) 38%, rgba(130,175,255,0.08) 65%, transparent 100%)',
-          boxShadow: 'inset -22px -22px 60px rgba(100,145,255,0.06), 0 0 90px rgba(100,145,255,0.04)',
+          background: 'radial-gradient(circle at 33% 33%, rgba(255,255,255,0.35) 0%, rgba(29,159,218,0.12) 38%, rgba(97,166,68,0.06) 65%, transparent 100%)',
+          boxShadow: 'inset -22px -22px 60px rgba(29,159,218,0.05), 0 0 90px rgba(29,159,218,0.03)',
         }} />
         <div style={{
           position: 'absolute', top: '18%', right: '7%',
           width: '18vw', height: '18vw', maxWidth: '240px', maxHeight: '240px',
           borderRadius: '50%',
-          background: 'radial-gradient(circle at 33% 33%, rgba(185,215,255,0.28) 0%, rgba(80,145,255,0.15) 48%, rgba(50,105,255,0.06) 75%, transparent 100%)',
-          boxShadow: 'inset -10px -10px 28px rgba(30,85,255,0.08), 0 0 45px rgba(60,125,255,0.05)',
+          background: 'radial-gradient(circle at 33% 33%, rgba(97,166,68,0.22) 0%, rgba(29,159,218,0.12) 48%, rgba(29,159,218,0.05) 75%, transparent 100%)',
+          boxShadow: 'inset -10px -10px 28px rgba(29,159,218,0.06), 0 0 45px rgba(97,166,68,0.04)',
         }} />
         <div style={{
           position: 'absolute', top: '42%', left: '-3%',
           width: '9vw', height: '9vw', maxWidth: '120px', maxHeight: '120px',
           borderRadius: '50%',
-          background: 'radial-gradient(circle at 33% 33%, rgba(140,175,255,0.25) 0%, rgba(70,125,255,0.14) 52%, rgba(40,95,255,0.05) 78%, transparent 100%)',
-          boxShadow: 'inset -5px -5px 14px rgba(30,80,255,0.06), 0 0 28px rgba(60,120,255,0.04)',
+          background: 'radial-gradient(circle at 33% 33%, rgba(29,159,218,0.20) 0%, rgba(97,166,68,0.12) 52%, rgba(97,166,68,0.04) 78%, transparent 100%)',
+          boxShadow: 'inset -5px -5px 14px rgba(97,166,68,0.05), 0 0 28px rgba(29,159,218,0.03)',
         }} />
         <div style={{
           position: 'absolute', bottom: '-12%', left: '8%',
           width: '32vw', height: '32vw', maxWidth: '420px', maxHeight: '420px',
           borderRadius: '50%',
-          background: 'radial-gradient(circle at 33% 33%, rgba(255,255,255,0.22) 0%, rgba(205,222,255,0.14) 42%, rgba(120,162,255,0.06) 70%, transparent 100%)',
-          boxShadow: 'inset -14px -14px 40px rgba(80,120,255,0.05), 0 0 65px rgba(80,120,255,0.03)',
+          background: 'radial-gradient(circle at 33% 33%, rgba(255,255,255,0.22) 0%, rgba(97,166,68,0.10) 42%, rgba(29,159,218,0.05) 70%, transparent 100%)',
+          boxShadow: 'inset -14px -14px 40px rgba(97,166,68,0.04), 0 0 65px rgba(29,159,218,0.03)',
         }} />
       </div>
 
@@ -149,18 +149,14 @@ export default function ArticleDetail() {
           <div className="max-w-3xl mx-auto px-4 text-center py-4 relative z-10">
             {/* Category / tag badge */}
             <span
-              className="inline-block text-xs font-semibold px-3 py-1 rounded-full mb-5"
-              style={{
-                background: 'linear-gradient(135deg, rgba(97,166,68,.12), rgba(29,159,218,.12))',
-                border: '1px solid rgba(29,159,218,.2)',
-                color: '#1D9FDA',
-              }}
+              className="inline-block text-xs font-semibold px-3 py-1 rounded-full mb-5 text-white"
+              style={{ background: 'linear-gradient(135deg, #61A644, #1D9FDA)' }}
             >
               {article.tag}
             </span>
 
             {/* Title */}
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 leading-snug mb-4">
+            <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 leading-snug mb-4">
               {article.title}
             </h1>
 
@@ -247,7 +243,7 @@ export default function ArticleDetail() {
 
                 {/* Intro paragraph */}
                 {article.intro && (
-                  <p className="text-gray-500 text-sm leading-relaxed mb-8">
+                  <p className="text-gray-700 text-sm leading-relaxed mb-8">
                     {article.intro}
                   </p>
                 )}
@@ -256,10 +252,10 @@ export default function ArticleDetail() {
                 {sections.map((s, i) => (
                   <div key={i} data-section={i} className="mb-8 scroll-mt-8">
                     {s.header && (
-                      <h2 className="text-base font-bold text-gray-900 mb-3">{s.header}</h2>
+                      <h2 className="text-base font-semibold mb-3 bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">{s.header}</h2>
                     )}
                     {s.text && (
-                      <p className="text-gray-500 text-sm leading-relaxed mb-3">{s.text}</p>
+                      <p className="text-gray-700 text-sm leading-relaxed mb-3">{s.text}</p>
                     )}
                     {s.bullets && s.bullets.length > 0 && (
                       <ul className="space-y-1 text-sm text-gray-500 mt-2">
@@ -276,7 +272,7 @@ export default function ArticleDetail() {
 
                 {/* If no content blocks, show description as fallback */}
                 {sections.length === 0 && article.description && (
-                  <p className="text-gray-500 text-sm leading-relaxed">{article.description}</p>
+                  <p className="text-gray-700 text-sm leading-relaxed">{article.description}</p>
                 )}
 
               </article>
