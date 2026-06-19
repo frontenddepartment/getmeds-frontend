@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { injectHTML } from '../lib/injectHTML';
 import { useImageMapper } from '../lib/useSanity';
 
@@ -19,14 +19,21 @@ const Csr: React.FC = () => {
     'assets/papsliderthree.png'
   ]);
 
-  const pinkSliderImages = getSliderImages('Pink Run Slider Gallery', [
-    'assets/pinkrunone.png',
-    'assets/pinkruntwo.png',
-    'assets/pinkrunthree.png'
-  ]);
+  const pinkSliderImages = [
+    'assets/pinkrun1.jpg',
+    'assets/pinkrun3.jpg',
+    'assets/pinkrun4.jpg',
+    'assets/pinkrun5.jpg',
+    'assets/pinkrun6.jpg',
+    'assets/pinkrun7.jpg',
+    'assets/pinkrun8.jpg',
+    'assets/pinkrun9.jpg',
+    'assets/pinkrun10.jpg',
+  ];
   const galleryRef = useRef<HTMLDivElement>(null);
   const assistViewportRef = useRef<HTMLDivElement>(null);
-  const pinkViewportRef = useRef<HTMLDivElement>(null);
+  const [pinkActive, setPinkActive] = useState(0);
+  const [papGalleryActive, setPapGalleryActive] = useState(0);
 
   // Navbar / Footer injection
   useEffect(() => {
@@ -96,40 +103,30 @@ const Csr: React.FC = () => {
     };
   }, []);
 
-  // Pink Run 3D slider
+  // Pink Run hero slider — auto-advance every 5s
   useEffect(() => {
-    if (!pinkViewportRef.current) return;
-    const pinkCards = pinkViewportRef.current.querySelectorAll<HTMLElement>('.pink-card');
-    const pinkNext = document.getElementById('pink-next');
-    const pinkPrev = document.getElementById('pink-prev');
-    let pinkPositions = [0, 1, -1];
+    const timer = setInterval(() => {
+      setPinkActive(prev => (prev + 1) % pinkSliderImages.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [pinkSliderImages.length]);
 
-    const updatePinkCards = () => {
-      pinkCards.forEach((card, i) => {
-        card.setAttribute('data-pos', String(pinkPositions[i]));
-      });
-    };
+  // PAP/CSR gallery mobile slider — auto-advance every 5s
+  const papGalleryImages = [
+    papSliderImages[0],
+    csrSliderImages[0],
+    csrSliderImages[1],
+    csrSliderImages[2],
+    csrSliderImages[3],
+    papSliderImages[1],
+  ].filter(Boolean);
 
-    const handleNext = () => {
-      pinkPositions.push(pinkPositions.shift()!);
-      updatePinkCards();
-    };
-
-    const handlePrev = () => {
-      pinkPositions.unshift(pinkPositions.pop()!);
-      updatePinkCards();
-    };
-
-    pinkNext?.addEventListener('click', handleNext);
-    pinkPrev?.addEventListener('click', handlePrev);
-    const interval = setInterval(handleNext, 6000);
-
-    return () => {
-      pinkNext?.removeEventListener('click', handleNext);
-      pinkPrev?.removeEventListener('click', handlePrev);
-      clearInterval(interval);
-    };
-  }, []);
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setPapGalleryActive(prev => (prev + 1) % papGalleryImages.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [papGalleryImages.length]);
 
   // Scroll reveal (only adds 'active', never removes)
   useEffect(() => {
@@ -245,7 +242,7 @@ const Csr: React.FC = () => {
           </div>
 
           {/* Beating Cancer Twice Section */}
-          <div className="max-w-5xl mx-auto mb-24 reveal">
+          <div className="max-w-5xl mx-auto mb-0 reveal">
             <div className="flex flex-col md:flex-row gap-10 items-center">
               {/* Left: description + links */}
               <div className="md:w-1/2">
@@ -284,53 +281,105 @@ const Csr: React.FC = () => {
       </section>
 
       {/* COMBINED BENTO GALLERY */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-10 reveal">
-            <h2 className="text-dark font-semibold text-2xl md:text-3xl tracking-tight">
-              Free Cancer Medicines & Patient Assistance <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">Programs</span>
+      <section className="py-12 px-6">
+        <style>{`
+          @keyframes papProgress { from { width: 0% } to { width: 100% } }
+          .pap-progress-anim { animation: papProgress 5s linear forwards; }
+        `}</style>
+        <div className="max-w-7xl mx-auto bg-gray-100 rounded-3xl overflow-hidden">
+
+          {/* Header */}
+          <div className="flex flex-col md:flex-row md:items-start justify-between px-8 pt-8 pb-6 gap-6">
+            <h2 className="text-2xl md:text-3xl font-semibold text-gray-900 leading-tight max-w-md">
+              Free Cancer Medicines &<br />Patient Assistance <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">Programs</span>
             </h2>
+            <p className="text-gray-500 text-[14px] leading-relaxed max-w-sm md:pt-1">
+              Since 2020, Getmeds provides free cancer medicines to financially challenged Filipinos — ensuring no one is denied life-saving care.
+            </p>
           </div>
 
-          {/* Bento grid: 3 cols × 3 rows */}
+          {/* Mobile slider — landscape main image + thumbnail strip below */}
+          <div className="md:hidden">
+            <div className="relative overflow-hidden aspect-video">
+              {papGalleryImages.map((src, idx) => (
+                <div
+                  key={idx}
+                  className="absolute inset-0 transition-opacity duration-1000 ease-in-out"
+                  style={{
+                    backgroundImage: `url(${src})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    opacity: idx === papGalleryActive ? 1 : 0,
+                  }}
+                />
+              ))}
+              <div className="absolute inset-0" style={{ background: 'linear-gradient(to right, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.05) 50%, rgba(0,0,0,0.15) 100%)' }} />
+              <div className="absolute bottom-6 left-6 z-10 flex items-center gap-2">
+                <button
+                  onClick={() => setPapGalleryActive(prev => (prev - 1 + papGalleryImages.length) % papGalleryImages.length)}
+                  className="w-9 h-9 rounded-full border border-white/40 flex items-center justify-center text-white/70 hover:text-white hover:border-white transition-colors"
+                >
+                  <i className="fa-solid fa-chevron-left text-[10px]"></i>
+                </button>
+                <button
+                  onClick={() => setPapGalleryActive(prev => (prev + 1) % papGalleryImages.length)}
+                  className="w-9 h-9 rounded-full border border-white/40 flex items-center justify-center text-white/70 hover:text-white hover:border-white transition-colors"
+                >
+                  <i className="fa-solid fa-chevron-right text-[10px]"></i>
+                </button>
+              </div>
+              <div className="absolute bottom-6 right-6 z-10 text-white/60 text-xs font-bold tracking-widest">
+                {String(papGalleryActive + 1).padStart(2, '0')} / {String(papGalleryImages.length).padStart(2, '0')}
+              </div>
+              <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-white/20 z-10">
+                <div key={papGalleryActive} className="h-full bg-gradient-to-r from-[#61A644] to-[#1D9FDA] pap-progress-anim" />
+              </div>
+            </div>
+            <div className="flex gap-2 overflow-x-auto px-4 py-4" style={{ scrollbarWidth: 'none' }}>
+              {papGalleryImages.map((src, idx) => (
+                <div
+                  key={idx}
+                  onClick={() => setPapGalleryActive(idx)}
+                  className="flex-shrink-0 cursor-pointer overflow-hidden transition-all duration-300"
+                  style={{
+                    width: '80px',
+                    height: '60px',
+                    borderRadius: '10px',
+                    opacity: idx === papGalleryActive ? 1 : 0.5,
+                    outline: idx === papGalleryActive ? '2px solid #61A644' : 'none',
+                    outlineOffset: '2px',
+                  }}
+                >
+                  <img src={src} alt="" className="w-full h-full object-cover" />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Desktop bento grid — hidden on mobile */}
           <div
-            className="grid gap-3 reveal"
+            className="hidden md:grid gap-3 px-8 pb-8"
             style={{
-              gridTemplateColumns: '1fr 1fr 1fr',
-              gridTemplateRows: '240px 240px 240px',
+              gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr',
+              gridTemplateRows: '320px 320px',
             }}
           >
-            {/* Portrait 1 — tall, spans rows 1–2, col 1 */}
-            <div className="relative rounded-2xl overflow-hidden group" style={{ gridColumn: '1', gridRow: '1 / 3' }}>
-              <img src={csrSliderImages[0]} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-              <span className="absolute bottom-4 left-4 text-white text-[11px] font-semibold px-3 py-1 rounded-full" style={{ background: 'linear-gradient(135deg,#61A644,#1D9FDA)' }}>Free Cancer Medicines</span>
+            <div className="relative rounded-2xl overflow-hidden group" style={{ gridColumn: '1 / 4', gridRow: '1' }}>
+              <img src={papSliderImages[0]} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
             </div>
-
-            {/* Portrait 2 — top-middle */}
-            <div className="relative rounded-2xl overflow-hidden group" style={{ gridColumn: '2', gridRow: '1' }}>
+            <div className="relative rounded-2xl overflow-hidden group" style={{ gridColumn: '4', gridRow: '1' }}>
+              <img src={csrSliderImages[0]} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+            </div>
+            <div className="relative rounded-2xl overflow-hidden group" style={{ gridColumn: '5', gridRow: '1' }}>
               <img src={csrSliderImages[1]} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
             </div>
-
-            {/* Portrait 3 — top-right */}
-            <div className="relative rounded-2xl overflow-hidden group" style={{ gridColumn: '3', gridRow: '1' }}>
+            <div className="relative rounded-2xl overflow-hidden group" style={{ gridColumn: '1', gridRow: '2' }}>
               <img src={csrSliderImages[2]} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
             </div>
-
-            {/* Landscape 1 — wide, spans cols 2–3, row 2 */}
-            <div className="relative rounded-2xl overflow-hidden group" style={{ gridColumn: '2 / 4', gridRow: '2' }}>
-              <img src={papSliderImages[0]} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-              <span className="absolute bottom-4 left-4 text-white text-[11px] font-semibold px-3 py-1 rounded-full" style={{ background: 'linear-gradient(135deg,#61A644,#1D9FDA)' }}>Patient Assistance</span>
-            </div>
-
-            {/* Portrait 4 — bottom-left */}
-            <div className="relative rounded-2xl overflow-hidden group" style={{ gridColumn: '1', gridRow: '3' }}>
+            <div className="relative rounded-2xl overflow-hidden group" style={{ gridColumn: '2', gridRow: '2' }}>
               <img src={csrSliderImages[3]} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
             </div>
-
-            {/* Landscape 2 — wide, spans cols 2–3, row 3 */}
-            <div className="relative rounded-2xl overflow-hidden group" style={{ gridColumn: '2 / 4', gridRow: '3' }}>
+            <div className="relative rounded-2xl overflow-hidden group" style={{ gridColumn: '3 / 6', gridRow: '2' }}>
               <img src={papSliderImages[1]} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
             </div>
           </div>
@@ -338,60 +387,16 @@ const Csr: React.FC = () => {
         </div>
       </section>
 
-      {/* CHRISTMAS PROMO & CANCER WARRIORS */}
+      {/* CANCER WARRIORS */}
       <section className="py-20 bg-white overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col lg:flex-row gap-16 items-center mb-32">
-            <div className="lg:w-1/2">
-              <img src={getImage('assets/cancerpatient.png', 'assets/cancerpatient.png')} alt="Christmas Promo Hug" className="w-full rounded-3xl shadow-2xl" />
-            </div>
-            <div className="lg:w-1/2 reveal">
-              <h2 className="text-3xl md:text-4xl font-semibold text-dark leading-tight mb-8">
-                Christmas Promo For<br />
-                Cancer{' '}<span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">Patients</span>
-              </h2>
-              <div className="space-y-8">
-                <div className="flex gap-5 items-start">
-                  <div className="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center flex-shrink-0">
-                    <i className="fa-solid fa-gift text-[#1D9FDA] text-lg"></i>
-                  </div>
-                  <div>
-                    <h4 className="text-[16px] font-bold text-dark mb-1">Celebrate with us</h4>
-                    <p className="text-gray-400 text-sm leading-relaxed">Spreading holiday cheer to those
-                      undergoing treatment during the festive season.</p>
-                  </div>
-                </div>
-                <div className="flex gap-5 items-start">
-                  <div className="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center flex-shrink-0">
-                    <i className="fa-solid fa-heart text-[#1D9FDA] text-lg"></i>
-                  </div>
-                  <div>
-                    <h4 className="text-[16px] font-bold text-dark mb-1">Spread the joy</h4>
-                    <p className="text-gray-400 text-sm leading-relaxed">Connecting survivors and patients
-                      through community events and shared experiences.</p>
-                  </div>
-                </div>
-                <div className="flex gap-5 items-start">
-                  <div className="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center flex-shrink-0">
-                    <i className="fa-solid fa-handshake-angle text-[#1D9FDA] text-lg"></i>
-                  </div>
-                  <div>
-                    <h4 className="text-[16px] font-bold text-dark mb-1">Give more</h4>
-                    <p className="text-gray-400 text-sm leading-relaxed">Providing extra support and medicine
-                      packs to brighten the holiday season for everyone.</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
 
           {/* Breast Cancer Warriors */}
           <div className="flex flex-col lg:flex-row gap-10 items-center mb-8">
             <div className="lg:w-1/2 reveal">
-              <div className="flex gap-3 mb-5">
-                <span className="bg-[#1D9FDA] text-white text-[10px] font-bold px-4 py-1.5 rounded-full uppercase">NGO
-                  PARTNERSHIPS</span>
-                <span className="bg-[#1D9FDA] text-white text-[10px] font-bold px-4 py-1.5 rounded-full uppercase">COLLABORATION</span>
+              <div className="flex gap-4 mb-5">
+                <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent font-bold uppercase tracking-widest text-xs">NGO Partnerships</span>
+                <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent font-bold uppercase tracking-widest text-xs">Collaboration</span>
               </div>
               <h2 className="text-3xl md:text-4xl font-semibold text-dark leading-tight mb-6">
                 The Beautiful One Dhe<br />
@@ -486,73 +491,125 @@ const Csr: React.FC = () => {
         </div>
       </section>
 
-      {/* PINK RUN SECTION */}
-      <section className="py-20 bg-white overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col lg:flex-row gap-16 items-center">
-            <div className="lg:w-1/2">
-              <img src={getImage('assets/pinkrun.png', 'assets/pinkrun.png')} alt="Pink Run Screen" className="w-full rounded-2xl shadow-xl" />
-            </div>
-            <div className="lg:w-1/2 reveal">
-              <div className="mb-5">
-                <span className="bg-[#26A8E1] text-white text-[10px] font-bold px-4 py-1.5 rounded-full uppercase tracking-wider">
-                  HEALTH PROMOTION EVENTS
-                </span>
-              </div>
-              <h2 className="text-3xl md:text-4xl font-semibold text-dark leading-tight mb-8">
-                Pink Run Breast Cancer{' '}<span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">Awareness</span>
-              </h2>
-              <div className="space-y-6">
-                <p className="text-gray-400 text-[15px] leading-[1.8]">
-                  The Pink Run is a running event in the Philippines dedicated to promoting breast cancer
-                  awareness. As the official health partner, Getmeds supports the advocacy by championing
-                  early detection, survivor support, improved healthcare access, and physical wellness.
-                </p>
-                <p className="text-gray-400 text-[15px] leading-[1.8]">
-                  To support participants, Getmeds provides free supplements for their well-being and
-                  highlights its Patient Assistance Program, helping patients gain access to essential
-                  oncology products.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* PINK RUN HERO SLIDER */}
+      <section className="py-12 px-6">
+        <style>{`
+          @keyframes pinkProgress { from { width: 0% } to { width: 100% } }
+          .pink-progress-anim { animation: pinkProgress 5s linear forwards; }
+        `}</style>
+        <div className="max-w-7xl mx-auto bg-gray-100 rounded-3xl overflow-hidden">
 
-      {/* PINK RUN GALLERY (3D SLIDER) */}
-      <section className="py-10 bg-white overflow-hidden">
-        <div className="relative w-full max-w-[1200px] mx-auto px-4">
-          <div
-            id="pink-3d-viewport"
-            ref={pinkViewportRef}
-            className="relative h-[280px] md:h-[400px] w-full flex items-center justify-center [perspective:1200px] overflow-visible"
-          >
-            {pinkSliderImages.map((src, idx) => {
-              const posMap = ['0', '1', '-1'];
-              const shadowMap = ['shadow-2xl', 'shadow-lg', 'shadow-lg'];
-              return (
+          {/* Header row — title left, description right */}
+          <div className="flex flex-col md:flex-row md:items-start justify-between px-8 pt-8 pb-6 gap-6">
+            <div>
+              <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent font-bold uppercase tracking-widest text-xs mb-2 block">
+                Health Promotion Events
+              </span>
+              <h2 className="text-2xl md:text-3xl font-semibold text-gray-900 leading-tight max-w-xs">
+                Pink Run Breast<br />Cancer <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">Awareness</span>
+              </h2>
+            </div>
+            <p className="text-gray-500 text-[14px] leading-relaxed max-w-sm md:pt-1">
+              The Pink Run is dedicated to promoting breast cancer awareness. Getmeds is the official health partner championing early detection and survivor support.
+            </p>
+          </div>
+
+          {/* MOBILE — landscape slider + thumbnails below */}
+          <div className="md:hidden">
+            <div className="relative overflow-hidden aspect-video">
+              {pinkSliderImages.map((src, idx) => (
                 <div
                   key={idx}
-                  className="pink-card absolute w-[280px] md:w-[750px] transition-all duration-700 ease-out cursor-pointer"
-                  data-pos={posMap[idx]}
-                >
-                  <img
-                    src={src}
-                    alt=""
-                    className={`w-full h-[220px] md:h-[360px] object-cover rounded-[1rem] ${shadowMap[idx]}`}
-                  />
+                  className="absolute inset-0 transition-opacity duration-1000 ease-in-out"
+                  style={{
+                    backgroundImage: `url(${src})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    opacity: idx === pinkActive ? 1 : 0,
+                  }}
+                />
+              ))}
+              <div className="absolute inset-0" style={{ background: 'linear-gradient(to right, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.25) 100%)' }} />
+              <div className="absolute bottom-3 left-4 z-10 flex items-center gap-2">
+                <button onClick={() => setPinkActive(prev => (prev - 1 + pinkSliderImages.length) % pinkSliderImages.length)}
+                  className="w-8 h-8 rounded-full border border-white/40 flex items-center justify-center text-white/70 hover:text-white hover:border-white transition-colors">
+                  <i className="fa-solid fa-chevron-left text-[9px]"></i>
+                </button>
+                <button onClick={() => setPinkActive(prev => (prev + 1) % pinkSliderImages.length)}
+                  className="w-8 h-8 rounded-full border border-white/40 flex items-center justify-center text-white/70 hover:text-white hover:border-white transition-colors">
+                  <i className="fa-solid fa-chevron-right text-[9px]"></i>
+                </button>
+              </div>
+              <div className="absolute bottom-3 right-4 z-10 text-white/60 text-xs font-bold tracking-widest">
+                {String(pinkActive + 1).padStart(2, '0')} / {String(pinkSliderImages.length).padStart(2, '0')}
+              </div>
+              <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-white/20 z-10">
+                <div key={pinkActive} className="h-full bg-gradient-to-r from-[#61A644] to-[#1D9FDA] pink-progress-anim" />
+              </div>
+            </div>
+            <div className="flex gap-2 overflow-x-auto px-4 py-4" style={{ scrollbarWidth: 'none' }}>
+              {pinkSliderImages.map((src, idx) => (
+                <div key={idx} onClick={() => setPinkActive(idx)}
+                  className="flex-shrink-0 cursor-pointer overflow-hidden transition-all duration-300"
+                  style={{ width: '80px', height: '60px', borderRadius: '10px', opacity: idx === pinkActive ? 1 : 0.5, outline: idx === pinkActive ? '2px solid #e91e8c' : 'none', outlineOffset: '2px' }}>
+                  <img src={src} alt="" className="w-full h-full object-cover" />
                 </div>
-              );
-            })}
-            <button id="pink-prev"
-              className="absolute left-0 md:-left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white shadow-xl rounded-full flex items-center justify-center text-gray-400 hover:text-[#26A8E1] transition-all z-40 hover:scale-110">
-              <i className="fa-solid fa-chevron-left"></i>
-            </button>
-            <button id="pink-next"
-              className="absolute right-0 md:-right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white shadow-xl rounded-full flex items-center justify-center text-gray-400 hover:text-[#26A8E1] transition-all z-40 hover:scale-110">
-              <i className="fa-solid fa-chevron-right"></i>
-            </button>
+              ))}
+            </div>
           </div>
+
+          {/* DESKTOP — padded slider with rounded corners, thumbnails overlaid inside */}
+          <div className="hidden md:block px-8 pb-8">
+            <div className="relative overflow-hidden rounded-2xl" style={{ height: '480px' }}>
+              {pinkSliderImages.map((src, idx) => (
+                <div
+                  key={idx}
+                  className="absolute inset-0 transition-opacity duration-1000 ease-in-out"
+                  style={{
+                    backgroundImage: `url(${src})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    opacity: idx === pinkActive ? 1 : 0,
+                  }}
+                />
+              ))}
+              <div className="absolute inset-0" style={{ background: 'linear-gradient(to right, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.25) 100%)' }} />
+              {/* Thumbnail strip overlaid inside — bottom right */}
+              <div className="absolute bottom-14 right-6 z-10 flex gap-2 items-end">
+                {pinkSliderImages.map((src, idx) => (
+                  <div key={idx} onClick={() => setPinkActive(idx)}
+                    className="relative cursor-pointer rounded-lg overflow-hidden flex-shrink-0 transition-all duration-500"
+                    style={{
+                      width: idx === pinkActive ? '72px' : '52px',
+                      height: idx === pinkActive ? '96px' : '70px',
+                      opacity: idx === pinkActive ? 1 : 0.5,
+                      boxShadow: idx === pinkActive ? '0 8px 24px rgba(0,0,0,0.5)' : 'none',
+                      outline: idx === pinkActive ? '2px solid rgba(255,255,255,0.8)' : 'none',
+                      outlineOffset: '2px',
+                    }}>
+                    <img src={src} alt="" className="w-full h-full object-cover" />
+                  </div>
+                ))}
+              </div>
+              <div className="absolute bottom-6 left-6 z-10 flex items-center gap-2">
+                <button onClick={() => setPinkActive(prev => (prev - 1 + pinkSliderImages.length) % pinkSliderImages.length)}
+                  className="w-9 h-9 rounded-full border border-white/40 flex items-center justify-center text-white/70 hover:text-white hover:border-white transition-colors">
+                  <i className="fa-solid fa-chevron-left text-[10px]"></i>
+                </button>
+                <button onClick={() => setPinkActive(prev => (prev + 1) % pinkSliderImages.length)}
+                  className="w-9 h-9 rounded-full border border-white/40 flex items-center justify-center text-white/70 hover:text-white hover:border-white transition-colors">
+                  <i className="fa-solid fa-chevron-right text-[10px]"></i>
+                </button>
+              </div>
+              <div className="absolute bottom-6 right-6 z-10 text-white/60 text-xs font-bold tracking-widest">
+                {String(pinkActive + 1).padStart(2, '0')} / {String(pinkSliderImages.length).padStart(2, '0')}
+              </div>
+              <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-white/20 z-10">
+                <div key={pinkActive} className="h-full bg-gradient-to-r from-[#61A644] to-[#1D9FDA] pink-progress-anim" />
+              </div>
+            </div>
+          </div>
+
         </div>
       </section>
 

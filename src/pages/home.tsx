@@ -339,10 +339,19 @@ export default function GetMedsHomepage() {
   };
 
   const [therapPage, setTherapPage] = useState(0);
+  const [therapMobileActive, setTherapMobileActive] = useState(0);
   const [openFaq, setOpenFaq] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [mobileProductsOpen, setMobileProductsOpen] = useState(false);
   const [mobileCompanyOpen, setMobileCompanyOpen] = useState(false);
+
+  // Therapeutic Areas mobile slider — auto-advance every 5s (12 cards)
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTherapMobileActive(prev => (prev + 1) % 12);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     // 1. Inject Fonts
@@ -999,14 +1008,14 @@ export default function GetMedsHomepage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div className="h-[220px] md:h-[280px] lg:h-[340px]">
               <img
-                src={getImage('assets/patientfirst.jpg', 'assets/patientfirst.jpg')}
+                src={getImage('assets/genericslider.jpg', 'assets/genericslider.jpg')}
                 alt="Medical Professional"
                 className="w-full h-full object-cover object-center rounded-[24px] shadow-lg"
               />
             </div>
             <div className="h-[220px] md:h-[280px] lg:h-[340px]">
               <img
-                src={getImage('assets/patientsecond.jpg', 'assets/patientsecond.jpg')}
+                src={getImage('assets/test.jpg', 'assets/test.jpg')}
                 alt="Medical Facility"
                 className="w-full h-full object-cover object-center rounded-[24px] shadow-lg"
               />
@@ -1125,64 +1134,145 @@ export default function GetMedsHomepage() {
         const totalPages = Math.ceil(therapCards.length / 4);
         return (
           <section className="py-12 px-6 reveal">
-            <div className="max-w-7xl mx-auto bg-gray-100 rounded-3xl p-8">
-              {/* Header row */}
-              <div className="flex flex-col md:flex-row md:items-start justify-between mb-8 gap-4">
+            <style>{`
+              @keyframes therapProgress { from { width: 0% } to { width: 100% } }
+              .therap-progress-anim { animation: therapProgress 5s linear forwards; }
+            `}</style>
+            <div className="max-w-7xl mx-auto bg-gray-100 rounded-3xl overflow-hidden">
+
+              {/* Header */}
+              <div className="flex flex-col md:flex-row md:items-start justify-between px-8 pt-8 pb-6 gap-4">
                 <h2 className="text-2xl md:text-3xl font-semibold text-gray-900 max-w-md leading-tight">Therapeutic areas we serve across the Philippines.</h2>
               </div>
 
-              {/* Slider */}
-              <div className="overflow-hidden">
-                <div
-                  className="flex transition-transform duration-500 ease-in-out"
-                  style={{ transform: `translateX(-${therapPage * 100}%)` }}
-                >
-                  {Array.from({ length: totalPages }).map((_, pageIdx) => (
-                    <div key={pageIdx} className="min-w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                      {therapCards.slice(pageIdx * 4, pageIdx * 4 + 4).map((card) => (
-                        <div key={card.name} className="relative rounded-2xl overflow-hidden aspect-[3/4] group cursor-pointer">
-                          <img src={card.img} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt={card.name} />
-                          <div className="absolute top-3 right-3 bg-white/80 backdrop-blur-sm rounded-full px-3 py-1">
-                            <span className="text-xs text-gray-700 font-medium">{card.badge}</span>
-                          </div>
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/15 to-transparent"></div>
-                          <div className="absolute bottom-0 left-0 right-0 p-4">
-                            <h3 className="text-white text-xl font-bold mb-1">{card.name}</h3>
-                            <div className="overflow-hidden mb-1">
-                              <div className="marquee-track">
-                                <span className="text-white/75 text-xs pr-6">{card.marquee}</span>
-                                <span className="text-white/75 text-xs pr-6">{card.marquee}</span>
-                              </div>
-                            </div>
-                            <a href={card.link} className="text-xs font-semibold text-white bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full px-3 py-1 transition-colors">See All</a>
-                          </div>
-                        </div>
-                      ))}
+              {/* Mobile slider — landscape main image + thumbnail strip */}
+              <div className="md:hidden">
+                <div className="relative overflow-hidden aspect-video">
+                  {therapCards.map((card, idx) => (
+                    <div
+                      key={idx}
+                      className="absolute inset-0 transition-opacity duration-1000 ease-in-out"
+                      style={{
+                        backgroundImage: `url(${card.img})`,
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                        opacity: idx === therapMobileActive ? 1 : 0,
+                      }}
+                    />
+                  ))}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                  {/* Card info overlay */}
+                  <div className="absolute bottom-12 left-4 z-10">
+                    <h3 className="text-white text-lg font-bold mb-0.5">{therapCards[therapMobileActive]?.name}</h3>
+                    <div className="overflow-hidden w-48">
+                      <div className="marquee-track">
+                        <span className="text-white/70 text-[11px] pr-4">{therapCards[therapMobileActive]?.marquee}</span>
+                        <span className="text-white/70 text-[11px] pr-4">{therapCards[therapMobileActive]?.marquee}</span>
+                      </div>
+                    </div>
+                  </div>
+                  {/* Nav arrows */}
+                  <div className="absolute bottom-3 left-4 z-10 flex items-center gap-2">
+                    <button
+                      onClick={() => setTherapMobileActive(prev => (prev - 1 + therapCards.length) % therapCards.length)}
+                      className="w-8 h-8 rounded-full border border-white/40 flex items-center justify-center text-white/70 hover:text-white hover:border-white transition-colors"
+                    >
+                      <i className="fa-solid fa-chevron-left text-[9px]"></i>
+                    </button>
+                    <button
+                      onClick={() => setTherapMobileActive(prev => (prev + 1) % therapCards.length)}
+                      className="w-8 h-8 rounded-full border border-white/40 flex items-center justify-center text-white/70 hover:text-white hover:border-white transition-colors"
+                    >
+                      <i className="fa-solid fa-chevron-right text-[9px]"></i>
+                    </button>
+                  </div>
+                  {/* Slide counter */}
+                  <div className="absolute bottom-3 right-4 z-10 text-white/60 text-xs font-bold tracking-widest">
+                    {String(therapMobileActive + 1).padStart(2, '0')} / {String(therapCards.length).padStart(2, '0')}
+                  </div>
+                  {/* Progress bar */}
+                  <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-white/20 z-10">
+                    <div key={therapMobileActive} className="h-full bg-gradient-to-r from-[#61A644] to-[#1D9FDA] therap-progress-anim" />
+                  </div>
+                </div>
+                {/* Thumbnail strip */}
+                <div className="flex gap-2 overflow-x-auto px-4 py-4" style={{ scrollbarWidth: 'none' }}>
+                  {therapCards.map((card, idx) => (
+                    <div
+                      key={idx}
+                      onClick={() => setTherapMobileActive(idx)}
+                      className="flex-shrink-0 cursor-pointer overflow-hidden transition-all duration-300"
+                      style={{
+                        width: '80px',
+                        height: '60px',
+                        borderRadius: '10px',
+                        opacity: idx === therapMobileActive ? 1 : 0.5,
+                        outline: idx === therapMobileActive ? '2px solid #61A644' : 'none',
+                        outlineOffset: '2px',
+                      }}
+                    >
+                      <img src={card.img} alt={card.name} className="w-full h-full object-cover" />
                     </div>
                   ))}
                 </div>
-              </div>
-
-              {/* Footer row */}
-              <div className="flex items-center justify-between mt-6">
-                <button className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:opacity-90 text-white text-sm font-medium rounded-full px-6 py-2.5 transition-opacity">View more</button>
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => setTherapPage(p => Math.max(0, p - 1))}
-                    disabled={therapPage === 0}
-                    className={`w-10 h-10 rounded-full border bg-white flex items-center justify-center transition-colors ${therapPage === 0 ? 'border-gray-200 text-gray-300 cursor-not-allowed' : 'border-gray-300 text-gray-600 hover:bg-gray-100'}`}
-                  >
-                    <i className="fa-solid fa-chevron-left text-sm"></i>
-                  </button>
-                  <button
-                    onClick={() => setTherapPage(p => Math.min(totalPages - 1, p + 1))}
-                    disabled={therapPage === totalPages - 1}
-                    className={`w-10 h-10 rounded-full border bg-white flex items-center justify-center transition-colors ${therapPage === totalPages - 1 ? 'border-gray-200 text-gray-300 cursor-not-allowed' : 'border-gray-300 text-gray-600 hover:bg-gray-100'}`}
-                  >
-                    <i className="fa-solid fa-chevron-right text-sm"></i>
-                  </button>
+                {/* Mobile view-more button */}
+                <div className="px-8 pb-6">
+                  <a href={therapCards[therapMobileActive]?.link}>
+                    <button className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:opacity-90 text-white text-sm font-medium rounded-full px-6 py-2.5 transition-opacity">See All</button>
+                  </a>
                 </div>
               </div>
+
+              {/* Desktop slider — hidden on mobile */}
+              <div className="hidden md:block px-8 pb-8">
+                <div className="overflow-hidden">
+                  <div
+                    className="flex transition-transform duration-500 ease-in-out"
+                    style={{ transform: `translateX(-${therapPage * 100}%)` }}
+                  >
+                    {Array.from({ length: totalPages }).map((_, pageIdx) => (
+                      <div key={pageIdx} className="min-w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        {therapCards.slice(pageIdx * 4, pageIdx * 4 + 4).map((card) => (
+                          <div key={card.name} className="relative rounded-2xl overflow-hidden aspect-[3/4] group cursor-pointer">
+                            <img src={card.img} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt={card.name} />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/15 to-transparent"></div>
+                            <div className="absolute bottom-0 left-0 right-0 p-4">
+                              <h3 className="text-white text-xl font-bold mb-1">{card.name}</h3>
+                              <div className="overflow-hidden mb-1">
+                                <div className="marquee-track">
+                                  <span className="text-white/75 text-xs pr-6">{card.marquee}</span>
+                                  <span className="text-white/75 text-xs pr-6">{card.marquee}</span>
+                                </div>
+                              </div>
+                              <a href={card.link} className="text-xs font-semibold text-white bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full px-3 py-1 transition-colors">See All</a>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div className="flex items-center justify-between mt-6">
+                  <button className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:opacity-90 text-white text-sm font-medium rounded-full px-6 py-2.5 transition-opacity">View more</button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setTherapPage(p => Math.max(0, p - 1))}
+                      disabled={therapPage === 0}
+                      className={`w-10 h-10 rounded-full border bg-white flex items-center justify-center transition-colors ${therapPage === 0 ? 'border-gray-200 text-gray-300 cursor-not-allowed' : 'border-gray-300 text-gray-600 hover:bg-gray-100'}`}
+                    >
+                      <i className="fa-solid fa-chevron-left text-sm"></i>
+                    </button>
+                    <button
+                      onClick={() => setTherapPage(p => Math.min(totalPages - 1, p + 1))}
+                      disabled={therapPage === totalPages - 1}
+                      className={`w-10 h-10 rounded-full border bg-white flex items-center justify-center transition-colors ${therapPage === totalPages - 1 ? 'border-gray-200 text-gray-300 cursor-not-allowed' : 'border-gray-300 text-gray-600 hover:bg-gray-100'}`}
+                    >
+                      <i className="fa-solid fa-chevron-right text-sm"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
             </div>
           </section>
         );

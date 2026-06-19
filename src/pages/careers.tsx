@@ -340,8 +340,48 @@ const Careers: React.FC = () => {
       </section>
 
       {/* WHY PROFESSIONALS CHOOSE Getmeds */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-20 bg-white relative overflow-hidden">
+        {/* Left gradient decoration */}
+        <div className="absolute left-0 top-0 h-full w-56 pointer-events-none">
+          <svg className="w-full h-full" viewBox="0 0 224 600" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <radialGradient id="careersLeftGrad" cx="0%" cy="100%" r="100%">
+                <stop offset="0%" stopColor="#61A644" stopOpacity="0.9" />
+                <stop offset="55%" stopColor="#1D9FDA" stopOpacity="0.55" />
+                <stop offset="100%" stopColor="#FFF7ED" stopOpacity="0" />
+              </radialGradient>
+            </defs>
+            <rect width="224" height="600" fill="url(#careersLeftGrad)" />
+            <path d="M 0 520 A 80 80 0 0 1 80 600" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="1.5" />
+            <path d="M 0 440 A 160 160 0 0 1 160 600" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="1.5" />
+            <path d="M 0 360 A 240 240 0 0 1 224 514" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="1.5" />
+            <path d="M 0 280 A 320 320 0 0 1 224 372" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="1.5" />
+            <path d="M 0 200 A 400 400 0 0 1 224 269" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="1.5" />
+            <path d="M 0 120 A 480 480 0 0 1 224 176" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="1.5" />
+            <path d="M 0 40 A 560 560 0 0 1 224 87" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="1.5" />
+          </svg>
+        </div>
+        {/* Right gradient decoration */}
+        <div className="absolute right-0 top-0 h-full w-56 pointer-events-none">
+          <svg className="w-full h-full" viewBox="0 0 224 600" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <radialGradient id="careersRightGrad" cx="100%" cy="100%" r="100%">
+                <stop offset="0%" stopColor="#61A644" stopOpacity="0.8" />
+                <stop offset="55%" stopColor="#1D9FDA" stopOpacity="0.5" />
+                <stop offset="100%" stopColor="#FFF1F2" stopOpacity="0" />
+              </radialGradient>
+            </defs>
+            <rect width="224" height="600" fill="url(#careersRightGrad)" />
+            <path d="M 224 520 A 80 80 0 0 0 144 600" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="1.5" />
+            <path d="M 224 440 A 160 160 0 0 0 64 600" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="1.5" />
+            <path d="M 224 360 A 240 240 0 0 0 0 514" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="1.5" />
+            <path d="M 224 280 A 320 320 0 0 0 0 372" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="1.5" />
+            <path d="M 224 200 A 400 400 0 0 0 0 269" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="1.5" />
+            <path d="M 224 120 A 480 480 0 0 0 0 176" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="1.5" />
+            <path d="M 224 40 A 560 560 0 0 0 0 87" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="1.5" />
+          </svg>
+        </div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent font-bold uppercase tracking-widest text-lg block mb-4">Career Advantages</span>
             <h2 className="text-3xl md:text-4xl font-semibold text-dark mb-4">
