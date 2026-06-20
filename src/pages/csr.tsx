@@ -281,12 +281,12 @@ const Csr: React.FC = () => {
       </section>
 
       {/* COMBINED BENTO GALLERY */}
-      <section className="py-12 px-6">
+      <section className="py-12 px-0 md:px-6">
         <style>{`
           @keyframes papProgress { from { width: 0% } to { width: 100% } }
           .pap-progress-anim { animation: papProgress 5s linear forwards; }
         `}</style>
-        <div className="max-w-7xl mx-auto bg-gray-100 rounded-3xl overflow-hidden">
+        <div className="max-w-7xl mx-auto bg-gray-100 rounded-none md:rounded-3xl overflow-hidden">
 
           {/* Header */}
           <div className="flex flex-col md:flex-row md:items-start justify-between px-8 pt-8 pb-6 gap-6">
@@ -492,12 +492,12 @@ const Csr: React.FC = () => {
       </section>
 
       {/* PINK RUN HERO SLIDER */}
-      <section className="py-12 px-6">
+      <section className="py-12 px-0 md:px-6">
         <style>{`
           @keyframes pinkProgress { from { width: 0% } to { width: 100% } }
           .pink-progress-anim { animation: pinkProgress 5s linear forwards; }
         `}</style>
-        <div className="max-w-7xl mx-auto bg-gray-100 rounded-3xl overflow-hidden">
+        <div className="max-w-7xl mx-auto bg-gray-100 rounded-none md:rounded-3xl overflow-hidden">
 
           {/* Header row — title left, description right */}
           <div className="flex flex-col md:flex-row md:items-start justify-between px-8 pt-8 pb-6 gap-6">
