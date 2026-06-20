@@ -431,7 +431,7 @@ export default function OrderMedicines() {
                     desc: 'Receive your order confirmation and delivery details via your preferred contact'
                   }
                 ].map((step, i) => (
-                  <div key={i} className="bg-white/10 backdrop-blur-sm rounded-[15px] border border-white/20 p-4 md:p-6 flex flex-row items-center md:flex-col md:items-center text-left md:text-center hover:bg-white/20 hover:border-white/40 hover:scale-[1.03] hover:shadow-[0_8px_32px_rgba(0,0,0,0.15)] transition-all duration-300 cursor-default">
+                  <div key={i} className="bg-white/10 backdrop-blur-sm rounded-[15px] border border-white/20 p-4 md:p-6 flex flex-row items-center md:flex-col md:items-center text-left md:text-center cursor-default">
                     <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-white/20 border border-white/30 flex items-center justify-center flex-shrink-0 mr-4 md:mr-0 md:mb-4">
                       <i className={`fa-solid ${step.icon} text-white text-lg md:text-xl`}></i>
                     </div>

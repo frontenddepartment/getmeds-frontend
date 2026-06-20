@@ -117,6 +117,7 @@ export default function ProductRange() {
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [formData, setFormData] = useState({ name: '', phone: '', email: '', message: '' });
   const [submitState, setSubmitState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
+  const [successModalOpen, setSuccessModalOpen] = useState(false);
   const [searchHistory, setSearchHistory] = useState<string[]>(() => {
     try {
       const saved = localStorage.getItem('getmeds-search-history');
@@ -782,7 +783,8 @@ export default function ProductRange() {
       setSubmitState('sent');
       setFormData({ name: '', phone: '', email: '', message: '' });
       setUploadedFiles([]);
-      setTimeout(() => closeModal(), 1500);
+      setSuccessModalOpen(true);
+      setTimeout(() => setSubmitState('idle'), 300);
     } catch (error) {
       console.error('Submission error:', error);
       setSubmitState('error');
@@ -1337,6 +1339,37 @@ export default function ProductRange() {
           </section>
 
           <div id="footer-container" />
+
+          {/* ── Product Inquiry Success Modal ── */}
+          {successModalOpen && (
+            <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/50 backdrop-blur-sm px-4">
+              <div className="bg-white w-full max-w-[400px] rounded-2xl shadow-2xl relative overflow-hidden">
+                <button onClick={() => setSuccessModalOpen(false)}
+                  className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition z-10">
+                  <i className="fa-solid fa-xmark text-base"></i>
+                </button>
+                <div className="px-10 pt-12 pb-8 text-center">
+                  <div className="flex justify-center mb-7">
+                    <div className="w-20 h-20 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg,#61A644,#1D9FDA)' }}>
+                      <i className="fa-solid fa-check text-white text-4xl"></i>
+                    </div>
+                  </div>
+                  <h2 className="text-[22px] font-bold text-gray-900 mb-4 leading-snug">Thank you for your inquiry.</h2>
+                  <p className="text-[13px] text-gray-500 leading-relaxed">
+                    Our team will contact you shortly to discuss your pharmaceutical product needs. For urgent concerns, please call{' '}
+                    <a href="tel:+639190769105" className="text-[#1D9FDA] font-semibold hover:underline">+63 919 076 9105</a>.
+                  </p>
+                </div>
+                <div className="border-t border-gray-100 px-10 py-4 text-center">
+                  <button onClick={() => setSuccessModalOpen(false)}
+                    className="text-[13px] font-semibold hover:underline"
+                    style={{ background: 'linear-gradient(to right,#61A644,#1D9FDA)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+                    Close
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>{/* end body row */}
 
