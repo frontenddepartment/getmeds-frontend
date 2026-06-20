@@ -1342,6 +1342,8 @@ export default function ProductRange() {
 
           {/* ── Product Inquiry Success Modal ── */}
           {successModalOpen && (
+            <>
+            <style>{`@keyframes checkBounce{0%{transform:scale(0);opacity:0}60%{transform:scale(1.15);opacity:1}100%{transform:scale(1);opacity:1}}.check-bounce{animation:checkBounce 0.5s cubic-bezier(0.175,0.885,0.32,1.275) forwards}`}</style>
             <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/50 backdrop-blur-sm px-4">
               <div className="bg-white w-full max-w-[400px] rounded-2xl shadow-2xl relative overflow-hidden">
                 <button onClick={() => setSuccessModalOpen(false)}
@@ -1350,11 +1352,11 @@ export default function ProductRange() {
                 </button>
                 <div className="px-10 pt-12 pb-8 text-center">
                   <div className="flex justify-center mb-7">
-                    <div className="w-20 h-20 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg,#61A644,#1D9FDA)' }}>
+                    <div className="check-bounce w-20 h-20 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg,#61A644,#1D9FDA)' }}>
                       <i className="fa-solid fa-check text-white text-4xl"></i>
                     </div>
                   </div>
-                  <h2 className="text-[22px] font-bold text-gray-900 mb-4 leading-snug">Thank you for your inquiry.</h2>
+                  <h2 className="text-[19px] font-semibold text-gray-900 mb-4 leading-snug">Thank you for your inquiry.</h2>
                   <p className="text-[13px] text-gray-500 leading-relaxed">
                     Our team will contact you shortly to discuss your pharmaceutical product needs. For urgent concerns, please call{' '}
                     <a href="tel:+639190769105" className="text-[#1D9FDA] font-semibold hover:underline">+63 919 076 9105</a>.
@@ -1369,6 +1371,7 @@ export default function ProductRange() {
                 </div>
               </div>
             </div>
+            </>
           )}
         </div>
       </div>{/* end body row */}
