@@ -45,6 +45,31 @@
     body[data-page="pap"] #mobile-company-label {
         color: #0D99FF;
     }
+
+    /* Mobile menu smooth slide-in / slide-out */
+    #mobile-menu {
+        transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        opacity: 0;
+        transform: translateY(-10px);
+        pointer-events: none;
+        visibility: hidden;
+    }
+    #mobile-menu.menu-open {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+        visibility: visible;
+    }
+
+    /* Hamburger icon transition */
+    #mobile-menu-btn i {
+        display: inline-block;
+        transition: transform 0.3s ease, opacity 0.2s ease;
+    }
+    #mobile-menu-btn.menu-open i {
+        transform: rotate(90deg);
+    }
 </style>
 
 <!-- Navbar -->
@@ -454,7 +479,7 @@
 
     <!-- Mobile Sidebar Menu -->
     <div id="mobile-menu"
-        class="hidden fixed top-[80px] left-0 w-full bg-white shadow-xl border-t border-gray-100 z-50 overflow-y-auto"
+        class="fixed top-[80px] left-0 w-full bg-white shadow-xl border-t border-gray-100 z-50 overflow-y-auto"
         style="height: calc(100vh - 80px);">
         <div class="flex flex-col px-4 py-4 pb-12">
 
@@ -778,18 +803,23 @@
 
     window.toggleMobileMenu = function (forceClose = false) {
         const menu = document.getElementById('mobile-menu');
+        const btn = document.getElementById('mobile-menu-btn');
         if (!menu) return;
         const searchBar = document.getElementById('search-bar-container');
 
+        const isOpen = menu.classList.contains('menu-open');
+
         // Hide search if opening menu
-        if (!forceClose && menu.classList.contains('hidden') && searchBar && !searchBar.classList.contains('hidden')) {
+        if (!forceClose && !isOpen && searchBar && !searchBar.classList.contains('hidden')) {
             toggleSearchBar();
         }
 
-        if (forceClose || !menu.classList.contains('hidden')) {
-            menu.classList.add('hidden');
+        if (forceClose || isOpen) {
+            menu.classList.remove('menu-open');
+            if (btn) btn.classList.remove('menu-open');
         } else {
-            menu.classList.remove('hidden');
+            menu.classList.add('menu-open');
+            if (btn) btn.classList.add('menu-open');
         }
     };
 
@@ -849,10 +879,12 @@
     // Close mobile menu when a link inside it is tapped
     (function () {
         const menu = document.getElementById('mobile-menu');
+        const btn = document.getElementById('mobile-menu-btn');
         if (menu) {
             menu.querySelectorAll('a').forEach(function (link) {
                 link.addEventListener('click', function () {
-                    menu.classList.add('hidden');
+                    menu.classList.remove('menu-open');
+                    if (btn) btn.classList.remove('menu-open');
                 });
             });
         }

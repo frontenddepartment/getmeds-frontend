@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useCategories, useImageMapper, useNews, useSiteSettings } from '../lib/useSanity';
 import { getGoogleSpreadsheetBySlug } from '../lib/queries';
 import { injectHTML } from '../lib/injectHTML';
@@ -56,6 +56,32 @@ export default function GetMedsHomepage() {
   const { getImage } = useImageMapper('home');
   const { data: newsItems } = useNews();
   const { data: settings } = useSiteSettings();
+  const newsSliderRef = useRef<HTMLDivElement>(null);
+  const [activeNewsSlide, setActiveNewsSlide] = useState(0);
+
+  const handleNewsScroll = () => {
+    const el = newsSliderRef.current;
+    if (!el) return;
+    const children = Array.from(el.children) as HTMLElement[];
+    let closest = 0;
+    let minDist = Infinity;
+    const elCenter = el.getBoundingClientRect().left + el.offsetWidth / 2;
+    children.forEach((child, i) => {
+      const childCenter = child.getBoundingClientRect().left + child.offsetWidth / 2;
+      const dist = Math.abs(childCenter - elCenter);
+      if (dist < minDist) { minDist = dist; closest = i; }
+    });
+    setActiveNewsSlide(closest);
+  };
+
+  const scrollToNewsSlide = (idx: number) => {
+    const el = newsSliderRef.current;
+    if (!el) return;
+    const child = el.children[idx] as HTMLElement;
+    if (child) {
+      el.scrollTo({ left: child.offsetLeft - (el.offsetWidth - child.offsetWidth) / 2, behavior: 'smooth' });
+    }
+  };
   const { data: categoriesData } = useCategories();
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -913,7 +939,7 @@ export default function GetMedsHomepage() {
         {/* Hero Content Area */}
         <div className="max-w-7xl mx-auto px-6 w-full relative z-10 flex-grow flex items-center justify-center md:justify-start pt-20 md:pt-28 pb-10 md:pb-14 text-center md:text-left">
           <div className="max-w-2xl space-y-3 reveal active mx-auto md:mx-0 flex flex-col items-center md:items-start">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-[1.1] tracking-tight bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">
+            <h1 className="text-2xl md:text-5xl lg:text-6xl font-bold leading-[1.1] tracking-tight bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">
               Life-Saving Access. <br />
               Redefining Healthcare Possibilities.
             </h1>
@@ -923,7 +949,7 @@ export default function GetMedsHomepage() {
 
             {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row justify-center md:justify-start gap-3 pt-2">
-              <a href="order-medicines.html" className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:opacity-90 text-white text-center font-bold uppercase tracking-wider text-[11px] px-6 py-3 rounded-lg shadow-2xl shadow-blue-500/40 transition-all flex items-center justify-center gap-2 group">
+              <a href="product-range.html" className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:opacity-90 text-white text-center font-bold uppercase tracking-wider text-[11px] px-6 py-3 rounded-lg shadow-2xl shadow-blue-500/40 transition-all flex items-center justify-center gap-2 group">
                 Our Solutions <i className="fa-solid fa-chevron-right group-hover:translate-x-1 transition-transform"></i>
               </a>
               <button onClick={() => setIsInquiryOpen(true)} className="bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/40 text-center font-bold uppercase tracking-wider text-[11px] px-6 py-3 rounded-lg transition-all flex items-center justify-center gap-2">
@@ -1133,21 +1159,22 @@ export default function GetMedsHomepage() {
         ];
         const totalPages = Math.ceil(therapCards.length / 4);
         return (
-          <section className="py-12 px-6 reveal">
+          <section className="py-12 px-0 md:px-6 reveal">
             <style>{`
               @keyframes therapProgress { from { width: 0% } to { width: 100% } }
               .therap-progress-anim { animation: therapProgress 5s linear forwards; }
             `}</style>
-            <div className="max-w-7xl mx-auto bg-gray-100 rounded-3xl overflow-hidden">
+            <div className="max-w-7xl mx-auto bg-gray-100 rounded-none md:rounded-3xl overflow-hidden">
 
               {/* Header */}
-              <div className="flex flex-col md:flex-row md:items-start justify-between px-8 pt-8 pb-6 gap-4">
+              <div className="flex items-start justify-between px-8 pt-8 pb-6 gap-4">
                 <h2 className="text-2xl md:text-3xl font-semibold text-gray-900 max-w-md leading-tight">Therapeutic areas we serve across the Philippines.</h2>
+                <a href="product-range.html" className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:opacity-90 text-white text-xs md:text-sm font-medium rounded-full px-3 py-1.5 md:px-6 md:py-2.5 transition-opacity shrink-0">See All</a>
               </div>
 
-              {/* Mobile slider — landscape main image + thumbnail strip */}
+              {/* Mobile slider — portrait main image + thumbnail strip */}
               <div className="md:hidden">
-                <div className="relative overflow-hidden aspect-video">
+                <div className="relative overflow-hidden" style={{ aspectRatio: '5/4' }}>
                   {therapCards.map((card, idx) => (
                     <div
                       key={idx}
@@ -1162,33 +1189,14 @@ export default function GetMedsHomepage() {
                   ))}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
                   {/* Card info overlay */}
-                  <div className="absolute bottom-12 left-4 z-10">
-                    <h3 className="text-white text-lg font-bold mb-0.5">{therapCards[therapMobileActive]?.name}</h3>
+                  <div className="absolute bottom-5 left-4 z-10">
+                    <h3 className="text-white text-xs md:text-lg font-bold mb-0.5">{therapCards[therapMobileActive]?.name}</h3>
                     <div className="overflow-hidden w-48">
                       <div className="marquee-track">
                         <span className="text-white/70 text-[11px] pr-4">{therapCards[therapMobileActive]?.marquee}</span>
                         <span className="text-white/70 text-[11px] pr-4">{therapCards[therapMobileActive]?.marquee}</span>
                       </div>
                     </div>
-                  </div>
-                  {/* Nav arrows */}
-                  <div className="absolute bottom-3 left-4 z-10 flex items-center gap-2">
-                    <button
-                      onClick={() => setTherapMobileActive(prev => (prev - 1 + therapCards.length) % therapCards.length)}
-                      className="w-8 h-8 rounded-full border border-white/40 flex items-center justify-center text-white/70 hover:text-white hover:border-white transition-colors"
-                    >
-                      <i className="fa-solid fa-chevron-left text-[9px]"></i>
-                    </button>
-                    <button
-                      onClick={() => setTherapMobileActive(prev => (prev + 1) % therapCards.length)}
-                      className="w-8 h-8 rounded-full border border-white/40 flex items-center justify-center text-white/70 hover:text-white hover:border-white transition-colors"
-                    >
-                      <i className="fa-solid fa-chevron-right text-[9px]"></i>
-                    </button>
-                  </div>
-                  {/* Slide counter */}
-                  <div className="absolute bottom-3 right-4 z-10 text-white/60 text-xs font-bold tracking-widest">
-                    {String(therapMobileActive + 1).padStart(2, '0')} / {String(therapCards.length).padStart(2, '0')}
                   </div>
                   {/* Progress bar */}
                   <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-white/20 z-10">
@@ -1214,12 +1222,6 @@ export default function GetMedsHomepage() {
                       <img src={card.img} alt={card.name} className="w-full h-full object-cover" />
                     </div>
                   ))}
-                </div>
-                {/* Mobile view-more button */}
-                <div className="px-8 pb-6">
-                  <a href={therapCards[therapMobileActive]?.link}>
-                    <button className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:opacity-90 text-white text-sm font-medium rounded-full px-6 py-2.5 transition-opacity">See All</button>
-                  </a>
                 </div>
               </div>
 
@@ -1315,8 +1317,8 @@ export default function GetMedsHomepage() {
                     <line x1="88" y1="176" x2="154" y2="0" stroke="#0ea5e9" strokeWidth="1" opacity="0.1" />
                   </svg>
                   <div className="absolute inset-0 flex items-end justify-end pb-5 pr-5">
-                    <div className="w-14 h-14 rounded-full bg-gradient-to-br from-sky-400 to-blue-500 flex items-center justify-center shadow-lg">
-                      <i className="fa-solid fa-earth-americas text-white text-lg"></i>
+                    <div className="w-9 h-9 md:w-14 md:h-14 rounded-full bg-gradient-to-br from-sky-400 to-blue-500 flex items-center justify-center shadow-lg">
+                      <i className="fa-solid fa-earth-americas text-white text-xs md:text-lg"></i>
                     </div>
                   </div>
                 </div>
@@ -1336,8 +1338,8 @@ export default function GetMedsHomepage() {
                     <circle cx="176" cy="176" r="155" fill="none" stroke="#7c3aed" strokeWidth="1" opacity="0.1" />
                   </svg>
                   <div className="absolute inset-0 flex items-end justify-end pb-5 pr-5">
-                    <div className="w-14 h-14 rounded-full bg-gradient-to-br from-violet-400 to-purple-600 flex items-center justify-center shadow-lg">
-                      <i className="fa-solid fa-shield-halved text-white text-lg"></i>
+                    <div className="w-9 h-9 md:w-14 md:h-14 rounded-full bg-gradient-to-br from-violet-400 to-purple-600 flex items-center justify-center shadow-lg">
+                      <i className="fa-solid fa-shield-halved text-white text-xs md:text-lg"></i>
                     </div>
                   </div>
                 </div>
@@ -1357,8 +1359,8 @@ export default function GetMedsHomepage() {
                   </svg>
                 </div>
                 <div className="absolute bottom-5 right-5">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-teal-400 to-cyan-500 flex items-center justify-center shadow-lg">
-                    <i className="fa-solid fa-truck text-white text-base"></i>
+                  <div className="w-9 h-9 md:w-12 md:h-12 rounded-full bg-gradient-to-br from-teal-400 to-cyan-500 flex items-center justify-center shadow-lg">
+                    <i className="fa-solid fa-truck text-white text-xs md:text-base"></i>
                   </div>
                 </div>
               </div>
@@ -1375,8 +1377,8 @@ export default function GetMedsHomepage() {
                   </svg>
                 </div>
                 <div className="absolute bottom-5 right-5">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-orange-400 to-amber-500 flex items-center justify-center shadow-lg">
-                    <i className="fa-solid fa-store text-white text-base"></i>
+                  <div className="w-9 h-9 md:w-12 md:h-12 rounded-full bg-gradient-to-br from-orange-400 to-amber-500 flex items-center justify-center shadow-lg">
+                    <i className="fa-solid fa-store text-white text-xs md:text-base"></i>
                   </div>
                 </div>
               </div>
@@ -1393,8 +1395,8 @@ export default function GetMedsHomepage() {
                   </svg>
                 </div>
                 <div className="absolute bottom-5 right-5">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-indigo-400 to-blue-600 flex items-center justify-center shadow-lg">
-                    <i className="fa-solid fa-landmark text-white text-base"></i>
+                  <div className="w-9 h-9 md:w-12 md:h-12 rounded-full bg-gradient-to-br from-indigo-400 to-blue-600 flex items-center justify-center shadow-lg">
+                    <i className="fa-solid fa-landmark text-white text-xs md:text-base"></i>
                   </div>
                 </div>
               </div>
@@ -1416,8 +1418,8 @@ export default function GetMedsHomepage() {
                     <line x1="88" y1="176" x2="176" y2="0" stroke="#10b981" strokeWidth="1" opacity="0.15" />
                   </svg>
                   <div className="absolute inset-0 flex items-end justify-end pb-5 pr-5">
-                    <div className="w-14 h-14 rounded-full bg-gradient-to-br from-emerald-400 to-green-600 flex items-center justify-center shadow-lg">
-                      <i className="fa-solid fa-hand-holding-medical text-white text-lg"></i>
+                    <div className="w-9 h-9 md:w-14 md:h-14 rounded-full bg-gradient-to-br from-emerald-400 to-green-600 flex items-center justify-center shadow-lg">
+                      <i className="fa-solid fa-hand-holding-medical text-white text-xs md:text-lg"></i>
                     </div>
                   </div>
                 </div>
@@ -1437,8 +1439,8 @@ export default function GetMedsHomepage() {
                     <circle cx="176" cy="176" r="155" fill="none" stroke="#9333ea" strokeWidth="1" opacity="0.1" />
                   </svg>
                   <div className="absolute inset-0 flex items-end justify-end pb-5 pr-5">
-                    <div className="w-14 h-14 rounded-full bg-gradient-to-br from-purple-400 to-violet-600 flex items-center justify-center shadow-lg">
-                      <i className="fa-solid fa-certificate text-white text-lg"></i>
+                    <div className="w-9 h-9 md:w-14 md:h-14 rounded-full bg-gradient-to-br from-purple-400 to-violet-600 flex items-center justify-center shadow-lg">
+                      <i className="fa-solid fa-certificate text-white text-xs md:text-lg"></i>
                     </div>
                   </div>
                 </div>
@@ -1460,8 +1462,8 @@ export default function GetMedsHomepage() {
                     <circle cx="176" cy="176" r="155" fill="none" stroke="#f43f5e" strokeWidth="1" opacity="0.1" />
                   </svg>
                   <div className="absolute inset-0 flex items-end justify-end pb-5 pr-5">
-                    <div className="w-14 h-14 rounded-full bg-gradient-to-br from-rose-400 to-pink-600 flex items-center justify-center shadow-lg">
-                      <i className="fa-solid fa-globe text-white text-lg"></i>
+                    <div className="w-9 h-9 md:w-14 md:h-14 rounded-full bg-gradient-to-br from-rose-400 to-pink-600 flex items-center justify-center shadow-lg">
+                      <i className="fa-solid fa-globe text-white text-xs md:text-lg"></i>
                     </div>
                   </div>
                 </div>
@@ -1482,8 +1484,8 @@ export default function GetMedsHomepage() {
                     <line x1="88" y1="176" x2="176" y2="0" stroke="#06b6d4" strokeWidth="1" opacity="0.15" />
                   </svg>
                   <div className="absolute inset-0 flex items-end justify-end pb-5 pr-5">
-                    <div className="w-14 h-14 rounded-full bg-gradient-to-br from-cyan-400 to-teal-600 flex items-center justify-center shadow-lg">
-                      <i className="fa-solid fa-microchip text-white text-lg"></i>
+                    <div className="w-9 h-9 md:w-14 md:h-14 rounded-full bg-gradient-to-br from-cyan-400 to-teal-600 flex items-center justify-center shadow-lg">
+                      <i className="fa-solid fa-microchip text-white text-xs md:text-lg"></i>
                     </div>
                   </div>
                 </div>
@@ -1709,9 +1711,9 @@ export default function GetMedsHomepage() {
       })()}
 
       {/* News & Insights Section */}
-      <section className="py-10 px-6 bg-white reveal">
+      <section className="py-10 px-0 md:px-6 bg-white reveal">
         <div className="max-w-7xl mx-auto">
-          <div className="rounded-2xl p-7" style={{
+          <div className="rounded-none md:rounded-2xl p-7" style={{
             background: 'linear-gradient(120deg, #fdf0e8 0%, #c8e8f5 55%, #7ab3d4 100%)',
           }}>
 
@@ -1724,17 +1726,22 @@ export default function GetMedsHomepage() {
                 }}>News and Insights</span>
                 <h2 className="text-2xl font-bold text-gray-900">What's new at Getmeds.</h2>
               </div>
-              <a href="articles.html" className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:opacity-90 text-white text-sm font-medium rounded-full px-6 py-2.5 transition-opacity shrink-0">View All</a>
+              <a href="articles.html" className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:opacity-90 text-white text-xs md:text-sm font-medium rounded-full px-3 py-1.5 md:px-6 md:py-2.5 transition-opacity shrink-0">View All</a>
             </div>
 
-            {/* 3 Article Cards — Dynamic from Sanity */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* 3 Article Cards — mobile: horizontal snap slider; desktop: 3-col grid */}
+            <div
+              ref={newsSliderRef}
+              onScroll={handleNewsScroll}
+              className="flex md:grid md:grid-cols-3 overflow-x-auto md:overflow-visible gap-3 md:gap-4 snap-x md:snap-none snap-mandatory -mx-7 px-7 md:mx-0 md:px-0 pb-1 md:pb-0"
+              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' } as React.CSSProperties}
+            >
               {(newsItems && newsItems.length > 0 ? newsItems.slice(0, 3) : []).map((article) => {
                 const imgUrl = article.image
                   ? urlFor(article.image).width(800).url()
                   : 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&q=80&w=800';
                 return (
-                  <a key={article._id} href={`/article-detail?id=${article._id}`} className="relative rounded-3xl overflow-hidden cursor-pointer hover:-translate-y-2 hover:shadow-2xl transition-all duration-500 group block" style={{ height: '460px' }}>
+                  <a key={article._id} href={`/article-detail?id=${article._id}`} className="relative rounded-3xl overflow-hidden cursor-pointer md:hover:-translate-y-2 md:hover:shadow-2xl transition-all duration-500 group block flex-shrink-0 w-[82%] md:w-auto snap-center mb-0 md:mb-0" style={{ height: '460px' }}>
 
                     {/* Full background image */}
                     <img src={imgUrl} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt={article.title} />
@@ -1745,8 +1752,8 @@ export default function GetMedsHomepage() {
                     {/* Content pinned to bottom */}
                     <div className="absolute bottom-0 left-0 right-0 p-5">
 
-                      {/* Title + read time pill */}
-                      <div className="flex items-start justify-between gap-3 mb-2">
+                      {/* Title — desktop: flex row with readTime pill; mobile: full width */}
+                      <div className="hidden md:flex items-start justify-between gap-3 mb-2">
                         <h3 className="text-white font-bold text-base leading-snug">{article.title}</h3>
                         {article.readTime && (
                           <div className="flex-shrink-0 text-white text-[10px] font-semibold px-2.5 py-1 rounded-full" style={{ background: 'rgba(255,255,255,0.18)', backdropFilter: 'blur(6px)' }}>
@@ -1754,13 +1761,19 @@ export default function GetMedsHomepage() {
                           </div>
                         )}
                       </div>
+                      <h3 className="md:hidden text-white font-bold text-base leading-snug mb-2">{article.title}</h3>
 
                       {/* Description */}
                       <p className="text-white/65 text-[12px] leading-relaxed mb-3 line-clamp-2">{article.description}</p>
 
-                      {/* Category tag */}
-                      <div className="flex gap-2 mb-4">
+                      {/* Tag + readTime on same row (mobile: both here; desktop: tag only) */}
+                      <div className="flex items-center gap-2 mb-4">
                         <span className="text-white text-[11px] font-semibold px-3 py-1 rounded-full" style={{ background: 'linear-gradient(135deg,#1D9FDA,#61A644)' }}>{article.tag}</span>
+                        {article.readTime && (
+                          <div className="md:hidden flex-shrink-0 text-white text-[10px] font-semibold px-2.5 py-1 rounded-full" style={{ background: 'rgba(255,255,255,0.18)', backdropFilter: 'blur(6px)' }}>
+                            {article.readTime}
+                          </div>
+                        )}
                       </div>
 
                       {/* Read More button */}
@@ -1772,6 +1785,22 @@ export default function GetMedsHomepage() {
                   </a>
                 );
               })}
+            </div>
+
+            {/* Mobile dot indicators */}
+            <div className="flex md:hidden justify-center gap-2 mt-4">
+              {(newsItems && newsItems.length > 0 ? newsItems.slice(0, 3) : []).map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => scrollToNewsSlide(i)}
+                  className="rounded-full transition-all duration-300"
+                  style={{
+                    width: activeNewsSlide === i ? '20px' : '8px',
+                    height: '8px',
+                    background: activeNewsSlide === i ? '#1D9FDA' : '#cbd5e1',
+                  }}
+                />
+              ))}
             </div>
 
           </div>
