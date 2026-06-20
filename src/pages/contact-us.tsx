@@ -183,14 +183,14 @@ export default function ContactUs() {
             <h2 className="text-2xl md:text-[28px] font-bold text-dark mb-3 leading-tight tracking-tight">
               How to Reach Us
             </h2>
-            <p className="text-gray-500 text-[14px] mb-10 leading-relaxed max-w-[90%]">
+            <p className="text-gray-500 text-[14px] mb-6 lg:mb-10 leading-relaxed max-w-[90%]">
               Pick the channel that fits your need. General inquiries, careers, and partnerships are routed directly to the right team for faster response.
             </p>
 
             {/* Dynamic contact groups grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-10 gap-x-8">
+            <div className="grid grid-cols-2 lg:grid-cols-2 gap-3 lg:gap-y-10 lg:gap-x-8">
               {contactGroups.map((group) => (
-                <div key={group._key}>
+                <div key={group._key} className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm lg:bg-transparent lg:rounded-none lg:p-0 lg:border-0 lg:shadow-none">
                   {/* Purpose heading with icon */}
                   <div className="flex items-center gap-2 mb-3">
                     <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
@@ -241,7 +241,7 @@ export default function ContactUs() {
               ))}
 
               {/* Social Network — always last */}
-              <div>
+              <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm lg:bg-transparent lg:rounded-none lg:p-0 lg:border-0 lg:shadow-none">
                 <div className="flex items-center gap-2 mb-3">
                   <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
                     style={{ background: 'linear-gradient(135deg, #61A644, #1D9FDA)' }}>
