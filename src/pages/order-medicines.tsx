@@ -792,7 +792,7 @@ export default function OrderMedicines() {
       {/* ── Order Success Modal ── */}
       {successModalOpen && (
         <>
-        <style>{`@keyframes checkBounce{0%{transform:scale(0);opacity:0}60%{transform:scale(1.15);opacity:1}100%{transform:scale(1);opacity:1}}.check-bounce{animation:checkBounce 0.5s cubic-bezier(0.175,0.885,0.32,1.275) forwards}`}</style>
+        <style>{`@keyframes checkBounce{0%{transform:scale(0);opacity:0}55%{transform:scale(1.06);opacity:1}75%{transform:scale(0.97)}100%{transform:scale(1);opacity:1}}.check-bounce{animation:checkBounce 0.8s ease-out forwards}`}</style>
         <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/50 backdrop-blur-sm px-4">
           <div className="bg-white w-full max-w-[400px] rounded-2xl shadow-2xl relative overflow-hidden">
             {/* Close button */}
@@ -806,8 +806,8 @@ export default function OrderMedicines() {
             <div className="px-10 pt-12 pb-8 text-center">
               {/* Illustration */}
               <div className="flex justify-center mb-7">
-                <div className="check-bounce w-20 h-20 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg,#61A644,#1D9FDA)' }}>
-                  <i className="fa-solid fa-check text-white text-4xl"></i>
+                <div className="check-bounce w-14 h-14 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg,#61A644,#1D9FDA)' }}>
+                  <i className="fa-solid fa-check text-white text-xl"></i>
                 </div>
               </div>
 
