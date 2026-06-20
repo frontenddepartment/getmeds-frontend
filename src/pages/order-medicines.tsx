@@ -804,26 +804,9 @@ export default function OrderMedicines() {
             <div className="px-10 pt-12 pb-8 text-center">
               {/* Illustration */}
               <div className="flex justify-center mb-7">
-                <svg width="120" height="110" viewBox="0 0 120 110" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  {/* Bag shadow */}
-                  <ellipse cx="60" cy="103" rx="38" ry="5" fill="#E8E8E8"/>
-                  {/* Bag body */}
-                  <rect x="18" y="42" width="84" height="60" rx="10" fill="#EEEEEE"/>
-                  {/* Bag top fold */}
-                  <rect x="18" y="42" width="84" height="18" rx="10" fill="#E0E0E0"/>
-                  <rect x="18" y="52" width="84" height="8" fill="#E0E0E0"/>
-                  {/* Bag handle left */}
-                  <path d="M38 42 C38 22 44 16 52 16" stroke="#BDBDBD" strokeWidth="5" strokeLinecap="round" fill="none"/>
-                  {/* Bag handle right */}
-                  <path d="M82 42 C82 22 76 16 68 16" stroke="#BDBDBD" strokeWidth="5" strokeLinecap="round" fill="none"/>
-                  {/* Cross/plus on bag */}
-                  <rect x="56" y="68" width="8" height="22" rx="4" fill="#BDBDBD"/>
-                  <rect x="49" y="75" width="22" height="8" rx="4" fill="#BDBDBD"/>
-                  {/* Green checkmark circle */}
-                  <circle cx="90" cy="38" r="22" fill="white"/>
-                  <circle cx="90" cy="38" r="18" fill="#61A644"/>
-                  <path d="M80 38 L87 45 L101 28" stroke="white" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
+                <div className="w-20 h-20 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg,#61A644,#1D9FDA)' }}>
+                  <i className="fa-solid fa-check text-white text-4xl"></i>
+                </div>
               </div>
 
               {/* Title */}
@@ -833,10 +816,7 @@ export default function OrderMedicines() {
 
               {/* Message */}
               <p className="text-[13px] text-gray-500 leading-relaxed">
-                We will contact you shortly to confirm your order details.
-              </p>
-              <p className="text-[13px] text-gray-500 leading-relaxed mt-1">
-                For urgent concerns, please call{' '}
+                We will contact you shortly to confirm your order details. For urgent concerns, please call{' '}
                 <a href="tel:+639190769105" className="text-[#1D9FDA] font-semibold hover:underline">
                   +63 919 076 9105
                 </a>.
