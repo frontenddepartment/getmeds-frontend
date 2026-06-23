@@ -1,7 +1,7 @@
 {
   "meta": {
-    "title": "Getmeds - Your Trusted Online Healthcare Partner",
-    "description": "Getmeds delivers precision pharmaceutical solutions, digital oncology care, and nationwide healthcare distribution."
+    "title": "Getmeds",
+    "description": "Pharmaceutical company in the Philippines specializing in oncology, hematology, anesthesia, rare diseases, and essential medicines. FDA Philippines licensed. UN Global Compact member."
   },
   "topBar": {
     "label": "Connect With Us",
@@ -14,7 +14,7 @@
   },
   "hero": {
     "backgroundImage": "assets/herosectiontsx.jpg",
-    "heading": "Your Trusted Online Healthcare Partner",
+    "heading": "Your Trusted Pharmaceutical Company in the Philippines",
     "headingLine1": "Your Health Deserves",
     "headingAccent": "The Best Care Possible",
     "description": "Access the world's finest medical care from the comfort of your home. Discover how our global network empowers your health journey.",
