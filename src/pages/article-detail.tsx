@@ -125,16 +125,16 @@ export default function ArticleDetail() {
         );
       },
       large: ({ children }: any) => (
-        <p className="text-lg text-gray-700 leading-relaxed mb-4">{children}</p>
+        <p className="text-gray-700 text-sm leading-relaxed mb-4">{children}</p>
       ),
       small: ({ children }: any) => (
-        <p className="text-xs text-gray-500 leading-relaxed mb-3">{children}</p>
+        <p className="text-gray-700 text-sm leading-relaxed mb-3">{children}</p>
       ),
       center: ({ children }: any) => (
-        <p className="text-sm text-gray-700 leading-relaxed mb-4 text-center">{children}</p>
+        <p className="text-gray-700 text-sm leading-relaxed mb-4 text-center">{children}</p>
       ),
       right: ({ children }: any) => (
-        <p className="text-sm text-gray-700 leading-relaxed mb-4 text-right">{children}</p>
+        <p className="text-gray-700 text-sm leading-relaxed mb-4 text-right">{children}</p>
       ),
       blockquote: ({ children }: any) => (
         <blockquote
@@ -217,41 +217,9 @@ export default function ArticleDetail() {
 
   return (
     <div
-      style={{ fontFamily: "'Poppins', sans-serif", background: 'linear-gradient(160deg, #edf8ea 0%, #f0f8fd 40%, #ffffff 100%)' }}
+      style={{ fontFamily: "'Poppins', sans-serif", background: '#ffffff' }}
       className="min-h-screen relative"
     >
-
-      {/* Glassy sphere background */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none" style={{ zIndex: 0 }}>
-        <div style={{
-          position: 'absolute', top: '-18%', right: '-8%',
-          width: '52vw', height: '52vw', maxWidth: '680px', maxHeight: '680px',
-          borderRadius: '50%',
-          background: 'radial-gradient(circle at 33% 33%, rgba(255,255,255,0.35) 0%, rgba(29,159,218,0.12) 38%, rgba(97,166,68,0.06) 65%, transparent 100%)',
-          boxShadow: 'inset -22px -22px 60px rgba(29,159,218,0.05), 0 0 90px rgba(29,159,218,0.03)',
-        }} />
-        <div style={{
-          position: 'absolute', top: '18%', right: '7%',
-          width: '18vw', height: '18vw', maxWidth: '240px', maxHeight: '240px',
-          borderRadius: '50%',
-          background: 'radial-gradient(circle at 33% 33%, rgba(97,166,68,0.22) 0%, rgba(29,159,218,0.12) 48%, rgba(29,159,218,0.05) 75%, transparent 100%)',
-          boxShadow: 'inset -10px -10px 28px rgba(29,159,218,0.06), 0 0 45px rgba(97,166,68,0.04)',
-        }} />
-        <div style={{
-          position: 'absolute', top: '42%', left: '-3%',
-          width: '9vw', height: '9vw', maxWidth: '120px', maxHeight: '120px',
-          borderRadius: '50%',
-          background: 'radial-gradient(circle at 33% 33%, rgba(29,159,218,0.20) 0%, rgba(97,166,68,0.12) 52%, rgba(97,166,68,0.04) 78%, transparent 100%)',
-          boxShadow: 'inset -5px -5px 14px rgba(97,166,68,0.05), 0 0 28px rgba(29,159,218,0.03)',
-        }} />
-        <div style={{
-          position: 'absolute', bottom: '-12%', left: '8%',
-          width: '32vw', height: '32vw', maxWidth: '420px', maxHeight: '420px',
-          borderRadius: '50%',
-          background: 'radial-gradient(circle at 33% 33%, rgba(255,255,255,0.22) 0%, rgba(97,166,68,0.10) 42%, rgba(29,159,218,0.05) 70%, transparent 100%)',
-          boxShadow: 'inset -14px -14px 40px rgba(97,166,68,0.04), 0 0 65px rgba(29,159,218,0.03)',
-        }} />
-      </div>
 
       {/* Navbar */}
       <div id="navbar-container" className="sticky top-0 z-[50]" />
@@ -313,7 +281,7 @@ export default function ArticleDetail() {
 
           {/* Hero image */}
           {imgUrl && (
-            <div className="max-w-5xl mx-auto px-4 mt-6 mb-10 relative z-10">
+            <div className="max-w-2xl mx-auto px-4 mt-6 mb-10 relative z-10">
               <img
                 src={imgUrl}
                 alt={article.title}
@@ -355,6 +323,7 @@ export default function ArticleDetail() {
                 {/* Share Article */}
                 <div>
                   <p className="text-xs font-semibold text-gray-700 mb-3">Share Article</p>
+
                   <div className="flex gap-2">
                     <a
                       href="#"
@@ -379,6 +348,22 @@ export default function ArticleDetail() {
                     </a>
                   </div>
                 </div>
+
+                {/* Sidebar image — below Share Article */}
+                {article.sidebarImage && (() => {
+                  const sidebarImgUrl = urlFor(article.sidebarImage).width(300).url();
+                  return (
+                    <div className="mt-6">
+                      <div style={{ borderRadius: '12px', overflow: 'hidden', transform: 'translateZ(0)' }}>
+                        <img
+                          src={sidebarImgUrl}
+                          alt=""
+                          style={{ width: '100%', display: 'block' }}
+                        />
+                      </div>
+                    </div>
+                  );
+                })()}
               </aside>
 
               {/* Article body */}
@@ -397,6 +382,22 @@ export default function ArticleDetail() {
                     {article.intro}
                   </p>
                 )}
+
+                {/* Center image — between intro and body content */}
+                {article.centerImage && (() => {
+                  const centerImgUrl = urlFor(article.centerImage).width(800).url();
+                  return (
+                    <div className="my-8 flex justify-center">
+                      <div style={{ borderRadius: '15px', overflow: 'hidden', transform: 'translateZ(0)', maxWidth: '100%' }}>
+                        <img
+                          src={centerImgUrl}
+                          alt=""
+                          style={{ width: '100%', display: 'block', maxHeight: '420px', objectFit: 'cover' }}
+                        />
+                      </div>
+                    </div>
+                  );
+                })()}
 
                 {/* Portable Text rich content */}
                 {article.content && article.content.length > 0 && (

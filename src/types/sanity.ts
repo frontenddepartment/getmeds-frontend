@@ -948,6 +948,8 @@ export interface News {
   readTime?: string
   intro?: string
   image?: SanityImage
+  centerImage?: SanityImage
+  sidebarImage?: SanityImage
   content?: SanityPortableTextNode[]
   source_link?: string
 }

@@ -532,50 +532,19 @@ export default function GetMedsHomepage() {
                 </span>
               </div>
               <div className="flex items-center space-x-6">
-                {/* Phone — from contactInfo.phones where showInTopBar is true */}
-                {(() => {
-                  const topBarPhone =
-                    settings?.contactGroups?.find(g => g.showInTopBar)?.phones?.[0] ||
-                    settings?.contactGroups?.find(g => g._key === 'general')?.phones?.[0] ||
-                    settings?.topBar?.phone ||
-                    '+63 919 076 9105'
-
-                  const phoneHref = `tel:${topBarPhone.replace(/[^+\d]/g, '')}`
-
-                  return (
-                    <a href={phoneHref} className="flex items-center space-x-2 hover:text-primary transition">
-                      <i className="fa-solid fa-phone"></i>
-                      <span id="topbar-phone">{topBarPhone.trim()}</span>
-                    </a>
-                  )
-                })()}
-                {/* Socials — from topBar.socials or static fallback */}
+                {/* Phone — Medicine Inquiries (static) */}
+                <a href="tel:+639190769103" className="flex items-center space-x-2 hover:text-primary transition">
+                  <i className="fa-solid fa-phone"></i>
+                  <span id="topbar-phone">+63 919 076 9103</span>
+                </a>
+                {/* Socials — static links from contact page */}
                 <div className="flex items-center space-x-4 border-l border-white/20 pl-6">
-                  {settings?.topBar?.socials && (settings.topBar.socials as any[]).length > 0
-                    ? (settings.topBar.socials as any[]).map((s: any, i: number) => {
-                      const platform = s.platform?.toLowerCase() || '';
-                      let iconClass = 'fa-solid fa-link';
-                      if (platform === 'facebook') iconClass = 'fa-brands fa-facebook-f';
-                      else if (platform === 'twitter' || platform === 'x') iconClass = 'fa-brands fa-x-twitter';
-                      else if (platform === 'instagram') iconClass = 'fa-brands fa-instagram';
-                      else if (platform === 'linkedin') iconClass = 'fa-brands fa-linkedin-in';
-                      else if (platform === 'youtube') iconClass = 'fa-brands fa-youtube';
-                      else if (platform === 'tiktok') iconClass = 'fa-brands fa-tiktok';
-                      if (s.icon) iconClass = s.icon.startsWith('fa-') ? s.icon : `fa-brands fa-${s.icon}`;
-                      return (
-                        <a key={i} href={s.href || '#'} target="_blank" rel="noopener noreferrer"
-                          className="hover:text-primary transition">
-                          <i className={`${iconClass} text-[14px]`}></i>
-                        </a>
-                      );
-                    })
-                    : (
-                      <>
-                        <a href="#" className="hover:text-primary transition"><i className="fa-brands fa-facebook text-[14px]"></i></a>
-                        <a href="#" className="hover:text-primary transition"><i className="fa-brands fa-linkedin text-[14px]"></i></a>
-                      </>
-                    )
-                  }
+                  <a href="https://www.facebook.com/getmedsphilippines/" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition">
+                    <i className="fa-brands fa-facebook-f text-[14px]"></i>
+                  </a>
+                  <a href="https://www.linkedin.com/company/getmeds" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition">
+                    <i className="fa-brands fa-linkedin-in text-[14px]"></i>
+                  </a>
                 </div>
               </div>
             </div>

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { injectHTML } from '../lib/injectHTML';
 import { useImageMapper } from '../lib/useSanity';
-import { getGoogleSpreadsheetBySlug, getCareers } from '../lib/queries';
+import { getCareers } from '../lib/queries';
 import { getApiUrl } from '../lib/api';
 
 const Careers: React.FC = () => {
@@ -25,7 +25,7 @@ const Careers: React.FC = () => {
   const [jobDescOpen, setJobDescOpen] = useState(false);
   const activeJob = jobs.find(j => j.title === applyingFor);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault();
     if (!applyForm.name || !applyForm.email || !applyForm.resumeBase64) {
       alert('Please fill in all required fields and upload your resume.');
@@ -95,6 +95,22 @@ const Careers: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('ca-in');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.12, rootMargin: '0px 0px -30px 0px' }
+    );
+    document.querySelectorAll('.ca-anim').forEach(el => observer.observe(el));
+    return () => observer.disconnect();
+  }, [jobs]);
+
+  useEffect(() => {
     // Fetch careers from Sanity
     getCareers()
       .then(data => {
@@ -122,28 +138,60 @@ const Careers: React.FC = () => {
 
   return (
     <div style={{ fontFamily: "'Poppins', sans-serif" }} className="bg-white text-gray-800 antialiased">
+      <style>{`
+        @keyframes caFadeUp   { from { opacity:0; transform:translateY(30px); } to { opacity:1; transform:translateY(0); } }
+        @keyframes caFadeLeft { from { opacity:0; transform:translateX(-32px); } to { opacity:1; transform:translateX(0); } }
+        @keyframes caFadeRight{ from { opacity:0; transform:translateX(32px);  } to { opacity:1; transform:translateX(0); } }
+        @keyframes caZoomIn   { from { opacity:0; transform:scale(0.93);       } to { opacity:1; transform:scale(1);    } }
+        @keyframes caFadeIn   { from { opacity:0; }                              to { opacity:1; }                        }
+
+        .ca-anim { opacity: 0; }
+        .ca-anim.ca-in.ca-up    { animation: caFadeUp    0.65s cubic-bezier(0.22,1,0.36,1) forwards; }
+        .ca-anim.ca-in.ca-left  { animation: caFadeLeft  0.65s cubic-bezier(0.22,1,0.36,1) forwards; }
+        .ca-anim.ca-in.ca-right { animation: caFadeRight 0.65s cubic-bezier(0.22,1,0.36,1) forwards; }
+        .ca-anim.ca-in.ca-zoom  { animation: caZoomIn    0.65s cubic-bezier(0.22,1,0.36,1) forwards; }
+        .ca-anim.ca-in.ca-fade  { animation: caFadeIn    0.65s ease forwards; }
+
+        .ca-d1 { animation-delay: 0.10s !important; }
+        .ca-d2 { animation-delay: 0.20s !important; }
+        .ca-d3 { animation-delay: 0.30s !important; }
+        .ca-d4 { animation-delay: 0.40s !important; }
+        .ca-d5 { animation-delay: 0.50s !important; }
+        .ca-d6 { animation-delay: 0.60s !important; }
+        .ca-d7 { animation-delay: 0.70s !important; }
+        .ca-d8 { animation-delay: 0.80s !important; }
+        .ca-d9 { animation-delay: 0.90s !important; }
+        .ca-d10{ animation-delay: 1.00s !important; }
+
+        /* Hero — plays on load */
+        .hero-l1 { animation: caFadeUp 0.7s cubic-bezier(0.22,1,0.36,1) 0.15s both; }
+        .hero-l2 { animation: caFadeUp 0.7s cubic-bezier(0.22,1,0.36,1) 0.32s both; }
+        .hero-p  { animation: caFadeUp 0.7s cubic-bezier(0.22,1,0.36,1) 0.48s both; }
+        .hero-btn{ animation: caFadeUp 0.7s cubic-bezier(0.22,1,0.36,1) 0.62s both; }
+      `}</style>
+
       {/* Navbar */}
       <div id="navbar-container" className="sticky top-0 z-[50]" />
 
       {/* HERO SECTION */}
-      <section className="w-full mx-auto px-3 sm:px-4 md:px-6 mt-3 md:mt-4 mb-16 max-w-[1600px]">
+      <section className="w-full mx-auto px-3 sm:px-4 md:px-6 mt-3 md:mt-4 mb-0 max-w-[1600px]">
         <div className="relative rounded-[1.5rem] overflow-hidden min-h-[450px] md:min-h-[500px] flex items-end bg-gray-100">
           <img src={getImage('assets/careershero.png', 'assets/careershero.png')} alt="Getmeds Team"
-            className="absolute inset-0 w-full h-full object-cover object-top" />
+            className="absolute inset-0 w-full h-full object-cover object-right-top" />
           <div className="relative z-10 w-full px-8 md:px-14 pb-7 md:pb-8 pt-0">
-            <div className="inline-block bg-black/60 backdrop-blur-md rounded-2xl px-10 py-9 max-w-[500px]">
-              <h1 className="text-[28px] md:text-[38px] leading-tight font-bold mb-4 tracking-tight">
-                <span className="text-white">Join the Minds</span><br />
-                <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">
+            <div className="inline-block max-w-[60%]">
+              <h1 className="text-2xl md:text-5xl lg:text-6xl leading-[1.1] font-bold mb-4 tracking-tight">
+                <span className="hero-l1 block bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">Join the Minds</span>
+                <span className="hero-l2 block bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent whitespace-nowrap">
                   Behind the Medicine
                 </span>
               </h1>
-              <p className="text-white/95 text-[14px] md:text-[15px] max-w-[420px] mb-6 leading-relaxed font-normal">
+              <p className="hero-p text-[#000b5d] text-[14px] md:text-[15px] max-w-[420px] mb-6 leading-relaxed font-medium">
                 Join our mission to make healthcare accessible worldwide. We're looking
                 for passionate individuals to innovate and grow with us.
               </p>
               <a href="#join-form"
-                className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:from-[#1D9FDA] hover:to-[#61A644] text-white font-semibold py-2.5 px-8 rounded-full text-[13px] inline-block transition shadow-lg">
+                className="hero-btn bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:from-[#1D9FDA] hover:to-[#61A644] text-white font-semibold py-2.5 px-8 rounded-full text-[13px] inline-block transition shadow-lg">
                 Read More
               </a>
             </div>
@@ -152,16 +200,16 @@ const Careers: React.FC = () => {
       </section>
 
       {/* BENEFITS SECTION */}
-      <section className="py-8 lg:py-16 bg-white">
+      <section className="pt-10 pb-8 lg:pb-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col lg:flex-row gap-4 lg:gap-8 items-center">
             <div className="shrink-0 lg:w-[42%]">
-              <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent font-bold uppercase tracking-widest text-lg block mb-4">
+              <span className="ca-anim ca-left block bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent font-bold uppercase tracking-widest text-lg mb-4">
                 Our Benefits
               </span>
-              <h2 className="text-3xl md:text-4xl font-semibold text-dark leading-snug">
-                Getmeds Has Been Present For<br />
-                Over A Decade In{' '}
+              <h2 className="ca-anim ca-left ca-d1 text-3xl md:text-4xl font-semibold text-dark leading-snug">
+                Getmeds Has Been Present<br />
+                For Over A Decade In<br />
                 <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">
                   Healthcare
                 </span>
@@ -169,7 +217,7 @@ const Careers: React.FC = () => {
             </div>
             <div className="flex-1 flex items-center">
               <div>
-                <p className="text-gray-500 text-[14px] leading-[1.8] mb-4">
+                <p className="ca-anim ca-right text-gray-500 text-[14px] leading-[1.8] mb-4">
                   Join a team of dedicated professionals working to make healthcare
                   accessible and affordable for everyone. We believe in empowering our
                   employees to innovate and make a real difference in people's lives.
@@ -188,7 +236,7 @@ const Careers: React.FC = () => {
             onMouseLeave={() => setActiveCareersPanel(0)}>
 
             {/* Panel 1 — Left */}
-            <div className="relative rounded-2xl overflow-hidden cursor-pointer"
+            <div className="ca-anim ca-up relative rounded-2xl overflow-hidden cursor-pointer"
               style={{ flex: activeCareersPanel === 0 ? 3 : 0.8, minWidth: 0, transition: 'flex 0.5s ease' }}
               onMouseEnter={() => setActiveCareersPanel(0)}>
               <img src={getImage('assets/aboutussix.jpg', 'assets/aboutussix.jpg')}
@@ -206,7 +254,7 @@ const Careers: React.FC = () => {
             </div>
 
             {/* Panel 2 — Center */}
-            <div className="relative rounded-2xl overflow-hidden cursor-pointer"
+            <div className="ca-anim ca-up ca-d2 relative rounded-2xl overflow-hidden cursor-pointer"
               style={{ flex: activeCareersPanel === 1 ? 3 : 0.8, minWidth: 0, transition: 'flex 0.5s ease' }}
               onMouseEnter={() => setActiveCareersPanel(1)}>
               <img src={getImage('assets/aboutusseven.jpg', 'assets/aboutusseven.jpg')}
@@ -224,7 +272,7 @@ const Careers: React.FC = () => {
             </div>
 
             {/* Panel 3 — Right */}
-            <div className="relative rounded-2xl overflow-hidden cursor-pointer"
+            <div className="ca-anim ca-up ca-d4 relative rounded-2xl overflow-hidden cursor-pointer"
               style={{ flex: activeCareersPanel === 2 ? 3 : 0.8, minWidth: 0, transition: 'flex 0.5s ease' }}
               onMouseEnter={() => setActiveCareersPanel(2)}>
               <img src={getImage('assets/aboutuseight.jpg', 'assets/aboutuseight.jpg')}
@@ -245,7 +293,7 @@ const Careers: React.FC = () => {
 
           {/* 3 Pillar Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
-            <div className="p-7 rounded-2xl border border-gray-100 hover:shadow-lg transition-shadow duration-300 flex flex-col h-full">
+            <div className="ca-anim ca-up p-7 rounded-2xl border border-gray-100 hover:shadow-lg transition-shadow duration-300 flex flex-col h-full">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-10 h-10 rounded-full bg-gradient-to-r from-[#61A644] to-[#1D9FDA] flex items-center justify-center">
                   <i className="fa-solid fa-rotate text-white text-sm"></i>
@@ -262,7 +310,7 @@ const Careers: React.FC = () => {
               </p>
             </div>
 
-            <div className="p-7 rounded-2xl border border-gray-100 hover:shadow-lg transition-shadow duration-300 flex flex-col h-full">
+            <div className="ca-anim ca-up ca-d2 p-7 rounded-2xl border border-gray-100 hover:shadow-lg transition-shadow duration-300 flex flex-col h-full">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-10 h-10 rounded-full bg-gradient-to-r from-[#61A644] to-[#1D9FDA] flex items-center justify-center">
                   <i className="fa-solid fa-paper-plane text-white text-sm"></i>
@@ -279,7 +327,7 @@ const Careers: React.FC = () => {
               </p>
             </div>
 
-            <div className="p-7 rounded-2xl border border-gray-100 hover:shadow-lg transition-shadow duration-300 flex flex-col h-full">
+            <div className="ca-anim ca-up ca-d4 p-7 rounded-2xl border border-gray-100 hover:shadow-lg transition-shadow duration-300 flex flex-col h-full">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-10 h-10 rounded-full bg-gradient-to-r from-[#61A644] to-[#1D9FDA] flex items-center justify-center">
                   <i className="fa-solid fa-people-group text-white text-sm"></i>
@@ -302,7 +350,7 @@ const Careers: React.FC = () => {
       <section className="py-20 bg-white">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row items-center gap-12 md:gap-20">
-            <div className="flex-1">
+            <div className="ca-anim ca-left flex-1">
               <i className="fa-solid fa-quote-left text-[#1D9FDA] text-4xl mb-6 block"></i>
               <blockquote className="text-[20px] md:text-[24px] font-bold text-dark leading-snug mb-6">
                 Join a culture where your growth is measured by the lives we touch.
@@ -312,7 +360,7 @@ const Careers: React.FC = () => {
                 <p className="text-gray-400 text-[12px]">Founder, Getmeds Inc.</p>
               </div>
             </div>
-            <div className="w-52 h-52 md:w-64 md:h-64 flex-shrink-0">
+            <div className="ca-anim ca-right ca-d2 w-52 h-52 md:w-64 md:h-64 flex-shrink-0">
               <img src={getImage('assets/CEO.jpg', 'assets/CEO.jpg')} alt="Naresh Bishnoi, Founder"
                 className="w-full h-full object-cover rounded-full shadow-xl border-4 border-white ring-2 ring-gray-100" />
             </div>
@@ -323,7 +371,7 @@ const Careers: React.FC = () => {
       {/* CTA BANNER */}
       <section className="py-6 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-gradient-to-r from-[#1D9FDA] to-[#0D99FF] rounded-2xl px-8 md:px-12 py-8 flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="ca-anim ca-zoom bg-gradient-to-r from-[#1D9FDA] to-[#0D99FF] rounded-2xl px-8 md:px-12 py-8 flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="flex-1">
               <h3 className="text-white font-bold text-[20px] md:text-[22px] mb-2">Ready to lead the future of
                 medicine?</h3>
@@ -383,7 +431,7 @@ const Careers: React.FC = () => {
           </svg>
         </div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="text-center max-w-3xl mx-auto mb-16">
+          <div className="ca-anim ca-up text-center max-w-3xl mx-auto mb-16">
             <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent font-bold uppercase tracking-widest text-lg block mb-4">Career Advantages</span>
             <h2 className="text-3xl md:text-4xl font-semibold text-dark mb-4">
               Why professionals choose{' '}
@@ -394,7 +442,7 @@ const Careers: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
-            <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+            <div className="ca-anim ca-up bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
               <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center mb-5">
                 <i className="fa-solid fa-microscope text-2xl text-primary"></i>
               </div>
@@ -403,7 +451,7 @@ const Careers: React.FC = () => {
                 portfolios in the Philippines.</p>
             </div>
 
-            <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+            <div className="ca-anim ca-up ca-d1 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
               <div className="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center mb-5">
                 <i className="fa-solid fa-certificate text-2xl text-success"></i>
               </div>
@@ -412,7 +460,7 @@ const Careers: React.FC = () => {
                 patients only through Getmeds.</p>
             </div>
 
-            <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+            <div className="ca-anim ca-up ca-d2 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
               <div className="w-12 h-12 rounded-xl bg-purple-50 flex items-center justify-center mb-5">
                 <i className="fa-solid fa-route text-2xl text-[#8B5CF6]"></i>
               </div>
@@ -421,7 +469,7 @@ const Careers: React.FC = () => {
                 first 6 months of joining.</p>
             </div>
 
-            <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+            <div className="ca-anim ca-up ca-d3 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
               <div className="w-12 h-12 rounded-xl bg-orange-50 flex items-center justify-center mb-5">
                 <i className="fa-solid fa-arrow-up-right-dots text-2xl text-[#F59E0B]"></i>
               </div>
@@ -430,7 +478,7 @@ const Careers: React.FC = () => {
                 Increments for high performers.</p>
             </div>
 
-            <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+            <div className="ca-anim ca-up ca-d4 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
               <div className="w-12 h-12 rounded-xl bg-red-50 flex items-center justify-center mb-5">
                 <i className="fa-solid fa-money-bill-trend-up text-2xl text-[#EF4444]"></i>
               </div>
@@ -439,7 +487,7 @@ const Careers: React.FC = () => {
                 Attractive Monthly Incentives.</p>
             </div>
 
-            <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+            <div className="ca-anim ca-up ca-d5 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
               <div className="w-12 h-12 rounded-xl bg-indigo-50 flex items-center justify-center mb-5">
                 <i className="fa-solid fa-car-side text-2xl text-[#6366F1]"></i>
               </div>
@@ -448,7 +496,7 @@ const Careers: React.FC = () => {
                 under the employee's name.</p>
             </div>
 
-            <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+            <div className="ca-anim ca-up ca-d6 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
               <div className="w-12 h-12 rounded-xl bg-cyan-50 flex items-center justify-center mb-5">
                 <i className="fa-solid fa-plane-departure text-2xl text-[#06B6D4]"></i>
               </div>
@@ -457,7 +505,7 @@ const Careers: React.FC = () => {
                 Incentives after 2 years of service.</p>
             </div>
 
-            <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+            <div className="ca-anim ca-up ca-d7 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
               <div className="w-12 h-12 rounded-xl bg-pink-50 flex items-center justify-center mb-5">
                 <i className="fa-solid fa-heart-pulse text-2xl text-[#EC4899]"></i>
               </div>
@@ -466,7 +514,7 @@ const Careers: React.FC = () => {
                 support mental health.</p>
             </div>
 
-            <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+            <div className="ca-anim ca-up ca-d8 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
               <div className="w-12 h-12 rounded-xl bg-yellow-50 flex items-center justify-center mb-5">
                 <i className="fa-solid fa-award text-2xl text-[#EAB308]"></i>
               </div>
@@ -475,7 +523,7 @@ const Careers: React.FC = () => {
                 Initiatives year-round.</p>
             </div>
 
-            <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+            <div className="ca-anim ca-up ca-d9 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
               <div className="w-12 h-12 rounded-xl bg-teal-50 flex items-center justify-center mb-5">
                 <i className="fa-solid fa-bolt-lightning text-2xl text-[#14B8A6]"></i>
               </div>
@@ -490,7 +538,7 @@ const Careers: React.FC = () => {
       {/* JOB LISTINGS */}
       <section id="join-form" className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-14">
+          <div className="ca-anim ca-up text-center mb-14">
             <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent font-bold uppercase tracking-widest text-lg block mb-4">Open Positions</span>
             <h2 className="text-3xl md:text-4xl font-semibold text-dark mb-3">Join Our{' '}<span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">Team</span></h2>
             <p className="text-gray-400 text-[14px] max-w-xl mx-auto leading-relaxed">
@@ -505,8 +553,8 @@ const Careers: React.FC = () => {
             ) : jobs.length === 0 ? (
               <p className="text-gray-400 text-center col-span-full">No open positions at the moment.</p>
             ) : (
-              jobs.map((job) => (
-                <div key={job.title} className="border border-gray-100 rounded-2xl p-6 hover:shadow-md transition-shadow duration-300 flex flex-col">
+              jobs.map((job, idx) => (
+                <div key={job.title} className={`ca-anim ca-up ca-d${(idx % 5) + 1} border border-gray-100 rounded-2xl p-6 hover:shadow-md transition-shadow duration-300 flex flex-col`}>
                   <span className="text-[12px] font-semibold text-gray-400 tracking-widest block mb-2">Full Time</span>
                   <h4 className="text-[16px] font-semibold text-dark mb-3">{job.title}</h4>
                   <p className="text-gray-400 text-[12.5px] leading-[1.7] mb-5 flex-1">{job.desc}</p>

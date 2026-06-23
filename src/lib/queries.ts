@@ -389,6 +389,8 @@ export async function getNewsById(id: string) {
       readTime,
       intro,
       image,
+      centerImage,
+      sidebarImage,
       content,
       source_link
     }

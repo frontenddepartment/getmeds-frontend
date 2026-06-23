@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { injectHTML } from '../lib/injectHTML';
 import { useImageMapper } from '../lib/useSanity';
 
-type SectionTab = 'steps' | 'requirements' | 'faqs' | 'location';
+type SectionTab = 'steps' | 'requirements' | 'faqs';
 
 const GRADIENT = 'linear-gradient(135deg, #61A644, #1D9FDA)';
 
@@ -108,7 +108,6 @@ export default function PatientAssistanceProgram() {
     { id: 'steps',        label: 'Mga Hakbang',    sub: 'PAP GUIDE'  },
     { id: 'requirements', label: 'Requirements',   sub: 'DOCUMENTS'  },
     { id: 'faqs',         label: 'FAQs',           sub: 'TANONG'     },
-    { id: 'location',     label: 'Saan Makukuha',  sub: 'LOKASYON'   },
   ];
 
   const FAQS: { q: string; a: React.ReactNode }[] = [
@@ -224,9 +223,6 @@ export default function PatientAssistanceProgram() {
               <p>
                 Ang Getmeds ay nakatuon sa pagsuporta sa kalusugan at kapakanan ng bawat Pilipinong lumalaban sa cancer. Sa pamamagitan ng aming Patient Assistance Program, nakikipagtulungan kami sa mga ahensya ng gobyerno tulad ng DSWD (AICS) at PCSO (MAP) upang makapagbigay ng tulong medikal, partikular na ang libreng chemotherapy at iba pang gamot sa cancer, sa mga higit na nangangailangan.
               </p>
-              <p>
-                Layunin ng programang ito na mapagaan ang gastusin ng mga Pilipinong pasyenteng may cancer at kanilang pamilya na nahaharap sa mataas na halaga ng gamutan.
-              </p>
               <div className="pt-2 space-y-2">
                 <p className="text-gray-900 font-semibold text-sm">Mga katuwang na ahensya:</p>
                 <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6">
@@ -319,17 +315,12 @@ export default function PatientAssistanceProgram() {
                     <div className="flex items-start justify-between gap-4 mb-1.5">
                       <div>
                         <h3 className="font-bold text-gray-900 text-base sm:text-lg leading-snug">Kumonsulta sa Iyong Doktor</h3>
-                        <p className="text-[#61A644] text-xs font-medium italic mt-0.5">Consult Your Doctor</p>
                       </div>
                       <i className="fa-solid fa-stethoscope shrink-0 mt-1" style={{ fontSize: '2.4rem', background: GRADIENT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }} />
                     </div>
                     <p className="text-gray-600 text-sm leading-relaxed">
-                      Tanungin ang iyong attending physician tungkol sa pagkuha ng government assistance para sa iyong mga gamot sa cancer.
+                      Tanungin ang iyong attending physician tungkol sa government assistance para sa iyong mga gamot sa cancer.
                     </p>
-                    <div className="flex items-start gap-2 bg-green-50 rounded-xl px-3 py-2.5 mt-3 border border-green-100">
-                      <i className="fa-solid fa-lightbulb text-[#61A644] text-xs mt-0.5 shrink-0" />
-                      <p className="text-gray-600 text-xs leading-relaxed"><span className="font-bold">Note:</span> Ihanda ang iyong diagnosis records bago ang konsultasyon. <span className="text-gray-400 italic">— Have your diagnosis records ready before the consultation.</span></p>
-                    </div>
                   </div>
                 </div>
 
@@ -343,24 +334,16 @@ export default function PatientAssistanceProgram() {
                     <div className="flex items-start justify-between gap-4 mb-1.5">
                       <div>
                         <h3 className="font-bold text-gray-900 text-base sm:text-lg leading-snug">Ihanda ang Iyong Mga Medical Documents</h3>
-                        <p className="text-[#61A644] text-xs font-medium italic mt-0.5">Prepare Your Medical Documents</p>
                       </div>
                       <i className="fa-solid fa-folder-open shrink-0 mt-1" style={{ fontSize: '2.4rem', background: GRADIENT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }} />
                     </div>
                     <p className="text-gray-600 text-sm leading-relaxed mb-3">
-                      Siguraduhing makuha ang sumusunod na requirements mula sa iyong doktor:
+                      Kunin ang sumusunod mula sa iyong doktor — original copy, may buong pangalan, pirma, at license number:
                     </p>
-                    <div className="flex flex-wrap gap-2 mb-3">
+                    <div className="flex flex-wrap gap-2">
                       {['Medical Prescription', 'Treatment Protocol', 'Medical Abstract / Clinical Summary'].map((tag, i) => (
                         <span key={i} className="px-3 py-1 rounded-full text-xs font-medium border border-gray-200 text-gray-600 bg-gray-50">{tag}</span>
                       ))}
-                    </div>
-                    <p className="text-gray-600 text-sm leading-relaxed mb-3">
-                      Lahat ng dokumento ay dapat original copy, may buong pangalan, pirma, at license number ng doktor upang masigurong maayos at mabilis ang proseso.
-                    </p>
-                    <div className="flex items-start gap-2 bg-green-50 rounded-xl px-3 py-2.5 border border-green-100">
-                      <i className="fa-solid fa-thumbtack text-[#61A644] text-xs mt-0.5 shrink-0" />
-                      <p className="text-gray-600 text-xs leading-relaxed"><span className="font-bold">Note:</span> All documents must be original copies with the doctor's full name, signature, and license number. <span className="text-gray-400 italic">— Lahat ng dokumento ay dapat may kumpletong impormasyon ng doktor.</span></p>
                     </div>
                   </div>
                 </div>
@@ -375,12 +358,11 @@ export default function PatientAssistanceProgram() {
                     <div className="flex items-start justify-between gap-4 mb-1.5">
                       <div>
                         <h3 className="font-bold text-gray-900 text-base sm:text-lg leading-snug">Kumpletuhin ang Iyong Application Documents</h3>
-                        <p className="text-[#61A644] text-xs font-medium italic mt-0.5">Complete Your Application Documents</p>
                       </div>
                       <i className="fa-solid fa-clipboard-list shrink-0 mt-1" style={{ fontSize: '2.4rem', background: GRADIENT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }} />
                     </div>
                     <p className="text-gray-600 text-sm leading-relaxed mb-4">
-                      Bukod sa mga medikal na dokumento mula sa iyong doktor, may karagdagang requirements na kailangang i-submit, na nakadepende sa ahensya ng gobyerno na iyong aaplayan.
+                      Bukod sa mga medikal na dokumento mula sa iyong doktor, may karagdagang requirements na kailangang i-submit, na nakadepende sa ahensya ng gobyerno na iyong aaplayan:
                     </p>
 
                     {/* 2-column requirements */}
@@ -440,28 +422,13 @@ export default function PatientAssistanceProgram() {
                   <div className="flex-1 pb-8">
                     <div className="flex items-start justify-between gap-4 mb-1.5">
                       <div>
-                        <h3 className="font-bold text-gray-900 text-base sm:text-lg leading-snug">Makipag-ugnayan sa Aming Patient Assistance Officer</h3>
-                        <p className="text-[#61A644] text-xs font-medium italic mt-0.5">Contact Our Patient Assistance Officer</p>
+                        <h3 className="font-bold text-gray-900 text-base sm:text-lg leading-snug">Makipag-ugnayan sa Aming Team</h3>
                       </div>
                       <i className="fa-solid fa-headset shrink-0 mt-1" style={{ fontSize: '2.4rem', background: GRADIENT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }} />
                     </div>
-                    <p className="text-gray-600 text-sm leading-relaxed mb-2.5">Ang aming Getmeds Patient Assistance Officer ay:</p>
-                    <ul className="space-y-1.5 mb-3">
-                      {[
-                        'gagabay sa buong proseso',
-                        'susuri sa inyong mga requirements',
-                        'magbibigay ng opisyal na quotation para sa inyong gamot sa cancer',
-                      ].map((b, i) => (
-                        <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
-                          <i className="fa-solid fa-circle-check text-[#61A644] mt-0.5 shrink-0 text-xs" />
-                          {b}
-                        </li>
-                      ))}
-                    </ul>
-                    <div className="flex items-start gap-2 bg-green-50 rounded-xl px-3 py-2.5 border border-green-100">
-                      <i className="fa-solid fa-circle-info text-[#1D9FDA] text-xs mt-0.5 shrink-0" />
-                      <p className="text-gray-600 text-xs leading-relaxed"><span className="font-bold">Note:</span> Our officer will review your requirements before submission to ensure completeness. <span className="text-gray-400 italic">— Susuriin ng aming officer ang inyong mga requirements bago i-submit.</span></p>
-                    </div>
+                    <p className="text-gray-600 text-sm leading-relaxed">
+                      Kontakin ang aming Patient Assistance Officer para sa pagsusuri ng inyong requirements at pagkuha ng opisyal na quotation para sa inyong gamot sa cancer.
+                    </p>
                   </div>
                 </div>
 
@@ -475,31 +442,22 @@ export default function PatientAssistanceProgram() {
                     <div className="flex items-start justify-between gap-4 mb-1.5">
                       <div>
                         <h3 className="font-bold text-gray-900 text-base sm:text-lg leading-snug">I-submit ang Iyong Requirements</h3>
-                        <p className="text-[#61A644] text-xs font-medium italic mt-0.5">Submit Your Requirements</p>
                       </div>
                       <i className="fa-solid fa-paper-plane shrink-0 mt-1" style={{ fontSize: '2.4rem', background: GRADIENT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }} />
                     </div>
-                    <p className="text-gray-600 text-sm leading-relaxed mb-3">
-                      Ang paraan ng pagsusumite ay nakadepende sa government agency na iyong inaaplayan.
-                    </p>
-                    {/* Submission table */}
-                    <div className="rounded-xl border border-gray-100 overflow-hidden text-sm mb-3">
+                    <div className="rounded-xl border border-gray-100 overflow-hidden text-sm">
                       <div className="grid grid-cols-2 bg-gray-50 border-b border-gray-100">
-                        <div className="px-4 py-2.5 font-bold text-gray-700 text-xs sm:text-sm">Ahensya / Programa</div>
+                        <div className="px-4 py-2.5 font-bold text-gray-700 text-xs sm:text-sm">Ahensya</div>
                         <div className="px-4 py-2.5 font-bold text-gray-700 text-xs sm:text-sm border-l border-gray-100">Paraan ng Pagsumite</div>
                       </div>
-                      <div className="grid grid-cols-2 border-b border-gray-50">
-                        <div className="px-4 py-3 text-gray-800 font-semibold text-xs sm:text-sm">DSWD Medical Assistance (AICS)</div>
-                        <div className="px-4 py-3 text-gray-600 text-xs sm:text-sm border-l border-gray-100">Personal na isumite sa pinakamalapit na DSWD Satellite Office</div>
+                      <div className="grid grid-cols-2 border-b border-gray-100">
+                        <div className="px-4 py-3 text-gray-800 font-semibold text-xs sm:text-sm">DSWD (AICS)</div>
+                        <div className="px-4 py-3 text-gray-600 text-xs sm:text-sm border-l border-gray-100">Personal sa pinakamalapit na DSWD Satellite Office</div>
                       </div>
                       <div className="grid grid-cols-2">
-                        <div className="px-4 py-3 text-gray-800 font-semibold text-xs sm:text-sm">PCSO Medical Assistance Program (MAP / IMAP)</div>
-                        <div className="px-4 py-3 text-gray-600 text-xs sm:text-sm border-l border-gray-100">Online submission (soft copy) sa PCSO website</div>
+                        <div className="px-4 py-3 text-gray-800 font-semibold text-xs sm:text-sm">PCSO (MAP / IMAP)</div>
+                        <div className="px-4 py-3 text-gray-600 text-xs sm:text-sm border-l border-gray-100">Online submission sa PCSO website</div>
                       </div>
-                    </div>
-                    <div className="flex items-start gap-2 bg-green-50 rounded-xl px-3 py-2.5 border border-green-100">
-                      <i className="fa-solid fa-circle-info text-[#1D9FDA] text-xs mt-0.5 shrink-0" />
-                      <p className="text-gray-600 text-xs leading-relaxed"><span className="font-bold">Note:</span> Choose the submission method based on the agency you are applying to. <span className="text-gray-400 italic">— Piliin ang paraan ng pagsumite batay sa ahensyang inyong aaplayan.</span></p>
                     </div>
                   </div>
                 </div>
@@ -513,20 +471,12 @@ export default function PatientAssistanceProgram() {
                     <div className="flex items-start justify-between gap-4 mb-1.5">
                       <div>
                         <h3 className="font-bold text-gray-900 text-base sm:text-lg leading-snug">Hintayin ang Iyong Guarantee Letter (GL)</h3>
-                        <p className="text-[#61A644] text-xs font-medium italic mt-0.5">Wait for Your Guarantee Letter (GL)</p>
                       </div>
                       <i className="fa-solid fa-envelope-open-text shrink-0 mt-1" style={{ fontSize: '2.4rem', background: GRADIENT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }} />
                     </div>
-                    <p className="text-gray-600 text-sm leading-relaxed mb-2">
-                      Kapag naaprubahan, ibibigay ng ahensiya ang GL bilang patunay na sasagutin nila ang gamot.
+                    <p className="text-gray-600 text-sm leading-relaxed">
+                      Kapag naaprubahan, dalhin ang GL sa nakasaad na supplier para makuha ang gamot. Para sa gabay, makipag-ugnayan sa aming Patient Assistance Officer.
                     </p>
-                    <p className="text-gray-600 text-sm leading-relaxed mb-3">
-                      Dalhin ito sa nakasaad na medicine distributor o supplier upang makuha ang gamot. Para sa gabay, makipag-ugnayan sa aming Patient Assistance Officer.
-                    </p>
-                    <div className="flex items-start gap-2 bg-green-50 rounded-xl px-3 py-2.5 border border-green-100">
-                      <i className="fa-solid fa-circle-info text-[#1D9FDA] text-xs mt-0.5 shrink-0" />
-                      <p className="text-gray-600 text-xs leading-relaxed"><span className="font-bold">Note:</span> Bring the GL to the designated medicine distributor or supplier to receive your medication. <span className="text-gray-400 italic">— Dalhin ang GL sa nakasaad na distributor upang makuha ang gamot.</span></p>
-                    </div>
                   </div>
                 </div>
 
@@ -620,39 +570,38 @@ export default function PatientAssistanceProgram() {
                   )}
                 </div>
               ))}
-            </div>
-          )}
 
-          {/* ── Saan Makukuha ── */}
-          {activeSection === 'location' && (
-            <div className="space-y-5">
-              <p className="text-gray-600 text-sm sm:text-base leading-relaxed">
-                Pagkatapos matanggap ang inyong Guarantee Letter (GL) mula sa ahensiya, maaari kayong pumunta sa aming opisina upang makuha ang inyong gamot.
-              </p>
-              <div className="grid sm:grid-cols-2 gap-5">
+              {/* Saan Makukuha ang Iyong Mga Gamot */}
+              <div className="mt-6 space-y-4">
+                <h3 className="text-base font-bold text-gray-900">Saan Makukuha ang Iyong Mga Gamot</h3>
+                <p className="text-gray-600 text-sm leading-relaxed">
+                  Pagkatapos matanggap ang inyong Guarantee Letter (GL) mula sa ahensiya, maaari kayong pumunta sa aming opisina upang makuha ang inyong gamot.
+                </p>
+                <div className="grid sm:grid-cols-2 gap-4">
 
-                <div className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300 p-5 sm:p-7 relative overflow-hidden">
-                  <div className="absolute bottom-0 left-0 w-36 h-36 rounded-full bg-gradient-to-tr from-[#1D9FDA]/20 via-[#1D9FDA]/5 to-transparent -translate-x-10 translate-y-10 pointer-events-none" />
-                  <div className="w-10 h-10 rounded-[12px] flex items-center justify-center mb-5" style={{ background: 'linear-gradient(135deg, #1D9FDA, #1a8fc7)' }}>
-                    <i className="fa-solid fa-location-dot text-white text-base" />
+                  <div className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300 p-5 sm:p-7 relative overflow-hidden">
+                    <div className="absolute bottom-0 left-0 w-36 h-36 rounded-full bg-gradient-to-tr from-[#1D9FDA]/20 via-[#1D9FDA]/5 to-transparent -translate-x-10 translate-y-10 pointer-events-none" />
+                    <div className="w-10 h-10 rounded-[12px] flex items-center justify-center mb-5" style={{ background: 'linear-gradient(135deg, #1D9FDA, #1a8fc7)' }}>
+                      <i className="fa-solid fa-location-dot text-white text-base" />
+                    </div>
+                    <h4 className="text-base font-bold text-gray-900 mb-2">Aming Lokasyon</h4>
+                    <p className="text-gray-600 text-sm leading-relaxed">
+                      <span className="font-bold text-gray-800">Unit 305, 17 Vatican Bldg.,</span> Vatican Drive, BF Resort Village, Las Piñas City, Metro Manila 1747
+                    </p>
                   </div>
-                  <h4 className="text-base font-bold text-gray-900 mb-2">Aming Lokasyon</h4>
-                  <p className="text-gray-600 text-sm leading-relaxed">
-                    <span className="font-bold text-gray-800">Unit 305, 17 Vatican Bldg.,</span> Vatican Drive, BF Resort Village, Las Piñas City, Metro Manila 1747
-                  </p>
-                </div>
 
-                <div className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300 p-5 sm:p-7 relative overflow-hidden">
-                  <div className="absolute bottom-0 left-0 w-36 h-36 rounded-full bg-gradient-to-tr from-[#61A644]/20 via-[#61A644]/5 to-transparent -translate-x-10 translate-y-10 pointer-events-none" />
-                  <div className="w-10 h-10 rounded-[12px] flex items-center justify-center mb-5" style={{ background: 'linear-gradient(135deg, #61A644, #4d8f36)' }}>
-                    <i className="fa-solid fa-clock text-white text-base" />
+                  <div className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300 p-5 sm:p-7 relative overflow-hidden">
+                    <div className="absolute bottom-0 left-0 w-36 h-36 rounded-full bg-gradient-to-tr from-[#61A644]/20 via-[#61A644]/5 to-transparent -translate-x-10 translate-y-10 pointer-events-none" />
+                    <div className="w-10 h-10 rounded-[12px] flex items-center justify-center mb-5" style={{ background: 'linear-gradient(135deg, #61A644, #4d8f36)' }}>
+                      <i className="fa-solid fa-clock text-white text-base" />
+                    </div>
+                    <h4 className="text-base font-bold text-gray-900 mb-2">Oras ng Operasyon</h4>
+                    <p className="text-gray-600 text-sm leading-relaxed">
+                      <span className="font-bold text-gray-800">8:00 AM – 5:00 PM,</span> Lunes hanggang Biyernes.
+                    </p>
                   </div>
-                  <h4 className="text-base font-bold text-gray-900 mb-2">Oras ng Operasyon</h4>
-                  <p className="text-gray-600 text-sm leading-relaxed">
-                    <span className="font-bold text-gray-800">8:00 AM – 5:00 PM,</span> Lunes hanggang Biyernes.
-                  </p>
-                </div>
 
+                </div>
               </div>
             </div>
           )}
