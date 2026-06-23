@@ -72,18 +72,154 @@ export default function ArticleDetail() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Extract h2/h3 blocks from Portable Text for the TOC
-  const headings = useMemo(() => {
-    if (!article?.content) return [];
-    return (article.content as any[])
-      .filter(b => b._type === 'block' && (b.style === 'h2' || b.style === 'h3'))
-      .map((b, i) => ({
-        key: b._key as string,
-        text: ((b.children as any[]) || []).map((c: any) => c.text).join(''),
-        index: i,
-        level: b.style as string,
-      }));
-  }, [article?.content]);
+  // Extract headings (h2/h3) and prepare HTML with scroll IDs and layout styles
+  const parsedHeadingsAndHtml = useMemo(() => {
+    if (!article) return { headings: [], processedHtml: '' };
+
+    if (article.content && article.content.length > 0) {
+      const hList = (article.content as any[])
+        .filter(b => b._type === 'block' && (b.style === 'h2' || b.style === 'h3'))
+        .map((b, i) => ({
+          key: b._key as string,
+          text: ((b.children as any[]) || []).map((c: any) => c.text).join(''),
+          index: i,
+          level: b.style as string,
+        }));
+      return { headings: hList, processedHtml: '' };
+    }
+
+    if (article.contentHtml) {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(article.contentHtml, 'text/html');
+      
+      // Parse headings (h1 to h6)
+      const headingElements = doc.querySelectorAll('h1, h2, h3, h4, h5, h6');
+      const hList: any[] = [];
+      let headingIndex = 0;
+
+      headingElements.forEach((el) => {
+        const tagName = el.tagName.toLowerCase();
+        
+        if (tagName === 'h1') {
+          el.className = "text-lg md:text-xl font-bold mt-8 mb-4 text-gray-900 scroll-mt-8";
+        } else if (tagName === 'h2') {
+          el.className = "text-base font-semibold mt-8 mb-3 scroll-mt-8 bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent";
+        } else if (tagName === 'h3') {
+          el.className = "text-sm font-semibold mt-6 mb-2 text-gray-800 scroll-mt-8";
+        } else {
+          el.className = "text-xs font-semibold mt-5 mb-2 text-gray-700 uppercase tracking-wider scroll-mt-8";
+        }
+
+        // Track only h2 and h3 in the sidebar table of contents
+        if (tagName === 'h2' || tagName === 'h3') {
+          const text = el.textContent || '';
+          const key = `wp-heading-${headingIndex}`;
+          
+          el.setAttribute('id', `heading-${headingIndex}`);
+          el.setAttribute('data-section', String(headingIndex));
+          
+          hList.push({
+            key,
+            text,
+            index: headingIndex,
+            level: tagName,
+          });
+          headingIndex++;
+        }
+      });
+
+      // Paragraphs
+      const pElements = doc.querySelectorAll('p');
+      pElements.forEach(el => {
+        el.className = "text-gray-700 text-sm leading-relaxed mb-4";
+      });
+
+      // Links
+      const aElements = doc.querySelectorAll('a');
+      aElements.forEach(el => {
+        el.className = "text-[#1D9FDA] underline hover:text-[#61A644] transition-colors";
+        el.setAttribute('target', '_blank');
+        el.setAttribute('rel', 'noopener noreferrer');
+      });
+
+      // Lists
+      const ulElements = doc.querySelectorAll('ul');
+      ulElements.forEach(el => {
+        el.className = "space-y-2 mb-4 text-sm text-gray-600 list-disc pl-5";
+      });
+
+      const olElements = doc.querySelectorAll('ol');
+      olElements.forEach(el => {
+        el.className = "space-y-2 mb-4 text-sm text-gray-600 list-decimal pl-5";
+      });
+
+      const liElements = doc.querySelectorAll('li');
+      liElements.forEach(el => {
+        el.className = "leading-relaxed text-gray-700 text-sm mb-1";
+      });
+
+      // Blockquotes
+      const quoteElements = doc.querySelectorAll('blockquote');
+      quoteElements.forEach(el => {
+        el.className = "border-l-4 pl-4 my-5 italic text-gray-600 text-sm leading-relaxed";
+        el.style.borderColor = "#1D9FDA";
+      });
+
+      // Horizontal Rules
+      const hrElements = doc.querySelectorAll('hr');
+      hrElements.forEach(el => {
+        el.className = "my-8 border-t border-gray-100";
+      });
+
+      // Pre & Code
+      const preElements = doc.querySelectorAll('pre');
+      preElements.forEach(el => {
+        el.className = "bg-gray-50 rounded-xl p-4 my-4 overflow-x-auto text-xs font-mono text-gray-800 border border-gray-100";
+      });
+
+      const codeElements = doc.querySelectorAll('code');
+      codeElements.forEach(el => {
+        if (el.parentElement?.tagName.toLowerCase() !== 'pre') {
+          el.className = "bg-gray-50 text-pink-600 px-1.5 py-0.5 rounded text-xs font-mono border border-gray-100/50";
+        }
+      });
+
+      // Images
+      const imgElements = doc.querySelectorAll('img');
+      imgElements.forEach(el => {
+        el.className = "max-w-full h-auto rounded-xl my-6 mx-auto block";
+        el.style.height = "auto";
+      });
+
+      // Bold text
+      const strongElements = doc.querySelectorAll('strong, b');
+      strongElements.forEach(el => {
+        el.className = "font-semibold text-gray-900";
+      });
+
+      // Align classes
+      const alignedElements = doc.querySelectorAll('.aligncenter, .alignleft, .alignright');
+      alignedElements.forEach(el => {
+        if (el.classList.contains('aligncenter')) {
+          el.classList.add('mx-auto', 'block', 'text-center');
+        } else if (el.classList.contains('alignleft')) {
+          el.classList.add('float-left', 'mr-4', 'mb-4');
+        } else if (el.classList.contains('alignright')) {
+          el.classList.add('float-right', 'ml-4', 'mb-4');
+        }
+      });
+
+      return {
+        headings: hList,
+        processedHtml: doc.body.innerHTML
+      };
+    }
+
+    return { headings: [], processedHtml: '' };
+  }, [article]);
+
+  const headings = parsedHeadingsAndHtml.headings;
+  const processedContentHtml = parsedHeadingsAndHtml.processedHtml;
 
   const headingKeyToIndex = useMemo(
     () => Object.fromEntries(headings.map(h => [h.key, h.index])),
@@ -399,13 +535,18 @@ export default function ArticleDetail() {
                   );
                 })()}
 
-                {/* Portable Text rich content */}
-                {article.content && article.content.length > 0 && (
+                {/* Body content rendering */}
+                {article.content && article.content.length > 0 ? (
                   <PortableText
                     value={article.content as any}
                     components={portableTextComponents}
                   />
-                )}
+                ) : processedContentHtml ? (
+                  <div
+                    dangerouslySetInnerHTML={{ __html: processedContentHtml }}
+                    className="prose prose-blue max-w-none text-gray-700 text-sm leading-relaxed"
+                  />
+                ) : null}
 
                 {/* Source link */}
                 {article.source_link && (
