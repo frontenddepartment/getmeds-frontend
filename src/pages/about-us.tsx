@@ -303,25 +303,20 @@ export default function AboutUs() {
                 {/* Dedicated To */}
                 <div className="bg-white border border-gray-100 rounded-2xl shadow-sm p-6">
                   <p className="text-dark font-semibold text-[16px] mb-4">Dedicated to:</p>
-                  <ul className="grid grid-cols-3 gap-y-3 gap-x-8 text-[14px] text-gray-500 font-medium">
-                    <li className="flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"></div> Precision Pharmaceutical Distribution
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"></div> Patient Access Programs
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"></div> Strategic Global Sourcing
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"></div> Cold-Chain & Last-Mile Delivery
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"></div> Regulatory Compliance & FDA Philippines Licensing
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"></div> Hospital & Pharmacy Partnerships
-                    </li>
+                  <ul className="flex flex-wrap gap-2 md:grid md:grid-cols-3 md:gap-y-3 md:gap-x-8 md:text-[14px] text-gray-500 font-medium">
+                    {[
+                      'Precision Pharmaceutical Distribution',
+                      'Patient Access Programs',
+                      'Strategic Global Sourcing',
+                      'Cold-Chain & Last-Mile Delivery',
+                      'Regulatory Compliance & FDA Philippines Licensing',
+                      'Hospital & Pharmacy Partnerships',
+                    ].map((item) => (
+                      <li key={item} className="flex items-center gap-1.5 md:gap-2 bg-gray-50 md:bg-transparent border border-gray-100 md:border-0 rounded-full md:rounded-none px-3 py-1.5 md:px-0 md:py-0 text-[12px] md:text-[14px]">
+                        <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: '#1D9FDA' }}></div>
+                        {item}
+                      </li>
+                    ))}
                   </ul>
                 </div>
               </div>

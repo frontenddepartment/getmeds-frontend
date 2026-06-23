@@ -40,6 +40,7 @@ export default function ContactUs() {
     message: ''
   });
   const [submitState, setSubmitState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
+  const [successModalOpen, setSuccessModalOpen] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -83,7 +84,8 @@ export default function ContactUs() {
 
       setSubmitState('sent');
       setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
-      setTimeout(() => setSubmitState('idle'), 3000);
+      setSuccessModalOpen(true);
+      setTimeout(() => setSubmitState('idle'), 300);
     } catch (err: any) {
       console.error(err);
       setSubmitState('error');
@@ -181,14 +183,14 @@ export default function ContactUs() {
             <h2 className="text-2xl md:text-[28px] font-bold text-dark mb-3 leading-tight tracking-tight">
               How to Reach Us
             </h2>
-            <p className="text-gray-500 text-[14px] mb-10 leading-relaxed max-w-[90%]">
+            <p className="text-gray-500 text-[14px] mb-6 lg:mb-10 leading-relaxed max-w-[90%]">
               Pick the channel that fits your need. General inquiries, careers, and partnerships are routed directly to the right team for faster response.
             </p>
 
             {/* Dynamic contact groups grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-10 gap-x-8">
+            <div className="grid grid-cols-2 lg:grid-cols-2 gap-3 lg:gap-y-10 lg:gap-x-8">
               {contactGroups.map((group) => (
-                <div key={group._key}>
+                <div key={group._key} className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm lg:bg-transparent lg:rounded-none lg:p-0 lg:border-0 lg:shadow-none">
                   {/* Purpose heading with icon */}
                   <div className="flex items-center gap-2 mb-3">
                     <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
@@ -239,7 +241,7 @@ export default function ContactUs() {
               ))}
 
               {/* Social Network — always last */}
-              <div>
+              <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm lg:bg-transparent lg:rounded-none lg:p-0 lg:border-0 lg:shadow-none">
                 <div className="flex items-center gap-2 mb-3">
                   <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
                     style={{ background: 'linear-gradient(135deg, #61A644, #1D9FDA)' }}>
@@ -346,6 +348,40 @@ export default function ContactUs() {
 
       {/* Footer */}
       <div id="footer-container" />
+
+      {/* ── Contact Us Success Modal ── */}
+      {successModalOpen && (
+        <>
+        <style>{`@keyframes checkBounce{0%{transform:scale(0);opacity:0}55%{transform:scale(1.06);opacity:1}75%{transform:scale(0.97)}100%{transform:scale(1);opacity:1}}.check-bounce{animation:checkBounce 0.8s ease-out forwards}`}</style>
+        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/50 backdrop-blur-sm px-4">
+          <div className="bg-white w-full max-w-[400px] rounded-2xl shadow-2xl relative overflow-hidden">
+            <button onClick={() => setSuccessModalOpen(false)}
+              className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition z-10">
+              <i className="fa-solid fa-xmark text-base"></i>
+            </button>
+            <div className="px-10 pt-12 pb-8 text-center">
+              <div className="flex justify-center mb-7">
+                <div className="check-bounce w-14 h-14 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg,#61A644,#1D9FDA)' }}>
+                  <i className="fa-solid fa-check text-white text-xl"></i>
+                </div>
+              </div>
+              <h2 className="text-[19px] font-semibold text-gray-900 mb-4 leading-snug">Thank you for reaching out.</h2>
+              <p className="text-[13px] text-gray-500 leading-relaxed">
+                Our team will get back to you shortly. For urgent concerns, please call{' '}
+                <a href="tel:+639190769105" className="text-[#1D9FDA] font-semibold hover:underline">+63 919 076 9105</a>.
+              </p>
+            </div>
+            <div className="border-t border-gray-100 px-10 py-4 text-center">
+              <button onClick={() => setSuccessModalOpen(false)}
+                className="text-[13px] font-semibold hover:underline"
+                style={{ background: 'linear-gradient(to right,#61A644,#1D9FDA)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+        </>
+      )}
 
     </div>
   );

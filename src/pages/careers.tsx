@@ -21,6 +21,7 @@ const Careers: React.FC = () => {
     resumeBase64: ''
   });
   const [submitState, setSubmitState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
+  const [successModalOpen, setSuccessModalOpen] = useState(false);
   const [jobDescOpen, setJobDescOpen] = useState(false);
   const activeJob = jobs.find(j => j.title === applyingFor);
 
@@ -71,10 +72,10 @@ const Careers: React.FC = () => {
         resumeBase64: ''
       });
       
-      setTimeout(() => {
-        setApplyModalOpen(false);
-        setSubmitState('idle');
-      }, 2000);
+      setApplyModalOpen(false);
+      setJobDescOpen(false);
+      setSuccessModalOpen(true);
+      setTimeout(() => setSubmitState('idle'), 300);
     } catch (err: any) {
       console.error(err);
       setSubmitState('error');
@@ -340,8 +341,48 @@ const Careers: React.FC = () => {
       </section>
 
       {/* WHY PROFESSIONALS CHOOSE Getmeds */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-20 bg-white relative overflow-hidden">
+        {/* Left gradient decoration */}
+        <div className="absolute left-0 top-0 h-full w-56 pointer-events-none">
+          <svg className="w-full h-full" viewBox="0 0 224 600" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <radialGradient id="careersLeftGrad" cx="0%" cy="100%" r="100%">
+                <stop offset="0%" stopColor="#61A644" stopOpacity="0.9" />
+                <stop offset="55%" stopColor="#1D9FDA" stopOpacity="0.55" />
+                <stop offset="100%" stopColor="#FFF7ED" stopOpacity="0" />
+              </radialGradient>
+            </defs>
+            <rect width="224" height="600" fill="url(#careersLeftGrad)" />
+            <path d="M 0 520 A 80 80 0 0 1 80 600" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="1.5" />
+            <path d="M 0 440 A 160 160 0 0 1 160 600" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="1.5" />
+            <path d="M 0 360 A 240 240 0 0 1 224 514" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="1.5" />
+            <path d="M 0 280 A 320 320 0 0 1 224 372" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="1.5" />
+            <path d="M 0 200 A 400 400 0 0 1 224 269" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="1.5" />
+            <path d="M 0 120 A 480 480 0 0 1 224 176" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="1.5" />
+            <path d="M 0 40 A 560 560 0 0 1 224 87" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="1.5" />
+          </svg>
+        </div>
+        {/* Right gradient decoration */}
+        <div className="absolute right-0 top-0 h-full w-56 pointer-events-none">
+          <svg className="w-full h-full" viewBox="0 0 224 600" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <radialGradient id="careersRightGrad" cx="100%" cy="100%" r="100%">
+                <stop offset="0%" stopColor="#61A644" stopOpacity="0.8" />
+                <stop offset="55%" stopColor="#1D9FDA" stopOpacity="0.5" />
+                <stop offset="100%" stopColor="#FFF1F2" stopOpacity="0" />
+              </radialGradient>
+            </defs>
+            <rect width="224" height="600" fill="url(#careersRightGrad)" />
+            <path d="M 224 520 A 80 80 0 0 0 144 600" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="1.5" />
+            <path d="M 224 440 A 160 160 0 0 0 64 600" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="1.5" />
+            <path d="M 224 360 A 240 240 0 0 0 0 514" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="1.5" />
+            <path d="M 224 280 A 320 320 0 0 0 0 372" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="1.5" />
+            <path d="M 224 200 A 400 400 0 0 0 0 269" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="1.5" />
+            <path d="M 224 120 A 480 480 0 0 0 0 176" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="1.5" />
+            <path d="M 224 40 A 560 560 0 0 0 0 87" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="1.5" />
+          </svg>
+        </div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent font-bold uppercase tracking-widest text-lg block mb-4">Career Advantages</span>
             <h2 className="text-3xl md:text-4xl font-semibold text-dark mb-4">
@@ -484,6 +525,40 @@ const Careers: React.FC = () => {
 
       {/* Footer */}
       <div id="footer-container" />
+
+      {/* ── Careers Success Modal ── */}
+      {successModalOpen && (
+        <>
+        <style>{`@keyframes checkBounce{0%{transform:scale(0);opacity:0}55%{transform:scale(1.06);opacity:1}75%{transform:scale(0.97)}100%{transform:scale(1);opacity:1}}.check-bounce{animation:checkBounce 0.8s ease-out forwards}`}</style>
+        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/50 backdrop-blur-sm px-4">
+          <div className="bg-white w-full max-w-[400px] rounded-2xl shadow-2xl relative overflow-hidden">
+            <button onClick={() => setSuccessModalOpen(false)}
+              className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition z-10">
+              <i className="fa-solid fa-xmark text-base"></i>
+            </button>
+            <div className="px-10 pt-12 pb-8 text-center">
+              <div className="flex justify-center mb-7">
+                <div className="check-bounce w-14 h-14 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg,#61A644,#1D9FDA)' }}>
+                  <i className="fa-solid fa-check text-white text-xl"></i>
+                </div>
+              </div>
+              <h2 className="text-[19px] font-semibold text-gray-900 mb-4 leading-snug">Thank you for your interest in Getmeds.</h2>
+              <p className="text-[13px] text-gray-500 leading-relaxed">
+                Our HR team will review your application and reach out shortly regarding next steps. For urgent concerns, please call{' '}
+                <a href="tel:+639171545029" className="text-[#1D9FDA] font-semibold hover:underline">+63 917 154 5029</a>.
+              </p>
+            </div>
+            <div className="border-t border-gray-100 px-10 py-4 text-center">
+              <button onClick={() => setSuccessModalOpen(false)}
+                className="text-[13px] font-semibold hover:underline"
+                style={{ background: 'linear-gradient(to right,#61A644,#1D9FDA)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+        </>
+      )}
 
       {/* Backdrop */}
       <div

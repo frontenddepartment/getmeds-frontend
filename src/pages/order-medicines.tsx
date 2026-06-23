@@ -189,6 +189,7 @@ export default function OrderMedicines() {
     terms: false
   });
   const [submitState, setSubmitState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
+  const [successModalOpen, setSuccessModalOpen] = useState(false);
 
   const fileToBase64 = (file: File): Promise<string> =>
     new Promise((resolve, reject) => {
@@ -244,7 +245,7 @@ export default function OrderMedicines() {
 
       setSubmitState('sent');
       setValidationSubmitted(true);
-      setTimeout(() => window.location.reload(), 1500);
+      setSuccessModalOpen(true);
     } catch (error) {
       console.error('Submission error:', error);
       setSubmitState('error');
@@ -430,12 +431,14 @@ export default function OrderMedicines() {
                     desc: 'Receive your order confirmation and delivery details via your preferred contact'
                   }
                 ].map((step, i) => (
-                  <div key={i} className="bg-white/10 backdrop-blur-sm rounded-[15px] border border-white/20 p-6 flex flex-col items-center text-center hover:bg-white/20 hover:border-white/40 hover:scale-[1.03] hover:shadow-[0_8px_32px_rgba(0,0,0,0.15)] transition-all duration-300 cursor-default">
-                    <div className="w-14 h-14 rounded-full bg-white/20 border border-white/30 flex items-center justify-center mb-4">
-                      <i className={`fa-solid ${step.icon} text-white text-xl`}></i>
+                  <div key={i} className="bg-white/10 backdrop-blur-sm rounded-[15px] border border-white/20 p-4 md:p-6 flex flex-row items-center md:flex-col md:items-center text-left md:text-center cursor-default">
+                    <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-white/20 border border-white/30 flex items-center justify-center flex-shrink-0 mr-4 md:mr-0 md:mb-4">
+                      <i className={`fa-solid ${step.icon} text-white text-lg md:text-xl`}></i>
                     </div>
-                    <h3 className="text-white font-bold text-[15px] mb-3">{step.label}</h3>
-                    <p className="text-white text-[12px] leading-relaxed">{step.desc}</p>
+                    <div className="flex flex-col">
+                      <h3 className="text-white font-bold text-[14px] md:text-[15px] mb-1 md:mb-3">{step.label}</h3>
+                      <p className="text-white/80 md:text-white text-[12px] leading-relaxed">{step.desc}</p>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -785,6 +788,57 @@ export default function OrderMedicines() {
         <div id="footer-container" />
 
       </div>
+
+      {/* ── Order Success Modal ── */}
+      {successModalOpen && (
+        <>
+        <style>{`@keyframes checkBounce{0%{transform:scale(0);opacity:0}55%{transform:scale(1.06);opacity:1}75%{transform:scale(0.97)}100%{transform:scale(1);opacity:1}}.check-bounce{animation:checkBounce 0.8s ease-out forwards}`}</style>
+        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/50 backdrop-blur-sm px-4">
+          <div className="bg-white w-full max-w-[400px] rounded-2xl shadow-2xl relative overflow-hidden">
+            {/* Close button */}
+            <button
+              onClick={() => { setSuccessModalOpen(false); window.location.reload(); }}
+              className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition z-10"
+            >
+              <i className="fa-solid fa-xmark text-base"></i>
+            </button>
+
+            <div className="px-10 pt-12 pb-8 text-center">
+              {/* Illustration */}
+              <div className="flex justify-center mb-7">
+                <div className="check-bounce w-14 h-14 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg,#61A644,#1D9FDA)' }}>
+                  <i className="fa-solid fa-check text-white text-xl"></i>
+                </div>
+              </div>
+
+              {/* Title */}
+              <h2 className="text-[19px] font-semibold text-gray-900 mb-4 leading-snug">
+                Thank you for your order.
+              </h2>
+
+              {/* Message */}
+              <p className="text-[13px] text-gray-500 leading-relaxed">
+                We will contact you shortly to confirm your order details. For urgent concerns, please call{' '}
+                <a href="tel:+639190769105" className="text-[#1D9FDA] font-semibold hover:underline">
+                  +63 919 076 9105
+                </a>.
+              </p>
+            </div>
+
+            {/* Divider + footer */}
+            <div className="border-t border-gray-100 px-10 py-4 text-center">
+              <button
+                onClick={() => { setSuccessModalOpen(false); window.location.reload(); }}
+                className="text-[13px] font-semibold hover:underline"
+                style={{ background: 'linear-gradient(to right,#61A644,#1D9FDA)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+        </>
+      )}
 
       {/* Image Lightbox */}
       {viewingFileUrl && (

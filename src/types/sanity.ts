@@ -905,11 +905,38 @@ export interface PageAsset {
 }
 
 
-export interface NewsContentBlock {
-  header?: string
-  text?: string
-  bullets?: string[]
+export interface SanityPortableTextSpan {
+  _type: 'span'
+  _key: string
+  text: string
+  marks?: string[]
 }
+
+export interface SanityPortableTextMarkDef {
+  _key: string
+  _type: string
+  href?: string
+}
+
+export interface SanityPortableTextBlock {
+  _type: 'block'
+  _key: string
+  style?: 'normal' | 'h2' | 'h3' | 'large' | 'small' | 'center' | 'right' | 'blockquote'
+  listItem?: 'bullet' | 'number'
+  level?: number
+  markDefs?: SanityPortableTextMarkDef[]
+  children?: SanityPortableTextSpan[]
+}
+
+export interface SanityPortableTextImage {
+  _type: 'image'
+  _key: string
+  asset?: SanityReference<SanityAsset>
+  hotspot?: { x: number; y: number }
+  crop?: { top: number; bottom: number; left: number; right: number }
+}
+
+export type SanityPortableTextNode = SanityPortableTextBlock | SanityPortableTextImage
 
 export interface News {
   _id: string
@@ -921,7 +948,7 @@ export interface News {
   readTime?: string
   intro?: string
   image?: SanityImage
-  content?: NewsContentBlock[]
+  content?: SanityPortableTextNode[]
   source_link?: string
 }
 
