@@ -455,51 +455,50 @@ export default function ArticleDetail() {
                     </nav>
                   </div>
                 )}
-
                 {/* Share Article */}
                 <div>
                   <p className="text-xs font-semibold text-gray-700 mb-3">Share Article</p>
 
                   <div className="flex gap-2">
+                    {/* Instagram */}
                     <a
-                      href="#"
+                      href={`https://www.instagram.com/`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => navigator.clipboard.writeText(article.source_link)}
                       className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs"
                       style={{ background: 'linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)' }}
+                      title="Copy link and open Instagram"
                     >
                       <i className="fa-brands fa-instagram"></i>
                     </a>
+
+                    {/* LinkedIn */}
                     <a
-                      href="#"
+                      href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(article.source_link)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs"
                       style={{ background: '#0077b5' }}
+                      title="Share on LinkedIn"
                     >
                       <i className="fa-brands fa-linkedin-in"></i>
                     </a>
+
+                    {/* TikTok */}
                     <a
-                      href="#"
+                      href={`https://www.tiktok.com/`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => navigator.clipboard.writeText(article.source_link)}
                       className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs"
                       style={{ background: '#010101' }}
+                      title="Copy link and open TikTok"
                     >
                       <i className="fa-brands fa-tiktok"></i>
                     </a>
                   </div>
                 </div>
-
-                {/* Sidebar image — below Share Article */}
-                {article.sidebarImage && (() => {
-                  const sidebarImgUrl = urlFor(article.sidebarImage).width(300).url();
-                  return (
-                    <div className="mt-6">
-                      <div style={{ borderRadius: '12px', overflow: 'hidden', transform: 'translateZ(0)' }}>
-                        <img
-                          src={sidebarImgUrl}
-                          alt=""
-                          style={{ width: '100%', display: 'block' }}
-                        />
-                      </div>
-                    </div>
-                  );
-                })()}
               </aside>
 
               {/* Article body */}
@@ -549,7 +548,7 @@ export default function ArticleDetail() {
                 ) : null}
 
                 {/* Source link */}
-                {article.source_link && (
+                {/* {article.source_link && (
                   <div className="mt-8 pt-6 border-t border-gray-100">
                     <p className="text-xs text-gray-400">
                       Source:{' '}
@@ -563,7 +562,7 @@ export default function ArticleDetail() {
                       </a>
                     </p>
                   </div>
-                )}
+                )} */}
 
               </article>
             </div>
