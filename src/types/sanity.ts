@@ -947,10 +947,11 @@ export interface News {
   description: string
   readTime?: string
   intro?: string
-  image?: SanityImage
-  centerImage?: SanityImage
-  sidebarImage?: SanityImage
+  image?: SanityImage | string
+  centerImage?: SanityImage | string
+  sidebarImage?: SanityImage | string
   content?: SanityPortableTextNode[]
+  contentHtml?: string
   source_link?: string
 }
 

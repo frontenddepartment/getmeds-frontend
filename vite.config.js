@@ -39,6 +39,15 @@ export default defineConfig(({ mode }) => {
       'import.meta.env.VITE_SANITY_DATASET': JSON.stringify(sanityDataset),
       'import.meta.env.VITE_SANITY_API_VERSION': JSON.stringify(sanityApiVersion)
     },
+    server: {
+      proxy: {
+        '/wp-json': {
+          target: 'https://2mginc.com',
+          changeOrigin: true,
+          secure: false,
+        }
+      }
+    },
     build: {
       rollupOptions: {
         input: getHtmlInputs()

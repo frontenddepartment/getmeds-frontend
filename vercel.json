@@ -6,6 +6,7 @@
   "outputDirectory": "dist",
   "cleanUrls": true,
   "rewrites": [
+    { "source": "/wp-json/:path*", "destination": "https://2mginc.com/wp-json/:path*" },
     { "source": "/api/:path*", "destination": "https://getmeds-admin.vercel.app/api/:path*" }
   ]
 }

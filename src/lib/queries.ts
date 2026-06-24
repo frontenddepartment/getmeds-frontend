@@ -363,38 +363,63 @@ export async function getGoogleSpreadsheetBySlug(slug: string) {
 // ─────────────────────────────────────────────
 
 export async function getNews() {
-  return client.fetch<News[]>(`
-    *[_type == "news"] | order(date desc) {
-      _id,
-      tag,
-      title,
-      date,
-      description,
-      readTime,
-      intro,
-      image,
-      content
-    }
-  `)
+  try {
+    const res = await fetch(`/wp-json/shared-cms/v1/news?site=getmeds&per_page=100&_t=${Date.now()}`, {
+      headers: {
+        'Cache-Control': 'no-cache',
+        'Pragma': 'no-cache'
+      }
+    });
+    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+    const data = await res.json();
+    const items = data.items || [];
+    return items.map((item: any) => ({
+      _id: String(item.wpId),
+      _type: 'news' as const,
+      tag: item.tag || item.categories?.[0]?.name || 'News',
+      title: item.title,
+      date: item.date,
+      description: item.description,
+      readTime: item.readTime,
+      image: item.featuredImage,
+      contentHtml: item.contentHtml,
+      source_link: item.source_link || item.link
+    }));
+  } catch (err) {
+    console.error('Error fetching news from WordPress API:', err);
+    return [];
+  }
 }
 
 export async function getNewsById(id: string) {
-  return client.fetch<News | null>(`
-    *[_type == "news" && _id == $id][0] {
-      _id,
-      tag,
-      title,
-      date,
-      description,
-      readTime,
-      intro,
-      image,
-      centerImage,
-      sidebarImage,
-      content,
-      source_link
-    }
-  `, { id })
+  try {
+    const res = await fetch(`/wp-json/shared-cms/v1/news?site=getmeds&wpId=${id}&_t=${Date.now()}`, {
+      headers: {
+        'Cache-Control': 'no-cache',
+        'Pragma': 'no-cache'
+      }
+    });
+    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+    const data = await res.json();
+    const items = data.items || [];
+    if (items.length === 0) return null;
+    const item = items[0];
+    return {
+      _id: String(item.wpId),
+      _type: 'news' as const,
+      tag: item.tag || item.categories?.[0]?.name || 'News',
+      title: item.title,
+      date: item.date,
+      description: item.description,
+      readTime: item.readTime,
+      image: item.featuredImage,
+      contentHtml: item.contentHtml,
+      source_link: item.source_link || item.link
+    };
+  } catch (err) {
+    console.error(`Error fetching news item ${id} from WordPress API:`, err);
+    return null;
+  }
 }
 
 export async function getCareers() {
