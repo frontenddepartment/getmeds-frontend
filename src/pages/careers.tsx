@@ -71,7 +71,7 @@ const Careers: React.FC = () => {
         resumeType: '',
         resumeBase64: ''
       });
-      
+
       setApplyModalOpen(false);
       setJobDescOpen(false);
       setSuccessModalOpen(true);
@@ -176,7 +176,7 @@ const Careers: React.FC = () => {
       {/* HERO SECTION */}
       <section className="w-full mx-auto px-3 sm:px-4 md:px-6 mt-3 md:mt-4 mb-0 max-w-[1600px]">
         <div className="relative rounded-[1.5rem] overflow-hidden min-h-[450px] md:min-h-[500px] flex items-end bg-gray-100">
-          <img src={getImage('assets/careershero.png', 'assets/careershero.png')} alt="Getmeds Team"
+          <img src={getImage('assets/careersherosection.jpg', 'assets/careersherosection.jpg')} alt="Getmeds Team"
             className="absolute inset-0 w-full h-full object-cover object-right-top" />
           <div className="relative z-10 w-full px-8 md:px-14 pb-7 md:pb-8 pt-0">
             <div className="inline-block max-w-[60%]">
@@ -577,34 +577,34 @@ const Careers: React.FC = () => {
       {/* ── Careers Success Modal ── */}
       {successModalOpen && (
         <>
-        <style>{`@keyframes checkBounce{0%{transform:scale(0);opacity:0}55%{transform:scale(1.06);opacity:1}75%{transform:scale(0.97)}100%{transform:scale(1);opacity:1}}.check-bounce{animation:checkBounce 0.8s ease-out forwards}`}</style>
-        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/50 backdrop-blur-sm px-4">
-          <div className="bg-white w-full max-w-[400px] rounded-2xl shadow-2xl relative overflow-hidden">
-            <button onClick={() => setSuccessModalOpen(false)}
-              className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition z-10">
-              <i className="fa-solid fa-xmark text-base"></i>
-            </button>
-            <div className="px-10 pt-12 pb-8 text-center">
-              <div className="flex justify-center mb-7">
-                <div className="check-bounce w-14 h-14 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg,#61A644,#1D9FDA)' }}>
-                  <i className="fa-solid fa-check text-white text-xl"></i>
-                </div>
-              </div>
-              <h2 className="text-[19px] font-semibold text-gray-900 mb-4 leading-snug">Thank you for your interest in Getmeds.</h2>
-              <p className="text-[13px] text-gray-500 leading-relaxed">
-                Our HR team will review your application and reach out shortly regarding next steps. For urgent concerns, please call{' '}
-                <a href="tel:+639171545029" className="text-[#1D9FDA] font-semibold hover:underline">+63 917 154 5029</a>.
-              </p>
-            </div>
-            <div className="border-t border-gray-100 px-10 py-4 text-center">
+          <style>{`@keyframes checkBounce{0%{transform:scale(0);opacity:0}55%{transform:scale(1.06);opacity:1}75%{transform:scale(0.97)}100%{transform:scale(1);opacity:1}}.check-bounce{animation:checkBounce 0.8s ease-out forwards}`}</style>
+          <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/50 backdrop-blur-sm px-4">
+            <div className="bg-white w-full max-w-[400px] rounded-2xl shadow-2xl relative overflow-hidden">
               <button onClick={() => setSuccessModalOpen(false)}
-                className="text-[13px] font-semibold hover:underline"
-                style={{ background: 'linear-gradient(to right,#61A644,#1D9FDA)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
-                Close
+                className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition z-10">
+                <i className="fa-solid fa-xmark text-base"></i>
               </button>
+              <div className="px-10 pt-12 pb-8 text-center">
+                <div className="flex justify-center mb-7">
+                  <div className="check-bounce w-14 h-14 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg,#61A644,#1D9FDA)' }}>
+                    <i className="fa-solid fa-check text-white text-xl"></i>
+                  </div>
+                </div>
+                <h2 className="text-[19px] font-semibold text-gray-900 mb-4 leading-snug">Thank you for your interest in Getmeds.</h2>
+                <p className="text-[13px] text-gray-500 leading-relaxed">
+                  Our HR team will review your application and reach out shortly regarding next steps. For urgent concerns, please call{' '}
+                  <a href="tel:+639171545029" className="text-[#1D9FDA] font-semibold hover:underline">+63 917 154 5029</a>.
+                </p>
+              </div>
+              <div className="border-t border-gray-100 px-10 py-4 text-center">
+                <button onClick={() => setSuccessModalOpen(false)}
+                  className="text-[13px] font-semibold hover:underline"
+                  style={{ background: 'linear-gradient(to right,#61A644,#1D9FDA)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+                  Close
+                </button>
+              </div>
             </div>
           </div>
-        </div>
         </>
       )}
 
@@ -618,72 +618,72 @@ const Careers: React.FC = () => {
       <div
         className={`fixed bottom-0 left-0 right-0 md:bottom-auto md:left-auto md:top-4 md:right-4 h-[calc(100vh-2rem)] w-full md:w-[calc(100%-2rem)] max-w-full md:max-w-md bg-white shadow-2xl rounded-t-[20px] md:rounded-[15px] z-[65] transform transition-transform duration-500 ease-[cubic-bezier(0.2,0.8,0.2,1)] overflow-y-auto flex flex-col ${jobDescOpen ? 'translate-y-0 md:translate-x-0' : 'translate-y-full md:translate-y-0 md:translate-x-[calc(100%+2rem)]'}`}
       >
-            {/* Drag handle — mobile only */}
-            <div className="md:hidden flex justify-center pt-3 pb-1 shrink-0">
-              <div className="w-10 h-1 bg-gray-200 rounded-full"></div>
-            </div>
-            {/* Sticky header — always visible, scrollbar space reserved */}
-            <div className="sticky top-0 z-10 bg-white rounded-t-[20px] md:rounded-t-[15px] flex items-center justify-between px-8 pt-4 md:pt-6 pb-4 border-b border-gray-100 shrink-0">
-              <div className="flex-1 pr-4">
-                <span className="text-[11px] font-bold uppercase tracking-widest bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent block mb-1">Job Description</span>
-                <h2 className="text-[22px] font-bold text-slate-900 leading-tight tracking-tight">{activeJob?.title}</h2>
-                <span className="inline-block text-[11px] font-semibold text-gray-400 tracking-wider mt-1">Full Time</span>
-              </div>
-              <button
-                onClick={() => { setJobDescOpen(false); setApplyModalOpen(false); }}
-                className="shrink-0 text-gray-400 hover:text-gray-900 transition-colors w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200"
-              >
-                <i className="fa-solid fa-xmark text-lg"></i>
-              </button>
-            </div>
+        {/* Drag handle — mobile only */}
+        <div className="md:hidden flex justify-center pt-3 pb-1 shrink-0">
+          <div className="w-10 h-1 bg-gray-200 rounded-full"></div>
+        </div>
+        {/* Sticky header — always visible, scrollbar space reserved */}
+        <div className="sticky top-0 z-10 bg-white rounded-t-[20px] md:rounded-t-[15px] flex items-center justify-between px-8 pt-4 md:pt-6 pb-4 border-b border-gray-100 shrink-0">
+          <div className="flex-1 pr-4">
+            <span className="text-[11px] font-bold uppercase tracking-widest bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent block mb-1">Job Description</span>
+            <h2 className="text-[22px] font-bold text-slate-900 leading-tight tracking-tight">{activeJob?.title}</h2>
+            <span className="inline-block text-[11px] font-semibold text-gray-400 tracking-wider mt-1">Full Time</span>
+          </div>
+          <button
+            onClick={() => { setJobDescOpen(false); setApplyModalOpen(false); }}
+            className="shrink-0 text-gray-400 hover:text-gray-900 transition-colors w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200"
+          >
+            <i className="fa-solid fa-xmark text-lg"></i>
+          </button>
+        </div>
 
-            {/* Scrollable content with right padding for scrollbar */}
-            <div className="flex-1 px-8 pr-14 pb-8 overflow-y-auto">
-              {activeJob && (
-                <div className="space-y-6 pt-6">
-                  <div>
-                    <p className="text-[13.5px] text-gray-500 leading-relaxed">{activeJob.desc}</p>
-                  </div>
-                  <div>
-                    <h4 className="text-[15px] font-semibold text-slate-800 mb-3">Key Responsibilities</h4>
-                    <ul className="space-y-2">
-                      {activeJob.responsibilities.map((r: string, i: number) => (
-                        <li key={i} className="flex items-start gap-2 text-[12.5px] text-gray-500 leading-relaxed">
-                          <i className="fa-solid fa-circle-check text-[#61A644] text-[11px] mt-[3px] shrink-0"></i>
-                          {r}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                  <div>
-                    <h4 className="text-[15px] font-semibold text-slate-800 mb-3">Qualifications & Requirements</h4>
-                    <ul className="space-y-2">
-                      {activeJob.requirements.map((r: string, i: number) => (
-                        <li key={i} className="flex items-start gap-2 text-[12.5px] text-gray-500 leading-relaxed">
-                          <i className="fa-solid fa-circle-check text-[#1D9FDA] text-[11px] mt-[3px] shrink-0"></i>
-                          {r}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                  <div className="pt-2 pb-4">
-                    <button
-                      onClick={() => {
-                        setJobDescOpen(false);
-                        setTimeout(() => {
-                          const modal = document.getElementById('apply-form-modal');
-                          if (modal) modal.scrollTo({ top: 0, behavior: 'smooth' });
-                        }, 100);
-                      }}
-                      className="w-full bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:opacity-90 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transition-all text-[13px] flex items-center justify-center gap-2"
-                    >
-                      <i className="fa-solid fa-pen-to-square"></i>
-                      <span>Fill Out Application</span>
-                    </button>
-                  </div>
-                </div>
-              )}
+        {/* Scrollable content with right padding for scrollbar */}
+        <div className="flex-1 px-8 pr-14 pb-8 overflow-y-auto">
+          {activeJob && (
+            <div className="space-y-6 pt-6">
+              <div>
+                <p className="text-[13.5px] text-gray-500 leading-relaxed">{activeJob.desc}</p>
+              </div>
+              <div>
+                <h4 className="text-[15px] font-semibold text-slate-800 mb-3">Key Responsibilities</h4>
+                <ul className="space-y-2">
+                  {activeJob.responsibilities.map((r: string, i: number) => (
+                    <li key={i} className="flex items-start gap-2 text-[12.5px] text-gray-500 leading-relaxed">
+                      <i className="fa-solid fa-circle-check text-[#61A644] text-[11px] mt-[3px] shrink-0"></i>
+                      {r}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <h4 className="text-[15px] font-semibold text-slate-800 mb-3">Qualifications & Requirements</h4>
+                <ul className="space-y-2">
+                  {activeJob.requirements.map((r: string, i: number) => (
+                    <li key={i} className="flex items-start gap-2 text-[12.5px] text-gray-500 leading-relaxed">
+                      <i className="fa-solid fa-circle-check text-[#1D9FDA] text-[11px] mt-[3px] shrink-0"></i>
+                      {r}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="pt-2 pb-4">
+                <button
+                  onClick={() => {
+                    setJobDescOpen(false);
+                    setTimeout(() => {
+                      const modal = document.getElementById('apply-form-modal');
+                      if (modal) modal.scrollTo({ top: 0, behavior: 'smooth' });
+                    }, 100);
+                  }}
+                  className="w-full bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:opacity-90 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transition-all text-[13px] flex items-center justify-center gap-2"
+                >
+                  <i className="fa-solid fa-pen-to-square"></i>
+                  <span>Fill Out Application</span>
+                </button>
+              </div>
             </div>
+          )}
+        </div>
       </div>
 
       {/* Slide-out Application Drawer */}

@@ -24,25 +24,18 @@ export default function AboutUs() {
   }, []);
 
   useEffect(() => {
-    const revealOptions = {
-      root: null,
-      threshold: 0.1,
-      rootMargin: '0px 0px -50px 0px',
-    };
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('active');
-        } else {
-          entry.target.classList.remove('active');
-        }
-      });
-    }, revealOptions);
-
-    const revealElements = document.querySelectorAll('.reveal');
-    revealElements.forEach(el => observer.observe(el));
-
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('ca-in');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.12, rootMargin: '0px 0px -30px 0px' }
+    );
+    document.querySelectorAll('.ca-anim').forEach(el => observer.observe(el));
     return () => observer.disconnect();
   }, []);
 
@@ -99,7 +92,7 @@ export default function AboutUs() {
     if (!el) return;
     setTimeout(() => {
       const ceoCard = el.children[4] as HTMLElement;
-      if (ceoCard) ceoCard.scrollIntoView({ behavior: 'instant' as ScrollBehavior, inline: 'center', block: 'nearest' });
+      if (ceoCard) el.scrollLeft = ceoCard.offsetLeft - (el.offsetWidth / 2) + (ceoCard.offsetWidth / 2);
     }, 80);
   }, []);
 
@@ -110,6 +103,29 @@ export default function AboutUs() {
 
   return (
     <div style={{ fontFamily: "'Poppins', sans-serif" }} className="bg-white text-gray-800 antialiased">
+      <style>{`
+        @keyframes caFadeUp   { from { opacity:0; transform:translateY(32px); } to { opacity:1; transform:translateY(0); } }
+        @keyframes caFadeLeft { from { opacity:0; transform:translateX(-36px); } to { opacity:1; transform:translateX(0); } }
+        @keyframes caFadeRight{ from { opacity:0; transform:translateX(36px);  } to { opacity:1; transform:translateX(0); } }
+        @keyframes caZoomIn   { from { opacity:0; transform:scale(0.92);       } to { opacity:1; transform:scale(1);    } }
+        @keyframes caFadeIn   { from { opacity:0; }                              to { opacity:1; }                        }
+
+        .ca-anim { opacity: 0; }
+        .ca-anim.ca-in.ca-up    { animation: caFadeUp    0.7s cubic-bezier(0.22,1,0.36,1) forwards; }
+        .ca-anim.ca-in.ca-left  { animation: caFadeLeft  0.7s cubic-bezier(0.22,1,0.36,1) forwards; }
+        .ca-anim.ca-in.ca-right { animation: caFadeRight 0.7s cubic-bezier(0.22,1,0.36,1) forwards; }
+        .ca-anim.ca-in.ca-zoom  { animation: caZoomIn    0.7s cubic-bezier(0.22,1,0.36,1) forwards; }
+        .ca-anim.ca-in.ca-fade  { animation: caFadeIn    0.7s ease forwards; }
+
+        .ca-d1 { animation-delay: 0.10s !important; }
+        .ca-d2 { animation-delay: 0.20s !important; }
+        .ca-d3 { animation-delay: 0.30s !important; }
+        .ca-d4 { animation-delay: 0.40s !important; }
+        .ca-d5 { animation-delay: 0.50s !important; }
+        .ca-d6 { animation-delay: 0.60s !important; }
+        .ca-d7 { animation-delay: 0.70s !important; }
+        .ca-d8 { animation-delay: 0.80s !important; }
+      `}</style>
 
       {/* Navbar */}
       <div id="navbar-container" className="sticky top-0 z-[50]" />
@@ -119,13 +135,13 @@ export default function AboutUs() {
         <div className="relative rounded-[1.5rem] overflow-hidden min-h-[450px] md:min-h-[500px] flex items-end group">
           {/* Background Image */}
           <div className="absolute inset-0 z-0">
-            <img src={getImage('assets/aboutusone.jpg', 'assets/aboutusone.jpg')} data-json-src="hero.image" data-json-alt="hero.imageAlt"
+            <img src={getImage('assets/aboutusone.jpg', 'assets/fallback.jpg')} data-json-src="hero.image" data-json-alt="hero.imageAlt"
               className="w-full h-full object-cover object-center transform group-hover:scale-105 transition-transform duration-[4s]"
               alt="About Getmeds" />
           </div>
 
           {/* Content */}
-          <div className="relative z-10 w-full px-8 md:px-14 pb-12 md:pb-16 pt-20 max-w-4xl reveal">
+          <div className="relative z-10 w-full px-8 md:px-14 pb-12 md:pb-16 pt-20 max-w-4xl ca-anim ca-up">
             <h1 className="text-[28px] md:text-[38px] leading-tight font-bold mb-3 tracking-tight">
               <span data-json="hero.heading" className="text-white">Your Compassionate</span><br />
               <span data-json="hero.headingAccent"
@@ -157,7 +173,7 @@ export default function AboutUs() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
           {/* Header Row */}
-          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-8 reveal">
+          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-8 ca-anim ca-up">
             <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 leading-tight max-w-lg">
               Inside Getmeds: Our People &amp; Culture
             </h2>
@@ -173,7 +189,7 @@ export default function AboutUs() {
           </div>
 
           {/* Expanding Panels */}
-          <div className="flex gap-3 h-[340px] md:h-[400px] mb-20 reveal"
+          <div className="flex gap-3 h-[340px] md:h-[400px] mb-20 ca-anim ca-fade"
             onMouseLeave={() => setActivePanel(0)}>
 
             {/* Panel 1 — Left */}
@@ -240,7 +256,7 @@ export default function AboutUs() {
           <div className="flex flex-col gap-10">
 
             {/* Introduction about getmeds */}
-            <div className="reveal">
+            <div className="ca-anim ca-up">
               <h3
                 className="inline-block text-3xl md:text-4xl lg:text-[35px] leading-tight font-semibold mb-8 tracking-tight text-gray-900">
                 About Us</h3>
@@ -328,10 +344,10 @@ export default function AboutUs() {
 
       {/* Enhanced Mission, Vision & Values */}
       <section className="pt-0 pb-16 bg-white overflow-hidden">
-        <div className="flex flex-col gap-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 reveal">
+        <div className="flex flex-col gap-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Mission Card */}
           <div
-            className="relative bg-white p-8 md:p-12 flex flex-col md:flex-row items-center text-center md:text-left group rounded-[15px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 hover:shadow-[0_20px_50px_rgb(0,0,0,0.08)] transition-all duration-500 hover:-translate-y-2 overflow-hidden gap-8 md:gap-12">
+            className="ca-anim ca-left relative bg-white p-8 md:p-12 flex flex-col md:flex-row items-center text-center md:text-left group rounded-[15px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 hover:shadow-[0_20px_50px_rgb(0,0,0,0.08)] transition-all duration-500 hover:-translate-y-2 overflow-hidden gap-8 md:gap-12">
             {/* Accent Line */}
             <div
               className="absolute top-0 left-0 w-full h-2 md:w-2 md:h-full bg-gradient-to-r md:bg-gradient-to-b from-[#61A644] to-[#1D9FDA] opacity-0 group-hover:opacity-100 transition-opacity duration-500">
@@ -362,7 +378,7 @@ export default function AboutUs() {
 
           {/* Vision Card */}
           <div
-            className="relative bg-white p-8 md:p-12 flex flex-col md:flex-row items-center text-center md:text-left group rounded-[15px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 hover:shadow-[0_20px_50px_rgb(0,0,0,0.08)] transition-all duration-500 hover:-translate-y-2 overflow-hidden gap-8 md:gap-12">
+            className="ca-anim ca-right ca-d2 relative bg-white p-8 md:p-12 flex flex-col md:flex-row items-center text-center md:text-left group rounded-[15px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 hover:shadow-[0_20px_50px_rgb(0,0,0,0.08)] transition-all duration-500 hover:-translate-y-2 overflow-hidden gap-8 md:gap-12">
             {/* Accent Line */}
             <div
               className="absolute top-0 left-0 w-full h-2 md:w-2 md:h-full bg-gradient-to-r md:bg-gradient-to-b from-[#61A644] to-[#1D9FDA] opacity-0 group-hover:opacity-100 transition-opacity duration-500">
@@ -398,7 +414,7 @@ export default function AboutUs() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
           {/* Header */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center mb-14 reveal">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center mb-14 ca-anim ca-up">
             {/* Left: title */}
             <div>
               <h2 className="text-[28px] md:text-[36px] font-semibold text-dark leading-tight tracking-tight">
@@ -415,17 +431,17 @@ export default function AboutUs() {
           </div>
 
           {/* Cards Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 reveal">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
             {/* Collaboration and Excellence */}
-            <div className="bg-white p-7 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+            <div className="ca-anim ca-up bg-white p-7 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
               <i className="fa-solid fa-handshake text-2xl text-gray-800 mb-5 block"></i>
               <h4 className="text-[13px] font-bold text-gray-900 mb-3 uppercase tracking-wider">Collaboration and Excellence</h4>
               <p className="text-sm text-gray-500 leading-relaxed">By fostering collaborations with leading medical professionals, researchers, and partners, we strive for synergistic partnerships that aim to accelerate breakthroughs and reshape the future of healthcare.</p>
             </div>
 
             {/* Compassion & Integrity — gradient highlight */}
-            <div className="p-7 rounded-2xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+            <div className="ca-anim ca-up ca-d2 p-7 rounded-2xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
               style={{ background: 'linear-gradient(135deg, #61A644 0%, #1D9FDA 100%)' }}>
               <i className="fa-solid fa-heart text-2xl text-white mb-5 block"></i>
               <h4 className="text-[13px] font-bold text-white mb-3 uppercase tracking-wider">Compassion &amp; Integrity</h4>
@@ -433,28 +449,28 @@ export default function AboutUs() {
             </div>
 
             {/* Pioneering Medicine Solutions */}
-            <div className="bg-white p-7 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+            <div className="ca-anim ca-up ca-d4 bg-white p-7 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
               <i className="fa-solid fa-flask text-2xl text-gray-800 mb-5 block"></i>
               <h4 className="text-[13px] font-bold text-gray-900 mb-3 uppercase tracking-wider">Pioneering Medicine Solutions</h4>
               <p className="text-sm text-gray-500 leading-relaxed">We are dedicated to delivering medicine solutions that address the unmet needs of patients worldwide, exploring novel therapies that make a difference in challenging medical conditions.</p>
             </div>
 
             {/* Global Accessibility */}
-            <div className="bg-white p-7 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+            <div className="ca-anim ca-up ca-d1 bg-white p-7 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
               <i className="fa-solid fa-earth-americas text-2xl text-gray-800 mb-5 block"></i>
               <h4 className="text-[13px] font-bold text-gray-900 mb-3 uppercase tracking-wider">Global Accessibility</h4>
               <p className="text-sm text-gray-500 leading-relaxed">We believe healthcare knows no boundaries. Our commitment to a seamless global presence through synergistic partnerships ensures the needs of patients are met globally without delay.</p>
             </div>
 
             {/* Empowering Patients */}
-            <div className="bg-white p-7 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+            <div className="ca-anim ca-up ca-d3 bg-white p-7 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
               <i className="fa-solid fa-user-shield text-2xl text-gray-800 mb-5 block"></i>
               <h4 className="text-[13px] font-bold text-gray-900 mb-3 uppercase tracking-wider">Empowering Patients</h4>
               <p className="text-sm text-gray-500 leading-relaxed">We strive to empower patients by providing them with accessible connection to life-saving medicines and providers, cutting-edge treatments, and vital healthcare resources.</p>
             </div>
 
             {/* Advancing Healthcare E-Commerce */}
-            <div className="bg-white p-7 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+            <div className="ca-anim ca-up ca-d5 bg-white p-7 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
               <i className="fa-solid fa-cart-shopping text-2xl text-gray-800 mb-5 block"></i>
               <h4 className="text-[13px] font-bold text-gray-900 mb-3 uppercase tracking-wider">Advancing Healthcare E-Commerce</h4>
               <p className="text-sm text-gray-500 leading-relaxed">Through our state-of-the-art e-commerce platform, we aim to redefine healthcare accessibility. Our seamless and secure online marketplace will ensure patients and providers can access medications regardless of geographic boundaries.</p>
@@ -467,7 +483,7 @@ export default function AboutUs() {
       {/* Core Values Section */}
       <section className="pt-10 md:pt-14 pb-16 bg-white overflow-hidden relative">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-          <div className="text-center mb-10 md:mb-14 reveal">
+          <div className="text-center mb-10 md:mb-14 ca-anim ca-up">
             <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent font-bold text-sm uppercase tracking-widest mb-4 block">Core Values</span>
             <h2 className="text-[28px] md:text-[38px] leading-tight font-semibold text-dark mb-3 tracking-tight">
               The Heart of Our{' '}
@@ -476,59 +492,59 @@ export default function AboutUs() {
           </div>
 
           <div className="flex flex-wrap justify-center gap-3" id="values-container" ref={valuesContainerRef}>
-            <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default reveal">
+            <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default ca-anim ca-zoom">
               <i className="fa-solid fa-heart text-[#EC4899] text-sm"></i>
               <span className="text-[13px] font-medium text-gray-600">Compassion</span>
             </div>
-            <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default reveal">
+            <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default ca-anim ca-zoom">
               <i className="fa-solid fa-shield-heart text-[#8B5CF6] text-sm"></i>
               <span className="text-[13px] font-medium text-gray-600">Integrity</span>
             </div>
-            <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default reveal">
+            <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default ca-anim ca-zoom">
               <i className="fa-solid fa-microscope text-[#1D9FDA] text-sm"></i>
               <span className="text-[13px] font-medium text-gray-600">Precision</span>
             </div>
-            <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default reveal">
+            <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default ca-anim ca-zoom">
               <i className="fa-solid fa-lightbulb text-[#EAB308] text-sm"></i>
               <span className="text-[13px] font-medium text-gray-600">Innovation</span>
             </div>
-            <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default reveal">
+            <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default ca-anim ca-zoom">
               <i className="fa-solid fa-lock text-[#6366F1] text-sm"></i>
               <span className="text-[13px] font-medium text-gray-600">Security</span>
             </div>
-            <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default reveal">
+            <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default ca-anim ca-zoom">
               <i className="fa-solid fa-truck-fast text-[#F59E0B] text-sm"></i>
               <span className="text-[13px] font-medium text-gray-600">Speed</span>
             </div>
-            <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default reveal">
+            <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default ca-anim ca-zoom">
               <i className="fa-solid fa-user-doctor text-[#14B8A6] text-sm"></i>
               <span className="text-[13px] font-medium text-gray-600">Expertise</span>
             </div>
-            <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default reveal">
+            <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default ca-anim ca-zoom">
               <i className="fa-solid fa-earth-asia text-[#06B6D4] text-sm"></i>
               <span className="text-[13px] font-medium text-gray-600">Global</span>
             </div>
-            <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default reveal">
+            <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default ca-anim ca-zoom">
               <i className="fa-solid fa-vial-circle-check text-[#10B981] text-sm"></i>
               <span className="text-[13px] font-medium text-gray-600">Safety</span>
             </div>
-            <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default reveal">
+            <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default ca-anim ca-zoom">
               <i className="fa-solid fa-hand-holding-medical text-[#F43F5E] text-sm"></i>
               <span className="text-[13px] font-medium text-gray-600">Care</span>
             </div>
-            <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default reveal">
+            <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default ca-anim ca-zoom">
               <i className="fa-solid fa-tags text-[#8B5CF6] text-sm"></i>
               <span className="text-[13px] font-medium text-gray-600">Affordable</span>
             </div>
-            <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default reveal">
+            <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default ca-anim ca-zoom">
               <i className="fa-solid fa-clipboard-check text-[#3B82F6] text-sm"></i>
               <span className="text-[13px] font-medium text-gray-600">Reliable</span>
             </div>
-            <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default reveal">
+            <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default ca-anim ca-zoom">
               <i className="fa-solid fa-people-group text-[#F97316] text-sm"></i>
               <span className="text-[13px] font-medium text-gray-600">Community</span>
             </div>
-            <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default reveal">
+            <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default ca-anim ca-zoom">
               <i className="fa-solid fa-award text-[#EAB308] text-sm"></i>
               <span className="text-[13px] font-medium text-gray-600">Excellence</span>
             </div>
@@ -580,7 +596,7 @@ export default function AboutUs() {
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-2xl mx-auto mb-16 reveal">
+          <div className="text-center max-w-2xl mx-auto mb-16 ca-anim ca-up">
             <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent font-bold text-sm uppercase tracking-wider mb-2 block">Our Advantages</span>
             <h2 className="text-3xl md:text-4xl font-semibold text-dark mb-4">Why Choose <span
               className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent inline-block">Getmeds</span>?
@@ -590,28 +606,28 @@ export default function AboutUs() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full">
-            <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 reveal">
-              <i className="fa-solid fa-truck-fast text-3xl text-primary mb-4"></i>
-              <h4 className="text-lg font-bold text-dark mb-2">Fast Delivery</h4>
-              <p className="text-sm text-gray-500">Speedy medication delivery straight to your door step.</p>
+            <div className="ca-anim ca-up bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+              <i className="fa-solid fa-globe text-3xl text-primary mb-4"></i>
+              <h4 className="text-lg font-bold text-dark mb-2">Globally Sourced Quality</h4>
+              <p className="text-sm text-gray-500">Verified under FDA Philippines and international quality standards.</p>
             </div>
 
-            <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 reveal">
-              <i className="fa-solid fa-shield-halved text-3xl text-success mb-4"></i>
-              <h4 className="text-lg font-bold text-dark mb-2">Secure Platform</h4>
-              <p className="text-sm text-gray-500">Your health data is safe with our advanced security.</p>
+            <div className="ca-anim ca-up ca-d2 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+              <i className="fa-solid fa-capsules text-3xl text-success mb-4"></i>
+              <h4 className="text-lg font-bold text-dark mb-2">Hard-to-Find Access</h4>
+              <p className="text-sm text-gray-500">Compassionate Special Permit imports and rare disease therapies unavailable elsewhere.</p>
             </div>
 
-            <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 reveal">
-              <i className="fa-solid fa-headset text-3xl text-[#5533FF] mb-4"></i>
-              <h4 className="text-lg font-bold text-dark mb-2">24/7 Support</h4>
-              <p className="text-sm text-gray-500">Our customer care and medical experts are always ready.</p>
+            <div className="ca-anim ca-up ca-d4 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+              <i className="fa-solid fa-truck-fast text-3xl text-[#5533FF] mb-4"></i>
+              <h4 className="text-lg font-bold text-dark mb-2">Nationwide Logistics</h4>
+              <p className="text-sm text-gray-500">Reliable cold-chain delivery across Luzon, Visayas, and Mindanao.</p>
             </div>
 
-            <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 reveal">
-              <i className="fa-solid fa-tags text-3xl text-[#FFB020] mb-4"></i>
-              <h4 className="text-lg font-bold text-dark mb-2">Best Prices</h4>
-              <p className="text-sm text-gray-500">Affordable medicine and discounted lab tests for you.</p>
+            <div className="ca-anim ca-up ca-d6 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+              <i className="fa-solid fa-hand-holding-heart text-3xl text-[#FFB020] mb-4"></i>
+              <h4 className="text-lg font-bold text-dark mb-2">Sustainable Pricing</h4>
+              <p className="text-sm text-gray-500">Rapid-response sourcing and fair pricing for the patients and partners we serve.</p>
             </div>
           </div>
         </div>
@@ -620,7 +636,7 @@ export default function AboutUs() {
       {/* Our Leaders — Horizontal Carousel */}
       <section className="py-24 bg-white relative overflow-hidden">
         <div className="relative z-10">
-          <div className="text-center max-w-2xl mx-auto mb-16 px-4 reveal">
+          <div className="text-center max-w-2xl mx-auto mb-16 px-4 ca-anim ca-zoom">
             <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent font-bold text-sm uppercase tracking-[0.2em] mb-4 block">Our Leaders</span>
             <h2 className="text-3xl md:text-4xl font-semibold text-dark mb-4">The People Behind <span
               className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent inline-block">Getmeds</span>
@@ -704,13 +720,13 @@ export default function AboutUs() {
       {/* Our Partners */}
       <section className="py-24 bg-white relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16 reveal">
+          <div className="text-center mb-16 ca-anim ca-zoom">
             <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent font-bold text-sm uppercase tracking-[0.2em] mb-4 block">Trust Network</span>
             <h2 className="text-3xl font-semibold text-dark mb-4">Strategic Partners &amp; Affiliates</h2>
             <div className="w-20 h-1 bg-gradient-to-r from-primary to-accent mx-auto rounded-full"></div>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-8 items-center reveal">
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-8 items-center ca-anim ca-zoom">
             <div className="flex items-center justify-center p-6 transition-all duration-300 transform hover:scale-110">
               <div className="flex items-center gap-2 opacity-60">
                 <i className="fa-solid fa-hospital-user text-3xl"></i>
@@ -754,7 +770,7 @@ export default function AboutUs() {
       <section className="py-16 mb-8">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div
-            className="bg-gradient-to-r from-blue-600 to-blue-400 rounded-3xl p-10 md:p-14 text-center text-white shadow-2xl relative overflow-hidden reveal">
+            className="bg-gradient-to-r from-blue-600 to-blue-400 rounded-3xl p-10 md:p-14 text-center text-white shadow-2xl relative overflow-hidden ca-anim ca-zoom">
             {/* Decor */}
             <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full transform translate-x-1/3 -translate-y-1/3"></div>
             <div className="absolute bottom-0 left-0 w-48 h-48 bg-white opacity-5 rounded-full transform -translate-x-1/4 translate-y-1/4"></div>
