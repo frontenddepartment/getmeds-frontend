@@ -468,6 +468,20 @@ export default function GetMedsHomepage() {
     const revealElements = document.querySelectorAll('.reveal');
     revealElements.forEach(el => observer.observe(el));
 
+    // 5b. Intersection Observer for scroll-triggered ca-anim animations
+    const caObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('ca-in');
+            caObserver.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
+    );
+    document.querySelectorAll('.ca-anim').forEach(el => caObserver.observe(el));
+
     // 6. Dynamically load the footer component
     const footerContainer = document.getElementById('footer-container');
     if (footerContainer && footerContainer.innerHTML.trim() === '') {
@@ -479,6 +493,7 @@ export default function GetMedsHomepage() {
     return () => {
       window.removeEventListener('scroll', handleScroll);
       revealElements.forEach(el => observer.unobserve(el));
+      caObserver.disconnect();
     };
   }, []);
 
@@ -490,6 +505,23 @@ export default function GetMedsHomepage() {
       <style dangerouslySetInnerHTML={{
         __html: `
         body { font-family: 'Inter', sans-serif; }
+        @keyframes caFadeUp   { from { opacity:0; transform:translateY(30px); } to { opacity:1; transform:translateY(0); } }
+        @keyframes caFadeLeft { from { opacity:0; transform:translateX(-32px); } to { opacity:1; transform:translateX(0); } }
+        @keyframes caFadeRight{ from { opacity:0; transform:translateX(32px);  } to { opacity:1; transform:translateX(0); } }
+        @keyframes caZoomIn   { from { opacity:0; transform:scale(0.93);       } to { opacity:1; transform:scale(1);    } }
+        @keyframes caFadeIn   { from { opacity:0; }                              to { opacity:1; }                        }
+        .ca-anim { opacity: 0; }
+        .ca-anim.ca-in.ca-up    { animation: caFadeUp    0.7s cubic-bezier(0.22,1,0.36,1) forwards; }
+        .ca-anim.ca-in.ca-left  { animation: caFadeLeft  0.7s cubic-bezier(0.22,1,0.36,1) forwards; }
+        .ca-anim.ca-in.ca-right { animation: caFadeRight 0.7s cubic-bezier(0.22,1,0.36,1) forwards; }
+        .ca-anim.ca-in.ca-zoom  { animation: caZoomIn    0.7s cubic-bezier(0.22,1,0.36,1) forwards; }
+        .ca-anim.ca-in.ca-fade  { animation: caFadeIn    0.7s ease forwards; }
+        .ca-d1 { animation-delay: 0.10s !important; }
+        .ca-d2 { animation-delay: 0.20s !important; }
+        .ca-d3 { animation-delay: 0.30s !important; }
+        .ca-d4 { animation-delay: 0.40s !important; }
+        .ca-d5 { animation-delay: 0.50s !important; }
+        .ca-d6 { animation-delay: 0.60s !important; }
         .reveal { transform: translateY(30px); opacity: 0; transition: all 0.8s ease-out; }
         .reveal.active { transform: translateY(0); opacity: 1; }
         .mega-menu-gradient { background: linear-gradient(135deg, #ffffff 0%, #f7fafc 100%); }
@@ -934,7 +966,7 @@ export default function GetMedsHomepage() {
       {/* Stat Numbers (Clean, without cards, directly under hero) */}
       <section className="relative z-10 max-w-7xl mx-auto px-6 py-12 md:py-16 grid grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12">
         {/* Stat 1 */}
-        <div className="flex flex-col items-center text-center hover:-translate-y-1 transition-all duration-300 group">
+        <div className="flex flex-col items-center text-center hover:-translate-y-1 transition-all duration-300 group ca-anim ca-up ca-d1">
           <h3 className="text-3xl md:text-4xl font-black bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent mb-2 group-hover:scale-110 transition-transform duration-300">
             <AnimatedCounter end={2000} suffix="+" />
           </h3>
@@ -942,7 +974,7 @@ export default function GetMedsHomepage() {
         </div>
 
         {/* Stat 2 */}
-        <div className="flex flex-col items-center text-center hover:-translate-y-1 transition-all duration-300 group">
+        <div className="flex flex-col items-center text-center hover:-translate-y-1 transition-all duration-300 group ca-anim ca-up ca-d2">
           <h3 className="text-3xl md:text-4xl font-black bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent mb-2 group-hover:scale-110 transition-transform duration-300">
             <AnimatedCounter end={10000} suffix="+" />
           </h3>
@@ -950,7 +982,7 @@ export default function GetMedsHomepage() {
         </div>
 
         {/* Stat 3 */}
-        <div className="flex flex-col items-center text-center hover:-translate-y-1 transition-all duration-300 group">
+        <div className="flex flex-col items-center text-center hover:-translate-y-1 transition-all duration-300 group ca-anim ca-up ca-d3">
           <h3 className="text-3xl md:text-4xl font-black bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent mb-2 group-hover:scale-110 transition-transform duration-300">
             <AnimatedCounter end={500} suffix="+" />
           </h3>
@@ -958,7 +990,7 @@ export default function GetMedsHomepage() {
         </div>
 
         {/* Stat 4 */}
-        <div className="flex flex-col items-center text-center hover:-translate-y-1 transition-all duration-300 group">
+        <div className="flex flex-col items-center text-center hover:-translate-y-1 transition-all duration-300 group ca-anim ca-up ca-d4">
           <h3 className="text-3xl md:text-4xl font-black bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent mb-2 group-hover:scale-110 transition-transform duration-300">
             <AnimatedCounter end={2} suffix="M+" />
           </h3>
@@ -974,7 +1006,7 @@ export default function GetMedsHomepage() {
           {/* Left Column: Eyebrow & Title */}
           <div className="flex flex-col justify-center items-end text-right space-y-4 max-w-lg md:ml-auto">
             <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent font-bold uppercase tracking-widest text-xs">Who We Are</span>
-            <h2 className="text-3xl md:text-4xl lg:text-[42px] font-semibold text-gray-900 leading-tight tracking-tight">
+            <h2 className="text-3xl md:text-4xl lg:text-[42px] font-semibold text-gray-900 leading-tight tracking-tight ca-anim ca-left">
               Patient First. <br />
               Raising the standard <br />
               <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">for Filipino care.</span>
@@ -1001,7 +1033,7 @@ export default function GetMedsHomepage() {
           </div>
 
           {/* Image Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 ca-anim ca-right ca-d2">
             <div className="h-[220px] md:h-[280px] lg:h-[340px]">
               <img
                 src={getImage('assets/genericslider.jpg', 'assets/genericslider.jpg')}
@@ -1067,7 +1099,7 @@ export default function GetMedsHomepage() {
         <div className="max-w-7xl mx-auto px-6 relative z-10">
           <div className="text-center max-w-2xl mx-auto mb-16">
             <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent font-bold uppercase tracking-widest text-xs mb-3 block">Our Pharmaceutical Portfolio</span>
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 ca-anim ca-up">
               From Essential Medicines to Advanced Therapies.
             </h2>
             <p className="text-gray-500 text-[13px]">
@@ -1077,7 +1109,7 @@ export default function GetMedsHomepage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full">
             {/* Card 1: Foundation */}
-            <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+            <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ca-anim ca-zoom ca-d1">
               <i className="fa-solid fa-pills text-3xl text-[#1D9FDA] mb-4 block"></i>
               <h4 className="text-lg font-semibold text-gray-900 mb-2">Foundation</h4>
               <p className="text-sm font-bold text-gray-500 mb-1">Everyday medicines, never out of reach.</p>
@@ -1085,7 +1117,7 @@ export default function GetMedsHomepage() {
             </div>
 
             {/* Card 2: Acceleration */}
-            <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+            <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ca-anim ca-zoom ca-d2">
               <i className="fa-solid fa-bolt text-3xl text-[#61A644] mb-4 block"></i>
               <h4 className="text-lg font-semibold text-gray-900 mb-2">Acceleration</h4>
               <p className="text-sm font-bold text-gray-500 mb-1">Smarter therapies, faster access.</p>
@@ -1093,7 +1125,7 @@ export default function GetMedsHomepage() {
             </div>
 
             {/* Card 3: Frontier */}
-            <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+            <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ca-anim ca-zoom ca-d3">
               <i className="fa-solid fa-microscope text-3xl text-[#5533FF] mb-4 block"></i>
               <h4 className="text-lg font-semibold text-gray-900 mb-2">Frontier</h4>
               <p className="text-sm font-bold text-gray-500 mb-1">Advanced therapies, within reach.</p>
@@ -1101,7 +1133,7 @@ export default function GetMedsHomepage() {
             </div>
 
             {/* Card 4: Beyond the molecule */}
-            <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+            <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ca-anim ca-zoom ca-d4">
               <i className="fa-solid fa-network-wired text-3xl text-[#FFB020] mb-4 block"></i>
               <h4 className="text-lg font-semibold text-gray-900 mb-2">Beyond the molecule</h4>
               <p className="text-sm font-bold text-gray-500 mb-1">The access infrastructure.</p>
@@ -1138,7 +1170,7 @@ export default function GetMedsHomepage() {
 
               {/* Header */}
               <div className="flex items-start justify-between px-8 pt-8 pb-6 gap-4">
-                <h2 className="text-2xl md:text-3xl font-semibold text-gray-900 max-w-md leading-tight">Therapeutic areas we serve across the Philippines.</h2>
+                <h2 className="text-2xl md:text-3xl font-semibold text-gray-900 max-w-md leading-tight ca-anim ca-up">Therapeutic areas we serve across the Philippines.</h2>
                 <a href="product-range.html" className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:opacity-90 text-white text-xs md:text-sm font-medium rounded-full px-3 py-1.5 md:px-6 md:py-2.5 transition-opacity shrink-0">See All</a>
               </div>
 
@@ -1254,7 +1286,7 @@ export default function GetMedsHomepage() {
       <section className="py-16 px-6 reveal">
         <div className="max-w-7xl mx-auto">
           <div className="text-center max-w-3xl mx-auto mb-12">
-            <h2 className="text-3xl md:text-4xl font-semibold mb-4 leading-tight">
+            <h2 className="text-3xl md:text-4xl font-semibold mb-4 leading-tight ca-anim ca-up">
               Capabilities that move{' '}
               <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">
                 medicines, partnerships, and patients forward.
@@ -1265,7 +1297,7 @@ export default function GetMedsHomepage() {
             </p>
           </div>
 
-          <div className="bg-gradient-to-br from-[#e8effe] via-[#eef1fd] to-[#ede8fb] rounded-3xl p-5">
+          <div className="bg-gradient-to-br from-[#e8effe] via-[#eef1fd] to-[#ede8fb] rounded-3xl p-5 ca-anim ca-fade ca-d2">
             <div className="grid grid-cols-6 gap-4">
 
               {/* Row 1 — 2 wide cards */}
@@ -1504,13 +1536,13 @@ export default function GetMedsHomepage() {
             <div className="max-w-7xl mx-auto relative z-10">
 
               {/* Heading — same size as other sections */}
-              <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 leading-tight mb-14 max-w-xl">
+              <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 leading-tight mb-14 max-w-xl ca-anim ca-up">
                 Why hospitals and pharmacies choose{' '}
                 <span className="bg-gradient-to-r from-[#1D9FDA] to-[#61A644] bg-clip-text text-transparent">Getmeds.</span>
               </h2>
 
               {/* 4 feature columns */}
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-10 pt-10 border-t border-gray-100">
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-10 pt-10 border-t border-gray-100 ca-anim ca-up ca-d2">
                 {whyFeatures.map((item, i) => (
                   <div key={i}>
                     <h4 className="font-bold text-gray-900 text-base mb-2">{item.title}</h4>
@@ -1531,7 +1563,7 @@ export default function GetMedsHomepage() {
       <section className="py-16 px-6 bg-white reveal relative">
 
         <div className="max-w-7xl mx-auto relative z-10">
-          <div className="mb-14 text-center">
+          <div className="mb-14 text-center ca-anim ca-up">
             <span className="font-bold text-sm uppercase tracking-wider mb-2 block" style={{
               background: 'linear-gradient(135deg, #1D9FDA, #61A644)',
               WebkitBackgroundClip: 'text',
@@ -1563,7 +1595,7 @@ export default function GetMedsHomepage() {
                 desc: 'Fully licensed by the Food and Drug Administration of the Philippines for pharmaceutical importation and distribution.',
               },
             ].map((item, i) => (
-              <div key={i} className="text-center">
+              <div key={i} className={`text-center ca-anim ca-zoom ca-d${i + 1}`}>
                 <div className="mb-6 flex justify-center">
                   <i className={`fa-solid ${item.icon}`} style={{ fontSize: '44px', color: item.color }}></i>
                 </div>
@@ -1636,7 +1668,7 @@ export default function GetMedsHomepage() {
                     <i className="fa-regular fa-circle-question text-xs" style={{ color: '#1D9FDA' }}></i>
                     <span className="text-xs font-medium" style={{ color: '#1D9FDA' }}>Frequently asked questions</span>
                   </div>
-                  <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 leading-tight mb-4">
+                  <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 leading-tight mb-4 ca-anim ca-left">
                     Frequently asked<br />
                     <span className="bg-gradient-to-r from-[#1D9FDA] to-[#61A644] bg-clip-text text-transparent">questions.</span>
                   </h2>
@@ -1646,7 +1678,7 @@ export default function GetMedsHomepage() {
                 </div>
 
                 {/* RIGHT — accordion */}
-                <div className="flex-1 flex flex-col gap-3">
+                <div className="flex-1 flex flex-col gap-3 ca-anim ca-up ca-d2">
                   {faqs.map((faq, i) => (
                     <div
                       key={i}
@@ -1694,7 +1726,7 @@ export default function GetMedsHomepage() {
                   background: 'linear-gradient(135deg,#1D9FDA,#61A644)',
                   WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', display: 'inline-block'
                 }}>News and Insights</span>
-                <h2 className="text-2xl font-bold text-gray-900">What's new at Getmeds.</h2>
+                <h2 className="text-2xl font-bold text-gray-900 ca-anim ca-up">What's new at Getmeds.</h2>
               </div>
               <a href="articles.html" className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:opacity-90 text-white text-xs md:text-sm font-medium rounded-full px-3 py-1.5 md:px-6 md:py-2.5 transition-opacity shrink-0">View All</a>
             </div>
@@ -1703,7 +1735,7 @@ export default function GetMedsHomepage() {
             <div
               ref={newsSliderRef}
               onScroll={handleNewsScroll}
-              className="flex md:grid md:grid-cols-3 overflow-x-auto md:overflow-visible gap-3 md:gap-4 snap-x md:snap-none snap-mandatory -mx-7 px-7 md:mx-0 md:px-0 pb-1 md:pb-0"
+              className="flex md:grid md:grid-cols-3 overflow-x-auto md:overflow-visible gap-3 md:gap-4 snap-x md:snap-none snap-mandatory -mx-7 px-7 md:mx-0 md:px-0 pb-1 md:pb-0 ca-anim ca-fade ca-d2"
               style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' } as React.CSSProperties}
             >
               {(newsItems && newsItems.length > 0 ? newsItems.slice(0, 3) : []).map((article) => {
@@ -1711,7 +1743,7 @@ export default function GetMedsHomepage() {
                   ? urlFor(article.image).width(800).url()
                   : 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&q=80&w=800';
                 return (
-                  <a key={article._id} href={`/article-detail?id=${article._id}`} className="relative rounded-3xl overflow-hidden cursor-pointer md:hover:-translate-y-2 md:hover:shadow-2xl transition-all duration-500 group block flex-shrink-0 w-[82%] md:w-auto snap-center mb-0 md:mb-0" style={{ height: '460px' }}>
+                  <a key={article._id} href={`/article-detail?id=${article._id}`} className="relative rounded-3xl overflow-hidden cursor-pointer md:hover:-translate-y-2 md:hover:shadow-2xl transition-all duration-500 group block flex-shrink-0 w-[82%] md:w-auto snap-center mb-0 md:mb-0 h-[300px] md:h-[460px]">
 
                     {/* Full background image */}
                     <img src={imgUrl} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt={article.title} />
