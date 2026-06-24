@@ -637,7 +637,15 @@ const Careers: React.FC = () => {
                   const posType = getPositionType(job.job_title || '', job.job_description_text || '');
                   return (
                     <div key={job.id || idx} className={`ca-anim ca-up ca-d${(idx % 5) + 1} border border-gray-100 rounded-2xl p-6 hover:shadow-md transition-shadow duration-300 flex flex-col w-full`}>
-                      <span className="text-[12px] font-semibold text-gray-400 tracking-widest block mb-2">{posType}</span>
+                      <div className="flex flex-wrap items-center gap-2 mb-2">
+                        <span className="text-[12px] font-semibold text-gray-400 tracking-widest uppercase">{job.job_type || posType}</span>
+                        {job.location && (
+                          <>
+                            <span className="text-gray-300 text-[10px]">•</span>
+                            <span className="text-[12px] font-semibold text-[#1D9FDA] uppercase tracking-wider">{job.location}</span>
+                          </>
+                        )}
+                      </div>
                       <h4 className="text-[16px] font-semibold text-dark mb-3">{job.job_title}</h4>
                       <p className="text-gray-400 text-[12.5px] leading-[1.7] mb-5 flex-1 line-clamp-3">
                         {job.job_description_text || 'No description available.'}
@@ -713,9 +721,19 @@ const Careers: React.FC = () => {
           <div className="flex-1 pr-4">
             <span className="text-[11px] font-bold uppercase tracking-widest bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent block mb-1">Job Description</span>
             <h2 className="text-[22px] font-bold text-slate-900 leading-tight tracking-tight">{activeJob?.job_title}</h2>
-            <span className="inline-block text-[11px] font-semibold text-gray-400 tracking-wider mt-1">
-              {activeJob ? getPositionType(activeJob.job_title || '', activeJob.job_description_text || '') : 'Full Time'}
-            </span>
+            <div className="flex flex-wrap items-center gap-2 mt-1">
+              <span className="inline-block text-[11px] font-semibold text-gray-400 tracking-wider uppercase">
+                {activeJob ? (activeJob.job_type || getPositionType(activeJob.job_title || '', activeJob.job_description_text || '')) : 'Full Time'}
+              </span>
+              {activeJob?.location && (
+                <>
+                  <span className="text-gray-300 text-[10px]">•</span>
+                  <span className="inline-block text-[11px] font-semibold text-[#1D9FDA] tracking-wider uppercase">
+                    {activeJob.location}
+                  </span>
+                </>
+              )}
+            </div>
           </div>
           <button
             onClick={() => { setJobDescOpen(false); setApplyModalOpen(false); }}
