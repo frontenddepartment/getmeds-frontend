@@ -403,7 +403,8 @@ export async function getNewsById(id: string) {
     const data = await res.json();
     const items = data.items || [];
     if (items.length === 0) return null;
-    const item = items[0];
+    const item = items.find((i: any) => String(i.wpId) === String(id)) ?? items[0];
+    if (!item) return null;
     return {
       _id: String(item.wpId),
       _type: 'news' as const,
