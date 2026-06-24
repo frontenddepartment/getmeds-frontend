@@ -520,7 +520,7 @@ const Careers: React.FC = () => {
               innovation, and global impact in the healthcare industry.</p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 xl:grid-cols-5 gap-6">
             <div className="ca-anim ca-up bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
               <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center mb-5">
                 <i className="fa-solid fa-microscope text-2xl text-primary"></i>
