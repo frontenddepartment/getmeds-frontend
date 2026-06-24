@@ -21,8 +21,38 @@ export default function GlobalPresence() {
     }
   }, []);
 
+  useEffect(() => {
+    const caObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          (entry.target as Element).classList.add('ca-in');
+          caObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.ca-anim').forEach(el => caObserver.observe(el));
+    return () => caObserver.disconnect();
+  }, []);
+
   return (
     <div style={{ fontFamily: "'Poppins', sans-serif" }} className="bg-white text-gray-800 antialiased">
+      <style>{`
+        .ca-anim{opacity:0}
+        .ca-anim.ca-in{animation-fill-mode:both}
+        .ca-up.ca-in{animation:caFadeUp 0.65s cubic-bezier(0.22,1,0.36,1) both}
+        .ca-left.ca-in{animation:caFadeLeft 0.65s cubic-bezier(0.22,1,0.36,1) both}
+        .ca-right.ca-in{animation:caFadeRight 0.65s cubic-bezier(0.22,1,0.36,1) both}
+        .ca-zoom.ca-in{animation:caZoomIn 0.6s cubic-bezier(0.22,1,0.36,1) both}
+        .ca-fade.ca-in{animation:caFadeIn 0.7s ease both}
+        .ca-d1.ca-in{animation-delay:0.1s}.ca-d2.ca-in{animation-delay:0.2s}
+        .ca-d3.ca-in{animation-delay:0.3s}.ca-d4.ca-in{animation-delay:0.4s}
+        .ca-d5.ca-in{animation-delay:0.5s}.ca-d6.ca-in{animation-delay:0.6s}
+        @keyframes caFadeUp{from{opacity:0;transform:translateY(32px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes caFadeLeft{from{opacity:0;transform:translateX(-44px)}to{opacity:1;transform:translateX(0)}}
+        @keyframes caFadeRight{from{opacity:0;transform:translateX(44px)}to{opacity:1;transform:translateX(0)}}
+        @keyframes caZoomIn{from{opacity:0;transform:scale(0.88)}to{opacity:1;transform:scale(1)}}
+        @keyframes caFadeIn{from{opacity:0}to{opacity:1}}
+      `}</style>
 
       {/* Navbar */}
       <div id="navbar-container" className="sticky top-0 z-[50]" />
@@ -37,20 +67,20 @@ export default function GlobalPresence() {
           <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent w-[100%] md:w-[70%]"></div>
 
           <div className="relative z-10 w-full px-8 md:px-14 pb-12 md:pb-16 pt-20 max-w-4xl">
-            <h1 className="text-[28px] md:text-[38px] leading-tight font-bold mb-3 tracking-tight">
+            <h1 className="ca-anim ca-up text-[28px] md:text-[38px] leading-tight font-bold mb-3 tracking-tight">
               <span data-json="hero.headingLine1" className="text-white">Global Healthcare</span><br />
               <span data-json="hero.headingAccent"
                 className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent leading-tight tracking-tight">
                 Without Borders
               </span>
             </h1>
-            <p data-json="hero.description" className="text-white/90 text-[13px] md:text-[14px] max-w-[650px] mb-5 leading-normal font-normal">
+            <p data-json="hero.description" className="ca-anim ca-up ca-d2 text-white/90 text-[13px] md:text-[14px] max-w-[650px] mb-5 leading-normal font-normal">
               Discover seamless healthcare solutions. Access a world-class medical network worldwide, efficiently
               linking you with top care continuously.
             </p>
             <button
               onClick={() => document.getElementById('gp-content-start')?.scrollIntoView({ behavior: 'smooth' })}
-              className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:from-[#1D9FDA] hover:to-[#61A644] text-white font-semibold py-2 px-6 rounded-full text-[13px] inline-block transition shadow-md">
+              className="ca-anim ca-up ca-d3 bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:from-[#1D9FDA] hover:to-[#61A644] text-white font-semibold py-2 px-6 rounded-full text-[13px] inline-block transition shadow-md">
               Explore Now
             </button>
           </div>
@@ -64,7 +94,7 @@ export default function GlobalPresence() {
           {/* ── SECTION 1: The Foundation ─────────────────────────── */}
           <div>
             {/* Section header */}
-            <div className="text-center mb-10">
+            <div className="ca-anim ca-up text-center mb-10">
               <h3 className="text-3xl md:text-4xl font-semibold text-gray-900 mb-4">The{' '}
                 <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent inline-block">Foundation</span>
               </h3>
@@ -72,7 +102,7 @@ export default function GlobalPresence() {
             </div>
 
             {/* Featured card — INDUSTRY FIRST */}
-            <div className="bg-gradient-to-br from-white to-green-100/60 rounded-2xl p-6 pb-14 mb-4 relative overflow-hidden flex flex-col justify-between hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer">
+            <div className="ca-anim ca-zoom ca-d2 bg-gradient-to-br from-white to-green-100/60 rounded-2xl p-6 pb-14 mb-4 relative overflow-hidden flex flex-col justify-between hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer">
               <span className="absolute top-4 right-4 text-[11px] font-semibold px-3 py-1.5 rounded-full border bg-green-100 text-green-700 border-green-200 z-10">Industry First</span>
               <div className="relative z-10 max-w-[65%]">
                 <div className="flex items-center gap-3 mb-3">
@@ -107,7 +137,7 @@ export default function GlobalPresence() {
             {/* 2-column cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* Philippines — Pharma Launch */}
-              <div className="relative bg-white border border-gray-100 rounded-2xl p-5 shadow-[0_2px_12px_rgba(0,0,0,0.05)] hover:shadow-[0_4px_20px_rgba(0,0,0,0.09)] hover:-translate-y-0.5 transition-all duration-200">
+              <div className="ca-anim ca-left ca-d1 relative bg-white border border-gray-100 rounded-2xl p-5 shadow-[0_2px_12px_rgba(0,0,0,0.05)] hover:shadow-[0_4px_20px_rgba(0,0,0,0.09)] hover:-translate-y-0.5 transition-all duration-200">
                 <span className="absolute top-4 right-4 text-[11px] font-semibold px-3 py-1.5 rounded-full border bg-emerald-50 text-emerald-700 border-emerald-200">Pharma Launch</span>
                 <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-gray-100 shadow-sm mb-3">
                   <img src="https://flagcdn.com/w80/ph.png" alt="Philippines" className="w-full h-full object-cover" />
@@ -117,7 +147,7 @@ export default function GlobalPresence() {
                 <p className="text-[15px] text-gray-500 leading-[1.8]">Redefining the Philippine healthcare landscape with high-quality, affordable generic medicines accessible to every Filipino.</p>
               </div>
               {/* India — Export Hub */}
-              <div className="relative bg-white border border-gray-100 rounded-2xl p-5 shadow-[0_2px_12px_rgba(0,0,0,0.05)] hover:shadow-[0_4px_20px_rgba(0,0,0,0.09)] hover:-translate-y-0.5 transition-all duration-200">
+              <div className="ca-anim ca-right ca-d2 relative bg-white border border-gray-100 rounded-2xl p-5 shadow-[0_2px_12px_rgba(0,0,0,0.05)] hover:shadow-[0_4px_20px_rgba(0,0,0,0.09)] hover:-translate-y-0.5 transition-all duration-200">
                 <span className="absolute top-4 right-4 text-[11px] font-semibold px-3 py-1.5 rounded-full border bg-blue-50 text-blue-700 border-blue-200">Export Hub</span>
                 <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-gray-100 shadow-sm mb-3">
                   <img src="https://flagcdn.com/w80/in.png" alt="India" className="w-full h-full object-cover" />
@@ -131,7 +161,7 @@ export default function GlobalPresence() {
 
           {/* ── SECTION 2: Regional Expansion Across Asia-Pacific ─── */}
           <div>
-            <div className="text-center mb-10">
+            <div className="ca-anim ca-up text-center mb-10">
               <h3 className="text-3xl md:text-4xl font-semibold text-gray-900 mb-4">Regional Expansion{' '}
                 <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent inline-block">Across Asia-Pacific</span>
               </h3>
@@ -141,7 +171,7 @@ export default function GlobalPresence() {
             {/* 2 larger primary cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
               {/* Singapore */}
-              <div className="relative bg-white border border-gray-100 rounded-2xl p-5 shadow-[0_2px_12px_rgba(0,0,0,0.05)] hover:shadow-[0_4px_20px_rgba(0,0,0,0.09)] hover:-translate-y-0.5 transition-all duration-200">
+              <div className="ca-anim ca-left ca-d1 relative bg-white border border-gray-100 rounded-2xl p-5 shadow-[0_2px_12px_rgba(0,0,0,0.05)] hover:shadow-[0_4px_20px_rgba(0,0,0,0.09)] hover:-translate-y-0.5 transition-all duration-200">
                 <span className="absolute top-4 right-4 text-[11px] font-semibold px-3 py-1.5 rounded-full border bg-purple-50 text-purple-700 border-purple-200">Global Hub</span>
                 <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-gray-100 shadow-sm mb-3">
                   <img src="https://flagcdn.com/w80/sg.png" alt="Singapore" className="w-full h-full object-cover" />
@@ -151,7 +181,7 @@ export default function GlobalPresence() {
                 <p className="text-[15px] text-gray-500 leading-[1.8]">Extending global reach and creating new opportunities for international expansion across Asia and beyond.</p>
               </div>
               {/* Pakistan */}
-              <div className="relative bg-white border border-gray-100 rounded-2xl p-5 shadow-[0_2px_12px_rgba(0,0,0,0.05)] hover:shadow-[0_4px_20px_rgba(0,0,0,0.09)] hover:-translate-y-0.5 transition-all duration-200">
+              <div className="ca-anim ca-right ca-d2 relative bg-white border border-gray-100 rounded-2xl p-5 shadow-[0_2px_12px_rgba(0,0,0,0.05)] hover:shadow-[0_4px_20px_rgba(0,0,0,0.09)] hover:-translate-y-0.5 transition-all duration-200">
                 <span className="absolute top-4 right-4 text-[11px] font-semibold px-3 py-1.5 rounded-full border bg-teal-50 text-teal-700 border-teal-200">Strategic Office</span>
                 <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-gray-100 shadow-sm mb-3">
                   <img src="https://flagcdn.com/w80/pk.png" alt="Pakistan" className="w-full h-full object-cover" />
@@ -169,8 +199,8 @@ export default function GlobalPresence() {
                 { flag: 'https://flagcdn.com/w80/kh.png', name: 'Cambodia', desc: 'Driving strategic initiatives to advance healthcare services and strengthen regional collaboration.' },
                 { flag: 'https://flagcdn.com/w80/la.png', name: 'Laos', desc: 'Spearheading programs to enhance healthcare delivery and foster long-term partnerships.' },
                 { flag: 'https://flagcdn.com/w80/mm.png', name: 'Myanmar', desc: 'Pioneering operations to accelerate healthcare development and operational excellence.' },
-              ].map(c => (
-                <div key={c.name} className="relative bg-white border border-gray-100 rounded-2xl p-4 shadow-[0_2px_12px_rgba(0,0,0,0.05)] hover:shadow-[0_4px_20px_rgba(0,0,0,0.09)] hover:-translate-y-0.5 transition-all duration-200">
+              ].map((c, idx) => (
+                <div key={c.name} className={`ca-anim ca-up ${['ca-d1','ca-d2','ca-d3','ca-d4'][idx]} relative bg-white border border-gray-100 rounded-2xl p-4 shadow-[0_2px_12px_rgba(0,0,0,0.05)] hover:shadow-[0_4px_20px_rgba(0,0,0,0.09)] hover:-translate-y-0.5 transition-all duration-200`}>
                   <span className="absolute top-3 right-3 text-[11px] font-semibold px-3 py-1.5 rounded-full border bg-gray-100 text-gray-500 border-gray-200">SE Asia</span>
                   <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-gray-100 shadow-sm mb-2.5">
                     <img src={c.flag} alt={c.name} className="w-full h-full object-cover" />
@@ -184,7 +214,7 @@ export default function GlobalPresence() {
 
           {/* ── SECTION 3: A Global Vision Takes Shape ────────────── */}
           <div>
-            <div className="text-center mb-10">
+            <div className="ca-anim ca-up text-center mb-10">
               <h3 className="text-3xl md:text-4xl font-semibold text-gray-900 mb-4">A Global Vision{' '}
                 <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent inline-block">Takes Shape</span>
               </h3>
@@ -194,7 +224,7 @@ export default function GlobalPresence() {
             {/* 2 cards — Caribbean & Pacific */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
               {/* Saint Kitts */}
-              <div className="relative bg-white border border-gray-100 rounded-2xl p-5 shadow-[0_2px_12px_rgba(0,0,0,0.05)] hover:shadow-[0_4px_20px_rgba(0,0,0,0.09)] hover:-translate-y-0.5 transition-all duration-200">
+              <div className="ca-anim ca-left ca-d1 relative bg-white border border-gray-100 rounded-2xl p-5 shadow-[0_2px_12px_rgba(0,0,0,0.05)] hover:shadow-[0_4px_20px_rgba(0,0,0,0.09)] hover:-translate-y-0.5 transition-all duration-200">
                 <span className="absolute top-4 right-4 text-[11px] font-semibold px-3 py-1.5 rounded-full border bg-orange-50 text-orange-600 border-orange-200">Caribbean Entry</span>
                 <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-gray-100 shadow-sm mb-3">
                   <img src="https://flagcdn.com/w80/kn.png" alt="Saint Kitts and Nevis" className="w-full h-full object-cover" />
@@ -204,7 +234,7 @@ export default function GlobalPresence() {
                 <p className="text-[15px] text-gray-500 leading-[1.8]">Strengthening global presence and paving the way for further international growth in the Caribbean and beyond.</p>
               </div>
               {/* Vanuatu */}
-              <div className="relative bg-white border border-gray-100 rounded-2xl p-5 shadow-[0_2px_12px_rgba(0,0,0,0.05)] hover:shadow-[0_4px_20px_rgba(0,0,0,0.09)] hover:-translate-y-0.5 transition-all duration-200">
+              <div className="ca-anim ca-right ca-d2 relative bg-white border border-gray-100 rounded-2xl p-5 shadow-[0_2px_12px_rgba(0,0,0,0.05)] hover:shadow-[0_4px_20px_rgba(0,0,0,0.09)] hover:-translate-y-0.5 transition-all duration-200">
                 <span className="absolute top-4 right-4 text-[11px] font-semibold px-3 py-1.5 rounded-full border bg-cyan-50 text-cyan-700 border-cyan-200">Pacific Partnership</span>
                 <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-gray-100 shadow-sm mb-3">
                   <img src="https://flagcdn.com/w80/vu.png" alt="Vanuatu" className="w-full h-full object-cover" />
@@ -216,7 +246,7 @@ export default function GlobalPresence() {
             </div>
 
             {/* Featured bottom card — A HEALTHCARE FIRST */}
-            <div className="bg-gradient-to-br from-white to-red-100/60 rounded-2xl p-6 pb-14 relative overflow-hidden flex flex-col justify-between hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer">
+            <div className="ca-anim ca-zoom ca-d3 bg-gradient-to-br from-white to-red-100/60 rounded-2xl p-6 pb-14 relative overflow-hidden flex flex-col justify-between hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer">
               <span className="absolute top-4 right-4 text-[11px] font-semibold px-3 py-1.5 rounded-full border bg-red-100 text-red-700 border-red-200 z-10">A Healthcare First</span>
               <div className="relative z-10 max-w-[65%]">
                 <h4 className="font-semibold text-gray-900 text-base leading-tight mb-2">First specialty cancer pharmacy in the Pacific</h4>
@@ -253,7 +283,7 @@ export default function GlobalPresence() {
         <div className="bg-[#1DA1F2] rounded-[15px] p-8 lg:p-14 pb-14 flex flex-col lg:flex-row items-center justify-between text-white relative z-10 pt-[170px] lg:pt-14"
           style={{ WebkitMaskImage: 'radial-gradient(circle at 50% 0px, transparent 145px, black 146px)', maskImage: 'radial-gradient(circle at 50% 0px, transparent 145px, black 146px)' }}>
 
-          <div className="lg:flex-1 w-full flex lg:justify-start justify-center">
+          <div className="ca-anim ca-left lg:flex-1 w-full flex lg:justify-start justify-center">
             <div className="text-center lg:text-left w-full max-w-[340px] pl-0 lg:pl-4">
               <h2 className="text-[32px] lg:text-[38px] font-bold leading-[1.15] tracking-tight m-0"
                 style={{ fontFamily: 'inherit' }}>
@@ -266,7 +296,7 @@ export default function GlobalPresence() {
 
           <div className="hidden lg:block w-[300px] flex-shrink-0 pointer-events-none"></div>
 
-          <div className="lg:flex-1 w-full flex lg:justify-end justify-center mt-10 lg:mt-0">
+          <div className="ca-anim ca-right ca-d3 lg:flex-1 w-full flex lg:justify-end justify-center mt-10 lg:mt-0">
             <div className="flex flex-col items-center lg:items-start text-center lg:text-left w-full max-w-[280px] pr-0">
               <p className="text-[13px] font-medium mb-5 leading-[1.45] text-white">
                 Whether you're sourcing specialized medicines or expanding healthcare access overseas, Getmeds

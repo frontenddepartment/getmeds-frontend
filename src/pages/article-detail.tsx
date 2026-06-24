@@ -504,13 +504,6 @@ export default function ArticleDetail() {
               {/* Article body */}
               <article className="flex-1 min-w-0">
 
-                {/* Description */}
-                {article.description && (
-                  <p className="text-gray-600 text-[15px] leading-relaxed mb-6 font-medium">
-                    {article.description}
-                  </p>
-                )}
-
                 {/* Intro paragraph */}
                 {article.intro && (
                   <p className="text-gray-700 text-sm leading-relaxed mb-8">

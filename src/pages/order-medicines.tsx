@@ -333,6 +333,19 @@ export default function OrderMedicines() {
     }
   }, []);
 
+  useEffect(() => {
+    const caObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          (entry.target as Element).classList.add('ca-in');
+          caObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.ca-anim').forEach(el => caObserver.observe(el));
+    return () => caObserver.disconnect();
+  }, []);
+
   // Suppress unused warning — goToSlide kept for potential external use
   void goToSlide;
   void currentSlide;
@@ -347,6 +360,23 @@ export default function OrderMedicines() {
 
   return (
     <div style={{ fontFamily: "'Poppins', sans-serif" }} className="bg-white text-gray-800 antialiased">
+      <style>{`
+        .ca-anim{opacity:0}
+        .ca-anim.ca-in{animation-fill-mode:both}
+        .ca-up.ca-in{animation:caFadeUp 0.65s cubic-bezier(0.22,1,0.36,1) both}
+        .ca-left.ca-in{animation:caFadeLeft 0.65s cubic-bezier(0.22,1,0.36,1) both}
+        .ca-right.ca-in{animation:caFadeRight 0.65s cubic-bezier(0.22,1,0.36,1) both}
+        .ca-zoom.ca-in{animation:caZoomIn 0.6s cubic-bezier(0.22,1,0.36,1) both}
+        .ca-fade.ca-in{animation:caFadeIn 0.7s ease both}
+        .ca-d1.ca-in{animation-delay:0.1s}.ca-d2.ca-in{animation-delay:0.2s}
+        .ca-d3.ca-in{animation-delay:0.3s}.ca-d4.ca-in{animation-delay:0.4s}
+        .ca-d5.ca-in{animation-delay:0.5s}.ca-d6.ca-in{animation-delay:0.6s}
+        @keyframes caFadeUp{from{opacity:0;transform:translateY(32px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes caFadeLeft{from{opacity:0;transform:translateX(-44px)}to{opacity:1;transform:translateX(0)}}
+        @keyframes caFadeRight{from{opacity:0;transform:translateX(44px)}to{opacity:1;transform:translateX(0)}}
+        @keyframes caZoomIn{from{opacity:0;transform:scale(0.88)}to{opacity:1;transform:scale(1)}}
+        @keyframes caFadeIn{from{opacity:0}to{opacity:1}}
+      `}</style>
 
       {/* Navbar */}
       <div id="navbar-container" className="sticky top-0 z-[50]" />
@@ -405,10 +435,10 @@ export default function OrderMedicines() {
             <div className="absolute pointer-events-none hidden md:block" style={{ width: 85, height: 85, borderRadius: '50%', top: '-15px', right: '38%', background: 'radial-gradient(circle at 38% 32%, rgba(80,220,210,0.55), rgba(30,170,200,0.30))', backdropFilter: 'blur(2px)', border: '1px solid rgba(255,255,255,0.22)' }} />
 
             <div className="relative z-10">
-              <h1 className="text-xl sm:text-2xl md:text-3xl font-semibold text-white tracking-tight leading-tight mb-1">
+              <h1 className="ca-anim ca-up text-xl sm:text-2xl md:text-3xl font-semibold text-white tracking-tight leading-tight mb-1">
                 How to order with prescription
               </h1>
-              <p className="text-white/75 text-[12px] sm:text-[13px] mt-1 font-medium mb-10">
+              <p className="ca-anim ca-up ca-d2 text-white/75 text-[12px] sm:text-[13px] mt-1 font-medium mb-10">
                 A simple 3-step process designed for your convenience.
               </p>
 
@@ -431,7 +461,7 @@ export default function OrderMedicines() {
                     desc: 'Receive your order confirmation and delivery details via your preferred contact'
                   }
                 ].map((step, i) => (
-                  <div key={i} className="bg-white/10 backdrop-blur-sm rounded-[15px] border border-white/20 p-4 md:p-6 flex flex-row items-center md:flex-col md:items-center text-left md:text-center cursor-default">
+                  <div key={i} className={`ca-anim ca-zoom ${['ca-d1','ca-d3','ca-d5'][i]} bg-white/10 backdrop-blur-sm rounded-[15px] border border-white/20 p-4 md:p-6 flex flex-row items-center md:flex-col md:items-center text-left md:text-center cursor-default`}>
                     <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-white/20 border border-white/30 flex items-center justify-center flex-shrink-0 mr-4 md:mr-0 md:mb-4">
                       <i className={`fa-solid ${step.icon} text-white text-lg md:text-xl`}></i>
                     </div>
@@ -457,7 +487,7 @@ export default function OrderMedicines() {
               <div className="lg:col-span-3 space-y-6">
 
                 {/* Upload Prescription Card */}
-                <div className="bg-white rounded-[15px] border border-gray-100 p-8 shadow-sm">
+                <div className="ca-anim ca-left bg-white rounded-[15px] border border-gray-100 p-8 shadow-sm">
                   <div className="flex items-center gap-4 mb-6">
                     <div className="w-10 h-10 rounded-[12px] flex items-center justify-center text-white shadow-md"
                       style={{ background: 'linear-gradient(to right,#61A644,#1D9FDA)' }}>
@@ -528,7 +558,7 @@ export default function OrderMedicines() {
                 </div>
 
                 {/* Guide for Valid Prescription */}
-                <div className="bg-white rounded-[15px] border border-gray-100 p-8 shadow-sm">
+                <div className="ca-anim ca-left ca-d2 bg-white rounded-[15px] border border-gray-100 p-8 shadow-sm">
                   <h2 className="text-[17px] font-semibold text-dark mb-1">Guide for a valid prescription</h2>
                   <p className="text-gray-400 text-[12px] mb-6">Please ensure the document includes:</p>
                   <ul className="space-y-3.5">
@@ -551,7 +581,7 @@ export default function OrderMedicines() {
               <div className="lg:col-span-2 space-y-6">
 
                 {/* Need Assistance */}
-                <div className="bg-white p-6 rounded-[15px] border border-gray-100 shadow-sm">
+                <div className="ca-anim ca-right bg-white p-6 rounded-[15px] border border-gray-100 shadow-sm">
                   <p className="text-[11px] font-semibold uppercase tracking-widest text-gray-400 mb-1.5">Need Assistance?</p>
                   <p className="text-[17px] font-semibold mb-5"
                     style={{ background: 'linear-gradient(to right,#61A644,#1D9FDA)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
@@ -580,7 +610,7 @@ export default function OrderMedicines() {
                 </div>
 
                 {/* Secure Prescription Storage */}
-                <div className="bg-white p-6 rounded-[15px] border border-gray-100 shadow-sm flex items-start gap-4">
+                <div className="ca-anim ca-right ca-d2 bg-white p-6 rounded-[15px] border border-gray-100 shadow-sm flex items-start gap-4">
                   <div className="w-10 h-10 rounded-[12px] bg-green-50 flex items-center justify-center text-green-600 flex-shrink-0">
                     <i className="fa-solid fa-lock text-lg"></i>
                   </div>
@@ -591,7 +621,7 @@ export default function OrderMedicines() {
                 </div>
 
                 {/* Compliance & Standards */}
-                <div className="bg-white p-6 rounded-[15px] border border-gray-100 shadow-sm space-y-5">
+                <div className="ca-anim ca-right ca-d4 bg-white p-6 rounded-[15px] border border-gray-100 shadow-sm space-y-5">
                   <div className="flex items-start gap-3">
                     <div className="w-9 h-9 rounded-[10px] bg-green-50 flex items-center justify-center text-green-600 flex-shrink-0 mt-0.5">
                       <i className="fa-solid fa-certificate text-base"></i>
@@ -632,7 +662,7 @@ export default function OrderMedicines() {
             </div>
 
             {/* ── Customer Validation Form ── */}
-            <div className="bg-white rounded-[15px] border border-gray-100 p-8 md:p-12 shadow-sm">
+            <div className="ca-anim ca-up bg-white rounded-[15px] border border-gray-100 p-8 md:p-12 shadow-sm">
               <div className="mb-8">
                 <h2 className="text-2xl font-semibold text-gray-900 mb-1">Customer validation</h2>
                 <p className="text-gray-400 text-[13px]">Please provide accurate details for legal verification.</p>
