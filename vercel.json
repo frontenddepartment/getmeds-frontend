@@ -7,6 +7,7 @@
   "cleanUrls": true,
   "rewrites": [
     { "source": "/wp-json/:path*", "destination": "https://2mginc.com/wp-json/:path*" },
+    { "source": "/api/careers", "destination": "https://getmeds-test-creation.vercel.app/api/careers" },
     { "source": "/api/:path*", "destination": "https://getmeds-admin.vercel.app/api/:path*" }
   ]
 }

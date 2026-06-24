@@ -4,6 +4,15 @@ import { useImageMapper } from '../lib/useSanity';
 import { getCareers } from '../lib/queries';
 import { getApiUrl } from '../lib/api';
 
+const getPositionType = (title: string, desc: string): string => {
+  const text = (title + ' ' + desc).toLowerCase();
+  if (text.includes('part time') || text.includes('part-time')) return 'Part Time';
+  if (text.includes('contract')) return 'Contract';
+  if (text.includes('intern') || text.includes('internship')) return 'Internship';
+  if (text.includes('freelance')) return 'Freelance';
+  return 'Full Time';
+};
+
 const Careers: React.FC = () => {
   const { getImage } = useImageMapper('careers');
   const [activeCareersPanel, setActiveCareersPanel] = useState(0);
@@ -23,7 +32,7 @@ const Careers: React.FC = () => {
   const [submitState, setSubmitState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
   const [successModalOpen, setSuccessModalOpen] = useState(false);
   const [jobDescOpen, setJobDescOpen] = useState(false);
-  const activeJob = jobs.find(j => j.title === applyingFor);
+  const activeJob = jobs.find(j => j.job_title === applyingFor);
 
   const handleSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault();
@@ -111,14 +120,20 @@ const Careers: React.FC = () => {
   }, [jobs]);
 
   useEffect(() => {
-    // Fetch careers from Sanity
-    getCareers()
-      .then(data => {
-        setJobs(data || []);
+    // Fetch careers from public API
+    fetch('/api/careers')
+      .then(r => r.json())
+      .then(resData => {
+        if (resData && resData.success && Array.isArray(resData.data)) {
+          setJobs(resData.data);
+        } else {
+          setJobs([]);
+        }
         setLoading(false);
       })
       .catch(err => {
         console.error('Error fetching careers:', err);
+        setJobs([]);
         setLoading(false);
       });
 
@@ -168,6 +183,70 @@ const Careers: React.FC = () => {
         .hero-l2 { animation: caFadeUp 0.7s cubic-bezier(0.22,1,0.36,1) 0.32s both; }
         .hero-p  { animation: caFadeUp 0.7s cubic-bezier(0.22,1,0.36,1) 0.48s both; }
         .hero-btn{ animation: caFadeUp 0.7s cubic-bezier(0.22,1,0.36,1) 0.62s both; }
+
+        /* Quill Editor rich HTML styles */
+        .job-desc-content p {
+          margin-bottom: 0.75rem;
+        }
+        .job-desc-content strong {
+          font-weight: 700;
+        }
+        .job-desc-content em {
+          font-style: italic;
+        }
+        .job-desc-content u {
+          text-decoration: underline;
+        }
+        .job-desc-content ul {
+          list-style-type: disc;
+          padding-left: 1.25rem;
+          margin-bottom: 0.75rem;
+        }
+        .job-desc-content ol {
+          list-style-type: decimal;
+          padding-left: 1.25rem;
+          margin-bottom: 0.75rem;
+        }
+        .job-desc-content li {
+          margin-bottom: 0.25rem;
+        }
+        .job-desc-content blockquote {
+          border-left: 4px solid #cbd5e1;
+          padding-left: 1rem;
+          font-style: italic;
+          margin-bottom: 0.75rem;
+          color: #475569;
+        }
+        .job-desc-content pre.ql-syntax {
+          background-color: #f1f5f9;
+          padding: 0.75rem;
+          border-radius: 0.375rem;
+          font-family: monospace;
+          white-space: pre-wrap;
+          margin-bottom: 0.75rem;
+        }
+        .job-desc-content .ql-align-center {
+          text-align: center;
+        }
+        .job-desc-content .ql-align-right {
+          text-align: right;
+        }
+        .job-desc-content .ql-align-justify {
+          text-align: justify;
+        }
+        .job-desc-content .ql-indent-1 {
+          padding-left: 1.5rem;
+        }
+        .job-desc-content .ql-indent-2 {
+          padding-left: 3rem;
+        }
+        .job-desc-content a {
+          color: #1D9FDA;
+          text-decoration: underline;
+        }
+        .job-desc-content a:hover {
+          color: #0D99FF;
+        }
       `}</style>
 
       {/* Navbar */}
@@ -441,7 +520,7 @@ const Careers: React.FC = () => {
               innovation, and global impact in the healthcare industry.</p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 xl:grid-cols-5 gap-6">
             <div className="ca-anim ca-up bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
               <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center mb-5">
                 <i className="fa-solid fa-microscope text-2xl text-primary"></i>
@@ -536,40 +615,55 @@ const Careers: React.FC = () => {
       </section>
 
       {/* JOB LISTINGS */}
-      <section id="join-form" className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="ca-anim ca-up text-center mb-14">
-            <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent font-bold uppercase tracking-widest text-lg block mb-4">Open Positions</span>
-            <h2 className="text-3xl md:text-4xl font-semibold text-dark mb-3">Join Our{' '}<span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">Team</span></h2>
-            <p className="text-gray-400 text-[14px] max-w-xl mx-auto leading-relaxed">
-              Discover exciting opportunities to grow your career with us. We are looking for passionate
-              individuals to join our mission-driven team.
-            </p>
-          </div>
+      {(!loading && jobs.length === 0) ? null : (
+        <section id="join-form" className="py-20 bg-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="ca-anim ca-up text-center mb-14">
+              <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent font-bold uppercase tracking-widest text-lg block mb-4">Open Positions</span>
+              <h2 className="text-3xl md:text-4xl font-semibold text-dark mb-3">Join Our{' '}<span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">Team</span></h2>
+              <p className="text-gray-400 text-[14px] max-w-xl mx-auto leading-relaxed">
+                Discover exciting opportunities to grow your career with us. We are looking for passionate
+                individuals to join our mission-driven team.
+              </p>
+            </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {loading ? (
-              <p className="text-gray-400 text-center col-span-full">Loading positions...</p>
-            ) : jobs.length === 0 ? (
-              <p className="text-gray-400 text-center col-span-full">No open positions at the moment.</p>
-            ) : (
-              jobs.map((job, idx) => (
-                <div key={job.title} className={`ca-anim ca-up ca-d${(idx % 5) + 1} border border-gray-100 rounded-2xl p-6 hover:shadow-md transition-shadow duration-300 flex flex-col`}>
-                  <span className="text-[12px] font-semibold text-gray-400 tracking-widest block mb-2">Full Time</span>
-                  <h4 className="text-[16px] font-semibold text-dark mb-3">{job.title}</h4>
-                  <p className="text-gray-400 text-[12.5px] leading-[1.7] mb-5 flex-1">{job.desc}</p>
-                  <button
-                    onClick={() => { setApplyingFor(job.title); setApplyModalOpen(true); setJobDescOpen(true); }}
-                    className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] text-white text-[11px] font-bold px-5 py-2 rounded-full tracking-wider hover:opacity-90 transition self-start"
-                  >
-                    APPLY NOW
-                  </button>
-                </div>
-              ))
-            )}
+            <div className={`grid grid-cols-1 ${jobs.length === 1 ? 'lg:grid-cols-1 max-w-md mx-auto' : 'sm:grid-cols-2 lg:grid-cols-3'} gap-6`}>
+              {loading ? (
+                <p className="text-gray-400 text-center col-span-full">Loading positions...</p>
+              ) : jobs.length === 0 ? (
+                <p className="text-gray-400 text-center col-span-full">No open positions at the moment.</p>
+              ) : (
+                jobs.map((job, idx) => {
+                  const posType = getPositionType(job.job_title || '', job.job_description_text || '');
+                  return (
+                    <div key={job.id || idx} className={`ca-anim ca-up ca-d${(idx % 5) + 1} border border-gray-100 rounded-2xl p-6 hover:shadow-md transition-shadow duration-300 flex flex-col w-full`}>
+                      <div className="flex flex-wrap items-center gap-2 mb-2">
+                        <span className="text-[12px] font-semibold text-gray-400 tracking-widest uppercase">{job.job_type || posType}</span>
+                        {job.location && (
+                          <>
+                            <span className="text-gray-300 text-[10px]">•</span>
+                            <span className="text-[12px] font-semibold text-[#1D9FDA] uppercase tracking-wider">{job.location}</span>
+                          </>
+                        )}
+                      </div>
+                      <h4 className="text-[16px] font-semibold text-dark mb-3">{job.job_title}</h4>
+                      <p className="text-gray-400 text-[12.5px] leading-[1.7] mb-5 flex-1 line-clamp-3">
+                        {job.job_description_text || 'No description available.'}
+                      </p>
+                      <button
+                        onClick={() => { setApplyingFor(job.job_title); setApplyModalOpen(true); setJobDescOpen(true); }}
+                        className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] text-white text-[11px] font-bold px-5 py-2 rounded-full tracking-wider hover:opacity-90 transition self-start"
+                      >
+                        APPLY NOW
+                      </button>
+                    </div>
+                  );
+                })
+              )}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Footer */}
       <div id="footer-container" />
@@ -626,12 +720,24 @@ const Careers: React.FC = () => {
         <div className="sticky top-0 z-10 bg-white rounded-t-[20px] md:rounded-t-[15px] flex items-center justify-between px-8 pt-4 md:pt-6 pb-4 border-b border-gray-100 shrink-0">
           <div className="flex-1 pr-4">
             <span className="text-[11px] font-bold uppercase tracking-widest bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent block mb-1">Job Description</span>
-            <h2 className="text-[22px] font-bold text-slate-900 leading-tight tracking-tight">{activeJob?.title}</h2>
-            <span className="inline-block text-[11px] font-semibold text-gray-400 tracking-wider mt-1">Full Time</span>
+            <h2 className="text-[22px] font-bold text-slate-900 leading-tight tracking-tight">{activeJob?.job_title}</h2>
+            <div className="flex flex-wrap items-center gap-2 mt-1">
+              <span className="inline-block text-[11px] font-semibold text-gray-400 tracking-wider uppercase">
+                {activeJob ? (activeJob.job_type || getPositionType(activeJob.job_title || '', activeJob.job_description_text || '')) : 'Full Time'}
+              </span>
+              {activeJob?.location && (
+                <>
+                  <span className="text-gray-300 text-[10px]">•</span>
+                  <span className="inline-block text-[11px] font-semibold text-[#1D9FDA] tracking-wider uppercase">
+                    {activeJob.location}
+                  </span>
+                </>
+              )}
+            </div>
           </div>
           <button
             onClick={() => { setJobDescOpen(false); setApplyModalOpen(false); }}
-            className="shrink-0 text-gray-400 hover:text-gray-900 transition-colors w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200"
+            className="shrink-0 text-gray-400 hover:text-gray-900 transition-colors w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-200"
           >
             <i className="fa-solid fa-xmark text-lg"></i>
           </button>
@@ -641,31 +747,12 @@ const Careers: React.FC = () => {
         <div className="flex-1 px-8 pr-14 pb-8 overflow-y-auto">
           {activeJob && (
             <div className="space-y-6 pt-6">
-              <div>
-                <p className="text-[13.5px] text-gray-500 leading-relaxed">{activeJob.desc}</p>
-              </div>
-              <div>
-                <h4 className="text-[15px] font-semibold text-slate-800 mb-3">Key Responsibilities</h4>
-                <ul className="space-y-2">
-                  {activeJob.responsibilities.map((r: string, i: number) => (
-                    <li key={i} className="flex items-start gap-2 text-[12.5px] text-gray-500 leading-relaxed">
-                      <i className="fa-solid fa-circle-check text-[#61A644] text-[11px] mt-[3px] shrink-0"></i>
-                      {r}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div>
-                <h4 className="text-[15px] font-semibold text-slate-800 mb-3">Qualifications & Requirements</h4>
-                <ul className="space-y-2">
-                  {activeJob.requirements.map((r: string, i: number) => (
-                    <li key={i} className="flex items-start gap-2 text-[12.5px] text-gray-500 leading-relaxed">
-                      <i className="fa-solid fa-circle-check text-[#1D9FDA] text-[11px] mt-[3px] shrink-0"></i>
-                      {r}
-                    </li>
-                  ))}
-                </ul>
-              </div>
+              <div 
+                className="job-desc-content text-[13.5px] text-gray-500 leading-relaxed"
+                dangerouslySetInnerHTML={{ 
+                  __html: activeJob.job_description_html || '<p class="text-gray-400 italic">No job description provided.</p>' 
+                }} 
+              />
               <div className="pt-2 pb-4">
                 <button
                   onClick={() => {

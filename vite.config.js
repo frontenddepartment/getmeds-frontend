@@ -45,6 +45,11 @@ export default defineConfig(({ mode }) => {
           target: 'https://2mginc.com',
           changeOrigin: true,
           secure: false,
+        },
+        '/api/careers': {
+          target: 'https://getmeds-test-creation.vercel.app',
+          changeOrigin: true,
+          secure: false,
         }
       }
     },
