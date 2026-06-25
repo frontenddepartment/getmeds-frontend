@@ -52,6 +52,19 @@ const AnimatedCounter = ({ end, duration = 2000, suffix = "" }: { end: number, d
   return <span ref={counterRef}>{count.toLocaleString()}{suffix}</span>;
 };
 
+const slugify = (text: string | undefined | null) => {
+  if (!text) return '';
+  return text
+    .toString()
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, '-')
+    .replace(/[^\w\-]+/g, '')
+    .replace(/\-\-+/g, '-')
+    .replace(/^-+/, '')
+    .replace(/-+$/, '');
+};
+
 export default function GetMedsHomepage() {
   const { getImage } = useImageMapper('home');
   const { data: newsItems } = useNews();
@@ -1743,7 +1756,7 @@ export default function GetMedsHomepage() {
                   ? urlFor(article.image).width(800).url()
                   : 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&q=80&w=800';
                 return (
-                  <a key={article._id} href={`/article-detail?id=${article._id}`} className="relative rounded-3xl overflow-hidden cursor-pointer md:hover:-translate-y-2 md:hover:shadow-2xl transition-all duration-500 group block flex-shrink-0 w-[82%] md:w-auto snap-center mb-0 md:mb-0 h-[300px] md:h-[460px]">
+                  <a key={article._id} href={`/article-detail?title=${encodeURIComponent(slugify(article.title))}&id=${article._id}`} className="relative rounded-3xl overflow-hidden cursor-pointer md:hover:-translate-y-2 md:hover:shadow-2xl transition-all duration-500 group block flex-shrink-0 w-[82%] md:w-auto snap-center mb-0 md:mb-0 h-[300px] md:h-[460px]">
 
                     {/* Full background image */}
                     <img src={imgUrl} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt={article.title} />

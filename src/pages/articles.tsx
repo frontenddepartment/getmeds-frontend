@@ -14,6 +14,19 @@ const formatDate = (dateStr: string | undefined | null) => {
   }
 };
 
+const slugify = (text: string | undefined | null) => {
+  if (!text) return '';
+  return text
+    .toString()
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, '-')
+    .replace(/[^\w\-]+/g, '')
+    .replace(/\-\-+/g, '-')
+    .replace(/^-+/, '')
+    .replace(/-+$/, '');
+};
+
 export default function Articles() {
   const { data: articles, loading } = useNews();
   const [page, setPage] = useState(0);
@@ -73,7 +86,7 @@ export default function Articles() {
               {/* Left: Featured card */}
               {featured && (
                 <a
-                  href={`/article-detail?id=${featured._id}`}
+                  href={`/article-detail?title=${encodeURIComponent(slugify(featured.title))}&id=${featured._id}`}
                   className="relative rounded-2xl overflow-hidden block group no-underline"
                   style={{ minHeight: '420px' }}
                 >
@@ -104,7 +117,7 @@ export default function Articles() {
                   {latestPosts.map(article => (
                     <a
                       key={article._id}
-                      href={`/article-detail?id=${article._id}`}
+                      href={`/article-detail?title=${encodeURIComponent(slugify(article.title))}&id=${article._id}`}
                       className="flex gap-3 group no-underline"
                     >
                       <img
@@ -156,7 +169,7 @@ export default function Articles() {
                   return (
                     <a
                       key={article._id}
-                      href={`/article-detail?id=${article._id}`}
+                      href={`/article-detail?title=${encodeURIComponent(slugify(article.title))}&id=${article._id}`}
                       className="block rounded-2xl overflow-hidden border border-gray-100 hover:shadow-lg transition-shadow no-underline group"
                       style={{ boxShadow: '0 1px 6px rgba(0,0,0,0.05)' }}
                     >

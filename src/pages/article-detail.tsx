@@ -27,6 +27,19 @@ const formatDate = (dateStr: string | undefined | null): string => {
   }
 };
 
+const slugify = (text: string | undefined | null) => {
+  if (!text) return '';
+  return text
+    .toString()
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, '-')
+    .replace(/[^\w\-]+/g, '')
+    .replace(/\-\-+/g, '-')
+    .replace(/^-+/, '')
+    .replace(/-+$/, '');
+};
+
 export default function ArticleDetail() {
   const [articleId, setArticleId] = useState<string>('');
   const [activeSection, setActiveSection] = useState(0);
@@ -42,6 +55,15 @@ export default function ArticleDetail() {
   useEffect(() => {
     if (article) {
       document.title = `${article.title} — Getmeds`;
+
+      const params = new URLSearchParams(window.location.search);
+      const currentTitle = params.get('title');
+      const expectedTitle = slugify(article.title);
+      if (currentTitle !== expectedTitle) {
+        params.set('title', expectedTitle);
+        const newUrl = `${window.location.pathname}?${params.toString()}`;
+        window.history.replaceState(null, '', newUrl);
+      }
     }
   }, [article]);
 
