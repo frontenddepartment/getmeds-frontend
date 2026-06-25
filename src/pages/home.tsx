@@ -1726,101 +1726,103 @@ export default function GetMedsHomepage() {
       })()}
 
       {/* News & Insights Section */}
-      <section className="py-10 px-0 md:px-6 bg-white reveal">
-        <div className="max-w-7xl mx-auto">
-          <div className="rounded-none md:rounded-2xl p-7" style={{
-            background: 'linear-gradient(120deg, #fdf0e8 0%, #c8e8f5 55%, #7ab3d4 100%)',
-          }}>
+      {newsItems && newsItems.length > 0 && (
+        <section className="py-10 px-0 md:px-6 bg-white reveal">
+          <div className="max-w-7xl mx-auto">
+            <div className="rounded-none md:rounded-2xl p-7" style={{
+              background: 'linear-gradient(120deg, #fdf0e8 0%, #c8e8f5 55%, #7ab3d4 100%)',
+            }}>
 
-            {/* Header */}
-            <div className="flex items-end justify-between mb-6">
-              <div>
-                <span className="text-[13px] font-semibold tracking-wide mb-1.5 block" style={{
-                  background: 'linear-gradient(135deg,#1D9FDA,#61A644)',
-                  WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', display: 'inline-block'
-                }}>News and Insights</span>
-                <h2 className="text-2xl font-bold text-gray-900 ca-anim ca-up">What's new at Getmeds.</h2>
+              {/* Header */}
+              <div className="flex items-end justify-between mb-6">
+                <div>
+                  <span className="text-[13px] font-semibold tracking-wide mb-1.5 block" style={{
+                    background: 'linear-gradient(135deg,#1D9FDA,#61A644)',
+                    WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', display: 'inline-block'
+                  }}>News and Insights</span>
+                  <h2 className="text-2xl font-bold text-gray-900 ca-anim ca-up">What's new at Getmeds.</h2>
+                </div>
+                <a href="articles.html" className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:opacity-90 text-white text-xs md:text-sm font-medium rounded-full px-3 py-1.5 md:px-6 md:py-2.5 transition-opacity shrink-0">View All</a>
               </div>
-              <a href="articles.html" className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:opacity-90 text-white text-xs md:text-sm font-medium rounded-full px-3 py-1.5 md:px-6 md:py-2.5 transition-opacity shrink-0">View All</a>
-            </div>
 
-            {/* 3 Article Cards — mobile: horizontal snap slider; desktop: 3-col grid */}
-            <div
-              ref={newsSliderRef}
-              onScroll={handleNewsScroll}
-              className="flex md:grid md:grid-cols-3 overflow-x-auto md:overflow-visible gap-3 md:gap-4 snap-x md:snap-none snap-mandatory -mx-7 px-7 md:mx-0 md:px-0 pb-1 md:pb-0 ca-anim ca-fade ca-d2"
-              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' } as React.CSSProperties}
-            >
-              {(newsItems && newsItems.length > 0 ? newsItems.slice(0, 3) : []).map((article) => {
-                const imgUrl = article.image
-                  ? urlFor(article.image).width(800).url()
-                  : 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&q=80&w=800';
-                return (
-                  <a key={article._id} href={`/article-detail?title=${encodeURIComponent(slugify(article.title))}&id=${article._id}`} className="relative rounded-3xl overflow-hidden cursor-pointer md:hover:-translate-y-2 md:hover:shadow-2xl transition-all duration-500 group block flex-shrink-0 w-[82%] md:w-auto snap-center mb-0 md:mb-0 h-[300px] md:h-[460px]">
+              {/* 3 Article Cards — mobile: horizontal snap slider; desktop: 3-col grid */}
+              <div
+                ref={newsSliderRef}
+                onScroll={handleNewsScroll}
+                className="flex md:grid md:grid-cols-3 overflow-x-auto md:overflow-visible gap-3 md:gap-4 snap-x md:snap-none snap-mandatory -mx-7 px-7 md:mx-0 md:px-0 pb-1 md:pb-0 ca-anim ca-fade ca-d2"
+                style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' } as React.CSSProperties}
+              >
+                {newsItems.slice(0, 3).map((article) => {
+                  const imgUrl = article.image
+                    ? urlFor(article.image).width(800).url()
+                    : 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&q=80&w=800';
+                  return (
+                    <a key={article._id} href={`/article-detail?title=${encodeURIComponent(slugify(article.title))}&id=${article._id}`} className="relative rounded-3xl overflow-hidden cursor-pointer md:hover:-translate-y-2 md:hover:shadow-2xl transition-all duration-500 group block flex-shrink-0 w-[82%] md:w-auto snap-center mb-0 md:mb-0 h-[300px] md:h-[460px]">
 
-                    {/* Full background image */}
-                    <img src={imgUrl} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt={article.title} />
+                      {/* Full background image */}
+                      <img src={imgUrl} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt={article.title} />
 
-                    {/* Dark gradient overlay */}
-                    <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(10,15,30,0.92) 0%, rgba(10,15,30,0.55) 45%, rgba(10,15,30,0.15) 100%)' }}></div>
+                      {/* Dark gradient overlay */}
+                      <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(10,15,30,0.92) 0%, rgba(10,15,30,0.55) 45%, rgba(10,15,30,0.15) 100%)' }}></div>
 
-                    {/* Content pinned to bottom */}
-                    <div className="absolute bottom-0 left-0 right-0 p-5">
+                      {/* Content pinned to bottom */}
+                      <div className="absolute bottom-0 left-0 right-0 p-5">
 
-                      {/* Title — desktop: flex row with readTime pill; mobile: full width */}
-                      <div className="hidden md:flex items-start justify-between gap-3 mb-2">
-                        <h3 className="text-white font-bold text-base leading-snug">{article.title}</h3>
-                        {article.readTime && (
-                          <div className="flex-shrink-0 text-white text-[10px] font-semibold px-2.5 py-1 rounded-full" style={{ background: 'rgba(255,255,255,0.18)', backdropFilter: 'blur(6px)' }}>
-                            {article.readTime}
-                          </div>
-                        )}
+                        {/* Title — desktop: flex row with readTime pill; mobile: full width */}
+                        <div className="hidden md:flex items-start justify-between gap-3 mb-2">
+                          <h3 className="text-white font-bold text-base leading-snug">{article.title}</h3>
+                          {article.readTime && (
+                            <div className="flex-shrink-0 text-white text-[10px] font-semibold px-2.5 py-1 rounded-full" style={{ background: 'rgba(255,255,255,0.18)', backdropFilter: 'blur(6px)' }}>
+                              {article.readTime}
+                            </div>
+                          )}
+                        </div>
+                        <h3 className="md:hidden text-white font-bold text-base leading-snug mb-2">{article.title}</h3>
+
+                        {/* Description */}
+                        <p className="text-white/65 text-[12px] leading-relaxed mb-3 line-clamp-2">{article.description}</p>
+
+                        {/* Tag + readTime on same row (mobile: both here; desktop: tag only) */}
+                        <div className="flex items-center gap-2 mb-4">
+                          <span className="text-white text-[11px] font-semibold px-3 py-1 rounded-full" style={{ background: 'linear-gradient(135deg,#1D9FDA,#61A644)' }}>{article.tag}</span>
+                          {article.readTime && (
+                            <div className="md:hidden flex-shrink-0 text-white text-[10px] font-semibold px-2.5 py-1 rounded-full" style={{ background: 'rgba(255,255,255,0.18)', backdropFilter: 'blur(6px)' }}>
+                              {article.readTime}
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Read More button */}
+                        <span className="w-full font-semibold text-sm py-3 rounded-2xl transition-all duration-200 flex items-center justify-center" style={{ background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.3)', color: '#fff', boxShadow: '0 4px 16px rgba(0,0,0,0.12)' }}>
+                          Read More
+                        </span>
+
                       </div>
-                      <h3 className="md:hidden text-white font-bold text-base leading-snug mb-2">{article.title}</h3>
+                    </a>
+                  );
+                })}
+              </div>
 
-                      {/* Description */}
-                      <p className="text-white/65 text-[12px] leading-relaxed mb-3 line-clamp-2">{article.description}</p>
+              {/* Mobile dot indicators */}
+              <div className="flex md:hidden justify-center gap-2 mt-4">
+                {newsItems.slice(0, 3).map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => scrollToNewsSlide(i)}
+                    className="rounded-full transition-all duration-300"
+                    style={{
+                      width: activeNewsSlide === i ? '20px' : '8px',
+                      height: '8px',
+                      background: activeNewsSlide === i ? '#1D9FDA' : '#cbd5e1',
+                    }}
+                  />
+                ))}
+              </div>
 
-                      {/* Tag + readTime on same row (mobile: both here; desktop: tag only) */}
-                      <div className="flex items-center gap-2 mb-4">
-                        <span className="text-white text-[11px] font-semibold px-3 py-1 rounded-full" style={{ background: 'linear-gradient(135deg,#1D9FDA,#61A644)' }}>{article.tag}</span>
-                        {article.readTime && (
-                          <div className="md:hidden flex-shrink-0 text-white text-[10px] font-semibold px-2.5 py-1 rounded-full" style={{ background: 'rgba(255,255,255,0.18)', backdropFilter: 'blur(6px)' }}>
-                            {article.readTime}
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Read More button */}
-                      <span className="w-full font-semibold text-sm py-3 rounded-2xl transition-all duration-200 flex items-center justify-center" style={{ background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.3)', color: '#fff', boxShadow: '0 4px 16px rgba(0,0,0,0.12)' }}>
-                        Read More
-                      </span>
-
-                    </div>
-                  </a>
-                );
-              })}
             </div>
-
-            {/* Mobile dot indicators */}
-            <div className="flex md:hidden justify-center gap-2 mt-4">
-              {(newsItems && newsItems.length > 0 ? newsItems.slice(0, 3) : []).map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => scrollToNewsSlide(i)}
-                  className="rounded-full transition-all duration-300"
-                  style={{
-                    width: activeNewsSlide === i ? '20px' : '8px',
-                    height: '8px',
-                    background: activeNewsSlide === i ? '#1D9FDA' : '#cbd5e1',
-                  }}
-                />
-              ))}
-            </div>
-
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
 
       {/* Footer Component Placeholder */}

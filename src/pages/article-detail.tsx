@@ -363,6 +363,7 @@ export default function ArticleDetail() {
             <img
               src={imgSrc}
               alt=""
+              loading="lazy"
               className="w-full rounded-xl object-cover"
             />
           </figure>
@@ -443,6 +444,7 @@ export default function ArticleDetail() {
               <img
                 src={imgUrl}
                 alt={article.title}
+                fetchPriority="high"
                 className="w-full rounded-2xl object-cover"
                 style={{ height: '340px' }}
               />

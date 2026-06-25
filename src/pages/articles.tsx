@@ -93,6 +93,7 @@ export default function Articles() {
                   <img
                     src={featured.image ? urlFor(featured.image).width(900).url() : ''}
                     alt={featured.title}
+                    fetchPriority="high"
                     className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                   />
                   <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.25) 55%, transparent 100%)' }} />
@@ -123,6 +124,7 @@ export default function Articles() {
                       <img
                         src={article.image ? urlFor(article.image).width(200).url() : ''}
                         alt={article.title}
+                        loading="lazy"
                         className="w-[70px] h-[70px] rounded-xl object-cover flex-shrink-0"
                       />
                       <div className="flex-1 min-w-0">
@@ -177,6 +179,7 @@ export default function Articles() {
                         <img
                           src={imgUrl}
                           alt={article.title}
+                          loading="lazy"
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         />
                       </div>
