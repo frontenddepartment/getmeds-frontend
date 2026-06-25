@@ -1727,7 +1727,7 @@ export default function GetMedsHomepage() {
 
       {/* News & Insights Section */}
       {newsItems && newsItems.length > 0 && (
-        <section className="py-10 px-0 md:px-6 bg-white reveal">
+        <section className="py-10 px-0 md:px-6 bg-white">
           <div className="max-w-7xl mx-auto">
             <div className="rounded-none md:rounded-2xl p-7" style={{
               background: 'linear-gradient(120deg, #fdf0e8 0%, #c8e8f5 55%, #7ab3d4 100%)',
@@ -1740,7 +1740,7 @@ export default function GetMedsHomepage() {
                     background: 'linear-gradient(135deg,#1D9FDA,#61A644)',
                     WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', display: 'inline-block'
                   }}>News and Insights</span>
-                  <h2 className="text-2xl font-bold text-gray-900 ca-anim ca-up">What's new at Getmeds.</h2>
+                  <h2 className="text-2xl font-bold text-gray-900">What's new at Getmeds.</h2>
                 </div>
                 <a href="articles.html" className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:opacity-90 text-white text-xs md:text-sm font-medium rounded-full px-3 py-1.5 md:px-6 md:py-2.5 transition-opacity shrink-0">View All</a>
               </div>
@@ -1749,7 +1749,7 @@ export default function GetMedsHomepage() {
               <div
                 ref={newsSliderRef}
                 onScroll={handleNewsScroll}
-                className="flex md:grid md:grid-cols-3 overflow-x-auto md:overflow-visible gap-3 md:gap-4 snap-x md:snap-none snap-mandatory -mx-7 px-7 md:mx-0 md:px-0 pb-1 md:pb-0 ca-anim ca-fade ca-d2"
+                className="flex md:grid md:grid-cols-3 overflow-x-auto md:overflow-visible gap-3 md:gap-4 snap-x md:snap-none snap-mandatory -mx-7 px-7 md:mx-0 md:px-0 pb-1 md:pb-0"
                 style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' } as React.CSSProperties}
               >
                 {newsItems.slice(0, 3).map((article) => {
