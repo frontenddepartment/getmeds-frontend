@@ -362,18 +362,12 @@ export async function getGoogleSpreadsheetBySlug(slug: string) {
 // News & Articles
 // ─────────────────────────────────────────────
 
-let cachedNews: any[] | null = null;
-const cachedNewsById: Record<string, any> = {};
-
 export async function getNews() {
-  if (cachedNews) {
-    return cachedNews;
-  }
   try {
-    const res = await fetch(`/wp-json/wp/v2/posts?per_page=20&_embed=true`, { cache: 'no-cache' });
+    const res = await fetch(`/wp-json/wp/v2/posts?per_page=20&_embed=true`, { cache: 'reload' });
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
     const data = await res.json();
-    const mapped = data.map((item: any) => {
+    return data.map((item: any) => {
       const categories = item._embedded?.['wp:term']?.[0] || [];
       const tag = categories[0]?.name || 'News';
       
@@ -408,14 +402,6 @@ export async function getNews() {
         source_link: item.link
       };
     });
-    cachedNews = mapped;
-    
-    // Warm individual post caches
-    mapped.forEach((item: any) => {
-      cachedNewsById[item._id] = item;
-    });
-
-    return mapped;
   } catch (err) {
     console.error('Error fetching news from WordPress API:', err);
     return [];
@@ -423,11 +409,8 @@ export async function getNews() {
 }
 
 export async function getNewsById(id: string) {
-  if (cachedNewsById[id]) {
-    return cachedNewsById[id];
-  }
   try {
-    const res = await fetch(`/wp-json/wp/v2/posts/${id}?_embed=true`, { cache: 'no-cache' });
+    const res = await fetch(`/wp-json/wp/v2/posts/${id}?_embed=true`, { cache: 'reload' });
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
     const item = await res.json();
     
@@ -450,7 +433,7 @@ export async function getNewsById(id: string) {
     const minutes = Math.max(1, Math.round(wordCount / 200));
     const readTime = `${minutes} min read`;
 
-    const mapped = {
+    return {
       _id: String(item.id),
       _type: 'news' as const,
       tag: tag,
@@ -462,8 +445,6 @@ export async function getNewsById(id: string) {
       contentHtml: rawContent,
       source_link: item.link
     };
-    cachedNewsById[id] = mapped;
-    return mapped;
   } catch (err) {
     console.error(`Error fetching news item ${id} from WordPress API:`, err);
     return null;
