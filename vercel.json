@@ -7,22 +7,22 @@
   "cleanUrls": true,
   "redirects": [
     {
-      "source": "/blog",
+      "source": "/articles",
       "destination": "/blog",
       "permanent": true
     },
     {
-      "source": "/blog.html",
+      "source": "/articles.html",
       "destination": "/blog",
       "permanent": true
     },
     {
-      "source": "/blog-detail",
+      "source": "/article-detail",
       "destination": "/blog-detail",
       "permanent": true
     },
     {
-      "source": "/blog-detail.html",
+      "source": "/article-detail.html",
       "destination": "/blog-detail",
       "permanent": true
     }
