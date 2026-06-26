@@ -364,7 +364,7 @@ export async function getGoogleSpreadsheetBySlug(slug: string) {
 
 export async function getNews() {
   try {
-    const res = await fetch(`/wp-json/wp/v2/posts?per_page=20&_embed=true`, { cache: 'reload' });
+    const res = await fetch(`/wp-json/wp/v2/posts?per_page=20&_embed=true&_=${Date.now()}`, { cache: 'reload' });
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
     const data = await res.json();
     return data.map((item: any) => {
@@ -410,7 +410,7 @@ export async function getNews() {
 
 export async function getNewsById(id: string) {
   try {
-    const res = await fetch(`/wp-json/wp/v2/posts/${id}?_embed=true`, { cache: 'reload' });
+    const res = await fetch(`/wp-json/wp/v2/posts/${id}?_embed=true&_=${Date.now()}`, { cache: 'reload' });
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
     const item = await res.json();
     
