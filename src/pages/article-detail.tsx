@@ -67,6 +67,96 @@ export default function ArticleDetail() {
     }
   }, [article]);
 
+  // Hash scroll listener and initial hash trigger
+  useEffect(() => {
+    if (!loading && article) {
+      const handleHashScroll = () => {
+        const hash = window.location.hash;
+        if (!hash) return;
+        
+        const targetName = decodeURIComponent(hash.substring(1)).toLowerCase().replace(/[^a-z0-9]+/g, '_');
+        const headings = document.querySelectorAll('[data-section], h1, h2, h3, h4, h5, h6');
+        
+        for (const el of headings) {
+          const originalId = el.getAttribute('data-original-id') || el.getAttribute('id') || '';
+          const text = el.textContent || '';
+          
+          const normOriginalId = originalId.toLowerCase().replace(/[^a-z0-9]+/g, '_');
+          const normText = text.toLowerCase().replace(/[^a-z0-9]+/g, '_');
+          
+          if (normOriginalId === targetName || normText === targetName || normText.includes(targetName) || targetName.includes(normText)) {
+            setTimeout(() => {
+              el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 300);
+            break;
+          }
+        }
+      };
+
+      // Run on initial load
+      setTimeout(handleHashScroll, 500);
+
+      // Run on hash change
+      window.addEventListener('hashchange', handleHashScroll);
+      return () => window.removeEventListener('hashchange', handleHashScroll);
+    }
+  }, [loading, article]);
+
+  // Intercept clicks on legacy slug-based links (e.g. /some-post-slug/) and redirect to article-detail?id=X
+  useEffect(() => {
+    const handleLinkClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      const anchor = target.closest('a');
+      if (!anchor) return;
+
+      const href = anchor.getAttribute('href') || '';
+      if (!href) return;
+
+      // Extract path and clean up domains
+      const cleanPath = href
+        .replace(/^https?:\/\/(cms\.)?getmeds\.ph/i, '')
+        .replace(/^https?:\/\/www\.getmeds\.ph/i, '')
+        .replace(/^https?:\/\/173\.231\.197\.156/i, '');
+      
+      const ourPages = new Set([
+        'articles', 'about-us', 'contact-us', 'product-range', 'meditations',
+        'pap', 'careers', 'services', 'csr', 'ungc', 'article-detail', 'index.html'
+      ]);
+
+      const urlParts = cleanPath.split('#');
+      const pathOnly = urlParts[0].replace(/^\/|\/$/g, ''); // strip leading/trailing slashes
+      const hash = urlParts[1] ? `#${urlParts[1]}` : '';
+
+      // Check if it looks like a WordPress post slug path (e.g. not one of our pages)
+      if (pathOnly && !ourPages.has(pathOnly.split('/')[0]) && !pathOnly.includes('.')) {
+        e.preventDefault();
+        const slug = pathOnly.split('/').pop() || '';
+        if (slug) {
+          anchor.style.opacity = '0.5';
+          fetch(`/wp-json/wp/v2/posts?slug=${slug}&_=${Date.now()}`)
+            .then(res => res.json())
+            .then(posts => {
+              anchor.style.opacity = '';
+              if (posts && posts.length > 0) {
+                const postId = posts[0].id;
+                const postTitle = slugify(posts[0].title?.rendered || '');
+                window.location.href = `/article-detail?title=${postTitle}&id=${postId}${hash}`;
+              } else {
+                window.location.href = `/articles`;
+              }
+            })
+            .catch(() => {
+              anchor.style.opacity = '';
+              window.location.href = `/articles`;
+            });
+        }
+      }
+    };
+
+    document.addEventListener('click', handleLinkClick);
+    return () => document.removeEventListener('click', handleLinkClick);
+  }, []);
+
   useEffect(() => {
     const navContainer = document.getElementById('navbar-container');
     if (navContainer && navContainer.innerHTML.trim() === '') {
@@ -121,6 +211,11 @@ export default function ArticleDetail() {
 
       headingElements.forEach((el) => {
         const tagName = el.tagName.toLowerCase();
+        
+        const originalId = el.getAttribute('id') || '';
+        if (originalId) {
+          el.setAttribute('data-original-id', originalId);
+        }
         
         if (tagName === 'h1') {
           el.className = "text-lg md:text-xl font-bold mt-8 mb-4 text-gray-900 scroll-mt-8";
