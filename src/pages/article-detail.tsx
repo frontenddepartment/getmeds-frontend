@@ -162,6 +162,20 @@ export default function ArticleDetail() {
         el.className = "text-[#1D9FDA] underline hover:text-[#61A644] transition-colors";
         el.setAttribute('target', '_blank');
         el.setAttribute('rel', 'noopener noreferrer');
+        
+        const href = el.getAttribute('href') || '';
+        if (href) {
+          const newHref = href
+            .replace(/^https?:\/\/(cms\.)?getmeds\.ph/i, '')
+            .replace(/^https?:\/\/www\.getmeds\.ph/i, '')
+            .replace(/^https?:\/\/173\.231\.197\.156/i, '');
+          
+          if (newHref.startsWith('/') || newHref.startsWith('./') || newHref.startsWith('../')) {
+            el.setAttribute('href', newHref);
+            el.removeAttribute('target');
+            el.removeAttribute('rel');
+          }
+        }
       });
 
       // Lists
@@ -343,16 +357,25 @@ export default function ArticleDetail() {
           {children}
         </code>
       ),
-      link: ({ value, children }: any) => (
-        <a
-          href={value?.href}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-[#1D9FDA] underline hover:text-[#61A644] transition-colors"
-        >
-          {children}
-        </a>
-      ),
+      link: ({ value, children }: any) => {
+        const href = value?.href || '';
+        const newHref = href
+          .replace(/^https?:\/\/(cms\.)?getmeds\.ph/i, '')
+          .replace(/^https?:\/\/www\.getmeds\.ph/i, '')
+          .replace(/^https?:\/\/173\.231\.197\.156/i, '');
+        
+        const isRelative = newHref.startsWith('/') || newHref.startsWith('./') || newHref.startsWith('../');
+        return (
+          <a
+            href={newHref}
+            target={isRelative ? undefined : "_blank"}
+            rel={isRelative ? undefined : "noopener noreferrer"}
+            className="text-[#1D9FDA] underline hover:text-[#61A644] transition-colors"
+          >
+            {children}
+          </a>
+        );
+      },
     },
     types: {
       image: ({ value }: any) => {
