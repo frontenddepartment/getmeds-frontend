@@ -10,6 +10,11 @@
       "source": "/articles",
       "destination": "/blog",
       "permanent": true
+    },
+    {
+      "source": "/articles.html",
+      "destination": "/blog",
+      "permanent": true
     }
   ],
   "rewrites": [
@@ -31,6 +36,10 @@
     },
     {
       "source": "/article-detail",
+      "destination": "/blog-detail.html"
+    },
+    {
+      "source": "/article-detail.html",
       "destination": "/blog-detail.html"
     },
     {
