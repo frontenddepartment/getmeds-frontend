@@ -86,15 +86,18 @@ export default function ArticleDetail() {
           
           if (normOriginalId === targetName || normText === targetName || normText.includes(targetName) || targetName.includes(normText)) {
             setTimeout(() => {
-              el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }, 300);
+              const yOffset = -100; // Account for 80px sticky navbar + 20px padding
+              const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
+              window.scrollTo({ top: y, behavior: 'smooth' });
+            }, 50);
             break;
           }
         }
       };
 
-      // Run on initial load
-      setTimeout(handleHashScroll, 500);
+      // Run with a delay to allow text layout, and run again slightly later to correct for image load shifts
+      setTimeout(handleHashScroll, 300);
+      setTimeout(handleHashScroll, 900);
 
       // Run on hash change
       window.addEventListener('hashchange', handleHashScroll);
@@ -218,13 +221,13 @@ export default function ArticleDetail() {
         }
         
         if (tagName === 'h1') {
-          el.className = "text-lg md:text-xl font-bold mt-8 mb-4 text-gray-900 scroll-mt-8";
+          el.className = "text-lg md:text-xl font-bold mt-8 mb-4 text-gray-900 scroll-mt-28";
         } else if (tagName === 'h2') {
-          el.className = "text-base font-semibold mt-8 mb-3 scroll-mt-8 bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent";
+          el.className = "text-base font-semibold mt-8 mb-3 scroll-mt-28 bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent";
         } else if (tagName === 'h3') {
-          el.className = "text-sm font-semibold mt-6 mb-2 text-gray-800 scroll-mt-8";
+          el.className = "text-sm font-semibold mt-6 mb-2 text-gray-800 scroll-mt-28";
         } else {
-          el.className = "text-xs font-semibold mt-5 mb-2 text-gray-700 uppercase tracking-wider scroll-mt-8";
+          el.className = "text-xs font-semibold mt-5 mb-2 text-gray-700 uppercase tracking-wider scroll-mt-28";
         }
 
         // Track only h2 and h3 in the sidebar table of contents
@@ -359,7 +362,11 @@ export default function ArticleDetail() {
 
   const scrollTo = (idx: number) => {
     const el = document.getElementById(`heading-${idx}`);
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (el) {
+      const yOffset = -100; // Account for 80px sticky navbar + 20px padding
+      const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }
   };
 
   const portableTextComponents = useMemo(() => ({
@@ -373,7 +380,7 @@ export default function ArticleDetail() {
           <h2
             id={`heading-${idx}`}
             data-section={idx}
-            className="text-base font-semibold mt-8 mb-3 scroll-mt-8 bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent"
+            className="text-base font-semibold mt-8 mb-3 scroll-mt-28 bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent"
           >
             {children}
           </h2>
@@ -385,7 +392,7 @@ export default function ArticleDetail() {
           <h3
             id={`heading-${idx}`}
             data-section={idx}
-            className="text-sm font-semibold mt-6 mb-2 text-gray-800 scroll-mt-8"
+            className="text-sm font-semibold mt-6 mb-2 text-gray-800 scroll-mt-28"
           >
             {children}
           </h3>
