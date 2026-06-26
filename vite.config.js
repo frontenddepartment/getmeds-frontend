@@ -277,20 +277,14 @@ export default defineConfig(({ mode }) => {
                 return;
               }
             }
-            if (cleanPath === '/articles.html') {
-              res.statusCode = 302;
-              res.setHeader('Location', '/articles' + qs);
+            if (cleanPath === '/articles.html' || cleanPath === '/articles' || cleanPath === '/articles/') {
+              res.statusCode = 301;
+              res.setHeader('Location', '/blog' + qs);
               res.end();
               return;
             }
-            if (cleanPath === '/article-detail.html') {
-              res.statusCode = 302;
-              res.setHeader('Location', '/article-detail' + qs);
-              res.end();
-              return;
-            }
-            if (cleanPath === '/article-detail' || cleanPath === '/article-detail/') {
-              const htmlPath = path.join(process.cwd(), 'article-detail.html');
+            if (cleanPath === '/article-detail.html' || cleanPath === '/article-detail' || cleanPath === '/article-detail/') {
+              const htmlPath = path.join(process.cwd(), 'blog-detail.html');
               if (fs.existsSync(htmlPath)) {
                 const htmlContent = fs.readFileSync(htmlPath, 'utf-8');
                 res.setHeader('Content-Type', 'text/html');
@@ -298,8 +292,23 @@ export default defineConfig(({ mode }) => {
                 return;
               }
             }
-            if (cleanPath === '/articles' || cleanPath === '/articles/') {
-              const htmlPath = path.join(process.cwd(), 'articles.html');
+            if (cleanPath === '/blog.html') {
+              res.statusCode = 302;
+              res.setHeader('Location', '/blog' + qs);
+              res.end();
+              return;
+            }
+            if (cleanPath === '/blog' || cleanPath === '/blog/') {
+              const htmlPath = path.join(process.cwd(), 'blog.html');
+              if (fs.existsSync(htmlPath)) {
+                const htmlContent = fs.readFileSync(htmlPath, 'utf-8');
+                res.setHeader('Content-Type', 'text/html');
+                res.end(htmlContent);
+                return;
+              }
+            }
+            if (cleanPath.startsWith('/blog/') && cleanPath.split('/').filter(Boolean).length >= 2) {
+              const htmlPath = path.join(process.cwd(), 'blog-detail.html');
               if (fs.existsSync(htmlPath)) {
                 const htmlContent = fs.readFileSync(htmlPath, 'utf-8');
                 res.setHeader('Content-Type', 'text/html');

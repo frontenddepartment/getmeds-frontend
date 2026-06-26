@@ -46,6 +46,7 @@ import {
   getPageAssetsByPage,
   getNews,
   getNewsById,
+  getNewsBySlug,
 } from './queries'
 
 import { urlFor } from './sanity'
@@ -356,5 +357,9 @@ export function useNews() {
 
 export function useNewsById(id: string) {
   return useFetchWithParam<News | null, string>(getNewsById, id)
+}
+
+export function useNewsBySlug(slug: string) {
+  return useFetchWithParam<News | null, string>(getNewsBySlug, slug)
 }
 

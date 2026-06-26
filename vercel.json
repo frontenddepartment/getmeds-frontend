@@ -5,6 +5,13 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "cleanUrls": true,
+  "redirects": [
+    {
+      "source": "/articles",
+      "destination": "/blog",
+      "permanent": true
+    }
+  ],
   "rewrites": [
     {
       "source": "/wp-json/:path*",
@@ -17,6 +24,14 @@
     {
       "source": "/api/:path*",
       "destination": "https://getmeds-admin.vercel.app/api/:path*"
+    },
+    {
+      "source": "/blog/:slug",
+      "destination": "/blog-detail.html"
+    },
+    {
+      "source": "/article-detail",
+      "destination": "/blog-detail.html"
     },
     {
       "source": "/:path*",

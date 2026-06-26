@@ -1,12 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import ArticleDetail from '../pages/article-detail';
+import Blog from '../pages/blog';
 
 const rootElement = document.getElementById('root');
 if (rootElement) {
   ReactDOM.createRoot(rootElement).render(
     <React.StrictMode>
-      <ArticleDetail />
+      <Blog />
     </React.StrictMode>
   );
 }

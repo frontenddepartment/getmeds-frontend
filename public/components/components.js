@@ -533,10 +533,10 @@
                         .trim()
                         .replace(/[^a-z0-9]+/g, '-');
                     url = '/about-us#' + slug;
-                } else if (url.startsWith('/article-detail')) {
+                } else if (url.startsWith('/article-detail') || url.startsWith('/blog-detail')) {
                     url = '/' + url.substring(1); // e.g. /article-detail?id=0
-                } else if (url.startsWith('/articles')) {
-                    url = '/articles';
+                } else if (url.startsWith('/articles') || url.startsWith('/blog')) {
+                    url = '/blog';
                 } else if (url === '/faq') {
                     url = '/';
                 } else if (url.startsWith('/')) {

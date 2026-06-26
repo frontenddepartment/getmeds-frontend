@@ -943,6 +943,7 @@ export interface News {
   _type: 'news'
   tag: string
   title: string
+  slug?: string
   date: string
   description: string
   readTime?: string

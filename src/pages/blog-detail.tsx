@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { PortableText } from '@portabletext/react';
 import { injectHTML } from '../lib/injectHTML';
-import { useNewsById } from '../lib/useSanity';
+import { useNewsById, useNewsBySlug } from '../lib/useSanity';
 import { urlFor } from '../lib/sanity';
 import type { SanityImage } from '../types/sanity';
 
@@ -40,29 +40,51 @@ const slugify = (text: string | undefined | null) => {
     .replace(/-+$/, '');
 };
 
-export default function ArticleDetail() {
+export default function BlogDetail() {
+  const [slug, setSlug] = useState<string>('');
   const [articleId, setArticleId] = useState<string>('');
   const [activeSection, setActiveSection] = useState(0);
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const id = params.get('id') || '';
-    setArticleId(id);
+    const pathname = window.location.pathname;
+    const segments = pathname.split('/').filter(Boolean); // e.g. ["blog", "some-blog-slug"]
+    
+    // Check if path starts with /blog/
+    if (segments[0] === 'blog' && segments[1]) {
+      setSlug(segments[1]);
+    } else {
+      // Fallback to query params if accessing via legacy /article-detail?id=123
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get('id') || '';
+      if (id) {
+        setArticleId(id);
+      }
+    }
   }, []);
 
-  const { data: article, loading } = useNewsById(articleId);
+  const { data: articleBySlug, loading: loadingSlug } = useNewsBySlug(slug);
+  const { data: articleById, loading: loadingId } = useNewsById(articleId);
+
+  const article = slug ? articleBySlug : articleById;
+  const loading = slug ? loadingSlug : loadingId;
 
   useEffect(() => {
     if (article) {
       document.title = `${article.title} — Getmeds`;
 
-      const params = new URLSearchParams(window.location.search);
-      const currentTitle = params.get('title');
-      const expectedTitle = slugify(article.title);
-      if (currentTitle !== expectedTitle) {
-        params.set('title', expectedTitle);
-        const newUrl = `${window.location.pathname}?${params.toString()}`;
-        window.history.replaceState(null, '', newUrl);
+      const pathname = window.location.pathname;
+      const segments = pathname.split('/').filter(Boolean);
+      
+      // If we got here via legacy /article-detail?id=X, redirect to /blog/slug
+      if (segments[0] !== 'blog') {
+        const targetSlug = article.slug || slugify(article.title);
+        window.location.replace(`/blog/${targetSlug}${window.location.hash}`);
+      } else {
+        // If we are already on /blog/slug, check if the slug is correct. If it isn't, sync history:
+        const expectedSlug = article.slug || slugify(article.title);
+        if (segments[1] !== expectedSlug) {
+          window.history.replaceState(null, '', `/blog/${expectedSlug}${window.location.hash}`);
+        }
       }
     }
   }, [article]);
@@ -105,7 +127,7 @@ export default function ArticleDetail() {
     }
   }, [loading, article]);
 
-  // Intercept clicks on legacy slug-based links (e.g. /some-post-slug/) and redirect to article-detail?id=X
+  // Intercept clicks on legacy slug-based links (e.g. /some-post-slug/) and redirect to /blog/slug
   useEffect(() => {
     const handleLinkClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
@@ -122,8 +144,8 @@ export default function ArticleDetail() {
         .replace(/^https?:\/\/173\.231\.197\.156/i, '');
       
       const ourPages = new Set([
-        'articles', 'about-us', 'contact-us', 'product-range', 'meditations',
-        'pap', 'careers', 'services', 'csr', 'ungc', 'article-detail', 'index.html'
+        'blog', 'blog-detail', 'articles', 'article-detail', 'about-us', 'contact-us', 'product-range', 'meditations',
+        'pap', 'careers', 'services', 'csr', 'ungc', 'index.html'
       ]);
 
       const urlParts = cleanPath.split('#');
@@ -133,25 +155,9 @@ export default function ArticleDetail() {
       // Check if it looks like a WordPress post slug path (e.g. not one of our pages)
       if (pathOnly && !ourPages.has(pathOnly.split('/')[0]) && !pathOnly.includes('.')) {
         e.preventDefault();
-        const slug = pathOnly.split('/').pop() || '';
-        if (slug) {
-          anchor.style.opacity = '0.5';
-          fetch(`/wp-json/wp/v2/posts?slug=${slug}&_=${Date.now()}`)
-            .then(res => res.json())
-            .then(posts => {
-              anchor.style.opacity = '';
-              if (posts && posts.length > 0) {
-                const postId = posts[0].id;
-                const postTitle = slugify(posts[0].title?.rendered || '');
-                window.location.href = `/article-detail?title=${postTitle}&id=${postId}${hash}`;
-              } else {
-                window.location.href = `/articles`;
-              }
-            })
-            .catch(() => {
-              anchor.style.opacity = '';
-              window.location.href = `/articles`;
-            });
+        const postSlug = pathOnly.split('/').pop() || '';
+        if (postSlug) {
+          window.location.href = `/blog/${postSlug}${hash}`;
         }
       }
     };
@@ -520,11 +526,11 @@ export default function ArticleDetail() {
         </div>
       )}
 
-      {/* Article not found */}
-      {!loading && !article && articleId && (
+      {/* Blog post not found */}
+      {!loading && !article && (slug || articleId) && (
         <div className="max-w-3xl mx-auto px-4 py-20 text-center relative z-10">
-          <p className="text-gray-500 text-lg">Article not found.</p>
-          <a href="/articles" className="mt-4 inline-block text-primary underline">Back to Articles</a>
+          <p className="text-gray-500 text-lg">Blog post not found.</p>
+          <a href="/blog" className="mt-4 inline-block text-primary underline">Back to Blog</a>
         </div>
       )}
 
@@ -533,7 +539,7 @@ export default function ArticleDetail() {
           {/* Back button */}
           <div className="max-w-3xl mx-auto px-4 pt-6 pb-2 relative z-10">
             <a
-              href="/articles"
+              href="/blog"
               className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-800 transition-colors"
             >
               <i className="fa-solid fa-chevron-left text-[10px]"></i>

@@ -27,7 +27,7 @@ const slugify = (text: string | undefined | null) => {
     .replace(/-+$/, '');
 };
 
-export default function Articles() {
+export default function Blog() {
   const { data: articles, loading } = useNews();
   const [page, setPage] = useState(0);
 
@@ -74,7 +74,7 @@ export default function Articles() {
             <div className="w-20 h-20 rounded-2xl flex items-center justify-center mb-6" style={{ background: 'linear-gradient(135deg, rgba(97, 166, 68, 0.08), rgba(29, 159, 218, 0.08))' }}>
               <i className="fa-regular fa-newspaper text-3xl" style={{ background: 'linear-gradient(135deg, #61A644, #1D9FDA)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}></i>
             </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">No articles published yet</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">No blog posts published yet</h3>
             <p className="text-gray-500 text-xs max-w-sm leading-relaxed">
               We are working on bringing you the latest stories, news, and updates. Please check back later.
             </p>
@@ -86,7 +86,7 @@ export default function Articles() {
               {/* Left: Featured card */}
               {featured && (
                 <a
-                  href={`/article-detail?title=${encodeURIComponent(slugify(featured.title))}&id=${featured._id}`}
+                  href={`/blog/${featured.slug || slugify(featured.title)}`}
                   className="relative rounded-2xl overflow-hidden block group no-underline"
                   style={{ minHeight: '420px' }}
                 >
@@ -118,7 +118,7 @@ export default function Articles() {
                   {latestPosts.map(article => (
                     <a
                       key={article._id}
-                      href={`/article-detail?title=${encodeURIComponent(slugify(article.title))}&id=${article._id}`}
+                      href={`/blog/${article.slug || slugify(article.title)}`}
                       className="flex gap-3 group no-underline"
                     >
                       <img
@@ -171,7 +171,7 @@ export default function Articles() {
                   return (
                     <a
                       key={article._id}
-                      href={`/article-detail?title=${encodeURIComponent(slugify(article.title))}&id=${article._id}`}
+                      href={`/blog/${article.slug || slugify(article.title)}`}
                       className="block rounded-2xl overflow-hidden border border-gray-100 hover:shadow-lg transition-shadow no-underline group"
                       style={{ boxShadow: '0 1px 6px rgba(0,0,0,0.05)' }}
                     >

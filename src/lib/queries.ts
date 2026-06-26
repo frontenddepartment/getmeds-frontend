@@ -394,6 +394,7 @@ export async function getNews() {
         _type: 'news' as const,
         tag: tag,
         title: item.title?.rendered || '',
+        slug: item.slug || '',
         date: item.date,
         description: description,
         readTime: readTime,
@@ -438,6 +439,7 @@ export async function getNewsById(id: string) {
       _type: 'news' as const,
       tag: tag,
       title: item.title?.rendered || '',
+      slug: item.slug || '',
       date: item.date,
       description: description,
       readTime: readTime,
@@ -447,6 +449,52 @@ export async function getNewsById(id: string) {
     };
   } catch (err) {
     console.error(`Error fetching news item ${id} from WordPress API:`, err);
+    return null;
+  }
+}
+
+export async function getNewsBySlug(slug: string) {
+  try {
+    const res = await fetch(`/wp-json/wp/v2/posts?slug=${slug}&_embed=true&_=${Date.now()}`, { cache: 'reload' });
+    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+    const posts = await res.json();
+    if (!posts || posts.length === 0) return null;
+    const item = posts[0];
+    
+    const categories = item._embedded?.['wp:term']?.[0] || [];
+    const tag = categories[0]?.name || 'News';
+    
+    const featuredMedia = item._embedded?.['wp:featuredmedia']?.[0];
+    const image = featuredMedia?.source_url || '';
+
+    const rawExcerpt = item.excerpt?.rendered || '';
+    const description = rawExcerpt
+      .replace(/<[^>]*>/g, '')
+      .replace(/&nbsp;/g, ' ')
+      .replace(/&#\d+;/g, '')
+      .trim();
+
+    const rawContent = item.content?.rendered || '';
+    const textOnly = rawContent.replace(/<[^>]*>/g, '');
+    const wordCount = textOnly.split(/\s+/).filter(Boolean).length;
+    const minutes = Math.max(1, Math.round(wordCount / 200));
+    const readTime = `${minutes} min read`;
+
+    return {
+      _id: String(item.id),
+      _type: 'news' as const,
+      tag: tag,
+      title: item.title?.rendered || '',
+      slug: item.slug || '',
+      date: item.date,
+      description: description,
+      readTime: readTime,
+      image: image,
+      contentHtml: rawContent,
+      source_link: item.link
+    };
+  } catch (err) {
+    console.error(`Error fetching news item by slug ${slug} from WordPress API:`, err);
     return null;
   }
 }
