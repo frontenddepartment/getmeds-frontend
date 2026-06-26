@@ -370,7 +370,7 @@ export async function getNews() {
     return cachedNews;
   }
   try {
-    const res = await fetch(`/wp-json/wp/v2/posts?per_page=20&_embed=true`);
+    const res = await fetch(`/wp-json/wp/v2/posts?per_page=20&_embed=true`, { cache: 'no-cache' });
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
     const data = await res.json();
     const mapped = data.map((item: any) => {
@@ -427,7 +427,7 @@ export async function getNewsById(id: string) {
     return cachedNewsById[id];
   }
   try {
-    const res = await fetch(`/wp-json/wp/v2/posts/${id}?_embed=true`);
+    const res = await fetch(`/wp-json/wp/v2/posts/${id}?_embed=true`, { cache: 'no-cache' });
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
     const item = await res.json();
     
