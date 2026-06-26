@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { injectHTML } from '../lib/injectHTML';
-import { useNews } from '../lib/useSanity';
+import { useNewsPaginated } from '../lib/useSanity';
 import { urlFor } from '../lib/sanity';
 
 const formatDate = (dateStr: string | undefined | null) => {
@@ -28,8 +28,31 @@ const slugify = (text: string | undefined | null) => {
 };
 
 export default function Blog() {
-  const { data: articles, loading } = useNews();
-  const [page, setPage] = useState(0);
+  const { articles, loading, loadingMore, hasMore, loadMore } = useNewsPaginated(20);
+
+  // Infinite scroll: observe a sentinel element at the bottom of the list
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
+
+  const handleObserver = useCallback((entries: IntersectionObserverEntry[]) => {
+    const target = entries[0];
+    if (target.isIntersecting && hasMore && !loadingMore && !loading) {
+      loadMore();
+    }
+  }, [hasMore, loadingMore, loading, loadMore]);
+
+  useEffect(() => {
+    const sentinel = sentinelRef.current;
+    if (!sentinel) return;
+
+    const observer = new IntersectionObserver(handleObserver, {
+      root: null,
+      rootMargin: '400px', // Start loading 400px before the user reaches the bottom
+      threshold: 0,
+    });
+
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [handleObserver]);
 
   useEffect(() => {
     const navContainer = document.getElementById('navbar-container');
@@ -49,9 +72,6 @@ export default function Blog() {
   const featured = articles && articles.length > 0 ? articles[0] : null;
   const latestPosts = articles && articles.length > 1 ? articles.slice(1, 5) : [];
   const cardArticles = articles && articles.length > 1 ? articles.slice(1) : [];
-  const perPage = 3;
-  const totalPages = Math.ceil(cardArticles.length / perPage);
-  const visibleCards = cardArticles.slice(page * perPage, page * perPage + perPage);
 
   return (
     <div style={{ fontFamily: "'Poppins', sans-serif" }} className="bg-white text-gray-900 min-h-screen">
@@ -66,7 +86,7 @@ export default function Blog() {
           <div className="grid grid-cols-1 lg:grid-cols-[3fr_2fr] gap-6 mb-12">
             <div className="bg-gray-100 rounded-2xl animate-pulse" style={{ minHeight: '420px' }} />
             <div className="space-y-4">
-              {[1,2,3,4].map(n => <div key={n} className="flex gap-3"><div className="w-16 h-16 rounded-xl bg-gray-100 animate-pulse flex-shrink-0" /><div className="flex-1 bg-gray-100 rounded-xl animate-pulse h-16" /></div>)}
+              {[1, 2, 3, 4].map(n => <div key={n} className="flex gap-3"><div className="w-16 h-16 rounded-xl bg-gray-100 animate-pulse flex-shrink-0" /><div className="flex-1 bg-gray-100 rounded-xl animate-pulse h-16" /></div>)}
             </div>
           </div>
         ) : !articles || articles.length === 0 ? (
@@ -141,30 +161,17 @@ export default function Blog() {
               </div>
             </div>
 
-            {/* ===== BOTTOM: CARD GRID ===== */}
+            {/* ===== BOTTOM: INFINITE SCROLL CARD GRID ===== */}
             <div>
               <div className="flex items-center justify-between mb-6">
                 <h2 className="font-semibold text-[22px] text-gray-900">Recent blog posts</h2>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => setPage(p => Math.max(0, p - 1))}
-                    disabled={page === 0}
-                    className="w-9 h-9 rounded-full border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-50 disabled:opacity-30 transition-colors"
-                  >
-                    <i className="fa-solid fa-chevron-left text-xs"></i>
-                  </button>
-                  <button
-                    onClick={() => setPage(p => p + 1)}
-                    disabled={page >= totalPages - 1}
-                    className="w-9 h-9 rounded-full border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-50 disabled:opacity-30 transition-colors"
-                  >
-                    <i className="fa-solid fa-chevron-right text-xs"></i>
-                  </button>
-                </div>
+                {/* <span className="text-xs text-gray-400 font-medium">
+                  {cardArticles.length} posts loaded{hasMore ? ' • Scroll for more' : ' • All posts loaded'}
+                </span> */}
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {visibleCards.map(article => {
+                {cardArticles.map(article => {
                   const imgUrl = article.image
                     ? urlFor(article.image).width(600).url()
                     : '';
@@ -198,6 +205,30 @@ export default function Blog() {
                   );
                 })}
               </div>
+
+              {/* Loading more indicator */}
+              {loadingMore && (
+                <div className="flex justify-center py-10">
+                  <div className="flex items-center gap-3">
+                    <div className="w-5 h-5 border-2 border-gray-200 border-t-[#1D9FDA] rounded-full animate-spin" />
+                    <span className="text-sm text-gray-400 font-medium">Loading more posts…</span>
+                  </div>
+                </div>
+              )}
+
+              {/* All posts loaded message */}
+              {!hasMore && cardArticles.length > 0 && (
+                <div className="flex justify-center py-10">
+                  <div className="flex items-center gap-2 text-xs text-gray-400">
+                    <div className="w-8 h-px bg-gray-200" />
+                    <span>You've reached the end • {articles.length} posts total</span>
+                    <div className="w-8 h-px bg-gray-200" />
+                  </div>
+                </div>
+              )}
+
+              {/* Invisible sentinel for IntersectionObserver */}
+              <div ref={sentinelRef} className="h-1" />
             </div>
           </>
         )}

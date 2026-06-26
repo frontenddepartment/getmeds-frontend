@@ -409,6 +409,53 @@ export async function getNews() {
   }
 }
 
+export async function getNewsPage(page: number, perPage: number = 20): Promise<{ items: News[]; totalPages: number }> {
+  try {
+    const res = await fetch(`/wp-json/wp/v2/posts?per_page=${perPage}&page=${page}&_embed=true&_=${Date.now()}`, { cache: 'reload' });
+    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+    const totalPages = parseInt(res.headers.get('X-WP-TotalPages') || '1', 10);
+    const data = await res.json();
+    const items: News[] = data.map((item: any) => {
+      const categories = item._embedded?.['wp:term']?.[0] || [];
+      const tag = categories[0]?.name || 'News';
+      
+      const featuredMedia = item._embedded?.['wp:featuredmedia']?.[0];
+      const image = featuredMedia?.source_url || '';
+
+      const rawExcerpt = item.excerpt?.rendered || '';
+      const description = rawExcerpt
+        .replace(/<[^>]*>/g, '')
+        .replace(/&nbsp;/g, ' ')
+        .replace(/&#\d+;/g, '')
+        .trim();
+
+      const rawContent = item.content?.rendered || '';
+      const textOnly = rawContent.replace(/<[^>]*>/g, '');
+      const wordCount = textOnly.split(/\s+/).filter(Boolean).length;
+      const minutes = Math.max(1, Math.round(wordCount / 200));
+      const readTime = `${minutes} min read`;
+
+      return {
+        _id: String(item.id),
+        _type: 'news' as const,
+        tag: tag,
+        title: item.title?.rendered || '',
+        slug: item.slug || '',
+        date: item.date,
+        description: description,
+        readTime: readTime,
+        image: image,
+        contentHtml: rawContent,
+        source_link: item.link
+      };
+    });
+    return { items, totalPages };
+  } catch (err) {
+    console.error(`Error fetching news page ${page} from WordPress API:`, err);
+    return { items: [], totalPages: 0 };
+  }
+}
+
 export async function getNewsById(id: string) {
   try {
     const res = await fetch(`/wp-json/wp/v2/posts/${id}?_embed=true&_=${Date.now()}`, { cache: 'reload' });

@@ -47,6 +47,7 @@ import {
   getNews,
   getNewsById,
   getNewsBySlug,
+  getNewsPage,
 } from './queries'
 
 import { urlFor } from './sanity'
@@ -361,5 +362,59 @@ export function useNewsById(id: string) {
 
 export function useNewsBySlug(slug: string) {
   return useFetchWithParam<News | null, string>(getNewsBySlug, slug)
+}
+
+export function useNewsPaginated(perPage: number = 20) {
+  const [articles, setArticles] = useState<News[]>([])
+  const [loading, setLoading] = useState(true)
+  const [loadingMore, setLoadingMore] = useState(false)
+  const [hasMore, setHasMore] = useState(true)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [error, setError] = useState<Error | null>(null)
+
+  // Load the first page on mount
+  useEffect(() => {
+    let cancelled = false
+    setLoading(true)
+
+    getNewsPage(1, perPage)
+      .then(({ items, totalPages }) => {
+        if (!cancelled) {
+          setArticles(items)
+          setCurrentPage(1)
+          setHasMore(1 < totalPages)
+        }
+      })
+      .catch((err) => {
+        if (!cancelled) setError(err instanceof Error ? err : new Error(String(err)))
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false)
+      })
+
+    return () => { cancelled = true }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const loadMore = () => {
+    if (loadingMore || !hasMore) return
+    const nextPage = currentPage + 1
+    setLoadingMore(true)
+
+    getNewsPage(nextPage, perPage)
+      .then(({ items, totalPages }) => {
+        setArticles(prev => [...prev, ...items])
+        setCurrentPage(nextPage)
+        setHasMore(nextPage < totalPages)
+      })
+      .catch((err) => {
+        setError(err instanceof Error ? err : new Error(String(err)))
+      })
+      .finally(() => {
+        setLoadingMore(false)
+      })
+  }
+
+  return { articles, loading, loadingMore, hasMore, loadMore, error }
 }
 
