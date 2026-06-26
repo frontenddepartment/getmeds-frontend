@@ -42,15 +42,15 @@
     },
     {
       "source": "/blog/:slug",
-      "destination": "/blog-detail.html"
+      "destination": "/blog-detail"
     },
     {
       "source": "/blog-detail",
-      "destination": "/blog-detail.html"
+      "destination": "/blog-detail"
     },
     {
       "source": "/blog-detail.html",
-      "destination": "/blog-detail.html"
+      "destination": "/blog-detail"
     },
     {
       "source": "/:path*",
