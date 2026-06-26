@@ -6,8 +6,21 @@
   "outputDirectory": "dist",
   "cleanUrls": true,
   "rewrites": [
-    { "source": "/wp-json/:path*", "destination": "https://cms.getmeds.ph/wp-json/:path*" },
-    { "source": "/api/careers", "destination": "https://getmeds-test-creation.vercel.app/api/careers" },
-    { "source": "/api/:path*", "destination": "https://getmeds-admin.vercel.app/api/:path*" }
+    {
+      "source": "/wp-json/:path*",
+      "destination": "https://cms.getmeds.ph/wp-json/:path*"
+    },
+    {
+      "source": "/api/careers",
+      "destination": "https://getmeds-test-creation.vercel.app/api/careers"
+    },
+    {
+      "source": "/api/:path*",
+      "destination": "https://getmeds-admin.vercel.app/api/:path*"
+    },
+    {
+      "source": "/:path*",
+      "destination": "/index.html"
+    }
   ]
 }
