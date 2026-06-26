@@ -7,13 +7,23 @@
   "cleanUrls": true,
   "redirects": [
     {
-      "source": "/articles",
+      "source": "/blog",
       "destination": "/blog",
       "permanent": true
     },
     {
-      "source": "/articles.html",
+      "source": "/blog.html",
       "destination": "/blog",
+      "permanent": true
+    },
+    {
+      "source": "/blog-detail",
+      "destination": "/blog-detail",
+      "permanent": true
+    },
+    {
+      "source": "/blog-detail.html",
+      "destination": "/blog-detail",
       "permanent": true
     }
   ],
@@ -35,11 +45,11 @@
       "destination": "/blog-detail.html"
     },
     {
-      "source": "/article-detail",
+      "source": "/blog-detail",
       "destination": "/blog-detail.html"
     },
     {
-      "source": "/article-detail.html",
+      "source": "/blog-detail.html",
       "destination": "/blog-detail.html"
     },
     {
