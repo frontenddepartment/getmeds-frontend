@@ -115,7 +115,21 @@ export default function ProductRange() {
   const [zoomedImageOpen, setZoomedImageOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<'description' | 'usage' | 'precautions'>('description');
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
-  const [formData, setFormData] = useState({ name: '', phone: '', email: '', message: '' });
+  const [formData, setFormData] = useState({ name: '', phone: '', email: '', message: '', age: '' });
+  const [ageDropdownOpen, setAgeDropdownOpen] = useState(false);
+  const ageDropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!ageDropdownOpen) return;
+    const close = (e: MouseEvent) => {
+      if (ageDropdownRef.current && !ageDropdownRef.current.contains(e.target as Node)) {
+        setAgeDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', close);
+    return () => document.removeEventListener('mousedown', close);
+  }, [ageDropdownOpen]);
+
   const [submitState, setSubmitState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
   const [successModalOpen, setSuccessModalOpen] = useState(false);
   const [searchHistory, setSearchHistory] = useState<string[]>(() => {
@@ -718,7 +732,7 @@ export default function ProductRange() {
   const openModal = (product: ProductWithCategory) => {
     setSelectedProduct(product);
     setActiveTab('description');
-    setFormData({ name: '', phone: '', email: '', message: '' });
+    setFormData({ name: '', phone: '', email: '', message: '', age: '' });
     setUploadedFiles([]);
     setSubmitState('idle');
     setModalOpen(true);
@@ -765,7 +779,8 @@ export default function ProductRange() {
         phone: formData.phone,
         message: formData.message,
         additionalData: {
-          productName: selectedProduct?.brandName || selectedProduct?.name || ''
+          productName: selectedProduct?.brandName || selectedProduct?.name || '',
+          age: formData.age
         },
         files: filesData
       };
@@ -781,7 +796,7 @@ export default function ProductRange() {
       }
 
       setSubmitState('sent');
-      setFormData({ name: '', phone: '', email: '', message: '' });
+      setFormData({ name: '', phone: '', email: '', message: '', age: '' });
       setUploadedFiles([]);
       setSuccessModalOpen(true);
       setTimeout(() => setSubmitState('idle'), 300);
@@ -1599,17 +1614,43 @@ export default function ProductRange() {
                       className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2.5 text-[13px] text-gray-700 outline-none focus:border-primary transition"
                     />
                   </div>
-                  <div>
-                    <label className="block text-[13px] font-medium text-gray-500 mb-2">Phone Number</label>
-                    <input
-                      type="tel"
-                      required
-                      placeholder="+63 900 000 0000"
-                      value={formData.phone}
-                      onChange={e => setFormData(f => ({ ...f, phone: e.target.value.replace(/[^\d+\s\-()]/g, '') }))}
-                      inputMode="numeric"
-                      className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2.5 text-[13px] text-gray-700 outline-none focus:border-primary transition"
-                    />
+                  <div className="flex gap-3 items-end">
+                    <div className="flex-1 min-w-0">
+                      <label className="block text-[13px] font-medium text-gray-500 mb-2">Phone Number</label>
+                      <input
+                        type="tel"
+                        required
+                        placeholder="+63 900 000 0000"
+                        value={formData.phone}
+                        onChange={e => setFormData(f => ({ ...f, phone: e.target.value.replace(/[^\d+\s\-()]/g, '') }))}
+                        inputMode="numeric"
+                        className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2.5 text-[13px] text-gray-700 outline-none focus:border-primary transition"
+                      />
+                    </div>
+                    <div className="w-[90px] shrink-0" ref={ageDropdownRef}>
+                      <label className="block text-[13px] font-medium text-gray-500 mb-2">Age</label>
+                      <div className="relative">
+                        <button type="button"
+                          onClick={() => setAgeDropdownOpen(o => !o)}
+                          className="w-full flex items-center justify-between bg-white border border-gray-200 rounded-xl px-3 py-2.5 text-[13px] text-gray-700 outline-none focus:border-primary transition cursor-pointer">
+                          <span className={formData.age ? 'text-gray-700' : 'text-gray-400'}>{formData.age || 'Age'}</span>
+                          <i className="fa-solid fa-chevron-down text-[10px] text-gray-400"></i>
+                        </button>
+                        {ageDropdownOpen && (
+                          <div className="absolute top-full left-0 mt-1 w-full bg-white rounded-xl shadow-xl border border-gray-100 z-[60] overflow-hidden">
+                            <div className="max-h-48 overflow-y-auto">
+                              {Array.from({ length: 63 }, (_, i) => i + 18).map(age => (
+                                <button key={age} type="button"
+                                  onClick={() => { setFormData(f => ({ ...f, age: String(age) })); setAgeDropdownOpen(false); }}
+                                  className={`w-full text-left px-3 py-2 text-[13px] hover:bg-gray-50 transition ${formData.age === String(age) ? 'bg-blue-50 text-primary font-semibold' : 'text-gray-700'}`}>
+                                  {age}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   </div>
                   <div>
                     <label className="block text-[13px] font-medium text-gray-500 mb-2">Email Address</label>

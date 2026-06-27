@@ -337,7 +337,7 @@
         // Trigger Button
         const btn = document.createElement('button');
         btn.id = 'zap-ai-trigger';
-        btn.innerHTML = '<span style="width:12px;height:12px;border-radius:50%;background:rgba(255,255,255,0.88);box-shadow:0 0 10px rgba(255,255,255,0.7),0 0 20px rgba(255,255,255,0.35);position:relative;z-index:2;display:block;"></span>';
+        btn.innerHTML = '<img src="/assets/chatbotimage.png" style="width:100%;height:100%;object-fit:cover;border-radius:50%;display:block;position:relative;z-index:2;clip-path:circle(31% at 50% 50%);" />';
         btn.title = 'Ask GetAssist';
         document.body.appendChild(btn);
 
@@ -347,8 +347,8 @@
         chatWindow.innerHTML = `
             <div style="display:flex;align-items:center;justify-content:space-between;padding:13px 16px;flex-shrink:0;">
                 <div style="display:flex;align-items:center;gap:10px;">
-                    <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#61A644,#1D9FDA);display:flex;align-items:center;justify-content:center;position:relative;flex-shrink:0;box-shadow:0 4px 14px rgba(29,159,218,0.3);">
-                        <span style="width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,0.88);box-shadow:0 0 8px rgba(255,255,255,0.6);display:block;position:relative;z-index:1;"></span>
+                    <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#61A644,#1D9FDA);display:flex;align-items:center;justify-content:center;position:relative;flex-shrink:0;box-shadow:0 4px 14px rgba(29,159,218,0.3);overflow:hidden;">
+                        <img src="/assets/chatbotimage.png" style="width:100%;height:100%;object-fit:cover;display:block;clip-path:circle(31% at 50% 50%);" />
                         <span style="position:absolute;inset:0;border-radius:50%;background:linear-gradient(135deg,rgba(255,255,255,0.4) 0%,transparent 55%);pointer-events:none;"></span>
                     </div>
                     <span style="font-size:15px;font-weight:600;color:#1a1a1a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;letter-spacing:0.1px;">GetAssist</span>
@@ -360,8 +360,8 @@
 
             <div id="zap-messages">
                 <div id="zap-welcome" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px;gap:22px;">
-                    <div id="zap-welcome-orb" style="width:68px;height:68px;border-radius:50%;background:linear-gradient(135deg,#61A644,#1D9FDA);display:flex;align-items:center;justify-content:center;position:relative;box-shadow:0 10px 30px rgba(29,159,218,0.35);">
-                        <span style="width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,0.88);box-shadow:0 0 14px rgba(255,255,255,0.65);display:block;position:relative;z-index:1;"></span>
+                    <div id="zap-welcome-orb" style="width:68px;height:68px;border-radius:50%;background:linear-gradient(135deg,#61A644,#1D9FDA);display:flex;align-items:center;justify-content:center;position:relative;box-shadow:0 10px 30px rgba(29,159,218,0.35);overflow:hidden;">
+                        <img src="/assets/chatbotimage.png" style="width:100%;height:100%;object-fit:cover;display:block;clip-path:circle(31% at 50% 50%);" />
                         <span style="position:absolute;inset:0;border-radius:50%;background:linear-gradient(135deg,rgba(255,255,255,0.42) 0%,transparent 55%);pointer-events:none;"></span>
                     </div>
                     <p style="margin:0;font-size:18px;font-weight:600;color:#1a1a1a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;text-align:center;line-height:1.5;letter-spacing:-0.2px;">Hi! How can I help<br>you today?</p>

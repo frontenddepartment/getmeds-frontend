@@ -30,7 +30,7 @@ const slugify = (text: string | undefined | null) => {
 const mapArticleToCategory = (article: any): string => {
   const rawTag = (article.tag || '').trim();
   const rawTagLower = rawTag.toLowerCase();
-  
+
   const categories = [
     'Disease Awareness',
     'Patient Resources',
@@ -39,7 +39,7 @@ const mapArticleToCategory = (article: any): string => {
     'Company News',
     'CSR & Sustainability'
   ];
-  
+
   // Exact match
   const exactMatch = categories.find(c => c.toLowerCase() === rawTagLower);
   if (exactMatch) return exactMatch;
@@ -85,8 +85,8 @@ const mapArticleToCategory = (article: any): string => {
 
   // 5. Disease Awareness
   if (
-    rawTagLower === 'cancer' || rawTagLower === 'multiple sclerosis' || rawTagLower === 'covid-19' || rawTagLower === 'diabetes' || 
-    rawTagLower === 'blood pressure' || rawTagLower === 'hypertension' || rawTagLower === 'kids health' || rawTagLower === 'mental health' || 
+    rawTagLower === 'cancer' || rawTagLower === 'multiple sclerosis' || rawTagLower === 'covid-19' || rawTagLower === 'diabetes' ||
+    rawTagLower === 'blood pressure' || rawTagLower === 'hypertension' || rawTagLower === 'kids health' || rawTagLower === 'mental health' ||
     rawTagLower === 'pregnancy' || rawTagLower === 'health care' || rawTagLower === 'health' || rawTagLower === 'immune system' ||
     title.includes('disease') || title.includes('symptom') || title.includes('treatment') || title.includes('awareness') || title.includes('prevent') || title.includes('understand') ||
     desc.includes('disease') || desc.includes('symptom') || desc.includes('treatment') || desc.includes('awareness') || desc.includes('prevent') || desc.includes('understand')
@@ -96,7 +96,7 @@ const mapArticleToCategory = (article: any): string => {
 
   // 6. Patient Resources
   if (
-    rawTagLower === 'fitness' || rawTagLower === 'skin care' || rawTagLower === 'muscle gain' || rawTagLower === 'weight loss' || 
+    rawTagLower === 'fitness' || rawTagLower === 'skin care' || rawTagLower === 'muscle gain' || rawTagLower === 'weight loss' ||
     rawTagLower === 'workout' || rawTagLower === 'blood' || rawTagLower === 'vitamin' ||
     title.includes('guide') || title.includes('tips') || title.includes('how to') || title.includes('diet') || title.includes('healthy') ||
     desc.includes('guide') || desc.includes('tips') || desc.includes('how to') || desc.includes('diet') || desc.includes('healthy')
@@ -108,7 +108,7 @@ const mapArticleToCategory = (article: any): string => {
   if (rawTagLower === 'fitness' || rawTagLower === 'skin care' || rawTagLower === 'vitamin' || rawTagLower === 'workout') {
     return 'Patient Resources';
   }
-  
+
   return 'Disease Awareness';
 };
 
@@ -187,7 +187,20 @@ export default function Blog() {
       {/* Navbar */}
       <div id="navbar-container" className="sticky top-0 z-[50]" />
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-2">
+        <div className="mb-10">
+          <span className="inline-block bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent font-bold uppercase tracking-widest text-sm mb-3">Our Blog</span>
+          <h1 className="text-3xl md:text-4xl font-semibold text-gray-900 leading-tight mb-3">
+            Insights from{' '}
+            <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">Getmeds</span>
+          </h1>
+          <p className="text-gray-500 text-[15px] max-w-full leading-relaxed">
+            Stay informed with the latest news, health guides, and updates from Getmeds — your trusted source for pharmaceutical insights and patient care resources in the Philippines.
+          </p>
+        </div>
+      </div>
+
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-10">
 
         {/* ===== TOP: FEATURED + LATEST ===== */}
         {loading ? (

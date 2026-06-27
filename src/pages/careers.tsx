@@ -259,7 +259,7 @@ const Careers: React.FC = () => {
           {/* Background Image — only mount after Sanity resolves so the src never changes */}
           {!imagesLoading && (
             <img
-              src={getImage('assets/careersherosection.jpg', 'assets/careersherosection.jpg')}
+              src={getImage('assets/careershero.png', 'assets/careershero.png')}
               alt="Getmeds Team"
               onLoad={() => setHeroImgLoaded(true)}
               className={`absolute inset-0 w-full h-full object-cover object-right-top transition-opacity duration-700 ${heroImgLoaded ? 'opacity-100' : 'opacity-0'}`}
@@ -755,11 +755,11 @@ const Careers: React.FC = () => {
         <div className="flex-1 px-8 pr-14 pb-8 overflow-y-auto">
           {activeJob && (
             <div className="space-y-6 pt-6">
-              <div 
+              <div
                 className="job-desc-content text-[13.5px] text-gray-500 leading-relaxed"
-                dangerouslySetInnerHTML={{ 
-                  __html: activeJob.job_description_html || '<p class="text-gray-400 italic">No job description provided.</p>' 
-                }} 
+                dangerouslySetInnerHTML={{
+                  __html: activeJob.job_description_html || '<p class="text-gray-400 italic">No job description provided.</p>'
+                }}
               />
               <div className="pt-2 pb-4">
                 <button

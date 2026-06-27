@@ -14,6 +14,8 @@ export default function OrderMedicines() {
 
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [phoneCountryOpen, setPhoneCountryOpen] = useState(false);
+  const [ageDropdownOpen, setAgeDropdownOpen] = useState(false);
+  const ageDropdownRef = useRef<HTMLDivElement>(null);
   const [phoneCountry, setPhoneCountry] = useState({ code: '+63', flag: '🇵🇭', name: 'Philippines', mask: '### ### ####' });
   const [phoneSearch, setPhoneSearch] = useState('');
 
@@ -184,6 +186,7 @@ export default function OrderMedicines() {
     patientName: '',
     email: '',
     phone: '',
+    age: '',
     dob: '',
     address: '',
     terms: false
@@ -227,9 +230,10 @@ export default function OrderMedicines() {
         fullName: formData.patientName,
         email: formData.email,
         phone: formData.phone,
-        message: `Medicine Order Request. DOB: ${formData.dob}, Address: ${formData.address}`,
+        message: `Medicine Order Request. DOB: ${formData.dob}, Age: ${formData.age}, Address: ${formData.address}`,
         additionalData: {
           dob: formData.dob,
+          age: formData.age,
           address: formData.address
         },
         files: filesData
@@ -308,6 +312,17 @@ export default function OrderMedicines() {
     document.addEventListener('click', close);
     return () => document.removeEventListener('click', close);
   }, [phoneCountryOpen]);
+
+  useEffect(() => {
+    if (!ageDropdownOpen) return;
+    const close = (e: MouseEvent) => {
+      if (ageDropdownRef.current && !ageDropdownRef.current.contains(e.target as Node)) {
+        setAgeDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', close);
+    return () => document.removeEventListener('mousedown', close);
+  }, [ageDropdownOpen]);
 
   useEffect(() => {
     if (uploadComplete || validationSubmitted) { setStepperVisible(true); return; }
@@ -686,44 +701,72 @@ export default function OrderMedicines() {
                       onChange={e => setFormData(prev => ({ ...prev, email: e.target.value }))}
                       className="w-full bg-gray-50 border-none rounded-[15px] px-6 py-3.5 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition placeholder-gray-300" />
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-[14px] font-semibold text-gray-700">Phone number</label>
-                    <div className="relative flex items-center bg-gray-50 rounded-[15px] overflow-visible focus-within:ring-2 focus-within:ring-primary/20 transition">
-                      <button type="button" onClick={() => setPhoneCountryOpen(o => !o)}
-                        className="flex items-center gap-1.5 pl-4 pr-2 py-3.5 shrink-0 border-r border-gray-200 text-[13px] text-gray-700 hover:bg-gray-100 rounded-l-[15px] transition">
-                        <span>{phoneCountry.flag}</span>
-                        <span className="font-semibold text-gray-600">{phoneCountry.code}</span>
-                        <i className="fa-solid fa-chevron-down text-[9px] text-gray-400"></i>
-                      </button>
-                      <input ref={phoneInputRef} type="tel" required
-                        placeholder={(() => { const d = '9123456789'; let i = 0; return phoneCountry.mask.replace(/#/g, () => d[i++ % d.length]); })()}
-                        value={formData.phone}
-                        onChange={handlePhoneChange}
-                        className="flex-1 bg-transparent px-4 py-3.5 text-[13px] text-gray-700 outline-none placeholder-gray-300" />
-                      {phoneCountryOpen && (
-                        <div className="absolute top-full left-0 mt-1 w-72 bg-white rounded-[12px] shadow-xl border border-gray-100 z-[60] overflow-hidden" onClick={e => e.stopPropagation()}>
-                          <div className="p-2 border-b border-gray-100">
-                            <input autoFocus type="text" placeholder="Search country..."
-                              value={phoneSearch} onChange={e => setPhoneSearch(e.target.value)}
-                              className="w-full px-3 py-2 text-[12px] bg-gray-50 rounded-[8px] outline-none placeholder-gray-300 text-gray-700" />
+                  {/* Phone + Age — left column */}
+                  <div className="flex flex-row gap-3 items-end">
+                    <div className="space-y-2 flex-1 min-w-0">
+                      <label className="text-[14px] font-semibold text-gray-700">Phone number</label>
+                      <div className="relative flex items-center bg-gray-50 rounded-[15px] overflow-visible focus-within:ring-2 focus-within:ring-primary/20 transition">
+                        <button type="button" onClick={() => setPhoneCountryOpen(o => !o)}
+                          className="flex items-center gap-1.5 pl-4 pr-2 py-3.5 shrink-0 border-r border-gray-200 text-[13px] text-gray-700 hover:bg-gray-100 rounded-l-[15px] transition">
+                          <span>{phoneCountry.flag}</span>
+                          <span className="font-semibold text-gray-600">{phoneCountry.code}</span>
+                          <i className="fa-solid fa-chevron-down text-[9px] text-gray-400"></i>
+                        </button>
+                        <input ref={phoneInputRef} type="tel" required
+                          placeholder={(() => { const d = '9123456789'; let i = 0; return phoneCountry.mask.replace(/#/g, () => d[i++ % d.length]); })()}
+                          value={formData.phone}
+                          onChange={handlePhoneChange}
+                          className="flex-1 min-w-0 bg-transparent px-4 py-3.5 text-[13px] text-gray-700 outline-none placeholder-gray-300" />
+                        {phoneCountryOpen && (
+                          <div className="absolute top-full left-0 mt-1 w-72 bg-white rounded-[12px] shadow-xl border border-gray-100 z-[60] overflow-hidden" onClick={e => e.stopPropagation()}>
+                            <div className="p-2 border-b border-gray-100">
+                              <input autoFocus type="text" placeholder="Search country..."
+                                value={phoneSearch} onChange={e => setPhoneSearch(e.target.value)}
+                                className="w-full px-3 py-2 text-[12px] bg-gray-50 rounded-[8px] outline-none placeholder-gray-300 text-gray-700" />
+                            </div>
+                            <div className="max-h-52 overflow-y-auto">
+                              {PHONE_COUNTRIES.filter(c =>
+                                c.name.toLowerCase().includes(phoneSearch.toLowerCase()) || c.code.includes(phoneSearch)
+                              ).map(c => (
+                                <button key={c.code + c.name} type="button"
+                                  onClick={() => { setPhoneCountry(c); setPhoneCountryOpen(false); setPhoneSearch(''); setFormData(prev => ({ ...prev, phone: '' })); }}
+                                  className={`w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-gray-50 transition text-[13px] ${phoneCountry.code === c.code && phoneCountry.name === c.name ? 'bg-green-50 text-[#61A644] font-semibold' : 'text-gray-700'}`}>
+                                  <span className="text-base">{c.flag}</span>
+                                  <span className="flex-1">{c.name}</span>
+                                  <span className="text-gray-400 text-[12px]">{c.code}</span>
+                                </button>
+                              ))}
+                            </div>
                           </div>
-                          <div className="max-h-52 overflow-y-auto">
-                            {PHONE_COUNTRIES.filter(c =>
-                              c.name.toLowerCase().includes(phoneSearch.toLowerCase()) || c.code.includes(phoneSearch)
-                            ).map(c => (
-                              <button key={c.code + c.name} type="button"
-                                onClick={() => { setPhoneCountry(c); setPhoneCountryOpen(false); setPhoneSearch(''); setFormData(prev => ({ ...prev, phone: '' })); }}
-                                className={`w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-gray-50 transition text-[13px] ${phoneCountry.code === c.code && phoneCountry.name === c.name ? 'bg-green-50 text-[#61A644] font-semibold' : 'text-gray-700'}`}>
-                                <span className="text-base">{c.flag}</span>
-                                <span className="flex-1">{c.name}</span>
-                                <span className="text-gray-400 text-[12px]">{c.code}</span>
-                              </button>
-                            ))}
+                        )}
+                      </div>
+                    </div>
+                    <div className="space-y-2 w-[90px] shrink-0" ref={ageDropdownRef}>
+                      <label className="text-[14px] font-semibold text-gray-700">Age</label>
+                      <div className="relative">
+                        <button type="button"
+                          onClick={() => setAgeDropdownOpen(o => !o)}
+                          className="w-full flex items-center justify-between bg-gray-50 rounded-[15px] px-4 py-3.5 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition cursor-pointer">
+                          <span className={formData.age ? 'text-gray-700' : 'text-gray-300'}>{formData.age || 'Age'}</span>
+                          <i className="fa-solid fa-chevron-down text-[10px] text-gray-400"></i>
+                        </button>
+                        {ageDropdownOpen && (
+                          <div className="absolute top-full left-0 mt-1 w-full bg-white rounded-[12px] shadow-xl border border-gray-100 z-[60] overflow-hidden">
+                            <div className="max-h-48 overflow-y-auto">
+                              {Array.from({ length: 63 }, (_, i) => i + 18).map(age => (
+                                <button key={age} type="button"
+                                  onClick={() => { setFormData(prev => ({ ...prev, age: String(age) })); setAgeDropdownOpen(false); }}
+                                  className={`w-full text-left px-4 py-2 text-[13px] hover:bg-gray-50 transition ${formData.age === String(age) ? 'bg-green-50 text-[#61A644] font-semibold' : 'text-gray-700'}`}>
+                                  {age}
+                                </button>
+                              ))}
+                            </div>
                           </div>
-                        </div>
-                      )}
+                        )}
+                      </div>
                     </div>
                   </div>
+                  {/* Delivery address — right column, aligned under Email */}
                   <div className="space-y-2">
                     <label className="text-[14px] font-semibold text-gray-700">Delivery address</label>
                     <input type="text" placeholder="Complete address for courier delivery"
@@ -754,7 +797,7 @@ export default function OrderMedicines() {
                 <div className="flex flex-wrap items-center gap-4 pt-2">
                   <button type="button"
                     onClick={() => {
-                      setFormData({ patientName: '', email: '', phone: '', dob: '', address: '', terms: false });
+                      setFormData({ patientName: '', email: '', phone: '', age: '', dob: '', address: '', terms: false });
                       setUploadedFiles([]);
                       setUploadComplete(false);
                     }}
