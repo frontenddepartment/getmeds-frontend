@@ -67,6 +67,7 @@ export default function BlogDetail() {
 
   const article = slug ? articleBySlug : articleById;
   const loading = slug ? loadingSlug : loadingId;
+  const imgUrl = article?.image ? urlFor(article.image).width(1200).url() : '';
 
   useEffect(() => {
     if (article) {
@@ -534,8 +535,6 @@ export default function BlogDetail() {
       },
     },
   }), [headingKeyToIndex]);
-
-  const imgUrl = article?.image ? urlFor(article.image).width(1200).url() : '';
 
   return (
     <div
