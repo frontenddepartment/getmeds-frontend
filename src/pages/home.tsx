@@ -111,12 +111,12 @@ export default function GetMedsHomepage() {
     'join-us': { title: 'Join Us', href: '/careers.html#join-form', img: '/assets/careershero.png', desc: 'Apply for our open positions and start your journey with us.' }
   });
   const [activeCompanySlide, setActiveCompanySlide] = useState<string>('about');
-  const [companySliderInterval, setCompanySliderInterval] = useState<NodeJS.Timeout | null>(null);
+  const [companySliderInterval, setCompanySliderInterval] = useState<any>(null);
   const companyRotationKeys = ['about', 'csr', 'careers', 'ungc', 'blog', 'join-us'];
   const rotationIndexRef = useRef(0);
 
   useEffect(() => {
-    let interval: NodeJS.Timeout;
+    let interval: any;
     const startRotation = () => {
       interval = setInterval(() => {
         rotationIndexRef.current = (rotationIndexRef.current + 1) % companyRotationKeys.length;
