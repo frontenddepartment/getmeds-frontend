@@ -663,7 +663,7 @@ export default function GetMedsHomepage() {
     };
   }, []);
 
-  console.log(settings);
+
 
 
   return (
