@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useCategories, useImageMapper, useNews, useSiteSettings } from '../lib/useSanity';
 import { getGoogleSpreadsheetBySlug } from '../lib/queries';
 import { injectHTML } from '../lib/injectHTML';
-import { urlFor } from '../lib/sanity';
+import { urlFor, client } from '../lib/sanity';
 
 
 // Declare global tailwind interface
@@ -97,6 +97,159 @@ export default function GetMedsHomepage() {
   };
   const { data: categoriesData } = useCategories();
   const [isScrolled, setIsScrolled] = useState(false);
+
+  // --- Dynamic Company Mega Menu State ---
+  const [companySlides, setCompanySlides] = useState<Record<string, { title: string, href: string, img: string, desc: string }>>({
+    'about': { title: 'About Us', href: '/about-us.html', img: '/assets/about_us_hero.png', desc: 'Learn more about our mission and vision.' },
+    'services': { title: 'Our Services', href: '/services.html', img: '/assets/services_hero_new.png', desc: 'Discover our specialized pharmaceutical offerings.' },
+    'globalPresence': { title: 'Global Presence', href: '/global-presence.html', img: '/assets/globalpresencehero.jpg', desc: 'We are expanding healthcare solutions worldwide.' },
+    'meditations': { title: 'Meditations', href: '/meditations.html', img: '/assets/fallback.jpg', desc: 'Explore our mental wellness resources.' },
+    'csr': { title: 'CSR', href: '/csr.html', img: '/assets/csrhero.png', desc: 'Explore our corporate social responsibility initiatives.' },
+    'careers': { title: 'Careers', href: '/careers.html', img: '/assets/careershero.png', desc: 'Join our team and make a difference.' },
+    'ungc': { title: 'United Nations Global Compact', href: '/ungc.html', img: '/assets/ungchero.jpg', desc: 'Read about our commitment to sustainable development goals.' },
+    'blog': { title: 'Blog', href: '/blog', img: '/assets/fallback.jpg', desc: 'Stay updated with our latest news and medical articles.' },
+    'join-us': { title: 'Join Us', href: '/careers.html#join-form', img: '/assets/careershero.png', desc: 'Apply for our open positions and start your journey with us.' }
+  });
+  const [activeCompanySlide, setActiveCompanySlide] = useState<string>('about');
+  const [companySliderInterval, setCompanySliderInterval] = useState<NodeJS.Timeout | null>(null);
+  const companyRotationKeys = ['about', 'csr', 'careers', 'ungc', 'blog', 'join-us'];
+  const rotationIndexRef = useRef(0);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    const startRotation = () => {
+      interval = setInterval(() => {
+        rotationIndexRef.current = (rotationIndexRef.current + 1) % companyRotationKeys.length;
+        setActiveCompanySlide(companyRotationKeys[rotationIndexRef.current]);
+      }, 5000);
+      setCompanySliderInterval(interval);
+    };
+    startRotation();
+
+    // Fetch hero images from Sanity (pageAsset records) — primary source
+    const fetchCompanyData = async () => {
+      try {
+        // Map each slide key to its known hero assetPath in Sanity pageAsset
+        const heroAssetPaths: Record<string, string> = {
+          'about':         'assets/about_us_hero.png',
+          'services':      'assets/services_hero_new.png',
+          'globalPresence':'assets/globalpresencehero.jpg',
+          'csr':           'assets/csrhero.png',
+          'careers':       'assets/careershero.png',
+          'ungc':          'assets/ungcimage.jpg',
+          'join-us':       'assets/careershero.png',
+        };
+
+        // Fetch all pageAsset documents whose assetPath matches any hero image
+        const assetPaths = [...new Set(Object.values(heroAssetPaths))];
+        const sanityAssets: any[] = await client.fetch(
+          `*[_type == "pageAsset" && assetPath in $paths] { assetPath, image, page, name }`,
+          { paths: assetPaths }
+        );
+
+        // Index Sanity assets by assetPath for fast lookup
+        const byPath: Record<string, any> = {};
+        (sanityAssets || []).forEach((a: any) => {
+          if (a.assetPath && a.image) byPath[a.assetPath] = a;
+        });
+
+        // Also query page documents for hero text (title, description)
+        const pageTextData: any = await client.fetch(`{
+          "about":         *[_type == "aboutPage"         && _id == "about-page"][0]          { hero },
+          "services":      *[_type == "servicesPage"      && _id == "services-page"][0]       { hero },
+          "globalPresence":*[_type == "globalPresencePage"&& _id == "global-presence-page"][0]{ hero },
+          "csr":           *[_type == "csrPage"           && _id == "csr-page"][0]            { hero },
+          "careers":       *[_type == "careersPage"       && _id == "careers-page"][0]        { hero },
+          "ungc":          *[_type == "ungcPage"          && _id == "ungc-page"][0]           { hero }
+        }`);
+
+        // Fetch latest WordPress blog post
+        let wpPost: any = null;
+        try {
+          const res = await fetch('/wp-json/wp/v2/posts?per_page=1&_embed=true');
+          if (res.ok) {
+            const posts = await res.json();
+            if (posts && posts.length > 0) wpPost = posts[0];
+          }
+        } catch (e) {
+          console.warn('Failed to fetch WordPress post', e);
+        }
+
+        setCompanySlides(prev => {
+          const next = { ...prev };
+          Object.keys(next).forEach(key => {
+            const def = next[key];
+
+            // --- Image from Sanity pageAsset (CDN URL via urlFor) ---
+            const heroPath = heroAssetPaths[key];
+            const sanityAsset = byPath[heroPath];
+            if (sanityAsset && sanityAsset.image) {
+              try { def.img = urlFor(sanityAsset.image).url(); } catch(e) {}
+            }
+
+            // --- Text from Sanity page hero document ---
+            const pageKey = key === 'join-us' ? 'careers' : key;
+            const pageDoc = (pageTextData || {})[pageKey];
+            if (pageDoc && pageDoc.hero) {
+              const headingText = pageDoc.hero.headingLine1 || pageDoc.hero.heading || pageDoc.hero.headingAccent;
+              if (headingText) {
+                let title = String(headingText).replace(/<[^>]*>/g, '');
+                if (title.length > 40) title = title.substring(0, 37) + '...';
+                def.title = title;
+              }
+              if (pageDoc.hero.description) {
+                let desc = pageDoc.hero.description;
+                if (desc.length > 80) desc = desc.substring(0, 77) + '...';
+                def.desc = desc;
+              }
+            }
+
+            // --- Blog: latest WordPress post ---
+            if (key === 'blog' && wpPost) {
+              const wpImg = wpPost._embedded?.['wp:featuredmedia']?.[0]?.source_url;
+              if (wpImg) def.img = wpImg;
+              const wpTitle = wpPost.title?.rendered;
+              if (wpTitle) {
+                let title = wpTitle.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim();
+                if (title.length > 40) title = title.substring(0, 37) + '...';
+                def.title = title;
+              }
+              const wpExcerpt = wpPost.excerpt?.rendered;
+              if (wpExcerpt) {
+                let desc = wpExcerpt.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim();
+                if (desc.length > 80) desc = desc.substring(0, 77) + '...';
+                def.desc = desc;
+              }
+            }
+          });
+          return next;
+        });
+      } catch (e) {
+        console.warn('Failed to fetch dynamic company slides from Sanity:', e);
+      }
+    };
+    
+    fetchCompanyData();
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleCompanyLinkEnter = (key: string) => {
+    if (companySliderInterval) clearInterval(companySliderInterval);
+    setActiveCompanySlide(key);
+  };
+
+  const handleCompanyLinkLeave = (key: string) => {
+    const rotIdx = companyRotationKeys.indexOf(key);
+    if (rotIdx !== -1) {
+      rotationIndexRef.current = rotIdx;
+    }
+    const interval = setInterval(() => {
+      rotationIndexRef.current = (rotationIndexRef.current + 1) % companyRotationKeys.length;
+      setActiveCompanySlide(companyRotationKeys[rotationIndexRef.current]);
+    }, 5000);
+    setCompanySliderInterval(interval);
+  };
 
   // Grouping config to keep the static layout and style
   const categoryConfig: Record<string, { col: number; title: string }> = {
@@ -759,16 +912,6 @@ export default function GetMedsHomepage() {
                   </button>
                   {/* Mega Menu Container */}
                   <div className="fixed top-[80px] left-0 w-full bg-white rounded-b-[30px] border-b border-gray-100 shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-[100] max-h-[calc(100vh-80px)] overflow-y-auto">
-                    <style dangerouslySetInnerHTML={{
-                      __html: `
-                        @keyframes slide1 { 0%, 28% { opacity: 1; z-index: 10; } 33%, 95% { opacity: 0; z-index: 0; } 100% { opacity: 1; z-index: 10; } }
-                        @keyframes slide2 { 0%, 28% { opacity: 0; z-index: 0; } 33%, 61% { opacity: 1; z-index: 10; } 66%, 100% { opacity: 0; z-index: 0; } }
-                        @keyframes slide3 { 0%, 61% { opacity: 0; z-index: 0; } 66%, 95% { opacity: 1; z-index: 10; } 100% { opacity: 0; z-index: 0; } }
-                        .company-slide-1 { animation: slide1 15s infinite; }
-                        .company-slide-2 { animation: slide2 15s infinite; }
-                        .company-slide-3 { animation: slide3 15s infinite; }
-                      `
-                    }} />
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 font-medium text-gray-800">
                       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 text-left items-start">
                         {/* Links Section (Cols 1-7) */}
@@ -776,19 +919,19 @@ export default function GetMedsHomepage() {
                           <div>
                             <h4 className="font-semibold text-gray-900 mb-4 border-b pb-2 text-sm uppercase tracking-wider">Explore by Organization</h4>
                             <ul className="space-y-4">
-                              <li><a href="services.html" className="relative inline-block text-gray-700 font-semibold hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300 text-base">Our Services</a></li>
-                              <li><a href="global-presence.html" className="relative inline-block text-gray-700 font-semibold hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300 text-base">Global Presence</a></li>
-                              <li><a href="meditations.html" className="relative inline-block text-gray-700 font-semibold hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300 text-base">Meditations</a></li>
+                              <li><a href="services.html" onMouseEnter={() => handleCompanyLinkEnter('services')} onMouseLeave={() => handleCompanyLinkLeave('services')} className="relative inline-block text-gray-700 font-semibold hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300 text-base">Our Services</a></li>
+                              <li><a href="global-presence.html" onMouseEnter={() => handleCompanyLinkEnter('globalPresence')} onMouseLeave={() => handleCompanyLinkLeave('globalPresence')} className="relative inline-block text-gray-700 font-semibold hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300 text-base">Global Presence</a></li>
+                              <li><a href="meditations.html" onMouseEnter={() => handleCompanyLinkEnter('meditations')} onMouseLeave={() => handleCompanyLinkLeave('meditations')} className="relative inline-block text-gray-700 font-semibold hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300 text-base">Meditations</a></li>
                             </ul>
                           </div>
                           <div>
                             <h4 className="font-semibold text-gray-900 mb-4 border-b pb-2 text-sm uppercase tracking-wider">More Information</h4>
                             <ul className="space-y-4">
-                              <li><a href="csr.html" className="relative inline-block text-gray-700 font-semibold hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300 text-base">CSR</a></li>
-                              <li><a href="careers.html" className="relative inline-block text-gray-700 font-semibold hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300 text-base">Careers</a></li>
-                              <li><a href="ungc.html" className="relative inline-block text-gray-700 font-semibold hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300 text-base">United Nations Global Compact</a></li>
-                              <li><a href="/blog" className="relative inline-block text-gray-700 font-semibold hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300 text-base">Blog</a></li>
-                              <li className="pt-2">
+                              <li><a href="csr.html" onMouseEnter={() => handleCompanyLinkEnter('csr')} onMouseLeave={() => handleCompanyLinkLeave('csr')} className="relative inline-block text-gray-700 font-semibold hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300 text-base">CSR</a></li>
+                              <li><a href="careers.html" onMouseEnter={() => handleCompanyLinkEnter('careers')} onMouseLeave={() => handleCompanyLinkLeave('careers')} className="relative inline-block text-gray-700 font-semibold hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300 text-base">Careers</a></li>
+                              <li><a href="ungc.html" onMouseEnter={() => handleCompanyLinkEnter('ungc')} onMouseLeave={() => handleCompanyLinkLeave('ungc')} className="relative inline-block text-gray-700 font-semibold hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300 text-base">United Nations Global Compact</a></li>
+                              <li><a href="/blog" onMouseEnter={() => handleCompanyLinkEnter('blog')} onMouseLeave={() => handleCompanyLinkLeave('blog')} className="relative inline-block text-gray-700 font-semibold hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300 text-base">Blog</a></li>
+                              <li className="pt-2" onMouseEnter={() => handleCompanyLinkEnter('join-us')} onMouseLeave={() => handleCompanyLinkLeave('join-us')}>
                                 <a href="careers.html#join-form"
                                   className="inline-flex items-center px-5 py-2.5 rounded-full text-sm font-semibold text-white transition-all hover:opacity-90 hover:-translate-y-0.5 shadow-md"
                                   style={{ background: 'linear-gradient(135deg, #61A644, #1D9FDA)' }}>
@@ -800,27 +943,22 @@ export default function GetMedsHomepage() {
                         </div>
                         {/* Slider Section (Cols 8-12) */}
                         <div className="lg:col-span-5 h-[260px] relative rounded-2xl overflow-hidden shadow-lg bg-gray-100">
-                          <a href="about-us.html" className="absolute inset-0 bg-cover bg-center company-slide-1 transition-opacity duration-1000 cursor-pointer" style={{ backgroundImage: `url('${getImage('assets/about_us_hero.png', 'assets/about_us_hero.png')}')` }}>
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
-                            <div className="absolute bottom-6 left-6 right-6">
-                              <h3 className="text-white font-bold text-xl mb-1">About Us</h3>
-                              <p className="text-white/80 text-sm">Learn more about our mission and vision.</p>
-                            </div>
-                          </a>
-                          <a href="global-presence.html" className="absolute inset-0 bg-cover bg-center company-slide-2 transition-opacity duration-1000 cursor-pointer" style={{ backgroundImage: `url('${getImage('assets/globalpresencehero.jpg', 'assets/globalpresencehero.jpg')}')` }}>
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
-                            <div className="absolute bottom-6 left-6 right-6">
-                              <h3 className="text-white font-bold text-xl mb-1">Global Presence</h3>
-                              <p className="text-white/80 text-sm">We are expanding healthcare solutions worldwide.</p>
-                            </div>
-                          </a>
-                          <a href="careers.html" className="absolute inset-0 bg-cover bg-center company-slide-3 transition-opacity duration-1000 cursor-pointer" style={{ backgroundImage: `url('${getImage('assets/careershero.png', 'assets/careershero.png')}')` }}>
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
-                            <div className="absolute bottom-6 left-6 right-6">
-                              <h3 className="text-white font-bold text-xl mb-1">Careers</h3>
-                              <p className="text-white/80 text-sm">Join our team and make a difference.</p>
-                            </div>
-                          </a>
+                          {Object.entries(companySlides).map(([key, slide]) => (
+                            <a
+                              key={key}
+                              href={slide.href}
+                              className={`absolute inset-0 bg-cover bg-center transition-opacity duration-700 cursor-pointer ${
+                                activeCompanySlide === key ? 'opacity-100 pointer-events-auto z-10' : 'opacity-0 pointer-events-none z-0'
+                              }`}
+                              style={{ backgroundImage: `url('${slide.img}')` }}
+                            >
+                              <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+                              <div className="absolute bottom-6 left-6 right-6">
+                                <h3 className="text-white font-bold text-xl mb-1">{slide.title}</h3>
+                                <p className="text-white/80 text-sm">{slide.desc}</p>
+                              </div>
+                            </a>
+                          ))}
                         </div>
                       </div>
                     </div>

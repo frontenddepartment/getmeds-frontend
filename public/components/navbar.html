@@ -415,7 +415,7 @@
                                     </div>
                                 </div>
                                 <!-- Slider Section (Cols 8-12) -->
-                                <div
+                                <div id="company-mega-menu-slider"
                                     class="lg:col-span-5 h-[260px] relative rounded-2xl overflow-hidden shadow-lg bg-gray-100">
                                     <a href="/about-us.html"
                                         class="absolute inset-0 bg-cover bg-center company-slide-1 transition-opacity duration-1000 cursor-pointer"
@@ -1211,4 +1211,269 @@
 
     // Run dynamic populate
     fetchAndPopulateDropdown();
+</script>
+
+<script>
+    (function() {
+        const projectId = document.querySelector('meta[name="getmeds-sanity-project-id"]')?.content || 's7ocz8zp';
+        const dataset = document.querySelector('meta[name="getmeds-sanity-dataset"]')?.content || 'production';
+        const apiVersion = document.querySelector('meta[name="getmeds-sanity-api-version"]')?.content || '2021-10-21';
+
+        function getSanityImageUrl(imageRef) {
+            if (!imageRef) return '';
+            if (typeof imageRef === 'string') {
+                if (imageRef.startsWith('http') || imageRef.startsWith('/')) return imageRef;
+                if (imageRef.startsWith('image-')) {
+                    const parts = imageRef.substring(6).split('-');
+                    const ext = parts.pop();
+                    const filename = parts.join('-');
+                    return `https://cdn.sanity.io/images/${projectId}/${dataset}/${filename}.${ext}`;
+                }
+            }
+            const ref = imageRef?.asset?._ref || imageRef?._ref;
+            if (ref && ref.startsWith('image-')) {
+                const parts = ref.substring(6).split('-');
+                const ext = parts.pop();
+                const filename = parts.join('-');
+                return `https://cdn.sanity.io/images/${projectId}/${dataset}/${filename}.${ext}`;
+            }
+            return '';
+        }
+
+        const defaultSlides = {
+            'about': { title: 'About Us', href: '/about-us.html', img: '/assets/about_us_hero.png', desc: 'Learn more about our mission and vision.' },
+            'services': { title: 'Our Services', href: '/services.html', img: '/assets/services_hero_new.png', desc: 'Discover our specialized pharmaceutical offerings.' },
+            'globalPresence': { title: 'Global Presence', href: '/global-presence.html', img: '/assets/globalpresencehero.jpg', desc: 'We are expanding healthcare solutions worldwide.' },
+            'meditations': { title: 'Meditations', href: '/meditations.html', img: '/assets/fallback.jpg', desc: 'Explore our mental wellness resources.' },
+            'csr': { title: 'CSR', href: '/csr.html', img: '/assets/csrhero.png', desc: 'Explore our corporate social responsibility initiatives.' },
+            'careers': { title: 'Careers', href: '/careers.html', img: '/assets/careershero.png', desc: 'Join our team and make a difference.' },
+            'ungc': { title: 'United Nations Global Compact', href: '/ungc.html', img: '/assets/ungchero.jpg', desc: 'Read about our commitment to sustainable development goals.' },
+            'blog': { title: 'Blog', href: '/blog', img: '/assets/fallback.jpg', desc: 'Stay updated with our latest news and medical articles.' },
+            'join-us': { title: 'Join Us', href: '/careers.html#join-form', img: '/assets/careershero.png', desc: 'Apply for our open positions and start your journey with us.' }
+        };
+
+        const rotationKeys = ['about', 'csr', 'careers', 'ungc', 'blog', 'join-us'];
+
+        let activeInterval = null;
+        let rotationIndex = 0;
+        let currentActiveKey = 'about';
+
+        function showSlide(key) {
+            const slider = document.getElementById('company-mega-menu-slider');
+            if (!slider) return;
+            
+            const slides = slider.querySelectorAll('[data-slide-key]');
+            slides.forEach(slide => {
+                if (slide.getAttribute('data-slide-key') === key) {
+                    slide.classList.remove('opacity-0', 'pointer-events-none', 'z-0');
+                    slide.classList.add('opacity-100', 'pointer-events-auto', 'z-10');
+                } else {
+                    slide.classList.remove('opacity-100', 'pointer-events-auto', 'z-10');
+                    slide.classList.add('opacity-0', 'pointer-events-none', 'z-0');
+                }
+            });
+            currentActiveKey = key;
+        }
+
+        function startRotation() {
+            stopRotation();
+            activeInterval = setInterval(() => {
+                rotationIndex = (rotationIndex + 1) % rotationKeys.length;
+                showSlide(rotationKeys[rotationIndex]);
+            }, 5000);
+        }
+
+        function stopRotation() {
+            if (activeInterval) {
+                clearInterval(activeInterval);
+                activeInterval = null;
+            }
+        }
+
+        function setupLinkHovers() {
+            const linkMappings = [
+                { selector: 'a[href*="services.html"]', key: 'services' },
+                { selector: 'a[href*="global-presence.html"]', key: 'globalPresence' },
+                { selector: 'a[href*="meditations.html"]', key: 'meditations' },
+                { selector: 'a[href*="csr.html"]', key: 'csr' },
+                { selector: 'a[href="/careers.html"]', key: 'careers' },
+                { selector: 'a[href*="ungc.html"]', key: 'ungc' },
+                { selector: 'a[href="/blog"]', key: 'blog' },
+                { selector: 'a[href*="join-form"]', key: 'join-us' }
+            ];
+
+            linkMappings.forEach(mapping => {
+                const links = document.querySelectorAll(mapping.selector);
+                links.forEach(link => {
+                    link.addEventListener('mouseenter', () => {
+                        stopRotation();
+                        showSlide(mapping.key);
+                    });
+                    link.addEventListener('mouseleave', () => {
+                        const rotIdx = rotationKeys.indexOf(mapping.key);
+                        if (rotIdx !== -1) {
+                            rotationIndex = rotIdx;
+                        }
+                        startRotation();
+                    });
+                });
+            });
+        }
+
+        async function initCompanySlider() {
+            // Map slide keys to their known hero assetPath in Sanity pageAsset
+            const heroAssetPaths = {
+                'about':         'assets/about_us_hero.png',
+                'services':      'assets/services_hero_new.png',
+                'globalPresence':'assets/globalpresencehero.jpg',
+                'csr':           'assets/csrhero.png',
+                'careers':       'assets/careershero.png',
+                'ungc':          'assets/ungcimage.jpg',
+                'join-us':       'assets/careershero.png',
+            };
+
+            // Step 1: Fetch all pageAsset records matching hero assetPaths from Sanity
+            const assetPaths = [...new Set(Object.values(heroAssetPaths))];
+            const assetQuery = `*[_type == "pageAsset" && assetPath in $paths] { assetPath, image, page, name }`;
+            const assetUrl = `https://${projectId}.api.sanity.io/v${apiVersion}/data/query/${dataset}?query=` +
+                encodeURIComponent(assetQuery) + '&$paths=' + encodeURIComponent(JSON.stringify(assetPaths));
+
+            const byPath = {};
+            try {
+                const res = await fetch(assetUrl);
+                if (res.ok) {
+                    const json = await res.json();
+                    (json.result || []).forEach(a => {
+                        if (a.assetPath && a.image) byPath[a.assetPath] = a;
+                    });
+                }
+            } catch (e) {
+                console.warn('[Getmeds] Failed to fetch Sanity pageAsset hero images:', e);
+            }
+
+            // Step 2: Fetch page hero text (title/description) from Sanity page documents
+            const textQuery = `{
+                "about":         *[_type == "aboutPage"         && _id == "about-page"][0]          { hero },
+                "services":      *[_type == "servicesPage"      && _id == "services-page"][0]       { hero },
+                "globalPresence":*[_type == "globalPresencePage"&& _id == "global-presence-page"][0]{ hero },
+                "csr":           *[_type == "csrPage"           && _id == "csr-page"][0]            { hero },
+                "careers":       *[_type == "careersPage"       && _id == "careers-page"][0]        { hero },
+                "ungc":          *[_type == "ungcPage"          && _id == "ungc-page"][0]           { hero }
+            }`;
+            const textUrl = `https://${projectId}.api.sanity.io/v${apiVersion}/data/query/${dataset}?query=` + encodeURIComponent(textQuery);
+
+            let pageTextData = {};
+            try {
+                const res = await fetch(textUrl);
+                if (res.ok) {
+                    const json = await res.json();
+                    pageTextData = json.result || {};
+                }
+            } catch (e) {
+                console.warn('[Getmeds] Failed to fetch Sanity page hero text:', e);
+            }
+
+            // Step 3: Fetch latest WordPress blog post
+            let wpPost = null;
+            try {
+                const res = await fetch('/wp-json/wp/v2/posts?per_page=1&_embed=true');
+                if (res.ok) {
+                    const posts = await res.json();
+                    if (posts && posts.length > 0) wpPost = posts[0];
+                }
+            } catch (e) {
+                console.warn('[Getmeds] Failed to fetch latest blog post:', e);
+            }
+
+            // Step 4: Build slides — Sanity pageAsset image is primary source
+            const slides = {};
+            Object.keys(defaultSlides).forEach(key => {
+                const def = defaultSlides[key];
+                let img = def.img;
+                let title = def.title;
+                let desc = def.desc;
+
+                // --- Image from Sanity pageAsset (CDN URL) ---
+                const heroPath = heroAssetPaths[key];
+                const sanityAsset = byPath[heroPath];
+                if (sanityAsset && sanityAsset.image) {
+                    const resolved = getSanityImageUrl(sanityAsset.image);
+                    if (resolved) img = resolved;
+                }
+
+                // --- Text from Sanity page hero document ---
+                const pageKey = key === 'join-us' ? 'careers' : key;
+                const pageDoc = pageTextData[pageKey];
+                if (pageDoc && pageDoc.hero) {
+                    const headingText = pageDoc.hero.headingLine1 || pageDoc.hero.heading || pageDoc.hero.headingAccent;
+                    if (headingText) {
+                        title = headingText.replace(/<[^>]*>/g, '');
+                        if (title.length > 40) title = title.substring(0, 37) + '...';
+                    }
+                    if (pageDoc.hero.description) {
+                        desc = pageDoc.hero.description;
+                        if (desc.length > 80) desc = desc.substring(0, 77) + '...';
+                    }
+                }
+
+                // --- Blog: latest WordPress post ---
+                if (key === 'blog' && wpPost) {
+                    const wpImg = wpPost._embedded?.['wp:featuredmedia']?.[0]?.source_url;
+                    if (wpImg) img = wpImg;
+                    const wpTitle = wpPost.title?.rendered;
+                    if (wpTitle) {
+                        title = wpTitle.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim();
+                        if (title.length > 40) title = title.substring(0, 37) + '...';
+                    }
+                    const wpExcerpt = wpPost.excerpt?.rendered;
+                    if (wpExcerpt) {
+                        desc = wpExcerpt.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim();
+                        if (desc.length > 80) desc = desc.substring(0, 77) + '...';
+                    }
+                }
+
+                slides[key] = { title, href: def.href, img, desc };
+            });
+
+            // Step 5: Inject slides into DOM
+            const slider = document.getElementById('company-mega-menu-slider');
+            if (slider) {
+                let html = '';
+                Object.keys(slides).forEach(key => {
+                    const s = slides[key];
+                    html += `
+                        <a href="${s.href}"
+                           data-slide-key="${key}"
+                           class="absolute inset-0 bg-cover bg-center transition-opacity duration-700 cursor-pointer opacity-0 pointer-events-none z-0"
+                           style="background-image: url('${s.img}');">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+                            <div class="absolute bottom-6 left-6 right-6">
+                                <h3 class="text-white font-bold text-xl mb-1">${s.title}</h3>
+                                <p class="text-white/80 text-sm">${s.desc}</p>
+                            </div>
+                        </a>
+                    `;
+                });
+                slider.innerHTML = html;
+            }
+
+            // Step 6: Start display and rotation
+            showSlide('about');
+            startRotation();
+            setupLinkHovers();
+        }
+
+        // Initialize when DOM/Component is loaded
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initCompanySlider);
+        } else {
+            const checkSliderInterval = setInterval(() => {
+                if (document.getElementById('company-mega-menu-slider')) {
+                    clearInterval(checkSliderInterval);
+                    initCompanySlider();
+                }
+            }, 100);
+            setTimeout(() => clearInterval(checkSliderInterval), 5000);
+        }
+    })();
 </script>

@@ -145,25 +145,26 @@ export default function ContactUs() {
       <div id="navbar-container" className="sticky top-0 z-[50]" />
 
       {/* Contact Us Hero Section */}
+
       <section className="w-full mx-auto px-3 sm:px-4 md:px-6 mt-3 md:mt-4 mb-6 max-w-[1600px]">
         <div
-          className={`relative rounded-[1.5rem] border border-gray-100/20 overflow-hidden min-h-[450px] md:min-h-[500px] flex items-end shadow-sm transition-colors duration-500 ${!heroImgLoaded ? 'bg-gray-200 animate-pulse' : 'bg-gray-100'}`}>
+          className={`relative rounded-[1.5rem] border border-gray-100/20 overflow-hidden min-h-[280px] sm:min-h-[360px] md:min-h-[450px] lg:min-h-[500px] flex items-end shadow-sm transition-colors duration-500 ${!heroImgLoaded ? 'bg-gray-200 animate-pulse' : 'bg-gray-100'}`}>
           {/* Background Image — only mount after Sanity resolves so the src never changes */}
           {!imagesLoading && (
             <img
               src={getImage('assets/contactushero.png', 'assets/contactushero.png')}
               alt="Contact Us"
               onLoad={() => setHeroImgLoaded(true)}
-              className={`absolute inset-0 w-full h-full object-cover object-[85%_center] md:object-center transition-opacity duration-700 ${heroImgLoaded ? 'opacity-100' : 'opacity-0'}`}
+              className={`absolute inset-0 w-full h-full object-cover object-[78%_top] sm:object-[82%_center] md:object-[80%_center] lg:object-center transition-opacity duration-700 ${heroImgLoaded ? 'opacity-100' : 'opacity-0'}`}
             />
           )}
-          <div className="relative z-10 w-full px-8 md:px-14 pb-12 md:pb-16 pt-20 max-w-4xl">
-            <span className="text-white/70 font-bold text-sm uppercase tracking-[0.2em] mb-3 block">Contact Us</span>
-            <h1 className="text-[28px] md:text-[42px] leading-tight font-bold mb-4 tracking-tight">
-              <span className="block bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">For patients, partners,</span>
-              <span className="block bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">and providers.</span>
+
+          <div className="relative z-10 w-full px-5 sm:px-8 md:px-14 pb-1 sm:pb-5 md:pb-16 pt-16 sm:pt-20 max-w-4xl">
+            <h1 className="text-[22px] sm:text-[28px] md:text-[42px] leading-tight font-bold mb-3 md:mb-4 tracking-tight">
+              <span className="inline-block bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">For patients, partners,</span><br />
+              <span className="inline-block bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">and providers.</span>
             </h1>
-            <p className="text-[#000b5d] text-[13px] md:text-[15px] max-w-[620px] mb-5 leading-relaxed font-medium">
+            <p className="text-[#000b5d] text-[12px] sm:text-[13px] md:text-[15px] max-w-[90%] sm:max-w-[480px] md:max-w-[620px] mb-5 leading-relaxed font-medium">
               For inquiries about our pharmaceutical portfolio, partnership opportunities, careers, or patient access programs — our team is ready to help.
             </p>
           </div>
