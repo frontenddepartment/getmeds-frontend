@@ -1,6 +1,4 @@
 (function () {
-    console.log('[Getmeds] Global Component Loader v3 active');
-
     function executeScripts(container) {
         const scripts = Array.from(container.querySelectorAll('script'));
         scripts.forEach(oldScript => {
@@ -64,7 +62,6 @@
                     document.body.appendChild(newScript);
                 });
 
-                console.log(`[Getmeds] Successfully loaded and executed ${componentPath}`);
             })
             .catch(function (err) {
                 console.warn(`[Getmeds] Failed to load ${componentPath}:`, err);
@@ -76,7 +73,7 @@
         window.getmeds_inited_hardened = true;
 
         try {
-            console.log('[Getmeds] Initializing UI components (Hardened)...');
+
 
             // Set Favicon dynamically
             injectFavicon();
@@ -101,7 +98,7 @@
             authContainer.id = 'auth-modal-container';
             document.body.appendChild(authContainer);
 
-            fetch('components/auth_modals.html?v=' + new Date().getTime())
+            fetch('/components/auth_modals.html?v=' + new Date().getTime())
                 .then(res => res.text())
                 .then(html => {
                     authContainer.innerHTML = html;
@@ -1264,8 +1261,8 @@
         }
 
         // Always force the Getmeds logo
-        link.href = 'assets/getmedslogo.png';
-        console.log('[Getmeds] Favicon standardized');
+        link.href = '/assets/getmedslogo.png';
+
     }
 
     function injectScrollToTop() {
@@ -1382,7 +1379,7 @@
             });
         });
 
-        console.log('[Getmeds] Scroll-to-top button injected and secured');
+
     }
 
     // Run loader

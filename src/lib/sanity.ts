@@ -1,5 +1,5 @@
 import { createClient } from '@sanity/client'
-import imageUrlBuilder from '@sanity/image-url'
+import { createImageUrlBuilder } from '@sanity/image-url'
 import type { SanityImage } from '../types/sanity'
 
 export const client = createClient({
@@ -9,7 +9,7 @@ export const client = createClient({
   useCdn: false,
 })
 
-const builder = imageUrlBuilder(client)
+const builder = createImageUrlBuilder(client)
 
 export function urlFor(source: any) {
   if (typeof source === 'string' && (source.startsWith('http') || source.startsWith('/'))) {

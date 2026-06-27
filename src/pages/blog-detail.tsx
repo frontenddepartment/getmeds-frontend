@@ -67,17 +67,50 @@ export default function BlogDetail() {
 
   const article = slug ? articleBySlug : articleById;
   const loading = slug ? loadingSlug : loadingId;
+  const imgUrl = article?.image ? urlFor(article.image).width(1200).url() : '';
 
   useEffect(() => {
     if (article) {
+      const targetSlug = article.slug || slugify(article.title);
       document.title = `${article.title} — Getmeds`;
+
+      // Helper to update or create meta tags dynamically
+      const updateMeta = (name: string, content: string, isProperty = false) => {
+        const selector = isProperty ? `meta[property="${name}"]` : `meta[name="${name}"]`;
+        let el = document.querySelector(selector);
+        if (!el) {
+          el = document.createElement('meta');
+          el.setAttribute(isProperty ? 'property' : 'name', name);
+          document.head.appendChild(el);
+        }
+        el.setAttribute('content', content);
+      };
+
+      // Set canonical link
+      let canonicalEl = document.querySelector('link[rel="canonical"]');
+      if (!canonicalEl) {
+        canonicalEl = document.createElement('link');
+        canonicalEl.setAttribute('rel', 'canonical');
+        document.head.appendChild(canonicalEl);
+      }
+      canonicalEl.setAttribute('href', `https://getmeds.ph/blog/${targetSlug}`);
+
+      // Set SEO meta description and OpenGraph tags
+      if (article.description) {
+        updateMeta('description', article.description);
+        updateMeta('og:description', article.description, true);
+      }
+      updateMeta('og:title', article.title, true);
+      updateMeta('og:url', `https://getmeds.ph/blog/${targetSlug}`, true);
+      if (imgUrl) {
+        updateMeta('og:image', imgUrl, true);
+      }
 
       const pathname = window.location.pathname;
       const segments = pathname.split('/').filter(Boolean);
       
       // If we got here via legacy /article-detail?id=X, redirect to /blog/slug
       if (segments[0] !== 'blog') {
-        const targetSlug = article.slug || slugify(article.title);
         window.location.replace(`/blog/${targetSlug}${window.location.hash}`);
       } else {
         // If we are already on /blog/slug, check if the slug is correct. If it isn't, sync history:
@@ -87,7 +120,7 @@ export default function BlogDetail() {
         }
       }
     }
-  }, [article]);
+  }, [article, imgUrl]);
 
   // Hash scroll listener and initial hash trigger
   useEffect(() => {
@@ -502,8 +535,6 @@ export default function BlogDetail() {
       },
     },
   }), [headingKeyToIndex]);
-
-  const imgUrl = article?.image ? urlFor(article.image).width(1200).url() : '';
 
   return (
     <div

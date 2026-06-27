@@ -85,13 +85,24 @@ export default defineConfig(({ mode }) => {
       {
         name: 'inject-chatbot-meta',
         transformIndexHtml(html) {
-          return html.replace(
-            '</head>',
-            `  <meta name="getmeds-chatbot-api" content="${chatbotUrl}" />
+          const suppressor = `\n  <script>
+    (function() {
+      var w = console.warn;
+      console.warn = function() {
+        if (arguments[0] && typeof arguments[0] === 'string' && arguments[0].indexOf('cdn.tailwindcss.com') !== -1) return;
+        w.apply(console, arguments);
+      };
+    })();
+  </script>`;
+          return html
+            .replace('<head>', '<head>' + suppressor)
+            .replace(
+              '</head>',
+              `  <meta name="getmeds-chatbot-api" content="${chatbotUrl}" />
   <meta name="getmeds-sanity-project-id" content="${sanityProjectId}" />
   <meta name="getmeds-sanity-dataset" content="${sanityDataset}" />
   <meta name="getmeds-sanity-api-version" content="${sanityApiVersion}" />\n</head>`
-          );
+            );
         }
       },
     {
