@@ -3,9 +3,10 @@ import { injectHTML } from '../lib/injectHTML';
 import { useImageMapper } from '../lib/useSanity';
 
 export default function AboutUs() {
-  const { getImage } = useImageMapper('about-us');
+  const { getImage, loading: imagesLoading } = useImageMapper('about-us');
   const valuesContainerRef = useRef<HTMLDivElement>(null);
   const [activePanel, setActivePanel] = useState(0);
+  const [heroImgLoaded, setHeroImgLoaded] = useState(false);
 
   useEffect(() => {
     const navContainer = document.getElementById('navbar-container');
@@ -132,13 +133,16 @@ export default function AboutUs() {
 
       {/* Enhanced Hero Section */}
       <section className="w-full mx-auto px-3 sm:px-4 md:px-6 mt-3 md:mt-4 mb-0 max-w-[1600px]">
-        <div className="relative rounded-[1.5rem] overflow-hidden min-h-[450px] md:min-h-[500px] flex items-end group">
-          {/* Background Image */}
-          <div className="absolute inset-0 z-0">
-            <img src={getImage('assets/aboutusone.jpg', 'assets/fallback.jpg')} data-json-src="hero.image" data-json-alt="hero.imageAlt"
-              className="w-full h-full object-cover object-center transform group-hover:scale-105 transition-transform duration-[4s]"
-              alt="About Getmeds" />
-          </div>
+        <div className={`relative rounded-[1.5rem] overflow-hidden min-h-[450px] md:min-h-[500px] flex items-end group transition-colors duration-500 ${!heroImgLoaded ? 'bg-gray-200 animate-pulse' : 'bg-gray-100'}`}>
+          {/* Background Image — only mount after Sanity resolves so the src never changes */}
+          {!imagesLoading && (
+            <div className="absolute inset-0 z-0">
+              <img src={getImage('assets/aboutusone.jpg', 'assets/fallback.jpg')} data-json-src="hero.image" data-json-alt="hero.imageAlt"
+                onLoad={() => setHeroImgLoaded(true)}
+                className={`w-full h-full object-cover object-center transform group-hover:scale-105 transition-[opacity,transform] duration-700 ${heroImgLoaded ? 'opacity-100' : 'opacity-0'}`}
+                alt="About Getmeds" />
+            </div>
+          )}
 
           {/* Content */}
           <div className="relative z-10 w-full px-8 md:px-14 pb-12 md:pb-16 pt-20 max-w-4xl ca-anim ca-up">

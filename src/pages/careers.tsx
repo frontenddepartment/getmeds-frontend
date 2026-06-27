@@ -14,8 +14,9 @@ const getPositionType = (title: string, desc: string): string => {
 };
 
 const Careers: React.FC = () => {
-  const { getImage } = useImageMapper('careers');
+  const { getImage, loading: imagesLoading } = useImageMapper('careers');
   const [activeCareersPanel, setActiveCareersPanel] = useState(0);
+  const [heroImgLoaded, setHeroImgLoaded] = useState(false);
   const [jobs, setJobs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [applyModalOpen, setApplyModalOpen] = useState(false);
@@ -254,9 +255,16 @@ const Careers: React.FC = () => {
 
       {/* HERO SECTION */}
       <section className="w-full mx-auto px-3 sm:px-4 md:px-6 mt-3 md:mt-4 mb-0 max-w-[1600px]">
-        <div className="relative rounded-[1.5rem] overflow-hidden min-h-[450px] md:min-h-[500px] flex items-end bg-gray-100">
-          <img src={getImage('assets/careersherosection.jpg', 'assets/careersherosection.jpg')} alt="Getmeds Team"
-            className="absolute inset-0 w-full h-full object-cover object-right-top" />
+        <div className={`relative rounded-[1.5rem] overflow-hidden min-h-[450px] md:min-h-[500px] flex items-end transition-colors duration-500 ${!heroImgLoaded ? 'bg-gray-200 animate-pulse' : 'bg-gray-100'}`}>
+          {/* Background Image — only mount after Sanity resolves so the src never changes */}
+          {!imagesLoading && (
+            <img
+              src={getImage('assets/careersherosection.jpg', 'assets/careersherosection.jpg')}
+              alt="Getmeds Team"
+              onLoad={() => setHeroImgLoaded(true)}
+              className={`absolute inset-0 w-full h-full object-cover object-right-top transition-opacity duration-700 ${heroImgLoaded ? 'opacity-100' : 'opacity-0'}`}
+            />
+          )}
           <div className="relative z-10 w-full px-8 md:px-14 pb-7 md:pb-8 pt-0">
             <div className="inline-block max-w-[60%]">
               <h1 className="text-2xl md:text-5xl lg:text-6xl leading-[1.1] font-bold mb-4 tracking-tight">

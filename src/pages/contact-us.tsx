@@ -30,7 +30,7 @@ function getPurposeIcon(purpose: string): string {
 
 
 export default function ContactUs() {
-  const { getImage } = useImageMapper('contact-us');
+  const { getImage, loading: imagesLoading } = useImageMapper('contact-us');
   const { data: settings } = useSiteSettings();
   const [formData, setFormData] = useState({
     name: '',
@@ -39,6 +39,7 @@ export default function ContactUs() {
     subject: '',
     message: ''
   });
+  const [heroImgLoaded, setHeroImgLoaded] = useState(false);
   const [submitState, setSubmitState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
   const [successModalOpen, setSuccessModalOpen] = useState(false);
 
@@ -146,28 +147,23 @@ export default function ContactUs() {
       {/* Contact Us Hero Section */}
       <section className="w-full mx-auto px-3 sm:px-4 md:px-6 mt-3 md:mt-4 mb-6 max-w-[1600px]">
         <div
-          className="relative rounded-[1.5rem] border border-gray-100/20 overflow-hidden min-h-[450px] md:min-h-[500px] flex items-end shadow-sm">
-          {/* Background Image */}
-          <img src={getImage('assets/contactushero.png', 'assets/contactushero.png')} alt="Contact Us"
-            className="absolute inset-0 w-full h-full object-cover object-[85%_center] md:object-center" />
-          {/* Floating icons */}
-          <div className="absolute top-[12%] right-[25%] md:top-[18%] md:right-[30%] lg:right-[25%] flex items-center justify-center bg-white/20 backdrop-blur-lg border border-white/30 shadow-[0_8px_32px_rgba(0,0,0,0.15)] rounded-2xl w-12 h-12 md:w-[70px] md:h-[70px] animate-float-1 z-20">
-            <i className="fa-solid fa-envelope text-white text-xl md:text-3xl drop-shadow-md"></i>
-          </div>
-          <div className="absolute top-[40%] right-[2%] md:top-[45%] md:right-[6%] lg:right-[8%] flex items-center justify-center bg-white/20 backdrop-blur-lg border border-white/30 shadow-[0_8px_32px_rgba(0,0,0,0.15)] rounded-2xl w-10 h-10 md:w-[60px] md:h-[60px] animate-float-2 z-20">
-            <i className="fa-solid fa-phone-volume text-white text-lg md:text-2xl drop-shadow-md"></i>
-          </div>
-          <div className="absolute top-[25%] left-[5%] md:top-[60%] md:left-[auto] md:right-[22%] lg:right-[25%] flex items-center justify-center bg-white/20 backdrop-blur-lg border border-white/30 shadow-[0_8px_32px_rgba(0,0,0,0.15)] rounded-[20px] w-14 h-14 md:w-[84px] md:h-[84px] animate-float-3 z-20">
-            <i className="fa-solid fa-comments text-white text-2xl md:text-[38px] drop-shadow-md"></i>
-          </div>
-
+          className={`relative rounded-[1.5rem] border border-gray-100/20 overflow-hidden min-h-[450px] md:min-h-[500px] flex items-end shadow-sm transition-colors duration-500 ${!heroImgLoaded ? 'bg-gray-200 animate-pulse' : 'bg-gray-100'}`}>
+          {/* Background Image — only mount after Sanity resolves so the src never changes */}
+          {!imagesLoading && (
+            <img
+              src={getImage('assets/contactushero.png', 'assets/contactushero.png')}
+              alt="Contact Us"
+              onLoad={() => setHeroImgLoaded(true)}
+              className={`absolute inset-0 w-full h-full object-cover object-[85%_center] md:object-center transition-opacity duration-700 ${heroImgLoaded ? 'opacity-100' : 'opacity-0'}`}
+            />
+          )}
           <div className="relative z-10 w-full px-8 md:px-14 pb-12 md:pb-16 pt-20 max-w-4xl">
             <span className="text-white/70 font-bold text-sm uppercase tracking-[0.2em] mb-3 block">Contact Us</span>
             <h1 className="text-[28px] md:text-[42px] leading-tight font-bold mb-4 tracking-tight">
-              <span className="text-white">For patients, partners,</span><br />
-              <span className="text-white">and providers.</span>
+              <span className="block bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">For patients, partners,</span>
+              <span className="block bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">and providers.</span>
             </h1>
-            <p className="text-white/90 text-[13px] md:text-[15px] max-w-[620px] mb-5 leading-relaxed font-normal">
+            <p className="text-[#000b5d] text-[13px] md:text-[15px] max-w-[620px] mb-5 leading-relaxed font-medium">
               For inquiries about our pharmaceutical portfolio, partnership opportunities, careers, or patient access programs — our team is ready to help.
             </p>
           </div>
