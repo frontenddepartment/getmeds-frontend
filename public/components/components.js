@@ -101,7 +101,7 @@
             authContainer.id = 'auth-modal-container';
             document.body.appendChild(authContainer);
 
-            fetch('components/auth_modals.html?v=' + new Date().getTime())
+            fetch('/components/auth_modals.html?v=' + new Date().getTime())
                 .then(res => res.text())
                 .then(html => {
                     authContainer.innerHTML = html;
@@ -1264,7 +1264,7 @@
         }
 
         // Always force the Getmeds logo
-        link.href = 'assets/getmedslogo.png';
+        link.href = '/assets/getmedslogo.png';
         console.log('[Getmeds] Favicon standardized');
     }
 
