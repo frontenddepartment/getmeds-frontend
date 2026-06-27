@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { injectHTML } from '../lib/injectHTML';
 import { useImageMapper } from '../lib/useSanity';
 import { getCareers } from '../lib/queries';
@@ -138,13 +138,13 @@ const Careers: React.FC = () => {
         setLoading(false);
       });
 
-    fetch('/components/navbar.html')
+    fetch('/components/navbar.html', { cache: 'no-store' })
       .then(r => r.text())
       .then(html => {
         const el = document.getElementById('navbar-container');
         if (el) injectHTML(el, html);
       });
-    fetch('/components/footer.html')
+    fetch('/components/footer.html', { cache: 'no-store' })
       .then(r => r.text())
       .then(html => {
         const el = document.getElementById('footer-container');

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import { useCategories, useImageMapper, useNews, useSiteSettings } from '../lib/useSanity';
 import { getGoogleSpreadsheetBySlug } from '../lib/queries';
 import { injectHTML } from '../lib/injectHTML';
@@ -651,7 +651,7 @@ export default function GetMedsHomepage() {
     // 6. Dynamically load the footer component
     const footerContainer = document.getElementById('footer-container');
     if (footerContainer && footerContainer.innerHTML.trim() === '') {
-      fetch('/components/footer.html')
+      fetch('/components/footer.html', { cache: 'no-store' })
         .then(res => res.text())
         .then(html => { injectHTML(footerContainer, html); });
     }

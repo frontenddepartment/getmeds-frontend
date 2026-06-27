@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useCallback } from 'react';
+﻿import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { injectHTML } from '../lib/injectHTML';
 import { useNewsPaginated } from '../lib/useSanity';
 import { urlFor } from '../lib/sanity';
@@ -113,7 +113,7 @@ const mapArticleToCategory = (article: any): string => {
 };
 
 export default function Blog() {
-  const { articles, loading, loadingMore, hasMore, loadMore } = useNewsPaginated(100);
+  const { articles, loading, loadingMore, hasMore, loadMore, loadMoreError } = useNewsPaginated(9);
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -122,10 +122,10 @@ export default function Blog() {
 
   const handleObserver = useCallback((entries: IntersectionObserverEntry[]) => {
     const target = entries[0];
-    if (target.isIntersecting && hasMore && !loadingMore && !loading) {
+    if (target.isIntersecting && hasMore && !loadingMore && !loading && !loadMoreError) {
       loadMore();
     }
-  }, [hasMore, loadingMore, loading, loadMore]);
+  }, [hasMore, loadingMore, loading, loadMore, loadMoreError]);
 
   useEffect(() => {
     const sentinel = sentinelRef.current;
@@ -142,15 +142,31 @@ export default function Blog() {
   }, [handleObserver]);
 
   useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('bl-in');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.08, rootMargin: '0px 0px -40px 0px' }
+    );
+    document.querySelectorAll('.bl-anim').forEach(el => observer.observe(el));
+    return () => observer.disconnect();
+  }, [articles]);
+
+  useEffect(() => {
     const navContainer = document.getElementById('navbar-container');
     if (navContainer && navContainer.innerHTML.trim() === '') {
-      fetch('/components/navbar.html')
+      fetch('/components/navbar.html', { cache: 'no-store' })
         .then(r => r.text())
         .then(html => { injectHTML(navContainer, html); });
     }
     const footerContainer = document.getElementById('footer-container');
     if (footerContainer && footerContainer.innerHTML.trim() === '') {
-      fetch('/components/footer.html')
+      fetch('/components/footer.html', { cache: 'no-store' })
         .then(r => r.text())
         .then(html => { injectHTML(footerContainer, html); });
     }
@@ -182,6 +198,24 @@ export default function Blog() {
       <style>{`
         .scrollbar-none::-webkit-scrollbar { display: none; }
         .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
+
+        @keyframes blFadeUp   { from { opacity:0; transform:translateY(28px); } to { opacity:1; transform:translateY(0); } }
+        @keyframes blFadeLeft { from { opacity:0; transform:translateX(-28px); } to { opacity:1; transform:translateX(0); } }
+        @keyframes blFadeRight{ from { opacity:0; transform:translateX(28px);  } to { opacity:1; transform:translateX(0); } }
+        @keyframes blFadeIn   { from { opacity:0; }                              to { opacity:1; }                         }
+
+        .bl-anim { opacity:0; }
+        .bl-anim.bl-in.bl-up    { animation: blFadeUp    0.6s cubic-bezier(0.22,1,0.36,1) forwards; }
+        .bl-anim.bl-in.bl-left  { animation: blFadeLeft  0.6s cubic-bezier(0.22,1,0.36,1) forwards; }
+        .bl-anim.bl-in.bl-right { animation: blFadeRight 0.6s cubic-bezier(0.22,1,0.36,1) forwards; }
+        .bl-anim.bl-in.bl-fade  { animation: blFadeIn    0.6s ease forwards; }
+
+        .bl-d1 { animation-delay: 0.08s !important; }
+        .bl-d2 { animation-delay: 0.16s !important; }
+        .bl-d3 { animation-delay: 0.24s !important; }
+        .bl-d4 { animation-delay: 0.32s !important; }
+        .bl-d5 { animation-delay: 0.40s !important; }
+        .bl-d6 { animation-delay: 0.48s !important; }
       `}</style>
 
       {/* Navbar */}
@@ -189,12 +223,12 @@ export default function Blog() {
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-2">
         <div className="mb-10">
-          <span className="inline-block bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent font-bold uppercase tracking-widest text-sm mb-3">Our Blog</span>
-          <h1 className="text-3xl md:text-4xl font-semibold text-gray-900 leading-tight mb-3">
+          <span className="bl-anim bl-up inline-block bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent font-bold uppercase tracking-widest text-sm mb-3">Our Blog</span>
+          <h1 className="bl-anim bl-up bl-d1 text-3xl md:text-4xl font-semibold text-gray-900 leading-tight mb-3">
             Insights from{' '}
             <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">Getmeds</span>
           </h1>
-          <p className="text-gray-500 text-[15px] max-w-full leading-relaxed">
+          <p className="bl-anim bl-up bl-d2 text-gray-500 text-[15px] max-w-full leading-relaxed">
             Stay informed with the latest news, health guides, and updates from Getmeds — your trusted source for pharmaceutical insights and patient care resources in the Philippines.
           </p>
         </div>
@@ -228,7 +262,7 @@ export default function Blog() {
               {featured && (
                 <a
                   href={`/blog/${featured.slug || slugify(featured.title)}`}
-                  className="relative rounded-2xl overflow-hidden block group no-underline"
+                  className="bl-anim bl-left relative rounded-2xl overflow-hidden block group no-underline"
                   style={{ minHeight: '420px' }}
                 >
                   <img
@@ -253,7 +287,7 @@ export default function Blog() {
               )}
 
               {/* Right: Latest post list */}
-              <div>
+              <div className="bl-anim bl-right bl-d1">
                 <h2 className="font-semibold text-[22px] mb-5 text-gray-900">Latest post</h2>
                 <div className="space-y-5">
                   {latestPosts.map(article => (
@@ -285,7 +319,7 @@ export default function Blog() {
             {/* ===== BOTTOM: CATEGORY FILTER + SEARCH + CARD GRID ===== */}
             <div>
               {/* Header row: title + categories + search */}
-              <div className="flex flex-col gap-4 mb-6">
+              <div className="bl-anim bl-up flex flex-col gap-4 mb-6">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                   <h2 className="font-semibold text-[22px] text-gray-900 shrink-0">Recent blog posts</h2>
 
@@ -367,7 +401,7 @@ export default function Blog() {
                       <a
                         key={article._id}
                         href={`/blog/${article.slug || slugify(article.title)}`}
-                        className="block rounded-2xl overflow-hidden border border-gray-100 hover:shadow-lg transition-shadow no-underline group"
+                        className={`bl-anim bl-up bl-d${(filteredCardArticles.indexOf(article) % 6) + 1} block rounded-2xl overflow-hidden border border-gray-100 hover:shadow-lg transition-shadow no-underline group`}
                         style={{ boxShadow: '0 1px 6px rgba(0,0,0,0.05)' }}
                       >
                         <div className="overflow-hidden" style={{ height: '200px' }}>
@@ -405,8 +439,25 @@ export default function Blog() {
                 </div>
               )}
 
+              {/* Load more error + retry */}
+              {loadMoreError && !loadingMore && (
+                <div className="flex flex-col items-center justify-center py-10 gap-3">
+                  <div className="flex items-center gap-2 text-sm text-gray-500">
+                    <i className="fa-solid fa-circle-exclamation text-red-400" />
+                    <span>Failed to load more posts.</span>
+                  </div>
+                  <button
+                    onClick={loadMore}
+                    className="px-5 py-2 rounded-full text-[13px] font-semibold text-white transition-opacity hover:opacity-90"
+                    style={{ background: 'linear-gradient(135deg, #61A644, #1D9FDA)' }}
+                  >
+                    Try again
+                  </button>
+                </div>
+              )}
+
               {/* All posts loaded message */}
-              {!hasMore && filteredCardArticles.length > 0 && (
+              {!hasMore && !loadMoreError && filteredCardArticles.length > 0 && (
                 <div className="flex justify-center py-10">
                   <div className="flex items-center gap-2 text-xs text-gray-400">
                     <div className="w-8 h-px bg-gray-200" />

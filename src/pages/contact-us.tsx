@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { injectHTML } from '../lib/injectHTML';
 import { useImageMapper, useSiteSettings } from '../lib/useSanity';
 import { getGoogleSpreadsheetBySlug } from '../lib/queries';
@@ -42,6 +42,7 @@ export default function ContactUs() {
   const [heroImgLoaded, setHeroImgLoaded] = useState(false);
   const [submitState, setSubmitState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
   const [successModalOpen, setSuccessModalOpen] = useState(false);
+  const [privacyModalOpen, setPrivacyModalOpen] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -95,16 +96,32 @@ export default function ContactUs() {
   };
 
   useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('ct-in');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.08, rootMargin: '0px 0px -30px 0px' }
+    );
+    document.querySelectorAll('.ct-anim').forEach(el => observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
     const navContainer = document.getElementById('navbar-container');
     if (navContainer && navContainer.innerHTML.trim() === '') {
-      fetch('/components/navbar.html')
+      fetch('/components/navbar.html', { cache: 'no-store' })
         .then(r => r.text())
         .then(html => { injectHTML(navContainer, html); });
     }
 
     const footerContainer = document.getElementById('footer-container');
     if (footerContainer && footerContainer.innerHTML.trim() === '') {
-      fetch('/components/footer.html')
+      fetch('/components/footer.html', { cache: 'no-store' })
         .then(r => r.text())
         .then(html => { injectHTML(footerContainer, html); });
     }
@@ -140,6 +157,25 @@ export default function ContactUs() {
 
   return (
     <div style={{ fontFamily: "'Poppins', sans-serif" }} className="bg-white text-gray-800 antialiased">
+      <style>{`
+        .ct-anim { opacity: 0; }
+        .ct-anim.ct-in.ct-up    { animation: ctFadeUp    0.65s cubic-bezier(0.22,1,0.36,1) both; }
+        .ct-anim.ct-in.ct-left  { animation: ctFadeLeft  0.65s cubic-bezier(0.22,1,0.36,1) both; }
+        .ct-anim.ct-in.ct-right { animation: ctFadeRight 0.65s cubic-bezier(0.22,1,0.36,1) both; }
+        .ct-anim.ct-in.ct-fade  { animation: ctFadeIn    0.7s ease both; }
+        .ct-anim.ct-in.ct-zoom  { animation: ctZoomIn    0.6s cubic-bezier(0.22,1,0.36,1) both; }
+        .ct-d1.ct-in { animation-delay: 0.08s !important; }
+        .ct-d2.ct-in { animation-delay: 0.16s !important; }
+        .ct-d3.ct-in { animation-delay: 0.24s !important; }
+        .ct-d4.ct-in { animation-delay: 0.32s !important; }
+        .ct-d5.ct-in { animation-delay: 0.40s !important; }
+        .ct-d6.ct-in { animation-delay: 0.48s !important; }
+        @keyframes ctFadeUp    { from { opacity:0; transform:translateY(36px);  } to { opacity:1; transform:translateY(0); } }
+        @keyframes ctFadeLeft  { from { opacity:0; transform:translateX(-44px); } to { opacity:1; transform:translateX(0); } }
+        @keyframes ctFadeRight { from { opacity:0; transform:translateX(44px);  } to { opacity:1; transform:translateX(0); } }
+        @keyframes ctFadeIn    { from { opacity:0; }                              to { opacity:1; }                         }
+        @keyframes ctZoomIn    { from { opacity:0; transform:scale(0.92); }       to { opacity:1; transform:scale(1); }     }
+      `}</style>
 
       {/* Navbar */}
       <div id="navbar-container" className="sticky top-0 z-[50]" />
@@ -160,11 +196,11 @@ export default function ContactUs() {
           )}
 
           <div className="relative z-10 w-full px-5 sm:px-8 md:px-14 pb-1 sm:pb-5 md:pb-16 pt-16 sm:pt-20 max-w-4xl">
-            <h1 className="text-[22px] sm:text-[28px] md:text-[42px] leading-tight font-bold mb-3 md:mb-4 tracking-tight">
+            <h1 className="ct-anim ct-up text-[22px] sm:text-[28px] md:text-[42px] leading-tight font-bold mb-3 md:mb-4 tracking-tight">
               <span className="inline-block bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">For patients, partners,</span><br />
               <span className="inline-block bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">and providers.</span>
             </h1>
-            <p className="text-[#000b5d] text-[12px] sm:text-[13px] md:text-[15px] max-w-[90%] sm:max-w-[480px] md:max-w-[620px] mb-5 leading-relaxed font-medium">
+            <p className="ct-anim ct-up ct-d2 text-[#000b5d] text-[12px] sm:text-[13px] md:text-[15px] max-w-[90%] sm:max-w-[480px] md:max-w-[620px] mb-5 leading-relaxed font-medium">
               For inquiries about our pharmaceutical portfolio, partnership opportunities, careers, or patient access programs — our team is ready to help.
             </p>
           </div>
@@ -177,17 +213,17 @@ export default function ContactUs() {
 
           {/* Left Info Area */}
           <div className="w-full lg:w-[45%] lg:pt-2">
-            <h2 className="text-2xl md:text-[28px] font-bold text-dark mb-3 leading-tight tracking-tight">
+            <h2 className="ct-anim ct-left text-2xl md:text-[28px] font-bold text-dark mb-3 leading-tight tracking-tight">
               How to Reach Us
             </h2>
-            <p className="text-gray-500 text-[14px] mb-6 lg:mb-10 leading-relaxed max-w-[90%]">
+            <p className="ct-anim ct-left ct-d1 text-gray-500 text-[14px] mb-6 lg:mb-10 leading-relaxed max-w-[90%]">
               Pick the channel that fits your need. General inquiries, careers, and partnerships are routed directly to the right team for faster response.
             </p>
 
             {/* Dynamic contact groups grid */}
             <div className="grid grid-cols-2 lg:grid-cols-2 gap-3 lg:gap-y-10 lg:gap-x-8">
-              {contactGroups.map((group) => (
-                <div key={group._key} className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm lg:bg-transparent lg:rounded-none lg:p-0 lg:border-0 lg:shadow-none">
+              {contactGroups.map((group, idx) => (
+                <div key={group._key} className={`ct-anim ct-up ct-d${Math.min(idx + 2, 6)} bg-white rounded-2xl p-4 border border-gray-100 shadow-sm lg:bg-transparent lg:rounded-none lg:p-0 lg:border-0 lg:shadow-none`}>
                   {/* Purpose heading with icon */}
                   <div className="flex items-center gap-2 mb-3">
                     <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
@@ -238,7 +274,7 @@ export default function ContactUs() {
               ))}
 
               {/* Social Network — always last */}
-              <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm lg:bg-transparent lg:rounded-none lg:p-0 lg:border-0 lg:shadow-none">
+              <div className="ct-anim ct-up ct-d6 bg-white rounded-2xl p-4 border border-gray-100 shadow-sm lg:bg-transparent lg:rounded-none lg:p-0 lg:border-0 lg:shadow-none">
                 <div className="flex items-center gap-2 mb-3">
                   <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
                     style={{ background: 'linear-gradient(135deg, #61A644, #1D9FDA)' }}>
@@ -259,7 +295,7 @@ export default function ContactUs() {
           </div>
 
           {/* Right Form Area */}
-          <div className="w-full lg:w-[55%] bg-white rounded-3xl p-8 md:p-11 shadow-[0_8px_30px_rgba(0,0,0,0.06)] border border-gray-100/50">
+          <div className="ct-anim ct-right w-full lg:w-[55%] bg-white rounded-3xl p-8 md:p-11 shadow-[0_8px_30px_rgba(0,0,0,0.06)] border border-gray-100/50">
             <h3 className="text-[21px] font-bold bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent mb-7 tracking-tight">
               Get in Touch with Us
             </h3>
@@ -334,8 +370,8 @@ export default function ContactUs() {
 
               {/* Footer Link */}
               <div className="pt-2 text-left pb-2">
-                <p className="text-[11px] text-gray-500 font-medium">By submitting, I agree to the <a href="#"
-                  className="text-[#0057FF] hover:underline transition">Privacy Policy</a>.</p>
+                <p className="text-[11px] text-gray-500 font-medium">By submitting, I agree to the <button type="button" onClick={() => setPrivacyModalOpen(true)}
+                  className="text-[#0057FF] hover:underline transition font-medium">Privacy Policy</button>.</p>
               </div>
             </form>
           </div>
@@ -345,6 +381,154 @@ export default function ContactUs() {
 
       {/* Footer */}
       <div id="footer-container" />
+
+      {/* ── Privacy Policy Modal ── */}
+      {privacyModalOpen && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/50 backdrop-blur-sm px-4 py-6">
+          <div className="bg-white w-full max-w-2xl rounded-2xl shadow-2xl flex flex-col overflow-hidden" style={{ maxHeight: '88vh' }}>
+            {/* Header */}
+            <div className="flex items-start justify-between px-8 pt-7 pb-5 border-b border-gray-100 flex-shrink-0">
+              <div>
+                <h2 className="text-[18px] font-bold text-gray-900 mb-1">Privacy Policy</h2>
+                <p className="text-[11px] text-gray-400 font-medium">Effective Date: April 2026</p>
+              </div>
+              <button onClick={() => setPrivacyModalOpen(false)}
+                className="w-8 h-8 flex items-center justify-center rounded-full text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition flex-shrink-0 mt-0.5">
+                <i className="fa-solid fa-xmark text-base"></i>
+              </button>
+            </div>
+
+            {/* Scrollable body */}
+            <div className="overflow-y-auto px-8 py-6 space-y-6 text-[13px] text-gray-600 leading-relaxed">
+
+              <section>
+                <h3 className="text-[14px] font-bold text-gray-900 mb-2">01 &nbsp; Introduction</h3>
+                <p>Getmeds values your privacy and is committed to protecting the personal information of visitors, partners, healthcare professionals, and other stakeholders who interact with our website.</p>
+                <p className="mt-2">This Privacy Policy explains how we collect, use, store, and protect personal information obtained through our website and related communications. Our practices comply with the Data Privacy Act of 2012 and other applicable data protection regulations.</p>
+                <p className="mt-2">By accessing or using this website, you acknowledge and agree to the practices described in this Privacy Policy.</p>
+              </section>
+
+              <section>
+                <h3 className="text-[14px] font-bold text-gray-900 mb-2">02 &nbsp; Information We Collect</h3>
+                <p className="font-semibold text-gray-800 mb-1">Personal Information</p>
+                <p>We may collect personal information that you voluntarily provide when contacting us or submitting inquiries through the website, including:</p>
+                <ul className="mt-2 space-y-1 pl-4 list-disc">
+                  <li>Full name</li>
+                  <li>Email address</li>
+                  <li>Phone number</li>
+                  <li>Company or organization name</li>
+                  <li>Professional affiliation (if applicable)</li>
+                  <li>Any information included in your message or inquiry</li>
+                </ul>
+                <p className="font-semibold text-gray-800 mt-4 mb-1">Non-Personal Information</p>
+                <p>We may automatically collect certain technical information when you visit our website, including:</p>
+                <ul className="mt-2 space-y-1 pl-4 list-disc">
+                  <li>IP address</li>
+                  <li>Browser type and version</li>
+                  <li>Device information</li>
+                  <li>Pages visited and browsing activity</li>
+                  <li>Date and time of access</li>
+                </ul>
+                <p className="mt-2">This information helps us improve website performance and user experience.</p>
+              </section>
+
+              <section>
+                <h3 className="text-[14px] font-bold text-gray-900 mb-2">03 &nbsp; How We Use Your Information</h3>
+                <p>The information collected may be used for the following purposes:</p>
+                <ul className="mt-2 space-y-1 pl-4 list-disc">
+                  <li>To respond to inquiries and requests for information</li>
+                  <li>To provide details about our pharmaceutical products and services</li>
+                  <li>To communicate with healthcare professionals, partners, and stakeholders</li>
+                  <li>To improve our website, services, and user experience</li>
+                  <li>To maintain security and prevent fraudulent activities</li>
+                  <li>To comply with applicable legal and regulatory obligations</li>
+                </ul>
+                <p className="mt-2">We ensure that personal data is processed only for legitimate and lawful purposes.</p>
+              </section>
+
+              <section>
+                <h3 className="text-[14px] font-bold text-gray-900 mb-2">04 &nbsp; Sharing and Disclosure of Information</h3>
+                <p>Getmeds does not sell, rent, or trade personal information to third parties.</p>
+                <p className="mt-2">Personal information may be shared only when necessary with:</p>
+                <ul className="mt-2 space-y-1 pl-4 list-disc">
+                  <li>Authorized employees and representatives of the company</li>
+                  <li>Service providers supporting website operations or communication systems</li>
+                  <li>Regulatory authorities or government agencies when required by law</li>
+                </ul>
+                <p className="mt-2">All parties receiving such information are required to maintain strict confidentiality and protect the data in accordance with applicable laws.</p>
+              </section>
+
+              <section>
+                <h3 className="text-[14px] font-bold text-gray-900 mb-2">05 &nbsp; Cookies and Website Analytics</h3>
+                <p>Our website may use cookies and similar technologies to enhance the browsing experience and analyze website usage. Cookies help us:</p>
+                <ul className="mt-2 space-y-1 pl-4 list-disc">
+                  <li>Understand how visitors interact with our website</li>
+                  <li>Improve website functionality and performance</li>
+                  <li>Optimize content and navigation</li>
+                </ul>
+                <p className="mt-2">Users may modify their browser settings to disable cookies; however, some features of the website may not function properly if cookies are disabled.</p>
+              </section>
+
+              <section>
+                <h3 className="text-[14px] font-bold text-gray-900 mb-2">06 &nbsp; Data Security</h3>
+                <p>We implement appropriate technical and organizational security measures to safeguard personal information against unauthorized access, alteration, disclosure, or destruction.</p>
+                <p className="mt-2">While we strive to protect personal data, no electronic transmission or storage system can be guaranteed to be completely secure.</p>
+              </section>
+
+              <section>
+                <h3 className="text-[14px] font-bold text-gray-900 mb-2">07 &nbsp; Data Subject Rights</h3>
+                <p>In accordance with the Data Privacy Act of 2012, individuals whose personal information is processed have the following rights:</p>
+                <ul className="mt-2 space-y-1 pl-4 list-disc">
+                  <li>Right to be informed</li>
+                  <li>Right to access personal information</li>
+                  <li>Right to correct inaccurate or incomplete data</li>
+                  <li>Right to object to data processing</li>
+                  <li>Right to request deletion or blocking of personal data</li>
+                  <li>Right to file a complaint with the appropriate regulatory authority</li>
+                </ul>
+                <p className="mt-2">Requests regarding personal data may be submitted through the contact details provided below.</p>
+              </section>
+
+              <section>
+                <h3 className="text-[14px] font-bold text-gray-900 mb-2">08 &nbsp; Third-Party Links</h3>
+                <p>Our website may contain links to external websites operated by third parties. These websites have their own privacy policies, and Getmeds is not responsible for their content or privacy practices.</p>
+                <p className="mt-2">Users are encouraged to review the privacy policies of any external websites they visit.</p>
+              </section>
+
+              <section>
+                <h3 className="text-[14px] font-bold text-gray-900 mb-2">09 &nbsp; Retention of Personal Data</h3>
+                <p>Personal information will be retained only for as long as necessary to fulfill the purposes outlined in this policy, unless a longer retention period is required or permitted by law.</p>
+              </section>
+
+              <section>
+                <h3 className="text-[14px] font-bold text-gray-900 mb-2">10 &nbsp; Changes to This Privacy Policy</h3>
+                <p>Getmeds reserves the right to update or modify this Privacy Policy at any time to reflect changes in legal requirements, company practices, or website functionality. Updates will be posted on this page with the revised effective date.</p>
+              </section>
+
+              <section>
+                <h3 className="text-[14px] font-bold text-gray-900 mb-2">11 &nbsp; Contact Information</h3>
+                <p>For questions or requests regarding this Privacy Policy or the handling of personal data, you may contact:</p>
+                <div className="mt-3 space-y-1">
+                  <p className="font-semibold text-gray-800">Getmeds</p>
+                  <p>Unit 301 &amp; 305, 17 Vatican Building, Vatican Drive, BF Resort Village, Las Piñas City, Philippines</p>
+                  <p>Email: <a href="mailto:info@getmeds.ph" className="text-[#1D9FDA] hover:underline">info@getmeds.ph</a></p>
+                  <p>Phone: <a href="tel:+639190769103" className="text-[#1D9FDA] hover:underline">+63 919 076 9103</a></p>
+                </div>
+              </section>
+
+            </div>
+
+            {/* Footer */}
+            <div className="border-t border-gray-100 px-8 py-4 flex-shrink-0 text-center">
+              <button onClick={() => setPrivacyModalOpen(false)}
+                className="text-[13px] font-semibold hover:underline"
+                style={{ background: 'linear-gradient(to right,#61A644,#1D9FDA)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ── Contact Us Success Modal ── */}
       {successModalOpen && (

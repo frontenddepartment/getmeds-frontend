@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import { injectHTML } from '../lib/injectHTML';
 import { getGoogleSpreadsheetBySlug } from '../lib/queries';
 import { getApiUrl } from '../lib/api';
@@ -10,6 +10,7 @@ export default function OrderMedicines() {
   const [progress, setProgress] = useState(0);
   const slideIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const uploadIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const uploadTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const totalSlides = 3;
 
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
@@ -265,6 +266,14 @@ export default function OrderMedicines() {
     return () => { if (slideIntervalRef.current) clearInterval(slideIntervalRef.current); };
   }, []);
 
+  // Clear upload timers on unmount to prevent setState on unmounted component
+  useEffect(() => {
+    return () => {
+      if (uploadIntervalRef.current) clearInterval(uploadIntervalRef.current);
+      if (uploadTimeoutRef.current) clearTimeout(uploadTimeoutRef.current);
+    };
+  }, []);
+
   const goToSlide = (index: number) => {
     if (slideIntervalRef.current) clearInterval(slideIntervalRef.current);
     setCurrentSlide(index);
@@ -282,7 +291,7 @@ export default function OrderMedicines() {
       if (prog >= 100) {
         prog = 100;
         if (uploadIntervalRef.current) clearInterval(uploadIntervalRef.current);
-        setTimeout(() => {
+        uploadTimeoutRef.current = setTimeout(() => {
           setUploadComplete(true);
           closeUploadModal();
         }, 500);
@@ -294,7 +303,8 @@ export default function OrderMedicines() {
   const closeUploadModal = () => {
     setModalOpen(false);
     if (uploadIntervalRef.current) clearInterval(uploadIntervalRef.current);
-    setTimeout(() => setProgress(0), 300);
+    if (uploadTimeoutRef.current) clearTimeout(uploadTimeoutRef.current);
+    uploadTimeoutRef.current = setTimeout(() => setProgress(0), 300);
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -336,13 +346,13 @@ export default function OrderMedicines() {
   useEffect(() => {
     const navContainer = document.getElementById('navbar-container');
     if (navContainer && navContainer.innerHTML.trim() === '') {
-      fetch('/components/navbar.html')
+      fetch('/components/navbar.html', { cache: 'no-store' })
         .then(r => r.text())
         .then(html => { injectHTML(navContainer, html); });
     }
     const footerContainer = document.getElementById('footer-container');
     if (footerContainer && footerContainer.innerHTML.trim() === '') {
-      fetch('/components/footer.html')
+      fetch('/components/footer.html', { cache: 'no-store' })
         .then(r => r.text())
         .then(html => { injectHTML(footerContainer, html); });
     }

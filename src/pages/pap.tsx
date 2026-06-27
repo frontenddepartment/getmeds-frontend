@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import { injectHTML } from '../lib/injectHTML';
 import { useImageMapper } from '../lib/useSanity';
 
@@ -49,11 +49,11 @@ export default function PatientAssistanceProgram() {
   useEffect(() => {
     const navContainer = document.getElementById('navbar-container');
     if (navContainer && navContainer.innerHTML.trim() === '') {
-      fetch('/components/navbar.html').then(r => r.text()).then(html => { injectHTML(navContainer, html); });
+      fetch('/components/navbar.html', { cache: 'no-store' }).then(r => r.text()).then(html => { injectHTML(navContainer, html); });
     }
     const footerContainer = document.getElementById('footer-container');
     if (footerContainer && footerContainer.innerHTML.trim() === '') {
-      fetch('/components/footer.html').then(r => r.text()).then(html => { injectHTML(footerContainer, html); });
+      fetch('/components/footer.html', { cache: 'no-store' }).then(r => r.text()).then(html => { injectHTML(footerContainer, html); });
     }
   }, []);
 

@@ -69,7 +69,10 @@
         <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-gray-500">
             <p id="footer-copyright">&copy; <span id="footer-year"></span> Getmeds. All rights reserved.</p>
             <div id="footer-legal-links" class="flex flex-wrap justify-center gap-x-6 gap-y-2 mt-4 md:mt-0">
-                <a href="#" class="footer-link text-gray-500 hover:!text-white">Privacy Policy</a>
+                <button onclick="document.getElementById('privacy-policy-modal').classList.remove('hidden')"
+                    class="footer-link text-gray-500 hover:!text-white bg-transparent border-none cursor-pointer text-xs p-0">
+                    Privacy Policy
+                </button>
                 <a href="#" class="footer-link text-gray-500 hover:!text-white">Terms of Service</a>
                 <button onclick="document.getElementById('medical-disclaimer-modal').classList.remove('hidden')"
                     class="footer-link text-gray-500 hover:!text-white bg-transparent border-none cursor-pointer text-xs p-0">
@@ -102,6 +105,150 @@
                 class="w-full py-2.5 rounded-xl text-sm font-semibold text-white transition"
                 style="background: linear-gradient(135deg, #61A644, #1D9FDA);">
                 I Understand
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Privacy Policy Modal -->
+<div id="privacy-policy-modal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl flex flex-col overflow-hidden" style="max-height:88vh">
+        <!-- Header -->
+        <div class="flex items-start justify-between px-8 pt-7 pb-5 border-b border-gray-100 flex-shrink-0">
+            <div>
+                <h2 class="text-[18px] font-bold text-gray-900 mb-1">Privacy Policy</h2>
+                <p class="text-[11px] text-gray-400 font-medium">Effective Date: April 2026</p>
+            </div>
+            <button onclick="closePrivacyPolicy()"
+                class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 transition flex-shrink-0 mt-0.5">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+        </div>
+        <!-- Content -->
+        <div class="overflow-y-auto px-8 py-6 space-y-6 text-[13px] text-gray-600 leading-relaxed" style="scrollbar-width:thin;scrollbar-color:#e5e7eb transparent;">
+
+            <section>
+                <h3 class="text-[14px] font-bold text-gray-900 mb-2">01 &nbsp; Introduction</h3>
+                <p>Getmeds values your privacy and is committed to protecting the personal information of visitors, partners, healthcare professionals, and other stakeholders who interact with our website.</p>
+                <p class="mt-2">This Privacy Policy explains how we collect, use, store, and protect personal information obtained through our website and related communications. Our practices comply with the Data Privacy Act of 2012 and other applicable data protection regulations.</p>
+                <p class="mt-2">By accessing or using this website, you acknowledge and agree to the practices described in this Privacy Policy.</p>
+            </section>
+
+            <section>
+                <h3 class="text-[14px] font-bold text-gray-900 mb-2">02 &nbsp; Information We Collect</h3>
+                <p class="font-semibold text-gray-800 mb-1">Personal Information</p>
+                <p>We may collect personal information that you voluntarily provide when contacting us or submitting inquiries through the website, including:</p>
+                <ul class="mt-2 space-y-1 pl-4 list-disc">
+                    <li>Full name</li>
+                    <li>Email address</li>
+                    <li>Phone number</li>
+                    <li>Company or organization name</li>
+                    <li>Professional affiliation (if applicable)</li>
+                    <li>Any information included in your message or inquiry</li>
+                </ul>
+                <p class="font-semibold text-gray-800 mt-4 mb-1">Non-Personal Information</p>
+                <p>We may automatically collect certain technical information when you visit our website, including:</p>
+                <ul class="mt-2 space-y-1 pl-4 list-disc">
+                    <li>IP address</li>
+                    <li>Browser type and version</li>
+                    <li>Device information</li>
+                    <li>Pages visited and browsing activity</li>
+                    <li>Date and time of access</li>
+                </ul>
+                <p class="mt-2">This information helps us improve website performance and user experience.</p>
+            </section>
+
+            <section>
+                <h3 class="text-[14px] font-bold text-gray-900 mb-2">03 &nbsp; How We Use Your Information</h3>
+                <p>The information collected may be used for the following purposes:</p>
+                <ul class="mt-2 space-y-1 pl-4 list-disc">
+                    <li>To respond to inquiries and requests for information</li>
+                    <li>To provide details about our pharmaceutical products and services</li>
+                    <li>To communicate with healthcare professionals, partners, and stakeholders</li>
+                    <li>To improve our website, services, and user experience</li>
+                    <li>To maintain security and prevent fraudulent activities</li>
+                    <li>To comply with applicable legal and regulatory obligations</li>
+                </ul>
+                <p class="mt-2">We ensure that personal data is processed only for legitimate and lawful purposes.</p>
+            </section>
+
+            <section>
+                <h3 class="text-[14px] font-bold text-gray-900 mb-2">04 &nbsp; Sharing and Disclosure of Information</h3>
+                <p>Getmeds does not sell, rent, or trade personal information to third parties.</p>
+                <p class="mt-2">Personal information may be shared only when necessary with:</p>
+                <ul class="mt-2 space-y-1 pl-4 list-disc">
+                    <li>Authorized employees and representatives of the company</li>
+                    <li>Service providers supporting website operations or communication systems</li>
+                    <li>Regulatory authorities or government agencies when required by law</li>
+                </ul>
+                <p class="mt-2">All parties receiving such information are required to maintain strict confidentiality and protect the data in accordance with applicable laws.</p>
+            </section>
+
+            <section>
+                <h3 class="text-[14px] font-bold text-gray-900 mb-2">05 &nbsp; Cookies and Website Analytics</h3>
+                <p>Our website may use cookies and similar technologies to enhance the browsing experience and analyze website usage. Cookies help us:</p>
+                <ul class="mt-2 space-y-1 pl-4 list-disc">
+                    <li>Understand how visitors interact with our website</li>
+                    <li>Improve website functionality and performance</li>
+                    <li>Optimize content and navigation</li>
+                </ul>
+                <p class="mt-2">Users may modify their browser settings to disable cookies; however, some features of the website may not function properly if cookies are disabled.</p>
+            </section>
+
+            <section>
+                <h3 class="text-[14px] font-bold text-gray-900 mb-2">06 &nbsp; Data Security</h3>
+                <p>We implement appropriate technical and organizational security measures to safeguard personal information against unauthorized access, alteration, disclosure, or destruction.</p>
+                <p class="mt-2">While we strive to protect personal data, no electronic transmission or storage system can be guaranteed to be completely secure.</p>
+            </section>
+
+            <section>
+                <h3 class="text-[14px] font-bold text-gray-900 mb-2">07 &nbsp; Data Subject Rights</h3>
+                <p>In accordance with the Data Privacy Act of 2012, individuals whose personal information is processed have the following rights:</p>
+                <ul class="mt-2 space-y-1 pl-4 list-disc">
+                    <li>Right to be informed</li>
+                    <li>Right to access personal information</li>
+                    <li>Right to correct inaccurate or incomplete data</li>
+                    <li>Right to object to data processing</li>
+                    <li>Right to request deletion or blocking of personal data</li>
+                    <li>Right to file a complaint with the appropriate regulatory authority</li>
+                </ul>
+                <p class="mt-2">Requests regarding personal data may be submitted through the contact details provided below.</p>
+            </section>
+
+            <section>
+                <h3 class="text-[14px] font-bold text-gray-900 mb-2">08 &nbsp; Third-Party Links</h3>
+                <p>Our website may contain links to external websites operated by third parties. These websites have their own privacy policies, and Getmeds is not responsible for their content or privacy practices.</p>
+                <p class="mt-2">Users are encouraged to review the privacy policies of any external websites they visit.</p>
+            </section>
+
+            <section>
+                <h3 class="text-[14px] font-bold text-gray-900 mb-2">09 &nbsp; Retention of Personal Data</h3>
+                <p>Personal information will be retained only for as long as necessary to fulfill the purposes outlined in this policy, unless a longer retention period is required or permitted by law.</p>
+            </section>
+
+            <section>
+                <h3 class="text-[14px] font-bold text-gray-900 mb-2">10 &nbsp; Changes to This Privacy Policy</h3>
+                <p>Getmeds reserves the right to update or modify this Privacy Policy at any time to reflect changes in legal requirements, company practices, or website functionality. Updates will be posted on this page with the revised effective date.</p>
+            </section>
+
+            <section>
+                <h3 class="text-[14px] font-bold text-gray-900 mb-2">11 &nbsp; Contact Information</h3>
+                <p>For questions or requests regarding this Privacy Policy or the handling of personal data, you may contact:</p>
+                <div class="mt-3 space-y-1">
+                    <p class="font-semibold text-gray-800">Getmeds</p>
+                    <p>Unit 301 &amp; 305, 17 Vatican Building, Vatican Drive, BF Resort Village, Las Piñas City, Philippines</p>
+                    <p>Email: <a href="mailto:info@getmeds.ph" class="text-[#1D9FDA] hover:underline">info@getmeds.ph</a></p>
+                    <p>Phone: <a href="tel:+639190769103" class="text-[#1D9FDA] hover:underline">+63 919 076 9103</a></p>
+                </div>
+            </section>
+
+        </div>
+        <!-- Footer -->
+        <div class="px-8 py-4 border-t border-gray-100 flex-shrink-0 text-center">
+            <button onclick="closePrivacyPolicy()"
+                class="px-8 py-2.5 rounded-xl text-sm font-semibold text-white transition"
+                style="background: linear-gradient(135deg, #61A644, #1D9FDA);">
+                Close
             </button>
         </div>
     </div>
@@ -190,5 +337,14 @@
     // Close modal on backdrop click
     document.getElementById('medical-disclaimer-modal').addEventListener('click', function (e) {
         if (e.target === this) closeDisclaimer();
+    });
+
+    // Privacy Policy modal
+    window.closePrivacyPolicy = function () {
+        document.getElementById('privacy-policy-modal').classList.add('hidden');
+    };
+
+    document.getElementById('privacy-policy-modal').addEventListener('click', function (e) {
+        if (e.target === this) closePrivacyPolicy();
     });
 </script>

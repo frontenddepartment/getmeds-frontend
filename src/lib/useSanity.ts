@@ -371,6 +371,7 @@ export function useNewsPaginated(perPage: number = 20) {
   const [hasMore, setHasMore] = useState(true)
   const [currentPage, setCurrentPage] = useState(1)
   const [error, setError] = useState<Error | null>(null)
+  const [loadMoreError, setLoadMoreError] = useState<Error | null>(null)
 
   // Load the first page on mount
   useEffect(() => {
@@ -400,6 +401,7 @@ export function useNewsPaginated(perPage: number = 20) {
     if (loadingMore || !hasMore) return
     const nextPage = currentPage + 1
     setLoadingMore(true)
+    setLoadMoreError(null)
 
     getNewsPage(nextPage, perPage)
       .then(({ items, totalPages }) => {
@@ -408,13 +410,13 @@ export function useNewsPaginated(perPage: number = 20) {
         setHasMore(nextPage < totalPages)
       })
       .catch((err) => {
-        setError(err instanceof Error ? err : new Error(String(err)))
+        setLoadMoreError(err instanceof Error ? err : new Error(String(err)))
       })
       .finally(() => {
         setLoadingMore(false)
       })
   }
 
-  return { articles, loading, loadingMore, hasMore, loadMore, error }
+  return { articles, loading, loadingMore, hasMore, loadMore, error, loadMoreError }
 }
 

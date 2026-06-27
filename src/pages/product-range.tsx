@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useMemo } from 'react';
+﻿import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { useProducts, useCategories, useImageMapper, useSiteSettings } from '../lib/useSanity';
 import { urlFor, client } from '../lib/sanity';
 import type { Product as SanityProduct, Category } from '../types/sanity';
@@ -178,13 +178,13 @@ export default function ProductRange() {
   useEffect(() => {
     const navContainer = document.getElementById('navbar-container');
     if (navContainer && navContainer.innerHTML.trim() === '') {
-      fetch('/components/navbar.html')
+      fetch('/components/navbar.html', { cache: 'no-store' })
         .then(r => r.text())
         .then(html => { injectHTML(navContainer, html); });
     }
     const footerContainer = document.getElementById('footer-container');
     if (footerContainer && footerContainer.innerHTML.trim() === '') {
-      fetch('/components/footer.html')
+      fetch('/components/footer.html', { cache: 'no-store' })
         .then(r => r.text())
         .then(html => { injectHTML(footerContainer, html); });
     }

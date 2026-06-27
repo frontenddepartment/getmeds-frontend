@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+﻿import React, { useEffect, useRef, useState } from 'react';
 import { injectHTML } from '../lib/injectHTML';
 import { useImageMapper } from '../lib/useSanity';
 
@@ -37,13 +37,13 @@ const Csr: React.FC = () => {
 
   // Navbar / Footer injection
   useEffect(() => {
-    fetch('/components/navbar.html')
+    fetch('/components/navbar.html', { cache: 'no-store' })
       .then(r => r.text())
       .then(html => {
         const el = document.getElementById('navbar-container');
         if (el) injectHTML(el, html);
       });
-    fetch('/components/footer.html')
+    fetch('/components/footer.html', { cache: 'no-store' })
       .then(r => r.text())
       .then(html => {
         const el = document.getElementById('footer-container');
