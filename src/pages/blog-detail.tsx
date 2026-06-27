@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { PortableText } from '@portabletext/react';
 import { injectHTML } from '../lib/injectHTML';
-import { useNewsById } from '../lib/useSanity';
+import { useNewsById, useNewsBySlug } from '../lib/useSanity';
 import { urlFor } from '../lib/sanity';
 import type { SanityImage } from '../types/sanity';
 
@@ -27,23 +27,144 @@ const formatDate = (dateStr: string | undefined | null): string => {
   }
 };
 
-export default function ArticleDetail() {
+const slugify = (text: string | undefined | null) => {
+  if (!text) return '';
+  return text
+    .toString()
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, '-')
+    .replace(/[^\w\-]+/g, '')
+    .replace(/\-\-+/g, '-')
+    .replace(/^-+/, '')
+    .replace(/-+$/, '');
+};
+
+export default function BlogDetail() {
+  const [slug, setSlug] = useState<string>('');
   const [articleId, setArticleId] = useState<string>('');
   const [activeSection, setActiveSection] = useState(0);
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const id = params.get('id') || '';
-    setArticleId(id);
+    const pathname = window.location.pathname;
+    const segments = pathname.split('/').filter(Boolean); // e.g. ["blog", "some-blog-slug"]
+    
+    // Check if path starts with /blog/
+    if (segments[0] === 'blog' && segments[1]) {
+      setSlug(segments[1]);
+    } else {
+      // Fallback to query params if accessing via legacy /article-detail?id=123
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get('id') || '';
+      if (id) {
+        setArticleId(id);
+      }
+    }
   }, []);
 
-  const { data: article, loading } = useNewsById(articleId);
+  const { data: articleBySlug, loading: loadingSlug } = useNewsBySlug(slug);
+  const { data: articleById, loading: loadingId } = useNewsById(articleId);
+
+  const article = slug ? articleBySlug : articleById;
+  const loading = slug ? loadingSlug : loadingId;
 
   useEffect(() => {
     if (article) {
       document.title = `${article.title} — Getmeds`;
+
+      const pathname = window.location.pathname;
+      const segments = pathname.split('/').filter(Boolean);
+      
+      // If we got here via legacy /article-detail?id=X, redirect to /blog/slug
+      if (segments[0] !== 'blog') {
+        const targetSlug = article.slug || slugify(article.title);
+        window.location.replace(`/blog/${targetSlug}${window.location.hash}`);
+      } else {
+        // If we are already on /blog/slug, check if the slug is correct. If it isn't, sync history:
+        const expectedSlug = article.slug || slugify(article.title);
+        if (segments[1] !== expectedSlug) {
+          window.history.replaceState(null, '', `/blog/${expectedSlug}${window.location.hash}`);
+        }
+      }
     }
   }, [article]);
+
+  // Hash scroll listener and initial hash trigger
+  useEffect(() => {
+    if (!loading && article) {
+      const handleHashScroll = () => {
+        const hash = window.location.hash;
+        if (!hash) return;
+        
+        const targetName = decodeURIComponent(hash.substring(1)).toLowerCase().replace(/[^a-z0-9]+/g, '_');
+        const headings = document.querySelectorAll('[data-section], h1, h2, h3, h4, h5, h6');
+        
+        for (const el of headings) {
+          const originalId = el.getAttribute('data-original-id') || el.getAttribute('id') || '';
+          const text = el.textContent || '';
+          
+          const normOriginalId = originalId.toLowerCase().replace(/[^a-z0-9]+/g, '_');
+          const normText = text.toLowerCase().replace(/[^a-z0-9]+/g, '_');
+          
+          if (normOriginalId === targetName || normText === targetName || normText.includes(targetName) || targetName.includes(normText)) {
+            setTimeout(() => {
+              const yOffset = -100; // Account for 80px sticky navbar + 20px padding
+              const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
+              window.scrollTo({ top: y, behavior: 'smooth' });
+            }, 50);
+            break;
+          }
+        }
+      };
+
+      // Run with a delay to allow text layout, and run again slightly later to correct for image load shifts
+      setTimeout(handleHashScroll, 300);
+      setTimeout(handleHashScroll, 900);
+
+      // Run on hash change
+      window.addEventListener('hashchange', handleHashScroll);
+      return () => window.removeEventListener('hashchange', handleHashScroll);
+    }
+  }, [loading, article]);
+
+  // Intercept clicks on legacy slug-based links (e.g. /some-post-slug/) and redirect to /blog/slug
+  useEffect(() => {
+    const handleLinkClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      const anchor = target.closest('a');
+      if (!anchor) return;
+
+      const href = anchor.getAttribute('href') || '';
+      if (!href) return;
+
+      // Extract path and clean up domains
+      const cleanPath = href
+        .replace(/^https?:\/\/(cms\.)?getmeds\.ph/i, '')
+        .replace(/^https?:\/\/www\.getmeds\.ph/i, '')
+        .replace(/^https?:\/\/173\.231\.197\.156/i, '');
+      
+      const ourPages = new Set([
+        'blog', 'blog-detail', 'articles', 'article-detail', 'about-us', 'contact-us', 'product-range', 'meditations',
+        'pap', 'careers', 'services', 'csr', 'ungc', 'index.html'
+      ]);
+
+      const urlParts = cleanPath.split('#');
+      const pathOnly = urlParts[0].replace(/^\/|\/$/g, ''); // strip leading/trailing slashes
+      const hash = urlParts[1] ? `#${urlParts[1]}` : '';
+
+      // Check if it looks like a WordPress post slug path (e.g. not one of our pages)
+      if (pathOnly && !ourPages.has(pathOnly.split('/')[0]) && !pathOnly.includes('.')) {
+        e.preventDefault();
+        const postSlug = pathOnly.split('/').pop() || '';
+        if (postSlug) {
+          window.location.href = `/blog/${postSlug}${hash}`;
+        }
+      }
+    };
+
+    document.addEventListener('click', handleLinkClick);
+    return () => document.removeEventListener('click', handleLinkClick);
+  }, []);
 
   useEffect(() => {
     const navContainer = document.getElementById('navbar-container');
@@ -100,14 +221,19 @@ export default function ArticleDetail() {
       headingElements.forEach((el) => {
         const tagName = el.tagName.toLowerCase();
         
+        const originalId = el.getAttribute('id') || '';
+        if (originalId) {
+          el.setAttribute('data-original-id', originalId);
+        }
+        
         if (tagName === 'h1') {
-          el.className = "text-lg md:text-xl font-bold mt-8 mb-4 text-gray-900 scroll-mt-8";
+          el.className = "text-lg md:text-xl font-bold mt-8 mb-4 text-gray-900 scroll-mt-28";
         } else if (tagName === 'h2') {
-          el.className = "text-base font-semibold mt-8 mb-3 scroll-mt-8 bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent";
+          el.className = "text-base font-semibold mt-8 mb-3 scroll-mt-28 bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent";
         } else if (tagName === 'h3') {
-          el.className = "text-sm font-semibold mt-6 mb-2 text-gray-800 scroll-mt-8";
+          el.className = "text-sm font-semibold mt-6 mb-2 text-gray-800 scroll-mt-28";
         } else {
-          el.className = "text-xs font-semibold mt-5 mb-2 text-gray-700 uppercase tracking-wider scroll-mt-8";
+          el.className = "text-xs font-semibold mt-5 mb-2 text-gray-700 uppercase tracking-wider scroll-mt-28";
         }
 
         // Track only h2 and h3 in the sidebar table of contents
@@ -140,6 +266,20 @@ export default function ArticleDetail() {
         el.className = "text-[#1D9FDA] underline hover:text-[#61A644] transition-colors";
         el.setAttribute('target', '_blank');
         el.setAttribute('rel', 'noopener noreferrer');
+        
+        const href = el.getAttribute('href') || '';
+        if (href) {
+          const newHref = href
+            .replace(/^https?:\/\/(cms\.)?getmeds\.ph/i, '')
+            .replace(/^https?:\/\/www\.getmeds\.ph/i, '')
+            .replace(/^https?:\/\/173\.231\.197\.156/i, '');
+          
+          if (newHref.startsWith('/') || newHref.startsWith('./') || newHref.startsWith('../')) {
+            el.setAttribute('href', newHref);
+            el.removeAttribute('target');
+            el.removeAttribute('rel');
+          }
+        }
       });
 
       // Lists
@@ -228,7 +368,11 @@ export default function ArticleDetail() {
 
   const scrollTo = (idx: number) => {
     const el = document.getElementById(`heading-${idx}`);
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (el) {
+      const yOffset = -100; // Account for 80px sticky navbar + 20px padding
+      const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }
   };
 
   const portableTextComponents = useMemo(() => ({
@@ -242,7 +386,7 @@ export default function ArticleDetail() {
           <h2
             id={`heading-${idx}`}
             data-section={idx}
-            className="text-base font-semibold mt-8 mb-3 scroll-mt-8 bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent"
+            className="text-base font-semibold mt-8 mb-3 scroll-mt-28 bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent"
           >
             {children}
           </h2>
@@ -254,7 +398,7 @@ export default function ArticleDetail() {
           <h3
             id={`heading-${idx}`}
             data-section={idx}
-            className="text-sm font-semibold mt-6 mb-2 text-gray-800 scroll-mt-8"
+            className="text-sm font-semibold mt-6 mb-2 text-gray-800 scroll-mt-28"
           >
             {children}
           </h3>
@@ -321,16 +465,25 @@ export default function ArticleDetail() {
           {children}
         </code>
       ),
-      link: ({ value, children }: any) => (
-        <a
-          href={value?.href}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-[#1D9FDA] underline hover:text-[#61A644] transition-colors"
-        >
-          {children}
-        </a>
-      ),
+      link: ({ value, children }: any) => {
+        const href = value?.href || '';
+        const newHref = href
+          .replace(/^https?:\/\/(cms\.)?getmeds\.ph/i, '')
+          .replace(/^https?:\/\/www\.getmeds\.ph/i, '')
+          .replace(/^https?:\/\/173\.231\.197\.156/i, '');
+        
+        const isRelative = newHref.startsWith('/') || newHref.startsWith('./') || newHref.startsWith('../');
+        return (
+          <a
+            href={newHref}
+            target={isRelative ? undefined : "_blank"}
+            rel={isRelative ? undefined : "noopener noreferrer"}
+            className="text-[#1D9FDA] underline hover:text-[#61A644] transition-colors"
+          >
+            {children}
+          </a>
+        );
+      },
     },
     types: {
       image: ({ value }: any) => {
@@ -341,6 +494,7 @@ export default function ArticleDetail() {
             <img
               src={imgSrc}
               alt=""
+              loading="lazy"
               className="w-full rounded-xl object-cover"
             />
           </figure>
@@ -372,11 +526,11 @@ export default function ArticleDetail() {
         </div>
       )}
 
-      {/* Article not found */}
-      {!loading && !article && articleId && (
+      {/* Blog post not found */}
+      {!loading && !article && (slug || articleId) && (
         <div className="max-w-3xl mx-auto px-4 py-20 text-center relative z-10">
-          <p className="text-gray-500 text-lg">Article not found.</p>
-          <a href="/articles" className="mt-4 inline-block text-primary underline">Back to Articles</a>
+          <p className="text-gray-500 text-lg">Blog post not found.</p>
+          <a href="/blog" className="mt-4 inline-block text-primary underline">Back to Blog</a>
         </div>
       )}
 
@@ -385,7 +539,7 @@ export default function ArticleDetail() {
           {/* Back button */}
           <div className="max-w-3xl mx-auto px-4 pt-6 pb-2 relative z-10">
             <a
-              href="/articles"
+              href="/blog"
               className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-800 transition-colors"
             >
               <i className="fa-solid fa-chevron-left text-[10px]"></i>
@@ -421,6 +575,7 @@ export default function ArticleDetail() {
               <img
                 src={imgUrl}
                 alt={article.title}
+                fetchPriority="high"
                 className="w-full rounded-2xl object-cover"
                 style={{ height: '340px' }}
               />

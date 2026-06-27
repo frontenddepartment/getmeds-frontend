@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { injectHTML } from '../lib/injectHTML';
-import { useNews } from '../lib/useSanity';
+import { useNewsPaginated } from '../lib/useSanity';
 import { urlFor } from '../lib/sanity';
 
 const formatDate = (dateStr: string | undefined | null) => {
@@ -14,9 +14,45 @@ const formatDate = (dateStr: string | undefined | null) => {
   }
 };
 
-export default function Articles() {
-  const { data: articles, loading } = useNews();
-  const [page, setPage] = useState(0);
+const slugify = (text: string | undefined | null) => {
+  if (!text) return '';
+  return text
+    .toString()
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, '-')
+    .replace(/[^\w\-]+/g, '')
+    .replace(/\-\-+/g, '-')
+    .replace(/^-+/, '')
+    .replace(/-+$/, '');
+};
+
+export default function Blog() {
+  const { articles, loading, loadingMore, hasMore, loadMore } = useNewsPaginated(20);
+
+  // Infinite scroll: observe a sentinel element at the bottom of the list
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
+
+  const handleObserver = useCallback((entries: IntersectionObserverEntry[]) => {
+    const target = entries[0];
+    if (target.isIntersecting && hasMore && !loadingMore && !loading) {
+      loadMore();
+    }
+  }, [hasMore, loadingMore, loading, loadMore]);
+
+  useEffect(() => {
+    const sentinel = sentinelRef.current;
+    if (!sentinel) return;
+
+    const observer = new IntersectionObserver(handleObserver, {
+      root: null,
+      rootMargin: '400px', // Start loading 400px before the user reaches the bottom
+      threshold: 0,
+    });
+
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [handleObserver]);
 
   useEffect(() => {
     const navContainer = document.getElementById('navbar-container');
@@ -36,9 +72,6 @@ export default function Articles() {
   const featured = articles && articles.length > 0 ? articles[0] : null;
   const latestPosts = articles && articles.length > 1 ? articles.slice(1, 5) : [];
   const cardArticles = articles && articles.length > 1 ? articles.slice(1) : [];
-  const perPage = 3;
-  const totalPages = Math.ceil(cardArticles.length / perPage);
-  const visibleCards = cardArticles.slice(page * perPage, page * perPage + perPage);
 
   return (
     <div style={{ fontFamily: "'Poppins', sans-serif" }} className="bg-white text-gray-900 min-h-screen">
@@ -53,7 +86,7 @@ export default function Articles() {
           <div className="grid grid-cols-1 lg:grid-cols-[3fr_2fr] gap-6 mb-12">
             <div className="bg-gray-100 rounded-2xl animate-pulse" style={{ minHeight: '420px' }} />
             <div className="space-y-4">
-              {[1,2,3,4].map(n => <div key={n} className="flex gap-3"><div className="w-16 h-16 rounded-xl bg-gray-100 animate-pulse flex-shrink-0" /><div className="flex-1 bg-gray-100 rounded-xl animate-pulse h-16" /></div>)}
+              {[1, 2, 3, 4].map(n => <div key={n} className="flex gap-3"><div className="w-16 h-16 rounded-xl bg-gray-100 animate-pulse flex-shrink-0" /><div className="flex-1 bg-gray-100 rounded-xl animate-pulse h-16" /></div>)}
             </div>
           </div>
         ) : !articles || articles.length === 0 ? (
@@ -61,7 +94,7 @@ export default function Articles() {
             <div className="w-20 h-20 rounded-2xl flex items-center justify-center mb-6" style={{ background: 'linear-gradient(135deg, rgba(97, 166, 68, 0.08), rgba(29, 159, 218, 0.08))' }}>
               <i className="fa-regular fa-newspaper text-3xl" style={{ background: 'linear-gradient(135deg, #61A644, #1D9FDA)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}></i>
             </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">No articles published yet</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">No blog posts published yet</h3>
             <p className="text-gray-500 text-xs max-w-sm leading-relaxed">
               We are working on bringing you the latest stories, news, and updates. Please check back later.
             </p>
@@ -73,13 +106,14 @@ export default function Articles() {
               {/* Left: Featured card */}
               {featured && (
                 <a
-                  href={`/article-detail?id=${featured._id}`}
+                  href={`/blog/${featured.slug || slugify(featured.title)}`}
                   className="relative rounded-2xl overflow-hidden block group no-underline"
                   style={{ minHeight: '420px' }}
                 >
                   <img
                     src={featured.image ? urlFor(featured.image).width(900).url() : ''}
                     alt={featured.title}
+                    fetchPriority="high"
                     className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                   />
                   <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.25) 55%, transparent 100%)' }} />
@@ -104,12 +138,13 @@ export default function Articles() {
                   {latestPosts.map(article => (
                     <a
                       key={article._id}
-                      href={`/article-detail?id=${article._id}`}
+                      href={`/blog/${article.slug || slugify(article.title)}`}
                       className="flex gap-3 group no-underline"
                     >
                       <img
                         src={article.image ? urlFor(article.image).width(200).url() : ''}
                         alt={article.title}
+                        loading="lazy"
                         className="w-[70px] h-[70px] rounded-xl object-cover flex-shrink-0"
                       />
                       <div className="flex-1 min-w-0">
@@ -126,37 +161,24 @@ export default function Articles() {
               </div>
             </div>
 
-            {/* ===== BOTTOM: CARD GRID ===== */}
+            {/* ===== BOTTOM: INFINITE SCROLL CARD GRID ===== */}
             <div>
               <div className="flex items-center justify-between mb-6">
                 <h2 className="font-semibold text-[22px] text-gray-900">Recent blog posts</h2>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => setPage(p => Math.max(0, p - 1))}
-                    disabled={page === 0}
-                    className="w-9 h-9 rounded-full border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-50 disabled:opacity-30 transition-colors"
-                  >
-                    <i className="fa-solid fa-chevron-left text-xs"></i>
-                  </button>
-                  <button
-                    onClick={() => setPage(p => p + 1)}
-                    disabled={page >= totalPages - 1}
-                    className="w-9 h-9 rounded-full border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-50 disabled:opacity-30 transition-colors"
-                  >
-                    <i className="fa-solid fa-chevron-right text-xs"></i>
-                  </button>
-                </div>
+                {/* <span className="text-xs text-gray-400 font-medium">
+                  {cardArticles.length} posts loaded{hasMore ? ' • Scroll for more' : ' • All posts loaded'}
+                </span> */}
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {visibleCards.map(article => {
+                {cardArticles.map(article => {
                   const imgUrl = article.image
                     ? urlFor(article.image).width(600).url()
                     : '';
                   return (
                     <a
                       key={article._id}
-                      href={`/article-detail?id=${article._id}`}
+                      href={`/blog/${article.slug || slugify(article.title)}`}
                       className="block rounded-2xl overflow-hidden border border-gray-100 hover:shadow-lg transition-shadow no-underline group"
                       style={{ boxShadow: '0 1px 6px rgba(0,0,0,0.05)' }}
                     >
@@ -164,6 +186,7 @@ export default function Articles() {
                         <img
                           src={imgUrl}
                           alt={article.title}
+                          loading="lazy"
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         />
                       </div>
@@ -182,6 +205,30 @@ export default function Articles() {
                   );
                 })}
               </div>
+
+              {/* Loading more indicator */}
+              {loadingMore && (
+                <div className="flex justify-center py-10">
+                  <div className="flex items-center gap-3">
+                    <div className="w-5 h-5 border-2 border-gray-200 border-t-[#1D9FDA] rounded-full animate-spin" />
+                    <span className="text-sm text-gray-400 font-medium">Loading more posts…</span>
+                  </div>
+                </div>
+              )}
+
+              {/* All posts loaded message */}
+              {!hasMore && cardArticles.length > 0 && (
+                <div className="flex justify-center py-10">
+                  <div className="flex items-center gap-2 text-xs text-gray-400">
+                    <div className="w-8 h-px bg-gray-200" />
+                    <span>You've reached the end • {articles.length} posts total</span>
+                    <div className="w-8 h-px bg-gray-200" />
+                  </div>
+                </div>
+              )}
+
+              {/* Invisible sentinel for IntersectionObserver */}
+              <div ref={sentinelRef} className="h-1" />
             </div>
           </>
         )}

@@ -1,6 +1,7 @@
 import { defineConfig, loadEnv } from 'vite';
 import fs from 'fs';
 import path from 'path';
+import https from 'https';
 
 const getHtmlInputs = () => {
   const dir = process.cwd();
@@ -42,9 +43,31 @@ export default defineConfig(({ mode }) => {
     server: {
       proxy: {
         '/wp-json': {
-          target: 'https://2mginc.com',
+          target: 'https://173.231.197.156',
           changeOrigin: true,
           secure: false,
+          configure: (proxy, _options) => {
+            proxy.on('proxyReq', (proxyReq, _req, _res) => {
+              proxyReq.removeHeader('origin');
+              proxyReq.removeHeader('Origin');
+              proxyReq.removeHeader('referer');
+              proxyReq.removeHeader('Referer');
+              proxyReq.removeHeader('sec-fetch-site');
+              proxyReq.removeHeader('sec-fetch-mode');
+              proxyReq.removeHeader('sec-fetch-dest');
+              proxyReq.removeHeader('x-forwarded-for');
+              proxyReq.removeHeader('X-Forwarded-For');
+              proxyReq.removeHeader('x-forwarded-host');
+              proxyReq.removeHeader('X-Forwarded-Host');
+              proxyReq.removeHeader('x-forwarded-proto');
+              proxyReq.removeHeader('X-Forwarded-Proto');
+              proxyReq.removeHeader('x-forwarded-port');
+              proxyReq.removeHeader('X-Forwarded-Port');
+              proxyReq.setHeader('Host', 'cms.getmeds.ph');
+              proxyReq.setHeader('host', 'cms.getmeds.ph');
+              proxyReq.setHeader('User-Agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)');
+            });
+          }
         },
         '/api/careers': {
           target: 'https://getmeds-test-creation.vercel.app',
@@ -254,20 +277,14 @@ export default defineConfig(({ mode }) => {
                 return;
               }
             }
-            if (cleanPath === '/articles.html') {
-              res.statusCode = 302;
-              res.setHeader('Location', '/articles' + qs);
+            if (cleanPath === '/articles.html' || cleanPath === '/articles' || cleanPath === '/articles/') {
+              res.statusCode = 301;
+              res.setHeader('Location', '/blog' + qs);
               res.end();
               return;
             }
-            if (cleanPath === '/article-detail.html') {
-              res.statusCode = 302;
-              res.setHeader('Location', '/article-detail' + qs);
-              res.end();
-              return;
-            }
-            if (cleanPath === '/article-detail' || cleanPath === '/article-detail/') {
-              const htmlPath = path.join(process.cwd(), 'article-detail.html');
+            if (cleanPath === '/article-detail.html' || cleanPath === '/article-detail' || cleanPath === '/article-detail/') {
+              const htmlPath = path.join(process.cwd(), 'blog-detail.html');
               if (fs.existsSync(htmlPath)) {
                 const htmlContent = fs.readFileSync(htmlPath, 'utf-8');
                 res.setHeader('Content-Type', 'text/html');
@@ -275,8 +292,23 @@ export default defineConfig(({ mode }) => {
                 return;
               }
             }
-            if (cleanPath === '/articles' || cleanPath === '/articles/') {
-              const htmlPath = path.join(process.cwd(), 'articles.html');
+            if (cleanPath === '/blog.html') {
+              res.statusCode = 302;
+              res.setHeader('Location', '/blog' + qs);
+              res.end();
+              return;
+            }
+            if (cleanPath === '/blog' || cleanPath === '/blog/') {
+              const htmlPath = path.join(process.cwd(), 'blog.html');
+              if (fs.existsSync(htmlPath)) {
+                const htmlContent = fs.readFileSync(htmlPath, 'utf-8');
+                res.setHeader('Content-Type', 'text/html');
+                res.end(htmlContent);
+                return;
+              }
+            }
+            if (cleanPath.startsWith('/blog/') && cleanPath.split('/').filter(Boolean).length >= 2) {
+              const htmlPath = path.join(process.cwd(), 'blog-detail.html');
               if (fs.existsSync(htmlPath)) {
                 const htmlContent = fs.readFileSync(htmlPath, 'utf-8');
                 res.setHeader('Content-Type', 'text/html');

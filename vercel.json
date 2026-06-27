@@ -5,9 +5,61 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "cleanUrls": true,
+  "redirects": [
+    {
+      "source": "/articles",
+      "destination": "/blog",
+      "permanent": true
+    },
+    {
+      "source": "/articles.html",
+      "destination": "/blog",
+      "permanent": true
+    },
+    {
+      "source": "/article-detail",
+      "destination": "/blog-detail",
+      "permanent": true
+    },
+    {
+      "source": "/article-detail.html",
+      "destination": "/blog-detail",
+      "permanent": true
+    },
+    {
+      "source": "/:slug((?!about-us|blog|careers|contact-us|csr|edit-profile|global-presence|home-preview|meditations|order-medicines|pap|product-range|profile|services|under-development|ungc|api/|wp-json/|assets/|components/|data/|src/|dist/|node_modules/|_vercel/|[^/]+\\.[^/]+$)[^/]+)",
+      "destination": "/blog/:slug",
+      "permanent": true
+    }
+  ],
   "rewrites": [
-    { "source": "/wp-json/:path*", "destination": "https://2mginc.com/wp-json/:path*" },
-    { "source": "/api/careers", "destination": "https://getmeds-test-creation.vercel.app/api/careers" },
-    { "source": "/api/:path*", "destination": "https://getmeds-admin.vercel.app/api/:path*" }
+    {
+      "source": "/wp-json/:path*",
+      "destination": "https://cms.getmeds.ph/wp-json/:path*"
+    },
+    {
+      "source": "/api/careers",
+      "destination": "https://getmeds-test-creation.vercel.app/api/careers"
+    },
+    {
+      "source": "/api/:path*",
+      "destination": "https://getmeds-admin.vercel.app/api/:path*"
+    },
+    {
+      "source": "/blog/:slug",
+      "destination": "/blog-detail"
+    },
+    {
+      "source": "/blog-detail",
+      "destination": "/blog-detail"
+    },
+    {
+      "source": "/blog-detail.html",
+      "destination": "/blog-detail"
+    },
+    {
+      "source": "/:path*",
+      "destination": "/index.html"
+    }
   ]
 }
