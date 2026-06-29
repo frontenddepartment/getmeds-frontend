@@ -47,15 +47,19 @@
       "permanent": true
     },
     {
-      "source": "/:slug((?!about-us|blog|blog-detail|cancer-medicines|careers|contact-us|csr|edit-profile|global-presence|home-preview|masteradlorock|meditations|order-medicines|pap|profile|services|under-development|ungc|api/|wp-json/|assets/|components/|data/|src/|dist/|node_modules/|_vercel/|[^/]+\\.[^/]+$)[^/]+)",
+      "source": "/:slug((?!about-us|blog|blog-detail|cms|masteradlorock|masteradlorockpd|masteradlorockpdprocess|masteradlogriyon|adminadlorock|cancer-medicines|careers|contact-us|csr|edit-profile|global-presence|home-preview|meditations|order-medicines|pap|profile|services|under-development|ungc|api/|wp-json/|assets/|components/|data/|src/|dist/|node_modules/|_vercel/|[^/]+\\.[^/]+$)[^/]+)",
       "destination": "/blog/:slug",
       "permanent": true
     }
   ],
   "rewrites": [
     {
-      "source": "/masteradlorock/:path*",
-      "destination": "https://admin.getmeds.ph/masteradlorock/:path*"
+      "source": "/cms",
+      "destination": "https://cms.getmeds.ph/"
+    },
+    {
+      "source": "/cms/:path*",
+      "destination": "https://cms.getmeds.ph/:path*"
     },
     {
       "source": "/wp-json/:path*",
@@ -68,6 +72,46 @@
     {
       "source": "/api/:path*",
       "destination": "https://getmeds-admin.vercel.app/api/:path*"
+    },
+    {
+      "source": "/masteradlorock",
+      "destination": "https://admin.getmeds.ph/masteradlorock"
+    },
+    {
+      "source": "/masteradlorock/:path*",
+      "destination": "https://admin.getmeds.ph/masteradlorock/:path*"
+    },
+    {
+      "source": "/masteradlorockpd",
+      "destination": "https://admin.getmeds.ph/masteradlorockpd"
+    },
+    {
+      "source": "/masteradlorockpd/:path*",
+      "destination": "https://admin.getmeds.ph/masteradlorockpd/:path*"
+    },
+    {
+      "source": "/masteradlorockpdprocess",
+      "destination": "https://admin.getmeds.ph/masteradlorockpdprocess"
+    },
+    {
+      "source": "/masteradlorockpdprocess/:path*",
+      "destination": "https://admin.getmeds.ph/masteradlorockpdprocess/:path*"
+    },
+    {
+      "source": "/masteradlogriyon",
+      "destination": "https://admin.getmeds.ph/masteradlogriyon"
+    },
+    {
+      "source": "/masteradlogriyon/:path*",
+      "destination": "https://admin.getmeds.ph/masteradlogriyon/:path*"
+    },
+    {
+      "source": "/adminadlorock",
+      "destination": "https://admin.getmeds.ph/adminadlorock"
+    },
+    {
+      "source": "/adminadlorock/:path*",
+      "destination": "https://admin.getmeds.ph/adminadlorock/:path*"
     },
     {
       "source": "/cancer-medicines/:subcategory/:product",
