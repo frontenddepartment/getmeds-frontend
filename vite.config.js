@@ -273,6 +273,21 @@ export default defineConfig(({ mode }) => {
                 return;
               }
             }
+            if (cleanPath === '/product-detail.html') {
+              res.statusCode = 302;
+              res.setHeader('Location', '/product-detail' + qs);
+              res.end();
+              return;
+            }
+            if (cleanPath === '/product-detail' || cleanPath === '/product-detail/') {
+              const htmlPath = path.join(process.cwd(), 'product-detail.html');
+              if (fs.existsSync(htmlPath)) {
+                const htmlContent = fs.readFileSync(htmlPath, 'utf-8');
+                res.setHeader('Content-Type', 'text/html');
+                res.end(htmlContent);
+                return;
+              }
+            }
             if (cleanPath === '/order-medicines.html') {
               res.statusCode = 302;
               res.setHeader('Location', '/order-medicines' + qs);

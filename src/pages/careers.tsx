@@ -646,11 +646,11 @@ const Careers: React.FC = () => {
                   return (
                     <div key={job.id || idx} className={`ca-anim ca-up ca-d${(idx % 5) + 1} border border-gray-100 rounded-2xl p-6 hover:shadow-md transition-shadow duration-300 flex flex-col w-full`}>
                       <div className="flex flex-wrap items-center gap-2 mb-2">
-                        <span className="text-[12px] font-semibold text-gray-400 tracking-widest uppercase">{job.job_type || posType}</span>
+                        <span className="text-[12px] font-semibold text-gray-400 tracking-widest">{job.job_type || posType}</span>
                         {job.location && (
                           <>
                             <span className="text-gray-300 text-[10px]">•</span>
-                            <span className="text-[12px] font-semibold text-[#1D9FDA] uppercase tracking-wider">{job.location}</span>
+                            <span className="text-[12px] font-semibold text-[#1D9FDA] tracking-wider">{job.location}</span>
                           </>
                         )}
                       </div>

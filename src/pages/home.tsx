@@ -1372,7 +1372,22 @@ export default function GetMedsHomepage() {
                         outlineOffset: '2px',
                       }}
                     >
-                      <img src={card.img} alt={card.name} className="w-full h-full object-cover" />
+                      <img
+                        src={card.img}
+                        alt={card.name}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          const t = e.currentTarget;
+                          t.style.display = 'none';
+                          const parent = t.parentElement;
+                          if (parent && !parent.querySelector('.img-fallback')) {
+                            const fb = document.createElement('div');
+                            fb.className = 'img-fallback w-full h-full flex items-center justify-center bg-gray-100';
+                            fb.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;gap:4px"><i class="fa-regular fa-image" style="font-size:16px;color:#d1d5db"></i><span style="font-size:10px;color:#9ca3af;font-family:Poppins,sans-serif">No image</span></div>';
+                            parent.appendChild(fb);
+                          }
+                        }}
+                      />
                     </div>
                   ))}
                 </div>
@@ -1389,7 +1404,22 @@ export default function GetMedsHomepage() {
                       <div key={pageIdx} className="min-w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                         {therapCards.slice(pageIdx * 4, pageIdx * 4 + 4).map((card) => (
                           <div key={card.name} className="relative rounded-2xl overflow-hidden aspect-[3/4] group cursor-pointer">
-                            <img src={card.img} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt={card.name} />
+                            <img
+                              src={card.img}
+                              className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                              alt={card.name}
+                              onError={(e) => {
+                                const t = e.currentTarget;
+                                t.style.display = 'none';
+                                const parent = t.parentElement;
+                                if (parent && !parent.querySelector('.img-fallback')) {
+                                  const fb = document.createElement('div');
+                                  fb.className = 'img-fallback absolute inset-0 flex items-center justify-center bg-gray-100';
+                                  fb.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;gap:4px"><i class="fa-regular fa-image" style="font-size:20px;color:#d1d5db"></i><span style="font-size:11px;color:#9ca3af;font-family:Poppins,sans-serif">No image</span></div>';
+                                  parent.insertBefore(fb, parent.firstChild);
+                                }
+                              }}
+                            />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/15 to-transparent"></div>
                             <div className="absolute bottom-0 left-0 right-0 p-4">
                               <h3 className="text-white text-xl font-bold mb-1">{card.name}</h3>

@@ -3,8 +3,6 @@ import { useProducts, useCategories, useImageMapper, useSiteSettings } from '../
 import { urlFor, client } from '../lib/sanity';
 import type { Product as SanityProduct, Category } from '../types/sanity';
 import { injectHTML } from '../lib/injectHTML';
-import { getGoogleSpreadsheetBySlug } from '../lib/queries';
-import { getApiUrl } from '../lib/api';
 
 
 interface ProductWithCategory extends Omit<SanityProduct, 'category'> {
@@ -109,28 +107,6 @@ export default function ProductRange() {
   const [searchTerm, setSearchTerm] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [sortBy, setSortBy] = useState('Default');
-  const [modalOpen, setModalOpen] = useState(false);
-  const [modalVisible, setModalVisible] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState<ProductWithCategory | null>(null);
-  const [zoomedImageOpen, setZoomedImageOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<'description' | 'usage' | 'precautions'>('description');
-  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
-  const [formData, setFormData] = useState({ name: '', phone: '', email: '', message: '', age: '' });
-  const [ageDropdownOpen, setAgeDropdownOpen] = useState(false);
-  const ageDropdownRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!ageDropdownOpen) return;
-    const close = (e: MouseEvent) => {
-      if (ageDropdownRef.current && !ageDropdownRef.current.contains(e.target as Node)) {
-        setAgeDropdownOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', close);
-    return () => document.removeEventListener('mousedown', close);
-  }, [ageDropdownOpen]);
-
-  const [submitState, setSubmitState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
   const [successModalOpen, setSuccessModalOpen] = useState(false);
   const [searchHistory, setSearchHistory] = useState<string[]>(() => {
     try {
@@ -210,27 +186,23 @@ export default function ProductRange() {
       const urlParams = new URLSearchParams(window.location.search);
       const productSlug = urlParams.get('product');
       const searchQuery = urlParams.get('search');
-      
-      let targetProduct = null;
-      
+
       if (productSlug) {
-        targetProduct = productsData.find(
-          p => p.slug?.current === productSlug || p.brandName?.toLowerCase() === productSlug.toLowerCase()
-        );
-      } else if (searchQuery) {
+        window.location.href = '/product-detail?product=' + productSlug;
+        return;
+      }
+
+      if (searchQuery) {
         const cleanQuery = searchQuery.trim().toLowerCase();
-        targetProduct = productsData.find(
+        const targetProduct = productsData.find(
           p => (p.brandName && p.brandName.toLowerCase() === cleanQuery) ||
                (p.name && p.name.toLowerCase() === cleanQuery) ||
                (p.brandName && p.genericName && `${p.brandName} (${p.genericName})`.toLowerCase() === cleanQuery)
         );
-      }
-
-      if (targetProduct) {
-        setSelectedProduct(targetProduct);
-        setSearchTerm(targetProduct.brandName || targetProduct.name || '');
-        setModalOpen(true);
-        setModalVisible(true);
+        if (targetProduct) {
+          const slug = targetProduct.slug?.current || encodeURIComponent((targetProduct.brandName || targetProduct.name || '').toLowerCase());
+          window.location.href = '/product-detail?product=' + slug;
+        }
       }
     }
   }, [productsLoading, productsData]);
@@ -730,81 +702,8 @@ export default function ProductRange() {
   };
 
   const openModal = (product: ProductWithCategory) => {
-    setSelectedProduct(product);
-    setActiveTab('description');
-    setFormData({ name: '', phone: '', email: '', message: '', age: '' });
-    setUploadedFiles([]);
-    setSubmitState('idle');
-    setModalOpen(true);
-    setTimeout(() => setModalVisible(true), 10);
-    document.body.style.overflow = 'hidden';
-  };
-
-  const closeModal = () => {
-    setModalVisible(false);
-    setTimeout(() => setModalOpen(false), 500);
-    document.body.style.overflow = 'auto';
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) setUploadedFiles(Array.from(e.target.files));
-  };
-
-  const fileToBase64 = (file: File): Promise<string> =>
-    new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve((reader.result as string).split(',')[1]);
-      reader.onerror = reject;
-    });
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSubmitState('sending');
-    const filesData: { name: string; type: string; base64: string }[] = [];
-    for (const file of uploadedFiles) {
-      try {
-        const base64 = await fileToBase64(file);
-        filesData.push({ name: file.name, type: file.type, base64 });
-      } catch (err) {
-        console.error('Error processing file:', file.name, err);
-      }
-    }
-    
-    try {
-      const payload = {
-        inquiryType: 'Product Inquiry',
-        fullName: formData.name,
-        email: formData.email,
-        phone: formData.phone,
-        message: formData.message,
-        additionalData: {
-          productName: selectedProduct?.brandName || selectedProduct?.name || '',
-          age: formData.age
-        },
-        files: filesData
-      };
-
-      const response = await fetch(getApiUrl(), {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-
-      if (!response.ok) {
-        throw new Error('Form submission failed.');
-      }
-
-      setSubmitState('sent');
-      setFormData({ name: '', phone: '', email: '', message: '', age: '' });
-      setUploadedFiles([]);
-      setSuccessModalOpen(true);
-      setTimeout(() => setSubmitState('idle'), 300);
-    } catch (error) {
-      console.error('Submission error:', error);
-      setSubmitState('error');
-      setTimeout(() => setSubmitState('idle'), 2000);
-    }
+    const slug = product.slug?.current || encodeURIComponent((product.brandName || product.name || '').toLowerCase());
+    window.location.href = '/product-detail?product=' + slug;
   };
 
 
@@ -1391,356 +1290,6 @@ export default function ProductRange() {
         </div>
       </div>{/* end body row */}
 
-      {/* Inquiry Modal */}
-      {modalOpen && (
-        <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center sm:p-4 sm:p-6">
-          <div
-            className={`absolute inset-0 backdrop-blur-sm transition-opacity duration-500 ${modalVisible ? 'opacity-100' : 'opacity-0'}`}
-            style={{ background: 'rgba(26,32,44,0.6)' }}
-            onClick={closeModal}
-          />
-          <div
-            className={`relative bg-white w-full sm:max-w-6xl h-full sm:h-auto sm:max-h-[95vh] sm:rounded-[15px] rounded-t-[20px] shadow-2xl overflow-hidden flex flex-col transform transition-all duration-500 ease-out ${modalVisible ? 'translate-y-0 sm:scale-100 sm:opacity-100' : 'translate-y-full sm:translate-y-0 sm:scale-95 sm:opacity-0'}`}
-          >
-            {/* Modal Header */}
-            <div className="bg-white border-b border-gray-100 px-6 py-4 flex justify-between items-center shrink-0">
-              <div className="flex items-center space-x-4">
-                <img src={getImage('assets/getmedslogo.png', 'assets/getmedslogo.png')} alt="Getmeds Logo" className="h-6 w-auto object-contain" />
-                <h3 className="text-base font-semibold text-gray-800 border-l border-gray-200 pl-4">
-                  Product Details & Inquiry
-                </h3>
-              </div>
-              <div className="flex items-center space-x-4">
-                <button
-                  className="hidden sm:flex items-center text-gray-500 hover:text-primary transition text-sm space-x-1.5"
-                  onClick={() => {
-                    const chatWindow = document.getElementById('zap-chat-window');
-                    if (chatWindow) chatWindow.classList.add('active');
-                    const trigger = document.getElementById('zap-ai-trigger');
-                    if (trigger) trigger.classList.remove('zap-modal-open');
-                  }}
-                >
-                  <i className="fa-regular fa-circle-question" />
-                  <span>Do you need help?</span>
-                </button>
-                <button
-                  onClick={closeModal}
-                  className="text-gray-500 hover:text-gray-800 transition border border-gray-200 hover:border-gray-300 rounded-full w-8 h-8 flex items-center justify-center bg-white shadow-sm hover:shadow"
-                >
-                  <i className="fa-solid fa-xmark text-sm" />
-                </button>
-              </div>
-            </div>
-
-            {/* Modal Body */}
-            <div className="flex-1 overflow-y-auto p-0 flex flex-col lg:flex-row bg-white">
-
-              {/* Left Column: Product Info */}
-              <div className="lg:w-1/2 p-6 lg:p-8 border-b lg:border-b-0 lg:border-r border-gray-100 flex flex-col">
-                <div className="flex flex-col-reverse md:flex-row gap-8 mb-8">
-                  <div className="w-full md:w-1/2 flex flex-col justify-center">
-                    <div className="flex flex-wrap items-start gap-x-3 gap-y-1 mb-3 text-sm text-gray-600">
-                      <span className="flex items-center font-medium whitespace-nowrap" style={{ color: '#61A644' }}>
-                        <i className="fa-solid fa-check mr-1.5" /> In stock
-                      </span>
-                      <span className="text-gray-300 whitespace-nowrap">|</span>
-                      <span className="capitalize font-medium leading-snug" style={{ color: '#0D99FF' }}>
-                        {selectedProduct ? getCategorizationDisplay(selectedProduct) : 'General'}
-                      </span>
-                    </div>
-                    <h1 className="text-xl font-bold text-gray-900 mb-4 leading-tight">
-                      {selectedProduct?.brandName && selectedProduct?.genericName && selectedProduct.brandName !== selectedProduct.genericName
-                        ? `${selectedProduct.brandName} (${selectedProduct.genericName})`
-                        : selectedProduct?.name || selectedProduct?.brandName || selectedProduct?.genericName || 'Product Details'}
-                    </h1>
-                    <p className="text-gray-600 text-[13px] leading-relaxed">
-                      {selectedProduct?.description || 'Getmeds pharmaceutical product designed for patient care and optimal therapeutic outcomes.'}
-                    </p>
-                  </div>
-                  <div className="w-full md:w-1/2 flex items-center justify-center">
-                    <div 
-                      onClick={() => setZoomedImageOpen(true)}
-                      className="w-full max-w-[320px] aspect-square flex flex-col items-center justify-center bg-gray-50 rounded-[15px] border border-gray-100 p-4 overflow-hidden relative cursor-zoom-in group/zoom hover:shadow-md transition-all duration-300"
-                    >
-                      {(() => {
-                        const resolvedImageUrl = selectedProduct ? getProductImage(selectedProduct) : null;
-                        const hasImage = resolvedImageUrl && !resolvedImageUrl.endsWith('no-image.png');
-                        return hasImage ? (
-                          <>
-                            <img
-                              src={resolvedImageUrl}
-                              className="w-full h-full object-contain mix-blend-multiply group-hover/zoom:scale-105 transition-transform duration-500"
-                              alt={selectedProduct?.name}
-                              onError={(e) => { (e.target as HTMLImageElement).src = 'assets/no-image.png'; }}
-                            />
-                            <div className="absolute inset-0 bg-black/5 opacity-0 group-hover/zoom:opacity-100 flex items-center justify-center transition-opacity duration-300">
-                              <div className="bg-white/95 backdrop-blur-sm text-gray-800 rounded-full px-3 py-1.5 flex items-center gap-1.5 shadow-sm text-xs font-semibold">
-                                <i className="fa-solid fa-magnifying-glass-plus text-primary" />
-                                Click to Zoom
-                              </div>
-                            </div>
-                          </>
-                        ) : (
-                          <>
-                            <i className="fa-regular fa-image text-4xl mb-3" />
-                            <span className="text-xs font-medium uppercase tracking-wider text-gray-400">No Image</span>
-                          </>
-                        );
-                      })()}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Tabs */}
-                <div className="bg-white rounded-[15px] border border-gray-100 p-5 mt-auto">
-                  <div className="flex overflow-x-auto border-b border-gray-100 mb-5 gap-6">
-                    {(['description', 'usage', 'precautions'] as const).map(tab => (
-                      <button
-                        key={tab}
-                        type="button"
-                        onClick={() => setActiveTab(tab)}
-                        className="pb-3 text-[13px] whitespace-nowrap transition-colors"
-                        style={activeTab === tab
-                          ? { color: '#0D99FF', borderBottom: '2px solid #0D99FF', fontWeight: 600 }
-                          : { color: '#6B7280', fontWeight: 500 }}
-                      >
-                        {tab.charAt(0).toUpperCase() + tab.slice(1)}
-                      </button>
-                    ))}
-                  </div>
-                  <div className="text-[13px] text-gray-600 leading-relaxed max-h-[200px] overflow-y-auto pr-2 custom-scrollbar">
-                    {activeTab === 'description' && (
-                      <div>
-                        {selectedProduct?.description ? (
-                          <p>{selectedProduct.description}</p>
-                        ) : (
-                          <p>Detailed therapeutic description is not available.</p>
-                        )}
-                        <div className="mt-4 border-t border-gray-100 pt-4 grid grid-cols-2 gap-4">
-                          {selectedProduct?.strength && (
-                            <div>
-                              <span className="block text-[11px] text-gray-400 uppercase font-semibold">Strength</span>
-                              <span className="text-gray-800 font-medium text-[13px]">{formatFieldWithLineBreaks(selectedProduct.strength)}</span>
-                            </div>
-                          )}
-                          {selectedProduct?.form && (
-                            <div>
-                              <span className="block text-[11px] text-gray-400 uppercase font-semibold">Form</span>
-                              <span className="text-gray-800 font-medium text-[13px]">{formatFieldWithLineBreaks(selectedProduct.form)}</span>
-                            </div>
-                          )}
-                          {selectedProduct?.packaging && (
-                            <div>
-                              <span className="block text-[11px] text-gray-400 uppercase font-semibold">Packaging</span>
-                              <span className="text-gray-800 font-medium text-[13px]">{selectedProduct.packaging}</span>
-                            </div>
-                          )}
-                          {selectedProduct?.innovator && (
-                            <div>
-                              <span className="block text-[11px] text-gray-400 uppercase font-semibold">Innovator</span>
-                              <span className="text-gray-800 font-medium text-[13px]">{selectedProduct.innovator}</span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    )}
-                    {activeTab === 'usage' && (
-                      <div>
-                        {selectedProduct?.dosageAdministration && (
-                          <div className="mb-4">
-                            <span className="block text-[11px] text-gray-400 uppercase font-semibold mb-1">Dosage & Administration</span>
-                            <p className="text-[13px] text-gray-600">{selectedProduct.dosageAdministration}</p>
-                          </div>
-                        )}
-                        {selectedProduct?.indications && (
-                          <div className="mb-4">
-                            <span className="block text-[11px] text-gray-400 uppercase font-semibold mb-1">Indications</span>
-                            <p className="text-[13px] text-gray-600">{selectedProduct.indications}</p>
-                          </div>
-                        )}
-                        {!selectedProduct?.dosageAdministration && !selectedProduct?.indications && (
-                          <p>Dosage and administration should be directed by a licensed physician.</p>
-                        )}
-                      </div>
-                    )}
-                    {activeTab === 'precautions' && (
-                      <div>
-                        {selectedProduct?.storageCondition && (
-                          <div className="mb-4">
-                            <span className="block text-[11px] text-gray-400 uppercase font-semibold mb-1">Storage Conditions</span>
-                            <p className="text-[13px] text-gray-600">{selectedProduct.storageCondition}</p>
-                          </div>
-                        )}
-                        {selectedProduct?.accreditations && (
-                          <div className="mb-4">
-                            <span className="block text-[11px] text-gray-400 uppercase font-semibold mb-1">Accreditations</span>
-                            <p className="text-[13px] text-gray-600">{selectedProduct.accreditations}</p>
-                          </div>
-                        )}
-                        {!selectedProduct?.storageCondition && !selectedProduct?.accreditations && (
-                          <p>Precautions, potential side effects, and warnings should be consulted with your doctor or pharmacist.</p>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              {/* Right Column: Inquiry Form */}
-              <div className="lg:w-1/2 bg-white p-6 lg:p-8 pb-10">
-                <div className="mb-6">
-                  <h4 className="text-lg font-bold text-gray-900">Send Inquiry</h4>
-                  <p className="text-xs text-gray-500 mt-1">Submit your details to get a formal quote for this product.</p>
-                </div>
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <div>
-                    <label className="block text-[13px] font-medium text-gray-500 mb-2">Target Product</label>
-                    <input
-                      type="text"
-                      readOnly
-                      value={selectedProduct?.name || ''}
-                      className="w-full bg-gray-50 border border-gray-100 rounded-xl px-3 py-2.5 text-[13px] font-semibold outline-none cursor-default"
-                      style={{ color: '#0D99FF' }}
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[13px] font-medium text-gray-500 mb-2">Full Name</label>
-                    <input
-                      type="text"
-                      required
-                      placeholder="John Doe"
-                      value={formData.name}
-                      onChange={e => setFormData(f => ({ ...f, name: e.target.value }))}
-                      className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2.5 text-[13px] text-gray-700 outline-none focus:border-primary transition"
-                    />
-                  </div>
-                  <div className="flex gap-3 items-end">
-                    <div className="flex-1 min-w-0">
-                      <label className="block text-[13px] font-medium text-gray-500 mb-2">Phone Number</label>
-                      <input
-                        type="tel"
-                        required
-                        placeholder="+63 900 000 0000"
-                        value={formData.phone}
-                        onChange={e => setFormData(f => ({ ...f, phone: e.target.value.replace(/[^\d+\s\-()]/g, '') }))}
-                        inputMode="numeric"
-                        className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2.5 text-[13px] text-gray-700 outline-none focus:border-primary transition"
-                      />
-                    </div>
-                    <div className="w-[90px] shrink-0" ref={ageDropdownRef}>
-                      <label className="block text-[13px] font-medium text-gray-500 mb-2">Age</label>
-                      <div className="relative">
-                        <button type="button"
-                          onClick={() => setAgeDropdownOpen(o => !o)}
-                          className="w-full flex items-center justify-between bg-white border border-gray-200 rounded-xl px-3 py-2.5 text-[13px] text-gray-700 outline-none focus:border-primary transition cursor-pointer">
-                          <span className={formData.age ? 'text-gray-700' : 'text-gray-400'}>{formData.age || 'Age'}</span>
-                          <i className="fa-solid fa-chevron-down text-[10px] text-gray-400"></i>
-                        </button>
-                        {ageDropdownOpen && (
-                          <div className="absolute top-full left-0 mt-1 w-full bg-white rounded-xl shadow-xl border border-gray-100 z-[60] overflow-hidden">
-                            <div className="max-h-48 overflow-y-auto">
-                              {Array.from({ length: 63 }, (_, i) => i + 18).map(age => (
-                                <button key={age} type="button"
-                                  onClick={() => { setFormData(f => ({ ...f, age: String(age) })); setAgeDropdownOpen(false); }}
-                                  className={`w-full text-left px-3 py-2 text-[13px] hover:bg-gray-50 transition ${formData.age === String(age) ? 'bg-blue-50 text-primary font-semibold' : 'text-gray-700'}`}>
-                                  {age}
-                                </button>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                  <div>
-                    <label className="block text-[13px] font-medium text-gray-500 mb-2">Email Address</label>
-                    <input
-                      type="email"
-                      required
-                      placeholder="john@example.com"
-                      value={formData.email}
-                      onChange={e => setFormData(f => ({ ...f, email: e.target.value }))}
-                      className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2.5 text-[13px] text-gray-700 outline-none focus:border-primary transition"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[13px] font-medium text-gray-500 mb-2">Message</label>
-                    <textarea
-                      rows={3}
-                      placeholder="Tell us more about your requirements..."
-                      value={formData.message}
-                      onChange={e => setFormData(f => ({ ...f, message: e.target.value }))}
-                      className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2.5 text-[13px] text-gray-700 outline-none focus:border-primary transition resize-none"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[13px] font-medium text-gray-500 mb-2">Upload Prescription (Optional)</label>
-                    <input
-                      type="file"
-                      multiple
-                      accept=".png,.jpg,.jpeg,.pdf"
-                      onChange={handleFileChange}
-                      className="w-full text-[13px] text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-[12px] file:font-medium file:bg-primary/10 file:text-primary hover:file:bg-primary/20 transition cursor-pointer border border-gray-200 rounded-xl p-1.5 bg-white outline-none"
-                    />
-                    {uploadedFiles.length > 0 && (
-                      <div className="mt-2 space-y-1">
-                        {uploadedFiles.map((file, fi) => (
-                          <div key={fi} className="flex items-center text-[11px] text-gray-500 bg-gray-50 px-2 py-1.5 rounded-md border border-gray-100">
-                            <i className="fa-solid fa-file-lines mr-2" style={{ color: 'rgba(13,153,255,0.7)' }} />
-                            <span className="truncate">{file.name}</span>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                  <button
-                    type="submit"
-                    disabled={submitState === 'sending' || submitState === 'sent'}
-                    className="w-full text-white font-bold py-3 rounded-xl shadow-lg transition-all duration-500 transform active:scale-[0.98] mt-6 mb-8 text-[13px]"
-                    style={submitState === 'sent'
-                      ? { background: '#61A644' }
-                      : { background: 'linear-gradient(to right, #61A644, #0D99FF)' }}
-                  >
-                    {submitState === 'sending'
-                      ? 'Sending...'
-                      : submitState === 'sent'
-                        ? '✓ Inquiry Sent Successfully!'
-                        : submitState === 'error'
-                          ? 'Failed to submit. Try again.'
-                          : 'Submit Inquiry Request'}
-                  </button>
-                  <div className="h-8" />
-                </form>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {zoomedImageOpen && selectedProduct && (
-        <div 
-          className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/85 backdrop-blur-md transition-all duration-300"
-          onClick={() => setZoomedImageOpen(false)}
-        >
-          <button 
-            className="absolute top-6 right-6 w-12 h-12 bg-white/10 hover:bg-white/20 text-white rounded-full flex items-center justify-center transition-colors cursor-pointer"
-            onClick={() => setZoomedImageOpen(false)}
-          >
-            <i className="fa-solid fa-xmark text-xl" />
-          </button>
-          <div 
-            className="max-w-[90vw] max-h-[90vh] overflow-hidden rounded-2xl bg-white p-4 shadow-2xl relative"
-            onClick={e => e.stopPropagation()}
-          >
-            <img
-              src={getProductImage(selectedProduct)}
-              className="max-w-full max-h-[80vh] object-contain transition-transform duration-300 hover:scale-150 cursor-zoom-in"
-              alt={selectedProduct.name}
-              onError={(e) => { (e.target as HTMLImageElement).src = 'assets/no-image.png'; }}
-            />
-          </div>
-        </div>
-      )}
     </div>
   );
 }
