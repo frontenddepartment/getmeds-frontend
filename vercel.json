@@ -114,18 +114,6 @@
       "destination": "https://admin.getmeds.ph/adminadlorock/:path*"
     },
     {
-      "source": "/public/:path*",
-      "destination": "https://admin.getmeds.ph/public/:path*"
-    },
-    {
-      "source": "/assets/:path*",
-      "destination": "https://admin.getmeds.ph/assets/:path*"
-    },
-    {
-      "source": "/uploads/:path*",
-      "destination": "https://admin.getmeds.ph/uploads/:path*"
-    },
-    {
       "source": "/cancer-medicines/:subcategory/:product",
       "destination": "/product-detail.html"
     },
@@ -152,6 +140,6 @@
     {
       "source": "/:path*",
       "destination": "/index.html"
-    }
+        }
   ]
 }
