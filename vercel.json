@@ -7,61 +7,6 @@
   "cleanUrls": true,
   "redirects": [
     {
-      "source": "/masteradlorock",
-      "has": [
-        {
-          "type": "host",
-          "value": "getmeds.ph"
-        }
-      ],
-      "destination": "https://www.getmeds.ph/masteradlorock",
-      "permanent": false
-    },
-    {
-      "source": "/masteradlorock/:path*",
-      "has": [
-        {
-          "type": "host",
-          "value": "getmeds.ph"
-        }
-      ],
-      "destination": "https://www.getmeds.ph/masteradlorock/:path*",
-      "permanent": false
-    },
-    {
-      "source": "/masteradlorockpd",
-      "has": [
-        {
-          "type": "host",
-          "value": "getmeds.ph"
-        }
-      ],
-      "destination": "https://www.getmeds.ph/masteradlorockpd",
-      "permanent": false
-    },
-    {
-      "source": "/masteradlorockpdprocess",
-      "has": [
-        {
-          "type": "host",
-          "value": "getmeds.ph"
-        }
-      ],
-      "destination": "https://www.getmeds.ph/masteradlorockpdprocess",
-      "permanent": false
-    },
-    {
-      "source": "/masteradlogriyon",
-      "has": [
-        {
-          "type": "host",
-          "value": "getmeds.ph"
-        }
-      ],
-      "destination": "https://www.getmeds.ph/masteradlogriyon",
-      "permanent": false
-    },
-    {
       "source": "/articles",
       "destination": "/blog",
       "permanent": true
@@ -102,20 +47,12 @@
       "permanent": true
     },
     {
-      "source": "/:slug((?!about-us|blog|blog-detail|cms|masteradlorock|masteradlorockpd|masteradlorockpdprocess|masteradlogriyon|adminadlorock|cancer-medicines|careers|contact-us|csr|edit-profile|global-presence|home-preview|meditations|order-medicines|pap|profile|services|under-development|ungc|api/|wp-json/|public/|components/|data/|src/|dist/|node_modules/|_vercel/|[^/]+\\.[^/]+$)[^/]+)",
+      "source": "/:slug((?!about-us|blog|blog-detail|cancer-medicines|careers|contact-us|csr|edit-profile|global-presence|home-preview|meditations|order-medicines|pap|profile|services|under-development|ungc|api/|wp-json/|assets/|components/|data/|src/|dist/|node_modules/|_vercel/|[^/]+\\.[^/]+$)[^/]+)",
       "destination": "/blog/:slug",
       "permanent": true
     }
   ],
   "rewrites": [
-    {
-      "source": "/cms",
-      "destination": "https://cms.getmeds.ph/"
-    },
-    {
-      "source": "/cms/:path*",
-      "destination": "https://cms.getmeds.ph/:path*"
-    },
     {
       "source": "/wp-json/:path*",
       "destination": "https://cms.getmeds.ph/wp-json/:path*"
@@ -127,50 +64,6 @@
     {
       "source": "/api/:path*",
       "destination": "https://getmeds-admin.vercel.app/api/:path*"
-    },
-    {
-      "source": "/masteradlorock",
-      "destination": "https://admin.getmeds.ph/masteradlorock"
-    },
-    {
-      "source": "/masteradlorock/:path*",
-      "destination": "https://admin.getmeds.ph/masteradlorock/:path*"
-    },
-    {
-      "source": "/masteradlorockpd",
-      "destination": "https://admin.getmeds.ph/masteradlorockpd"
-    },
-    {
-      "source": "/masteradlorockpd/:path*",
-      "destination": "https://admin.getmeds.ph/masteradlorockpd/:path*"
-    },
-    {
-      "source": "/masteradlorockpdprocess",
-      "destination": "https://admin.getmeds.ph/masteradlorockpdprocess"
-    },
-    {
-      "source": "/masteradlorockpdprocess/:path*",
-      "destination": "https://admin.getmeds.ph/masteradlorockpdprocess/:path*"
-    },
-    {
-      "source": "/masteradlogriyon",
-      "destination": "https://admin.getmeds.ph/masteradlogriyon"
-    },
-    {
-      "source": "/masteradlogriyon/:path*",
-      "destination": "https://admin.getmeds.ph/masteradlogriyon/:path*"
-    },
-    {
-      "source": "/adminadlorock",
-      "destination": "https://admin.getmeds.ph/adminadlorock"
-    },
-    {
-      "source": "/adminadlorock/:path*",
-      "destination": "https://admin.getmeds.ph/adminadlorock/:path*"
-    },
-    {
-      "source": "/public/:path*",
-      "destination": "https://admin.getmeds.ph/public/:path*"
     },
     {
       "source": "/cancer-medicines/:subcategory/:product",
