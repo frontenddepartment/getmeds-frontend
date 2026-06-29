@@ -24,14 +24,43 @@ function request(url, options = {}) {
   });
 }
 
+// Load environment variables from .env
+function loadEnv() {
+  const envPath = path.join(__dirname, '..', '.env');
+  const env = {};
+  if (fs.existsSync(envPath)) {
+    const lines = fs.readFileSync(envPath, 'utf8').split('\n');
+    lines.forEach(line => {
+      const match = line.match(/^\s*([\w.-]+)\s*=\s*(.*)?\s*$/);
+      if (match) {
+        const key = match[1];
+        let value = match[2] || '';
+        if (value.length > 0 && value.charAt(0) === '"' && value.charAt(value.length - 1) === '"') {
+          value = value.substring(1, value.length - 1);
+        } else if (value.length > 0 && value.charAt(0) === "'" && value.charAt(value.length - 1) === "'") {
+          value = value.substring(1, value.length - 1);
+        }
+        env[key] = value.trim();
+      }
+    });
+  }
+  return env;
+}
+
 // Fetch a single page of posts from WordPress API, with IP fallback if DNS fails
 async function fetchPage(page) {
   const pathQuery = `/wp-json/wp/v2/posts?per_page=100&page=${page}&_fields=slug,date`;
+  const env = loadEnv();
+  const wordpressApiRoot = env.VITE_WORDPRESS_API_ROOT || 'https://cms.getmeds.ph';
+  const targetUrl = new URL(wordpressApiRoot);
   
   // Try 1: Fetch via the domain
   try {
-    const res = await request(`https://cms.getmeds.ph${pathQuery}`, {
-      headers: { 'User-Agent': 'SitemapGenerator/1.0' }
+    const res = await request(`${targetUrl.origin}${pathQuery}`, {
+      headers: {
+        'Host': targetUrl.host,
+        'User-Agent': 'SitemapGenerator/1.0'
+      }
     });
     if (res.statusCode === 200) {
       return {
@@ -39,6 +68,7 @@ async function fetchPage(page) {
         totalPages: parseInt(res.headers['x-wp-totalpages'] || '1', 10)
       };
     }
+    throw new Error(`WordPress API returned status code ${res.statusCode}`);
   } catch (err) {
     console.warn(`Direct fetch failed for page ${page}: ${err.message}. Trying IP fallback...`);
   }
@@ -47,7 +77,7 @@ async function fetchPage(page) {
   try {
     const res = await request(`https://173.231.197.156${pathQuery}`, {
       headers: {
-        'Host': 'cms.getmeds.ph',
+        'Host': targetUrl.host,
         'User-Agent': 'SitemapGenerator/1.0'
       },
       rejectUnauthorized: false // Ignore self-signed/invalid certificate issues for IP

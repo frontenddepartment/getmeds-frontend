@@ -31,6 +31,8 @@ export default defineConfig(({ mode }) => {
   const sanityProjectId = env.VITE_SANITY_PROJECT_ID || 's7ocz8zp';
   const sanityDataset = env.VITE_SANITY_DATASET || 'production';
   const sanityApiVersion = env.VITE_SANITY_API_VERSION || '2024-01-01';
+  const wordpressApiBase = env.VITE_WORDPRESS_API_BASE || '/wp-json/wp/v2';
+  const wordpressApiRoot = env.VITE_WORDPRESS_API_ROOT || 'https://cms.getmeds.ph';
 
   return {
     define: {
@@ -38,12 +40,14 @@ export default defineConfig(({ mode }) => {
       'import.meta.env.VITE_SPREADSHEET_API_URL': JSON.stringify(spreadsheetUrl),
       'import.meta.env.VITE_SANITY_PROJECT_ID': JSON.stringify(sanityProjectId),
       'import.meta.env.VITE_SANITY_DATASET': JSON.stringify(sanityDataset),
-      'import.meta.env.VITE_SANITY_API_VERSION': JSON.stringify(sanityApiVersion)
+      'import.meta.env.VITE_SANITY_API_VERSION': JSON.stringify(sanityApiVersion),
+      'import.meta.env.VITE_WORDPRESS_API_BASE': JSON.stringify(wordpressApiBase),
+      'import.meta.env.VITE_WORDPRESS_API_ROOT': JSON.stringify(wordpressApiRoot)
     },
     server: {
       proxy: {
         '/wp-json': {
-          target: 'https://173.231.197.156',
+          target: wordpressApiRoot,
           changeOrigin: true,
           secure: false,
           configure: (proxy, _options) => {
@@ -63,8 +67,9 @@ export default defineConfig(({ mode }) => {
               proxyReq.removeHeader('X-Forwarded-Proto');
               proxyReq.removeHeader('x-forwarded-port');
               proxyReq.removeHeader('X-Forwarded-Port');
-              proxyReq.setHeader('Host', 'cms.getmeds.ph');
-              proxyReq.setHeader('host', 'cms.getmeds.ph');
+              const targetUrl = new URL(wordpressApiRoot);
+              proxyReq.setHeader('Host', targetUrl.host);
+              proxyReq.setHeader('host', targetUrl.host);
               proxyReq.setHeader('User-Agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)');
             });
           }

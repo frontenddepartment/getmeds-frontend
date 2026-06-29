@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useCategories, useImageMapper, useNews, useSiteSettings } from '../lib/useSanity';
 import { getGoogleSpreadsheetBySlug } from '../lib/queries';
 import { injectHTML } from '../lib/injectHTML';
@@ -166,7 +166,8 @@ export default function GetMedsHomepage() {
         // Fetch latest WordPress blog post
         let wpPost: any = null;
         try {
-          const res = await fetch('/wp-json/wp/v2/posts?per_page=1&_embed=true');
+          const WP_API_BASE = import.meta.env.VITE_WORDPRESS_API_BASE || '/wp-json/wp/v2';
+          const res = await fetch(`${WP_API_BASE}/posts?per_page=1&_embed=true`);
           if (res.ok) {
             const posts = await res.json();
             if (posts && posts.length > 0) wpPost = posts[0];

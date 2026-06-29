@@ -362,9 +362,11 @@ export async function getGoogleSpreadsheetBySlug(slug: string) {
 // News & Articles
 // ─────────────────────────────────────────────
 
+const WP_API_BASE = import.meta.env.VITE_WORDPRESS_API_BASE || '/wp-json/wp/v2';
+
 export async function getNews() {
   try {
-    const res = await fetch(`/wp-json/wp/v2/posts?per_page=20&_embed=true&_=${Date.now()}`, { cache: 'reload' });
+    const res = await fetch(`${WP_API_BASE}/posts?per_page=20&_embed=true&_=${Date.now()}`, { cache: 'reload' });
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
     const data = await res.json();
     return data.map((item: any) => {
@@ -411,7 +413,7 @@ export async function getNews() {
 
 export async function getNewsPage(page: number, perPage: number = 20): Promise<{ items: News[]; totalPages: number }> {
   try {
-    const res = await fetch(`/wp-json/wp/v2/posts?per_page=${perPage}&page=${page}&_embed=true&_=${Date.now()}`, { cache: 'reload' });
+    const res = await fetch(`${WP_API_BASE}/posts?per_page=${perPage}&page=${page}&_embed=true&_=${Date.now()}`, { cache: 'reload' });
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
     const totalPages = parseInt(res.headers.get('X-WP-TotalPages') || '1', 10);
     const data = await res.json();
@@ -458,7 +460,7 @@ export async function getNewsPage(page: number, perPage: number = 20): Promise<{
 
 export async function getNewsById(id: string) {
   try {
-    const res = await fetch(`/wp-json/wp/v2/posts/${id}?_embed=true&_=${Date.now()}`, { cache: 'reload' });
+    const res = await fetch(`${WP_API_BASE}/posts/${id}?_embed=true&_=${Date.now()}`, { cache: 'reload' });
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
     const item = await res.json();
     
@@ -502,7 +504,7 @@ export async function getNewsById(id: string) {
 
 export async function getNewsBySlug(slug: string) {
   try {
-    const res = await fetch(`/wp-json/wp/v2/posts?slug=${slug}&_embed=true&_=${Date.now()}`, { cache: 'reload' });
+    const res = await fetch(`${WP_API_BASE}/posts?slug=${slug}&_embed=true&_=${Date.now()}`, { cache: 'reload' });
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
     const posts = await res.json();
     if (!posts || posts.length === 0) return null;
