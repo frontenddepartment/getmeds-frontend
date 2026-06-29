@@ -54,6 +54,10 @@
   ],
   "rewrites": [
     {
+      "source": "/masteradlorock/:path*",
+      "destination": "https://admin.getmeds.ph/masteradlorock/:path*"
+    },
+    {
       "source": "/wp-json/:path*",
       "destination": "https://cms.getmeds.ph/wp-json/:path*"
     },
