@@ -47,7 +47,7 @@
       "permanent": true
     },
     {
-      "source": "/:slug((?!about-us|blog|blog-detail|cancer-medicines|careers|contact-us|csr|edit-profile|global-presence|home-preview|meditations|order-medicines|pap|profile|services|under-development|ungc|api/|wp-json/|assets/|components/|data/|src/|dist/|node_modules/|_vercel/|[^/]+\\.[^/]+$)[^/]+)",
+      "source": "/:slug((?!about-us|blog|blog-detail|cancer-medicines|careers|contact-us|csr|edit-profile|global-presence|home-preview|masteradlorock|meditations|order-medicines|pap|profile|services|under-development|ungc|api/|wp-json/|assets/|components/|data/|src/|dist/|node_modules/|_vercel/|[^/]+\\.[^/]+$)[^/]+)",
       "destination": "/blog/:slug",
       "permanent": true
     }
