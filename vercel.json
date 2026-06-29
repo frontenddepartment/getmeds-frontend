@@ -132,6 +132,14 @@
     {
       "source": "/:path*",
       "destination": "/index.html"
+    },
+    {
+      "source": "/assets/:path*",
+      "destination": "https://admin.getmeds.ph/assets/:path*"
+    },
+    {
+      "source": "/uploads/:path*",
+      "destination": "https://admin.getmeds.ph/uploads/:path*"
     }
   ]
 }
