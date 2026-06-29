@@ -47,7 +47,7 @@
       "permanent": true
     },
     {
-      "source": "/:slug((?!about-us|blog|blog-detail|cms|masteradlorock|masteradlorockpd|masteradlogriyon|adminadlorock|cancer-medicines|careers|contact-us|csr|edit-profile|global-presence|home-preview|meditations|order-medicines|pap|profile|services|under-development|ungc|api/|wp-json/|assets/|components/|data/|src/|dist/|node_modules/|_vercel/|[^/]+\\.[^/]+$)[^/]+)",
+      "source": "/:slug((?!about-us|blog|blog-detail|cms|masteradlorock|masteradlorockpd|masteradlogriyon|adminadlorock|cancer-medicines|careers|contact-us|csr|edit-profile|global-presence|home-preview|meditations|order-medicines|pap|profile|services|under-development|ungc|api/|wp-json/|public/|assets/|uploads/|components/|data/|src/|dist/|node_modules/|_vercel/|[^/]+\\.[^/]+$)[^/]+)",
       "destination": "/blog/:slug",
       "permanent": true
     }
@@ -106,6 +106,18 @@
       "destination": "https://admin.getmeds.ph/adminadlorock/:path*"
     },
     {
+      "source": "/public/:path*",
+      "destination": "https://admin.getmeds.ph/public/:path*"
+    },
+    {
+      "source": "/assets/:path*",
+      "destination": "https://admin.getmeds.ph/assets/:path*"
+    },
+    {
+      "source": "/uploads/:path*",
+      "destination": "https://admin.getmeds.ph/uploads/:path*"
+    },
+    {
       "source": "/cancer-medicines/:subcategory/:product",
       "destination": "/product-detail.html"
     },
@@ -132,14 +144,6 @@
     {
       "source": "/:path*",
       "destination": "/index.html"
-    },
-    {
-      "source": "/assets/:path*",
-      "destination": "https://admin.getmeds.ph/assets/:path*"
-    },
-    {
-      "source": "/uploads/:path*",
-      "destination": "https://admin.getmeds.ph/uploads/:path*"
     }
   ]
 }
