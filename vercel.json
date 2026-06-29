@@ -58,7 +58,7 @@
       "permanent": true
     },
     {
-      "source": "/:slug((?!about-us|blog|blog-detail|cms|masteradlorock|masteradlorockpd|masteradlorockpdprocess|masteradlogriyon|adminadlorock|cancer-medicines|careers|contact-us|csr|edit-profile|global-presence|home-preview|meditations|order-medicines|pap|profile|services|under-development|ungc|api/|wp-json/|public/|assets/|uploads/|components/|data/|src/|dist/|node_modules/|_vercel/|[^/]+\\.[^/]+$)[^/]+)",
+      "source": "/:slug((?!about-us|blog|blog-detail|cms|masteradlorock|masteradlorockpd|masteradlorockpdprocess|masteradlogriyon|adminadlorock|cancer-medicines|careers|contact-us|csr|edit-profile|global-presence|home-preview|meditations|order-medicines|pap|profile|services|under-development|ungc|api/|wp-json/|public/|uploads/|components/|data/|src/|dist/|node_modules/|_vercel/|[^/]+\\.[^/]+$)[^/]+)",
       "destination": "/blog/:slug",
       "permanent": true
     }
@@ -127,10 +127,6 @@
     {
       "source": "/public/:path*",
       "destination": "https://admin.getmeds.ph/public/:path*"
-    },
-    {
-      "source": "/assets/:path*",
-      "destination": "https://admin.getmeds.ph/assets/:path*"
     },
     {
       "source": "/uploads/:path*",
