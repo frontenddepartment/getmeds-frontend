@@ -71,18 +71,92 @@ export default function ProductDetail() {
     return () => document.removeEventListener('mousedown', close);
   }, [ageDropdownOpen]);
 
+  const getSubcategorySlug = (name: string) => {
+    const slug = name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+    const specials: Record<string, string> = {
+      'non-small-cell-lung-cancer': 'lung-cancer',
+      'acute-myeloid-leukemia': 'aml',
+      'chronic-myeloid-leukemia': 'cml',
+      'hodgkin-non-hodgkins-lymphoma': 'lymphoma',
+      'hodgkin-non-hodgkin-s-lymphoma': 'lymphoma',
+      'sickle-cell-anemia': 'sickle-cell',
+      'respiratory-infections': 'respiratory',
+      'urinary-tract-infections': 'uti',
+      'skin-and-soft-tissue-infections': 'skin-infections',
+      'bone-and-joint-infections': 'bone-infections',
+      'fibrocystic-breast-disease': 'fibrocystic',
+      'arrhythmia-management': 'arrhythmia',
+      'hypertension-angina': 'hypertension',
+      'hypertension-and-angina': 'hypertension',
+      'seasonal-allergic-rhinitis': 'allergic-rhinitis',
+      'chronic-kidney-disease': 'kidney-disease',
+      'chronic-pain': 'pain',
+      'inflammatory-disorders': 'rheumatology',
+      'inflammatory-and-rheumatic-disorders': 'rheumatology'
+    };
+    return specials[slug] || slug;
+  };
+
+  const getProductSubcategories = (p: ProductWithCategory) => {
+    if (!p.subCategory) return [];
+    const parts = p.subCategory.split('/').map(s => s.trim().replace(/,$/, '')).filter(Boolean);
+    const catDoc = categoriesData?.find(c => c._id === p.category?._id || c.category === p.category?.category);
+    const masterSubcategories = catDoc?.subcategory || [];
+    if (masterSubcategories.length === 0) return parts;
+    return parts.map(part => {
+      const matched = masterSubcategories.find(m => m.toLowerCase() === part.toLowerCase());
+      return matched || part;
+    });
+  };
+
+  const getCategorizationDisplay = (p: ProductWithCategory) => {
+    const subcats = getProductSubcategories(p);
+    if (subcats.length === 0) {
+      return p.category?.category || 'General';
+    }
+    return subcats[0] || 'General';
+  };
+
   useEffect(() => {
     if (!productsLoading && productsData) {
-      const urlParams = new URLSearchParams(window.location.search);
-      const productSlug = urlParams.get('product');
+      let productSlug = '';
+      
+      // Parse from pathname
+      const pathParts = window.location.pathname.split('/').filter(Boolean);
+      if (pathParts[0] === 'cancer-medicines' && pathParts.length === 3) {
+        productSlug = pathParts[2];
+      }
+      
+      // Fallback to query param
+      if (!productSlug) {
+        const urlParams = new URLSearchParams(window.location.search);
+        productSlug = urlParams.get('product') || '';
+      }
+      
       if (!productSlug) {
         setNotFound(true);
         return;
       }
+
+      // Generate slug in format brandname-molecule-dosage-strength
+      const getProductSlug = (p: ProductWithCategory) => {
+        const brand = (p.brandName || '').toLowerCase().trim();
+        const molecule = (p.genericName || '').toLowerCase().trim()
+          .replace(/\s*\(as\s+[^)]+\)/gi, '')
+          .replace(/[^a-z0-9]+/g, '-');
+        const form = (p.form || '').toLowerCase().trim()
+          .replace(/[^a-z0-9]+/g, '-');
+        const strength = (p.strength || '').toLowerCase().trim()
+          .replace(/[^a-z0-9]+/g, '-');
+        const parts = [brand, molecule, strength, form].filter(Boolean).join('-');
+        return parts.replace(/-+/g, '-').replace(/(^-|-$)/g, '');
+      };
+
       const found = productsData.find(
-        p => p.slug?.current === productSlug ||
+        p => getProductSlug(p) === productSlug.toLowerCase() ||
+             p.slug?.current?.toLowerCase() === productSlug.toLowerCase() ||
              p.brandName?.toLowerCase() === productSlug.toLowerCase() ||
-             decodeURIComponent(productSlug) === (p.brandName || '').toLowerCase()
+             decodeURIComponent(productSlug).toLowerCase() === (p.brandName || '').toLowerCase()
       );
       if (found) {
         setProduct(found);
@@ -94,7 +168,12 @@ export default function ProductDetail() {
         setNotFound(true);
       }
     }
-  }, [productsLoading, productsData]);
+  }, [productsLoading, productsData, categoriesData]);
+
+  const backUrl = product
+    ? `/cancer-medicines/${getSubcategorySlug(getCategorizationDisplay(product))}`
+    : '/cancer-medicines';
+
 
   const brandNameCounts = useMemo(() => {
     const counts = new Map<string, number>();
@@ -187,23 +266,7 @@ export default function ProductDetail() {
     return 'assets/no-image.png';
   };
 
-  const getProductSubcategories = (p: ProductWithCategory) => {
-    if (!p.subCategory) return [];
-    const parts = p.subCategory.split('/').map((s: string) => s.trim().replace(/,$/, '')).filter(Boolean);
-    const catDoc = categoriesData?.find(c => c._id === p.category?._id || c.category === p.category?.category);
-    const masterSubcategories = catDoc?.subcategory || [];
-    if (masterSubcategories.length === 0) return parts;
-    return parts.map(part => {
-      const matched = masterSubcategories.find((m: string) => m.toLowerCase() === part.toLowerCase());
-      return matched || part;
-    });
-  };
 
-  const getCategorizationDisplay = (p: ProductWithCategory) => {
-    const subcats = getProductSubcategories(p);
-    if (subcats.length === 0) return p.category?.category || 'General';
-    return subcats[0] || p.category?.category || 'General';
-  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) setUploadedFiles(Array.from(e.target.files));
@@ -277,7 +340,7 @@ export default function ProductDetail() {
         {/* Page Header */}
         <div className="bg-white px-6 py-4 flex items-center gap-4 sticky top-0 z-10">
           <a
-            href="/product-range"
+            href={backUrl}
             className="flex items-center gap-2 text-sm text-gray-500 hover:text-primary transition-colors font-medium"
           >
             <i className="fa-solid fa-arrow-left text-xs" />
@@ -329,7 +392,7 @@ export default function ProductDetail() {
               The product you're looking for doesn't exist or may have been removed.
             </p>
             <a
-              href="/product-range"
+              href="/cancer-medicines"
               className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-white text-sm font-semibold shadow-md transition-all"
               style={{ background: 'linear-gradient(to right, #61A644, #0D99FF)' }}
             >

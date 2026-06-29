@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState, useRef, useMemo } from 'react';
+import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { useProducts, useCategories, useImageMapper, useSiteSettings } from '../lib/useSanity';
 import { urlFor, client } from '../lib/sanity';
 import type { Product as SanityProduct, Category } from '../types/sanity';
@@ -83,7 +83,7 @@ const getSubcategorySlug = (name: string) => {
   return subcategorySpecials[slug] || slug;
 };
 
-export default function ProductRange() {
+export default function CancerMedicines() {
   const { getImage } = useImageMapper('product-range');
   const { data: productsDataRaw, loading: productsLoading } = useProducts();
   const productsData = productsDataRaw as ProductWithCategory[] | null;
@@ -180,32 +180,6 @@ export default function ProductRange() {
     document.addEventListener('click', handleClick);
     return () => document.removeEventListener('click', handleClick);
   }, []);
-
-  useEffect(() => {
-    if (!productsLoading && productsData) {
-      const urlParams = new URLSearchParams(window.location.search);
-      const productSlug = urlParams.get('product');
-      const searchQuery = urlParams.get('search');
-
-      if (productSlug) {
-        window.location.href = '/product-detail?product=' + productSlug;
-        return;
-      }
-
-      if (searchQuery) {
-        const cleanQuery = searchQuery.trim().toLowerCase();
-        const targetProduct = productsData.find(
-          p => (p.brandName && p.brandName.toLowerCase() === cleanQuery) ||
-               (p.name && p.name.toLowerCase() === cleanQuery) ||
-               (p.brandName && p.genericName && `${p.brandName} (${p.genericName})`.toLowerCase() === cleanQuery)
-        );
-        if (targetProduct) {
-          const slug = targetProduct.slug?.current || encodeURIComponent((targetProduct.brandName || targetProduct.name || '').toLowerCase());
-          window.location.href = '/product-detail?product=' + slug;
-        }
-      }
-    }
-  }, [productsLoading, productsData]);
 
   // Process dynamic categories into 4 columns using Jaccard Similarity Graph Grouping (sim >= 0.5)
   const processedCats = useMemo(() => {
@@ -327,10 +301,22 @@ export default function ProductRange() {
     return result;
   }, [categoriesData]);
 
-  // Synchronize URL Category param with dynamic categories data
+  // Synchronize URL Category param or pathname with dynamic categories data
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const categorySlug = urlParams.get('category');
+    const pathParts = window.location.pathname.split('/').filter(Boolean);
+    let categorySlug = '';
+    
+    if (pathParts[0] === 'cancer-medicines') {
+      if (pathParts.length >= 2) {
+        categorySlug = pathParts[1];
+      }
+    }
+    
+    if (!categorySlug) {
+      const urlParams = new URLSearchParams(window.location.search);
+      categorySlug = urlParams.get('category') || '';
+    }
+
     if (categorySlug && processedCats.length > 0) {
       const cleanSlug = categorySlug.toLowerCase().trim();
       
@@ -359,6 +345,14 @@ export default function ProductRange() {
     }
   }, [processedCats]);
 
+  // Synchronize Title to active category
+  useEffect(() => {
+    if (currentCategory === 'All') {
+      document.title = 'Cancer Medicines - Getmeds';
+    } else {
+      document.title = `${currentCategory} - Cancer Medicines | Getmeds`;
+    }
+  }, [currentCategory]);
 
   const brandNameCounts = useMemo(() => {
     const counts = new Map<string, number>()
@@ -696,14 +690,40 @@ export default function ProductRange() {
     });
   };
 
+   const getProductDetailUrl = (p: ProductWithCategory) => {
+    const subcats = getProductSubcategories(p);
+    const subcat = subcats[0] || 'general';
+    const subcatSlug = getSubcategorySlug(subcat);
+    
+    const brand = (p.brandName || '').toLowerCase().trim();
+    const molecule = (p.genericName || '').toLowerCase().trim()
+      .replace(/\s*\(as\s+[^)]+\)/gi, '')
+      .replace(/[^a-z0-9]+/g, '-');
+    const form = (p.form || '').toLowerCase().trim()
+      .replace(/[^a-z0-9]+/g, '-');
+    const strength = (p.strength || '').toLowerCase().trim()
+      .replace(/[^a-z0-9]+/g, '-');
+    
+    const parts = [brand, molecule, strength, form].filter(Boolean).join('-');
+    const cleanProductSlug = parts.replace(/-+/g, '-').replace(/(^-|-$)/g, '');
+    
+    return `/cancer-medicines/${subcatSlug}/${cleanProductSlug}`;
+  };
+
   const selectCategory = (category: string) => {
     setCurrentCategory(category);
     setCurrentPage(1);
+    
+    if (category === 'All') {
+      window.history.pushState(null, '', '/cancer-medicines');
+    } else {
+      const slug = getSubcategorySlug(category);
+      window.history.pushState(null, '', `/cancer-medicines/${slug}`);
+    }
   };
 
   const openModal = (product: ProductWithCategory) => {
-    const slug = product.slug?.current || encodeURIComponent((product.brandName || product.name || '').toLowerCase());
-    window.location.href = '/product-detail?product=' + slug;
+    window.location.href = getProductDetailUrl(product);
   };
 
 
@@ -777,12 +797,12 @@ export default function ProductRange() {
             ) : (
               sidebarCategories.map(cat => (
                 <button
-                  key={cat.name}
-                  onClick={() => { selectCategory(cat.name); openFlyout(cat); }}
-                  className="w-full flex items-center justify-between px-4 py-2.5 rounded-[10px] text-[13px] font-semibold transition-all duration-200 hover:bg-gray-50 group"
-                  style={(flyoutVisible ? activeFlyoutCat?.name === cat.name : isCatParentActive(cat))
-                    ? { background: 'linear-gradient(to right, #61A644, #1D9FDA)', color: '#fff' }
-                    : { color: '#374151' }}
+                   key={cat.name}
+                   onClick={() => { selectCategory(cat.name); openFlyout(cat); }}
+                   className="w-full flex items-center justify-between px-4 py-2.5 rounded-[10px] text-[13px] font-semibold transition-all duration-200 hover:bg-gray-50 group"
+                   style={(flyoutVisible ? activeFlyoutCat?.name === cat.name : isCatParentActive(cat))
+                     ? { background: 'linear-gradient(to right, #61A644, #1D9FDA)', color: '#fff' }
+                     : { color: '#374151' }}
                 >
                   <span className="text-left leading-snug truncate">{cat.name}</span>
                 </button>
@@ -851,24 +871,17 @@ export default function ProductRange() {
               className="relative rounded-[15px] overflow-hidden flex items-center px-8 md:px-12"
               style={{ background: 'linear-gradient(135deg, #3aaf5c 0%, #1ab8c4 45%, #1a99d6 100%)', minHeight: '130px' }}
             >
-              {/* Glassy circles — mirroring the reference image */}
-              {/* Large teal circle bottom-left */}
+              {/* Glassy circles */}
               <div className="absolute pointer-events-none" style={{ width: 160, height: 160, borderRadius: '50%', bottom: '-55px', left: '28%', background: 'radial-gradient(circle at 40% 35%, rgba(100,240,200,0.55), rgba(30,180,210,0.30))', backdropFilter: 'blur(2px)', border: '1px solid rgba(255,255,255,0.25)' }} />
-              {/* Large blue/purple circle center-bottom */}
               <div className="absolute pointer-events-none" style={{ width: 130, height: 130, borderRadius: '50%', bottom: '-42px', left: '45%', background: 'radial-gradient(circle at 38% 30%, rgba(120,100,240,0.55), rgba(60,80,220,0.35))', backdropFilter: 'blur(2px)', border: '1px solid rgba(255,255,255,0.20)' }} />
-              {/* Big light-teal circle right */}
               <div className="absolute pointer-events-none hidden md:block" style={{ width: 180, height: 180, borderRadius: '50%', bottom: '-70px', right: '8%', background: 'radial-gradient(circle at 42% 38%, rgba(130,230,230,0.45), rgba(60,190,210,0.22))', backdropFilter: 'blur(2px)', border: '1px solid rgba(255,255,255,0.22)' }} />
-              {/* Medium green-yellow circle far left */}
               <div className="absolute pointer-events-none hidden md:block" style={{ width: 90, height: 90, borderRadius: '50%', bottom: '-20px', left: '18%', background: 'radial-gradient(circle at 35% 30%, rgba(160,240,120,0.60), rgba(40,210,130,0.35))', backdropFilter: 'blur(2px)', border: '1px solid rgba(255,255,255,0.25)' }} />
-              {/* Small purple circle top-right area */}
               <div className="absolute pointer-events-none hidden md:block" style={{ width: 52, height: 52, borderRadius: '50%', top: '10px', right: '28%', background: 'radial-gradient(circle at 35% 30%, rgba(170,110,240,0.70), rgba(100,60,210,0.45))', backdropFilter: 'blur(2px)', border: '1px solid rgba(255,255,255,0.25)' }} />
-              {/* Medium teal circle top center-right */}
               <div className="absolute pointer-events-none hidden md:block" style={{ width: 85, height: 85, borderRadius: '50%', top: '-15px', right: '38%', background: 'radial-gradient(circle at 38% 32%, rgba(80,220,210,0.55), rgba(30,170,200,0.30))', backdropFilter: 'blur(2px)', border: '1px solid rgba(255,255,255,0.22)' }} />
-              {/* Wide shallow blue ellipse bottom */}
               <div className="absolute pointer-events-none" style={{ width: 280, height: 80, borderRadius: '50%', bottom: '-48px', left: '22%', background: 'radial-gradient(ellipse at 50% 40%, rgba(40,160,230,0.38), rgba(20,130,210,0.18))', backdropFilter: 'blur(2px)' }} />
               <div className="relative z-10 transition-all duration-300">
                 <h1 className="text-xl sm:text-2xl md:text-3xl font-semibold text-white tracking-tight leading-tight">
-                  Getmeds Products
+                  Cancer Medicines
                 </h1>
                 <p className="text-white/75 text-[12px] sm:text-[13px] mt-1 font-medium">Comprehensive catalog of pharmaceutical solutions. Browse categories and send inquiries directly.</p>
               </div>
@@ -877,14 +890,14 @@ export default function ProductRange() {
 
           {/* PRODUCTS LIST */}
           <section className="px-4 sm:px-6 lg:px-8 mb-24">
-            {/* Toolbar: stacks vertically on mobile */}
+            {/* Toolbar */}
             <div className="flex flex-col gap-3 mb-6 sm:flex-row sm:items-start sm:justify-between sm:mb-8">
               <h2 className="text-xl font-semibold text-gray-900 leading-snug sm:max-w-[55%]">
                 {currentCategory === 'All' ? 'All Products' : currentCategory}{' '}
                 <span className="text-gray-400 font-normal text-sm ml-1 whitespace-nowrap">({sorted.length} Items)</span>
               </h2>
 
-              {/* Check Products — opens category sidebar */}
+              {/* Check Products */}
               {!sidebarOpen && (
                 <button
                   onClick={() => setSidebarOpen(true)}
@@ -895,7 +908,7 @@ export default function ProductRange() {
                 </button>
               )}
 
-              {/* Search Bar — full width on mobile, flex-1 on desktop */}
+              {/* Search Bar */}
               <div className="relative w-full sm:flex-1 sm:min-w-0" ref={searchWrapperRef}>
                 <div className="bg-white rounded-full py-1 px-1.5 border border-gray-200 flex items-center">
                   <div className="relative flex-grow flex items-center ml-3">
@@ -1099,7 +1112,7 @@ export default function ProductRange() {
                 <TableSkeleton />
               ) : (
                 <>
-                  {/* MOBILE CARDS — visible below lg */}
+                  {/* MOBILE CARDS */}
                   <div className="lg:hidden space-y-3">
                     {paginated.map((p, i) => {
                       const displayName = p.brandName && p.genericName && p.brandName !== p.genericName
@@ -1146,7 +1159,7 @@ export default function ProductRange() {
                     })}
                   </div>
 
-                  {/* DESKTOP TABLE — visible lg and above */}
+                  {/* DESKTOP TABLE */}
                   <div className="hidden lg:block overflow-x-auto bg-white rounded-[10px] border border-gray-100 shadow-sm">
                     <table className="w-full text-left border-collapse">
                       <thead>

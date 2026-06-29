@@ -263,19 +263,36 @@ export default defineConfig(({ mode }) => {
                 return;
               }
             }
-            if (cleanPath === '/product-range.html') {
-              res.statusCode = 302;
-              res.setHeader('Location', '/product-range' + qs);
+            if (cleanPath === '/product-range.html' || cleanPath === '/product-range' || cleanPath === '/product-range/') {
+              res.statusCode = 301;
+              res.setHeader('Location', '/cancer-medicines' + qs);
               res.end();
               return;
             }
-            if (cleanPath === '/product-range' || cleanPath === '/product-range/') {
-              const htmlPath = path.join(process.cwd(), 'product-range.html');
-              if (fs.existsSync(htmlPath)) {
-                const htmlContent = fs.readFileSync(htmlPath, 'utf-8');
-                res.setHeader('Content-Type', 'text/html');
-                res.end(htmlContent);
-                return;
+            if (cleanPath === '/cancer-medicines.html') {
+              res.statusCode = 302;
+              res.setHeader('Location', '/cancer-medicines' + qs);
+              res.end();
+              return;
+            }
+            if (cleanPath.startsWith('/cancer-medicines')) {
+              const segments = cleanPath.split('/').filter(Boolean);
+              if (segments.length === 3) {
+                const htmlPath = path.join(process.cwd(), 'product-detail.html');
+                if (fs.existsSync(htmlPath)) {
+                  const htmlContent = fs.readFileSync(htmlPath, 'utf-8');
+                  res.setHeader('Content-Type', 'text/html');
+                  res.end(htmlContent);
+                  return;
+                }
+              } else {
+                const htmlPath = path.join(process.cwd(), 'cancer-medicines.html');
+                if (fs.existsSync(htmlPath)) {
+                  const htmlContent = fs.readFileSync(htmlPath, 'utf-8');
+                  res.setHeader('Content-Type', 'text/html');
+                  res.end(htmlContent);
+                  return;
+                }
               }
             }
             if (cleanPath === '/product-detail.html') {
