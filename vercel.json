@@ -47,7 +47,7 @@
       "permanent": true
     },
     {
-      "source": "/:slug((?!about-us|blog|blog-detail|cms|masteradlorock|masteradlorockpd|masteradlogriyon|adminadlorock|cancer-medicines|careers|contact-us|csr|edit-profile|global-presence|home-preview|meditations|order-medicines|pap|profile|services|under-development|ungc|api/|wp-json/|public/|assets/|uploads/|components/|data/|src/|dist/|node_modules/|_vercel/|[^/]+\\.[^/]+$)[^/]+)",
+      "source": "/:slug((?!about-us|blog|blog-detail|cms|masteradlorock|masteradlorockpd|masteradlorockpdprocess|masteradlogriyon|adminadlorock|cancer-medicines|careers|contact-us|csr|edit-profile|global-presence|home-preview|meditations|order-medicines|pap|profile|services|under-development|ungc|api/|wp-json/|public/|assets/|uploads/|components/|data/|src/|dist/|node_modules/|_vercel/|[^/]+\\.[^/]+$)[^/]+)",
       "destination": "/blog/:slug",
       "permanent": true
     }
@@ -96,6 +96,14 @@
     {
       "source": "/masteradlorockpd/:path*",
       "destination": "https://admin.getmeds.ph/masteradlorockpd/:path*"
+    },
+    {
+      "source": "/masteradlorockpdprocess",
+      "destination": "https://admin.getmeds.ph/masteradlorockpdprocess"
+    },
+    {
+      "source": "/masteradlorockpdprocess/:path*",
+      "destination": "https://admin.getmeds.ph/masteradlorockpdprocess/:path*"
     },
     {
       "source": "/adminadlorock",
