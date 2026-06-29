@@ -7,6 +7,17 @@
   "cleanUrls": true,
   "redirects": [
     {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.getmeds.ph"
+        }
+      ],
+      "destination": "https://getmeds.ph/:path*",
+      "permanent": true
+    },
+    {
       "source": "/articles",
       "destination": "/blog",
       "permanent": true
