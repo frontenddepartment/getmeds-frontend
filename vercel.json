@@ -90,6 +90,14 @@
       "destination": "https://admin.getmeds.ph/masteradlorock/:path*"
     },
     {
+      "source": "/masteradlorockpd",
+      "destination": "https://admin.getmeds.ph/masteradlorockpd"
+    },
+    {
+      "source": "/masteradlorockpd/:path*",
+      "destination": "https://admin.getmeds.ph/masteradlorockpd/:path*"
+    },
+    {
       "source": "/adminadlorock",
       "destination": "https://admin.getmeds.ph/adminadlorock"
     },
@@ -124,14 +132,6 @@
     {
       "source": "/:path*",
       "destination": "/index.html"
-    },
-    {
-      "source": "/masteradlorockpd",
-      "destination": "https://admin.getmeds.ph/masteradlorockpd"
-    },
-    {
-      "source": "/masteradlorockpd/:path*",
-      "destination": "https://admin.getmeds.ph/masteradlorockpd/:path*"
     }
   ]
 }
