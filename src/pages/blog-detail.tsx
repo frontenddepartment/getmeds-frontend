@@ -122,6 +122,13 @@ export default function BlogDetail() {
     }
   }, [article, imgUrl]);
 
+  // Redirect to 404 if article is not found
+  useEffect(() => {
+    if (!loading && !article && (slug || articleId)) {
+      window.location.replace('/404');
+    }
+  }, [loading, article, slug, articleId]);
+
   // Hash scroll listener and initial hash trigger
   useEffect(() => {
     if (!loading && article) {

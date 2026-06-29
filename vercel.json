@@ -140,10 +140,6 @@
     {
       "source": "/blog-detail.html",
       "destination": "/blog-detail"
-    },
-    {
-      "source": "/:path*",
-      "destination": "/index.html"
     }
   ]
 }
