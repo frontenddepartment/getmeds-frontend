@@ -119,15 +119,15 @@
     },
     {
       "source": "/cancer-medicines/:subcategory/:product",
-      "destination": "/product-detail.html"
+      "destination": "/product-detail"
     },
     {
       "source": "/cancer-medicines/:subcategory",
-      "destination": "/cancer-medicines.html"
+      "destination": "/cancer-medicines"
     },
     {
       "source": "/cancer-medicines",
-      "destination": "/cancer-medicines.html"
+      "destination": "/cancer-medicines"
     },
     {
       "source": "/blog/:slug*",
