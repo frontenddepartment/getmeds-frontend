@@ -54,6 +54,18 @@
   ],
   "rewrites": [
     {
+      "source": "/public/:path*",
+      "destination": "https://admin.getmeds.ph/public/:path*"
+    },
+    {
+      "source": "/masteradmin",
+      "destination": "https://admin.getmeds.ph/masteradmin"
+    },
+    {
+      "source": "/masteradmin/:path*",
+      "destination": "https://admin.getmeds.ph/masteradmin/:path*"
+    },
+    {
       "source": "/wp-json/:path*",
       "destination": "https://cms.getmeds.ph/wp-json/:path*"
     },
