@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { PortableText } from '@portabletext/react';
 import { injectHTML } from '../lib/injectHTML';
 import { useNewsById, useNewsBySlug } from '../lib/useSanity';
@@ -177,7 +177,7 @@ export default function BlogDetail() {
         .replace(/^https?:\/\/173\.231\.197\.156/i, '');
       
       const ourPages = new Set([
-        'blog', 'blog-detail', 'articles', 'article-detail', 'about-us', 'contact-us', 'product-range', 'meditations',
+        'blog', 'blog-detail', 'articles', 'article-detail', 'about-us', 'contact-us', 'product-range', 'cancer-medicines', 'meditations',
         'pap', 'careers', 'services', 'csr', 'ungc', 'index.html'
       ]);
 
