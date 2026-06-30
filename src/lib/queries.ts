@@ -49,80 +49,151 @@ export async function getNavigation() {
 // Products
 // ─────────────────────────────────────────────
 
-export async function getProducts() {
-  return client.fetch<Product[]>(`
-    *[_type == "product"] | order(name asc) {
-      _id,
-      name,
-      genericName,
-      brandName,
-      slug,
-      availability,
-      image,
-      strength,
-      form,
-      packaging,
-      description,
-      indications,
-      category-> { _id, category, slug },
-      subCategory,
-      country,
-      distributor,
-      innovator,
+async function fetchProductsFromExcel(): Promise<Product[]> {
+  const result = await client.fetch<{ json_data?: string }>(`
+    *[_type == "product" && (remarks == "present" || remarks == "active") && defined(title)][0] {
+      json_data
     }
   `)
+  if (!result || !result.json_data) return []
+  try {
+    const data = JSON.parse(result.json_data)
+    const firstSheetName = Object.keys(data)[0]
+    if (!firstSheetName) return []
+    const rawProducts = data[firstSheetName] || []
+    
+    // Fetch all individual product documents (which don't have title defined) that are active/present or undefined remarks
+    const originalProducts = await client.fetch<any[]>(`
+      *[_type == "product" && !defined(title) && (!defined(remarks) || remarks == "present" || remarks == "active")] {
+        _id,
+        slug,
+        image,
+        category-> { _id, category, slug },
+        subCategory,
+        availability,
+        genericName,
+        brandName,
+        name,
+        remarks,
+        description,
+        packaging,
+        innovator,
+        strength,
+        form,
+        indications,
+        dosageAdministration,
+        storageCondition,
+        accreditations
+      }
+    `)
+
+    // Create a lookup map for original products by their document _id
+    const originalMap = new Map<string, any>()
+    originalProducts.forEach(op => {
+      originalMap.set(op._id, op)
+    })
+
+    const allowedProducts = rawProducts.map((p: any) => {
+      // Find matching original product
+      const orig = originalMap.get(p._id) || {}
+
+      // Exclude if the original document has remarks that are not active/present (e.g. previews)
+      if (orig.remarks && orig.remarks !== 'present' && orig.remarks !== 'active') {
+        return null
+      }
+
+      // Resolve slug
+      let slug = p.slug || orig.slug
+      if (typeof slug === 'string') {
+        slug = { _type: 'slug', current: slug }
+      } else if (slug && typeof slug === 'object' && slug.current) {
+        // already formatted correctly
+      } else if (p.name || orig.name) {
+        slug = {
+          _type: 'slug',
+          current: String(p.name || orig.name).toLowerCase().trim().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-')
+        }
+      } else {
+        slug = { _type: 'slug', current: 'unnamed-product' }
+      }
+
+      return {
+        ...orig,
+        ...p,
+        _id: p._id || orig._id || `excel-${slug.current}`,
+        _type: 'product',
+        slug,
+        category: orig.category || p.category,
+        image: orig.image || p.image,
+        availability: p.availability === undefined ? (orig.availability ?? true) : (p.availability === true || String(p.availability).toLowerCase() === 'true'),
+      } as Product
+    }).filter(Boolean) as Product[]
+
+    // Find manually created individual product documents (which have remarks present or active)
+    const excelProductIds = new Set(rawProducts.map((p: any) => p._id))
+    const individualOnlyProducts = originalProducts.filter(op => {
+      if (excelProductIds.has(op._id)) return false
+      return op.remarks === 'present' || op.remarks === 'active'
+    }).map(op => {
+      // Resolve slug
+      let slug = op.slug
+      if (typeof slug === 'string') {
+        slug = { _type: 'slug', current: slug }
+      } else if (slug && typeof slug === 'object' && slug.current) {
+        // already formatted correctly
+      } else if (op.name) {
+        slug = {
+          _type: 'slug',
+          current: String(op.name).toLowerCase().trim().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-')
+        }
+      } else {
+        slug = { _type: 'slug', current: 'unnamed-product' }
+      }
+
+      return {
+        ...op,
+        _type: 'product',
+        slug,
+        availability: op.availability === undefined ? true : (op.availability === true || String(op.availability).toLowerCase() === 'true'),
+      } as Product
+    })
+
+    return [...allowedProducts, ...individualOnlyProducts]
+  } catch (err) {
+    console.error('Failed to parse Excel products:', err)
+    return []
+  }
+}
+
+export async function getProducts() {
+  const products = await fetchProductsFromExcel()
+  return products.sort((a, b) => (a.name || '').localeCompare(b.name || ''))
 }
 
 export async function getProductBySlug(slug: string) {
-  return client.fetch<Product>(`
-    *[_type == "product" && slug.current == $slug][0] {
-      ...,
-      category->
-    }
-  `, { slug })
+  const products = await fetchProductsFromExcel()
+  return products.find((p) => p.slug?.current === slug) || null
 }
 
 export async function getProductsByCategory(categoryId: string) {
-  return client.fetch<Product[]>(`
-    *[_type == "product" && category._ref == $categoryId] | order(name asc) {
-      _id,
-      name,
-      genericName,
-      brandName,
-      slug,
-      availability,
-      image,
-      strength,
-      form,
-      packaging,
-      description,
-      category-> { _id, category, slug },
-      subCategory,
-    }
-  `, { categoryId })
+  const products = await fetchProductsFromExcel()
+  return products
+    .filter((p) => p.category?._id === categoryId)
+    .sort((a, b) => (a.name || '').localeCompare(b.name || ''))
 }
 
 export async function searchProducts(query: string) {
-  return client.fetch<Product[]>(`
-    *[_type == "product" && (
-      name match $query ||
-      genericName match $query ||
-      brandName match $query ||
-      subCategory match $query
-    )] | order(name asc) {
-      _id,
-      name,
-      genericName,
-      brandName,
-      slug,
-      availability,
-      image,
-      strength,
-      form,
-      category-> { _id, category, slug },
-      subCategory,
-    }
-  `, { query: `*${query}*` })
+  const products = await fetchProductsFromExcel()
+  const normalizedQuery = query.replace(/\*/g, '').toLowerCase().trim()
+  if (!normalizedQuery) return products
+  return products
+    .filter((p) => 
+      (p.name || '').toLowerCase().includes(normalizedQuery) ||
+      (p.genericName || '').toLowerCase().includes(normalizedQuery) ||
+      (p.brandName || '').toLowerCase().includes(normalizedQuery) ||
+      (p.subCategory || '').toLowerCase().includes(normalizedQuery)
+    )
+    .sort((a, b) => (a.name || '').localeCompare(b.name || ''))
 }
 
 // ─────────────────────────────────────────────

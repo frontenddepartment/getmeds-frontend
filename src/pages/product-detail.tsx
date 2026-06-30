@@ -482,11 +482,27 @@ export default function ProductDetail() {
                     <span className="inline-block pb-3 text-[13px] font-semibold" style={{ color: '#0D99FF', borderBottom: '2px solid #0D99FF' }}>Description</span>
                   </div>
                   <div className="text-[13px] text-gray-600 leading-relaxed max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
-                    <div>
-                      {product.description
-                        ? <p>{product.description}</p>
-                        : <p>Detailed therapeutic description is not available.</p>
-                      }
+                    <div className="space-y-4">
+                      {product.description && (
+                        <div>
+                          <p>{product.description}</p>
+                        </div>
+                      )}
+                      {(product.indications || (product as any).indication) && (
+                        <div>
+                          <span className="block text-[11px] text-gray-400 uppercase font-semibold mb-1">Indications</span>
+                          <p className="text-[13px] text-gray-600 font-medium">{product.indications || (product as any).indication}</p>
+                        </div>
+                      )}
+                      {(product.dosageAdministration || (product as any).dosageAndAdministration) && (
+                        <div>
+                          <span className="block text-[11px] text-gray-400 uppercase font-semibold mb-1">Dosage & Administration</span>
+                          <p className="text-[13px] text-gray-600 font-medium">{product.dosageAdministration || (product as any).dosageAndAdministration}</p>
+                        </div>
+                      )}
+                      {!product.description && !product.indications && !(product as any).indication && !product.dosageAdministration && !(product as any).dosageAndAdministration && (
+                        <p>Detailed therapeutic description is not available.</p>
+                      )}
                       <div className="mt-4 border-t border-gray-100 pt-4 grid grid-cols-2 gap-4">
                         {product.packaging && (
                           <div>
