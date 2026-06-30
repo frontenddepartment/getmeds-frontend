@@ -25,10 +25,13 @@ function loadEnv() {
 }
 
 const env = loadEnv();
-let corsOrigin = env.VITE_CORS_ALLOWED_ORIGIN || env.CORS_ALLOWED_ORIGIN;
+const deploymentMode = env.DEPLOYMENT || env.VITE_DEPLOYMENT || 'development';
+let corsOrigin = deploymentMode === 'production'
+  ? (env.VITE_CORS_ALLOWED_ORIGIN_PRODUCTION || env.VITE_CORS_ALLOWED_ORIGIN || env.CORS_ALLOWED_ORIGIN)
+  : (env.VITE_CORS_ALLOWED_ORIGIN_DEVELOPMENT || env.VITE_CORS_ALLOWED_ORIGIN || env.CORS_ALLOWED_ORIGIN);
 
 if (!corsOrigin) {
-  console.log('[CORS Config] No CORS origin variable (VITE_CORS_ALLOWED_ORIGIN or CORS_ALLOWED_ORIGIN) found in .env. Skipping headers generation.');
+  console.log('[CORS Config] No CORS origin variable found in .env. Skipping headers generation.');
   process.exit(0);
 }
 
