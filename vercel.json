@@ -118,7 +118,7 @@
       "destination": "https://admin.getmeds.ph/adminadlorock/:path*"
     },
     {
-      "source": "/cancer-medicines/:subcategory(breast-cancer|ovarian-cancer|lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|aml|cml|lymphoma|sickle-cell|respiratory|uti|skin-infections|bone-infections|endometriosis|fibrocystic|multiple-myeloma|osteoporosis|arrhythmia|hypertension|glioblastoma|allergic-rhinitis|kidney-disease|pain|rheumatology)",
+      "source": "/cancer-medicines/:subcategory(breast-cancer|ovarian-cancer|lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|aml|cml|lymphoma|sickle-cell|respiratory|uti|skin-infections|bone-infections|endometriosis|fibrocystic|multiple-myeloma|osteoporosis|arrhythmia|hypertension|glioblastoma|allergic-rhinitis|kidney-disease|pain|rheumatology|chronic-lymphocytic-leukemia)",
       "destination": "/cancer-medicines"
     },
     {
@@ -148,7 +148,7 @@
       "headers": [
         {
           "key": "Access-Control-Allow-Origin",
-          "value": "https://getmeds.ph"
+          "value": "http://localhost:5173"
         },
         {
           "key": "Access-Control-Allow-Methods",
@@ -169,7 +169,7 @@
       "headers": [
         {
           "key": "Access-Control-Allow-Origin",
-          "value": "https://getmeds.ph"
+          "value": "http://localhost:5173"
         },
         {
           "key": "Access-Control-Allow-Methods",
@@ -190,7 +190,7 @@
       "headers": [
         {
           "key": "Access-Control-Allow-Origin",
-          "value": "https://getmeds.ph"
+          "value": "http://localhost:5173"
         },
         {
           "key": "Access-Control-Allow-Methods",
@@ -211,7 +211,7 @@
       "headers": [
         {
           "key": "Access-Control-Allow-Origin",
-          "value": "https://getmeds.ph"
+          "value": "http://localhost:5173"
         },
         {
           "key": "Access-Control-Allow-Methods",
@@ -232,7 +232,7 @@
       "headers": [
         {
           "key": "Access-Control-Allow-Origin",
-          "value": "https://getmeds.ph"
+          "value": "http://localhost:5173"
         },
         {
           "key": "Access-Control-Allow-Methods",
@@ -253,7 +253,7 @@
       "headers": [
         {
           "key": "Access-Control-Allow-Origin",
-          "value": "https://getmeds.ph"
+          "value": "http://localhost:5173"
         },
         {
           "key": "Access-Control-Allow-Methods",
@@ -274,7 +274,7 @@
       "headers": [
         {
           "key": "Access-Control-Allow-Origin",
-          "value": "https://getmeds.ph"
+          "value": "http://localhost:5173"
         },
         {
           "key": "Access-Control-Allow-Methods",
@@ -295,7 +295,7 @@
       "headers": [
         {
           "key": "Access-Control-Allow-Origin",
-          "value": "https://getmeds.ph"
+          "value": "http://localhost:5173"
         },
         {
           "key": "Access-Control-Allow-Methods",
@@ -316,7 +316,7 @@
       "headers": [
         {
           "key": "Access-Control-Allow-Origin",
-          "value": "https://getmeds.ph"
+          "value": "http://localhost:5173"
         },
         {
           "key": "Access-Control-Allow-Methods",
@@ -337,7 +337,7 @@
       "headers": [
         {
           "key": "Access-Control-Allow-Origin",
-          "value": "https://getmeds.ph"
+          "value": "http://localhost:5173"
         },
         {
           "key": "Access-Control-Allow-Methods",
@@ -358,7 +358,7 @@
       "headers": [
         {
           "key": "Access-Control-Allow-Origin",
-          "value": "https://getmeds.ph"
+          "value": "http://localhost:5173"
         },
         {
           "key": "Access-Control-Allow-Methods",
@@ -379,7 +379,7 @@
       "headers": [
         {
           "key": "Access-Control-Allow-Origin",
-          "value": "https://getmeds.ph"
+          "value": "http://localhost:5173"
         },
         {
           "key": "Access-Control-Allow-Methods",
@@ -400,7 +400,7 @@
       "headers": [
         {
           "key": "Access-Control-Allow-Origin",
-          "value": "https://getmeds.ph"
+          "value": "http://localhost:5173"
         },
         {
           "key": "Access-Control-Allow-Methods",
@@ -421,7 +421,7 @@
       "headers": [
         {
           "key": "Access-Control-Allow-Origin",
-          "value": "https://getmeds.ph"
+          "value": "http://localhost:5173"
         },
         {
           "key": "Access-Control-Allow-Methods",
@@ -442,7 +442,7 @@
       "headers": [
         {
           "key": "Access-Control-Allow-Origin",
-          "value": "https://getmeds.ph"
+          "value": "http://localhost:5173"
         },
         {
           "key": "Access-Control-Allow-Methods",
@@ -463,7 +463,7 @@
       "headers": [
         {
           "key": "Access-Control-Allow-Origin",
-          "value": "https://getmeds.ph"
+          "value": "http://localhost:5173"
         },
         {
           "key": "Access-Control-Allow-Methods",
