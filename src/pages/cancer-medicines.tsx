@@ -691,10 +691,6 @@ export default function CancerMedicines() {
   };
 
    const getProductDetailUrl = (p: ProductWithCategory) => {
-    const subcats = getProductSubcategories(p);
-    const subcat = subcats[0] || 'general';
-    const subcatSlug = getSubcategorySlug(subcat);
-    
     const brand = (p.brandName || '').toLowerCase().trim();
     const molecule = (p.genericName || '').toLowerCase().trim()
       .replace(/\s*\(as\s+[^)]+\)/gi, '')
@@ -707,7 +703,7 @@ export default function CancerMedicines() {
     const parts = [brand, molecule, strength, form].filter(Boolean).join('-');
     const cleanProductSlug = parts.replace(/-+/g, '-').replace(/(^-|-$)/g, '');
     
-    return `/cancer-medicines/${subcatSlug}/${cleanProductSlug}`;
+    return `/cancer-medicines/${cleanProductSlug}`;
   };
 
   const selectCategory = (category: string) => {
