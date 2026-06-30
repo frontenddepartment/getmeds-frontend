@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { PortableText } from '@portabletext/react';
 import { injectHTML } from '../lib/injectHTML';
 import { useNewsById, useNewsBySlug } from '../lib/useSanity';
@@ -122,6 +122,13 @@ export default function BlogDetail() {
     }
   }, [article, imgUrl]);
 
+  // Redirect to 404 if article is not found
+  useEffect(() => {
+    if (!loading && !article && (slug || articleId)) {
+      window.location.replace('/404');
+    }
+  }, [loading, article, slug, articleId]);
+
   // Hash scroll listener and initial hash trigger
   useEffect(() => {
     if (!loading && article) {
@@ -177,7 +184,7 @@ export default function BlogDetail() {
         .replace(/^https?:\/\/173\.231\.197\.156/i, '');
       
       const ourPages = new Set([
-        'blog', 'blog-detail', 'articles', 'article-detail', 'about-us', 'contact-us', 'product-range', 'meditations',
+        '404', 'blog', 'blog-detail', 'articles', 'article-detail', 'about-us', 'contact-us', 'product-range', 'cancer-medicines', 'meditations',
         'pap', 'careers', 'services', 'csr', 'ungc', 'index.html'
       ]);
 

@@ -305,10 +305,12 @@ export default function CancerMedicines() {
   useEffect(() => {
     const pathParts = window.location.pathname.split('/').filter(Boolean);
     let categorySlug = '';
+    let isPathnameMatch = false;
     
     if (pathParts[0] === 'cancer-medicines') {
       if (pathParts.length >= 2) {
         categorySlug = pathParts[1];
+        isPathnameMatch = true;
       }
     }
     
@@ -317,33 +319,98 @@ export default function CancerMedicines() {
       categorySlug = urlParams.get('category') || '';
     }
 
+    let matched = false;
+
     if (categorySlug && processedCats.length > 0) {
       const cleanSlug = categorySlug.toLowerCase().trim();
       
       // 1. Check if cleanSlug matches any category slugs
-      const matchedCat = processedCats.find(c => {
-        const hasSlugMatch = c.slugs.some(s => s.toLowerCase() === cleanSlug) || c.slug.toLowerCase() === cleanSlug;
-        const hasNameMatch = c.category.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') === cleanSlug;
-        return hasSlugMatch || hasNameMatch;
+      let matchedCat = processedCats.find(c => {
+        const nameSlug = c.category.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+        return nameSlug === cleanSlug;
       });
+
+      if (!matchedCat) {
+        matchedCat = processedCats.find(c => {
+          const hasSlugMatch = c.slugs.some(s => s.toLowerCase() === cleanSlug) || c.slug.toLowerCase() === cleanSlug;
+          return hasSlugMatch;
+        });
+      }
+
       if (matchedCat) {
         setCurrentCategory(matchedCat.category);
-        return;
+        matched = true;
+      } else {
+        // 2. Check if cleanSlug matches any subcategory
+        for (const cat of processedCats) {
+          const matchedSub = cat.subcategory.find(sub => {
+            const subSlug = getSubcategorySlug(sub);
+            return subSlug === cleanSlug || sub.toLowerCase() === cleanSlug;
+          });
+          if (matchedSub) {
+            setCurrentCategory(matchedSub);
+            matched = true;
+            break;
+          }
+        }
       }
-      
-      // 2. Check if cleanSlug matches any subcategory
-      for (const cat of processedCats) {
-        const matchedSub = cat.subcategory.find(sub => {
-          const subSlug = getSubcategorySlug(sub);
-          return subSlug === cleanSlug || sub.toLowerCase() === cleanSlug;
-        });
-        if (matchedSub) {
-          setCurrentCategory(matchedSub);
-          return;
+
+      if (matched && isPathnameMatch) {
+        // Clean URL pathname so user only sees /cancer-medicines
+        window.history.replaceState(null, '', '/cancer-medicines');
+      }
+    }
+
+    // If no category was resolved from the URL, try restoring the session-saved one
+    if (!matched && processedCats.length > 0) {
+      const savedCategory = sessionStorage.getItem('selectedCategory');
+      if (savedCategory) {
+        // Try exact match first
+        const matchedCat = processedCats.find(c => c.category === savedCategory);
+        if (matchedCat) {
+          setCurrentCategory(matchedCat.category);
+        } else {
+          // Check subcategories by exact name
+          let foundSub = '';
+          for (const cat of processedCats) {
+            const sub = cat.subcategory.find(s => s === savedCategory);
+            if (sub) {
+              foundSub = sub;
+              break;
+            }
+          }
+          if (foundSub) {
+            setCurrentCategory(foundSub);
+          } else {
+            // Check if savedCategory is a slug and match it
+            const cleanSlug = savedCategory.toLowerCase().trim();
+            let matchedCatBySlug = processedCats.find(c => {
+              const nameSlug = c.category.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+              return nameSlug === cleanSlug || c.slugs.some(s => s.toLowerCase() === cleanSlug) || c.slug.toLowerCase() === cleanSlug;
+            });
+            if (matchedCatBySlug) {
+              setCurrentCategory(matchedCatBySlug.category);
+            } else {
+              for (const cat of processedCats) {
+                const sub = cat.subcategory.find(s => getSubcategorySlug(s) === cleanSlug);
+                if (sub) {
+                  setCurrentCategory(sub);
+                  break;
+                }
+              }
+            }
+          }
         }
       }
     }
   }, [processedCats]);
+
+  // Save active category to sessionStorage
+  useEffect(() => {
+    if (currentCategory) {
+      sessionStorage.setItem('selectedCategory', currentCategory);
+    }
+  }, [currentCategory]);
 
   // Synchronize Title to active category
   useEffect(() => {
@@ -691,10 +758,6 @@ export default function CancerMedicines() {
   };
 
    const getProductDetailUrl = (p: ProductWithCategory) => {
-    const subcats = getProductSubcategories(p);
-    const subcat = subcats[0] || 'general';
-    const subcatSlug = getSubcategorySlug(subcat);
-    
     const brand = (p.brandName || '').toLowerCase().trim();
     const molecule = (p.genericName || '').toLowerCase().trim()
       .replace(/\s*\(as\s+[^)]+\)/gi, '')
@@ -707,19 +770,12 @@ export default function CancerMedicines() {
     const parts = [brand, molecule, strength, form].filter(Boolean).join('-');
     const cleanProductSlug = parts.replace(/-+/g, '-').replace(/(^-|-$)/g, '');
     
-    return `/cancer-medicines/${subcatSlug}/${cleanProductSlug}`;
+    return `/cancer-medicines/${cleanProductSlug}`;
   };
 
   const selectCategory = (category: string) => {
     setCurrentCategory(category);
     setCurrentPage(1);
-    
-    if (category === 'All') {
-      window.history.pushState(null, '', '/cancer-medicines');
-    } else {
-      const slug = getSubcategorySlug(category);
-      window.history.pushState(null, '', `/cancer-medicines/${slug}`);
-    }
   };
 
   const openModal = (product: ProductWithCategory) => {

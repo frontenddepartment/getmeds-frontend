@@ -2,6 +2,7 @@ import { defineConfig, loadEnv } from 'vite';
 import fs from 'fs';
 import path from 'path';
 import https from 'https';
+import { execSync } from 'child_process';
 
 const getHtmlInputs = () => {
   const dir = process.cwd();
@@ -15,8 +16,70 @@ const getHtmlInputs = () => {
   return inputs;
 };
 
-export default defineConfig(({ mode }) => {
+const getSubcategorySlug = (name) => {
+  return name
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, '-')
+    .replace(/[^a-z0-9-]/g, '')
+    .replace(/-+/g, '-');
+};
+
+async function fetchSanitySubcategories(env) {
+  const projectId = env.VITE_SANITY_PROJECT_ID || 'q9y7lsh1';
+  const dataset = env.VITE_SANITY_DATASET || 'production';
+  const query = '*[_type == "category"] { category, subcategory }';
+  const url = `https://${projectId}.api.sanity.io/v2023-08-01/data/query/${dataset}?query=${encodeURIComponent(query)}`;
+
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const json = await res.json();
+    const subcats = new Set();
+
+    if (json.result) {
+      json.result.forEach(cat => {
+        if (cat.category) {
+          subcats.add(getSubcategorySlug(cat.category));
+        }
+        if (Array.isArray(cat.subcategory)) {
+          cat.subcategory.forEach(sub => {
+            if (sub) {
+              subcats.add(getSubcategorySlug(sub));
+            }
+          });
+        }
+      });
+    }
+
+    const list = Array.from(subcats).filter(Boolean);
+    if (list.length > 0) {
+      return list;
+    }
+  } catch (error) {
+    // fallback silently or log warning
+  }
+  return [
+    'breast-cancer', 'ovarian-cancer', 'lung-cancer', 'prostate-cancer', 'colorectal-cancer',
+    'pancreatic-cancer', 'aml', 'cml', 'lymphoma', 'sickle-cell', 'respiratory', 'uti',
+    'skin-infections', 'bone-infections', 'endometriosis', 'fibrocystic', 'multiple-myeloma',
+    'osteoporosis', 'arrhythmia', 'hypertension', 'glioblastoma', 'allergic-rhinitis',
+    'kidney-disease', 'pain', 'rheumatology', 'chronic-lymphocytic-leukemia'
+  ];
+}
+
+export default defineConfig(async ({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
+
+  // Update vercel.json headers & subcategories dynamically at start
+  try {
+    execSync('node scripts/update-vercel-headers.cjs', { stdio: 'inherit' });
+  } catch (err) {
+    console.error('[CORS Script] Warning: Failed to run update-vercel-headers.cjs:', err.message);
+  }
+
+  const subcategories = await fetchSanitySubcategories(env);
+
   const deploymentMode = env.VITE_DEPLOYMENT || env.DEPLOYMENT || 'development';
   const isProduction = deploymentMode === 'production';
 
@@ -45,6 +108,38 @@ export default defineConfig(({ mode }) => {
       'import.meta.env.VITE_WORDPRESS_API_ROOT': JSON.stringify(wordpressApiRoot)
     },
     server: {
+      cors: {
+        origin: (origin, callback) => {
+          const allowedString = env.VITE_ALLOWED_CORS_ORIGIN || env.VITE_CORS_ALLOWED_ORIGIN || env.CORS_ALLOWED_ORIGIN || '*';
+          const allowedOrigins = allowedString.split(',').map(o => o.trim()).filter(Boolean);
+          
+          if (!origin || allowedOrigins.includes('*')) {
+            callback(null, true);
+            return;
+          }
+          
+          const isAllowed = allowedOrigins.some(allowed => {
+            if (origin === allowed) return true;
+            try {
+              const allowedUrl = allowed.startsWith('http') ? new URL(allowed) : null;
+              const allowedHost = allowedUrl ? allowedUrl.hostname : allowed;
+              const originUrl = new URL(origin);
+              if (originUrl.hostname === allowedHost) return true;
+            } catch (e) {
+              // ignore
+            }
+            return false;
+          });
+
+          if (isAllowed) {
+            callback(null, true);
+          } else {
+            callback(new Error('Not allowed by CORS'));
+          }
+        },
+        methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+        credentials: true
+      },
       proxy: {
         '/wp-json': {
           target: wordpressApiRoot,
@@ -277,20 +372,28 @@ export default defineConfig(({ mode }) => {
             }
             if (cleanPath.startsWith('/cancer-medicines')) {
               const segments = cleanPath.split('/').filter(Boolean);
-              if (segments.length === 3) {
-                const htmlPath = path.join(process.cwd(), 'product-detail.html');
-                if (fs.existsSync(htmlPath)) {
-                  const htmlContent = fs.readFileSync(htmlPath, 'utf-8');
-                  res.setHeader('Content-Type', 'text/html');
-                  res.end(htmlContent);
-                  return;
+              if (segments.length === 2) {
+                const slug = segments[1];
+                if (subcategories.includes(slug)) {
+                  const htmlPath = path.join(process.cwd(), 'cancer-medicines.html');
+                  if (fs.existsSync(htmlPath)) {
+                    res.setHeader('Content-Type', 'text/html');
+                    res.end(fs.readFileSync(htmlPath, 'utf-8'));
+                    return;
+                  }
+                } else {
+                  const htmlPath = path.join(process.cwd(), 'product-detail.html');
+                  if (fs.existsSync(htmlPath)) {
+                    res.setHeader('Content-Type', 'text/html');
+                    res.end(fs.readFileSync(htmlPath, 'utf-8'));
+                    return;
+                  }
                 }
               } else {
                 const htmlPath = path.join(process.cwd(), 'cancer-medicines.html');
                 if (fs.existsSync(htmlPath)) {
-                  const htmlContent = fs.readFileSync(htmlPath, 'utf-8');
                   res.setHeader('Content-Type', 'text/html');
-                  res.end(htmlContent);
+                  res.end(fs.readFileSync(htmlPath, 'utf-8'));
                   return;
                 }
               }

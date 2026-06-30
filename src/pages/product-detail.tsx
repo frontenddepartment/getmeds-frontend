@@ -120,10 +120,9 @@ export default function ProductDetail() {
     if (!productsLoading && productsData) {
       let productSlug = '';
       
-      // Parse from pathname
       const pathParts = window.location.pathname.split('/').filter(Boolean);
-      if (pathParts[0] === 'cancer-medicines' && pathParts.length === 3) {
-        productSlug = pathParts[2];
+      if (pathParts[0] === 'cancer-medicines' && pathParts.length === 2) {
+        productSlug = pathParts[1];
       }
       
       // Fallback to query param
@@ -169,9 +168,7 @@ export default function ProductDetail() {
     }
   }, [productsLoading, productsData, categoriesData]);
 
-  const backUrl = product
-    ? `/cancer-medicines/${getSubcategorySlug(getCategorizationDisplay(product))}`
-    : '/cancer-medicines';
+  const backUrl = '/cancer-medicines';
 
 
   const brandNameCounts = useMemo(() => {
@@ -340,6 +337,12 @@ export default function ProductDetail() {
         <div className="bg-white px-6 py-4 flex items-center gap-4 sticky top-0 z-10">
           <a
             href={backUrl}
+            onClick={(e) => {
+              if (window.history.length > 1) {
+                e.preventDefault();
+                window.history.back();
+              }
+            }}
             className="flex items-center gap-2 text-sm text-gray-500 hover:text-primary transition-colors font-medium"
           >
             <i className="fa-solid fa-arrow-left text-xs" />
