@@ -47,7 +47,10 @@ export default defineConfig(({ mode }) => {
     server: {
       cors: {
         origin: (origin, callback) => {
-          const allowedString = env.VITE_CORS_ALLOWED_ORIGIN || env.CORS_ALLOWED_ORIGIN || '*';
+          const deploymentMode = env.DEPLOYMENT || env.VITE_DEPLOYMENT || 'development';
+          const allowedString = deploymentMode === 'production'
+            ? (env.VITE_CORS_ALLOWED_ORIGIN_PRODUCTION || env.VITE_CORS_ALLOWED_ORIGIN || env.CORS_ALLOWED_ORIGIN || '*')
+            : (env.VITE_CORS_ALLOWED_ORIGIN_DEVELOPMENT || env.VITE_CORS_ALLOWED_ORIGIN || env.CORS_ALLOWED_ORIGIN || '*');
           const allowedOrigins = allowedString.split(',').map(o => o.trim()).filter(Boolean);
           if (!origin || allowedOrigins.includes(origin) || allowedOrigins.includes('*')) {
             callback(null, true);
