@@ -30,7 +30,6 @@ export default function ProductDetail() {
   const [product, setProduct] = useState<ProductWithCategory | null>(null);
   const [notFound, setNotFound] = useState(false);
 
-  const [activeTab, setActiveTab] = useState<'description' | 'usage' | 'precautions'>('description');
   const [zoomedImageOpen, setZoomedImageOpen] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [formData, setFormData] = useState({ name: '', phone: '', email: '', message: '', age: '' });
@@ -474,84 +473,32 @@ export default function ProductDetail() {
                   </div>
                 </div>
 
-                {/* Tabs */}
+                {/* Description */}
                 <div className="bg-white rounded-[15px] border border-gray-100 p-5">
-                  <div className="flex overflow-x-auto border-b border-gray-100 mb-5 gap-6">
-                    {(['description', 'usage', 'precautions'] as const).map(tab => (
-                      <button
-                        key={tab}
-                        type="button"
-                        onClick={() => setActiveTab(tab)}
-                        className="pb-3 text-[13px] whitespace-nowrap transition-colors"
-                        style={activeTab === tab
-                          ? { color: '#0D99FF', borderBottom: '2px solid #0D99FF', fontWeight: 600 }
-                          : { color: '#6B7280', fontWeight: 500 }}
-                      >
-                        {tab.charAt(0).toUpperCase() + tab.slice(1)}
-                      </button>
-                    ))}
+                  <div className="border-b border-gray-100 mb-5">
+                    <span className="inline-block pb-3 text-[13px] font-semibold" style={{ color: '#0D99FF', borderBottom: '2px solid #0D99FF' }}>Description</span>
                   </div>
                   <div className="text-[13px] text-gray-600 leading-relaxed max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
-                    {activeTab === 'description' && (
-                      <div>
-                        {product.description
-                          ? <p>{product.description}</p>
-                          : <p>Detailed therapeutic description is not available.</p>
-                        }
-                        <div className="mt-4 border-t border-gray-100 pt-4 grid grid-cols-2 gap-4">
-                          {product.packaging && (
-                            <div>
-                              <span className="block text-[11px] text-gray-400 uppercase font-semibold">Packaging</span>
-                              <span className="text-gray-800 font-medium text-[13px]">{product.packaging}</span>
-                            </div>
-                          )}
-                          {product.innovator && (
-                            <div>
-                              <span className="block text-[11px] text-gray-400 uppercase font-semibold">Innovator</span>
-                              <span className="text-gray-800 font-medium text-[13px]">{product.innovator}</span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    )}
-                    {activeTab === 'usage' && (
-                      <div>
-                        {product.dosageAdministration && (
-                          <div className="mb-4">
-                            <span className="block text-[11px] text-gray-400 uppercase font-semibold mb-1">Dosage & Administration</span>
-                            <p className="text-[13px] text-gray-600">{product.dosageAdministration}</p>
+                    <div>
+                      {product.description
+                        ? <p>{product.description}</p>
+                        : <p>Detailed therapeutic description is not available.</p>
+                      }
+                      <div className="mt-4 border-t border-gray-100 pt-4 grid grid-cols-2 gap-4">
+                        {product.packaging && (
+                          <div>
+                            <span className="block text-[11px] text-gray-400 uppercase font-semibold">Packaging</span>
+                            <span className="text-gray-800 font-medium text-[13px]">{product.packaging}</span>
                           </div>
                         )}
-                        {product.indications && (
-                          <div className="mb-4">
-                            <span className="block text-[11px] text-gray-400 uppercase font-semibold mb-1">Indications</span>
-                            <p className="text-[13px] text-gray-600">{product.indications}</p>
+                        {product.innovator && (
+                          <div>
+                            <span className="block text-[11px] text-gray-400 uppercase font-semibold">Innovator</span>
+                            <span className="text-gray-800 font-medium text-[13px]">{product.innovator}</span>
                           </div>
-                        )}
-                        {!product.dosageAdministration && !product.indications && (
-                          <p>Dosage and administration should be directed by a licensed physician.</p>
                         )}
                       </div>
-                    )}
-                    {activeTab === 'precautions' && (
-                      <div>
-                        {product.storageCondition && (
-                          <div className="mb-4">
-                            <span className="block text-[11px] text-gray-400 uppercase font-semibold mb-1">Storage Conditions</span>
-                            <p className="text-[13px] text-gray-600">{product.storageCondition}</p>
-                          </div>
-                        )}
-                        {product.accreditations && (
-                          <div className="mb-4">
-                            <span className="block text-[11px] text-gray-400 uppercase font-semibold mb-1">Accreditations</span>
-                            <p className="text-[13px] text-gray-600">{product.accreditations}</p>
-                          </div>
-                        )}
-                        {!product.storageCondition && !product.accreditations && (
-                          <p>Precautions, potential side effects, and warnings should be consulted with your doctor or pharmacist.</p>
-                        )}
-                      </div>
-                    )}
+                    </div>
                   </div>
                 </div>
               </div>

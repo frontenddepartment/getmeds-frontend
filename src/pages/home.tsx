@@ -131,13 +131,13 @@ export default function GetMedsHomepage() {
       try {
         // Map each slide key to its known hero assetPath in Sanity pageAsset
         const heroAssetPaths: Record<string, string> = {
-          'about':         'assets/about_us_hero.png',
-          'services':      'assets/services_hero_new.png',
-          'globalPresence':'assets/globalpresencehero.jpg',
-          'csr':           'assets/csrhero.png',
-          'careers':       'assets/careershero.png',
-          'ungc':          'assets/ungcimage.jpg',
-          'join-us':       'assets/careershero.png',
+          'about': 'assets/about_us_hero.png',
+          'services': 'assets/services_hero_new.png',
+          'globalPresence': 'assets/globalpresencehero.jpg',
+          'csr': 'assets/csrhero.png',
+          'careers': 'assets/careershero.png',
+          'ungc': 'assets/ungcimage.jpg',
+          'join-us': 'assets/careershero.png',
         };
 
         // Fetch all pageAsset documents whose assetPath matches any hero image
@@ -185,7 +185,7 @@ export default function GetMedsHomepage() {
             const heroPath = heroAssetPaths[key];
             const sanityAsset = byPath[heroPath];
             if (sanityAsset && sanityAsset.image) {
-              try { def.img = urlFor(sanityAsset.image).url(); } catch(e) {}
+              try { def.img = urlFor(sanityAsset.image).url(); } catch (e) { }
             }
 
             // --- Text from Sanity page hero document ---
@@ -229,7 +229,7 @@ export default function GetMedsHomepage() {
         console.warn('Failed to fetch dynamic company slides from Sanity:', e);
       }
     };
-    
+
     fetchCompanyData();
 
     return () => clearInterval(interval);
@@ -781,7 +781,7 @@ export default function GetMedsHomepage() {
                 {/* Product Range Dropdown */}
                 <div className="group h-20 flex items-center">
                   <a href="/cancer-medicines" className={`flex items-center transition-colors duration-300 whitespace-nowrap focus:outline-none ${isScrolled ? 'text-gray-700 hover:text-primary' : 'text-[#000b5d] hover:text-primary'}`}>
-                    Product Range <i className="fa-solid fa-chevron-down ml-1.5 text-[10px]"></i>
+                    Cancer Medicines <i className="fa-solid fa-chevron-down ml-1.5 text-[10px]"></i>
                   </a>
                   {/* Mega Menu Container */}
                   <div className="fixed top-[80px] left-0 w-full bg-white rounded-b-[30px] border-b border-gray-100 shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-[100] max-h-[calc(100vh-80px)] overflow-y-auto">
@@ -948,9 +948,8 @@ export default function GetMedsHomepage() {
                             <a
                               key={key}
                               href={slide.href}
-                              className={`absolute inset-0 bg-cover bg-center transition-opacity duration-700 cursor-pointer ${
-                                activeCompanySlide === key ? 'opacity-100 pointer-events-auto z-10' : 'opacity-0 pointer-events-none z-0'
-                              }`}
+                              className={`absolute inset-0 bg-cover bg-center transition-opacity duration-700 cursor-pointer ${activeCompanySlide === key ? 'opacity-100 pointer-events-auto z-10' : 'opacity-0 pointer-events-none z-0'
+                                }`}
                               style={{ backgroundImage: `url('${slide.img}')` }}
                             >
                               <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
@@ -2099,34 +2098,34 @@ export default function GetMedsHomepage() {
       {/* ── Partnership Success Modal ── */}
       {successModalOpen && (
         <>
-        <style>{`@keyframes checkBounce{0%{transform:scale(0);opacity:0}55%{transform:scale(1.06);opacity:1}75%{transform:scale(0.97)}100%{transform:scale(1);opacity:1}}.check-bounce{animation:checkBounce 0.8s ease-out forwards}`}</style>
-        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/50 backdrop-blur-sm px-4">
-          <div className="bg-white w-full max-w-[400px] rounded-2xl shadow-2xl relative overflow-hidden">
-            <button onClick={() => setSuccessModalOpen(false)}
-              className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition z-10">
-              <i className="fa-solid fa-xmark text-base"></i>
-            </button>
-            <div className="px-10 pt-12 pb-8 text-center">
-              <div className="flex justify-center mb-7">
-                <div className="check-bounce w-14 h-14 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg,#61A644,#1D9FDA)' }}>
-                  <i className="fa-solid fa-check text-white text-xl"></i>
-                </div>
-              </div>
-              <h2 className="text-[19px] font-semibold text-gray-900 mb-4 leading-snug">Thank you for considering Getmeds as your partner.</h2>
-              <p className="text-[13px] text-gray-500 leading-relaxed">
-                Our business development team will contact you within 2 working days to discuss collaboration opportunities. For urgent concerns, please call{' '}
-                <a href="tel:+639190769103" className="text-[#1D9FDA] font-semibold hover:underline">+63 919 076 9103</a>.
-              </p>
-            </div>
-            <div className="border-t border-gray-100 px-10 py-4 text-center">
+          <style>{`@keyframes checkBounce{0%{transform:scale(0);opacity:0}55%{transform:scale(1.06);opacity:1}75%{transform:scale(0.97)}100%{transform:scale(1);opacity:1}}.check-bounce{animation:checkBounce 0.8s ease-out forwards}`}</style>
+          <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/50 backdrop-blur-sm px-4">
+            <div className="bg-white w-full max-w-[400px] rounded-2xl shadow-2xl relative overflow-hidden">
               <button onClick={() => setSuccessModalOpen(false)}
-                className="text-[13px] font-semibold hover:underline"
-                style={{ background: 'linear-gradient(to right,#61A644,#1D9FDA)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
-                Close
+                className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition z-10">
+                <i className="fa-solid fa-xmark text-base"></i>
               </button>
+              <div className="px-10 pt-12 pb-8 text-center">
+                <div className="flex justify-center mb-7">
+                  <div className="check-bounce w-14 h-14 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg,#61A644,#1D9FDA)' }}>
+                    <i className="fa-solid fa-check text-white text-xl"></i>
+                  </div>
+                </div>
+                <h2 className="text-[19px] font-semibold text-gray-900 mb-4 leading-snug">Thank you for considering Getmeds as your partner.</h2>
+                <p className="text-[13px] text-gray-500 leading-relaxed">
+                  Our business development team will contact you within 2 working days to discuss collaboration opportunities. For urgent concerns, please call{' '}
+                  <a href="tel:+639190769103" className="text-[#1D9FDA] font-semibold hover:underline">+63 919 076 9103</a>.
+                </p>
+              </div>
+              <div className="border-t border-gray-100 px-10 py-4 text-center">
+                <button onClick={() => setSuccessModalOpen(false)}
+                  className="text-[13px] font-semibold hover:underline"
+                  style={{ background: 'linear-gradient(to right,#61A644,#1D9FDA)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+                  Close
+                </button>
+              </div>
             </div>
           </div>
-        </div>
         </>
       )}
     </div>
