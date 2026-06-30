@@ -45,6 +45,19 @@ export default defineConfig(({ mode }) => {
       'import.meta.env.VITE_WORDPRESS_API_ROOT': JSON.stringify(wordpressApiRoot)
     },
     server: {
+      cors: {
+        origin: (origin, callback) => {
+          const allowedString = env.VITE_CORS_ALLOWED_ORIGIN || env.CORS_ALLOWED_ORIGIN || '*';
+          const allowedOrigins = allowedString.split(',').map(o => o.trim()).filter(Boolean);
+          if (!origin || allowedOrigins.includes(origin) || allowedOrigins.includes('*')) {
+            callback(null, true);
+          } else {
+            callback(new Error('Not allowed by CORS'));
+          }
+        },
+        methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+        credentials: true
+      },
       proxy: {
         '/wp-json': {
           target: wordpressApiRoot,
