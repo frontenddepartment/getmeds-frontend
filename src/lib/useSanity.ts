@@ -44,6 +44,7 @@ import {
   getNavigation,
   getPageAssets,
   getPageAssetsByPage,
+  getHeroSlides,
   getNews,
   getNewsById,
   getNewsBySlug,
@@ -281,6 +282,10 @@ export function usePageAssets(page?: string) {
   return useFetch<PageAsset[]>(() => {
     return page ? getPageAssetsByPage(page) : getPageAssets()
   })
+}
+
+export function useHeroSlides() {
+  return useFetch<PageAsset[]>(getHeroSlides)
 }
 
 export function useImageMapper(page: string) {

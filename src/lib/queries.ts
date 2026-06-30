@@ -290,7 +290,19 @@ export async function getCsrPrograms() {
 
 export async function getHomePage() {
   return client.fetch<HomePage>(`
-    *[_type == "homePage" && _id == "home-page"][0]
+    *[_type == "homePage" && _id == "home-page"][0] {
+      ...,
+      hero {
+        ...,
+        slides[0..4] {
+          _key,
+          heading,
+          description,
+          enabled,
+          image { ..., asset-> }
+        }
+      }
+    }
   `)
 }
 
@@ -417,6 +429,17 @@ export async function getPageAssetsByPage(page: string) {
       }
     }
   `, { page })
+}
+
+export async function getHeroSlides() {
+  return client.fetch<PageAsset[]>(`
+    *[_type == "pageAsset" && page == "home" && location == "hero-slider"] | order(_createdAt asc) [0..4] {
+      _id,
+      name,
+      altText,
+      image { ..., asset-> }
+    }
+  `)
 }
 
 export async function getGoogleSpreadsheetBySlug(slug: string) {

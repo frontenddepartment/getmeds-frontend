@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useCategories, useImageMapper, useNews, useSiteSettings } from '../lib/useSanity';
+import { useCategories, useHeroSlides, useImageMapper, useNews, useSiteSettings } from '../lib/useSanity';
 import { getGoogleSpreadsheetBySlug } from '../lib/queries';
 import { injectHTML } from '../lib/injectHTML';
 import { urlFor, client } from '../lib/sanity';
@@ -69,6 +69,7 @@ export default function GetMedsHomepage() {
   const { getImage } = useImageMapper('home');
   const { data: newsItems } = useNews();
   const { data: settings } = useSiteSettings();
+  const { data: heroSlidesData } = useHeroSlides();
   const newsSliderRef = useRef<HTMLDivElement>(null);
   const [activeNewsSlide, setActiveNewsSlide] = useState(0);
 
@@ -97,6 +98,53 @@ export default function GetMedsHomepage() {
   };
   const { data: categoriesData } = useCategories();
   const [isScrolled, setIsScrolled] = useState(false);
+
+  // --- Hero Slider ---
+  const fallbackHeroSlides = [
+    {
+      bg: 'assets/imagebanner.jpg',
+      heading: 'Life-Saving Access.\nRedefining Healthcare Possibilities.',
+      sub: 'Getmeds is a global pharmaceutical company advancing healthcare access in the Philippines through high-quality medicines from essential therapies to advanced hospital treatments.',
+    },
+    {
+      bg: 'assets/homebanner.png',
+      heading: 'Advanced Cancer Medicines.\nHope Delivered to Every Patient.',
+      sub: 'From oncology to hematology, we bring world-class cancer treatments directly to Filipino patients and healthcare institutions nationwide.',
+    },
+    {
+      bg: 'assets/homebanner3.png',
+      heading: 'Compassionate Care.\nA Global Reach, A Local Heart.',
+      sub: 'With a presence across multiple countries, Getmeds connects global pharmaceutical innovation with the communities that need it most.',
+    },
+  ];
+
+  // Build slides from Sanity pageAsset docs (location="hero-slider", page="home"); fall back to hardcoded if none
+  const heroSlides = (heroSlidesData && heroSlidesData.length > 0)
+    ? heroSlidesData.slice(0, 5).map(s => ({
+      bg: s.image ? urlFor(s.image).url() : 'assets/imagebanner.jpg',
+      heading: s.name ?? '',
+      sub: s.altText ?? '',
+    }))
+    : fallbackHeroSlides;
+  const [heroIndex, setHeroIndex] = useState(0);
+  const [heroFading, setHeroFading] = useState(false);
+  const heroTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const goToHeroSlide = (idx: number) => {
+    if (idx === heroIndex) return;
+    setHeroFading(true);
+    setTimeout(() => {
+      setHeroIndex(idx);
+      setHeroFading(false);
+    }, 400);
+  };
+
+  useEffect(() => {
+    heroTimerRef.current = setTimeout(() => {
+      goToHeroSlide((heroIndex + 1) % heroSlides.length);
+    }, 6000);
+    return () => { if (heroTimerRef.current) clearTimeout(heroTimerRef.current); };
+  }, [heroIndex]);
 
   // --- Dynamic Company Mega Menu State ---
   const [companySlides, setCompanySlides] = useState<Record<string, { title: string, href: string, img: string, desc: string }>>({
@@ -713,9 +761,20 @@ export default function GetMedsHomepage() {
         .float-d { animation: floatB 3s ease-in-out infinite 1.7s; }
       ` }} />
 
-      {/* Hero Container - Wraps the transparent header & top-bar, matching the UI screenshot overlay concept */}
-      <div className="relative min-h-[70vh] md:min-h-[600px] w-full bg-cover bg-center overflow-hidden flex flex-col justify-between"
-        style={{ backgroundImage: `url('${getImage('assets/imagebanner.jpg', 'assets/imagebanner.jpg')}')` }}>
+      {/* Hero Container - Slider */}
+      <div className="relative min-h-[70vh] md:min-h-[600px] w-full overflow-hidden flex flex-col justify-between">
+        {/* Slide backgrounds */}
+        {heroSlides.map((slide, i) => (
+          <div
+            key={i}
+            className="absolute inset-0 bg-cover bg-center transition-opacity duration-700"
+            style={{
+              backgroundImage: `url('${getImage(slide.bg, slide.bg)}')`,
+              opacity: i === heroIndex ? 1 : 0,
+              zIndex: 0,
+            }}
+          />
+        ))}
 
         {/* No overlay */}
 
@@ -1090,15 +1149,18 @@ export default function GetMedsHomepage() {
         </div>
 
         {/* Hero Content Area */}
-        <div className="max-w-7xl mx-auto px-6 w-full relative z-10 flex-grow flex items-center justify-center md:justify-start pt-20 md:pt-28 pb-10 md:pb-14 text-center md:text-left">
-          <div className="max-w-2xl space-y-3 reveal active mx-auto md:mx-0 flex flex-col items-center md:items-start">
-            <h1 className="text-2xl md:text-5xl lg:text-6xl font-bold leading-[1.1] tracking-tight bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">
-              Life-Saving Access. <br />
-              Redefining Healthcare Possibilities.
-            </h1>
-            <p className="text-[#000b5d] text-sm md:text-base font-medium leading-relaxed max-w-xl mx-auto md:mx-0">
-              Getmeds is a global pharmaceutical company advancing healthcare access in the Philippines through high-quality medicines from essential therapies to advanced hospital treatments.
-            </p>
+        <div className="max-w-7xl mx-auto px-6 w-full relative z-10 flex-grow flex items-center justify-center md:justify-start pt-20 md:pt-28 pb-16 md:pb-20 text-center md:text-left">
+          <div className="max-w-2xl space-y-3 mx-auto md:mx-0 flex flex-col items-center md:items-start">
+            <div style={{ opacity: heroFading ? 0 : 1, transition: 'opacity 0.4s ease' }}>
+              <h1 className="text-2xl md:text-5xl lg:text-6xl font-bold leading-[1.1] tracking-tight bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent mb-3">
+                {heroSlides[heroIndex].heading.split('\n').map((line, i, arr) => (
+                  <React.Fragment key={i}>{line}{i < arr.length - 1 && <br />}</React.Fragment>
+                ))}
+              </h1>
+              <p className="text-[#000b5d] text-sm md:text-base font-medium leading-relaxed max-w-xl mx-auto md:mx-0">
+                {heroSlides[heroIndex].sub}
+              </p>
+            </div>
 
             {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row justify-center md:justify-start gap-3 pt-2">
@@ -1111,6 +1173,41 @@ export default function GetMedsHomepage() {
               </button>
             </div>
           </div>
+        </div>
+
+        {/* Slider Controls — dots + arrows */}
+        <div className="absolute bottom-5 left-0 right-0 z-20 flex items-center justify-center gap-6">
+          {/* Prev */}
+          <button
+            onClick={() => goToHeroSlide((heroIndex - 1 + heroSlides.length) % heroSlides.length)}
+            className="w-8 h-8 rounded-full bg-white/20 hover:bg-white/40 backdrop-blur-sm flex items-center justify-center transition"
+          >
+            <i className="fa-solid fa-chevron-left text-white text-xs"></i>
+          </button>
+
+          {/* Dots */}
+          <div className="flex items-center gap-2">
+            {heroSlides.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => goToHeroSlide(i)}
+                className="transition-all duration-300 rounded-full"
+                style={{
+                  width: i === heroIndex ? '24px' : '8px',
+                  height: '8px',
+                  background: i === heroIndex ? 'white' : 'rgba(255,255,255,0.45)',
+                }}
+              />
+            ))}
+          </div>
+
+          {/* Next */}
+          <button
+            onClick={() => goToHeroSlide((heroIndex + 1) % heroSlides.length)}
+            className="w-8 h-8 rounded-full bg-white/20 hover:bg-white/40 backdrop-blur-sm flex items-center justify-center transition"
+          >
+            <i className="fa-solid fa-chevron-right text-white text-xs"></i>
+          </button>
         </div>
       </div>
 
