@@ -118,12 +118,12 @@
       "destination": "https://admin.getmeds.ph/adminadlorock/:path*"
     },
     {
-      "source": "/cancer-medicines/:subcategory/:product",
-      "destination": "/product-detail"
+      "source": "/cancer-medicines/:subcategory(breast-cancer|ovarian-cancer|lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|aml|cml|lymphoma|sickle-cell|respiratory|uti|skin-infections|bone-infections|endometriosis|fibrocystic|multiple-myeloma|osteoporosis|arrhythmia|hypertension|glioblastoma|allergic-rhinitis|kidney-disease|pain|rheumatology)",
+      "destination": "/cancer-medicines"
     },
     {
-      "source": "/cancer-medicines/:subcategory",
-      "destination": "/cancer-medicines"
+      "source": "/cancer-medicines/:product",
+      "destination": "/product-detail"
     },
     {
       "source": "/cancer-medicines",

@@ -121,10 +121,9 @@ export default function ProductDetail() {
     if (!productsLoading && productsData) {
       let productSlug = '';
       
-      // Parse from pathname
       const pathParts = window.location.pathname.split('/').filter(Boolean);
-      if (pathParts[0] === 'cancer-medicines' && pathParts.length === 3) {
-        productSlug = pathParts[2];
+      if (pathParts[0] === 'cancer-medicines' && pathParts.length === 2) {
+        productSlug = pathParts[1];
       }
       
       // Fallback to query param

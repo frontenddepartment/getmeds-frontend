@@ -290,20 +290,35 @@ export default defineConfig(({ mode }) => {
             }
             if (cleanPath.startsWith('/cancer-medicines')) {
               const segments = cleanPath.split('/').filter(Boolean);
-              if (segments.length === 3) {
-                const htmlPath = path.join(process.cwd(), 'product-detail.html');
-                if (fs.existsSync(htmlPath)) {
-                  const htmlContent = fs.readFileSync(htmlPath, 'utf-8');
-                  res.setHeader('Content-Type', 'text/html');
-                  res.end(htmlContent);
-                  return;
+              if (segments.length === 2) {
+                const slug = segments[1];
+                const subcategories = [
+                  'breast-cancer', 'ovarian-cancer', 'lung-cancer', 'prostate-cancer', 'colorectal-cancer',
+                  'pancreatic-cancer', 'aml', 'cml', 'lymphoma', 'sickle-cell', 'respiratory', 'uti',
+                  'skin-infections', 'bone-infections', 'endometriosis', 'fibrocystic', 'multiple-myeloma',
+                  'osteoporosis', 'arrhythmia', 'hypertension', 'glioblastoma', 'allergic-rhinitis',
+                  'kidney-disease', 'pain', 'rheumatology'
+                ];
+                if (subcategories.includes(slug)) {
+                  const htmlPath = path.join(process.cwd(), 'cancer-medicines.html');
+                  if (fs.existsSync(htmlPath)) {
+                    res.setHeader('Content-Type', 'text/html');
+                    res.end(fs.readFileSync(htmlPath, 'utf-8'));
+                    return;
+                  }
+                } else {
+                  const htmlPath = path.join(process.cwd(), 'product-detail.html');
+                  if (fs.existsSync(htmlPath)) {
+                    res.setHeader('Content-Type', 'text/html');
+                    res.end(fs.readFileSync(htmlPath, 'utf-8'));
+                    return;
+                  }
                 }
               } else {
                 const htmlPath = path.join(process.cwd(), 'cancer-medicines.html');
                 if (fs.existsSync(htmlPath)) {
-                  const htmlContent = fs.readFileSync(htmlPath, 'utf-8');
                   res.setHeader('Content-Type', 'text/html');
-                  res.end(htmlContent);
+                  res.end(fs.readFileSync(htmlPath, 'utf-8'));
                   return;
                 }
               }
