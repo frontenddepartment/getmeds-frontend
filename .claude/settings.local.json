@@ -5,7 +5,8 @@
       "Bash(Select-Object FullName, PSIsContainer)",
       "Bash(Sort-Object FullName)",
       "Bash(Format-Table -AutoSize)",
-      "Bash(git mv *)"
+      "Bash(git mv *)",
+      "PowerShell(Get-ChildItem \"$env:APPDATA\\\\Code\\\\User\\\\globalStorage\\\\github.vscode-pull-request-github\" -ErrorAction SilentlyContinue | Select-Object Name; Get-ChildItem \"$env:APPDATA\\\\Code\\\\User\\\\globalStorage\\\\vscode.github-authentication\" -ErrorAction SilentlyContinue | Select-Object Name)"
     ]
   }
 }
