@@ -107,12 +107,12 @@ export default function GetMedsHomepage() {
       sub: 'Getmeds is a global pharmaceutical company advancing healthcare access in the Philippines through high-quality medicines from essential therapies to advanced hospital treatments.',
     },
     {
-      bg: 'assets/slidetwo.jpg',
+      bg: 'assets/homebanner.png',
       heading: 'Advanced Cancer Medicines.\nHope Delivered to Every Patient.',
       sub: 'From oncology to hematology, we bring world-class cancer treatments directly to Filipino patients and healthcare institutions nationwide.',
     },
     {
-      bg: 'assets/slidethree.jpg',
+      bg: 'assets/homebanner3.png',
       heading: 'Compassionate Care.\nA Global Reach, A Local Heart.',
       sub: 'With a presence across multiple countries, Getmeds connects global pharmaceutical innovation with the communities that need it most.',
     },
@@ -121,10 +121,10 @@ export default function GetMedsHomepage() {
   // Build slides from Sanity pageAsset docs (location="hero-slider", page="home"); fall back to hardcoded if none
   const heroSlides = (heroSlidesData && heroSlidesData.length > 0)
     ? heroSlidesData.slice(0, 5).map(s => ({
-        bg: s.image ? urlFor(s.image).url() : 'assets/imagebanner.jpg',
-        heading: s.name ?? '',
-        sub: s.altText ?? '',
-      }))
+      bg: s.image ? urlFor(s.image).url() : 'assets/imagebanner.jpg',
+      heading: s.name ?? '',
+      sub: s.altText ?? '',
+    }))
     : fallbackHeroSlides;
   const [heroIndex, setHeroIndex] = useState(0);
   const [heroFading, setHeroFading] = useState(false);

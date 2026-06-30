@@ -122,6 +122,14 @@ export interface SplitHero {
   description?: string
 }
 
+export interface HeroSlide {
+  _key: string
+  image?: SanityImage
+  heading?: string
+  description?: string
+  enabled?: boolean
+}
+
 export interface HomeHero {
   _type: 'homeHero'
   backgroundImage?: SanityImage
@@ -130,7 +138,7 @@ export interface HomeHero {
   headingAccent?: string
   description?: string
   subheading?: string
-  slides?: Array<{ _key: string; image?: SanityImage }>
+  slides?: HeroSlide[]
 }
 
 // ─────────────────────────────────────────────
