@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { injectHTML } from '../lib/injectHTML';
 import { useImageMapper } from '../lib/useSanity';
 import { setPageMeta } from '../lib/seo';
@@ -146,7 +146,7 @@ export default function AboutUs() {
           {/* Background Image — only mount after Sanity resolves so the src never changes */}
           {!imagesLoading && (
             <div className="absolute inset-0 z-0">
-              <img src={getImage('assets/aboutusone.jpg', 'assets/fallback.jpg')} data-json-src="hero.image" data-json-alt="hero.imageAlt"
+              <img src={getImage('About Us Hero Background', 'assets/fallback.jpg')} data-json-src="hero.image" data-json-alt="hero.imageAlt"
                 onLoad={() => setHeroImgLoaded(true)}
                 className={`w-full h-full object-cover object-center transform group-hover:scale-105 transition-[opacity,transform] duration-700 ${heroImgLoaded ? 'opacity-100' : 'opacity-0'}`}
                 alt="About Getmeds" />
@@ -209,7 +209,7 @@ export default function AboutUs() {
             <div className="relative rounded-2xl overflow-hidden cursor-pointer"
               style={{ flex: activePanel === 0 ? 3 : 0.8, minWidth: 0, transition: 'flex 0.5s ease' }}
               onMouseEnter={() => setActivePanel(0)}>
-              <img src={getImage('assets/aboutussix.jpg', 'assets/aboutussix.jpg')}
+              <img src={getImage('About Us Team Image 1', 'assets/aboutussix.jpg')}
                 alt="Getmeds Team Gathering"
                 className="w-full h-full object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
@@ -231,7 +231,7 @@ export default function AboutUs() {
             <div className="relative rounded-2xl overflow-hidden cursor-pointer"
               style={{ flex: activePanel === 1 ? 3 : 0.8, minWidth: 0, transition: 'flex 0.5s ease' }}
               onMouseEnter={() => setActivePanel(1)}>
-              <img src={getImage('assets/aboutusseven.jpg', 'assets/aboutusseven.jpg')}
+              <img src={getImage('About Us Team Image 2', 'assets/aboutusseven.jpg')}
                 alt="Getmeds Training & Development"
                 className="w-full h-full object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent"></div>
@@ -249,7 +249,7 @@ export default function AboutUs() {
             <div className="relative rounded-2xl overflow-hidden cursor-pointer"
               style={{ flex: activePanel === 2 ? 3 : 0.8, minWidth: 0, transition: 'flex 0.5s ease' }}
               onMouseEnter={() => setActivePanel(2)}>
-              <img src={getImage('assets/aboutuseight.jpg', 'assets/aboutuseight.jpg')}
+              <img src={getImage('About Us Team Image 3', 'assets/aboutuseight.jpg')}
                 alt="Getmeds Strategy & Innovation"
                 className="w-full h-full object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent"></div>
@@ -772,7 +772,7 @@ export default function AboutUs() {
             </div>
             <div className="flex items-center justify-center p-6 transition-all duration-300 transform hover:scale-110">
               <div className="flex items-center gap-2 opacity-60">
-                <img src={getImage('assets/UNGClogo.png', 'assets/UNGClogo.png')} className="h-10 object-contain" alt="UNGC Logo" />
+                <img src={getImage('UNGC Logo Partner', 'assets/UNGClogo.png')} className="h-10 object-contain" alt="UNGC Logo" />
               </div>
             </div>
           </div>

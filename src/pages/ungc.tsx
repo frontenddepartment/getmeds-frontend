@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { injectHTML } from '../lib/injectHTML';
 import { useImageMapper } from '../lib/useSanity';
 import { setPageMeta } from '../lib/seo';
@@ -55,11 +55,11 @@ const Ungc: React.FC = () => {
       {/* UNGC Hero Section */}
       <section className="w-full mx-auto px-3 sm:px-4 md:px-6 mt-3 md:mt-4 mb-16 max-w-[1600px]">
         <div className="relative rounded-[1.5rem] border border-white/10 overflow-hidden min-h-[450px] flex items-center justify-center">
-          <img src={getImage('assets/ungcimage.jpg', 'assets/ungcimage.jpg')} alt="UN Global Compact" className="absolute inset-0 w-full h-full object-cover" />
+          <img src={getImage('UNGC Hero Background', 'assets/ungcimage.jpg')} alt="UN Global Compact" className="absolute inset-0 w-full h-full object-cover" />
           <div className="absolute inset-0 bg-[#0F2642]/75 backdrop-blur-[1px]"></div>
           <div className="relative z-10 flex flex-col md:flex-row items-center gap-10 md:gap-14 px-8 py-16 max-w-6xl">
             <div className="flex-shrink-0">
-              <img src={getImage('assets/ungclogowhite.png', 'assets/ungclogowhite.png')} alt="UNGC Logo" className="w-48 md:w-60 h-auto opacity-100" />
+              <img src={getImage('UNGC Logo White', 'assets/ungclogowhite.png')} alt="UNGC Logo" className="w-48 md:w-60 h-auto opacity-100" />
             </div>
             <div className="hidden md:block w-[1.5px] h-56 bg-white/40"></div>
             <div className="text-white text-center md:text-left max-w-xl">
@@ -96,7 +96,7 @@ const Ungc: React.FC = () => {
             </div>
             <div className="flex-shrink-0 flex flex-col items-center justify-center">
               <span className="text-[#1A365D] font-serif font-bold text-xs md:text-sm tracking-tight mb-2 uppercase">We Support</span>
-              <img src={getImage('assets/UNGClogo.png', 'assets/UNGClogo.png')} alt="UNGC Logo"
+              <img src={getImage('UNGC Logo Partner', 'assets/UNGClogo.png')} alt="UNGC Logo"
                 className="max-w-[160px] md:max-w-[180px] h-auto opacity-90 drop-shadow-sm" />
             </div>
           </div>
@@ -110,8 +110,8 @@ const Ungc: React.FC = () => {
 
             {/* Left: CEO Addresses */}
             <div className="relative group w-full md:w-1/3 h-[500px] cursor-pointer overflow-hidden"
-              onClick={() => setLightboxSrc(getImage('assets/left.jpg', 'assets/left.jpg'))}>
-              <img src={getImage('assets/left.jpg', 'assets/left.jpg')}
+              onClick={() => setLightboxSrc(getImage('UNGC Event Left Image', 'assets/left.jpg'))}>
+              <img src={getImage('UNGC Event Left Image', 'assets/left.jpg')}
                 className="w-full h-full object-cover group-hover:scale-110 transition duration-700" alt="" />
               <div className="absolute inset-0 bg-[#1D9FDA]/0 group-hover:bg-[#1D9FDA]/40 transition-all duration-500 z-10"></div>
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30 p-8 flex flex-col justify-between z-20">
@@ -127,8 +127,8 @@ const Ungc: React.FC = () => {
             {/* Middle: Sustainable & Networking */}
             <div className="flex flex-col w-full md:w-1/3">
               <div className="relative group h-[250px] border-l border-b border-gray-100/10 cursor-pointer overflow-hidden"
-                onClick={() => setLightboxSrc(getImage('assets/topmid.jpg', 'assets/topmid.jpg'))}>
-                <img src={getImage('assets/topmid.jpg', 'assets/topmid.jpg')}
+                onClick={() => setLightboxSrc(getImage('UNGC Event Top Mid Image', 'assets/topmid.jpg'))}>
+                <img src={getImage('UNGC Event Top Mid Image', 'assets/topmid.jpg')}
                   className="w-full h-full object-cover group-hover:scale-110 transition duration-700" alt="" />
                 <div className="absolute inset-0 bg-[#1D9FDA]/0 group-hover:bg-[#1D9FDA]/40 transition-all duration-500 z-10"></div>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30 p-8 flex flex-col justify-between z-20">
@@ -141,8 +141,8 @@ const Ungc: React.FC = () => {
                 </div>
               </div>
               <div className="relative group h-[250px] border-l border-gray-100/10 cursor-pointer overflow-hidden"
-                onClick={() => setLightboxSrc(getImage('assets/bottommid.jpg', 'assets/bottommid.jpg'))}>
-                <img src={getImage('assets/bottommid.jpg', 'assets/bottommid.jpg')}
+                onClick={() => setLightboxSrc(getImage('UNGC Event Bottom Mid Image', 'assets/bottommid.jpg'))}>
+                <img src={getImage('UNGC Event Bottom Mid Image', 'assets/bottommid.jpg')}
                   className="w-full h-full object-cover group-hover:scale-110 transition duration-700" alt="" />
                 <div className="absolute inset-0 bg-[#1D9FDA]/0 group-hover:bg-[#1D9FDA]/40 transition-all duration-500 z-10"></div>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30 p-8 flex flex-col justify-between z-20">
@@ -159,8 +159,8 @@ const Ungc: React.FC = () => {
             {/* Right: Ethical & General Assembly */}
             <div className="flex flex-col w-full md:w-1/3">
               <div className="relative group h-[250px] border-l border-b border-gray-100/10 cursor-pointer overflow-hidden"
-                onClick={() => setLightboxSrc(getImage('assets/topright.jpeg', 'assets/topright.jpeg'))}>
-                <img src={getImage('assets/topright.jpeg', 'assets/topright.jpeg')}
+                onClick={() => setLightboxSrc(getImage('UNGC Event Top Right Image', 'assets/topright.jpeg'))}>
+                <img src={getImage('UNGC Event Top Right Image', 'assets/topright.jpeg')}
                   className="w-full h-full object-cover group-hover:scale-110 transition duration-700" alt="" />
                 <div className="absolute inset-0 bg-[#1D9FDA]/0 group-hover:bg-[#1D9FDA]/40 transition-all duration-500 z-10"></div>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30 p-8 flex flex-col justify-between z-20">
@@ -173,8 +173,8 @@ const Ungc: React.FC = () => {
                 </div>
               </div>
               <div className="relative group h-[250px] border-l border-gray-100/10 cursor-pointer overflow-hidden"
-                onClick={() => setLightboxSrc(getImage('assets/bottomright.jpeg', 'assets/bottomright.jpeg'))}>
-                <img src={getImage('assets/bottomright.jpeg', 'assets/bottomright.jpeg')}
+                onClick={() => setLightboxSrc(getImage('UNGC Event Bottom Right Image', 'assets/bottomright.jpeg'))}>
+                <img src={getImage('UNGC Event Bottom Right Image', 'assets/bottomright.jpeg')}
                   className="w-full h-full object-cover group-hover:scale-110 transition duration-700" alt="" />
                 <div className="absolute inset-0 bg-[#1D9FDA]/0 group-hover:bg-[#1D9FDA]/40 transition-all duration-500 z-10"></div>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30 p-8 flex flex-col justify-between z-20">
@@ -344,7 +344,7 @@ const Ungc: React.FC = () => {
       {/* Large Banner Image */}
       <section className="max-w-7xl mx-auto px-4 mb-24 overflow-hidden">
         <div className="relative rounded-[1.5rem] overflow-hidden h-[200px] flex items-center justify-start px-12 md:px-28">
-          <img src={getImage('assets/learnmorecopy.png', 'assets/learnmorecopy.png')} alt="UN Global Compact"
+          <img src={getImage('UNGC Learn More Image', 'assets/learnmorecopy.png')} alt="UN Global Compact"
             className="absolute inset-0 w-full h-full object-cover" />
           <div className="absolute inset-0 bg-black/40"></div>
           <div className="relative z-10 text-left">

@@ -388,56 +388,48 @@ export async function getUngcPage() {
 }
 
 // ─────────────────────────────────────────────
-// Page Assets (Materials)
+// Page Assets (Images)
 // ─────────────────────────────────────────────
 
 export async function getPageAssets() {
   return client.fetch<PageAsset[]>(`
-    *[_type == "pageAsset"] {
+    *[_type == "pageAsset"] | order(name asc) {
       _id,
       _type,
       name,
-      page,
-      location,
-      image,
-      altText,
-      assetPath,
       images[] {
         image,
-        altText,
-        assetPath
+        altText
       }
     }
   `)
 }
 
-export async function getPageAssetsByPage(page: string) {
+export async function getPageAssetsByPage(_page?: string) {
+  // Page filtering is no longer used — all assets are fetched and matched by name.
+  // This function is kept for backwards compatibility with existing hook calls.
   return client.fetch<PageAsset[]>(`
-    *[_type == "pageAsset" && (page == $page || page == "shared")] {
+    *[_type == "pageAsset"] | order(name asc) {
       _id,
       _type,
       name,
-      page,
-      location,
-      image,
-      altText,
-      assetPath,
       images[] {
         image,
-        altText,
-        assetPath
+        altText
       }
     }
-  `, { page })
+  `)
 }
 
 export async function getHeroSlides() {
   return client.fetch<PageAsset[]>(`
-    *[_type == "pageAsset" && page == "home" && location == "hero-slider"] | order(_createdAt asc) [0..4] {
+    *[_type == "pageAsset" && name == "Home Hero Background"][0] {
       _id,
       name,
-      altText,
-      image { ..., asset-> }
+      images[] {
+        image { ..., asset-> },
+        altText
+      }
     }
   `)
 }

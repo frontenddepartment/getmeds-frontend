@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { injectHTML } from '../lib/injectHTML';
 import { useImageMapper } from '../lib/useSanity';
 import { getCareers } from '../lib/queries';
@@ -268,7 +268,7 @@ const Careers: React.FC = () => {
           {/* Background Image — only mount after Sanity resolves so the src never changes */}
           {!imagesLoading && (
             <img
-              src={getImage('assets/careershero.png', 'assets/careershero.png')}
+              src={getImage('Careers Hero Background', 'assets/careershero.png')}
               alt="Getmeds Team"
               onLoad={() => setHeroImgLoaded(true)}
               className={`absolute inset-0 w-full h-full object-cover object-right-top transition-opacity duration-700 ${heroImgLoaded ? 'opacity-100' : 'opacity-0'}`}
@@ -335,7 +335,7 @@ const Careers: React.FC = () => {
             <div className="ca-anim ca-up relative rounded-2xl overflow-hidden cursor-pointer"
               style={{ flex: activeCareersPanel === 0 ? 3 : 0.8, minWidth: 0, transition: 'flex 0.5s ease' }}
               onMouseEnter={() => setActiveCareersPanel(0)}>
-              <img src={getImage('assets/aboutussix.jpg', 'assets/aboutussix.jpg')}
+              <img src={getImage('About Us Team Image 1', 'assets/aboutussix.jpg')}
                 alt="Getmeds Team"
                 className="w-full h-full object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
@@ -353,7 +353,7 @@ const Careers: React.FC = () => {
             <div className="ca-anim ca-up ca-d2 relative rounded-2xl overflow-hidden cursor-pointer"
               style={{ flex: activeCareersPanel === 1 ? 3 : 0.8, minWidth: 0, transition: 'flex 0.5s ease' }}
               onMouseEnter={() => setActiveCareersPanel(1)}>
-              <img src={getImage('assets/aboutusseven.jpg', 'assets/aboutusseven.jpg')}
+              <img src={getImage('About Us Team Image 2', 'assets/aboutusseven.jpg')}
                 alt="Getmeds Learning"
                 className="w-full h-full object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent"></div>
@@ -371,7 +371,7 @@ const Careers: React.FC = () => {
             <div className="ca-anim ca-up ca-d4 relative rounded-2xl overflow-hidden cursor-pointer"
               style={{ flex: activeCareersPanel === 2 ? 3 : 0.8, minWidth: 0, transition: 'flex 0.5s ease' }}
               onMouseEnter={() => setActiveCareersPanel(2)}>
-              <img src={getImage('assets/aboutuseight.jpg', 'assets/aboutuseight.jpg')}
+              <img src={getImage('About Us Team Image 3', 'assets/aboutuseight.jpg')}
                 alt="Getmeds Impact"
                 className="w-full h-full object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent"></div>
@@ -457,7 +457,7 @@ const Careers: React.FC = () => {
               </div>
             </div>
             <div className="ca-anim ca-right ca-d2 w-52 h-52 md:w-64 md:h-64 flex-shrink-0">
-              <img src={getImage('assets/CEO.jpg', 'assets/CEO.jpg')} alt="Naresh Bishnoi, Founder"
+              <img src={getImage('Naresh Bishnoi Careers Quote Image', 'assets/CEO.jpg')} alt="Naresh Bishnoi, Founder"
                 className="w-full h-full object-cover rounded-full shadow-xl border-4 border-white ring-2 ring-gray-100" />
             </div>
           </div>

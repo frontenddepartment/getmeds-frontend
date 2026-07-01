@@ -3,6 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import https from 'https';
 import { execSync } from 'child_process';
+import { sanityImageSyncPlugin } from './src/plugins/sanityImageSync.js';
 
 const getHtmlInputs = () => {
   const dir = process.cwd();
@@ -79,6 +80,12 @@ export default defineConfig(async ({ mode }) => {
   }
 
   const subcategories = await fetchSanitySubcategories(env);
+
+  // Expose Sanity env vars to Node plugin context (plugins run before Vite sets process.env)
+  process.env.VITE_SANITY_PROJECT_ID  = env.VITE_SANITY_PROJECT_ID  || 's7ocz8zp'
+  process.env.VITE_SANITY_DATASET     = env.VITE_SANITY_DATASET     || 'production'
+  process.env.VITE_SANITY_API_VERSION = env.VITE_SANITY_API_VERSION || '2024-01-01'
+  process.env.SANITY_WRITE_TOKEN      = env.SANITY_WRITE_TOKEN || ''
 
   const deploymentMode = env.VITE_DEPLOYMENT || env.DEPLOYMENT || 'development';
   const isProduction = deploymentMode === 'production';
@@ -182,7 +189,9 @@ export default defineConfig(async ({ mode }) => {
       }
     },
     plugins: [
+      sanityImageSyncPlugin(),
       {
+
         name: 'inject-chatbot-meta',
         transformIndexHtml(html) {
           const suppressor = `\n  <script>

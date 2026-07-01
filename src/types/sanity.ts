@@ -900,16 +900,16 @@ export interface PageAsset {
   _id: string
   _type: 'pageAsset'
   name: string
-  page: string
-  location: string
-  image?: SanityImage
-  altText?: string
-  assetPath?: string
   images?: Array<{
     image?: SanityImage
     altText?: string
-    assetPath?: string
   }>
+  // Legacy fields (kept for backwards compatibility during migration)
+  page?: string
+  location?: string
+  image?: SanityImage
+  altText?: string
+  assetPath?: string
 }
 
 

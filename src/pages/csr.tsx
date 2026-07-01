@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { injectHTML } from '../lib/injectHTML';
 import { useImageMapper } from '../lib/useSanity';
 import { setPageMeta } from '../lib/seo';
@@ -163,7 +163,7 @@ const Csr: React.FC = () => {
       <section className="w-full mx-auto px-3 sm:px-4 md:px-6 mt-3 md:mt-4 mb-0 max-w-[1600px]">
       <div className="relative rounded-[1.5rem] overflow-hidden min-h-[450px] md:min-h-[500px] flex items-end group">
         <img
-          src={getImage('assets/patienthand.jpg', 'assets/patienthand.jpg')}
+          src={getImage('CSR Hero Background', 'assets/patienthand.jpg')}
           alt="Corporate Social Responsibility"
           className="absolute inset-0 w-full h-full object-cover object-center brightness-90 transform group-hover:scale-105 transition-transform duration-[4s]"
         />
@@ -224,7 +224,7 @@ const Csr: React.FC = () => {
             {/* Left: Image */}
             <div className="lg:w-1/2 flex justify-center">
               <img
-                src={getImage('assets/csrimage1.png', 'assets/csrimage1.png')}
+                src={getImage('CSR Section Image 1', 'assets/csrimage1.png')}
                 alt="Free Cancer Medicines Program"
                 className="w-full h-auto rounded-2xl object-cover"
               />
@@ -420,18 +420,18 @@ const Csr: React.FC = () => {
               </p>
             </div>
             <div className="lg:w-1/2">
-              <img src={getImage('assets/one.png', 'assets/one.png')} alt="Warriors Event"
+              <img src={getImage('Warriors Event Section Image 1', 'assets/one.png')} alt="Warriors Event"
                 className="w-full md:h-[350px] object-cover rounded-tl-[150px] rounded-tr-[1rem] rounded-br-[1rem] rounded-bl-[1rem] shadow-xl" />
             </div>
           </div>
 
           {/* Event Mini Gallery */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <img src={getImage('assets/two.png', 'assets/two.png')} alt=""
+            <img src={getImage('Warriors Event Section Image 2', 'assets/two.png')} alt=""
               className="w-full h-60 object-cover rounded-2xl shadow-sm transition-transform hover:scale-[1.02]" />
-            <img src={getImage('assets/three.png', 'assets/three.png')} alt=""
+            <img src={getImage('Warriors Event Section Image 3', 'assets/three.png')} alt=""
               className="w-full h-60 object-cover rounded-2xl shadow-sm transition-transform hover:scale-[1.02]" />
-            <img src={getImage('assets/four.png', 'assets/four.png')} alt=""
+            <img src={getImage('Warriors Event Section Image 4', 'assets/four.png')} alt=""
               className="w-full h-60 object-cover rounded-tl-2xl rounded-tr-2xl rounded-br-[100px] rounded-bl-2xl shadow-sm transition-transform hover:scale-[1.02]" />
           </div>
         </div>
@@ -442,7 +442,7 @@ const Csr: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row gap-10 items-center mb-8">
             <div className="md:w-1/2">
-              <img src={getImage('assets/five.png', 'assets/five.png')} alt="EPCALM Partnership"
+              <img src={getImage('EPCALM Partnership Image', 'assets/five.png')} alt="EPCALM Partnership"
                 className="w-full h-[350px] object-cover rounded-[1rem] shadow-lg" />
             </div>
             <div className="md:w-1/2 reveal">
@@ -456,22 +456,22 @@ const Csr: React.FC = () => {
               </p>
               <div className="flex items-center gap-4">
                 <div className="w-16 h-16 flex items-center justify-center p-2">
-                  <img src={getImage('assets/epcalmlogo.png', 'assets/epcalmlogo.png')} alt="" className="w-full h-full object-contain" />
+                  <img src={getImage('EPCALM Logo', 'assets/epcalmlogo.png')} alt="" className="w-full h-full object-contain" />
                 </div>
               </div>
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="overflow-hidden h-60 rounded-tl-2xl rounded-tr-2xl rounded-br-2xl rounded-bl-[100px]">
-              <img src={getImage('assets/six.png', 'assets/six.png')} alt=""
+              <img src={getImage('Warriors Event Section Image 5', 'assets/six.png')} alt=""
                 className="w-full h-full object-cover transition-transform hover:scale-[1.02]" />
             </div>
             <div className="overflow-hidden h-60 rounded-2xl">
-              <img src={getImage('assets/seven.png', 'assets/seven.png')} alt=""
+              <img src={getImage('Warriors Event Section Image 6', 'assets/seven.png')} alt=""
                 className="w-full h-full object-cover transition-transform hover:scale-[1.02]" />
             </div>
             <div className="relative overflow-hidden h-60 rounded-tl-2xl rounded-tr-2xl rounded-br-[100px] rounded-bl-2xl">
-              <img src={getImage('assets/eight.png', 'assets/eight.png')} alt=""
+              <img src={getImage('Warriors Event Section Image 7', 'assets/eight.png')} alt=""
                 className="w-full h-full object-cover transition-transform hover:scale-[1.02]" />
             </div>
           </div>
@@ -483,7 +483,7 @@ const Csr: React.FC = () => {
         <div className="bg-[#26A8E1] rounded-[1rem] px-8 md:px-16 py-10 flex flex-col md:flex-row items-center gap-10 relative">
           <div className="flex flex-col items-center -mt-28 md:-mt-32 shrink-0 z-20">
             <div className="w-[210px] h-[210px] rounded-full border-[8px] border-white overflow-hidden mb-6 shadow-2xl bg-white">
-              <img src={getImage('assets/fohimage.png', 'assets/fohimage.png')} alt="Faces of Hope" className="w-full h-full object-cover" />
+              <img src={getImage('Faces of Hope Section Image', 'assets/fohimage.png')} alt="Faces of Hope" className="w-full h-full object-cover" />
             </div>
             <p className="text-white text-[14px] md:text-[15px] font-[700] text-center max-w-[300px] leading-relaxed tracking-wide">
               Mother of a Chronic Myeloid Leukemia Patient<br />(EPCALM Beneficiary)
