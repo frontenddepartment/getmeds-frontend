@@ -70,6 +70,20 @@ async function fetchSanityData(query) {
 }
 
 async function getAllCancerMedicines() {
+  const getProductSlug = (p) => {
+    const brand = (p.brandName || '').toLowerCase().trim();
+    const molecule = (p.genericName || '').toLowerCase().trim()
+      .replace(/\s*\(as\s+[^)]+\)/gi, '')
+      .replace(/[^a-z0-9]+/g, '-');
+    const form = (p.form || '').toLowerCase().trim()
+      .replace(/[^a-z0-9]+/g, '-');
+    const strength = (p.strength || '').toLowerCase().trim()
+      .replace(/[^a-z0-9]+/g, '-');
+    
+    const parts = [brand, molecule, strength, form].filter(Boolean).join('-');
+    return parts.replace(/-+/g, '-').replace(/(^-|-$)/g, '');
+  };
+
   const subcategories = [];
   const products = [];
   try {
@@ -97,7 +111,7 @@ async function getAllCancerMedicines() {
 
     console.log('[Sitemap] Fetching products from Sanity...');
     const excelDoc = await fetchSanityData('*[_type == "product" && (remarks == "present" || remarks == "active") && defined(title)][0] { json_data }');
-    const originalProducts = await fetchSanityData('*[_type == "product" && !defined(title) && (!defined(remarks) || remarks == "present" || remarks == "active")] { _id, slug, name, remarks }');
+    const originalProducts = await fetchSanityData('*[_type == "product" && !defined(title) && (!defined(remarks) || remarks == "present" || remarks == "active")] { _id, slug, name, remarks, brandName, genericName, form, strength }');
 
     const originalMap = new Map();
     originalProducts.forEach(op => {
@@ -127,15 +141,8 @@ async function getAllCancerMedicines() {
         return;
       }
 
-      let slug = p.slug || orig.slug;
-      let slugStr = '';
-      if (typeof slug === 'string') {
-        slugStr = slug;
-      } else if (slug && typeof slug === 'object' && slug.current) {
-        slugStr = slug.current;
-      } else if (p.name || orig.name) {
-        slugStr = getSubcategorySlug(p.name || orig.name);
-      }
+      const merged = { ...orig, ...p };
+      const slugStr = getProductSlug(merged);
 
       if (slugStr && !processedSlugs.has(slugStr)) {
         processedSlugs.add(slugStr);
@@ -148,15 +155,7 @@ async function getAllCancerMedicines() {
       if (excelProductIds.has(op._id)) return;
       if (op.remarks !== 'present' && op.remarks !== 'active') return;
 
-      let slug = op.slug;
-      let slugStr = '';
-      if (typeof slug === 'string') {
-        slugStr = slug;
-      } else if (slug && typeof slug === 'object' && slug.current) {
-        slugStr = slug.current;
-      } else if (op.name) {
-        slugStr = getSubcategorySlug(op.name);
-      }
+      const slugStr = getProductSlug(op);
 
       if (slugStr && !processedSlugs.has(slugStr)) {
         processedSlugs.add(slugStr);
