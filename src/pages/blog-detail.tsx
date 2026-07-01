@@ -55,7 +55,7 @@ export default function BlogDetail() {
     } else {
       // Fallback to query params if accessing via legacy /article-detail?id=123
       const params = new URLSearchParams(window.location.search);
-      const id = params.get('id') || '';
+      const id = params.get('id') || params.get('preview_id') || params.get('p') || '';
       if (id) {
         setArticleId(id);
       }
@@ -111,7 +111,10 @@ export default function BlogDetail() {
       
       // If we got here via legacy /article-detail?id=X, redirect to /blog/slug
       if (segments[0] !== 'blog') {
-        window.location.replace(`/blog/${targetSlug}${window.location.hash}`);
+        const isPreview = new URLSearchParams(window.location.search).get('preview') === 'true';
+        if (!isPreview) {
+          window.location.replace(`/blog/${targetSlug}${window.location.hash}`);
+        }
       } else {
         // If we are already on /blog/slug, check if the slug is correct. If it isn't, sync history:
         const expectedSlug = article.slug || slugify(article.title);
