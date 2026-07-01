@@ -66,6 +66,15 @@ const slugify = (text: string | undefined | null) => {
 };
 
 export default function GetMedsHomepage() {
+  // Redirect preview requests to the blog detail page
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const previewId = params.get('preview_id') || params.get('p');
+    if (previewId) {
+      window.location.replace(`/blog-detail${window.location.search}`);
+    }
+  }, []);
+
   const { getImage } = useImageMapper('home');
   const { data: newsItems } = useNews();
   const { data: settings } = useSiteSettings();
