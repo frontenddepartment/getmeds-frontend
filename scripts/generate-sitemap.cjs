@@ -270,6 +270,7 @@ async function generate() {
   // Helper to generate a standard XML urlset
   function generateUrlSetXml(urls) {
     let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
+    xml += '<?xml-stylesheet type="text/xsl" href="/sitemap.xsl"?>\n';
     xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
     urls.forEach(u => {
       xml += '  <url>\n';
@@ -336,6 +337,7 @@ async function generate() {
 
   // 4. Generate sitemap.xml (Sitemap Index)
   let indexXml = '<?xml version="1.0" encoding="UTF-8"?>\n';
+  indexXml += '<?xml-stylesheet type="text/xsl" href="/sitemap.xsl"?>\n';
   indexXml += '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
   
   const subSitemaps = ['category-sitemap.xml', 'product-sitemap.xml', 'blog-sitemap.xml'];
