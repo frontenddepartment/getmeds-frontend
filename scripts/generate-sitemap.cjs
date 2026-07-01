@@ -47,6 +47,130 @@ function loadEnv() {
   return env;
 }
 
+const getSubcategorySlug = (name) => {
+  return name
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, '-')
+    .replace(/[^a-z0-9-]/g, '')
+    .replace(/-+/g, '-');
+};
+
+async function fetchSanityData(query) {
+  const env = loadEnv();
+  const projectId = env.VITE_SANITY_PROJECT_ID || 's7ocz8zp';
+  const dataset = env.VITE_SANITY_DATASET || 'production';
+  const url = `https://${projectId}.api.sanity.io/v2024-01-01/data/query/${dataset}?query=${encodeURIComponent(query)}`;
+  
+  const res = await request(url, { headers: { 'User-Agent': 'SitemapGenerator/1.0' } });
+  if (res.statusCode === 200) {
+    return JSON.parse(res.body).result;
+  }
+  throw new Error(`Sanity API returned status code ${res.statusCode}`);
+}
+
+async function getAllCancerMedicines() {
+  const subcategories = [];
+  const products = [];
+  try {
+    console.log('[Sitemap] Fetching subcategories from Sanity...');
+    const categories = await fetchSanityData('*[_type == "category"] { category, subcategory }');
+    const subcats = new Set();
+    categories.forEach(cat => {
+      if (cat.category) {
+        subcats.add(getSubcategorySlug(cat.category));
+      }
+      if (Array.isArray(cat.subcategory)) {
+        cat.subcategory.forEach(sub => {
+          if (sub) {
+            subcats.add(getSubcategorySlug(sub));
+          }
+        });
+      }
+    });
+    
+    subcats.forEach(slug => {
+      if (slug) {
+        subcategories.push({ path: `cancer-medicines/${slug}`, priority: '0.7', changefreq: 'weekly' });
+      }
+    });
+
+    console.log('[Sitemap] Fetching products from Sanity...');
+    const excelDoc = await fetchSanityData('*[_type == "product" && (remarks == "present" || remarks == "active") && defined(title)][0] { json_data }');
+    const originalProducts = await fetchSanityData('*[_type == "product" && !defined(title) && (!defined(remarks) || remarks == "present" || remarks == "active")] { _id, slug, name, remarks }');
+
+    const originalMap = new Map();
+    originalProducts.forEach(op => {
+      originalMap.set(op._id, op);
+    });
+
+    let rawProducts = [];
+    if (excelDoc && excelDoc.json_data) {
+      try {
+        const data = JSON.parse(excelDoc.json_data);
+        const firstSheetName = Object.keys(data)[0];
+        if (firstSheetName) {
+          rawProducts = data[firstSheetName] || [];
+        }
+      } catch (e) {
+        console.error('[Sitemap] Failed to parse Excel json_data:', e.message);
+      }
+    }
+
+    const excelProductIds = new Set(rawProducts.map(p => p._id));
+    const processedSlugs = new Set();
+
+    // Process Excel Products
+    rawProducts.forEach(p => {
+      const orig = originalMap.get(p._id) || {};
+      if (orig.remarks && orig.remarks !== 'present' && orig.remarks !== 'active') {
+        return;
+      }
+
+      let slug = p.slug || orig.slug;
+      let slugStr = '';
+      if (typeof slug === 'string') {
+        slugStr = slug;
+      } else if (slug && typeof slug === 'object' && slug.current) {
+        slugStr = slug.current;
+      } else if (p.name || orig.name) {
+        slugStr = getSubcategorySlug(p.name || orig.name);
+      }
+
+      if (slugStr && !processedSlugs.has(slugStr)) {
+        processedSlugs.add(slugStr);
+        products.push({ path: `cancer-medicines/${slugStr}`, priority: '0.6', changefreq: 'monthly' });
+      }
+    });
+
+    // Process Individual-only products
+    originalProducts.forEach(op => {
+      if (excelProductIds.has(op._id)) return;
+      if (op.remarks !== 'present' && op.remarks !== 'active') return;
+
+      let slug = op.slug;
+      let slugStr = '';
+      if (typeof slug === 'string') {
+        slugStr = slug;
+      } else if (slug && typeof slug === 'object' && slug.current) {
+        slugStr = slug.current;
+      } else if (op.name) {
+        slugStr = getSubcategorySlug(op.name);
+      }
+
+      if (slugStr && !processedSlugs.has(slugStr)) {
+        processedSlugs.add(slugStr);
+        products.push({ path: `cancer-medicines/${slugStr}`, priority: '0.6', changefreq: 'monthly' });
+      }
+    });
+
+    console.log(`[Sitemap] Successfully processed ${subcats.size} subcategories and ${processedSlugs.size} products from Sanity.`);
+  } catch (err) {
+    console.error('[Sitemap] Failed to retrieve products/categories from Sanity:', err.message);
+  }
+  return { subcategories, products };
+}
+
 // Fetch a single page of posts from WordPress API, with IP fallback if DNS fails
 async function fetchPage(page) {
   const pathQuery = `/wp-json/wp/v2/posts?per_page=100&page=${page}&_fields=slug,date`;
@@ -121,7 +245,7 @@ async function generate() {
     { path: '', priority: '1.0', changefreq: 'daily' },
     { path: 'about-us', priority: '0.8', changefreq: 'monthly' },
     { path: 'services', priority: '0.8', changefreq: 'monthly' },
-    { path: 'product-range', priority: '0.8', changefreq: 'weekly' },
+    { path: 'cancer-medicines', priority: '0.8', changefreq: 'weekly' },
     { path: 'order-medicines', priority: '0.8', changefreq: 'monthly' },
     { path: 'careers', priority: '0.7', changefreq: 'monthly' },
     { path: 'contact-us', priority: '0.7', changefreq: 'monthly' },
@@ -134,46 +258,97 @@ async function generate() {
   ];
 
   const posts = await getAllPosts();
-
-  let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
-  xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
-
-  // 1. Add static pages
-  staticPages.forEach(p => {
-    const url = p.path ? `${DOMAIN}/${p.path}` : DOMAIN;
-    xml += '  <url>\n';
-    xml += `    <loc>${url}</loc>\n`;
-    xml += `    <changefreq>${p.changefreq}</changefreq>\n`;
-    xml += `    <priority>${p.priority}</priority>\n`;
-    xml += '  </url>\n';
-  });
-
-  // 2. Add dynamic blog posts
-  posts.forEach(post => {
-    if (!post.slug) return;
-    const url = `${DOMAIN}/blog/${post.slug}`;
-    const dateStr = post.date ? new Date(post.date).toISOString().split('T')[0] : '';
-    
-    xml += '  <url>\n';
-    xml += `    <loc>${url}</loc>\n`;
-    if (dateStr) {
-      xml += `    <lastmod>${dateStr}</lastmod>\n`;
-    }
-    xml += '    <changefreq>monthly</changefreq>\n';
-    xml += '    <priority>0.6</priority>\n';
-    xml += '  </url>\n';
-  });
-
-  xml += '</urlset>\n';
+  const { subcategories, products } = await getAllCancerMedicines();
 
   const publicDir = path.join(__dirname, '..', 'public');
   if (!fs.existsSync(publicDir)) {
     fs.mkdirSync(publicDir, { recursive: true });
   }
 
-  const sitemapPath = path.join(publicDir, 'sitemap.xml');
-  fs.writeFileSync(sitemapPath, xml, 'utf8');
-  console.log(`[Sitemap] Generated successfully at ${sitemapPath}`);
+  const currentDate = new Date().toISOString().split('T')[0];
+
+  // Helper to generate a standard XML urlset
+  function generateUrlSetXml(urls) {
+    let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
+    xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
+    urls.forEach(u => {
+      xml += '  <url>\n';
+      xml += `    <loc>${u.loc}</loc>\n`;
+      if (u.lastmod) {
+        xml += `    <lastmod>${u.lastmod}</lastmod>\n`;
+      }
+      xml += `    <changefreq>${u.changefreq}</changefreq>\n`;
+      xml += `    <priority>${u.priority}</priority>\n`;
+      xml += '  </url>\n';
+    });
+    xml += '</urlset>\n';
+    return xml;
+  }
+
+  // 1. Generate category-sitemap.xml (static pages + subcategories)
+  const categoryUrls = [];
+  staticPages.forEach(p => {
+    categoryUrls.push({
+      loc: p.path ? `${DOMAIN}/${p.path}` : DOMAIN,
+      changefreq: p.changefreq,
+      priority: p.priority,
+      lastmod: currentDate
+    });
+  });
+  subcategories.forEach(s => {
+    categoryUrls.push({
+      loc: `${DOMAIN}/${s.path}`,
+      changefreq: s.changefreq,
+      priority: s.priority,
+      lastmod: currentDate
+    });
+  });
+  fs.writeFileSync(path.join(publicDir, 'category-sitemap.xml'), generateUrlSetXml(categoryUrls), 'utf8');
+  console.log('[Sitemap] Generated category-sitemap.xml successfully.');
+
+  // 2. Generate product-sitemap.xml
+  const productUrls = [];
+  products.forEach(p => {
+    productUrls.push({
+      loc: `${DOMAIN}/${p.path}`,
+      changefreq: p.changefreq,
+      priority: p.priority,
+      lastmod: currentDate
+    });
+  });
+  fs.writeFileSync(path.join(publicDir, 'product-sitemap.xml'), generateUrlSetXml(productUrls), 'utf8');
+  console.log('[Sitemap] Generated product-sitemap.xml successfully.');
+
+  // 3. Generate blog-sitemap.xml
+  const blogUrls = [];
+  posts.forEach(post => {
+    if (!post.slug) return;
+    const dateStr = post.date ? new Date(post.date).toISOString().split('T')[0] : currentDate;
+    blogUrls.push({
+      loc: `${DOMAIN}/blog/${post.slug}`,
+      changefreq: 'monthly',
+      priority: '0.6',
+      lastmod: dateStr
+    });
+  });
+  fs.writeFileSync(path.join(publicDir, 'blog-sitemap.xml'), generateUrlSetXml(blogUrls), 'utf8');
+  console.log('[Sitemap] Generated blog-sitemap.xml successfully.');
+
+  // 4. Generate sitemap.xml (Sitemap Index)
+  let indexXml = '<?xml version="1.0" encoding="UTF-8"?>\n';
+  indexXml += '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
+  
+  const subSitemaps = ['category-sitemap.xml', 'product-sitemap.xml', 'blog-sitemap.xml'];
+  subSitemaps.forEach(s => {
+    indexXml += '  <sitemap>\n';
+    indexXml += `    <loc>${DOMAIN}/${s}</loc>\n`;
+    indexXml += `    <lastmod>${currentDate}</lastmod>\n`;
+    indexXml += '  </sitemap>\n';
+  });
+  indexXml += '</sitemapindex>\n';
+
+  fs.writeFileSync(path.join(publicDir, 'sitemap.xml'), indexXml, 'utf8');
+  console.log('[Sitemap] Generated sitemap.xml (Sitemap Index) successfully.');
 }
 
 generate();
