@@ -3,6 +3,7 @@ import { injectHTML } from '../lib/injectHTML';
 import { useImageMapper, useSiteSettings } from '../lib/useSanity';
 import { getGoogleSpreadsheetBySlug } from '../lib/queries';
 import { getApiUrl } from '../lib/api';
+import { setPageMeta } from '../lib/seo';
 import type { ContactGroup } from '../types/sanity';
 
 
@@ -30,6 +31,14 @@ function getPurposeIcon(purpose: string): string {
 
 
 export default function ContactUs() {
+  useEffect(() => {
+    setPageMeta({
+      title: 'Contact Us',
+      description: 'Get in touch with Getmeds Philippines. Reach our team for pharmaceutical inquiries, product availability, and patient assistance program support.',
+      path: '/contact-us.html',
+    });
+  }, []);
+
   const { getImage, loading: imagesLoading } = useImageMapper('contact-us');
   const { data: settings } = useSiteSettings();
   const [formData, setFormData] = useState({

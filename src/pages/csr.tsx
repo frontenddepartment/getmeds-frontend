@@ -1,8 +1,17 @@
 ﻿import React, { useEffect, useRef, useState } from 'react';
 import { injectHTML } from '../lib/injectHTML';
 import { useImageMapper } from '../lib/useSanity';
+import { setPageMeta } from '../lib/seo';
 
 const Csr: React.FC = () => {
+  useEffect(() => {
+    setPageMeta({
+      title: 'Corporate Social Responsibility',
+      description: 'Getmeds CSR initiatives — making healthcare accessible through partnerships, community outreach, and patient advocacy programs across the Philippines.',
+      path: '/csr.html',
+    });
+  }, []);
+
   const { getImage, getSliderImages } = useImageMapper('csr');
 
   const csrSliderImages = getSliderImages('CSR Slider Gallery', [

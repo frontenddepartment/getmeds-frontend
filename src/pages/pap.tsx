@@ -1,6 +1,7 @@
 ﻿import React, { useState, useEffect, useRef } from 'react';
 import { injectHTML } from '../lib/injectHTML';
 import { useImageMapper } from '../lib/useSanity';
+import { setPageMeta } from '../lib/seo';
 
 type SectionTab = 'steps' | 'requirements' | 'faqs';
 
@@ -37,6 +38,14 @@ function CheckItem({ text, note, bullets }: { text: string; note?: string; bulle
 }
 
 export default function PatientAssistanceProgram() {
+  useEffect(() => {
+    setPageMeta({
+      title: 'Patient Assistance Program',
+      description: 'Getmeds Patient Assistance Program — access free cancer medicines and chemotherapy support through DSWD and PCSO accreditation in the Philippines.',
+      path: '/pap.html',
+    });
+  }, []);
+
   const { getImage } = useImageMapper('pap');
   const [activeSection, setActiveSection] = useState<SectionTab>('steps');
   const [activeFaq, setActiveFaq] = useState<number | null>(null);

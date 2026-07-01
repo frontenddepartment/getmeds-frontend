@@ -3,6 +3,7 @@ import { injectHTML } from '../lib/injectHTML';
 import { useImageMapper } from '../lib/useSanity';
 import { getCareers } from '../lib/queries';
 import { getApiUrl } from '../lib/api';
+import { setPageMeta } from '../lib/seo';
 
 const getPositionType = (title: string, desc: string): string => {
   const text = (title + ' ' + desc).toLowerCase();
@@ -14,6 +15,14 @@ const getPositionType = (title: string, desc: string): string => {
 };
 
 const Careers: React.FC = () => {
+  useEffect(() => {
+    setPageMeta({
+      title: 'Careers',
+      description: 'Join the Getmeds team. We are looking for passionate individuals to innovate and grow with us in the global healthcare space.',
+      path: '/careers.html',
+    });
+  }, []);
+
   const { getImage, loading: imagesLoading } = useImageMapper('careers');
   const [activeCareersPanel, setActiveCareersPanel] = useState(0);
   const [heroImgLoaded, setHeroImgLoaded] = useState(false);

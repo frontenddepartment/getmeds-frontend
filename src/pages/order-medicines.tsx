@@ -2,9 +2,18 @@
 import { injectHTML } from '../lib/injectHTML';
 import { getGoogleSpreadsheetBySlug } from '../lib/queries';
 import { getApiUrl } from '../lib/api';
+import { setPageMeta } from '../lib/seo';
 
 
 export default function OrderMedicines() {
+  useEffect(() => {
+    setPageMeta({
+      title: 'Order Medicines',
+      description: 'Order your medicines securely with Getmeds. Upload your prescription and get fast delivery of quality pharmaceutical products to your doorstep.',
+      path: '/order-medicines.html',
+    });
+  }, []);
+
   const [currentSlide, setCurrentSlide] = useState(0);
   const [modalOpen, setModalOpen] = useState(false);
   const [progress, setProgress] = useState(0);

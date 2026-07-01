@@ -1,8 +1,17 @@
 ﻿import React, { useEffect, useRef, useState } from 'react';
 import { injectHTML } from '../lib/injectHTML';
 import { useImageMapper } from '../lib/useSanity';
+import { setPageMeta } from '../lib/seo';
 
 export default function AboutUs() {
+  useEffect(() => {
+    setPageMeta({
+      title: 'About Us',
+      description: 'Learn more about Getmeds, a trusted pharmaceutical company in the Philippines. Discover our mission, vision, and the team advancing healthcare access nationwide.',
+      path: '/about-us.html',
+    });
+  }, []);
+
   const { getImage, loading: imagesLoading } = useImageMapper('about-us');
   const valuesContainerRef = useRef<HTMLDivElement>(null);
   const [activePanel, setActivePanel] = useState(0);

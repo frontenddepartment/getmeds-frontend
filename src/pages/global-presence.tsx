@@ -1,8 +1,17 @@
 ﻿import React, { useEffect } from 'react';
 import { injectHTML } from '../lib/injectHTML';
 import { useImageMapper } from '../lib/useSanity';
+import { setPageMeta } from '../lib/seo';
 
 export default function GlobalPresence() {
+  useEffect(() => {
+    setPageMeta({
+      title: 'Global Presence',
+      description: 'Getmeds operates across multiple countries, connecting global pharmaceutical innovation with the communities that need it most.',
+      path: '/global-presence.html',
+    });
+  }, []);
+
   const { getImage } = useImageMapper('global-presence');
 
   useEffect(() => {

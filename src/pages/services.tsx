@@ -1,8 +1,17 @@
 ﻿import React, { useEffect } from 'react';
 import { injectHTML } from '../lib/injectHTML';
 import { useImageMapper } from '../lib/useSanity';
+import { setPageMeta } from '../lib/seo';
 
 export default function Services() {
+  useEffect(() => {
+    setPageMeta({
+      title: 'Our Services',
+      description: 'Explore Getmeds pharmaceutical services including drug distribution, patient assistance programs, and innovative healthcare solutions in the Philippines.',
+      path: '/services.html',
+    });
+  }, []);
+
   const { getImage } = useImageMapper('services');
   useEffect(() => {
     const navContainer = document.getElementById('navbar-container');

@@ -1,8 +1,17 @@
 ﻿import React, { useEffect, useState } from 'react';
 import { injectHTML } from '../lib/injectHTML';
 import { useImageMapper } from '../lib/useSanity';
+import { setPageMeta } from '../lib/seo';
 
 const Ungc: React.FC = () => {
+  useEffect(() => {
+    setPageMeta({
+      title: 'UN Global Compact',
+      description: 'Getmeds is a proud member of the United Nations Global Compact, committed to sustainable business practices and universal health access.',
+      path: '/ungc.html',
+    });
+  }, []);
+
   const { getImage } = useImageMapper('ungc');
   const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
 

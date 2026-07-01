@@ -1,6 +1,7 @@
 ﻿import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { injectHTML } from '../lib/injectHTML';
 import { useNewsPaginated } from '../lib/useSanity';
+import { setPageMeta } from '../lib/seo';
 import { urlFor } from '../lib/sanity';
 
 const formatDate = (dateStr: string | undefined | null) => {
@@ -113,6 +114,14 @@ const mapArticleToCategory = (article: any): string => {
 };
 
 export default function Blog() {
+  useEffect(() => {
+    setPageMeta({
+      title: 'Blog',
+      description: 'Stay informed with the latest pharmaceutical news, healthcare insights, and industry updates from Getmeds.',
+      path: '/blog.html',
+    });
+  }, []);
+
   const { articles, loading, loadingMore, hasMore, loadMore, loadMoreError } = useNewsPaginated(9);
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchTerm, setSearchTerm] = useState('');

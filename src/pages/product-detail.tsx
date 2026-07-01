@@ -4,6 +4,7 @@ import { urlFor, client } from '../lib/sanity';
 import type { Product as SanityProduct, Category } from '../types/sanity';
 import { injectHTML } from '../lib/injectHTML';
 import { getApiUrl } from '../lib/api';
+import { setPageMeta } from '../lib/seo';
 
 interface ProductWithCategory extends Omit<SanityProduct, 'category'> {
   category?: Category;
@@ -161,7 +162,19 @@ export default function ProductDetail() {
         const displayName = found.brandName && found.genericName && found.brandName !== found.genericName
           ? `${found.brandName} (${found.genericName})`
           : found.name || found.brandName || 'Product Details';
-        document.title = `${displayName} - Getmeds`;
+        const description = found.indications
+          ? found.indications.slice(0, 160)
+          : found.description
+            ? found.description.slice(0, 160)
+            : `${displayName} — available through Getmeds Philippines. Quality pharmaceutical product for healthcare needs.`;
+        const imgUrl = found.image ? urlFor(found.image).width(1200).url() : undefined;
+        setPageMeta({
+          title: displayName,
+          description,
+          path: `/product-detail.html?product=${found.slug?.current || ''}`,
+          image: imgUrl,
+          type: 'product',
+        });
       } else {
         setNotFound(true);
       }
@@ -481,23 +494,23 @@ export default function ProductDetail() {
                   <div className="border-b border-gray-100 mb-5">
                     <span className="inline-block pb-3 text-[13px] font-semibold" style={{ color: '#0D99FF', borderBottom: '2px solid #0D99FF' }}>Description</span>
                   </div>
-                  <div className="text-[13px] text-gray-600 leading-relaxed max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+                  <div className="text-[14px] text-gray-600 leading-relaxed max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
                     <div className="space-y-4">
                       {product.description && (
                         <div>
-                          <p>{product.description}</p>
+                          <p className="text-[14px] text-gray-600 leading-relaxed">{product.description}</p>
                         </div>
                       )}
                       {(product.indications || (product as any).indication) && (
                         <div>
-                          <span className="block text-[11px] text-gray-400 uppercase font-semibold mb-1">Indications</span>
-                          <p className="text-[13px] text-gray-600 font-medium">{product.indications || (product as any).indication}</p>
+                          <span className="block text-[13px] font-semibold mb-1 text-gray-400">Indications</span>
+                          <p className="text-[14px] text-gray-600 leading-relaxed">{product.indications || (product as any).indication}</p>
                         </div>
                       )}
                       {(product.dosageAdministration || (product as any).dosageAndAdministration) && (
                         <div>
-                          <span className="block text-[11px] text-gray-400 uppercase font-semibold mb-1">Dosage & Administration</span>
-                          <p className="text-[13px] text-gray-600 font-medium">{product.dosageAdministration || (product as any).dosageAndAdministration}</p>
+                          <span className="block text-[13px] font-semibold mb-1 text-gray-400">Dosage & Administration</span>
+                          <p className="text-[14px] text-gray-600 leading-relaxed">{product.dosageAdministration || (product as any).dosageAndAdministration}</p>
                         </div>
                       )}
                       {!product.description && !product.indications && !(product as any).indication && !product.dosageAdministration && !(product as any).dosageAndAdministration && (

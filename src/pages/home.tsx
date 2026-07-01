@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useCategories, useHeroSlides, useImageMapper, useNews, useSiteSettings } from '../lib/useSanity';
+import { setPageMeta } from '../lib/seo';
 import { getGoogleSpreadsheetBySlug } from '../lib/queries';
 import { injectHTML } from '../lib/injectHTML';
 import { urlFor, client } from '../lib/sanity';
@@ -66,6 +67,14 @@ const slugify = (text: string | undefined | null) => {
 };
 
 export default function GetMedsHomepage() {
+  useEffect(() => {
+    setPageMeta({
+      title: 'Getmeds',
+      description: 'Pharmaceutical company in the Philippines specializing in oncology, hematology, anesthesia, rare diseases, and essential medicines. FDA Philippines licensed. UN Global Compact member.',
+      path: '/',
+    });
+  }, []);
+
   const { getImage } = useImageMapper('home');
   const { data: newsItems } = useNews();
   const { data: settings } = useSiteSettings();

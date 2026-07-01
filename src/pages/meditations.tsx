@@ -1,6 +1,7 @@
 ﻿import React, { useEffect, useRef, useState } from 'react';
 import { injectHTML } from '../lib/injectHTML';
 import { useImageMapper } from '../lib/useSanity';
+import { setPageMeta } from '../lib/seo';
 
 const trackTitles: Record<number, string> = {
   1: 'Midnight Rainstorm',
@@ -9,6 +10,14 @@ const trackTitles: Record<number, string> = {
 };
 
 export default function Meditations() {
+  useEffect(() => {
+    setPageMeta({
+      title: 'Meditations',
+      description: 'Nurture your mind, body and soul. Experience the Getmeds Meditation App with interactive breathing guides and live ambient soundscapes.',
+      path: '/meditations.html',
+    });
+  }, []);
+
   const { getImage } = useImageMapper('meditations');
   // Audio state
   const [isGlobalAudioPlaying, setIsGlobalAudioPlaying] = useState(false);
