@@ -47,24 +47,12 @@
       "permanent": true
     },
     {
-      "source": "/:slug((?!404|about-us|blog|blog-detail|cancer-medicines|careers|contact-us|csr|edit-profile|global-presence|home-preview|meditations|order-medicines|pap|profile|services|under-development|ungc|api/|wp-json/|assets/|components/|data/|src/|dist/|node_modules/|_vercel/|masteradlorock|masteradlorockpd|masteradlorockpdprocess|masteradlogriyon|adminadlorock|[^/]+\\.[^/]+$)[^/]+)",
+      "source": "/:slug((?!404|about-us|blog|blog-detail|cancer-medicines|careers|contact-us|csr|edit-profile|global-presence|home-preview|meditations|order-medicines|pap|profile|services|under-development|ungc|api/|wp-json/|assets/|public/|components/|data/|src/|dist/|node_modules/|_vercel/|masteradmin|masteradlorock|masteradlorockpd|masteradlorockpdprocess|masteradlogriyon|adminadlorock|[^/]+\\.[^/]+$)[^/]+)",
       "destination": "/blog/:slug",
       "permanent": true
     }
   ],
   "rewrites": [
-    {
-      "source": "/public/:path*",
-      "destination": "https://admin.getmeds.ph/public/:path*"
-    },
-    {
-      "source": "/masteradmin",
-      "destination": "https://admin.getmeds.ph/masteradmin"
-    },
-    {
-      "source": "/masteradmin/:path*",
-      "destination": "https://admin.getmeds.ph/masteradmin/:path*"
-    },
     {
       "source": "/wp-json/:path*",
       "destination": "https://cms.getmeds.ph/wp-json/:path*"
@@ -76,6 +64,18 @@
     {
       "source": "/api/:path*",
       "destination": "https://getmeds-admin.vercel.app/api/:path*"
+    },
+    {
+      "source": "/public/:path*",
+      "destination": "https://admin.getmeds.ph/public/:path*"
+    },
+    {
+      "source": "/masteradmin",
+      "destination": "https://admin.getmeds.ph/masteradmin"
+    },
+    {
+      "source": "/masteradmin/:path*",
+      "destination": "https://admin.getmeds.ph/masteradmin/:path*"
     },
     {
       "source": "/masteradlorock",
@@ -140,342 +140,19 @@
     {
       "source": "/blog-detail.html",
       "destination": "/blog-detail"
+    },
+    {
+      "source": "/:path*",
+      "destination": "/index.html"
     }
   ],
   "headers": [
     {
-      "source": "/public/:path*",
-      "headers": [
-        {
-          "key": "Access-Control-Allow-Origin",
-          "value": "http://localhost:5173"
-        },
-        {
-          "key": "Access-Control-Allow-Methods",
-          "value": "GET,OPTIONS,PATCH,DELETE,POST,PUT"
-        },
-        {
-          "key": "Access-Control-Allow-Headers",
-          "value": "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization"
-        },
-        {
-          "key": "Access-Control-Allow-Credentials",
-          "value": "true"
-        }
-      ]
-    },
-    {
-      "source": "/masteradmin",
-      "headers": [
-        {
-          "key": "Access-Control-Allow-Origin",
-          "value": "http://localhost:5173"
-        },
-        {
-          "key": "Access-Control-Allow-Methods",
-          "value": "GET,OPTIONS,PATCH,DELETE,POST,PUT"
-        },
-        {
-          "key": "Access-Control-Allow-Headers",
-          "value": "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization"
-        },
-        {
-          "key": "Access-Control-Allow-Credentials",
-          "value": "true"
-        }
-      ]
-    },
-    {
-      "source": "/masteradmin/:path*",
-      "headers": [
-        {
-          "key": "Access-Control-Allow-Origin",
-          "value": "http://localhost:5173"
-        },
-        {
-          "key": "Access-Control-Allow-Methods",
-          "value": "GET,OPTIONS,PATCH,DELETE,POST,PUT"
-        },
-        {
-          "key": "Access-Control-Allow-Headers",
-          "value": "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization"
-        },
-        {
-          "key": "Access-Control-Allow-Credentials",
-          "value": "true"
-        }
-      ]
-    },
-    {
       "source": "/wp-json/:path*",
       "headers": [
         {
-          "key": "Access-Control-Allow-Origin",
-          "value": "http://localhost:5173"
-        },
-        {
-          "key": "Access-Control-Allow-Methods",
-          "value": "GET,OPTIONS,PATCH,DELETE,POST,PUT"
-        },
-        {
-          "key": "Access-Control-Allow-Headers",
-          "value": "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization"
-        },
-        {
-          "key": "Access-Control-Allow-Credentials",
-          "value": "true"
-        }
-      ]
-    },
-    {
-      "source": "/api/careers",
-      "headers": [
-        {
-          "key": "Access-Control-Allow-Origin",
-          "value": "http://localhost:5173"
-        },
-        {
-          "key": "Access-Control-Allow-Methods",
-          "value": "GET,OPTIONS,PATCH,DELETE,POST,PUT"
-        },
-        {
-          "key": "Access-Control-Allow-Headers",
-          "value": "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization"
-        },
-        {
-          "key": "Access-Control-Allow-Credentials",
-          "value": "true"
-        }
-      ]
-    },
-    {
-      "source": "/api/:path*",
-      "headers": [
-        {
-          "key": "Access-Control-Allow-Origin",
-          "value": "http://localhost:5173"
-        },
-        {
-          "key": "Access-Control-Allow-Methods",
-          "value": "GET,OPTIONS,PATCH,DELETE,POST,PUT"
-        },
-        {
-          "key": "Access-Control-Allow-Headers",
-          "value": "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization"
-        },
-        {
-          "key": "Access-Control-Allow-Credentials",
-          "value": "true"
-        }
-      ]
-    },
-    {
-      "source": "/masteradlorock",
-      "headers": [
-        {
-          "key": "Access-Control-Allow-Origin",
-          "value": "http://localhost:5173"
-        },
-        {
-          "key": "Access-Control-Allow-Methods",
-          "value": "GET,OPTIONS,PATCH,DELETE,POST,PUT"
-        },
-        {
-          "key": "Access-Control-Allow-Headers",
-          "value": "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization"
-        },
-        {
-          "key": "Access-Control-Allow-Credentials",
-          "value": "true"
-        }
-      ]
-    },
-    {
-      "source": "/masteradlorock/:path*",
-      "headers": [
-        {
-          "key": "Access-Control-Allow-Origin",
-          "value": "http://localhost:5173"
-        },
-        {
-          "key": "Access-Control-Allow-Methods",
-          "value": "GET,OPTIONS,PATCH,DELETE,POST,PUT"
-        },
-        {
-          "key": "Access-Control-Allow-Headers",
-          "value": "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization"
-        },
-        {
-          "key": "Access-Control-Allow-Credentials",
-          "value": "true"
-        }
-      ]
-    },
-    {
-      "source": "/masteradlorockpd",
-      "headers": [
-        {
-          "key": "Access-Control-Allow-Origin",
-          "value": "http://localhost:5173"
-        },
-        {
-          "key": "Access-Control-Allow-Methods",
-          "value": "GET,OPTIONS,PATCH,DELETE,POST,PUT"
-        },
-        {
-          "key": "Access-Control-Allow-Headers",
-          "value": "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization"
-        },
-        {
-          "key": "Access-Control-Allow-Credentials",
-          "value": "true"
-        }
-      ]
-    },
-    {
-      "source": "/masteradlorockpd/:path*",
-      "headers": [
-        {
-          "key": "Access-Control-Allow-Origin",
-          "value": "http://localhost:5173"
-        },
-        {
-          "key": "Access-Control-Allow-Methods",
-          "value": "GET,OPTIONS,PATCH,DELETE,POST,PUT"
-        },
-        {
-          "key": "Access-Control-Allow-Headers",
-          "value": "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization"
-        },
-        {
-          "key": "Access-Control-Allow-Credentials",
-          "value": "true"
-        }
-      ]
-    },
-    {
-      "source": "/masteradlorockpdprocess",
-      "headers": [
-        {
-          "key": "Access-Control-Allow-Origin",
-          "value": "http://localhost:5173"
-        },
-        {
-          "key": "Access-Control-Allow-Methods",
-          "value": "GET,OPTIONS,PATCH,DELETE,POST,PUT"
-        },
-        {
-          "key": "Access-Control-Allow-Headers",
-          "value": "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization"
-        },
-        {
-          "key": "Access-Control-Allow-Credentials",
-          "value": "true"
-        }
-      ]
-    },
-    {
-      "source": "/masteradlorockpdprocess/:path*",
-      "headers": [
-        {
-          "key": "Access-Control-Allow-Origin",
-          "value": "http://localhost:5173"
-        },
-        {
-          "key": "Access-Control-Allow-Methods",
-          "value": "GET,OPTIONS,PATCH,DELETE,POST,PUT"
-        },
-        {
-          "key": "Access-Control-Allow-Headers",
-          "value": "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization"
-        },
-        {
-          "key": "Access-Control-Allow-Credentials",
-          "value": "true"
-        }
-      ]
-    },
-    {
-      "source": "/masteradlogriyon",
-      "headers": [
-        {
-          "key": "Access-Control-Allow-Origin",
-          "value": "http://localhost:5173"
-        },
-        {
-          "key": "Access-Control-Allow-Methods",
-          "value": "GET,OPTIONS,PATCH,DELETE,POST,PUT"
-        },
-        {
-          "key": "Access-Control-Allow-Headers",
-          "value": "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization"
-        },
-        {
-          "key": "Access-Control-Allow-Credentials",
-          "value": "true"
-        }
-      ]
-    },
-    {
-      "source": "/masteradlogriyon/:path*",
-      "headers": [
-        {
-          "key": "Access-Control-Allow-Origin",
-          "value": "http://localhost:5173"
-        },
-        {
-          "key": "Access-Control-Allow-Methods",
-          "value": "GET,OPTIONS,PATCH,DELETE,POST,PUT"
-        },
-        {
-          "key": "Access-Control-Allow-Headers",
-          "value": "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization"
-        },
-        {
-          "key": "Access-Control-Allow-Credentials",
-          "value": "true"
-        }
-      ]
-    },
-    {
-      "source": "/adminadlorock",
-      "headers": [
-        {
-          "key": "Access-Control-Allow-Origin",
-          "value": "http://localhost:5173"
-        },
-        {
-          "key": "Access-Control-Allow-Methods",
-          "value": "GET,OPTIONS,PATCH,DELETE,POST,PUT"
-        },
-        {
-          "key": "Access-Control-Allow-Headers",
-          "value": "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization"
-        },
-        {
-          "key": "Access-Control-Allow-Credentials",
-          "value": "true"
-        }
-      ]
-    },
-    {
-      "source": "/adminadlorock/:path*",
-      "headers": [
-        {
-          "key": "Access-Control-Allow-Origin",
-          "value": "http://localhost:5173"
-        },
-        {
-          "key": "Access-Control-Allow-Methods",
-          "value": "GET,OPTIONS,PATCH,DELETE,POST,PUT"
-        },
-        {
-          "key": "Access-Control-Allow-Headers",
-          "value": "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization"
-        },
-        {
-          "key": "Access-Control-Allow-Credentials",
-          "value": "true"
+          "key": "Cache-Control",
+          "value": "s-maxage=300, stale-while-revalidate=86400"
         }
       ]
     }
