@@ -69,12 +69,15 @@
         <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-gray-500">
             <p id="footer-copyright">&copy; <span id="footer-year"></span> Getmeds. All rights reserved.</p>
             <div id="footer-legal-links" class="flex flex-wrap justify-center gap-x-6 gap-y-2 mt-4 md:mt-0">
-                <button onclick="document.getElementById('privacy-policy-modal').classList.remove('hidden')"
+                <button type="button" id="open-privacy-policy-btn"
                     class="footer-link text-gray-500 hover:!text-white bg-transparent border-none cursor-pointer text-xs p-0">
                     Privacy Policy
                 </button>
-                <a href="#" class="footer-link text-gray-500 hover:!text-white">Terms of Service</a>
-                <button onclick="document.getElementById('medical-disclaimer-modal').classList.remove('hidden')"
+                <button type="button" id="open-terms-of-service-btn"
+                    class="footer-link text-gray-500 hover:!text-white bg-transparent border-none cursor-pointer text-xs p-0">
+                    Terms of Service
+                </button>
+                <button type="button" id="open-medical-disclaimer-btn"
                     class="footer-link text-gray-500 hover:!text-white bg-transparent border-none cursor-pointer text-xs p-0">
                     Medical Disclaimer
                 </button>
@@ -112,20 +115,20 @@
 
 <!-- Privacy Policy Modal -->
 <div id="privacy-policy-modal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl flex flex-col overflow-hidden" style="max-height:88vh">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[85vh] flex flex-col overflow-hidden">
         <!-- Header -->
-        <div class="flex items-start justify-between px-8 pt-7 pb-5 border-b border-gray-100 flex-shrink-0">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 flex-shrink-0">
             <div>
-                <h2 class="text-[18px] font-bold text-gray-900 mb-1">Privacy Policy</h2>
-                <p class="text-[11px] text-gray-400 font-medium">Effective Date: April 2026</p>
+                <h2 class="text-[15px] font-semibold text-gray-900 uppercase tracking-wide">Privacy Policy</h2>
+                <p class="text-[11px] text-gray-400 font-medium mt-0.5">Effective Date: April 2026</p>
             </div>
             <button onclick="closePrivacyPolicy()"
-                class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 transition flex-shrink-0 mt-0.5">
+                class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 transition flex-shrink-0">
                 <i class="fa-solid fa-xmark text-sm"></i>
             </button>
         </div>
         <!-- Content -->
-        <div class="overflow-y-auto px-8 py-6 space-y-6 text-[13px] text-gray-600 leading-relaxed" style="scrollbar-width:thin;scrollbar-color:#e5e7eb transparent;">
+        <div class="overflow-y-auto px-6 py-5 space-y-5 text-[13px] text-gray-600 leading-relaxed" style="scrollbar-width:thin;scrollbar-color:#e5e7eb transparent;">
 
             <section>
                 <h3 class="text-[14px] font-bold text-gray-900 mb-2">01 &nbsp; Introduction</h3>
@@ -244,11 +247,72 @@
 
         </div>
         <!-- Footer -->
-        <div class="px-8 py-4 border-t border-gray-100 flex-shrink-0 text-center">
+        <div class="px-6 py-4 border-t border-gray-100 flex-shrink-0">
             <button onclick="closePrivacyPolicy()"
-                class="px-8 py-2.5 rounded-xl text-sm font-semibold text-white transition"
+                class="w-full py-2.5 rounded-xl text-sm font-semibold text-white transition"
                 style="background: linear-gradient(135deg, #61A644, #1D9FDA);">
-                Close
+                I Understand
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Terms of Service Modal -->
+<div id="terms-of-service-modal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[85vh] flex flex-col overflow-hidden">
+        <!-- Header -->
+        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 flex-shrink-0">
+            <h2 class="text-[15px] font-semibold text-gray-900 uppercase tracking-wide">Terms of Service</h2>
+            <button onclick="closeTermsOfService()"
+                class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 transition">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+        </div>
+        <!-- Content -->
+        <div class="overflow-y-auto px-6 py-5 space-y-5 text-[13px] text-gray-600 leading-relaxed" style="scrollbar-width:thin;scrollbar-color:#e5e7eb transparent;">
+            <p>By accessing or using the Getmeds website, you agree to be bound by these Terms of Service. If you do not agree with any part of these terms, you may not use this website.</p>
+
+            <div>
+                <p class="font-semibold text-gray-800 mb-1">Use of Website</p>
+                <p>This website is intended for informational purposes only. Content is provided for healthcare professionals, partners, and the general public seeking information about Getmeds and its pharmaceutical products. Unauthorized use, reproduction, or distribution of any content is strictly prohibited.</p>
+            </div>
+
+            <div>
+                <p class="font-semibold text-gray-800 mb-1">Intellectual Property</p>
+                <p>All content on this website — including text, images, logos, and graphics — is the property of Getmeds and is protected under applicable intellectual property laws. No material may be copied, reproduced, or redistributed without prior written consent.</p>
+            </div>
+
+            <div>
+                <p class="font-semibold text-gray-800 mb-1">Disclaimer of Warranties</p>
+                <p>The information on this website is provided "as is" without warranties of any kind. Getmeds makes no representations regarding the accuracy, completeness, or suitability of the content for any particular purpose.</p>
+            </div>
+
+            <div>
+                <p class="font-semibold text-gray-800 mb-1">Limitation of Liability</p>
+                <p>Getmeds shall not be liable for any direct, indirect, incidental, or consequential damages arising from the use of or inability to use this website or its content.</p>
+            </div>
+
+            <div>
+                <p class="font-semibold text-gray-800 mb-1">Governing Law</p>
+                <p>These Terms of Service are governed by the laws of the Republic of the Philippines. Any disputes shall be subject to the exclusive jurisdiction of the courts of Las Piñas City, Metro Manila.</p>
+            </div>
+
+            <div>
+                <p class="font-semibold text-gray-800 mb-1">Changes to Terms</p>
+                <p>Getmeds reserves the right to modify these Terms of Service at any time. Continued use of the website after any changes constitutes acceptance of the revised terms.</p>
+            </div>
+
+            <div>
+                <p class="font-semibold text-gray-800 mb-1">Contact Us</p>
+                <p>For questions regarding these terms, contact us at <a href="mailto:info@getmeds.ph" class="text-[#1D9FDA] hover:underline">info@getmeds.ph</a> or call <a href="tel:+639190769103" class="text-[#1D9FDA] hover:underline">+63 919 076 9103</a>.</p>
+            </div>
+        </div>
+        <!-- Footer -->
+        <div class="px-6 py-4 border-t border-gray-100 flex-shrink-0">
+            <button onclick="closeTermsOfService()"
+                class="w-full py-2.5 rounded-xl text-sm font-semibold text-white transition"
+                style="background: linear-gradient(135deg, #61A644, #1D9FDA);">
+                I Understand
             </button>
         </div>
     </div>
@@ -334,6 +398,20 @@
         });
     })();
 
+    // Open buttons
+    document.getElementById('open-privacy-policy-btn').addEventListener('click', function (e) {
+        e.preventDefault();
+        document.getElementById('privacy-policy-modal').classList.remove('hidden');
+    });
+    document.getElementById('open-terms-of-service-btn').addEventListener('click', function (e) {
+        e.preventDefault();
+        document.getElementById('terms-of-service-modal').classList.remove('hidden');
+    });
+    document.getElementById('open-medical-disclaimer-btn').addEventListener('click', function (e) {
+        e.preventDefault();
+        document.getElementById('medical-disclaimer-modal').classList.remove('hidden');
+    });
+
     // Close modal on backdrop click
     document.getElementById('medical-disclaimer-modal').addEventListener('click', function (e) {
         if (e.target === this) closeDisclaimer();
@@ -346,5 +424,14 @@
 
     document.getElementById('privacy-policy-modal').addEventListener('click', function (e) {
         if (e.target === this) closePrivacyPolicy();
+    });
+
+    // Terms of Service modal
+    window.closeTermsOfService = function () {
+        document.getElementById('terms-of-service-modal').classList.add('hidden');
+    };
+
+    document.getElementById('terms-of-service-modal').addEventListener('click', function (e) {
+        if (e.target === this) closeTermsOfService();
     });
 </script>

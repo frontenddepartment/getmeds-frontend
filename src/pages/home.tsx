@@ -1437,7 +1437,7 @@ export default function GetMedsHomepage() {
               {/* Header */}
               <div className="flex items-start justify-between px-8 pt-8 pb-6 gap-4">
                 <h2 className="text-2xl md:text-3xl font-semibold text-gray-900 max-w-md leading-tight ca-anim ca-up">Therapeutic areas we serve across the Philippines.</h2>
-                <a href="/cancer-medicines" className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:opacity-90 text-white text-xs md:text-sm font-medium rounded-full px-3 py-1.5 md:px-6 md:py-2.5 transition-opacity shrink-0">See All</a>
+                <a href="/cancer-medicines" className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:opacity-90 text-white text-xs md:text-sm font-medium rounded-full px-3 py-1.5 md:px-6 md:py-2.5 transition-opacity shrink-0">View All</a>
               </div>
 
               {/* Mobile slider — portrait main image + thumbnail strip */}
@@ -1552,8 +1552,7 @@ export default function GetMedsHomepage() {
                     ))}
                   </div>
                 </div>
-                <div className="flex items-center justify-between mt-6">
-                  <button className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:opacity-90 text-white text-sm font-medium rounded-full px-6 py-2.5 transition-opacity">View more</button>
+                <div className="flex items-center justify-end mt-6">
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => setTherapPage(p => Math.max(0, p - 1))}

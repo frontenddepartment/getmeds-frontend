@@ -1221,15 +1221,36 @@
                     footerLegal.innerHTML = '';
                     settings.legalLinks.forEach(link => {
                         if (!link || !link.label) return;
-                        const a = document.createElement('a');
-                        a.href = link.href || '#';
-                        a.className = 'hover:text-white transition';
-                        a.textContent = link.label;
-                        if (link.openInNewTab) {
-                            a.target = '_blank';
-                            a.rel = 'noopener noreferrer';
+                        const href = link.href || '#';
+                        if (href === '#') {
+                            // Map label to modal ID
+                            const modalMap = {
+                                'Privacy Policy': 'privacy-policy-modal',
+                                'Terms of Service': 'terms-of-service-modal',
+                                'Terms & Conditions': 'terms-of-service-modal',
+                            };
+                            const modalId = modalMap[link.label];
+                            const btn = document.createElement('button');
+                            btn.type = 'button';
+                            btn.className = 'footer-link text-gray-500 hover:text-white bg-transparent border-none cursor-pointer text-xs p-0';
+                            btn.textContent = link.label;
+                            btn.addEventListener('click', function (e) {
+                                e.preventDefault();
+                                var modal = modalId && document.getElementById(modalId);
+                                if (modal) modal.classList.remove('hidden');
+                            });
+                            footerLegal.appendChild(btn);
+                        } else {
+                            const a = document.createElement('a');
+                            a.href = href;
+                            a.className = 'hover:text-white transition';
+                            a.textContent = link.label;
+                            if (link.openInNewTab) {
+                                a.target = '_blank';
+                                a.rel = 'noopener noreferrer';
+                            }
+                            footerLegal.appendChild(a);
                         }
-                        footerLegal.appendChild(a);
                     });
                     // Always append Medical Disclaimer regardless of Sanity config
                     const disclaimerBtn = document.createElement('button');
