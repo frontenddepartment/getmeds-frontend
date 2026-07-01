@@ -70,6 +70,18 @@
     #mobile-menu-btn.menu-open i {
         transform: rotate(90deg);
     }
+    #pap-nav-logo {
+        height: 88px !important;
+        width: auto !important;
+        max-width: none !important;
+        flex-shrink: 0 !important;
+        display: inline-block;
+    }
+    #pap-nav-link {
+        flex-shrink: 0;
+        display: inline-flex;
+        align-items: center;
+    }
 </style>
 
 <!-- Navbar -->
@@ -279,9 +291,9 @@
                     </div>
                 </div>
                 <a href="/about-us.html" class="hover:text-primary transition whitespace-nowrap">About Us</a>
-                <a href="/pap.html"
-                    class="inline-flex items-center opacity-80 hover:opacity-100 transition-all duration-200 hover:-translate-y-0.5 transform">
-                    <img src="/assets/pap.png" alt="Patient Assistance Program" class="w-auto object-contain" style="height:88px;">
+                <a id="pap-nav-link" href="/pap.html"
+                    class="opacity-80 hover:opacity-100 transition-all duration-200 hover:-translate-y-0.5 transform">
+                    <img id="pap-nav-logo" src="/assets/pap.png" alt="Patient Assistance Program">
                 </a>
 
                 <!-- Company Dropdown -->
