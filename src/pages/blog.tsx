@@ -275,7 +275,7 @@ export default function Blog() {
                   style={{ minHeight: '420px' }}
                 >
                   <img
-                    src={featured.image ? urlFor(featured.image).width(800).url() : '/assets/no-image.png'}
+                    src={featured.image ? urlFor(featured.image).width(800).url() : 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&q=80&w=800'}
                     alt={featured.title}
                     fetchPriority="high"
                     decoding="async"
@@ -307,7 +307,7 @@ export default function Blog() {
                       className="flex gap-3 group no-underline"
                     >
                       <img
-                        src={article.image ? urlFor(article.image).width(140).height(140).url() : '/assets/no-image.png'}
+                        src={article.image ? urlFor(article.image).width(140).height(140).url() : 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&q=80&w=800'}
                         alt={article.title}
                         width={70}
                         height={70}
@@ -409,7 +409,7 @@ export default function Blog() {
                   filteredCardArticles.map(article => {
                     const imgUrl = article.image
                       ? urlFor(article.image).width(480).height(400).url()
-                      : '/assets/no-image.png';
+                      : 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&q=80&w=800';
                     return (
                       <a
                         key={article._id}
