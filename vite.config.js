@@ -176,6 +176,34 @@ export default defineConfig(async ({ mode }) => {
             });
           }
         },
+        '/wp-content': {
+          target: wordpressApiRoot,
+          changeOrigin: true,
+          secure: false,
+          configure: (proxy, _options) => {
+            proxy.on('proxyReq', (proxyReq, _req, _res) => {
+              proxyReq.removeHeader('origin');
+              proxyReq.removeHeader('Origin');
+              proxyReq.removeHeader('referer');
+              proxyReq.removeHeader('Referer');
+              proxyReq.removeHeader('sec-fetch-site');
+              proxyReq.removeHeader('sec-fetch-mode');
+              proxyReq.removeHeader('sec-fetch-dest');
+              proxyReq.removeHeader('x-forwarded-for');
+              proxyReq.removeHeader('X-Forwarded-For');
+              proxyReq.removeHeader('x-forwarded-host');
+              proxyReq.removeHeader('X-Forwarded-Host');
+              proxyReq.removeHeader('x-forwarded-proto');
+              proxyReq.removeHeader('X-Forwarded-Proto');
+              proxyReq.removeHeader('x-forwarded-port');
+              proxyReq.removeHeader('X-Forwarded-Port');
+              const targetUrl = new URL(wordpressApiRoot);
+              proxyReq.setHeader('Host', targetUrl.host);
+              proxyReq.setHeader('host', targetUrl.host);
+              proxyReq.setHeader('User-Agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)');
+            });
+          }
+        },
         '/api/careers': {
           target: 'https://getmeds-test-creation.vercel.app',
           changeOrigin: true,

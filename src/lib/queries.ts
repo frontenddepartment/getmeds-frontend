@@ -26,6 +26,14 @@ import type {
   News,
 } from '../types/sanity'
 
+function cleanWordPressUrl(url: string | undefined | null): string {
+  if (!url) return '';
+  return url
+    .replace(/^https?:\/\/(cms\.)?getmeds\.ph/i, '')
+    .replace(/^https?:\/\/www\.getmeds\.ph/i, '')
+    .replace(/^https?:\/\/173\.231\.197\.156/i, '');
+}
+
 // ─────────────────────────────────────────────
 // Site-wide
 // ─────────────────────────────────────────────
@@ -486,7 +494,7 @@ export async function getNews() {
         date: item.date,
         description: description,
         readTime: readTime,
-        image: image,
+        image: cleanWordPressUrl(image),
         contentHtml: rawContent,
         source_link: item.link
       };
@@ -532,7 +540,7 @@ export async function getNewsPage(page: number, perPage: number = 20): Promise<{
         date: item.date,
         description: description,
         readTime: readTime,
-        image: image,
+        image: cleanWordPressUrl(image),
         contentHtml: rawContent,
         source_link: item.link
       };
@@ -578,7 +586,7 @@ export async function getNewsById(id: string) {
       date: item.date,
       description: description,
       readTime: readTime,
-      image: image,
+      image: cleanWordPressUrl(image),
       contentHtml: rawContent,
       source_link: item.link
     };
@@ -624,7 +632,7 @@ export async function getNewsBySlug(slug: string) {
       date: item.date,
       description: description,
       readTime: readTime,
-      image: image,
+      image: cleanWordPressUrl(image),
       contentHtml: rawContent,
       source_link: item.link
     };

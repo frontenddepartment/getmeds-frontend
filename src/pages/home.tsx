@@ -277,7 +277,12 @@ export default function GetMedsHomepage() {
             // --- Blog: latest WordPress post ---
             if (key === 'blog' && wpPost) {
               const wpImg = wpPost._embedded?.['wp:featuredmedia']?.[0]?.source_url;
-              if (wpImg) def.img = wpImg;
+              if (wpImg) {
+                def.img = wpImg
+                  .replace(/^https?:\/\/(cms\.)?getmeds\.ph/i, '')
+                  .replace(/^https?:\/\/www\.getmeds\.ph/i, '')
+                  .replace(/^https?:\/\/173\.231\.197\.156/i, '');
+              }
               const wpTitle = wpPost.title?.rendered;
               if (wpTitle) {
                 let title = wpTitle.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim();
