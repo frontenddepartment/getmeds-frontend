@@ -68,7 +68,7 @@ export default function BlogDetail() {
 
   const article = slug ? articleBySlug : articleById;
   const loading = slug ? loadingSlug : loadingId;
-  const imgUrl = article?.image ? urlFor(article.image).width(1200).url() : '';
+  const imgUrl = article?.image ? urlFor(article.image).width(900).height(680).url() : '';
 
   useEffect(() => {
     if (article) {
@@ -627,6 +627,7 @@ export default function BlogDetail() {
                 src={imgUrl}
                 alt={article.title}
                 fetchPriority="high"
+                decoding="async"
                 className="w-full rounded-2xl object-cover"
                 style={{ height: '340px' }}
               />

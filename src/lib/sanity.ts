@@ -39,5 +39,5 @@ export function urlFor(source: any) {
       url: () => urlStr
     } as any;
   }
-  return builder.image(source)
+  return builder.image(source).auto('format').quality(60).fit('max')
 }
