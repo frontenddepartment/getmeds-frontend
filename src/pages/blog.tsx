@@ -275,9 +275,10 @@ export default function Blog() {
                   style={{ minHeight: '420px' }}
                 >
                   <img
-                    src={featured.image ? urlFor(featured.image).width(900).url() : ''}
+                    src={featured.image ? urlFor(featured.image).width(800).url() : 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&q=80&w=800'}
                     alt={featured.title}
                     fetchPriority="high"
+                    decoding="async"
                     className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                   />
                   <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.25) 55%, transparent 100%)' }} />
@@ -306,9 +307,12 @@ export default function Blog() {
                       className="flex gap-3 group no-underline"
                     >
                       <img
-                        src={article.image ? urlFor(article.image).width(200).url() : ''}
+                        src={article.image ? urlFor(article.image).width(140).height(140).url() : 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&q=80&w=800'}
                         alt={article.title}
+                        width={70}
+                        height={70}
                         loading="lazy"
+                        decoding="async"
                         className="w-[70px] h-[70px] rounded-xl object-cover flex-shrink-0"
                       />
                       <div className="flex-1 min-w-0">
@@ -404,8 +408,8 @@ export default function Blog() {
                 ) : (
                   filteredCardArticles.map(article => {
                     const imgUrl = article.image
-                      ? urlFor(article.image).width(600).url()
-                      : '';
+                      ? urlFor(article.image).width(480).height(400).url()
+                      : 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&q=80&w=800';
                     return (
                       <a
                         key={article._id}
@@ -418,6 +422,7 @@ export default function Blog() {
                             src={imgUrl}
                             alt={article.title}
                             loading="lazy"
+                            decoding="async"
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                           />
                         </div>

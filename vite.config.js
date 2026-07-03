@@ -3,6 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import https from 'https';
 import { execSync } from 'child_process';
+import { sanityImageSyncPlugin } from './src/plugins/sanityImageSync.js';
 
 const getHtmlInputs = () => {
   const dir = process.cwd();
@@ -79,6 +80,12 @@ export default defineConfig(async ({ mode }) => {
   }
 
   const subcategories = await fetchSanitySubcategories(env);
+
+  // Expose Sanity env vars to Node plugin context (plugins run before Vite sets process.env)
+  process.env.VITE_SANITY_PROJECT_ID  = env.VITE_SANITY_PROJECT_ID  || 's7ocz8zp'
+  process.env.VITE_SANITY_DATASET     = env.VITE_SANITY_DATASET     || 'production'
+  process.env.VITE_SANITY_API_VERSION = env.VITE_SANITY_API_VERSION || '2024-01-01'
+  process.env.SANITY_WRITE_TOKEN      = env.SANITY_WRITE_TOKEN || ''
 
   const deploymentMode = env.VITE_DEPLOYMENT || env.DEPLOYMENT || 'development';
   const isProduction = deploymentMode === 'production';
@@ -169,6 +176,34 @@ export default defineConfig(async ({ mode }) => {
             });
           }
         },
+        '/wp-content': {
+          target: wordpressApiRoot,
+          changeOrigin: true,
+          secure: false,
+          configure: (proxy, _options) => {
+            proxy.on('proxyReq', (proxyReq, _req, _res) => {
+              proxyReq.removeHeader('origin');
+              proxyReq.removeHeader('Origin');
+              proxyReq.removeHeader('referer');
+              proxyReq.removeHeader('Referer');
+              proxyReq.removeHeader('sec-fetch-site');
+              proxyReq.removeHeader('sec-fetch-mode');
+              proxyReq.removeHeader('sec-fetch-dest');
+              proxyReq.removeHeader('x-forwarded-for');
+              proxyReq.removeHeader('X-Forwarded-For');
+              proxyReq.removeHeader('x-forwarded-host');
+              proxyReq.removeHeader('X-Forwarded-Host');
+              proxyReq.removeHeader('x-forwarded-proto');
+              proxyReq.removeHeader('X-Forwarded-Proto');
+              proxyReq.removeHeader('x-forwarded-port');
+              proxyReq.removeHeader('X-Forwarded-Port');
+              const targetUrl = new URL(wordpressApiRoot);
+              proxyReq.setHeader('Host', targetUrl.host);
+              proxyReq.setHeader('host', targetUrl.host);
+              proxyReq.setHeader('User-Agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)');
+            });
+          }
+        },
         '/api/careers': {
           target: 'https://getmeds-test-creation.vercel.app',
           changeOrigin: true,
@@ -182,7 +217,9 @@ export default defineConfig(async ({ mode }) => {
       }
     },
     plugins: [
+      sanityImageSyncPlugin(),
       {
+
         name: 'inject-chatbot-meta',
         transformIndexHtml(html) {
           const suppressor = `\n  <script>

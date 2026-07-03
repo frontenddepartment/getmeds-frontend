@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { PortableText } from '@portabletext/react';
+import DOMPurify from 'dompurify';
 import { injectHTML } from '../lib/injectHTML';
 import { useNewsById, useNewsBySlug } from '../lib/useSanity';
 import { urlFor } from '../lib/sanity';
@@ -67,7 +68,7 @@ export default function BlogDetail() {
 
   const article = slug ? articleBySlug : articleById;
   const loading = slug ? loadingSlug : loadingId;
-  const imgUrl = article?.image ? urlFor(article.image).width(1200).url() : '';
+  const imgUrl = article?.image ? urlFor(article.image).width(900).height(680).url() : '';
 
   useEffect(() => {
     if (article) {
@@ -372,6 +373,15 @@ export default function BlogDetail() {
       imgElements.forEach(el => {
         el.className = "max-w-full h-auto rounded-xl my-6 mx-auto block";
         el.style.height = "auto";
+
+        const src = el.getAttribute('src') || '';
+        if (src) {
+          const newSrc = src
+            .replace(/^https?:\/\/(cms\.)?getmeds\.ph/i, '')
+            .replace(/^https?:\/\/www\.getmeds\.ph/i, '')
+            .replace(/^https?:\/\/173\.231\.197\.156/i, '');
+          el.setAttribute('src', newSrc);
+        }
       });
 
       // Bold text
@@ -617,6 +627,7 @@ export default function BlogDetail() {
                 src={imgUrl}
                 alt={article.title}
                 fetchPriority="high"
+                decoding="async"
                 className="w-full rounded-2xl object-cover"
                 style={{ height: '340px' }}
               />
@@ -731,7 +742,7 @@ export default function BlogDetail() {
                   />
                 ) : processedContentHtml ? (
                   <div
-                    dangerouslySetInnerHTML={{ __html: processedContentHtml }}
+                    dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(processedContentHtml) }}
                     className="prose prose-blue max-w-none text-gray-700 text-sm leading-relaxed"
                   />
                 ) : null}

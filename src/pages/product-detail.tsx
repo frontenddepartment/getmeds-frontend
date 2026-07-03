@@ -139,7 +139,8 @@ export default function ProductDetail() {
 
       // Generate slug in format brandname-molecule-dosage-strength
       const getProductSlug = (p: ProductWithCategory) => {
-        const brand = (p.brandName || '').toLowerCase().trim();
+        const brand = (p.brandName || '').toLowerCase().trim()
+          .replace(/[^a-z0-9]+/g, '-');
         const molecule = (p.genericName || '').toLowerCase().trim()
           .replace(/\s*\(as\s+[^)]+\)/gi, '')
           .replace(/[^a-z0-9]+/g, '-');
@@ -270,8 +271,6 @@ export default function ProductDetail() {
       }
     }
 
-    const brandLower = (p.brandName || '').toLowerCase().trim();
-    if (brandLower) return `assets/${brandLower}.png`;
     return 'assets/no-image.png';
   };
 
@@ -456,36 +455,38 @@ export default function ProductDetail() {
                     </div>
                   </div>
                   <div className="w-full md:w-1/2 flex items-center justify-center">
-                    <div
-                      onClick={() => setZoomedImageOpen(true)}
-                      className="w-full max-w-[320px] aspect-square flex flex-col items-center justify-center bg-gray-50 rounded-[15px] border border-gray-100 p-4 overflow-hidden relative cursor-zoom-in group/zoom hover:shadow-md transition-all duration-300"
-                    >
-                      {(() => {
-                        const resolvedImageUrl = getProductImage(product);
-                        const hasImage = resolvedImageUrl && !resolvedImageUrl.endsWith('no-image.png');
-                        return hasImage ? (
-                          <>
-                            <img
-                              src={resolvedImageUrl}
-                              className="w-full h-full object-contain mix-blend-multiply group-hover/zoom:scale-105 transition-transform duration-500"
-                              alt={product.name}
-                              onError={(e) => { (e.target as HTMLImageElement).src = 'assets/no-image.png'; }}
-                            />
-                            <div className="absolute inset-0 bg-black/5 opacity-0 group-hover/zoom:opacity-100 flex items-center justify-center transition-opacity duration-300">
-                              <div className="bg-white/95 backdrop-blur-sm text-gray-800 rounded-full px-3 py-1.5 flex items-center gap-1.5 shadow-sm text-xs font-semibold">
-                                <i className="fa-solid fa-magnifying-glass-plus text-primary" />
-                                Click to Zoom
+                    {(() => {
+                      const resolvedImageUrl = getProductImage(product);
+                      const hasImage = resolvedImageUrl && !resolvedImageUrl.endsWith('no-image.png');
+                      return (
+                        <div
+                          onClick={hasImage ? () => setZoomedImageOpen(true) : undefined}
+                          className={`w-full max-w-[320px] aspect-square flex flex-col items-center justify-center bg-gray-50 rounded-[15px] border border-gray-100 p-4 overflow-hidden relative group/zoom hover:shadow-md transition-all duration-300 ${hasImage ? 'cursor-zoom-in' : ''}`}
+                        >
+                          {hasImage ? (
+                            <>
+                              <img
+                                src={resolvedImageUrl}
+                                className="w-full h-full object-contain mix-blend-multiply group-hover/zoom:scale-105 transition-transform duration-500"
+                                alt={product.name}
+                                onError={(e) => { (e.target as HTMLImageElement).src = 'assets/no-image.png'; }}
+                              />
+                              <div className="absolute inset-0 bg-black/5 opacity-0 group-hover/zoom:opacity-100 flex items-center justify-center transition-opacity duration-300">
+                                <div className="bg-white/95 backdrop-blur-sm text-gray-800 rounded-full px-3 py-1.5 flex items-center gap-1.5 shadow-sm text-xs font-semibold">
+                                  <i className="fa-solid fa-magnifying-glass-plus text-primary" />
+                                  Click to Zoom
+                                </div>
                               </div>
-                            </div>
-                          </>
-                        ) : (
-                          <>
-                            <i className="fa-regular fa-image text-4xl mb-3 text-gray-300" />
-                            <span className="text-xs font-medium uppercase tracking-wider text-gray-400">No Image</span>
-                          </>
-                        );
-                      })()}
-                    </div>
+                            </>
+                          ) : (
+                            <>
+                              <i className="fa-regular fa-image text-4xl mb-3 text-gray-300" />
+                              <span className="text-xs font-medium uppercase tracking-wider text-gray-400">No Image</span>
+                            </>
+                          )}
+                        </div>
+                      );
+                    })()}
                   </div>
                 </div>
 

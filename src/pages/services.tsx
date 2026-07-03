@@ -1,4 +1,4 @@
-﻿import React, { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { injectHTML } from '../lib/injectHTML';
 import { useImageMapper } from '../lib/useSanity';
 import { setPageMeta } from '../lib/seo';
@@ -92,7 +92,7 @@ export default function Services() {
         <div className="relative rounded-[1.5rem] overflow-hidden min-h-[450px] md:min-h-[500px] flex items-end group">
           {/* Background Image */}
           <div className="absolute inset-0 z-0">
-            <img src={getImage('assets/services_hero_new.png', 'assets/services_hero_new.png')} data-json-src="hero.image" data-json-alt="hero.imageAlt"
+            <img src={getImage('Services Hero Background', 'assets/services_hero_new.png')} data-json-src="hero.image" data-json-alt="hero.imageAlt"
               className="w-full h-full object-cover object-center transform group-hover:scale-105 transition-transform duration-[4s]"
               alt="Healthcare Services" />
           </div>

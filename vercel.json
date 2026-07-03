@@ -47,7 +47,32 @@
       "permanent": true
     },
     {
-      "source": "/:slug((?!404|about-us|blog|blog-detail|cancer-medicines|careers|contact-us|csr|edit-profile|global-presence|home-preview|meditations|order-medicines|pap|profile|services|under-development|ungc|api/|wp-json/|assets/|public/|components/|data/|src/|dist/|node_modules/|_vercel/|masteradmin|masteradlorock|masteradlorockpd|masteradlorockpdprocess|masteradlogriyon|adminadlorock|[^/]+\\.[^/]+$)[^/]+)",
+      "source": "/cancer-medicines/amloget%2010-amlodipine-10-mg-tablet",
+      "destination": "/cancer-medicines/amloget-10-amlodipine-10-mg-tablet",
+      "permanent": true
+    },
+    {
+      "source": "/cancer-medicines/amloget%205-amlodipine-5-mg-tablet",
+      "destination": "/cancer-medicines/amloget-5-amlodipine-5-mg-tablet",
+      "permanent": true
+    },
+    {
+      "source": "/cancer-medicines/vancoget%20500-vancomycin-500-mg-powder-for-injection-i-v",
+      "destination": "/cancer-medicines/vancoget-500-vancomycin-500-mg-powder-for-injection-i-v",
+      "permanent": true
+    },
+    {
+      "source": "/cancer-medicines/vancoget%201000-vancomycin-1-g-powder-for-injection-i-v",
+      "destination": "/cancer-medicines/vancoget-1000-vancomycin-1-g-powder-for-injection-i-v",
+      "permanent": true
+    },
+    {
+      "source": "/cancer-medicines/gemget%20200-gemcitabine-200-mg-lyophilized-powder-for-injection-iv",
+      "destination": "/cancer-medicines/gemget-200-gemcitabine-200-mg-lyophilized-powder-for-injection-iv",
+      "permanent": true
+    },
+    {
+      "source": "/:slug((?!404|about-us|blog|blog-detail|cancer-medicines|careers|contact-us|csr|edit-profile|global-presence|home-preview|meditations|order-medicines|pap|profile|services|under-development|ungc|api/|wp-json/|wp-content/|assets/|public/|components/|data/|src/|dist/|node_modules/|_vercel/|masteradmin|masteradlorock|masteradlorockpd|masteradlorockpdprocess|masteradlogriyon|adminadlorock|[^/]+\\.[^/]+$)[^/]+)",
       "destination": "/blog/:slug",
       "permanent": true
     }
@@ -56,6 +81,10 @@
     {
       "source": "/wp-json/:path*",
       "destination": "https://cms.getmeds.ph/wp-json/:path*"
+    },
+    {
+      "source": "/wp-content/:path*",
+      "destination": "https://cms.getmeds.ph/wp-content/:path*"
     },
     {
       "source": "/api/careers",
@@ -148,6 +177,23 @@
   ],
   "headers": [
     {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        }
+      ]
+    },
+    {
       "source": "/wp-json/:path*",
       "headers": [
         {
@@ -158,6 +204,27 @@
     },
     {
       "source": "/wp-json/:path*",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "http://localhost:5173"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET,OPTIONS,PATCH,DELETE,POST,PUT"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization"
+        },
+        {
+          "key": "Access-Control-Allow-Credentials",
+          "value": "true"
+        }
+      ]
+    },
+    {
+      "source": "/wp-content/:path*",
       "headers": [
         {
           "key": "Access-Control-Allow-Origin",

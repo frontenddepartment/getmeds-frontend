@@ -71,7 +71,8 @@ async function fetchSanityData(query) {
 
 async function getAllCancerMedicines() {
   const getProductSlug = (p) => {
-    const brand = (p.brandName || '').toLowerCase().trim();
+    const brand = (p.brandName || '').toLowerCase().trim()
+      .replace(/[^a-z0-9]+/g, '-');
     const molecule = (p.genericName || '').toLowerCase().trim()
       .replace(/\s*\(as\s+[^)]+\)/gi, '')
       .replace(/[^a-z0-9]+/g, '-');

@@ -26,6 +26,14 @@ import type {
   News,
 } from '../types/sanity'
 
+function cleanWordPressUrl(url: string | undefined | null): string {
+  if (!url) return '';
+  return url
+    .replace(/^https?:\/\/(cms\.)?getmeds\.ph/i, '')
+    .replace(/^https?:\/\/www\.getmeds\.ph/i, '')
+    .replace(/^https?:\/\/173\.231\.197\.156/i, '');
+}
+
 // ─────────────────────────────────────────────
 // Site-wide
 // ─────────────────────────────────────────────
@@ -103,7 +111,9 @@ async function fetchProductsFromExcel(): Promise<Product[]> {
       }
 
       // Resolve slug
-      let slug = p.slug || orig.slug
+      // Note: SheetJS flattens nested "slug.current" columns into a literal "slug.current" key,
+      // not a nested { slug: { current } } object, so that key must be checked explicitly.
+      let slug = p.slug || p['slug.current'] || orig.slug
       if (typeof slug === 'string') {
         slug = { _type: 'slug', current: slug }
       } else if (slug && typeof slug === 'object' && slug.current) {
@@ -388,56 +398,48 @@ export async function getUngcPage() {
 }
 
 // ─────────────────────────────────────────────
-// Page Assets (Materials)
+// Page Assets (Images)
 // ─────────────────────────────────────────────
 
 export async function getPageAssets() {
   return client.fetch<PageAsset[]>(`
-    *[_type == "pageAsset"] {
+    *[_type == "pageAsset"] | order(name asc) {
       _id,
       _type,
       name,
-      page,
-      location,
-      image,
-      altText,
-      assetPath,
       images[] {
         image,
-        altText,
-        assetPath
+        altText
       }
     }
   `)
 }
 
-export async function getPageAssetsByPage(page: string) {
+export async function getPageAssetsByPage(_page?: string) {
+  // Page filtering is no longer used — all assets are fetched and matched by name.
+  // This function is kept for backwards compatibility with existing hook calls.
   return client.fetch<PageAsset[]>(`
-    *[_type == "pageAsset" && (page == $page || page == "shared")] {
+    *[_type == "pageAsset"] | order(name asc) {
       _id,
       _type,
       name,
-      page,
-      location,
-      image,
-      altText,
-      assetPath,
       images[] {
         image,
-        altText,
-        assetPath
+        altText
       }
     }
-  `, { page })
+  `)
 }
 
 export async function getHeroSlides() {
   return client.fetch<PageAsset[]>(`
-    *[_type == "pageAsset" && page == "home" && location == "hero-slider"] | order(_createdAt asc) [0..4] {
+    *[_type == "pageAsset" && name == "Home Hero Background"][0] {
       _id,
       name,
-      altText,
-      image { ..., asset-> }
+      images[] {
+        image { ..., asset-> },
+        altText
+      }
     }
   `)
 }
@@ -494,7 +496,7 @@ export async function getNews() {
         date: item.date,
         description: description,
         readTime: readTime,
-        image: image,
+        image: cleanWordPressUrl(image),
         contentHtml: rawContent,
         source_link: item.link
       };
@@ -540,7 +542,7 @@ export async function getNewsPage(page: number, perPage: number = 20): Promise<{
         date: item.date,
         description: description,
         readTime: readTime,
-        image: image,
+        image: cleanWordPressUrl(image),
         contentHtml: rawContent,
         source_link: item.link
       };
@@ -586,7 +588,7 @@ export async function getNewsById(id: string) {
       date: item.date,
       description: description,
       readTime: readTime,
-      image: image,
+      image: cleanWordPressUrl(image),
       contentHtml: rawContent,
       source_link: item.link
     };
@@ -632,7 +634,7 @@ export async function getNewsBySlug(slug: string) {
       date: item.date,
       description: description,
       readTime: readTime,
-      image: image,
+      image: cleanWordPressUrl(image),
       contentHtml: rawContent,
       source_link: item.link
     };

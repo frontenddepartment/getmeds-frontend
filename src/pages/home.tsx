@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useCategories, useHeroSlides, useImageMapper, useNews, useSiteSettings } from '../lib/useSanity';
 import { setPageMeta } from '../lib/seo';
-import { getGoogleSpreadsheetBySlug } from '../lib/queries';
+import { getApiUrl } from '../lib/api';
 import { injectHTML } from '../lib/injectHTML';
 import { urlFor, client } from '../lib/sanity';
 
@@ -136,13 +136,16 @@ export default function GetMedsHomepage() {
     },
   ];
 
-  // Build slides from Sanity pageAsset docs (location="hero-slider", page="home"); fall back to hardcoded if none
+  // Build slides from Sanity pageAsset docs (Home Hero Background images); fall back to hardcoded if none
   const heroSlides = (heroSlidesData && heroSlidesData.length > 0)
-    ? heroSlidesData.slice(0, 5).map(s => ({
-      bg: s.image ? urlFor(s.image).url() : 'assets/imagebanner.jpg',
-      heading: s.name ?? '',
-      sub: s.altText ?? '',
-    }))
+    ? heroSlidesData.slice(0, 5).map((s, idx) => {
+        const fallback = fallbackHeroSlides[idx % fallbackHeroSlides.length];
+        return {
+          bg: s.image ? urlFor(s.image).url() : fallback.bg,
+          heading: s.altText || fallback.heading,
+          sub: fallback.sub,
+        };
+      })
     : fallbackHeroSlides;
   const [heroIndex, setHeroIndex] = useState(0);
   const [heroFading, setHeroFading] = useState(false);
@@ -274,7 +277,12 @@ export default function GetMedsHomepage() {
             // --- Blog: latest WordPress post ---
             if (key === 'blog' && wpPost) {
               const wpImg = wpPost._embedded?.['wp:featuredmedia']?.[0]?.source_url;
-              if (wpImg) def.img = wpImg;
+              if (wpImg) {
+                def.img = wpImg
+                  .replace(/^https?:\/\/(cms\.)?getmeds\.ph/i, '')
+                  .replace(/^https?:\/\/www\.getmeds\.ph/i, '')
+                  .replace(/^https?:\/\/173\.231\.197\.156/i, '');
+              }
               const wpTitle = wpPost.title?.rendered;
               if (wpTitle) {
                 let title = wpTitle.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim();
@@ -550,26 +558,17 @@ export default function GetMedsHomepage() {
     }
     setSubmitState('sending');
     try {
-      const sheetInfo = await getGoogleSpreadsheetBySlug('partership-list');
-      if (!sheetInfo || !sheetInfo.spreadsheetId) {
-        throw new Error('Google Spreadsheet settings not found in Sanity.');
-      }
-
-      const timestamp = new Date().toLocaleString();
       const payload = {
-        spreadsheetId: sheetInfo.spreadsheetId,
-        row: [
-          partnershipData.name,
-          partnershipData.company,
-          partnershipData.email,
-          partnershipData.phone,
-          partnershipData.message,
-          partnershipData.consent ? 'Agreed' : 'Disagreed',
-          timestamp
-        ]
+        inquiryType: 'Partnership',
+        fullName: partnershipData.name,
+        email: partnershipData.email,
+        phone: partnershipData.phone,
+        subject: partnershipData.company,
+        message: partnershipData.message,
+        files: []
       };
 
-      const response = await fetch(import.meta.env.VITE_SPREADSHEET_API_URL || '/api/append-to-spreadsheet', {
+      const response = await fetch(getApiUrl(), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
@@ -837,7 +836,7 @@ export default function GetMedsHomepage() {
               <div className="w-auto sm:w-[180px] shrink-0 flex items-center">
                 <a href="/" className="flex items-center">
                   {(() => {
-                    const logoUrl = getImage('assets/getmedslogo.png', 'assets/getmedslogo.png');
+                    const logoUrl = getImage('assets/getmedslogo.png', 'assets/getmedslogo.png'); // intercepted via siteSettings.logo
                     const isCustomLogo = logoUrl && logoUrl.includes('cdn.sanity.io');
                     return (
                       <img
@@ -980,7 +979,7 @@ export default function GetMedsHomepage() {
 
                 <a href="about-us.html" className={`transition-colors duration-300 whitespace-nowrap ${isScrolled ? 'text-gray-700 hover:text-primary' : 'text-[#000b5d] hover:text-primary'}`}>About Us</a>
                 <a href="pap.html" className="inline-flex items-center opacity-80 hover:opacity-100 transition-all duration-200 hover:-translate-y-0.5 transform">
-                  <img src={getImage('assets/pap.png', 'assets/pap.png')} alt="Patient Assistance Program" className="h-[88px] w-auto object-contain" />
+                  <img src={getImage('Patient Assistance Program Logo', 'assets/pap.png')} alt="Patient Assistance Program" className="h-[88px] w-auto object-contain" />
                 </a>
 
                 {/* Company Dropdown */}
@@ -1132,7 +1131,7 @@ export default function GetMedsHomepage() {
 
                 <a href="about-us.html" className="flex items-center px-3 py-3.5 text-[15px] font-semibold text-gray-700 border-b border-gray-100 hover:text-primary transition">About Us</a>
                 <a href="pap.html" className="flex items-center px-3 py-2 border-b border-gray-100">
-                  <img src={getImage('assets/PAPlogo.png', 'assets/PAPlogo.png')} alt="Patient Assistance Program" className="h-10 w-auto object-contain opacity-80 hover:opacity-100 transition" />
+                  <img src={getImage('PAP Logo White', 'assets/PAPlogo.png')} alt="Patient Assistance Program" className="h-10 w-auto object-contain opacity-80 hover:opacity-100 transition" />
                 </a>
 
                 {/* Company accordion */}
@@ -1302,14 +1301,14 @@ export default function GetMedsHomepage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 ca-anim ca-right ca-d2">
             <div className="h-[220px] md:h-[280px] lg:h-[340px]">
               <img
-                src={getImage('assets/genericslider.jpg', 'assets/genericslider.jpg')}
+                src={getImage('Patient First Section Image', 'assets/genericslider.jpg')}
                 alt="Medical Professional"
                 className="w-full h-full object-cover object-center rounded-[24px] shadow-lg"
               />
             </div>
             <div className="h-[220px] md:h-[280px] lg:h-[340px]">
               <img
-                src={getImage('assets/test.jpg', 'assets/test.jpg')}
+                src={getImage('Patient Second Section Image', 'assets/test.jpg')}
                 alt="Medical Facility"
                 className="w-full h-full object-cover object-center rounded-[24px] shadow-lg"
               />

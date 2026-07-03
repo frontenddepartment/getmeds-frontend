@@ -275,26 +275,47 @@ export function useCsrPrograms() {
 }
 
 // ─────────────────────────────────────────────
-// Page Assets (Materials)
+// Page Assets (Images)
 // ─────────────────────────────────────────────
 
-export function usePageAssets(page?: string) {
-  return useFetch<PageAsset[]>(() => {
-    return page ? getPageAssetsByPage(page) : getPageAssets()
-  })
+export function usePageAssets(_page?: string) {
+  // All page assets are fetched globally and matched by name.
+  // The _page argument is kept for backwards compatibility but is no longer used.
+  return useFetch<PageAsset[]>(getPageAssets)
 }
 
 export function useHeroSlides() {
-  return useFetch<PageAsset[]>(getHeroSlides)
+  const { data, loading, error } = useFetch<PageAsset>(getHeroSlides as any)
+  return { data: data?.images || null, loading, error }
 }
 
-export function useImageMapper(page: string) {
-  const { data: pageImages, loading, error } = usePageAssets(page)
+/**
+ * useImageMapper
+ * 
+ * Provides two helpers to pull images from the Sanity "Page Images" CMS:
+ *
+ *   getImage(name, fallback)
+ *     Returns the URL of the first image in the named slot.
+ *     Used for any single image on a page.
+ *
+ *   getSliderImages(name, defaultPaths)
+ *     Returns an array of image URLs from the named slot.
+ *     Used for sliders and galleries.
+ *
+ * The `name` must match the "Image Name" field in Sanity exactly.
+ * See PAGE-IMAGE-GUIDE.md in getmeds_database for the full name list.
+ */
+export function useImageMapper(_page?: string) {
+  const { data: allAssets, loading, error } = usePageAssets()
   const { data: settings } = useSiteSettings()
 
-  const getImage = (assetPath: string, fallback: string): string => {
-    // Intercept centralized logo requests from siteSettings
-    if (assetPath.includes('getmedslogo.png') && settings?.logo?.src) {
+  /**
+   * getImage(name, fallback) — returns the first image URL for the named slot.
+   * Falls back to the local `fallback` path if Sanity has no image yet.
+   */
+  const getImage = (name: string, fallback: string): string => {
+    // Intercept centralized logo — served from siteSettings, not pageAsset
+    if (name.includes('getmedslogo.png') && settings?.logo?.src) {
       try {
         return urlFor(settings.logo.src).url()
       } catch (err) {
@@ -302,51 +323,44 @@ export function useImageMapper(page: string) {
       }
     }
 
-    if (!pageImages) return fallback
-    // Try matching by relative assetPath or name in top-level assets
-    const found = pageImages.find(
-      (img) => img.assetPath === assetPath || img.name === assetPath
-    )
-    if (found && found.image) {
+    if (!allAssets) return fallback
+
+    // Find the document whose name matches exactly
+    const doc = allAssets.find((asset) => asset.name === name)
+    if (doc?.images && doc.images.length > 0 && doc.images[0]?.image) {
       try {
-        return urlFor(found.image).url()
+        return urlFor(doc.images[0].image).url()
       } catch (err) {
-        console.error('Error generating URL in useImageMapper:', err)
+        console.error('Error generating URL in getImage:', err)
       }
     }
-    // Try matching nested sliders array
-    for (const doc of pageImages) {
-      if (doc.images && Array.isArray(doc.images)) {
-        const nestedFound = doc.images.find(
-          (slide: any) => slide.assetPath === assetPath
-        )
-        if (nestedFound && nestedFound.image) {
-          try {
-            return urlFor(nestedFound.image).url()
-          } catch (err) {
-            console.error('Error generating nested URL in useImageMapper:', err)
-          }
-        }
-      }
-    }
+
     return fallback
   }
 
-  const getSliderImages = (sliderName: string, defaultPaths: string[]): string[] => {
-    if (!pageImages) return defaultPaths
-    const found = pageImages.find((img) => img.name === sliderName)
-    if (found && found.images && Array.isArray(found.images)) {
-      return found.images.map((slide: any) => {
-        if (slide.image) {
+  /**
+   * getSliderImages(name, defaultPaths) — returns all image URLs for the named slot.
+   * Falls back to the local `defaultPaths` array if Sanity has no images yet.
+   */
+  const getSliderImages = (name: string, defaultPaths: string[]): string[] => {
+    if (!allAssets) return defaultPaths
+
+    const doc = allAssets.find((asset) => asset.name === name)
+    if (doc?.images && Array.isArray(doc.images) && doc.images.length > 0) {
+      const urls = doc.images.map((slide: any) => {
+        if (slide?.image) {
           try {
             return urlFor(slide.image).url()
           } catch (err) {
             console.error('Error in getSliderImages urlFor:', err)
           }
         }
-        return slide.assetPath || ''
-      }).filter(Boolean)
+        return null
+      }).filter(Boolean) as string[]
+
+      if (urls.length > 0) return urls
     }
+
     return defaultPaths
   }
 

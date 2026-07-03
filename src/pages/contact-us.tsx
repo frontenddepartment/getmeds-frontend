@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { injectHTML } from '../lib/injectHTML';
 import { useImageMapper, useSiteSettings } from '../lib/useSanity';
 import { getGoogleSpreadsheetBySlug } from '../lib/queries';
@@ -197,7 +197,7 @@ export default function ContactUs() {
           {/* Background Image — only mount after Sanity resolves so the src never changes */}
           {!imagesLoading && (
             <img
-              src={getImage('assets/contactushero.png', 'assets/contactushero.png')}
+              src={getImage('Contact Us Hero Background', 'assets/contactushero.png')}
               alt="Contact Us"
               onLoad={() => setHeroImgLoaded(true)}
               className={`absolute inset-0 w-full h-full object-cover object-[78%_top] sm:object-[82%_center] md:object-[80%_center] lg:object-center transition-opacity duration-700 ${heroImgLoaded ? 'opacity-100' : 'opacity-0'}`}

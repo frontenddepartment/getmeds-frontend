@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { injectHTML } from '../lib/injectHTML';
 import { useImageMapper } from '../lib/useSanity';
 import { setPageMeta } from '../lib/seo';
@@ -205,7 +205,7 @@ export default function PatientAssistanceProgram() {
         {/* Hero Banner */}
         <section className="relative w-full overflow-hidden">
           <img
-            src={getImage('assets/papbanner.png', 'assets/papbanner.png')}
+            src={getImage('PAP Hero Background', 'assets/papbanner.png')}
             className="w-full h-auto brightness-90"
             alt="Medical Support"
           />
@@ -215,7 +215,7 @@ export default function PatientAssistanceProgram() {
         <section className="w-full overflow-hidden reveal relative bg-white">
           <div className="max-w-7xl mx-auto px-4 pt-1 pb-0 flex items-center gap-3 justify-center mb-0">
             <img
-              src={getImage('assets/pap.png', 'assets/pap.png')}
+              src={getImage('Patient Assistance Program Logo', 'assets/pap.png')}
               alt="Patient Assistance Program"
               className="w-28 sm:w-40 md:w-64 object-contain shrink-0"
             />
@@ -250,8 +250,8 @@ export default function PatientAssistanceProgram() {
             <div className="order-2 lg:order-1 shrink-0 flex items-end self-end w-56 sm:w-64 lg:w-[420px] xl:w-[480px] mx-auto lg:mx-0 -mb-1">
               <div className="relative inline-block w-full">
                 <div className="hidden lg:block absolute inset-0 shadow-[inset_0_0_120px_60px_white] rounded-[20px] pointer-events-none z-10" />
-                <img src={getImage('assets/patientpap.png', 'assets/patientpap.png')} alt="Cancer Patient" className="lg:hidden w-full object-contain object-bottom rounded-xl" />
-                <img src={getImage('assets/patientpap.png', 'assets/patientpap.png')} alt="Cancer Patient" className="hidden lg:block w-full object-contain object-bottom rounded-[20px]"
+                <img src={getImage('Patient Program Flow Diagram', 'assets/patientpap.png')} alt="Cancer Patient" className="lg:hidden w-full object-contain object-bottom rounded-xl" />
+                <img src={getImage('Patient Program Flow Diagram', 'assets/patientpap.png')} alt="Cancer Patient" className="hidden lg:block w-full object-contain object-bottom rounded-[20px]"
                   style={{ maskImage: 'radial-gradient(ellipse at center, black 40%, transparent 75%)', WebkitMaskImage: 'radial-gradient(ellipse at center, black 40%, transparent 75%)' }} />
               </div>
             </div>
