@@ -1,6 +1,5 @@
 ﻿import React, { useState, useEffect, useRef } from 'react';
 import { injectHTML } from '../lib/injectHTML';
-import { getGoogleSpreadsheetBySlug } from '../lib/queries';
 import { getApiUrl } from '../lib/api';
 import { setPageMeta } from '../lib/seo';
 

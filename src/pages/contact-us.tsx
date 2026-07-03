@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { injectHTML } from '../lib/injectHTML';
 import { useImageMapper, useSiteSettings } from '../lib/useSanity';
-import { getGoogleSpreadsheetBySlug } from '../lib/queries';
 import { getApiUrl } from '../lib/api';
 import { setPageMeta } from '../lib/seo';
 import type { ContactGroup } from '../types/sanity';
