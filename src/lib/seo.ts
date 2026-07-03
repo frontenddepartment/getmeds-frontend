@@ -32,7 +32,7 @@ function updateCanonical(path: string) {
 }
 
 export function setPageMeta({ title, description, path, image, type = 'website' }: PageMetaOptions) {
-  const fullTitle = `${title} - ${SITE_NAME}`;
+  const fullTitle = title === SITE_NAME ? SITE_NAME : `${title} - ${SITE_NAME}`;
   document.title = fullTitle;
 
   updateMeta('description', description);
