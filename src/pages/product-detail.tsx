@@ -139,7 +139,8 @@ export default function ProductDetail() {
 
       // Generate slug in format brandname-molecule-dosage-strength
       const getProductSlug = (p: ProductWithCategory) => {
-        const brand = (p.brandName || '').toLowerCase().trim();
+        const brand = (p.brandName || '').toLowerCase().trim()
+          .replace(/[^a-z0-9]+/g, '-');
         const molecule = (p.genericName || '').toLowerCase().trim()
           .replace(/\s*\(as\s+[^)]+\)/gi, '')
           .replace(/[^a-z0-9]+/g, '-');

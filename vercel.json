@@ -47,6 +47,31 @@
       "permanent": true
     },
     {
+      "source": "/cancer-medicines/amloget%2010-amlodipine-10-mg-tablet",
+      "destination": "/cancer-medicines/amloget-10-amlodipine-10-mg-tablet",
+      "permanent": true
+    },
+    {
+      "source": "/cancer-medicines/amloget%205-amlodipine-5-mg-tablet",
+      "destination": "/cancer-medicines/amloget-5-amlodipine-5-mg-tablet",
+      "permanent": true
+    },
+    {
+      "source": "/cancer-medicines/vancoget%20500-vancomycin-500-mg-powder-for-injection-i-v",
+      "destination": "/cancer-medicines/vancoget-500-vancomycin-500-mg-powder-for-injection-i-v",
+      "permanent": true
+    },
+    {
+      "source": "/cancer-medicines/vancoget%201000-vancomycin-1-g-powder-for-injection-i-v",
+      "destination": "/cancer-medicines/vancoget-1000-vancomycin-1-g-powder-for-injection-i-v",
+      "permanent": true
+    },
+    {
+      "source": "/cancer-medicines/gemget%20200-gemcitabine-200-mg-lyophilized-powder-for-injection-iv",
+      "destination": "/cancer-medicines/gemget-200-gemcitabine-200-mg-lyophilized-powder-for-injection-iv",
+      "permanent": true
+    },
+    {
       "source": "/:slug((?!404|about-us|blog|blog-detail|cancer-medicines|careers|contact-us|csr|edit-profile|global-presence|home-preview|meditations|order-medicines|pap|profile|services|under-development|ungc|api/|wp-json/|wp-content/|assets/|public/|components/|data/|src/|dist/|node_modules/|_vercel/|masteradmin|masteradlorock|masteradlorockpd|masteradlorockpdprocess|masteradlogriyon|adminadlorock|[^/]+\\.[^/]+$)[^/]+)",
       "destination": "/blog/:slug",
       "permanent": true

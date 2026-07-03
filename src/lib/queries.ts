@@ -111,7 +111,9 @@ async function fetchProductsFromExcel(): Promise<Product[]> {
       }
 
       // Resolve slug
-      let slug = p.slug || orig.slug
+      // Note: SheetJS flattens nested "slug.current" columns into a literal "slug.current" key,
+      // not a nested { slug: { current } } object, so that key must be checked explicitly.
+      let slug = p.slug || p['slug.current'] || orig.slug
       if (typeof slug === 'string') {
         slug = { _type: 'slug', current: slug }
       } else if (slug && typeof slug === 'object' && slug.current) {

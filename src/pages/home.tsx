@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useCategories, useHeroSlides, useImageMapper, useNews, useSiteSettings } from '../lib/useSanity';
 import { setPageMeta } from '../lib/seo';
-import { getGoogleSpreadsheetBySlug } from '../lib/queries';
+import { getApiUrl } from '../lib/api';
 import { injectHTML } from '../lib/injectHTML';
 import { urlFor, client } from '../lib/sanity';
 
@@ -558,26 +558,17 @@ export default function GetMedsHomepage() {
     }
     setSubmitState('sending');
     try {
-      const sheetInfo = await getGoogleSpreadsheetBySlug('partership-list');
-      if (!sheetInfo || !sheetInfo.spreadsheetId) {
-        throw new Error('Google Spreadsheet settings not found in Sanity.');
-      }
-
-      const timestamp = new Date().toLocaleString();
       const payload = {
-        spreadsheetId: sheetInfo.spreadsheetId,
-        row: [
-          partnershipData.name,
-          partnershipData.company,
-          partnershipData.email,
-          partnershipData.phone,
-          partnershipData.message,
-          partnershipData.consent ? 'Agreed' : 'Disagreed',
-          timestamp
-        ]
+        inquiryType: 'Partnership',
+        fullName: partnershipData.name,
+        email: partnershipData.email,
+        phone: partnershipData.phone,
+        subject: partnershipData.company,
+        message: partnershipData.message,
+        files: []
       };
 
-      const response = await fetch(import.meta.env.VITE_SPREADSHEET_API_URL || '/api/append-to-spreadsheet', {
+      const response = await fetch(getApiUrl(), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
