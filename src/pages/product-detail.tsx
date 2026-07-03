@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { useProducts, useCategories, useImageMapper, useSiteSettings } from '../lib/useSanity';
-import { urlFor, client } from '../lib/sanity';
+import { urlFor } from '../lib/sanity';
+import { sanityQuery } from '../lib/sanityProxy';
 import type { Product as SanityProduct, Category } from '../types/sanity';
 import { injectHTML } from '../lib/injectHTML';
 import { getApiUrl } from '../lib/api';
@@ -40,7 +41,7 @@ export default function ProductDetail() {
   const [successModalOpen, setSuccessModalOpen] = useState(false);
 
   useEffect(() => {
-    client.fetch('*[_type == "sanity.imageAsset"]{ _id, originalFilename }')
+    sanityQuery<any[]>('imageAsset.all')
       .then(assets => setImageAssets(assets || []))
       .catch(err => console.error('Error fetching image assets:', err));
   }, []);

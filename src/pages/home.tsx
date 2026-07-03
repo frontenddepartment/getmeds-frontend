@@ -3,7 +3,8 @@ import { useCategories, useHeroSlides, useImageMapper, useNews, useSiteSettings 
 import { setPageMeta } from '../lib/seo';
 import { getApiUrl } from '../lib/api';
 import { injectHTML } from '../lib/injectHTML';
-import { urlFor, client } from '../lib/sanity';
+import { urlFor } from '../lib/sanity';
+import { sanityQuery } from '../lib/sanityProxy';
 
 
 // Declare global tailwind interface
@@ -211,10 +212,7 @@ export default function GetMedsHomepage() {
 
         // Fetch all pageAsset documents whose assetPath matches any hero image
         const assetPaths = [...new Set(Object.values(heroAssetPaths))];
-        const sanityAssets: any[] = await client.fetch(
-          `*[_type == "pageAsset" && assetPath in $paths] { assetPath, image, page, name }`,
-          { paths: assetPaths }
-        );
+        const sanityAssets: any[] = await sanityQuery<any[]>('pageAsset.byPaths', { paths: assetPaths });
 
         // Index Sanity assets by assetPath for fast lookup
         const byPath: Record<string, any> = {};
@@ -223,14 +221,7 @@ export default function GetMedsHomepage() {
         });
 
         // Also query page documents for hero text (title, description)
-        const pageTextData: any = await client.fetch(`{
-          "about":         *[_type == "aboutPage"         && _id == "about-page"][0]          { hero },
-          "services":      *[_type == "servicesPage"      && _id == "services-page"][0]       { hero },
-          "globalPresence":*[_type == "globalPresencePage"&& _id == "global-presence-page"][0]{ hero },
-          "csr":           *[_type == "csrPage"           && _id == "csr-page"][0]            { hero },
-          "careers":       *[_type == "careersPage"       && _id == "careers-page"][0]        { hero },
-          "ungc":          *[_type == "ungcPage"          && _id == "ungc-page"][0]           { hero }
-        }`);
+        const pageTextData: any = await sanityQuery('page.heroBundle');
 
         // Fetch latest WordPress blog post
         let wpPost: any = null;

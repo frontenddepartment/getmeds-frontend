@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { useProducts, useCategories, useImageMapper, useSiteSettings } from '../lib/useSanity';
-import { urlFor, client } from '../lib/sanity';
+import { urlFor } from '../lib/sanity';
+import { sanityQuery } from '../lib/sanityProxy';
 import type { Product as SanityProduct, Category } from '../types/sanity';
 import { injectHTML } from '../lib/injectHTML';
 
@@ -92,7 +93,7 @@ export default function CancerMedicines() {
   const [imageAssets, setImageAssets] = useState<any[]>([]);
 
   useEffect(() => {
-    client.fetch('*[_type == "sanity.imageAsset"]{ _id, originalFilename }')
+    sanityQuery<any[]>('imageAsset.all')
       .then(assets => {
         setImageAssets(assets || []);
       })

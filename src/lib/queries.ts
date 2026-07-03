@@ -1,4 +1,4 @@
-import { client } from './sanity'
+import { sanityQuery } from './sanityProxy'
 import type {
   Product,
   Category,
@@ -39,18 +39,11 @@ function cleanWordPressUrl(url: string | undefined | null): string {
 // ─────────────────────────────────────────────
 
 export async function getSiteSettings() {
-  return client.fetch<SiteSettings>(`
-    *[_type == "siteSettings" && _id == "global-site-settings"][0] {
-      ...,
-      mainNavigation->
-    }
-  `)
+  return sanityQuery<SiteSettings>('siteSettings.global')
 }
 
 export async function getNavigation() {
-  return client.fetch<Navigation>(`
-    *[_type == "navigation" && _id == "main-navigation"][0]
-  `)
+  return sanityQuery<Navigation>('navigation.main')
 }
 
 // ─────────────────────────────────────────────
@@ -58,42 +51,16 @@ export async function getNavigation() {
 // ─────────────────────────────────────────────
 
 async function fetchProductsFromExcel(): Promise<Product[]> {
-  const result = await client.fetch<{ json_data?: string }>(`
-    *[_type == "product" && (remarks == "present" || remarks == "active") && defined(title)][0] {
-      json_data
-    }
-  `)
+  const result = await sanityQuery<{ json_data?: string }>('product.excelJson')
   if (!result || !result.json_data) return []
   try {
     const data = JSON.parse(result.json_data)
     const firstSheetName = Object.keys(data)[0]
     if (!firstSheetName) return []
     const rawProducts = data[firstSheetName] || []
-    
+
     // Fetch all individual product documents (which don't have title defined) that are active/present or undefined remarks
-    const originalProducts = await client.fetch<any[]>(`
-      *[_type == "product" && !defined(title) && (!defined(remarks) || remarks == "present" || remarks == "active")] {
-        _id,
-        slug,
-        image,
-        category-> { _id, category, slug },
-        subCategory,
-        availability,
-        genericName,
-        brandName,
-        name,
-        remarks,
-        description,
-        packaging,
-        innovator,
-        strength,
-        form,
-        indications,
-        dosageAdministration,
-        storageCondition,
-        accreditations
-      }
-    `)
+    const originalProducts = await sanityQuery<any[]>('product.individualDocs')
 
     // Create a lookup map for original products by their document _id
     const originalMap = new Map<string, any>()
@@ -197,7 +164,7 @@ export async function searchProducts(query: string) {
   const normalizedQuery = query.replace(/\*/g, '').toLowerCase().trim()
   if (!normalizedQuery) return products
   return products
-    .filter((p) => 
+    .filter((p) =>
       (p.name || '').toLowerCase().includes(normalizedQuery) ||
       (p.genericName || '').toLowerCase().includes(normalizedQuery) ||
       (p.brandName || '').toLowerCase().includes(normalizedQuery) ||
@@ -211,25 +178,11 @@ export async function searchProducts(query: string) {
 // ─────────────────────────────────────────────
 
 export async function getCategories() {
-  return client.fetch<Category[]>(`
-    *[_type == "category"] | order(category asc) {
-      _id,
-      category,
-      slug,
-      subtitle,
-      description,
-      icon,
-      image,
-      subcategory,
-      categoryId,
-    }
-  `)
+  return sanityQuery<Category[]>('category.all')
 }
 
 export async function getCategoryBySlug(slug: string) {
-  return client.fetch<Category>(`
-    *[_type == "category" && slug.current == $slug][0]
-  `, { slug })
+  return sanityQuery<Category>('category.bySlug', { slug })
 }
 
 // ─────────────────────────────────────────────
@@ -237,19 +190,11 @@ export async function getCategoryBySlug(slug: string) {
 // ─────────────────────────────────────────────
 
 export async function getFAQs() {
-  return client.fetch<FAQ[]>(`
-    *[_type == "faq"] | order(_createdAt asc)
-  `)
+  return sanityQuery<FAQ[]>('faq.all')
 }
 
 export async function searchFAQs(query: string) {
-  return client.fetch<FAQ[]>(`
-    *[_type == "faq" && (
-      question match $query ||
-      answer match $query ||
-      $query in keywords
-    )]
-  `, { query: `*${query}*` })
+  return sanityQuery<FAQ[]>('faq.search', { query: `*${query}*` })
 }
 
 // ─────────────────────────────────────────────
@@ -257,41 +202,23 @@ export async function searchFAQs(query: string) {
 // ─────────────────────────────────────────────
 
 export async function getServices() {
-  return client.fetch<Service[]>(`
-    *[_type == "service"] | order(_createdAt asc)
-  `)
+  return sanityQuery<Service[]>('service.all')
 }
 
 export async function getTeamMembers() {
-  return client.fetch<TeamMember[]>(`
-    *[_type == "teamMember"] {
-      _id,
-      name,
-      role,
-      image,
-      ribbonLabel,
-      bio,
-      socialLinks,
-    }
-  `)
+  return sanityQuery<TeamMember[]>('teamMember.all')
 }
 
 export async function getTestimonials() {
-  return client.fetch<Testimonial[]>(`
-    *[_type == "testimonial"] | order(rating desc)
-  `)
+  return sanityQuery<Testimonial[]>('testimonial.all')
 }
 
 export async function getCountries() {
-  return client.fetch<CountryPresence[]>(`
-    *[_type == "countryPresence"] | order(name asc)
-  `)
+  return sanityQuery<CountryPresence[]>('countryPresence.all')
 }
 
 export async function getCsrPrograms() {
-  return client.fetch<CsrProgram[]>(`
-    *[_type == "csrProgram"] | order(_createdAt asc)
-  `)
+  return sanityQuery<CsrProgram[]>('csrProgram.all')
 }
 
 // ─────────────────────────────────────────────
@@ -299,102 +226,51 @@ export async function getCsrPrograms() {
 // ─────────────────────────────────────────────
 
 export async function getHomePage() {
-  return client.fetch<HomePage>(`
-    *[_type == "homePage" && _id == "home-page"][0] {
-      ...,
-      hero {
-        ...,
-        slides[0..4] {
-          _key,
-          heading,
-          description,
-          enabled,
-          image { ..., asset-> }
-        }
-      }
-    }
-  `)
+  return sanityQuery<HomePage>('homePage.main')
 }
 
 export async function getAboutPage() {
-  return client.fetch<AboutPage>(`
-    *[_type == "aboutPage" && _id == "about-page"][0] {
-      ...,
-      team {
-        ...,
-        members[]->
-      }
-    }
-  `)
+  return sanityQuery<AboutPage>('aboutPage.main')
 }
 
 export async function getCareersPage() {
-  return client.fetch<CareersPage>(`
-    *[_type == "careersPage" && _id == "careers-page"][0]
-  `)
+  return sanityQuery<CareersPage>('careersPage.main')
 }
 
 export async function getContactPage() {
-  return client.fetch<ContactPage>(`
-    *[_type == "contactPage" && _id == "contact-page"][0]
-  `)
+  return sanityQuery<ContactPage>('contactPage.main')
 }
 
 export async function getCsrPage() {
-  return client.fetch<CsrPage>(`
-    *[_type == "csrPage" && _id == "csr-page"][0] {
-      ...,
-      programs[]->
-    }
-  `)
+  return sanityQuery<CsrPage>('csrPage.main')
 }
 
 export async function getGlobalPresencePage() {
-  return client.fetch<GlobalPresencePage>(`
-    *[_type == "globalPresencePage" && _id == "global-presence-page"][0] {
-      ...,
-      countries[]->
-    }
-  `)
+  return sanityQuery<GlobalPresencePage>('globalPresencePage.main')
 }
 
 export async function getMeditationsPage() {
-  return client.fetch<MeditationsPage>(`
-    *[_type == "meditationsPage" && _id == "meditations-page"][0]
-  `)
+  return sanityQuery<MeditationsPage>('meditationsPage.main')
 }
 
 export async function getOrderMedicinesPage() {
-  return client.fetch<OrderMedicinesPage>(`
-    *[_type == "orderMedicinesPage" && _id == "order-medicines-page"][0]
-  `)
+  return sanityQuery<OrderMedicinesPage>('orderMedicinesPage.main')
 }
 
 export async function getPapPage() {
-  return client.fetch<PapPage>(`
-    *[_type == "papPage" && _id == "pap-page"][0]
-  `)
+  return sanityQuery<PapPage>('papPage.main')
 }
 
 export async function getProductsPage() {
-  return client.fetch<ProductsPage>(`
-    *[_type == "productsPage" && _id == "products-page"][0]
-  `)
+  return sanityQuery<ProductsPage>('productsPage.main')
 }
 
 export async function getServicesPage() {
-  return client.fetch<ServicesPage>(`
-    *[_type == "servicesPage" && _id == "services-page"][0] {
-      ...,
-      services[]->
-    }
-  `)
+  return sanityQuery<ServicesPage>('servicesPage.main')
 }
 
 export async function getUngcPage() {
-  return client.fetch<UngcPage>(`
-    *[_type == "ungcPage" && _id == "ungc-page"][0]
-  `)
+  return sanityQuery<UngcPage>('ungcPage.main')
 }
 
 // ─────────────────────────────────────────────
@@ -402,56 +278,21 @@ export async function getUngcPage() {
 // ─────────────────────────────────────────────
 
 export async function getPageAssets() {
-  return client.fetch<PageAsset[]>(`
-    *[_type == "pageAsset"] | order(name asc) {
-      _id,
-      _type,
-      name,
-      images[] {
-        image,
-        altText
-      }
-    }
-  `)
+  return sanityQuery<PageAsset[]>('pageAsset.all')
 }
 
 export async function getPageAssetsByPage(_page?: string) {
   // Page filtering is no longer used — all assets are fetched and matched by name.
   // This function is kept for backwards compatibility with existing hook calls.
-  return client.fetch<PageAsset[]>(`
-    *[_type == "pageAsset"] | order(name asc) {
-      _id,
-      _type,
-      name,
-      images[] {
-        image,
-        altText
-      }
-    }
-  `)
+  return sanityQuery<PageAsset[]>('pageAsset.all')
 }
 
 export async function getHeroSlides() {
-  return client.fetch<PageAsset[]>(`
-    *[_type == "pageAsset" && name == "Home Hero Background"][0] {
-      _id,
-      name,
-      images[] {
-        image { ..., asset-> },
-        altText
-      }
-    }
-  `)
+  return sanityQuery<PageAsset[]>('pageAsset.heroSlides')
 }
 
 export async function getGoogleSpreadsheetBySlug(slug: string) {
-  return client.fetch<{ _id: string; spreadsheetId: string; link: string } | null>(`
-    *[_type == "googleSpreadsheet" && id.current == $slug][0] {
-      _id,
-      spreadsheetId,
-      link
-    }
-  `, { slug })
+  return sanityQuery<{ _id: string; spreadsheetId: string; link: string } | null>('googleSpreadsheet.bySlug', { slug })
 }
 
 // ─────────────────────────────────────────────
@@ -468,7 +309,7 @@ export async function getNews() {
     return data.map((item: any) => {
       const categories = item._embedded?.['wp:term']?.[0] || [];
       const tag = categories[0]?.name || 'News';
-      
+
       const featuredMedia = item._embedded?.['wp:featuredmedia']?.[0];
       const image = featuredMedia?.source_url || '';
 
@@ -516,7 +357,7 @@ export async function getNewsPage(page: number, perPage: number = 20): Promise<{
     const items: News[] = data.map((item: any) => {
       const categories = item._embedded?.['wp:term']?.[0] || [];
       const tag = categories[0]?.name || 'News';
-      
+
       const featuredMedia = item._embedded?.['wp:featuredmedia']?.[0];
       const image = featuredMedia?.source_url || '';
 
@@ -559,10 +400,10 @@ export async function getNewsById(id: string) {
     const res = await fetch(`${WP_API_BASE}/posts/${id}?_embed=true&_=${Date.now()}`, { cache: 'reload' });
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
     const item = await res.json();
-    
+
     const categories = item._embedded?.['wp:term']?.[0] || [];
     const tag = categories[0]?.name || 'News';
-    
+
     const featuredMedia = item._embedded?.['wp:featuredmedia']?.[0];
     const image = featuredMedia?.source_url || '';
 
@@ -605,10 +446,10 @@ export async function getNewsBySlug(slug: string) {
     const posts = await res.json();
     if (!posts || posts.length === 0) return null;
     const item = posts[0];
-    
+
     const categories = item._embedded?.['wp:term']?.[0] || [];
     const tag = categories[0]?.name || 'News';
-    
+
     const featuredMedia = item._embedded?.['wp:featuredmedia']?.[0];
     const image = featuredMedia?.source_url || '';
 
@@ -645,17 +486,5 @@ export async function getNewsBySlug(slug: string) {
 }
 
 export async function getCareers() {
-  return client.fetch<any[]>(`
-    *[_type == "career"] | order(title asc) {
-      _id,
-      title,
-      "desc": description,
-      "responsibilities": keyResponsibilities,
-      "requirements": qualificationRequirements,
-      image
-    }
-  `)
+  return sanityQuery<any[]>('career.all')
 }
-
-
-
