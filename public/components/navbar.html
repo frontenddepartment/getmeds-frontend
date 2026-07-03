@@ -1253,13 +1253,13 @@
         }
 
         const defaultSlides = {
-            'about': { title: 'About Us', href: '/about-us.html', img: '/assets/about_us_hero.png', desc: 'Learn more about our mission and vision.' },
+            'about': { title: 'About Us', href: '/about-us.html', img: '/assets/aboutusone.jpg', desc: 'Learn more about our mission and vision.' },
             'services': { title: 'Our Services', href: '/services.html', img: '/assets/services_hero_new.png', desc: 'Discover our specialized pharmaceutical offerings.' },
             'globalPresence': { title: 'Global Presence', href: '/global-presence.html', img: '/assets/globalpresencehero.jpg', desc: 'We are expanding healthcare solutions worldwide.' },
-            'meditations': { title: 'Meditations', href: '/meditations.html', img: '/assets/fallback.jpg', desc: 'Explore our mental wellness resources.' },
-            'csr': { title: 'CSR', href: '/csr.html', img: '/assets/csrhero.png', desc: 'Explore our corporate social responsibility initiatives.' },
+            'meditations': { title: 'Meditations', href: '/meditations.html', img: '/assets/categories.png', desc: 'Explore our mental wellness resources.' },
+            'csr': { title: 'CSR', href: '/csr.html', img: '/assets/patienthand.jpg', desc: 'Explore our corporate social responsibility initiatives.' },
             'careers': { title: 'Careers', href: '/careers.html', img: '/assets/careershero.png', desc: 'Join our team and make a difference.' },
-            'ungc': { title: 'United Nations Global Compact', href: '/ungc.html', img: '/assets/ungchero.jpg', desc: 'Read about our commitment to sustainable development goals.' },
+            'ungc': { title: 'United Nations Global Compact', href: '/ungc.html', img: '/assets/ungcimage.jpg', desc: 'Read about our commitment to sustainable development goals.' },
             'blog': { title: 'Blog', href: '/blog', img: '/assets/fallback.jpg', desc: 'Stay updated with our latest news and medical articles.' },
             'join-us': { title: 'Join Us', href: '/careers.html#join-form', img: '/assets/careershero.png', desc: 'Apply for our open positions and start your journey with us.' }
         };
@@ -1334,14 +1334,16 @@
 
         async function initCompanySlider() {
             // Map slide keys to their known hero assetPath in Sanity pageAsset
+            // (must match the assetPath each page actually queries via useImageMapper's getImage())
             const heroAssetPaths = {
-                'about':         'assets/about_us_hero.png',
+                'about':         'assets/aboutusone.jpg',
                 'services':      'assets/services_hero_new.png',
                 'globalPresence':'assets/globalpresencehero.jpg',
-                'csr':           'assets/csrhero.png',
+                'csr':           'assets/patienthand.jpg',
                 'careers':       'assets/careershero.png',
                 'ungc':          'assets/ungcimage.jpg',
                 'join-us':       'assets/careershero.png',
+                'meditations':   'assets/categories.png',
             };
 
             // Step 1: Fetch all pageAsset records matching hero assetPaths from Sanity
@@ -1370,7 +1372,8 @@
                 "globalPresence":*[_type == "globalPresencePage"&& _id == "global-presence-page"][0]{ hero },
                 "csr":           *[_type == "csrPage"           && _id == "csr-page"][0]            { hero },
                 "careers":       *[_type == "careersPage"       && _id == "careers-page"][0]        { hero },
-                "ungc":          *[_type == "ungcPage"          && _id == "ungc-page"][0]           { hero }
+                "ungc":          *[_type == "ungcPage"          && _id == "ungc-page"][0]           { hero },
+                "meditations":   *[_type == "meditationsPage"   && _id == "meditations-page"][0]    { hero }
             }`;
             const textUrl = `https://${projectId}.api.sanity.io/v${apiVersion}/data/query/${dataset}?query=` + encodeURIComponent(textQuery);
 
@@ -1418,7 +1421,8 @@
                 const pageKey = key === 'join-us' ? 'careers' : key;
                 const pageDoc = pageTextData[pageKey];
                 if (pageDoc && pageDoc.hero) {
-                    const headingText = pageDoc.hero.headingLine1 || pageDoc.hero.heading || pageDoc.hero.headingAccent;
+                    const headingBase = pageDoc.hero.headingLine1 || pageDoc.hero.heading;
+                    const headingText = [headingBase, pageDoc.hero.headingAccent].filter(Boolean).join(' ') || headingBase || pageDoc.hero.headingAccent;
                     if (headingText) {
                         title = headingText.replace(/<[^>]*>/g, '');
                         if (title.length > 40) title = title.substring(0, 37) + '...';
@@ -1429,9 +1433,13 @@
                     }
                 }
 
-                // --- Blog: latest WordPress post ---
+                // --- Blog: latest WordPress post (featured image, with size-variant fallback) ---
                 if (key === 'blog' && wpPost) {
-                    const wpImg = wpPost._embedded?.['wp:featuredmedia']?.[0]?.source_url;
+                    const media = wpPost._embedded?.['wp:featuredmedia']?.[0];
+                    const wpImg = media?.source_url
+                        || media?.media_details?.sizes?.medium_large?.source_url
+                        || media?.media_details?.sizes?.medium?.source_url
+                        || media?.media_details?.sizes?.full?.source_url;
                     if (wpImg) img = wpImg;
                     const wpTitle = wpPost.title?.rendered;
                     if (wpTitle) {
