@@ -395,9 +395,13 @@ export default defineConfig(async ({ mode }) => {
                 return;
               }
             }
-            if (cleanPath === '/product-range.html' || cleanPath === '/product-range' || cleanPath === '/product-range/') {
+            if (cleanPath.startsWith('/product-range')) {
+              let subPath = cleanPath.slice('/product-range'.length);
+              if (subPath.startsWith('.html')) {
+                subPath = '';
+              }
               res.statusCode = 301;
-              res.setHeader('Location', '/cancer-medicines' + qs);
+              res.setHeader('Location', '/cancer-medicines' + subPath + qs);
               res.end();
               return;
             }
