@@ -215,7 +215,7 @@ export function useProducts() {
 }
 
 export function useProductBySlug(slug: string) {
-  return useFetchWithParam<Product, string>(getProductBySlug, slug)
+  return useFetchWithParam<Product | null, string>(getProductBySlug, slug)
 }
 
 export function useProductsByCategory(categoryId: string) {
