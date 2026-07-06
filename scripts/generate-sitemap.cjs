@@ -47,6 +47,28 @@ function loadEnv() {
   return env;
 }
 
+const subcategorySpecials = {
+  'non-small-cell-lung-cancer': 'lung-cancer',
+  'acute-myeloid-leukemia': 'aml',
+  'chronic-myeloid-leukemia': 'cml',
+  'hodgkin-non-hodgkins-lymphoma': 'lymphoma',
+  'hodgkin-non-hodgkin-s-lymphoma': 'lymphoma',
+  'sickle-cell-anemia': 'sickle-cell',
+  'respiratory-infections': 'respiratory',
+  'urinary-tract-infections': 'uti',
+  'skin-and-soft-tissue-infections': 'skin-infections',
+  'bone-and-joint-infections': 'bone-infections',
+  'fibrocystic-breast-disease': 'fibrocystic',
+  'arrhythmia-management': 'arrhythmia',
+  'hypertension-angina': 'hypertension',
+  'hypertension-and-angina': 'hypertension',
+  'seasonal-allergic-rhinitis': 'allergic-rhinitis',
+  'chronic-kidney-disease': 'kidney-disease',
+  'chronic-pain': 'pain',
+  'inflammatory-disorders': 'rheumatology',
+  'inflammatory-and-rheumatic-disorders': 'rheumatology'
+};
+
 const getSubcategorySlug = (name) => {
   return name
     .toLowerCase()
@@ -93,12 +115,20 @@ async function getAllCancerMedicines() {
     const subcats = new Set();
     categories.forEach(cat => {
       if (cat.category) {
-        subcats.add(getSubcategorySlug(cat.category));
+        const clean = getSubcategorySlug(cat.category);
+        subcats.add(clean);
+        if (subcategorySpecials[clean]) {
+          subcats.add(subcategorySpecials[clean]);
+        }
       }
       if (Array.isArray(cat.subcategory)) {
         cat.subcategory.forEach(sub => {
           if (sub) {
-            subcats.add(getSubcategorySlug(sub));
+            const clean = getSubcategorySlug(sub);
+            subcats.add(clean);
+            if (subcategorySpecials[clean]) {
+              subcats.add(subcategorySpecials[clean]);
+            }
           }
         });
       }
