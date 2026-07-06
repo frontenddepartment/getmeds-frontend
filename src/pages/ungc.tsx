@@ -7,7 +7,7 @@ const Ungc: React.FC = () => {
   useEffect(() => {
     setPageMeta({
       title: 'UN Global Compact',
-      description: 'Getmeds is a proud member of the United Nations Global Compact, committed to sustainable business practices and universal health access.',
+      description: 'At Getmeds Philippines, we do more than provide medicines—we drive meaningful impact through responsible healthcare, compassion, and sustainable action.',
       path: '/ungc.html',
     });
   }, []);

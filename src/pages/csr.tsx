@@ -7,7 +7,7 @@ const Csr: React.FC = () => {
   useEffect(() => {
     setPageMeta({
       title: 'Corporate Social Responsibility',
-      description: 'Getmeds CSR initiatives — making healthcare accessible through partnerships, community outreach, and patient advocacy programs across the Philippines.',
+      description: "We don't just distribute medicine; we facilitate healing. Through NGO partnerships and digital health advocacy, we ensure no patient navigates their journey alone.",
       path: '/csr.html',
     });
   }, []);

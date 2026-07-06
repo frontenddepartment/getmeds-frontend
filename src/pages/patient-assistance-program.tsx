@@ -42,7 +42,7 @@ export default function PatientAssistanceProgram() {
     setPageMeta({
       title: 'Patient Assistance Program',
       description: 'Getmeds Patient Assistance Program — access free cancer medicines and chemotherapy support through DSWD and PCSO accreditation in the Philippines.',
-      path: '/pap.html',
+      path: '/patient-assistance-program',
     });
   }, []);
 

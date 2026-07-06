@@ -657,5 +657,17 @@ export async function getCareers() {
   `)
 }
 
+export async function getVerifiedEmployees() {
+  return client.fetch<any[]>(`
+    *[_type == "verifiedEmployees" && (remarks == "present" || !defined(remarks))] {
+      _id,
+      title,
+      json_data,
+      remarks
+    }
+  `)
+}
+
+
 
 

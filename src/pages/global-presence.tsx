@@ -7,7 +7,7 @@ export default function GlobalPresence() {
   useEffect(() => {
     setPageMeta({
       title: 'Global Presence',
-      description: 'Getmeds operates across multiple countries, connecting global pharmaceutical innovation with the communities that need it most.',
+      description: 'Discover seamless healthcare solutions. Access a world-class medical network worldwide, efficiently linking you with top care continuously.',
       path: '/global-presence.html',
     });
   }, []);

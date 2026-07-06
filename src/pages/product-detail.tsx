@@ -111,6 +111,19 @@ export default function ProductDetail() {
 
   const getCategorizationDisplay = (p: ProductWithCategory) => {
     const subcats = getProductSubcategories(p);
+    
+    // Check if the URL provides context from where the user clicked
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      const categoryFromUrl = urlParams.get('category');
+      
+      if (categoryFromUrl) {
+        // Find a case-insensitive match among the product's subcategories
+        const matched = subcats.find(s => s.toLowerCase() === categoryFromUrl.toLowerCase());
+        if (matched) return matched;
+      }
+    }
+    
     if (subcats.length === 0) {
       return p.category?.category || 'General';
     }
@@ -345,25 +358,45 @@ export default function ProductDetail() {
       <div id="navbar-container" className="shrink-0 z-[50]" />
 
       <main className="flex-1">
-        {/* Page Header */}
-        <div className="bg-white px-6 py-4 flex items-center gap-4 sticky top-0 z-10">
-          <a
-            href={backUrl}
-            onClick={(e) => {
-              if (window.history.length > 1) {
-                e.preventDefault();
-                window.history.back();
-              }
-            }}
-            className="flex items-center gap-2 text-sm text-gray-500 hover:text-primary transition-colors font-medium"
-          >
-            <i className="fa-solid fa-arrow-left text-xs" />
-            Back to Products
-          </a>
-          <span className="text-gray-200">|</span>
-          <h1 className="text-base font-semibold text-gray-800">Product Details & Inquiry</h1>
+        {/* Breadcrumb Header */}
+        <div className="bg-white px-6 py-3 flex items-center justify-between border-b border-gray-100 sticky top-0 z-10">
+          <nav aria-label="Breadcrumb">
+            <ol className="flex items-center gap-1.5 text-[12px] flex-wrap">
+              <li>
+                <a
+                  href="/cancer-medicines"
+                  className="text-gray-400 hover:text-primary transition-colors font-medium"
+                >
+                  Cancer Medicines
+                </a>
+              </li>
+              {product && (
+                <>
+                  <li className="text-gray-300"><i className="fa-solid fa-chevron-right text-[9px]" /></li>
+                  <li>
+                    <a
+                      href={`/cancer-medicines/${encodeURIComponent(getSubcategorySlug(getCategorizationDisplay(product)))}`}
+                      className="text-gray-400 hover:text-primary transition-colors font-medium max-w-[120px] truncate inline-block align-bottom"
+                    >
+                      {getCategorizationDisplay(product)}
+                    </a>
+                  </li>
+                  <li className="text-gray-300"><i className="fa-solid fa-chevron-right text-[9px]" /></li>
+                  <li className="font-semibold text-gray-700 max-w-[160px] truncate">
+                    {product.brandName || product.name || 'Product Details'}
+                  </li>
+                </>
+              )}
+              {!product && (
+                <>
+                  <li className="text-gray-300"><i className="fa-solid fa-chevron-right text-[9px]" /></li>
+                  <li className="font-semibold text-gray-700">Product Details</li>
+                </>
+              )}
+            </ol>
+          </nav>
           <button
-            className="ml-auto hidden sm:flex items-center text-gray-500 hover:text-primary transition text-sm space-x-1.5"
+            className="hidden sm:flex items-center text-gray-500 hover:text-primary transition text-sm space-x-1.5"
             onClick={() => {
               const chatWindow = document.getElementById('zap-chat-window');
               if (chatWindow) chatWindow.classList.add('active');
@@ -534,6 +567,31 @@ export default function ProductDetail() {
                     </div>
                   </div>
                 </div>
+
+                {/* Also used for */}
+                {(() => {
+                  const allSubcats = getProductSubcategories(product);
+                  const primarySubcat = getCategorizationDisplay(product);
+                  const otherSubcats = allSubcats.filter(s => s !== primarySubcat);
+                  if (otherSubcats.length === 0) return null;
+                  return (
+                    <div className="mt-4 px-5 pb-5">
+                      <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-2.5">Also used for</p>
+                      <div className="flex flex-wrap gap-2">
+                        {otherSubcats.map((sub, idx) => (
+                          <a
+                            key={idx}
+                            href={`/cancer-medicines/${encodeURIComponent(getSubcategorySlug(sub))}`}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-medium border border-blue-100 bg-blue-50 text-primary hover:bg-primary hover:text-white hover:border-primary transition-all duration-200"
+                          >
+                            <i className="fa-solid fa-arrow-right-to-bracket text-[9px]" />
+                            {sub}
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })()}
               </div>
 
               {/* Right Column: Inquiry Form */}

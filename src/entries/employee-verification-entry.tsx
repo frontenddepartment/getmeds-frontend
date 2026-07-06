@@ -1,12 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import PatientAssistanceProgram from '../pages/patient-assistance-program';
+import EmployeeVerification from '../pages/employee-verification';
 
 const rootElement = document.getElementById('root');
 if (rootElement) {
   ReactDOM.createRoot(rootElement).render(
     <React.StrictMode>
-      <PatientAssistanceProgram />
+      <EmployeeVerification />
     </React.StrictMode>
   );
 }

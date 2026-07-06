@@ -7,7 +7,7 @@ export default function Services() {
   useEffect(() => {
     setPageMeta({
       title: 'Our Services',
-      description: 'Explore Getmeds pharmaceutical services including drug distribution, patient assistance programs, and innovative healthcare solutions in the Philippines.',
+      description: 'Getmeds delivers precision pharmaceutical solutions and nationwide distribution — from regulatory compliance and government bidding to pioneering digital oncology care.',
       path: '/services.html',
     });
   }, []);

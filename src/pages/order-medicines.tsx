@@ -9,7 +9,7 @@ export default function OrderMedicines() {
   useEffect(() => {
     setPageMeta({
       title: 'Order Medicines',
-      description: 'Order your medicines securely with Getmeds. Upload your prescription and get fast delivery of quality pharmaceutical products to your doorstep.',
+      description: 'A simple 3-step process designed for your convenience.',
       path: '/order-medicines.html',
     });
   }, []);

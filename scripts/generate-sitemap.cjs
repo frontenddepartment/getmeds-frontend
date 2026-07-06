@@ -252,7 +252,7 @@ async function generate() {
     { path: 'csr', priority: '0.7', changefreq: 'monthly' },
     { path: 'global-presence', priority: '0.7', changefreq: 'monthly' },
     { path: 'meditations', priority: '0.7', changefreq: 'monthly' },
-    { path: 'pap', priority: '0.7', changefreq: 'monthly' },
+    { path: 'patient-assistance-program', priority: '0.7', changefreq: 'monthly' },
     { path: 'ungc', priority: '0.7', changefreq: 'monthly' },
     { path: 'blog', priority: '0.8', changefreq: 'daily' }
   ];

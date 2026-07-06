@@ -189,7 +189,7 @@ export default function BlogDetail() {
       
       const ourPages = new Set([
         '404', 'blog', 'blog-detail', 'articles', 'article-detail', 'about-us', 'contact-us', 'product-range', 'cancer-medicines', 'meditations',
-        'pap', 'careers', 'services', 'csr', 'ungc', 'index.html'
+        'patient-assistance-program', 'careers', 'services', 'csr', 'ungc', 'index.html'
       ]);
 
       const urlParts = cleanPath.split('#');

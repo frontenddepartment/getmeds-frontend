@@ -260,14 +260,20 @@ export default defineConfig(async ({ mode }) => {
                 return;
               }
             }
-            if (cleanPath === '/pap.html') {
-              res.statusCode = 302;
-              res.setHeader('Location', '/pap' + qs);
+            if (cleanPath === '/pap.html' || cleanPath === '/pap' || cleanPath === '/pap/') {
+              res.statusCode = 301;
+              res.setHeader('Location', '/patient-assistance-program' + qs);
               res.end();
               return;
             }
-            if (cleanPath === '/pap' || cleanPath === '/pap/') {
-              const htmlPath = path.join(process.cwd(), 'pap-preview.html');
+            if (cleanPath === '/patient-assistance-program.html') {
+              res.statusCode = 302;
+              res.setHeader('Location', '/patient-assistance-program' + qs);
+              res.end();
+              return;
+            }
+            if (cleanPath === '/patient-assistance-program' || cleanPath === '/patient-assistance-program/') {
+              const htmlPath = path.join(process.cwd(), 'patient-assistance-program-preview.html');
               if (fs.existsSync(htmlPath)) {
                 const htmlContent = fs.readFileSync(htmlPath, 'utf-8');
                 res.setHeader('Content-Type', 'text/html');
@@ -388,6 +394,21 @@ export default defineConfig(async ({ mode }) => {
             }
             if (cleanPath === '/meditations' || cleanPath === '/meditations/') {
               const htmlPath = path.join(process.cwd(), 'meditations.html');
+              if (fs.existsSync(htmlPath)) {
+                const htmlContent = fs.readFileSync(htmlPath, 'utf-8');
+                res.setHeader('Content-Type', 'text/html');
+                res.end(htmlContent);
+                return;
+              }
+            }
+            if (cleanPath === '/employee-verification.html') {
+              res.statusCode = 302;
+              res.setHeader('Location', '/employee-verification' + qs);
+              res.end();
+              return;
+            }
+            if (cleanPath === '/employee-verification' || cleanPath === '/employee-verification/') {
+              const htmlPath = path.join(process.cwd(), 'employee-verification.html');
               if (fs.existsSync(htmlPath)) {
                 const htmlContent = fs.readFileSync(htmlPath, 'utf-8');
                 res.setHeader('Content-Type', 'text/html');

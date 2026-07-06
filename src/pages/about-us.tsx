@@ -7,7 +7,7 @@ export default function AboutUs() {
   useEffect(() => {
     setPageMeta({
       title: 'About Us',
-      description: 'Learn more about Getmeds, a trusted pharmaceutical company in the Philippines. Discover our mission, vision, and the team advancing healthcare access nationwide.',
+      description: 'A new standard of care for a new generation of patients. Advanced science. Trusted medicine. Closer access. Better outcomes. Greater hope.',
       path: '/about-us.html',
     });
   }, []);
@@ -85,16 +85,16 @@ export default function AboutUs() {
   const teamTrackRef = useRef<HTMLDivElement>(null);
 
   const TEAM_MEMBERS: { img: string; name: string; role: string; isCeo?: boolean }[] = [
-    { img: 'employeeone.png', name: 'Mr. Subir Dey', role: 'Sales & Marketing Coach' },
-    { img: 'employeetwo.png', name: 'Ms. Mira Verango', role: 'Executive & Admin Coach' },
-    { img: 'employeethree.png', name: 'Ms. Vanessa Escalderon', role: 'Hospital Division Coach' },
-    { img: 'employeefour.png', name: 'Mr. Javed Shaikh', role: 'Sales & Marketing Coach' },
-    { img: 'CEO.png', name: 'Mr. Naresh Bishnoi', role: 'Founder & CEO', isCeo: true },
-    { img: 'employeefive.png', name: 'Ms. Beatrice Ampaso', role: "Sales & Business Dev't" },
-    { img: 'employeesix.png', name: 'Ms. Esther Chiong', role: 'In-Licensing Mentor' },
-    { img: 'employeeseven.png', name: 'Ms. Ivy Varias', role: 'Regulatory Affairs Mentor' },
-    { img: 'employeeeight.png', name: 'Ms. Malou Jagonoy', role: 'Finance Mentor' },
-    { img: 'employeenine.png', name: 'Ms. Sarla Devi', role: 'Finance Coach' },
+    { img: 'SIRSUBIR.png', name: 'Mr. Subir Dey', role: 'Sales & Marketing Coach' },
+    { img: 'MAMMIRA.png', name: 'Ms. Mira Verango', role: 'Executive & Admin Coach' },
+    { img: 'MAMVAN.png', name: 'Ms. Vanessa Escalderon', role: 'Hospital Division Coach' },
+    { img: 'SIRJAVED.png', name: 'Mr. Javed Shaikh', role: 'Sales & Marketing Coach' },
+    { img: 'SIRNARESH.png', name: 'Mr. Naresh Bishnoi', role: 'Founder & CEO', isCeo: true },
+    { img: 'MAMBEA.png', name: 'Ms. Beatrice Ampaso', role: "Sales & Business Dev't" },
+    { img: 'MAMCHI.png', name: 'Ms. Esther Chiong', role: 'In-Licensing Mentor' },
+    { img: 'MAMIVY.png', name: 'Ms. Ivy Varias', role: 'Regulatory Affairs Mentor' },
+    { img: 'MAMMALOU.png', name: 'Ms. Malou Jagonoy', role: 'Finance Mentor' },
+    { img: 'MAMSARLA.png', name: 'Ms. Sarla Devi', role: 'Finance Coach' },
   ];
 
   useEffect(() => {
@@ -697,8 +697,16 @@ export default function AboutUs() {
                   <div className="absolute top-0 left-0 z-[1] flex items-start justify-center overflow-hidden" style={{ width: '42px', height: '100%', paddingTop: '16px' }}>
                     <span style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)', color: 'rgba(255,255,255,0.22)', fontSize: '1.4rem', fontWeight: 900, letterSpacing: '0.25em', textTransform: 'uppercase', whiteSpace: 'nowrap', userSelect: 'none' }}>Getmeds</span>
                   </div>
-                  {/* Photo sits on top of gradient background */}
-                  <img src={getImage(`assets/${member.img}`, `assets/${member.img}`)} alt={member.name} className="absolute inset-0 w-full h-full object-cover object-top rounded-[1.3rem] transition-all duration-700 z-[2]" />
+                  {/* Photo sits on top of gradient background; falls back to placeholder if the asset 404s */}
+                  <div className="absolute inset-0 w-full h-full flex flex-col items-center justify-center gap-1 rounded-[1.3rem] z-[2]">
+                    <i className="fa-regular fa-image text-white/70" style={{ fontSize: '16px' }}></i>
+                    <span className="text-white/70" style={{ fontSize: '10px', fontFamily: 'Poppins, sans-serif' }}>No image</span>
+                  </div>
+                  {member.img && (
+                    <img src={getImage(`assets/${member.img}`, `assets/${member.img}`)} alt={member.name}
+                      onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                      className="absolute inset-0 w-full h-full object-cover object-top rounded-[1.3rem] transition-all duration-700 z-[3]" />
+                  )}
                   {/* LinkedIn hover */}
                   <div className="absolute top-3 right-3 z-20 opacity-0 translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
                     <a href="#" className="h-7 w-7 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-primary transition shadow-lg">
@@ -783,21 +791,21 @@ export default function AboutUs() {
       <section className="py-16 mb-8">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div
-            className="bg-gradient-to-r from-blue-600 to-blue-400 rounded-3xl p-10 md:p-14 text-center text-white shadow-2xl relative overflow-hidden ca-anim ca-zoom">
+            className="bg-gradient-to-r from-blue-600 to-blue-400 rounded-3xl p-10 md:p-14 text-center text-white relative overflow-hidden ca-anim ca-zoom">
             {/* Decor */}
             <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full transform translate-x-1/3 -translate-y-1/3"></div>
             <div className="absolute bottom-0 left-0 w-48 h-48 bg-white opacity-5 rounded-full transform -translate-x-1/4 translate-y-1/4"></div>
 
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 relative z-10">Ready to take control of your health?</h2>
-            <p className="text-blue-50 text-lg mb-8 max-w-2xl mx-auto relative z-10">Join thousands of satisfied
+            <h2 className="text-xl md:text-2xl font-bold mb-3 relative z-10">Ready to take control of your health?</h2>
+            <p className="text-blue-50 text-sm md:text-base mb-6 max-w-2xl mx-auto relative z-10">Join thousands of satisfied
               patients and experience the future of healthcare today.</p>
-            <div className="flex flex-col sm:flex-row justify-center gap-4 relative z-10">
+            <div className="flex flex-col sm:flex-row justify-center gap-3 relative z-10">
               <a href="order-medicines.html"
-                className="bg-white text-blue-600 font-bold px-8 py-3.5 rounded-full shadow-lg hover:bg-gray-50 transition transform hover:-translate-y-1">
+                className="bg-white text-blue-600 font-bold text-sm px-6 py-2.5 rounded-full hover:bg-gray-50 transition transform hover:-translate-y-1">
                 Order Medicines
               </a>
               <a href="contact-us.html"
-                className="bg-transparent border-2 border-white text-white font-bold px-8 py-3.5 rounded-full hover:bg-white/10 transition transform hover:-translate-y-1">
+                className="bg-transparent border-2 border-white text-white font-bold text-sm px-6 py-2.5 rounded-full hover:bg-white/10 transition transform hover:-translate-y-1">
                 Contact Us
               </a>
             </div>

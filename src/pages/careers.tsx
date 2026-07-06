@@ -18,7 +18,7 @@ const Careers: React.FC = () => {
   useEffect(() => {
     setPageMeta({
       title: 'Careers',
-      description: 'Join the Getmeds team. We are looking for passionate individuals to innovate and grow with us in the global healthcare space.',
+      description: "Join our mission to make healthcare accessible worldwide. We're looking for passionate individuals to innovate and grow with us.",
       path: '/careers.html',
     });
   }, []);
@@ -295,6 +295,153 @@ const Careers: React.FC = () => {
         </div>
       </section>
 
+      {/* WHY PROFESSIONALS CHOOSE Getmeds */}
+      <section className="py-20 bg-white relative overflow-hidden">
+        {/* Left gradient decoration */}
+        <div className="absolute left-0 top-0 h-full w-56 pointer-events-none">
+          <svg className="w-full h-full" viewBox="0 0 224 600" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <radialGradient id="careersLeftGrad" cx="0%" cy="100%" r="100%">
+                <stop offset="0%" stopColor="#61A644" stopOpacity="0.9" />
+                <stop offset="55%" stopColor="#1D9FDA" stopOpacity="0.55" />
+                <stop offset="100%" stopColor="#FFF7ED" stopOpacity="0" />
+              </radialGradient>
+            </defs>
+            <rect width="224" height="600" fill="url(#careersLeftGrad)" />
+            <path d="M 0 520 A 80 80 0 0 1 80 600" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="1.5" />
+            <path d="M 0 440 A 160 160 0 0 1 160 600" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="1.5" />
+            <path d="M 0 360 A 240 240 0 0 1 224 514" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="1.5" />
+            <path d="M 0 280 A 320 320 0 0 1 224 372" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="1.5" />
+            <path d="M 0 200 A 400 400 0 0 1 224 269" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="1.5" />
+            <path d="M 0 120 A 480 480 0 0 1 224 176" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="1.5" />
+            <path d="M 0 40 A 560 560 0 0 1 224 87" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="1.5" />
+          </svg>
+        </div>
+        {/* Right gradient decoration */}
+        <div className="absolute right-0 top-0 h-full w-56 pointer-events-none">
+          <svg className="w-full h-full" viewBox="0 0 224 600" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <radialGradient id="careersRightGrad" cx="100%" cy="100%" r="100%">
+                <stop offset="0%" stopColor="#61A644" stopOpacity="0.8" />
+                <stop offset="55%" stopColor="#1D9FDA" stopOpacity="0.5" />
+                <stop offset="100%" stopColor="#FFF1F2" stopOpacity="0" />
+              </radialGradient>
+            </defs>
+            <rect width="224" height="600" fill="url(#careersRightGrad)" />
+            <path d="M 224 520 A 80 80 0 0 0 144 600" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="1.5" />
+            <path d="M 224 440 A 160 160 0 0 0 64 600" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="1.5" />
+            <path d="M 224 360 A 240 240 0 0 0 0 514" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="1.5" />
+            <path d="M 224 280 A 320 320 0 0 0 0 372" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="1.5" />
+            <path d="M 224 200 A 400 400 0 0 0 0 269" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="1.5" />
+            <path d="M 224 120 A 480 480 0 0 0 0 176" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="1.5" />
+            <path d="M 224 40 A 560 560 0 0 0 0 87" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="1.5" />
+          </svg>
+        </div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="ca-anim ca-up text-center max-w-3xl mx-auto mb-16">
+            <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent font-bold uppercase tracking-widest text-lg block mb-4">Career Advantages</span>
+            <h2 className="text-3xl md:text-4xl font-semibold text-dark mb-4">
+              Why professionals choose{' '}
+              <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent inline-block">Getmeds</span>?
+            </h2>
+            <p className="text-gray-500 text-[15px]">We provide more than just a job; we offer a path to excellence,
+              innovation, and global impact in the healthcare industry.</p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 xl:grid-cols-5 gap-6">
+            <div className="ca-anim ca-up bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+              <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center mb-5">
+                <i className="fa-solid fa-microscope text-2xl text-primary"></i>
+              </div>
+              <h4 className="text-[15px] font-semibold text-dark mb-2">Major Portfolio</h4>
+              <p className="text-[13px] text-gray-500 leading-relaxed">One of the largest Hematology &amp; Oncology
+                portfolios in the Philippines.</p>
+            </div>
+
+            <div className="ca-anim ca-up ca-d1 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+              <div className="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center mb-5">
+                <i className="fa-solid fa-certificate text-2xl text-success"></i>
+              </div>
+              <h4 className="text-[15px] font-semibold text-dark mb-2">Exclusive Products</h4>
+              <p className="text-[13px] text-gray-500 leading-relaxed">Exclusive CSP products available to Filipino
+                patients.</p>
+            </div>
+
+            <div className="ca-anim ca-up ca-d2 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+              <div className="w-12 h-12 rounded-xl bg-purple-50 flex items-center justify-center mb-5">
+                <i className="fa-solid fa-route text-2xl text-[#8B5CF6]"></i>
+              </div>
+              <h4 className="text-[15px] font-semibold text-dark mb-2">Structured Path</h4>
+              <p className="text-[13px] text-gray-500 leading-relaxed">Structured Career Development Path within the
+                first 6 months of joining.</p>
+            </div>
+
+            <div className="ca-anim ca-up ca-d3 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+              <div className="w-12 h-12 rounded-xl bg-orange-50 flex items-center justify-center mb-5">
+                <i className="fa-solid fa-arrow-up-right-dots text-2xl text-[#F59E0B]"></i>
+              </div>
+              <h4 className="text-[15px] font-semibold text-dark mb-2">Fast Promotion</h4>
+              <p className="text-[13px] text-gray-500 leading-relaxed">Fast-track Promotions &amp; Annual Salary
+                Increments for high performers.</p>
+            </div>
+
+            <div className="ca-anim ca-up ca-d4 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+              <div className="w-12 h-12 rounded-xl bg-red-50 flex items-center justify-center mb-5">
+                <i className="fa-solid fa-money-bill-trend-up text-2xl text-[#EF4444]"></i>
+              </div>
+              <h4 className="text-[15px] font-semibold text-dark mb-2">Top Compensation</h4>
+              <p className="text-[13px] text-gray-500 leading-relaxed">Competitive Compensation Package with
+                Attractive Monthly Incentives.</p>
+            </div>
+
+            <div className="ca-anim ca-up ca-d5 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+              <div className="w-12 h-12 rounded-xl bg-indigo-50 flex items-center justify-center mb-5">
+                <i className="fa-solid fa-car-side text-2xl text-[#6366F1]"></i>
+              </div>
+              <h4 className="text-[15px] font-semibold text-dark mb-2">Company Car</h4>
+              <p className="text-[13px] text-gray-500 leading-relaxed">Free Company Car Program — vehicle ownership
+                under the employee's name.</p>
+            </div>
+
+            <div className="ca-anim ca-up ca-d6 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+              <div className="w-12 h-12 rounded-xl bg-cyan-50 flex items-center justify-center mb-5">
+                <i className="fa-solid fa-plane-departure text-2xl text-[#06B6D4]"></i>
+              </div>
+              <h4 className="text-[15px] font-semibold text-dark mb-2">Travel Incentives</h4>
+              <p className="text-[13px] text-gray-500 leading-relaxed">All-Expense-Paid International Travel
+                Incentives after 2 years of service.</p>
+            </div>
+
+            <div className="ca-anim ca-up ca-d7 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+              <div className="w-12 h-12 rounded-xl bg-pink-50 flex items-center justify-center mb-5">
+                <i className="fa-solid fa-heart-pulse text-2xl text-[#EC4899]"></i>
+              </div>
+              <h4 className="text-[15px] font-semibold text-dark mb-2">Wellness Focus</h4>
+              <p className="text-[13px] text-gray-500 leading-relaxed">Employee Wellness &amp; Meditation Programs to
+                support mental health.</p>
+            </div>
+
+            <div className="ca-anim ca-up ca-d8 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+              <div className="w-12 h-12 rounded-xl bg-yellow-50 flex items-center justify-center mb-5">
+                <i className="fa-solid fa-award text-2xl text-[#EAB308]"></i>
+              </div>
+              <h4 className="text-[15px] font-semibold text-dark mb-2">Recognition</h4>
+              <p className="text-[13px] text-gray-500 leading-relaxed">Recognition, Awards, and Employee Engagement
+                Initiatives year-round.</p>
+            </div>
+
+            <div className="ca-anim ca-up ca-d9 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+              <div className="w-12 h-12 rounded-xl bg-teal-50 flex items-center justify-center mb-5">
+                <i className="fa-solid fa-bolt-lightning text-2xl text-[#14B8A6]"></i>
+              </div>
+              <h4 className="text-[15px] font-semibold text-dark mb-2">Growth Environment</h4>
+              <p className="text-[13px] text-gray-500 leading-relaxed">Dynamic, high-performing, and growth-oriented
+                work environment.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* BENEFITS SECTION */}
       <section className="pt-10 pb-8 lg:pb-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -442,6 +589,144 @@ const Careers: React.FC = () => {
         </div>
       </section>
 
+      {/* CONVENTIONS SECTION */}
+      <section className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="ca-anim ca-up text-center max-w-3xl mx-auto mb-14">
+            <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent font-bold uppercase tracking-widest text-lg block mb-4">Industry Engagement</span>
+            <h2 className="text-3xl md:text-4xl font-semibold text-dark mb-4">
+              Conventions We've Been{' '}
+              <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent inline-block">Part Of</span>
+            </h2>
+            <p className="text-gray-500 text-[15px]">Our team regularly represents Getmeds at leading local and
+              international medical conventions, building partnerships that expand access to care.</p>
+          </div>
+
+          <span className="ca-anim ca-up inline-block bg-gradient-to-r from-[#61A644] to-[#1D9FDA] text-white text-sm font-semibold rounded-full px-4 py-1.5 mb-6">Local</span>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-14">
+            <div className="ca-anim ca-up bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 p-5 flex items-center gap-4">
+              <div className="relative w-28 h-28 shrink-0 rounded-xl overflow-hidden">
+                <img
+                  src="/assets/conventionfirst.jpg"
+                  alt="Philippine Society of Medical Oncology"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="flex-1">
+                <h4 className="text-[15px] font-semibold text-dark mb-2">Philippine Society of Medical Oncology</h4>
+                <p className="text-[13px] text-gray-500 leading-relaxed">Engaged with the country's leading oncology
+                  professionals to support better access to cancer care and treatment solutions.</p>
+              </div>
+            </div>
+
+            <div className="ca-anim ca-up ca-d1 bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 p-5 flex items-center gap-4">
+              <div className="relative w-28 h-28 shrink-0 rounded-xl overflow-hidden">
+                <img
+                  src="/assets/conventionsecond.JPG"
+                  alt="Philippine Society of Hematology and Blood Transfusion Annual Convention"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="flex-1">
+                <h4 className="text-[15px] font-semibold text-dark mb-2">Philippine Society of Hematology and Blood
+                  Transfusion Annual Convention</h4>
+                <p className="text-[13px] text-gray-500 leading-relaxed">Connected with hematology experts to advance
+                  patient access to therapies for blood disorders and related conditions.</p>
+              </div>
+            </div>
+
+            <div className="ca-anim ca-up ca-d2 bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 p-5 flex items-center gap-4">
+              <div className="relative w-28 h-28 shrink-0 rounded-xl overflow-hidden">
+                <img
+                  src="/assets/conventionthird.jpg"
+                  alt="ASEAN Congress of Anesthesiologists"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="flex-1">
+                <h4 className="text-[15px] font-semibold text-dark mb-2">ASEAN Congress of Anesthesiologists</h4>
+                <p className="text-[13px] text-gray-500 leading-relaxed">Strengthened regional partnerships with
+                  anesthesiology professionals while showcasing Getmeds' healthcare solutions.</p>
+              </div>
+            </div>
+
+            <div className="ca-anim ca-up ca-d3 bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 p-5 flex items-center gap-4">
+              <div className="relative w-28 h-28 shrink-0 rounded-xl overflow-hidden">
+                <img
+                  src="/assets/conventionfourth.JPG"
+                  alt="Philippine Society of Anesthesiologist Annual Convention"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="flex-1">
+                <h4 className="text-[15px] font-semibold text-dark mb-2">Philippine Society of Anesthesiologist
+                  Annual Convention</h4>
+                <p className="text-[13px] text-gray-500 leading-relaxed">Collaborated with anesthesiologists
+                  nationwide to promote accessible and reliable healthcare solutions for patients.</p>
+              </div>
+            </div>
+
+            <div className="ca-anim ca-up ca-d4 bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 p-5 flex items-center gap-4">
+              <div className="relative w-28 h-28 shrink-0 rounded-xl overflow-hidden">
+                <img
+                  src="/assets/conventionfifth.jpg"
+                  alt="Society of Gynecologic Oncologists of the Philippines (SGOP) Annual Convention"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="flex-1">
+                <h4 className="text-[15px] font-semibold text-dark mb-2">Society of Gynecologic Oncologists of the
+                  Philippines (SGOP) Annual Convention</h4>
+                <p className="text-[13px] text-gray-500 leading-relaxed">Demonstrated Getmeds' dedication to
+                  advancing care for women through collaboration with gynecologic oncology specialists.</p>
+              </div>
+            </div>
+
+            <div className="ca-anim ca-up ca-d5 bg-gradient-to-br from-[#61A644] to-[#1D9FDA] rounded-2xl p-5 flex items-center shadow-sm hover:shadow-xl transition-all duration-300">
+              <div className="flex-1">
+                <h4 className="text-white text-[15px] font-semibold mb-2">Growing Nationwide</h4>
+                <p className="text-white/80 text-[13px] leading-relaxed">Beyond these five conventions, we continue
+                  building lasting partnerships with medical societies across the Philippines.</p>
+              </div>
+            </div>
+          </div>
+
+          <span className="ca-anim ca-up inline-block bg-gradient-to-r from-[#61A644] to-[#1D9FDA] text-white text-sm font-semibold rounded-full px-4 py-1.5 mb-6">International</span>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="ca-anim ca-up ca-d6 bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 p-5 flex items-center gap-4">
+              <div className="relative w-28 h-28 shrink-0 rounded-xl overflow-hidden">
+                <img
+                  src="/assets/conventionsixth.DNG"
+                  alt="CPHI"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="flex-1">
+                <h4 className="text-[15px] font-semibold text-dark mb-2">CPHI</h4>
+                <p className="text-[13px] text-gray-500 leading-relaxed">Strengthened global pharmaceutical
+                  partnerships and explored innovative healthcare solutions through one of the world's leading pharma
+                  exhibitions.</p>
+              </div>
+            </div>
+
+            <div className="ca-anim ca-up ca-d7 bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 p-5 flex items-center gap-4">
+              <div className="relative w-28 h-28 shrink-0 rounded-xl overflow-hidden">
+                <img
+                  src="/assets/conventionseventh.jpg"
+                  alt="IPHEX"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="flex-1">
+                <h4 className="text-[15px] font-semibold text-dark mb-2">IPHEX</h4>
+                <p className="text-[13px] text-gray-500 leading-relaxed">Connected with international pharmaceutical
+                  manufacturers to expand collaboration and improve access to quality medicines in the Philippines.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* QUOTE SECTION */}
       <section className="py-20 bg-white">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -480,153 +765,6 @@ const Careers: React.FC = () => {
               className="flex-shrink-0 bg-dark hover:bg-gray-900 text-white font-semibold py-3 px-6 rounded-xl text-[13px] transition whitespace-nowrap shadow-md">
               Explore Your Future Roles
             </a>
-          </div>
-        </div>
-      </section>
-
-      {/* WHY PROFESSIONALS CHOOSE Getmeds */}
-      <section className="py-20 bg-white relative overflow-hidden">
-        {/* Left gradient decoration */}
-        <div className="absolute left-0 top-0 h-full w-56 pointer-events-none">
-          <svg className="w-full h-full" viewBox="0 0 224 600" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <radialGradient id="careersLeftGrad" cx="0%" cy="100%" r="100%">
-                <stop offset="0%" stopColor="#61A644" stopOpacity="0.9" />
-                <stop offset="55%" stopColor="#1D9FDA" stopOpacity="0.55" />
-                <stop offset="100%" stopColor="#FFF7ED" stopOpacity="0" />
-              </radialGradient>
-            </defs>
-            <rect width="224" height="600" fill="url(#careersLeftGrad)" />
-            <path d="M 0 520 A 80 80 0 0 1 80 600" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="1.5" />
-            <path d="M 0 440 A 160 160 0 0 1 160 600" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="1.5" />
-            <path d="M 0 360 A 240 240 0 0 1 224 514" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="1.5" />
-            <path d="M 0 280 A 320 320 0 0 1 224 372" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="1.5" />
-            <path d="M 0 200 A 400 400 0 0 1 224 269" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="1.5" />
-            <path d="M 0 120 A 480 480 0 0 1 224 176" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="1.5" />
-            <path d="M 0 40 A 560 560 0 0 1 224 87" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="1.5" />
-          </svg>
-        </div>
-        {/* Right gradient decoration */}
-        <div className="absolute right-0 top-0 h-full w-56 pointer-events-none">
-          <svg className="w-full h-full" viewBox="0 0 224 600" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <radialGradient id="careersRightGrad" cx="100%" cy="100%" r="100%">
-                <stop offset="0%" stopColor="#61A644" stopOpacity="0.8" />
-                <stop offset="55%" stopColor="#1D9FDA" stopOpacity="0.5" />
-                <stop offset="100%" stopColor="#FFF1F2" stopOpacity="0" />
-              </radialGradient>
-            </defs>
-            <rect width="224" height="600" fill="url(#careersRightGrad)" />
-            <path d="M 224 520 A 80 80 0 0 0 144 600" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="1.5" />
-            <path d="M 224 440 A 160 160 0 0 0 64 600" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="1.5" />
-            <path d="M 224 360 A 240 240 0 0 0 0 514" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="1.5" />
-            <path d="M 224 280 A 320 320 0 0 0 0 372" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="1.5" />
-            <path d="M 224 200 A 400 400 0 0 0 0 269" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="1.5" />
-            <path d="M 224 120 A 480 480 0 0 0 0 176" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="1.5" />
-            <path d="M 224 40 A 560 560 0 0 0 0 87" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="1.5" />
-          </svg>
-        </div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="ca-anim ca-up text-center max-w-3xl mx-auto mb-16">
-            <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent font-bold uppercase tracking-widest text-lg block mb-4">Career Advantages</span>
-            <h2 className="text-3xl md:text-4xl font-semibold text-dark mb-4">
-              Why professionals choose{' '}
-              <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent inline-block">Getmeds</span>?
-            </h2>
-            <p className="text-gray-500 text-[15px]">We provide more than just a job; we offer a path to excellence,
-              innovation, and global impact in the healthcare industry.</p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 xl:grid-cols-5 gap-6">
-            <div className="ca-anim ca-up bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-              <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center mb-5">
-                <i className="fa-solid fa-microscope text-2xl text-primary"></i>
-              </div>
-              <h4 className="text-[15px] font-semibold text-dark mb-2">Major Portfolio</h4>
-              <p className="text-[13px] text-gray-500 leading-relaxed">One of the largest Hematology &amp; Oncology
-                portfolios in the Philippines.</p>
-            </div>
-
-            <div className="ca-anim ca-up ca-d1 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-              <div className="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center mb-5">
-                <i className="fa-solid fa-certificate text-2xl text-success"></i>
-              </div>
-              <h4 className="text-[15px] font-semibold text-dark mb-2">Exclusive Products</h4>
-              <p className="text-[13px] text-gray-500 leading-relaxed">Exclusive CSP products available to Filipino
-                patients only through Getmeds.</p>
-            </div>
-
-            <div className="ca-anim ca-up ca-d2 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-              <div className="w-12 h-12 rounded-xl bg-purple-50 flex items-center justify-center mb-5">
-                <i className="fa-solid fa-route text-2xl text-[#8B5CF6]"></i>
-              </div>
-              <h4 className="text-[15px] font-semibold text-dark mb-2">Structured Path</h4>
-              <p className="text-[13px] text-gray-500 leading-relaxed">Structured Career Development Path within the
-                first 6 months of joining.</p>
-            </div>
-
-            <div className="ca-anim ca-up ca-d3 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-              <div className="w-12 h-12 rounded-xl bg-orange-50 flex items-center justify-center mb-5">
-                <i className="fa-solid fa-arrow-up-right-dots text-2xl text-[#F59E0B]"></i>
-              </div>
-              <h4 className="text-[15px] font-semibold text-dark mb-2">Fast Promotion</h4>
-              <p className="text-[13px] text-gray-500 leading-relaxed">Fast-track Promotions &amp; Annual Salary
-                Increments for high performers.</p>
-            </div>
-
-            <div className="ca-anim ca-up ca-d4 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-              <div className="w-12 h-12 rounded-xl bg-red-50 flex items-center justify-center mb-5">
-                <i className="fa-solid fa-money-bill-trend-up text-2xl text-[#EF4444]"></i>
-              </div>
-              <h4 className="text-[15px] font-semibold text-dark mb-2">Top Compensation</h4>
-              <p className="text-[13px] text-gray-500 leading-relaxed">Competitive Compensation Package with
-                Attractive Monthly Incentives.</p>
-            </div>
-
-            <div className="ca-anim ca-up ca-d5 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-              <div className="w-12 h-12 rounded-xl bg-indigo-50 flex items-center justify-center mb-5">
-                <i className="fa-solid fa-car-side text-2xl text-[#6366F1]"></i>
-              </div>
-              <h4 className="text-[15px] font-semibold text-dark mb-2">Company Car</h4>
-              <p className="text-[13px] text-gray-500 leading-relaxed">Free Company Car Program — vehicle ownership
-                under the employee's name.</p>
-            </div>
-
-            <div className="ca-anim ca-up ca-d6 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-              <div className="w-12 h-12 rounded-xl bg-cyan-50 flex items-center justify-center mb-5">
-                <i className="fa-solid fa-plane-departure text-2xl text-[#06B6D4]"></i>
-              </div>
-              <h4 className="text-[15px] font-semibold text-dark mb-2">Travel Incentives</h4>
-              <p className="text-[13px] text-gray-500 leading-relaxed">All-Expense-Paid International Travel
-                Incentives after 2 years of service.</p>
-            </div>
-
-            <div className="ca-anim ca-up ca-d7 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-              <div className="w-12 h-12 rounded-xl bg-pink-50 flex items-center justify-center mb-5">
-                <i className="fa-solid fa-heart-pulse text-2xl text-[#EC4899]"></i>
-              </div>
-              <h4 className="text-[15px] font-semibold text-dark mb-2">Wellness Focus</h4>
-              <p className="text-[13px] text-gray-500 leading-relaxed">Employee Wellness &amp; Meditation Programs to
-                support mental health.</p>
-            </div>
-
-            <div className="ca-anim ca-up ca-d8 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-              <div className="w-12 h-12 rounded-xl bg-yellow-50 flex items-center justify-center mb-5">
-                <i className="fa-solid fa-award text-2xl text-[#EAB308]"></i>
-              </div>
-              <h4 className="text-[15px] font-semibold text-dark mb-2">Recognition</h4>
-              <p className="text-[13px] text-gray-500 leading-relaxed">Recognition, Awards, and Employee Engagement
-                Initiatives year-round.</p>
-            </div>
-
-            <div className="ca-anim ca-up ca-d9 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-              <div className="w-12 h-12 rounded-xl bg-teal-50 flex items-center justify-center mb-5">
-                <i className="fa-solid fa-bolt-lightning text-2xl text-[#14B8A6]"></i>
-              </div>
-              <h4 className="text-[15px] font-semibold text-dark mb-2">Growth Environment</h4>
-              <p className="text-[13px] text-gray-500 leading-relaxed">Dynamic, high-performing, and growth-oriented
-                work environment.</p>
-            </div>
           </div>
         </div>
       </section>

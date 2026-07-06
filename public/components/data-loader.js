@@ -25,7 +25,7 @@
     'csr': 'csr',
     'ungc': 'ungc',
     'order-medicines': 'order-medicines',
-    'pap': 'pap',
+    'patient-assistance-program': 'pap',
     'product-range': 'products'
   };
 

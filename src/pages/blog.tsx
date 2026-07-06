@@ -117,7 +117,7 @@ export default function Blog() {
   useEffect(() => {
     setPageMeta({
       title: 'Blog',
-      description: 'Stay informed with the latest pharmaceutical news, healthcare insights, and industry updates from Getmeds.',
+      description: 'Stay informed with the latest news, health guides, and updates from Getmeds — your trusted source for pharmaceutical insights and patient care resources in the Philippines.',
       path: '/blog.html',
     });
   }, []);

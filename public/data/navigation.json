@@ -104,7 +104,7 @@
         "links": [
           { "label": "Our Services", "href": "services.html" },
           { "label": "Global Presence", "href": "global-presence.html" },
-          { "label": "Patient Assistance Program", "href": "pap.html", "isLogoLink": true, "logoSrc": "assets/PAPlogo.png", "logoAlt": "Patient Assistance Program" }
+          { "label": "Patient Assistance Program", "href": "patient-assistance-program.html", "isLogoLink": true, "logoSrc": "assets/PAPlogo.png", "logoAlt": "Patient Assistance Program" }
         ]
       },
       {

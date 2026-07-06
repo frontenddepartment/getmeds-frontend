@@ -139,13 +139,13 @@ export default function GetMedsHomepage() {
   // Build slides from Sanity pageAsset docs (Home Hero Background images); fall back to hardcoded if none
   const heroSlides = (heroSlidesData && heroSlidesData.length > 0)
     ? heroSlidesData.slice(0, 5).map((s, idx) => {
-        const fallback = fallbackHeroSlides[idx % fallbackHeroSlides.length];
-        return {
-          bg: s.image ? urlFor(s.image).url() : fallback.bg,
-          heading: s.altText || fallback.heading,
-          sub: fallback.sub,
-        };
-      })
+      const fallback = fallbackHeroSlides[idx % fallbackHeroSlides.length];
+      return {
+        bg: s.image ? urlFor(s.image).url() : fallback.bg,
+        heading: s.altText || fallback.heading,
+        sub: fallback.sub,
+      };
+    })
     : fallbackHeroSlides;
   const [heroIndex, setHeroIndex] = useState(0);
   const [heroFading, setHeroFading] = useState(false);
@@ -810,7 +810,7 @@ export default function GetMedsHomepage() {
                 {/* Phone — Medicine Inquiries (static) */}
                 <a href="tel:+639190769103" className="flex items-center space-x-2 hover:text-primary transition">
                   <i className="fa-solid fa-phone"></i>
-                  <span id="topbar-phone">+63 919 076 9103</span>
+                  <span id="topbar-phone">+63 919 076 9105</span>
                 </a>
                 {/* Socials — static links from contact page */}
                 <div className="flex items-center space-x-4 border-l border-white/20 pl-6">
@@ -978,7 +978,7 @@ export default function GetMedsHomepage() {
                 </div>
 
                 <a href="about-us.html" className={`transition-colors duration-300 whitespace-nowrap ${isScrolled ? 'text-gray-700 hover:text-primary' : 'text-[#000b5d] hover:text-primary'}`}>About Us</a>
-                <a href="pap.html" className="inline-flex items-center opacity-80 hover:opacity-100 transition-all duration-200 hover:-translate-y-0.5 transform">
+                <a href="patient-assistance-program.html" className="inline-flex items-center opacity-80 hover:opacity-100 transition-all duration-200 hover:-translate-y-0.5 transform">
                   <img src={getImage('Patient Assistance Program Logo', 'assets/pap.png')} alt="Patient Assistance Program" className="h-[88px] w-auto object-contain" />
                 </a>
 
@@ -999,6 +999,7 @@ export default function GetMedsHomepage() {
                               <li><a href="services.html" onMouseEnter={() => handleCompanyLinkEnter('services')} onMouseLeave={() => handleCompanyLinkLeave('services')} className="relative inline-block text-gray-700 font-semibold hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300 text-base">Our Services</a></li>
                               <li><a href="global-presence.html" onMouseEnter={() => handleCompanyLinkEnter('globalPresence')} onMouseLeave={() => handleCompanyLinkLeave('globalPresence')} className="relative inline-block text-gray-700 font-semibold hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300 text-base">Global Presence</a></li>
                               <li><a href="meditations.html" onMouseEnter={() => handleCompanyLinkEnter('meditations')} onMouseLeave={() => handleCompanyLinkLeave('meditations')} className="relative inline-block text-gray-700 font-semibold hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300 text-base">Meditations</a></li>
+                              {/* <li><a href="employee-verification.html" className="relative inline-block text-gray-700 font-semibold hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300 text-base">Employee Verification Portal</a></li> */}
                             </ul>
                           </div>
                           <div>
@@ -1130,7 +1131,7 @@ export default function GetMedsHomepage() {
                 </div>
 
                 <a href="about-us.html" className="flex items-center px-3 py-3.5 text-[15px] font-semibold text-gray-700 border-b border-gray-100 hover:text-primary transition">About Us</a>
-                <a href="pap.html" className="flex items-center px-3 py-2 border-b border-gray-100">
+                <a href="patient-assistance-program.html" className="flex items-center px-3 py-2 border-b border-gray-100">
                   <img src={getImage('PAP Logo White', 'assets/PAPlogo.png')} alt="Patient Assistance Program" className="h-10 w-auto object-contain opacity-80 hover:opacity-100 transition" />
                 </a>
 
@@ -1145,6 +1146,7 @@ export default function GetMedsHomepage() {
                       <a href="services.html" className="block pl-5 py-2.5 text-[14px] font-medium text-gray-600 hover:text-primary transition">Our Services</a>
                       <a href="global-presence.html" className="block pl-5 py-2.5 text-[14px] font-medium text-gray-600 hover:text-primary transition">Global Presence</a>
                       <a href="meditations.html" className="block pl-5 py-2.5 text-[14px] font-medium text-gray-600 hover:text-primary transition">Meditations</a>
+                      {/* <a href="employee-verification.html" className="block pl-5 py-2.5 text-[14px] font-medium text-gray-600 hover:text-primary transition">Employee Verification Portal</a> */}
                       <a href="csr.html" className="block pl-5 py-2.5 text-[14px] font-medium text-gray-600 hover:text-primary transition">CSR</a>
                       <a href="careers.html" className="block pl-5 py-2.5 text-[14px] font-medium text-gray-600 hover:text-primary transition">Careers</a>
                       <a href="ungc.html" className="block pl-5 py-2.5 text-[14px] font-medium text-gray-600 hover:text-primary transition">United Nations Global Compact</a>
@@ -1165,32 +1167,34 @@ export default function GetMedsHomepage() {
           )}
         </div>
 
-        {/* Hero Content Area */}
-        <div className="max-w-7xl mx-auto px-6 w-full relative z-10 flex-grow flex items-center justify-center md:justify-start pt-20 md:pt-28 pb-16 md:pb-20 text-center md:text-left">
-          <div className="max-w-2xl space-y-3 mx-auto md:mx-0 flex flex-col items-center md:items-start">
-            <div style={{ opacity: heroFading ? 0 : 1, transition: 'opacity 0.4s ease' }}>
-              <h1 className="text-2xl md:text-5xl lg:text-6xl font-bold leading-[1.1] tracking-tight bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent mb-3">
-                {heroSlides[heroIndex].heading.split('\n').map((line, i, arr) => (
-                  <React.Fragment key={i}>{line}{i < arr.length - 1 && <br />}</React.Fragment>
-                ))}
-              </h1>
-              <p className="text-[#000b5d] text-sm md:text-base font-medium leading-relaxed max-w-xl mx-auto md:mx-0">
-                {heroSlides[heroIndex].sub}
-              </p>
-            </div>
+        {/* Hero Content Area — heading, subtext, and buttons hidden on the 2nd slide */}
+        {heroIndex !== 1 && (
+          <div className="max-w-7xl mx-auto px-6 w-full relative z-10 flex-grow flex items-center justify-center md:justify-start pt-20 md:pt-28 pb-16 md:pb-20 text-center md:text-left">
+            <div className="max-w-2xl space-y-3 mx-auto md:mx-0 flex flex-col items-center md:items-start">
+              <div style={{ opacity: heroFading ? 0 : 1, transition: 'opacity 0.4s ease' }}>
+                <h1 className="text-2xl md:text-5xl lg:text-6xl font-bold leading-[1.1] tracking-tight bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent mb-3">
+                  {heroSlides[heroIndex].heading.split('\n').map((line, i, arr) => (
+                    <React.Fragment key={i}>{line}{i < arr.length - 1 && <br />}</React.Fragment>
+                  ))}
+                </h1>
+                <p className="text-[#000b5d] text-sm md:text-base font-medium leading-relaxed max-w-xl mx-auto md:mx-0">
+                  {heroSlides[heroIndex].sub}
+                </p>
+              </div>
 
-            {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row justify-center md:justify-start gap-3 pt-2">
-              <a href="/cancer-medicines" className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:opacity-90 text-white text-center font-bold uppercase tracking-wider text-[11px] px-6 py-3 rounded-lg shadow-2xl shadow-blue-500/40 transition-all flex items-center justify-center gap-2 group">
-                Our Solutions <i className="fa-solid fa-chevron-right group-hover:translate-x-1 transition-transform"></i>
-              </a>
-              <button onClick={() => setIsInquiryOpen(true)} className="bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/40 text-center font-bold uppercase tracking-wider text-[11px] px-6 py-3 rounded-lg transition-all flex items-center justify-center gap-2">
-                <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">Become a Partner</span>
-                <i className="fa-solid fa-phone text-[#1D9FDA]"></i>
-              </button>
+              {/* Action Buttons */}
+              <div className="flex flex-col sm:flex-row justify-center md:justify-start gap-3 pt-2">
+                <a href="/cancer-medicines" className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:opacity-90 text-white text-center font-bold uppercase tracking-wider text-[11px] px-6 py-3 rounded-lg shadow-2xl shadow-blue-500/40 transition-all flex items-center justify-center gap-2 group">
+                  Our Solutions <i className="fa-solid fa-chevron-right group-hover:translate-x-1 transition-transform"></i>
+                </a>
+                <button onClick={() => setIsInquiryOpen(true)} className="bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/40 text-center font-bold uppercase tracking-wider text-[11px] px-6 py-3 rounded-lg transition-all flex items-center justify-center gap-2">
+                  <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">Become a Partner</span>
+                  <i className="fa-solid fa-phone text-[#1D9FDA]"></i>
+                </button>
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
         {/* Slider Controls — dots + arrows */}
         <div className="absolute bottom-5 left-0 right-0 z-20 flex items-center justify-center gap-6">
@@ -1411,12 +1415,12 @@ export default function GetMedsHomepage() {
       {/* Therapeutic Areas Section */}
       {(() => {
         const therapCards = [
-          { name: "Oncology", badge: "50+ Products", img: getImage("assets/oncology.jpg", "assets/oncology.jpg"), marquee: "Breast Cancer • Ovarian Cancer • Non-Small Cell Lung Cancer • Prostate Cancer • Colorectal Cancer • Pancreatic Cancer • ", link: "/cancer-medicines/oncology" },
-          { name: "Cardiology", badge: "35+ Products", img: getImage("assets/cardiology.jpg", "assets/cardiology.jpg"), marquee: "Arrhythmia Management • Hypertension/Angina • Heart Failure • Atrial Fibrillation • Coronary Artery Disease • ", link: "/cancer-medicines/cardiology" },
-          { name: "Neurology", badge: "40+ Products", img: getImage("assets/neurology.jpg", "assets/neurology.jpg"), marquee: "Glioblastoma Multiforme • Chronic Pain • Inflammatory Disorders • Osteoporosis • Multiple Myeloma • Neuro-Oncology • ", link: "/cancer-medicines/neuro-oncology" },
-          { name: "Hematology", badge: "60+ Products", img: getImage("assets/hematology.jpg", "assets/hematology.jpg"), marquee: "Acute Myeloid Leukemia • Chronic Myeloid Leukemia • Hodgkin/Non-Hodgkin's Lymphoma • Sickle Cell Anemia • ", link: "/cancer-medicines/hematology" },
-          { name: "Anti-Infectives", badge: "45+ Products", img: getImage("assets/anti-infectives.jpg", "assets/anti-infectives.jpg"), marquee: "Respiratory Infections • Urinary Tract Infections • Skin and Soft Tissue Infections • Bone and Joint Infections • ", link: "/cancer-medicines/anti-infectives" },
-          { name: "Endocrinology", badge: "30+ Products", img: getImage("assets/endocrinology.jpg", "assets/endocrinology.jpg"), marquee: "Endometriosis • Fibrocystic Breast Disease • Diabetes Management • Thyroid Disorders • Metabolic Syndrome • ", link: "/cancer-medicines/endocrinology" },
+          { name: "Oncology", badge: "50+ Products", img: getImage("assets/therapeuticareaoncology.png", "assets/therapeuticareaoncology.png"), marquee: "Breast Cancer • Ovarian Cancer • Non-Small Cell Lung Cancer • Prostate Cancer • Colorectal Cancer • Pancreatic Cancer • ", link: "/cancer-medicines/oncology" },
+          { name: "Cardiology", badge: "35+ Products", img: getImage("assets/therapeuticareacardiology.png", "assets/therapeuticareacardiology.png"), marquee: "Arrhythmia Management • Hypertension/Angina • Heart Failure • Atrial Fibrillation • Coronary Artery Disease • ", link: "/cancer-medicines/cardiology" },
+          { name: "Neurology", badge: "40+ Products", img: getImage("assets/therapeuticareaneurology.png", "assets/therapeuticareaneurology.png"), marquee: "Glioblastoma Multiforme • Chronic Pain • Inflammatory Disorders • Osteoporosis • Multiple Myeloma • Neuro-Oncology • ", link: "/cancer-medicines/neuro-oncology" },
+          { name: "Hematology", badge: "60+ Products", img: getImage("assets/therapeuticareahematology.png", "assets/therapeuticareahematology.png"), marquee: "Acute Myeloid Leukemia • Chronic Myeloid Leukemia • Hodgkin/Non-Hodgkin's Lymphoma • Sickle Cell Anemia • ", link: "/cancer-medicines/hematology" },
+          { name: "Anti-Infectives", badge: "45+ Products", img: getImage("assets/therapeuticareaantiinfectives.jpg", "assets/therapeuticareaantiinfectives.jpg"), marquee: "Respiratory Infections • Urinary Tract Infections • Skin and Soft Tissue Infections • Bone and Joint Infections • ", link: "/cancer-medicines/anti-infectives" },
+          { name: "Endocrinology", badge: "30+ Products", img: getImage("assets/therapeuticareaendocrinology.jpg", "assets/therapeuticareaendocrinology.jpg"), marquee: "Endometriosis • Fibrocystic Breast Disease • Diabetes Management • Thyroid Disorders • Metabolic Syndrome • ", link: "/cancer-medicines/endocrinology" },
           { name: "Orthopedic", badge: "25+ Products", img: getImage("assets/orthopedic.jpg", "assets/orthopedic.jpg"), marquee: "Multiple Myeloma • Osteoporosis • Joint Replacement Support • Fracture Recovery • Bone Metastases • ", link: "/cancer-medicines/orthopedic" },
           { name: "Respiratory", badge: "35+ Products", img: getImage("assets/respiratory.jpg", "assets/respiratory.jpg"), marquee: "Seasonal Allergic Rhinitis • Asthma • COPD • Bronchitis • Pulmonary Hypertension • Chronic Kidney Disease • ", link: "/cancer-medicines/respiratory" },
           { name: "Essential Medicines", badge: "100+ Products", img: getImage("assets/essential-medicines.jpg", "assets/essential-medicines.jpg"), marquee: "Generic Medicines • OTC Products • Vitamins & Supplements • First-line Treatments • Essential Drug List • ", link: "/cancer-medicines" },

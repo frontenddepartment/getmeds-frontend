@@ -771,7 +771,11 @@ export default function CancerMedicines() {
     const parts = [brand, molecule, strength, form].filter(Boolean).join('-');
     const cleanProductSlug = parts.replace(/-+/g, '-').replace(/(^-|-$)/g, '');
     
-    return `/cancer-medicines/${cleanProductSlug}`;
+    let url = `/cancer-medicines/${cleanProductSlug}`;
+    if (currentCategory && currentCategory !== 'All') {
+      url += `?category=${encodeURIComponent(currentCategory)}`;
+    }
+    return url;
   };
 
   const selectCategory = (category: string) => {
@@ -944,6 +948,26 @@ export default function CancerMedicines() {
               </div>
             </div>
           </section>
+
+          {/* Breadcrumb */}
+          <nav className="px-4 sm:px-6 lg:px-8 pb-2 pt-1" aria-label="Breadcrumb">
+            <ol className="flex items-center gap-1.5 text-[12px] text-gray-400 flex-wrap">
+              <li>
+                <button
+                  onClick={() => selectCategory('All')}
+                  className="hover:text-primary transition-colors font-medium"
+                >
+                  Cancer Medicines
+                </button>
+              </li>
+              {currentCategory !== 'All' && (
+                <>
+                  <li className="text-gray-300"><i className="fa-solid fa-chevron-right text-[9px]" /></li>
+                  <li className="font-semibold text-gray-700 truncate max-w-[200px]">{currentCategory}</li>
+                </>
+              )}
+            </ol>
+          </nav>
 
           {/* PRODUCTS LIST */}
           <section className="px-4 sm:px-6 lg:px-8 mb-24">

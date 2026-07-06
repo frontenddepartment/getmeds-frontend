@@ -34,7 +34,7 @@ export default function ContactUs() {
   useEffect(() => {
     setPageMeta({
       title: 'Contact Us',
-      description: 'Get in touch with Getmeds Philippines. Reach our team for pharmaceutical inquiries, product availability, and patient assistance program support.',
+      description: 'For inquiries about our pharmaceutical portfolio, partnership opportunities, careers, or patient access programs — our team is ready to help.',
       path: '/contact-us.html',
     });
   }, []);
@@ -144,7 +144,7 @@ export default function ContactUs() {
         _key: 'general',
         purpose: 'Medicine Inquiries',
         addresses: ['Unit 305, 17 Vatican Bldg., Vatican Drive, BF Resort Village, Las Piñas City, Metro Manila 1747'],
-        phones: ['+63 919 076 9103'],
+        phones: ['+63 919 076 9105'],
         emails: ['info@getmeds.ph'],
         showInFooter: true,
         showInTopBar: true,
@@ -542,34 +542,34 @@ export default function ContactUs() {
       {/* ── Contact Us Success Modal ── */}
       {successModalOpen && (
         <>
-        <style>{`@keyframes checkBounce{0%{transform:scale(0);opacity:0}55%{transform:scale(1.06);opacity:1}75%{transform:scale(0.97)}100%{transform:scale(1);opacity:1}}.check-bounce{animation:checkBounce 0.8s ease-out forwards}`}</style>
-        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/50 backdrop-blur-sm px-4">
-          <div className="bg-white w-full max-w-[400px] rounded-2xl shadow-2xl relative overflow-hidden">
-            <button onClick={() => setSuccessModalOpen(false)}
-              className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition z-10">
-              <i className="fa-solid fa-xmark text-base"></i>
-            </button>
-            <div className="px-10 pt-12 pb-8 text-center">
-              <div className="flex justify-center mb-7">
-                <div className="check-bounce w-14 h-14 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg,#61A644,#1D9FDA)' }}>
-                  <i className="fa-solid fa-check text-white text-xl"></i>
-                </div>
-              </div>
-              <h2 className="text-[19px] font-semibold text-gray-900 mb-4 leading-snug">Thank you for reaching out.</h2>
-              <p className="text-[13px] text-gray-500 leading-relaxed">
-                Our team will get back to you shortly. For urgent concerns, please call{' '}
-                <a href="tel:+639190769105" className="text-[#1D9FDA] font-semibold hover:underline">+63 919 076 9105</a>.
-              </p>
-            </div>
-            <div className="border-t border-gray-100 px-10 py-4 text-center">
+          <style>{`@keyframes checkBounce{0%{transform:scale(0);opacity:0}55%{transform:scale(1.06);opacity:1}75%{transform:scale(0.97)}100%{transform:scale(1);opacity:1}}.check-bounce{animation:checkBounce 0.8s ease-out forwards}`}</style>
+          <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/50 backdrop-blur-sm px-4">
+            <div className="bg-white w-full max-w-[400px] rounded-2xl shadow-2xl relative overflow-hidden">
               <button onClick={() => setSuccessModalOpen(false)}
-                className="text-[13px] font-semibold hover:underline"
-                style={{ background: 'linear-gradient(to right,#61A644,#1D9FDA)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
-                Close
+                className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition z-10">
+                <i className="fa-solid fa-xmark text-base"></i>
               </button>
+              <div className="px-10 pt-12 pb-8 text-center">
+                <div className="flex justify-center mb-7">
+                  <div className="check-bounce w-14 h-14 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg,#61A644,#1D9FDA)' }}>
+                    <i className="fa-solid fa-check text-white text-xl"></i>
+                  </div>
+                </div>
+                <h2 className="text-[19px] font-semibold text-gray-900 mb-4 leading-snug">Thank you for reaching out.</h2>
+                <p className="text-[13px] text-gray-500 leading-relaxed">
+                  Our team will get back to you shortly. For urgent concerns, please call{' '}
+                  <a href="tel:+639190769105" className="text-[#1D9FDA] font-semibold hover:underline">+63 919 076 9105</a>.
+                </p>
+              </div>
+              <div className="border-t border-gray-100 px-10 py-4 text-center">
+                <button onClick={() => setSuccessModalOpen(false)}
+                  className="text-[13px] font-semibold hover:underline"
+                  style={{ background: 'linear-gradient(to right,#61A644,#1D9FDA)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+                  Close
+                </button>
+              </div>
             </div>
           </div>
-        </div>
         </>
       )}
 

@@ -13,7 +13,7 @@ export default function Meditations() {
   useEffect(() => {
     setPageMeta({
       title: 'Meditations',
-      description: 'Nurture your mind, body and soul. Experience the Getmeds Meditation App with interactive breathing guides and live ambient soundscapes.',
+      description: 'Nurture your mind, body, and soul. Discover clinical mindfulness, guided breathing exercises, and soothing ambient soundscapes designed to support your holistic wellness journey.',
       path: '/meditations.html',
     });
   }, []);
