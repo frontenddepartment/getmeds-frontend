@@ -24,6 +24,28 @@ function loadEnv() {
   return env;
 }
 
+const subcategorySpecials = {
+  'non-small-cell-lung-cancer': 'lung-cancer',
+  'acute-myeloid-leukemia': 'aml',
+  'chronic-myeloid-leukemia': 'cml',
+  'hodgkin-non-hodgkins-lymphoma': 'lymphoma',
+  'hodgkin-non-hodgkin-s-lymphoma': 'lymphoma',
+  'sickle-cell-anemia': 'sickle-cell',
+  'respiratory-infections': 'respiratory',
+  'urinary-tract-infections': 'uti',
+  'skin-and-soft-tissue-infections': 'skin-infections',
+  'bone-and-joint-infections': 'bone-infections',
+  'fibrocystic-breast-disease': 'fibrocystic',
+  'arrhythmia-management': 'arrhythmia',
+  'hypertension-angina': 'hypertension',
+  'hypertension-and-angina': 'hypertension',
+  'seasonal-allergic-rhinitis': 'allergic-rhinitis',
+  'chronic-kidney-disease': 'kidney-disease',
+  'chronic-pain': 'pain',
+  'inflammatory-disorders': 'rheumatology',
+  'inflammatory-and-rheumatic-disorders': 'rheumatology'
+};
+
 const getSubcategorySlug = (name) => {
   return name
     .toLowerCase()
@@ -48,12 +70,20 @@ async function fetchSanitySubcategories(env) {
     if (json.result) {
       json.result.forEach(cat => {
         if (cat.category) {
-          subcats.add(getSubcategorySlug(cat.category));
+          const clean = getSubcategorySlug(cat.category);
+          subcats.add(clean);
+          if (subcategorySpecials[clean]) {
+            subcats.add(subcategorySpecials[clean]);
+          }
         }
         if (Array.isArray(cat.subcategory)) {
           cat.subcategory.forEach(sub => {
             if (sub) {
-              subcats.add(getSubcategorySlug(sub));
+              const clean = getSubcategorySlug(sub);
+              subcats.add(clean);
+              if (subcategorySpecials[clean]) {
+                subcats.add(subcategorySpecials[clean]);
+              }
             }
           });
         }
@@ -75,7 +105,20 @@ async function fetchSanitySubcategories(env) {
     'pancreatic-cancer', 'aml', 'cml', 'lymphoma', 'sickle-cell', 'respiratory', 'uti',
     'skin-infections', 'bone-infections', 'endometriosis', 'fibrocystic', 'multiple-myeloma',
     'osteoporosis', 'arrhythmia', 'hypertension', 'glioblastoma', 'allergic-rhinitis',
-    'kidney-disease', 'pain', 'rheumatology', 'chronic-lymphocytic-leukemia'
+    'kidney-disease', 'pain', 'rheumatology', 'chronic-lymphocytic-leukemia',
+    'acute-lymphoblastic-leukemia', 'malignant-pleural-mesothelioma', 'head-and-neck-cancer',
+    'chronic-myeloid-leukemia', 'sickle-cell-anemia', 'malignant-pleural-effusion',
+    'gastrointestinal-stromal-tumors', 'acute-myeloid-leukemia', 'acute-lymphocytic-leukemia',
+    'chronic-myelocytic-leukemia', 'meningeal-leukemia', 'acute-promyelocytic-leukemia',
+    'mantle-cell-lymphoma', 'neuro-oncology', 'glioblastoma-multiforme', 'obstetrician',
+    'folate-deficiency-anemia', 'iron-deficiency-anemia', 'allergy', 'seasonal-allergic-rhinitis',
+    'chronic-pain-management', 'inflammatory-rheumatic-disorders', 'endocrinology',
+    'fibrocystic-breast-disease', 'benign-prostatic-hyperplasia', 'cardiology', 'arrhythmia-management',
+    'hypertension-angina', 'renal', 'radiology', 'radiologic-imaging-enhancement-ct-scans-angiography-urography',
+    'hematology', 'orthopedic', 'glucocorticoid-induced-osteoporosis', 'gynecology', 'anti-infectives',
+    'respiratory-infections', 'urinary-tract-infections', 'gynecological-infections', 'intra-abdominal-infections',
+    'skin-and-soft-tissue-infections', 'bone-and-joint-infections', 'bloodstream-infections', 'ocular-or-topical-infections',
+    'nephrology'
   ];
 }
 
@@ -159,10 +202,18 @@ async function run() {
   const subcategories = await fetchSanitySubcategories(env);
   if (vercelConfig.rewrites) {
     let updatedRewritesCount = 0;
+    const subcatPattern = subcategories.join('|');
     vercelConfig.rewrites = vercelConfig.rewrites.map(rewrite => {
-      if (rewrite.source && rewrite.source.startsWith('/cancer-medicines/:subcategory(')) {
-        const subcatPattern = subcategories.join('|');
-        rewrite.source = `/cancer-medicines/:subcategory(${subcatPattern})`;
+      if (rewrite.source && (
+        rewrite.source.startsWith('/cancer-medicines/:subcategory(') ||
+        rewrite.source.startsWith('/cancer-medicine/:subcategory(') ||
+        rewrite.source.startsWith('/product-range/:subcategory(')
+      )) {
+        let prefix;
+        if (rewrite.source.startsWith('/cancer-medicines/')) prefix = 'cancer-medicines';
+        else if (rewrite.source.startsWith('/cancer-medicine/')) prefix = 'cancer-medicine';
+        else prefix = 'product-range';
+        rewrite.source = `/${prefix}/:subcategory(${subcatPattern})`;
         updatedRewritesCount++;
       }
       return rewrite;

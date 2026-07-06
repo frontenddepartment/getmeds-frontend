@@ -3,7 +3,8 @@ import { useCategories, useHeroSlides, useImageMapper, useNews, useSiteSettings 
 import { setPageMeta } from '../lib/seo';
 import { getApiUrl } from '../lib/api';
 import { injectHTML } from '../lib/injectHTML';
-import { urlFor, client } from '../lib/sanity';
+import { urlFor } from '../lib/sanity';
+import { sanityQuery } from '../lib/sanityProxy';
 
 
 // Declare global tailwind interface
@@ -211,10 +212,7 @@ export default function GetMedsHomepage() {
 
         // Fetch all pageAsset documents whose assetPath matches any hero image
         const assetPaths = [...new Set(Object.values(heroAssetPaths))];
-        const sanityAssets: any[] = await client.fetch(
-          `*[_type == "pageAsset" && assetPath in $paths] { assetPath, image, page, name }`,
-          { paths: assetPaths }
-        );
+        const sanityAssets: any[] = await sanityQuery<any[]>('pageAsset.byPaths', { paths: assetPaths });
 
         // Index Sanity assets by assetPath for fast lookup
         const byPath: Record<string, any> = {};
@@ -223,14 +221,7 @@ export default function GetMedsHomepage() {
         });
 
         // Also query page documents for hero text (title, description)
-        const pageTextData: any = await client.fetch(`{
-          "about":         *[_type == "aboutPage"         && _id == "about-page"][0]          { hero },
-          "services":      *[_type == "servicesPage"      && _id == "services-page"][0]       { hero },
-          "globalPresence":*[_type == "globalPresencePage"&& _id == "global-presence-page"][0]{ hero },
-          "csr":           *[_type == "csrPage"           && _id == "csr-page"][0]            { hero },
-          "careers":       *[_type == "careersPage"       && _id == "careers-page"][0]        { hero },
-          "ungc":          *[_type == "ungcPage"          && _id == "ungc-page"][0]           { hero }
-        }`);
+        const pageTextData: any = await sanityQuery('page.heroBundle');
 
         // Fetch latest WordPress blog post
         let wpPost: any = null;
@@ -372,6 +363,22 @@ export default function GetMedsHomepage() {
     const slug = name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
     return subcategorySpecials[slug] || slug;
   };
+
+  // Subcategory slugs whose topic is cancer/oncology — these route through /cancer-medicines,
+  // everything else keeps the /product-range prefix.
+  const cancerSlugs = new Set([
+    'oncology', 'breast-cancer', 'ovarian-cancer', 'non-small-cell-lung-cancer', 'lung-cancer',
+    'prostate-cancer', 'gastric-cancer-gastric-adenocarcinoma', 'gastric-cancer', 'pancreatic-cancer', 'colorectal-cancer',
+    'hodgkin-non-hodgkins-lymphoma', 'hodgkin-non-hodgkin-s-lymphoma', 'lymphoma',
+    'acute-lymphoblastic-leukemia', 'malignant-pleural-mesothelioma', 'head-and-neck-cancer',
+    'chronic-myeloid-leukemia', 'cml', 'sickle-cell-anemia', 'sickle-cell',
+    'malignant-pleural-effusion', 'gastrointestinal-stromal-tumors',
+    'acute-myeloid-leukemia', 'aml', 'acute-lymphocytic-leukemia', 'chronic-myelocytic-leukemia',
+    'meningeal-leukemia', 'acute-promyelocytic-leukemia', 'chronic-lymphocytic-leukemia',
+    'mantle-cell-lymphoma', 'multiple-myeloma', 'neuro-oncology', 'glioblastoma-multiforme', 'glioblastoma'
+  ]);
+  const isCancerSubcat = (slug: string) => cancerSlugs.has(slug);
+  const categoryPrefix = (slug: string) => isCancerSubcat(slug) ? '/cancer-medicines/' : '/product-range/';
 
   // Process dynamic categories into 4 columns using Jaccard Similarity Graph Grouping (sim >= 0.5)
   const desktopColumns: Array<Array<{ title: string; subcategories: string[] }>> = [[], [], [], []];
@@ -714,7 +721,14 @@ export default function GetMedsHomepage() {
     );
     document.querySelectorAll('.ca-anim').forEach(el => caObserver.observe(el));
 
-    // 6. Dynamically load the footer component
+    // 6. Dynamically load the navbar and footer components
+    const navContainer = document.getElementById('navbar-container');
+    if (navContainer && navContainer.innerHTML.trim() === '') {
+      fetch('/components/navbar.html', { cache: 'no-store' })
+        .then(res => res.text())
+        .then(html => { injectHTML(navContainer, html); });
+    }
+
     const footerContainer = document.getElementById('footer-container');
     if (footerContainer && footerContainer.innerHTML.trim() === '') {
       fetch('/components/footer.html', { cache: 'no-store' })
@@ -777,6 +791,9 @@ export default function GetMedsHomepage() {
         .float-c { animation: float 3.4s ease-in-out infinite 1.1s; }
         .float-d { animation: floatB 3s ease-in-out infinite 1.7s; }
       ` }} />
+
+      {/* Navbar */}
+      <div id="navbar-container" className="sticky top-0 z-[50]" />
 
       {/* Hero Container - Slider */}
       <div className="relative min-h-[70vh] md:min-h-[600px] w-full overflow-hidden flex flex-col justify-between">
@@ -1440,7 +1457,7 @@ export default function GetMedsHomepage() {
               {/* Header */}
               <div className="flex items-start justify-between px-8 pt-8 pb-6 gap-4">
                 <h2 className="text-2xl md:text-3xl font-semibold text-gray-900 max-w-md leading-tight ca-anim ca-up">Therapeutic areas we serve across the Philippines.</h2>
-                <a href="/cancer-medicines" className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:opacity-90 text-white text-xs md:text-sm font-medium rounded-full px-3 py-1.5 md:px-6 md:py-2.5 transition-opacity shrink-0">View All</a>
+                <a href="/product-range" className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:opacity-90 text-white text-xs md:text-sm font-medium rounded-full px-3 py-1.5 md:px-6 md:py-2.5 transition-opacity shrink-0">View All</a>
               </div>
 
               {/* Mobile slider — portrait main image + thumbnail strip */}

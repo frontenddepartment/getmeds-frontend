@@ -26,7 +26,8 @@
     'ungc': 'ungc',
     'order-medicines': 'order-medicines',
     'patient-assistance-program': 'pap',
-    'product-range': 'products'
+    'product-range': 'products',
+    'cancer-medicines': 'products'
   };
 
   function resolvePath(obj, path) {

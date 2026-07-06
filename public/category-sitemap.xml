@@ -110,6 +110,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://getmeds.ph/cancer-medicines/allergic-rhinitis</loc>
+    <lastmod>2026-07-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://getmeds.ph/cancer-medicines/pain-management</loc>
     <lastmod>2026-07-06</lastmod>
     <changefreq>weekly</changefreq>
@@ -158,6 +164,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://getmeds.ph/cancer-medicines/lung-cancer</loc>
+    <lastmod>2026-07-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://getmeds.ph/cancer-medicines/prostate-cancer</loc>
     <lastmod>2026-07-06</lastmod>
     <changefreq>weekly</changefreq>
@@ -188,6 +200,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://getmeds.ph/cancer-medicines/lymphoma</loc>
+    <lastmod>2026-07-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://getmeds.ph/cancer-medicines/acute-lymphoblastic-leukemia</loc>
     <lastmod>2026-07-06</lastmod>
     <changefreq>weekly</changefreq>
@@ -212,7 +230,19 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://getmeds.ph/cancer-medicines/cml</loc>
+    <lastmod>2026-07-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://getmeds.ph/cancer-medicines/sickle-cell-anemia</loc>
+    <lastmod>2026-07-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://getmeds.ph/cancer-medicines/sickle-cell</loc>
     <lastmod>2026-07-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
@@ -231,6 +261,12 @@
   </url>
   <url>
     <loc>https://getmeds.ph/cancer-medicines/acute-myeloid-leukemia</loc>
+    <lastmod>2026-07-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://getmeds.ph/cancer-medicines/aml</loc>
     <lastmod>2026-07-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
@@ -296,6 +332,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://getmeds.ph/cancer-medicines/fibrocystic</loc>
+    <lastmod>2026-07-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://getmeds.ph/cancer-medicines/benign-prostatic-hyperplasia</loc>
     <lastmod>2026-07-06</lastmod>
     <changefreq>weekly</changefreq>
@@ -314,7 +356,19 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://getmeds.ph/cancer-medicines/arrhythmia</loc>
+    <lastmod>2026-07-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://getmeds.ph/cancer-medicines/hypertension-angina</loc>
+    <lastmod>2026-07-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://getmeds.ph/cancer-medicines/hypertension</loc>
     <lastmod>2026-07-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
@@ -327,6 +381,12 @@
   </url>
   <url>
     <loc>https://getmeds.ph/cancer-medicines/chronic-kidney-disease</loc>
+    <lastmod>2026-07-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://getmeds.ph/cancer-medicines/kidney-disease</loc>
     <lastmod>2026-07-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
@@ -380,7 +440,19 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://getmeds.ph/cancer-medicines/respiratory</loc>
+    <lastmod>2026-07-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://getmeds.ph/cancer-medicines/urinary-tract-infections</loc>
+    <lastmod>2026-07-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://getmeds.ph/cancer-medicines/uti</loc>
     <lastmod>2026-07-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
@@ -404,7 +476,19 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://getmeds.ph/cancer-medicines/skin-infections</loc>
+    <lastmod>2026-07-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://getmeds.ph/cancer-medicines/bone-and-joint-infections</loc>
+    <lastmod>2026-07-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://getmeds.ph/cancer-medicines/bone-infections</loc>
     <lastmod>2026-07-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
@@ -429,12 +513,6 @@
   </url>
   <url>
     <loc>https://getmeds.ph/cancer-medicines/glioblastoma-multiforme</loc>
-    <lastmod>2026-07-06</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://getmeds.ph/cancer-medicines/respiratory</loc>
     <lastmod>2026-07-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
