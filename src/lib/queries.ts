@@ -61,12 +61,61 @@ async function fetchProductsFromExcel(): Promise<Product[]> {
 
     // Fetch all individual product documents (which don't have title defined) that are active/present or undefined remarks
     const originalProducts = await sanityQuery<any[]>('product.individualDocs')
+    // Fetch all category documents to resolve category references
+    const categories = await sanityQuery<Category[]>('category.all') || []
+
+    console.log("DEBUG [fetchProductsFromExcel]: Excel products rows count:", rawProducts.length);
+    console.log("DEBUG [fetchProductsFromExcel]: Sanity individual products count:", originalProducts.length);
 
     // Create a lookup map for original products by their document _id
     const originalMap = new Map<string, any>()
     originalProducts.forEach(op => {
       originalMap.set(op._id, op)
     })
+
+    const getCategoryReference = (pCat: any) => {
+      if (!pCat) return undefined
+      if (typeof pCat === 'object' && pCat._id) return pCat
+      if (typeof pCat !== 'string') return undefined
+
+      const excelCat = pCat.trim()
+      if (!excelCat) return undefined
+
+      const parts = excelCat.split(/[\/,]/).map(s => s.trim().toLowerCase()).filter(Boolean)
+      for (const part of parts) {
+        const matched = categories.find(c => c.category.toLowerCase().trim() === part)
+        if (matched) {
+          return {
+            _id: matched._id,
+            _type: 'reference',
+            category: matched.category,
+            slug: matched.slug
+          }
+        }
+      }
+
+      for (const part of parts) {
+        const matched = categories.find(c => 
+          c.category.toLowerCase().includes(part) || part.includes(c.category.toLowerCase())
+        )
+        if (matched) {
+          return {
+            _id: matched._id,
+            _type: 'reference',
+            category: matched.category,
+            slug: matched.slug
+          }
+        }
+      }
+
+      const cleanName = excelCat.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
+      return {
+        _id: `temp-${cleanName}`,
+        _type: 'reference',
+        category: excelCat,
+        slug: { _type: 'slug', current: cleanName }
+      }
+    }
 
     const allowedProducts = rawProducts.map((p: any) => {
       // Find matching original product
@@ -94,16 +143,37 @@ async function fetchProductsFromExcel(): Promise<Product[]> {
         slug = { _type: 'slug', current: 'unnamed-product' }
       }
 
-      return {
+      const merged = {
         ...orig,
         ...p,
         _id: p._id || orig._id || `excel-${slug.current}`,
         _type: 'product',
         slug,
-        category: orig.category || p.category,
+        category: orig.category || getCategoryReference(p.category),
+        excelCategory: p.category,
         image: orig.image || p.image,
         availability: p.availability === undefined ? (orig.availability ?? true) : (p.availability === true || String(p.availability).toLowerCase() === 'true'),
-      } as Product
+        // Preserve rich-text / detail fields from the Sanity doc when Excel row is empty
+        description: p.description || orig.description,
+        indications: p.indications || orig.indications,
+        dosageAdministration: p.dosageAdministration || orig.dosageAdministration,
+        mechanismOfAction: p.mechanismOfAction || orig.mechanismOfAction,
+        supportingFacts: p.supportingFacts || orig.supportingFacts,
+        storageCondition: p.storageCondition || orig.storageCondition,
+        packaging: p.packaging || orig.packaging,
+        innovator: p.innovator || orig.innovator,
+      } as Product;
+
+      if ((merged.brandName || '').toLowerCase().includes('abira')) {
+        console.log("DEBUG [fetchProductsFromExcel]: Merged AbiraGet product fields:", {
+          brandName: merged.brandName,
+          indications: merged.indications,
+          description: merged.description,
+          dosageAdministration: merged.dosageAdministration
+        });
+      }
+
+      return merged;
     }).filter(Boolean) as Product[]
 
     // Find manually created individual product documents (which have remarks present or active)

@@ -364,6 +364,22 @@ export default function GetMedsHomepage() {
     return subcategorySpecials[slug] || slug;
   };
 
+  // Subcategory slugs whose topic is cancer/oncology — these route through /cancer-medicines,
+  // everything else keeps the /product-range prefix.
+  const cancerSlugs = new Set([
+    'oncology', 'breast-cancer', 'ovarian-cancer', 'non-small-cell-lung-cancer', 'lung-cancer',
+    'prostate-cancer', 'gastric-cancer-gastric-adenocarcinoma', 'gastric-cancer', 'pancreatic-cancer', 'colorectal-cancer',
+    'hodgkin-non-hodgkins-lymphoma', 'hodgkin-non-hodgkin-s-lymphoma', 'lymphoma',
+    'acute-lymphoblastic-leukemia', 'malignant-pleural-mesothelioma', 'head-and-neck-cancer',
+    'chronic-myeloid-leukemia', 'cml', 'sickle-cell-anemia', 'sickle-cell',
+    'malignant-pleural-effusion', 'gastrointestinal-stromal-tumors',
+    'acute-myeloid-leukemia', 'aml', 'acute-lymphocytic-leukemia', 'chronic-myelocytic-leukemia',
+    'meningeal-leukemia', 'acute-promyelocytic-leukemia', 'chronic-lymphocytic-leukemia',
+    'mantle-cell-lymphoma', 'multiple-myeloma', 'neuro-oncology', 'glioblastoma-multiforme', 'glioblastoma'
+  ]);
+  const isCancerSubcat = (slug: string) => cancerSlugs.has(slug);
+  const categoryPrefix = (slug: string) => isCancerSubcat(slug) ? '/cancer-medicines/' : '/product-range/';
+
   // Process dynamic categories into 4 columns using Jaccard Similarity Graph Grouping (sim >= 0.5)
   const desktopColumns: Array<Array<{ title: string; subcategories: string[] }>> = [[], [], [], []];
   const accordionSections: Array<{ title: string; subcategories: string[] }> = [];
@@ -705,7 +721,14 @@ export default function GetMedsHomepage() {
     );
     document.querySelectorAll('.ca-anim').forEach(el => caObserver.observe(el));
 
-    // 6. Dynamically load the footer component
+    // 6. Dynamically load the navbar and footer components
+    const navContainer = document.getElementById('navbar-container');
+    if (navContainer && navContainer.innerHTML.trim() === '') {
+      fetch('/components/navbar.html', { cache: 'no-store' })
+        .then(res => res.text())
+        .then(html => { injectHTML(navContainer, html); });
+    }
+
     const footerContainer = document.getElementById('footer-container');
     if (footerContainer && footerContainer.innerHTML.trim() === '') {
       fetch('/components/footer.html', { cache: 'no-store' })
@@ -769,6 +792,9 @@ export default function GetMedsHomepage() {
         .float-d { animation: floatB 3s ease-in-out infinite 1.7s; }
       ` }} />
 
+      {/* Navbar */}
+      <div id="navbar-container" className="sticky top-0 z-[50]" />
+
       {/* Hero Container - Slider */}
       <div className="relative min-h-[70vh] md:min-h-[600px] w-full overflow-hidden flex flex-col justify-between">
         {/* Slide backgrounds */}
@@ -785,376 +811,6 @@ export default function GetMedsHomepage() {
         ))}
 
         {/* No overlay */}
-
-        {/* Header (Top-bar + Nav) Group */}
-        <div className="relative w-full z-50">
-
-          {/* Top Bar (Dark semi-transparent strip) */}
-          <div className="w-full bg-slate-900/40 border-b border-white/10 backdrop-blur-sm py-2.5 px-6 hidden md:block">
-            <div className="max-w-7xl mx-auto flex items-center justify-between text-xs text-white/90 font-medium">
-              <div className="flex items-center space-x-2">
-                <span className="font-extrabold text-[11px] uppercase tracking-wider text-white">
-                  {settings?.topBar?.label || 'Connect With Us'}
-                </span>
-              </div>
-              <div className="flex items-center space-x-6">
-                {/* Phone — Medicine Inquiries (static) */}
-                <a href="tel:+639190769103" className="flex items-center space-x-2 hover:text-primary transition">
-                  <i className="fa-solid fa-phone"></i>
-                  <span id="topbar-phone">+63 919 076 9103</span>
-                </a>
-                {/* Socials — static links from contact page */}
-                <div className="flex items-center space-x-4 border-l border-white/20 pl-6">
-                  <a href="https://www.facebook.com/getmedsphilippines/" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition">
-                    <i className="fa-brands fa-facebook-f text-[14px]"></i>
-                  </a>
-                  <a href="https://www.linkedin.com/company/getmeds" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition">
-                    <i className="fa-brands fa-linkedin-in text-[14px]"></i>
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Navigation Bar (Transparent overlay, smoothly switches to colored shadow card on scroll) */}
-          <nav className={`w-full z-50 ${isScrolled
-            ? 'bg-white border-b border-gray-100 text-gray-800 fixed top-0 left-0 animate-slide-down'
-            : 'bg-transparent text-white absolute top-full left-0 transition-colors duration-300'
-            }`}>
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between h-20 relative">
-
-              {/* Logo */}
-              <div className="w-auto sm:w-[180px] shrink-0 flex items-center">
-                <a href="/" className="flex items-center">
-                  {(() => {
-                    const logoUrl = getImage('assets/getmedslogo.png', 'assets/getmedslogo.png'); // intercepted via siteSettings.logo
-                    const isCustomLogo = logoUrl && logoUrl.includes('cdn.sanity.io');
-                    return (
-                      <img
-                        src={logoUrl}
-                        alt="Getmeds Logo"
-                        className={`h-10 w-auto object-contain transition-all duration-300 ${isScrolled || isCustomLogo ? '' : 'brightness-0 invert'}`}
-                      />
-                    );
-                  })()}
-                </a>
-              </div>
-
-              {/* Navigation Links */}
-              <div className="hidden lg:flex flex-1 justify-center items-center space-x-8 text-sm font-semibold font-['Poppins']">
-                <a href="/" className="transition-colors duration-300 text-primary">Home</a>
-                <a href="order-medicines.html" className={`transition-colors duration-300 whitespace-nowrap ${isScrolled ? 'text-gray-700 hover:text-primary' : 'text-[#000b5d] hover:text-primary'}`}>Order Medicines</a>
-
-                {/* Product Range Dropdown */}
-                <div className="group h-20 flex items-center">
-                  <a href="/product-range" className={`flex items-center transition-colors duration-300 whitespace-nowrap focus:outline-none ${isScrolled ? 'text-gray-700 hover:text-primary' : 'text-[#000b5d] hover:text-primary'}`}>
-                    Product Range <i className="fa-solid fa-chevron-down ml-1.5 text-[10px]"></i>
-                  </a>
-                  {/* Mega Menu Container */}
-                  <div className="fixed top-[80px] left-0 w-full bg-white rounded-b-[30px] border-b border-gray-100 shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-[100] max-h-[calc(100vh-80px)] overflow-y-auto">
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 font-medium">
-                      <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-left">
-                        {desktopColumns.some(col => col.length > 0) ? (
-                          desktopColumns.map((colSections, colIdx) => (
-                            <div key={colIdx}>
-                              {colSections.map((sec, secIdx) => {
-                                const h4Class = secIdx > 0 ? "font-semibold text-gray-900 mb-4 border-b pb-2 text-sm mt-6" : "font-semibold text-gray-900 mb-4 border-b pb-2 text-sm";
-                                const ulClass = secIdx < colSections.length - 1 ? "space-y-2 text-[13px] mb-6" : "space-y-2 text-[13px]";
-                                return (
-                                  <React.Fragment key={sec.title}>
-                                    <h4 className={h4Class}>{sec.title}</h4>
-                                    <ul className={ulClass}>
-                                      {sec.subcategories.map((sub) => {
-                                        const subslug = getSubcategorySlug(sub);
-                                        return (
-                                          <li key={sub}>
-                                            <a href={`/product-range/${subslug}`} className="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">
-                                              {sub}
-                                            </a>
-                                          </li>
-                                        );
-                                      })}
-                                    </ul>
-                                  </React.Fragment>
-                                );
-                              })}
-                            </div>
-                          ))
-                        ) : (
-                          <>
-                            {/* Column 1 */}
-                            <div>
-                              <h4 className="font-semibold text-gray-900 mb-4 border-b pb-2 text-sm">Oncology (Solid Tumors)</h4>
-                              <ul className="space-y-2 text-[13px]">
-                                <li><a href="/product-range/breast-cancer" className="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Breast Cancer</a></li>
-                                <li><a href="/product-range/ovarian-cancer" className="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Ovarian Cancer</a></li>
-                                <li><a href="/product-range/lung-cancer" className="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Non-Small Cell Lung Cancer</a></li>
-                                <li><a href="/product-range/prostate-cancer" className="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Prostate Cancer</a></li>
-                                <li><a href="/product-range/colorectal-cancer" className="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Colorectal Cancer</a></li>
-                                <li><a href="/product-range/pancreatic-cancer" className="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Pancreatic Cancer</a></li>
-                              </ul>
-                            </div>
-
-                            {/* Column 2 */}
-                            <div>
-                              <h4 className="font-semibold text-gray-900 mb-4 border-b pb-2 text-sm">Hematology Range</h4>
-                              <ul className="space-y-2 text-[13px] mb-6">
-                                <li><a href="/product-range/aml" className="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Acute Myeloid Leukemia</a></li>
-                                <li><a href="/product-range/cml" className="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Chronic Myeloid Leukemia</a></li>
-                                <li><a href="/product-range/lymphoma" className="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Hodgkin/Non-Hodgkin's Lymphoma</a></li>
-                                <li><a href="/product-range/sickle-cell" className="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Sickle Cell Anemia</a></li>
-                              </ul>
-                              <h4 className="font-semibold text-gray-900 mb-4 border-b pb-2 text-sm">Anti-Infectives</h4>
-                              <ul className="space-y-2 text-[13px]">
-                                <li><a href="/product-range/respiratory" className="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Respiratory Infections</a></li>
-                                <li><a href="/product-range/uti" className="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Urinary Tract Infections</a></li>
-                                <li><a href="/product-range/skin-infections" className="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Skin and Soft Tissue Infections</a></li>
-                                <li><a href="/product-range/bone-infections" className="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Bone and Joint Infections</a></li>
-                              </ul>
-                            </div>
-
-                            {/* Column 3 */}
-                            <div>
-                              <h4 className="font-semibold text-gray-900 mb-4 border-b pb-2 text-sm">Endocrinology</h4>
-                              <ul className="space-y-2 text-[13px] mb-6">
-                                <li><a href="/product-range/endometriosis" className="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Endometriosis</a></li>
-                                <li><a href="/product-range/fibrocystic" className="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Fibrocystic Breast Disease</a></li>
-                              </ul>
-                              <h4 className="font-semibold text-gray-900 mb-4 border-b pb-2 text-sm">Orthopedic</h4>
-                              <ul className="space-y-2 text-[13px] mb-6">
-                                <li><a href="/product-range/multiple-myeloma" className="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Multiple Myeloma</a></li>
-                                <li><a href="/product-range/osteoporosis" className="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Osteoporosis</a></li>
-                              </ul>
-                              <h4 className="font-semibold text-gray-900 mb-4 border-b pb-2 text-sm">Cardiology</h4>
-                              <ul className="space-y-2 text-[13px]">
-                                <li><a href="/product-range/arrhythmia" className="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Arrhythmia management</a></li>
-                                <li><a href="/product-range/hypertension" className="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Hypertension/Angina</a></li>
-                              </ul>
-                            </div>
-
-                            {/* Column 4 */}
-                            <div>
-                              <h4 className="font-semibold text-gray-900 mb-4 border-b pb-2 text-sm">Neuro-Oncology</h4>
-                              <ul className="space-y-2 text-[13px] mb-6">
-                                <li><a href="/product-range/glioblastoma" className="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Glioblastoma Multiforme</a></li>
-                              </ul>
-                              <h4 className="font-semibold text-gray-900 mb-4 border-b pb-2 text-sm">Respiratory / Allergy</h4>
-                              <ul className="space-y-2 text-[13px] mb-6">
-                                <li><a href="/product-range/allergic-rhinitis" className="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Seasonal Allergic Rhinitis</a></li>
-                              </ul>
-                              <h4 className="font-semibold text-gray-900 mb-4 border-b pb-2 text-sm">Nephrology / Renal</h4>
-                              <ul className="space-y-2 text-[13px] mb-6">
-                                <li><a href="/product-range/kidney-disease" className="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Chronic Kidney Disease</a></li>
-                              </ul>
-                              <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                  <h4 className="font-semibold text-gray-900 mb-2 border-b pb-1 text-sm">Pain Mgt.</h4>
-                                  <ul className="space-y-2 text-[13px]">
-                                    <li><a href="/product-range/pain" className="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Chronic Pain</a></li>
-                                  </ul>
-                                </div>
-                                <div>
-                                  <h4 className="font-semibold text-gray-900 mb-2 border-b pb-1 text-sm">Rheumatology</h4>
-                                  <ul className="space-y-2 text-[13px]">
-                                    <li><a href="/product-range/rheumatology" className="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Inflammatory Disorders</a></li>
-                                  </ul>
-                                </div>
-                              </div>
-                            </div>
-                          </>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <a href="about-us.html" className={`transition-colors duration-300 whitespace-nowrap ${isScrolled ? 'text-gray-700 hover:text-primary' : 'text-[#000b5d] hover:text-primary'}`}>About Us</a>
-                <a href="pap.html" className="inline-flex items-center opacity-80 hover:opacity-100 transition-all duration-200 hover:-translate-y-0.5 transform">
-                  <img src={getImage('Patient Assistance Program Logo', 'assets/pap.png')} alt="Patient Assistance Program" className="h-[88px] w-auto object-contain" />
-                </a>
-
-                {/* Company Dropdown */}
-                <div className="group h-20 flex items-center">
-                  <button className={`flex items-center transition-colors duration-300 whitespace-nowrap focus:outline-none ${isScrolled ? 'text-gray-700 hover:text-primary' : 'text-[#000b5d] hover:text-primary'}`}>
-                    Company <i className="fa-solid fa-chevron-down ml-1.5 text-[9px] opacity-75"></i>
-                  </button>
-                  {/* Mega Menu Container */}
-                  <div className="fixed top-[80px] left-0 w-full bg-white rounded-b-[30px] border-b border-gray-100 shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-[100] max-h-[calc(100vh-80px)] overflow-y-auto">
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 font-medium text-gray-800">
-                      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 text-left items-start">
-                        {/* Links Section (Cols 1-7) */}
-                        <div className="lg:col-span-7 grid grid-cols-2 gap-8">
-                          <div>
-                            <h4 className="font-semibold text-gray-900 mb-4 border-b pb-2 text-sm uppercase tracking-wider">Explore by Organization</h4>
-                            <ul className="space-y-4">
-                              <li><a href="services.html" onMouseEnter={() => handleCompanyLinkEnter('services')} onMouseLeave={() => handleCompanyLinkLeave('services')} className="relative inline-block text-gray-700 font-semibold hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300 text-base">Our Services</a></li>
-                              <li><a href="global-presence.html" onMouseEnter={() => handleCompanyLinkEnter('globalPresence')} onMouseLeave={() => handleCompanyLinkLeave('globalPresence')} className="relative inline-block text-gray-700 font-semibold hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300 text-base">Global Presence</a></li>
-                              <li><a href="meditations.html" onMouseEnter={() => handleCompanyLinkEnter('meditations')} onMouseLeave={() => handleCompanyLinkLeave('meditations')} className="relative inline-block text-gray-700 font-semibold hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300 text-base">Meditations</a></li>
-                            </ul>
-                          </div>
-                          <div>
-                            <h4 className="font-semibold text-gray-900 mb-4 border-b pb-2 text-sm uppercase tracking-wider">More Information</h4>
-                            <ul className="space-y-4">
-                              <li><a href="csr.html" onMouseEnter={() => handleCompanyLinkEnter('csr')} onMouseLeave={() => handleCompanyLinkLeave('csr')} className="relative inline-block text-gray-700 font-semibold hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300 text-base">CSR</a></li>
-                              <li><a href="careers.html" onMouseEnter={() => handleCompanyLinkEnter('careers')} onMouseLeave={() => handleCompanyLinkLeave('careers')} className="relative inline-block text-gray-700 font-semibold hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300 text-base">Careers</a></li>
-                              <li><a href="ungc.html" onMouseEnter={() => handleCompanyLinkEnter('ungc')} onMouseLeave={() => handleCompanyLinkLeave('ungc')} className="relative inline-block text-gray-700 font-semibold hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300 text-base">United Nations Global Compact</a></li>
-                              <li><a href="/blog" onMouseEnter={() => handleCompanyLinkEnter('blog')} onMouseLeave={() => handleCompanyLinkLeave('blog')} className="relative inline-block text-gray-700 font-semibold hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300 text-base">Blog</a></li>
-                              <li className="pt-2" onMouseEnter={() => handleCompanyLinkEnter('join-us')} onMouseLeave={() => handleCompanyLinkLeave('join-us')}>
-                                <a href="careers.html#join-form"
-                                  className="inline-flex items-center px-5 py-2.5 rounded-full text-sm font-semibold text-white transition-all hover:opacity-90 hover:-translate-y-0.5 shadow-md"
-                                  style={{ background: 'linear-gradient(135deg, #61A644, #1D9FDA)' }}>
-                                  Join Us
-                                </a>
-                              </li>
-                            </ul>
-                          </div>
-                        </div>
-                        {/* Slider Section (Cols 8-12) */}
-                        <div className="lg:col-span-5 h-[260px] relative rounded-2xl overflow-hidden shadow-lg bg-gray-100">
-                          {Object.entries(companySlides).map(([key, slide]) => (
-                            <a
-                              key={key}
-                              href={slide.href}
-                              className={`absolute inset-0 bg-cover bg-center transition-opacity duration-700 cursor-pointer ${activeCompanySlide === key ? 'opacity-100 pointer-events-auto z-10' : 'opacity-0 pointer-events-none z-0'
-                                }`}
-                              style={{ backgroundImage: `url('${slide.img}')` }}
-                            >
-                              <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
-                              <div className="absolute bottom-6 left-6 right-6">
-                                <h3 className="text-white font-bold text-xl mb-1">{slide.title}</h3>
-                                <p className="text-white/80 text-sm">{slide.desc}</p>
-                              </div>
-                            </a>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <a href="contact-us.html" className={`transition-colors duration-300 whitespace-nowrap ${isScrolled ? 'text-gray-700 hover:text-primary' : 'text-[#000b5d] hover:text-primary'}`}>Contact Us</a>
-              </div>
-
-              {/* Right side — hamburger on mobile, empty spacer on desktop */}
-              <div className="w-auto sm:w-[180px] shrink-0 flex items-center justify-end">
-                <button
-                  className={`lg:hidden p-2 rounded-md transition-colors duration-300 ${isScrolled ? 'text-gray-600 hover:text-primary' : 'text-[#000b5d] hover:text-[#000b5d]/70'}`}
-                  onClick={() => setIsMobileMenuOpen(o => !o)}
-                  aria-label="Toggle menu"
-                >
-                  <i className={`fa-solid ${isMobileMenuOpen ? 'fa-xmark' : 'fa-bars'} text-2xl`}></i>
-                </button>
-              </div>
-            </div>
-          </nav>
-
-          {/* Mobile Sidebar Menu */}
-          {isMobileMenuOpen && (
-            <div className="lg:hidden fixed top-[80px] left-0 w-full bg-white shadow-xl border-t border-gray-100 z-[200] overflow-y-auto" style={{ height: 'calc(100vh - 80px)' }}>
-              <div className="flex flex-col px-4 py-4 pb-12">
-                <a href="/" className="flex items-center px-3 py-3.5 text-[15px] font-semibold text-primary border-b border-gray-100">Home</a>
-                <a href="order-medicines.html" className="flex items-center px-3 py-3.5 text-[15px] font-semibold text-gray-700 border-b border-gray-100 hover:text-primary transition">Order Medicines</a>
-
-                {/* Product Range accordion */}
-                <div className="border-b border-gray-100">
-                  <button onClick={() => setMobileProductsOpen(o => !o)} className="w-full flex items-center justify-between px-3 py-3.5 text-[15px] font-semibold text-gray-700 hover:text-primary transition">
-                    <span>Product Range</span>
-                    <i className={`fa-solid fa-chevron-down text-[11px] text-gray-400 transition-transform duration-300 ${mobileProductsOpen ? 'rotate-180' : ''}`}></i>
-                  </button>
-                  {mobileProductsOpen && (
-                    <div className="px-2 pb-3">
-                      {accordionSections.length > 0 ? (
-                        accordionSections.map((sec) => (
-                          <React.Fragment key={sec.title}>
-                            <p className="px-3 pt-3 pb-1 text-[10px] font-black uppercase text-gray-400 tracking-wider">{sec.title}</p>
-                            {sec.subcategories.map((sub) => {
-                              const subslug = getSubcategorySlug(sub);
-                              return (
-                                <a key={sub} href={`/product-range/${subslug}`} className="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">
-                                  {sub}
-                                </a>
-                              );
-                            })}
-                          </React.Fragment>
-                        ))
-                      ) : (
-                        <>
-                          <p className="px-3 pt-3 pb-1 text-[10px] font-black uppercase text-gray-400 tracking-wider">Oncology (Solid Tumors)</p>
-                          <a href="/product-range/breast-cancer" className="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Breast Cancer</a>
-                          <a href="/product-range/ovarian-cancer" className="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Ovarian Cancer</a>
-                          <a href="/product-range/lung-cancer" className="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Non-Small Cell Lung Cancer</a>
-                          <a href="/product-range/prostate-cancer" className="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Prostate Cancer</a>
-                          <a href="/product-range/colorectal-cancer" className="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Colorectal Cancer</a>
-                          <a href="/product-range/pancreatic-cancer" className="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Pancreatic Cancer</a>
-                          <p className="px-3 pt-3 pb-1 text-[10px] font-black uppercase text-gray-400 tracking-wider">Hematology</p>
-                          <a href="/product-range/aml" className="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Acute Myeloid Leukemia</a>
-                          <a href="/product-range/cml" className="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Chronic Myeloid Leukemia</a>
-                          <a href="/product-range/lymphoma" className="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Hodgkin / Non-Hodgkin's Lymphoma</a>
-                          <a href="/product-range/sickle-cell" className="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Sickle Cell Anemia</a>
-                          <p className="px-3 pt-3 pb-1 text-[10px] font-black uppercase text-gray-400 tracking-wider">Anti-Infectives</p>
-                          <a href="/product-range/respiratory" className="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Respiratory Infections</a>
-                          <a href="/product-range/uti" className="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Urinary Tract Infections</a>
-                          <a href="/product-range/skin-infections" className="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Skin and Soft Tissue Infections</a>
-                          <a href="/product-range/bone-infections" className="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Bone and Joint Infections</a>
-                          <p className="px-3 pt-3 pb-1 text-[10px] font-black uppercase text-gray-400 tracking-wider">Endocrinology</p>
-                          <a href="/product-range/endometriosis" className="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Endometriosis</a>
-                          <a href="/product-range/fibrocystic" className="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Fibrocystic Breast Disease</a>
-                          <p className="px-3 pt-3 pb-1 text-[10px] font-black uppercase text-gray-400 tracking-wider">Orthopedic</p>
-                          <a href="/product-range/multiple-myeloma" className="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Multiple Myeloma</a>
-                          <a href="/product-range/osteoporosis" className="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Osteoporosis</a>
-                          <p className="px-3 pt-3 pb-1 text-[10px] font-black uppercase text-gray-400 tracking-wider">Cardiology</p>
-                          <a href="/product-range/arrhythmia" className="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Arrhythmia Management</a>
-                          <a href="/product-range/hypertension" className="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Hypertension / Angina</a>
-                          <p className="px-3 pt-3 pb-1 text-[10px] font-black uppercase text-gray-400 tracking-wider">Neuro-Oncology</p>
-                          <a href="/product-range/glioblastoma" className="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Glioblastoma Multiforme</a>
-                          <p className="px-3 pt-3 pb-1 text-[10px] font-black uppercase text-gray-400 tracking-wider">Respiratory - Allergy</p>
-                          <a href="/product-range/allergic-rhinitis" className="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Seasonal Allergic Rhinitis</a>
-                          <p className="px-3 pt-3 pb-1 text-[10px] font-black uppercase text-gray-400 tracking-wider">Nephrology - Renal</p>
-                          <a href="/product-range/kidney-disease" className="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Chronic Kidney Disease</a>
-                          <p className="px-3 pt-3 pb-1 text-[10px] font-black uppercase text-gray-400 tracking-wider">Pain Management</p>
-                          <a href="/product-range/pain" className="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Chronic Pain</a>
-                          <p className="px-3 pt-3 pb-1 text-[10px] font-black uppercase text-gray-400 tracking-wider">Rheumatology</p>
-                          <a href="/product-range/rheumatology" className="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Inflammatory Disorders</a>
-                        </>
-                      )}
-                    </div>
-                  )}
-                </div>
-
-                <a href="about-us.html" className="flex items-center px-3 py-3.5 text-[15px] font-semibold text-gray-700 border-b border-gray-100 hover:text-primary transition">About Us</a>
-                <a href="pap.html" className="flex items-center px-3 py-2 border-b border-gray-100">
-                  <img src={getImage('PAP Logo White', 'assets/PAPlogo.png')} alt="Patient Assistance Program" className="h-10 w-auto object-contain opacity-80 hover:opacity-100 transition" />
-                </a>
-
-                {/* Company accordion */}
-                <div className="border-b border-gray-100">
-                  <button onClick={() => setMobileCompanyOpen(o => !o)} className="w-full flex items-center justify-between px-3 py-3.5 text-[15px] font-semibold text-gray-700 hover:text-primary transition">
-                    <span>Company</span>
-                    <i className={`fa-solid fa-chevron-down text-[11px] text-gray-400 transition-transform duration-300 ${mobileCompanyOpen ? 'rotate-180' : ''}`}></i>
-                  </button>
-                  {mobileCompanyOpen && (
-                    <div className="px-2 pb-3 space-y-0.5">
-                      <a href="services.html" className="block pl-5 py-2.5 text-[14px] font-medium text-gray-600 hover:text-primary transition">Our Services</a>
-                      <a href="global-presence.html" className="block pl-5 py-2.5 text-[14px] font-medium text-gray-600 hover:text-primary transition">Global Presence</a>
-                      <a href="meditations.html" className="block pl-5 py-2.5 text-[14px] font-medium text-gray-600 hover:text-primary transition">Meditations</a>
-                      <a href="csr.html" className="block pl-5 py-2.5 text-[14px] font-medium text-gray-600 hover:text-primary transition">CSR</a>
-                      <a href="careers.html" className="block pl-5 py-2.5 text-[14px] font-medium text-gray-600 hover:text-primary transition">Careers</a>
-                      <a href="ungc.html" className="block pl-5 py-2.5 text-[14px] font-medium text-gray-600 hover:text-primary transition">United Nations Global Compact</a>
-                      <a href="/blog" className="block pl-5 py-2.5 text-[14px] font-medium text-gray-600 hover:text-primary transition">Blog</a>
-                      <div className="pl-5 pt-2 pb-1">
-                        <a href="careers.html#join-form"
-                          className="inline-flex items-center px-5 py-2.5 rounded-full text-sm font-semibold text-white shadow-md"
-                          style={{ background: 'linear-gradient(135deg, #61A644, #1D9FDA)' }}>
-                          Join Us
-                        </a>
-                      </div>
-                    </div>
-                  )}
-                </div>
-                <a href="contact-us.html" className="flex items-center px-3 py-3.5 text-[15px] font-semibold text-gray-700 border-b border-gray-100 hover:text-primary transition">Contact Us</a>
-              </div>
-            </div>
-          )}
-        </div>
 
         {/* Hero Content Area */}
         <div className="max-w-7xl mx-auto px-6 w-full relative z-10 flex-grow flex items-center justify-center md:justify-start pt-20 md:pt-28 pb-16 md:pb-20 text-center md:text-left">

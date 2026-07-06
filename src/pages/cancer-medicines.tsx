@@ -80,8 +80,27 @@ const subcategorySpecials: Record<string, string> = {
 };
 
 const getSubcategorySlug = (name: string) => {
+  if (!name) return '';
   const slug = name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
   return subcategorySpecials[slug] || slug;
+};
+
+const CANCER_CATEGORY_NAMES = [
+  'oncology',
+  'neuro-oncology',
+  'oncology / hematology',
+  'oncology/hematology',
+  'cancer'
+];
+const CANCER_BRAND_EXCEPTIONS = ['zoloGet'.toLowerCase()];
+
+const isCancerCategoryName = (name: string) =>
+  CANCER_CATEGORY_NAMES.includes((name || '').toLowerCase().trim());
+
+const isCancerProduct = (p: { category?: { category?: string }; excelCategory?: string; brandName?: string }) => {
+  if (isCancerCategoryName(p.category?.category || '')) return true;
+  if (isCancerCategoryName(p.excelCategory || '')) return true;
+  return CANCER_BRAND_EXCEPTIONS.includes((p.brandName || '').toLowerCase().trim());
 };
 
 export default function CancerMedicines() {
@@ -183,123 +202,18 @@ export default function CancerMedicines() {
   }, []);
 
   // Process dynamic categories into 4 columns using Jaccard Similarity Graph Grouping (sim >= 0.5)
+  // Process dynamic categories directly from Sanity (no redundant grouping)
   const processedCats = useMemo(() => {
     if (!categoriesData) return [];
 
-    const validCats = categoriesData.filter(
-      (cat) => cat.subcategory && Array.isArray(cat.subcategory) && cat.subcategory.length > 0
-    );
-
-    const jaccardSimilarity = (arr1: string[], arr2: string[]) => {
-      const setA = new Set(arr1.map(x => x.trim().toLowerCase()));
-      const setB = new Set(arr2.map(x => x.trim().toLowerCase()));
-      const intersection = new Set([...setA].filter(x => setB.has(x)));
-      const union = new Set([...setA, ...setB]);
-      return union.size === 0 ? 0 : (intersection.size / union.size);
-    };
-
-    const visited = new Set<number>();
-    const groups: Array<typeof validCats> = [];
-
-    for (let i = 0; i < validCats.length; i++) {
-      if (visited.has(i)) continue;
-      
-      const component: typeof validCats = [];
-      const queue = [i];
-      visited.add(i);
-      
-      while (queue.length > 0) {
-        const currIdx = queue.shift()!;
-        const currCat = validCats[currIdx];
-        component.push(currCat);
-        
-        for (let j = 0; j < validCats.length; j++) {
-          if (visited.has(j)) continue;
-          
-          const sim = jaccardSimilarity(currCat.subcategory!, validCats[j].subcategory!);
-          if (sim >= 0.5) {
-            visited.add(j);
-            queue.push(j);
-          }
-        }
-      }
-      groups.push(component);
-    }
-
-    const result: Array<{
-      category: string;
-      slugs: string[];
-      slug: string;
-      subcategory: string[];
-    }> = [];
-
-    groups.forEach((groupCats) => {
-      if (groupCats.length === 1) {
-        result.push({
-          category: groupCats[0].category,
-          slugs: [groupCats[0].slug?.current || ''],
-          slug: groupCats[0].slug?.current || '',
-          subcategory: groupCats[0].subcategory!
-        });
-      } else {
-        const sortedCats = [...groupCats].sort((a, b) => a.category.localeCompare(b.category));
-        const combinedName = sortedCats.map((c) => c.category).join(' / ');
-        
-        // Find shared subcategories
-        const subMaps = sortedCats.map(cat => {
-          const map = new Map<string, string>();
-          cat.subcategory!.forEach(sub => {
-            map.set(sub.trim().toLowerCase(), sub);
-          });
-          return map;
-        });
-
-        const firstMap = subMaps[0];
-        const sharedKeys: string[] = [];
-        for (const key of firstMap.keys()) {
-          let inAll = true;
-          for (let k = 1; k < subMaps.length; k++) {
-            if (!subMaps[k].has(key)) {
-              inAll = false;
-              break;
-            }
-          }
-          if (inAll) {
-            sharedKeys.push(key);
-          }
-        }
-
-        const sharedSubcategories = sharedKeys.map(key => firstMap.get(key)!);
-
-        if (sharedSubcategories.length > 0) {
-          result.push({
-            category: combinedName,
-            slugs: sortedCats.map((c) => c.slug?.current || ''),
-            slug: sortedCats[0].slug?.current || '',
-            subcategory: sharedSubcategories
-          });
-        }
-
-        // Add unique subcategories for each category in the group
-        sortedCats.forEach(cat => {
-          const uniqueSubs = cat.subcategory!.filter(sub => {
-            const norm = sub.trim().toLowerCase();
-            return !sharedKeys.includes(norm);
-          });
-
-          if (uniqueSubs.length > 0) {
-            result.push({
-              category: cat.category,
-              slugs: [cat.slug?.current || ''],
-              slug: cat.slug?.current || '',
-              subcategory: uniqueSubs
-            });
-          }
-        });
-      }
-    });
-
-    return result;
+    return categoriesData
+      .filter((cat) => cat.category && cat.slug?.current && cat.subcategory && Array.isArray(cat.subcategory) && cat.subcategory.length > 0)
+      .map((cat) => ({
+        category: cat.category,
+        slugs: [cat.slug.current],
+        slug: cat.slug.current,
+        subcategory: cat.subcategory.filter(Boolean)
+      }));
   }, [categoriesData]);
 
   // Synchronize URL Category param or pathname with dynamic categories data
@@ -307,8 +221,9 @@ export default function CancerMedicines() {
     const pathParts = window.location.pathname.split('/').filter(Boolean);
     let categorySlug = '';
     let isPathnameMatch = false;
-    
-    if (pathParts[0] === 'cancer-medicines') {
+    const matchedPrefix = (pathParts[0] === 'cancer-medicines' || pathParts[0] === 'product-range' || pathParts[0] === 'cancer-medicine') ? pathParts[0] : '';
+
+    if (matchedPrefix) {
       if (pathParts.length >= 2) {
         categorySlug = pathParts[1];
         isPathnameMatch = true;
@@ -357,8 +272,8 @@ export default function CancerMedicines() {
       }
 
       if (matched && isPathnameMatch) {
-        // Clean URL pathname so user only sees /cancer-medicines
-        window.history.replaceState(null, '', '/cancer-medicines');
+        // Clean URL pathname so user only sees the matched prefix
+        window.history.replaceState(null, '', `/${matchedPrefix}`);
       }
     }
 
@@ -415,10 +330,12 @@ export default function CancerMedicines() {
 
   // Synchronize Title to active category
   useEffect(() => {
+    const pathParts = window.location.pathname.split('/').filter(Boolean);
+    const isCancerPage = pathParts[0] === 'cancer-medicines' || pathParts[0] === 'cancer-medicine';
     if (currentCategory === 'All') {
-      document.title = 'Cancer Medicines - Getmeds';
+      document.title = isCancerPage ? 'Cancer Medicines - Getmeds' : 'Product Range - Getmeds';
     } else {
-      document.title = `${currentCategory} - Cancer Medicines | Getmeds`;
+      document.title = `${currentCategory} - ${isCancerPage ? 'Cancer Medicines' : 'Product Range'} | Getmeds`;
     }
   }, [currentCategory]);
 
@@ -534,11 +451,11 @@ export default function CancerMedicines() {
   const getProductSubcategories = (p: ProductWithCategory) => {
     if (!p.subCategory) return [];
     const parts = p.subCategory.split('/').map(s => s.trim().replace(/,$/, '')).filter(Boolean);
-    const catDoc = categoriesData?.find(c => c._id === p.category?._id || c.category === p.category?.category);
+    const catDoc = categoriesData?.find(c => c._id === p.category?._id || (c.category && p.category?.category && c.category === p.category?.category));
     const masterSubcategories = catDoc?.subcategory || [];
     if (masterSubcategories.length === 0) return parts;
     return parts.map(part => {
-      const matched = masterSubcategories.find(m => m.toLowerCase() === part.toLowerCase());
+      const matched = masterSubcategories.find(m => m && typeof m === 'string' && m.toLowerCase() === part.toLowerCase());
       return matched || part;
     });
   };
@@ -550,10 +467,10 @@ export default function CancerMedicines() {
     }
     if (currentCategory !== 'All' && categoriesData) {
       const isSubcategory = categoriesData.some(c => 
-        c.subcategory?.some(sub => sub.toLowerCase() === currentCategory.toLowerCase())
+        c.subcategory?.some(sub => sub && typeof sub === 'string' && sub.toLowerCase() === currentCategory.toLowerCase())
       );
       if (isSubcategory) {
-        const matched = subcats.find(sub => sub.toLowerCase() === currentCategory.toLowerCase());
+        const matched = subcats.find(sub => sub && typeof sub === 'string' && sub.toLowerCase() === currentCategory.toLowerCase());
         if (matched) {
           return matched;
         }
@@ -758,7 +675,7 @@ export default function CancerMedicines() {
     });
   };
 
-   const getProductDetailUrl = (p: ProductWithCategory) => {
+  const getProductDetailUrl = (p: ProductWithCategory) => {
     const brand = (p.brandName || '').toLowerCase().trim()
       .replace(/[^a-z0-9]+/g, '-');
     const molecule = (p.genericName || '').toLowerCase().trim()
@@ -768,11 +685,16 @@ export default function CancerMedicines() {
       .replace(/[^a-z0-9]+/g, '-');
     const strength = (p.strength || '').toLowerCase().trim()
       .replace(/[^a-z0-9]+/g, '-');
-    
+
     const parts = [brand, molecule, strength, form].filter(Boolean).join('-');
     const cleanProductSlug = parts.replace(/-+/g, '-').replace(/(^-|-$)/g, '');
-    
-    return `/cancer-medicines/${cleanProductSlug}`;
+
+    // Oncology and Neuro-Oncology products → /cancer-medicine/[slug]
+    // All other products → /product-range/[slug]
+    if (isCancerProduct(p)) {
+      return `/cancer-medicine/${cleanProductSlug}`;
+    }
+    return `/product-range/${cleanProductSlug}`;
   };
 
   const selectCategory = (category: string) => {

@@ -18,21 +18,21 @@
       {
         "heading": "Oncology (Solid Tumors)",
         "items": [
-          { "label": "Breast Cancer", "href": "product-range.html?category=breast-cancer" },
-          { "label": "Ovarian Cancer", "href": "product-range.html?category=ovarian-cancer" },
-          { "label": "Non-Small Cell Lung Cancer", "href": "product-range.html?category=lung-cancer" },
-          { "label": "Prostate Cancer", "href": "product-range.html?category=prostate-cancer" },
-          { "label": "Colorectal Cancer", "href": "product-range.html?category=colorectal-cancer" },
-          { "label": "Pancreatic Cancer", "href": "product-range.html?category=pancreatic-cancer" }
+          { "label": "Breast Cancer", "href": "cancer-medicines.html?category=breast-cancer" },
+          { "label": "Ovarian Cancer", "href": "cancer-medicines.html?category=ovarian-cancer" },
+          { "label": "Non-Small Cell Lung Cancer", "href": "cancer-medicines.html?category=lung-cancer" },
+          { "label": "Prostate Cancer", "href": "cancer-medicines.html?category=prostate-cancer" },
+          { "label": "Colorectal Cancer", "href": "cancer-medicines.html?category=colorectal-cancer" },
+          { "label": "Pancreatic Cancer", "href": "cancer-medicines.html?category=pancreatic-cancer" }
         ]
       },
       {
         "heading": "Hematology Range",
         "items": [
-          { "label": "Acute Myeloid Leukemia", "href": "product-range.html?category=aml" },
-          { "label": "Chronic Myeloid Leukemia", "href": "product-range.html?category=cml" },
-          { "label": "Hodgkin/Non-Hodgkin's Lymphoma", "href": "product-range.html?category=lymphoma" },
-          { "label": "Sickle Cell Anemia", "href": "product-range.html?category=sickle-cell" }
+          { "label": "Acute Myeloid Leukemia", "href": "cancer-medicines.html?category=aml" },
+          { "label": "Chronic Myeloid Leukemia", "href": "cancer-medicines.html?category=cml" },
+          { "label": "Hodgkin/Non-Hodgkin's Lymphoma", "href": "cancer-medicines.html?category=lymphoma" },
+          { "label": "Sickle Cell Anemia", "href": "cancer-medicines.html?category=sickle-cell" }
         ]
       },
       {
@@ -54,7 +54,7 @@
       {
         "heading": "Orthopedic",
         "items": [
-          { "label": "Multiple Myeloma", "href": "product-range.html?category=multiple-myeloma" },
+          { "label": "Multiple Myeloma", "href": "cancer-medicines.html?category=multiple-myeloma" },
           { "label": "Osteoporosis", "href": "product-range.html?category=osteoporosis" }
         ]
       },
@@ -68,7 +68,7 @@
       {
         "heading": "Neuro-Oncology",
         "items": [
-          { "label": "Glioblastoma Multiforme", "href": "product-range.html?category=glioblastoma" }
+          { "label": "Glioblastoma Multiforme", "href": "cancer-medicines.html?category=glioblastoma" }
         ]
       },
       {
@@ -136,13 +136,13 @@
   },
   "mobileMenu": {
     "productSubLinks": [
-      { "label": "Oncology / Hematology", "href": "product-range.html?category=oncology-hematology" },
+      { "label": "Oncology / Hematology", "href": "cancer-medicines.html?category=oncology-hematology" },
       { "label": "Hematology / Obstetrician / Gynecology", "href": "product-range.html?category=hematology-obgyn" },
       { "label": "Anti-Infectives", "href": "product-range.html?category=anti-infectives" },
       { "label": "Endocrinology", "href": "product-range.html?category=endocrinology" },
       { "label": "Orthopedic", "href": "product-range.html?category=orthopedic" },
       { "label": "Cardiology", "href": "product-range.html?category=cardiology" },
-      { "label": "Neuro-Oncology", "href": "product-range.html?category=neuro-oncology" },
+      { "label": "Neuro-Oncology", "href": "cancer-medicines.html?category=neuro-oncology" },
       { "label": "Respiratory / Allergy", "href": "product-range.html?category=respiratory-allergy" },
       { "label": "Nephrology / Renal", "href": "product-range.html?category=nephrology-renal" },
       { "label": "Pain Management", "href": "product-range.html?category=pain-management" },

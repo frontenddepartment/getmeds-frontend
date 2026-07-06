@@ -32,18 +32,8 @@
       "permanent": true
     },
     {
-      "source": "/product-range",
-      "destination": "/cancer-medicines",
-      "permanent": true
-    },
-    {
       "source": "/product-range.html",
-      "destination": "/cancer-medicines",
-      "permanent": true
-    },
-    {
-      "source": "/product-range/:path*",
-      "destination": "/cancer-medicines/:path*",
+      "destination": "/product-range",
       "permanent": true
     },
     {
@@ -72,7 +62,7 @@
       "permanent": true
     },
     {
-      "source": "/:slug((?!404|about-us|blog|blog-detail|cancer-medicines|careers|contact-us|csr|edit-profile|global-presence|home-preview|meditations|order-medicines|pap|profile|services|under-development|ungc|api/|wp-json/|wp-content/|assets/|public/|components/|data/|src/|dist/|node_modules/|_vercel/|masteradmin|masteradlorock|masteradlorockpd|masteradlorockpdprocess|masteradlogriyon|adminadlorock|[^/]+\\.[^/]+$)[^/]+)",
+      "source": "/:slug((?!404|about-us|blog|blog-detail|cancer-medicines|cancer-medicine|product-range|careers|contact-us|csr|edit-profile|global-presence|home-preview|meditations|order-medicines|pap|profile|services|under-development|ungc|api/|wp-json/|wp-content/|assets/|public/|components/|data/|src/|dist/|node_modules/|_vercel/|masteradmin|masteradlorock|masteradlorockpd|masteradlorockpdprocess|masteradlogriyon|adminadlorock|[^/]+\\.[^/]+$)[^/]+)",
       "destination": "/blog/:slug",
       "permanent": true
     }
@@ -156,6 +146,30 @@
     },
     {
       "source": "/cancer-medicines",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/cancer-medicine/:subcategory(obstetrician|folate-deficiency-anemia|iron-deficiency-anemia|allergy|seasonal-allergic-rhinitis|pain-management|chronic-pain-management|rheumatology|inflammatory-rheumatic-disorders|oncology|breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|gastric-cancer-gastric-adenocarcinoma|pancreatic-cancer|colorectal-cancer|hodgkin-non-hodgkins-lymphoma|acute-lymphoblastic-leukemia|malignant-pleural-mesothelioma|head-and-neck-cancer|chronic-myeloid-leukemia|sickle-cell-anemia|malignant-pleural-effusion|gastrointestinal-stromal-tumors|acute-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-myelocytic-leukemia|meningeal-leukemia|acute-promyelocytic-leukemia|chronic-lymphocytic-leukemia|mantle-cell-lymphoma|multiple-myeloma|endocrinology|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|cardiology|arrhythmia-management|hypertension-angina|renal|chronic-kidney-disease|radiology|radiologic-imaging-enhancement-ct-scans-angiography-urography|hematology|orthopedic|glucocorticoid-induced-osteoporosis|gynecology|anti-infectives|respiratory-infections|urinary-tract-infections|gynecological-infections|intra-abdominal-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|bloodstream-infections|ocular-or-topical-infections|neuro-oncology|glioblastoma-multiforme|respiratory|nephrology)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/cancer-medicine/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/cancer-medicine",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/product-range/:subcategory(obstetrician|folate-deficiency-anemia|iron-deficiency-anemia|allergy|seasonal-allergic-rhinitis|pain-management|chronic-pain-management|rheumatology|inflammatory-rheumatic-disorders|oncology|breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|gastric-cancer-gastric-adenocarcinoma|pancreatic-cancer|colorectal-cancer|hodgkin-non-hodgkins-lymphoma|acute-lymphoblastic-leukemia|malignant-pleural-mesothelioma|head-and-neck-cancer|chronic-myeloid-leukemia|sickle-cell-anemia|malignant-pleural-effusion|gastrointestinal-stromal-tumors|acute-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-myelocytic-leukemia|meningeal-leukemia|acute-promyelocytic-leukemia|chronic-lymphocytic-leukemia|mantle-cell-lymphoma|multiple-myeloma|endocrinology|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|cardiology|arrhythmia-management|hypertension-angina|renal|chronic-kidney-disease|radiology|radiologic-imaging-enhancement-ct-scans-angiography-urography|hematology|orthopedic|glucocorticoid-induced-osteoporosis|gynecology|anti-infectives|respiratory-infections|urinary-tract-infections|gynecological-infections|intra-abdominal-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|bloodstream-infections|ocular-or-topical-infections|neuro-oncology|glioblastoma-multiforme|respiratory|nephrology)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/product-range/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/product-range",
       "destination": "/cancer-medicines"
     },
     {

@@ -506,7 +506,24 @@
                 // Normalize legacy relative links
                 if (!url.startsWith('/') && !url.startsWith('http') && url !== '#') {
                     if (url.startsWith('product-range.html')) {
-                        url = '/product-range' + url.substring('product-range.html'.length);
+                        // Subcategory slugs whose topic is cancer/oncology route through /cancer-medicines,
+                        // everything else keeps the /product-range prefix.
+                        const cancerSlugs = new Set([
+                            'oncology', 'breast-cancer', 'ovarian-cancer', 'non-small-cell-lung-cancer', 'lung-cancer',
+                            'prostate-cancer', 'gastric-cancer-gastric-adenocarcinoma', 'gastric-cancer', 'pancreatic-cancer', 'colorectal-cancer',
+                            'hodgkin-non-hodgkins-lymphoma', 'hodgkin-non-hodgkin-s-lymphoma', 'lymphoma',
+                            'acute-lymphoblastic-leukemia', 'malignant-pleural-mesothelioma', 'head-and-neck-cancer',
+                            'chronic-myeloid-leukemia', 'cml', 'sickle-cell-anemia', 'sickle-cell',
+                            'malignant-pleural-effusion', 'gastrointestinal-stromal-tumors',
+                            'acute-myeloid-leukemia', 'aml', 'acute-lymphocytic-leukemia', 'chronic-myelocytic-leukemia',
+                            'meningeal-leukemia', 'acute-promyelocytic-leukemia', 'chronic-lymphocytic-leukemia',
+                            'mantle-cell-lymphoma', 'multiple-myeloma', 'neuro-oncology', 'glioblastoma-multiforme', 'glioblastoma'
+                        ]);
+                        const rest = url.substring('product-range.html'.length);
+                        const categoryMatch = rest.match(/[?&]category=([^&]+)/);
+                        const categorySlug = categoryMatch ? decodeURIComponent(categoryMatch[1]) : null;
+                        const prefix = categorySlug && cancerSlugs.has(categorySlug) ? '/cancer-medicines' : '/product-range';
+                        url = prefix + rest;
                     } else if (url.startsWith('order-medicines.html')) {
                         url = '/order-medicines' + url.substring('order-medicines.html'.length);
                     } else if (url.startsWith('contact-us.html')) {

@@ -205,6 +205,7 @@ export interface Product {
   availability?: boolean
   image?: SanityImage
   category?: SanityReference<Category>
+  excelCategory?: string
   subCategory?: string
   description?: string
   strength?: string

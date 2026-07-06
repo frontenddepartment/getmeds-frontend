@@ -6,6 +6,7 @@ import type { Product as SanityProduct, Category } from '../types/sanity';
 import { injectHTML } from '../lib/injectHTML';
 import { getApiUrl } from '../lib/api';
 import { setPageMeta } from '../lib/seo';
+import { PortableText } from '@portabletext/react';
 
 interface ProductWithCategory extends Omit<SanityProduct, 'category'> {
   category?: Category;
@@ -20,6 +21,14 @@ const formatFieldWithLineBreaks = (text: string | undefined | null) => {
       {i < parts.length - 1 && <br />}
     </React.Fragment>
   ));
+};
+
+const renderRichContent = (val: any) => {
+  if (!val) return null;
+  if (Array.isArray(val)) {
+    return <PortableText value={val} />;
+  }
+  return <React.Fragment>{formatFieldWithLineBreaks(val)}</React.Fragment>;
 };
 
 export default function ProductDetail() {
@@ -98,14 +107,30 @@ export default function ProductDetail() {
     return specials[slug] || slug;
   };
 
+  const CANCER_CATEGORY_NAMES = [
+    'oncology',
+    'neuro-oncology',
+    'oncology / hematology',
+    'oncology/hematology',
+    'cancer'
+  ];
+  const CANCER_BRAND_EXCEPTIONS = ['zoloGet'.toLowerCase()];
+  const isCancerProduct = (p: ProductWithCategory | null) => {
+    if (!p) return false;
+    const catName = (p.category?.category || '').toLowerCase().trim();
+    if (CANCER_CATEGORY_NAMES.includes(catName)) return true;
+    if (p.excelCategory && CANCER_CATEGORY_NAMES.includes(p.excelCategory.toLowerCase().trim())) return true;
+    return CANCER_BRAND_EXCEPTIONS.includes((p.brandName || '').toLowerCase().trim());
+  };
+
   const getProductSubcategories = (p: ProductWithCategory) => {
     if (!p.subCategory) return [];
     const parts = p.subCategory.split('/').map(s => s.trim().replace(/,$/, '')).filter(Boolean);
-    const catDoc = categoriesData?.find(c => c._id === p.category?._id || c.category === p.category?.category);
+    const catDoc = categoriesData?.find(c => c._id === p.category?._id || (c.category && p.category?.category && c.category === p.category?.category));
     const masterSubcategories = catDoc?.subcategory || [];
     if (masterSubcategories.length === 0) return parts;
     return parts.map(part => {
-      const matched = masterSubcategories.find(m => m.toLowerCase() === part.toLowerCase());
+      const matched = masterSubcategories.find(m => m && typeof m === 'string' && m.toLowerCase() === part.toLowerCase());
       return matched || part;
     });
   };
@@ -123,7 +148,7 @@ export default function ProductDetail() {
       let productSlug = '';
       
       const pathParts = window.location.pathname.split('/').filter(Boolean);
-      if (pathParts[0] === 'cancer-medicines' && pathParts.length === 2) {
+      if ((pathParts[0] === 'cancer-medicines' || pathParts[0] === 'cancer-medicine' || pathParts[0] === 'product-range') && pathParts.length === 2) {
         productSlug = pathParts[1];
       }
       
@@ -183,7 +208,7 @@ export default function ProductDetail() {
     }
   }, [productsLoading, productsData, categoriesData]);
 
-  const backUrl = '/cancer-medicines';
+  const backUrl = isCancerProduct(product) ? '/cancer-medicines' : '/product-range';
 
 
   const brandNameCounts = useMemo(() => {
@@ -335,6 +360,13 @@ export default function ProductDetail() {
       setTimeout(() => setSubmitState('idle'), 2000);
     }
   };
+
+  if (product) {
+    console.log("DEBUG [product-detail]: product object before rendering:", product);
+    console.log("DEBUG [product-detail]: description field type/value:", typeof product.description, Array.isArray(product.description) ? "array/portable-text" : "not array", product.description);
+    console.log("DEBUG [product-detail]: indications field type/value:", typeof product.indications, Array.isArray(product.indications) ? "array/portable-text" : "not array", product.indications);
+    console.log("DEBUG [product-detail]: dosageAdministration field type/value:", typeof product.dosageAdministration, Array.isArray(product.dosageAdministration) ? "array/portable-text" : "not array", product.dosageAdministration);
+  }
 
   return (
     <div style={{ fontFamily: "'Poppins', sans-serif" }} className="bg-white text-gray-800 antialiased min-h-screen flex flex-col">
@@ -499,20 +531,24 @@ export default function ProductDetail() {
                   <div className="text-[14px] text-gray-600 leading-relaxed max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
                     <div className="space-y-4">
                       {product.description && (
-                        <div>
-                          <p className="text-[14px] text-gray-600 leading-relaxed">{product.description}</p>
+                        <div className="text-[14px] text-gray-600 leading-relaxed">
+                          {renderRichContent(product.description)}
                         </div>
                       )}
                       {(product.indications || (product as any).indication) && (
                         <div>
                           <span className="block text-[13px] font-semibold mb-1 text-gray-400">Indications</span>
-                          <p className="text-[14px] text-gray-600 leading-relaxed">{product.indications || (product as any).indication}</p>
+                          <div className="text-[14px] text-gray-600 leading-relaxed">
+                            {renderRichContent(product.indications || (product as any).indication)}
+                          </div>
                         </div>
                       )}
                       {(product.dosageAdministration || (product as any).dosageAndAdministration) && (
                         <div>
                           <span className="block text-[13px] font-semibold mb-1 text-gray-400">Dosage & Administration</span>
-                          <p className="text-[14px] text-gray-600 leading-relaxed">{product.dosageAdministration || (product as any).dosageAndAdministration}</p>
+                          <div className="text-[14px] text-gray-600 leading-relaxed">
+                            {renderRichContent(product.dosageAdministration || (product as any).dosageAndAdministration)}
+                          </div>
                         </div>
                       )}
                       {!product.description && !product.indications && !(product as any).indication && !product.dosageAdministration && !(product as any).dosageAndAdministration && (

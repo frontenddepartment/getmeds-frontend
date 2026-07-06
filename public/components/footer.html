@@ -36,11 +36,11 @@
             <div>
                 <h4 class="text-white font-semibold mb-6 text-base">Product Range</h4>
                 <ul class="footer-nav-grid">
-                    <li><a href="/product-range.html?category=breast-cancer" class="footer-link">Oncology</a></li>
-                    <li><a href="/product-range.html?category=aml" class="footer-link">Hematology</a></li>
+                    <li><a href="/cancer-medicines.html?category=breast-cancer" class="footer-link">Oncology</a></li>
+                    <li><a href="/cancer-medicines.html?category=aml" class="footer-link">Hematology</a></li>
                     <li><a href="/product-range.html?category=respiratory" class="footer-link">Anti-Infectives</a></li>
                     <li><a href="/product-range.html?category=endometriosis" class="footer-link">Endocrinology</a></li>
-                    <li><a href="/product-range.html?category=multiple-myeloma" class="footer-link">Orthopedic</a></li>
+                    <li><a href="/cancer-medicines.html?category=multiple-myeloma" class="footer-link">Orthopedic</a></li>
                     <li><a href="/product-range.html?category=arrhythmia" class="footer-link">Cardiology</a></li>
                 </ul>
             </div>
@@ -379,10 +379,10 @@
         sessionStorage.setItem('gmeds_disclaimer_seen', '1');
     };
 
-    // Auto-show disclaimer once per session on the product-range page
+    // Auto-show disclaimer once per session on the product-range / cancer-medicines listing pages
     (function () {
         var path = window.location.pathname.replace(/^\//, '').replace(/\.html$/, '').replace(/\/$/, '');
-        if (path === 'product-range' && !sessionStorage.getItem('gmeds_disclaimer_seen')) {
+        if ((path === 'product-range' || path === 'cancer-medicines') && !sessionStorage.getItem('gmeds_disclaimer_seen')) {
             document.getElementById('medical-disclaimer-modal').classList.remove('hidden');
         }
     })();

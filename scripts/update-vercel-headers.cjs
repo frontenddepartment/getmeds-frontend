@@ -159,10 +159,18 @@ async function run() {
   const subcategories = await fetchSanitySubcategories(env);
   if (vercelConfig.rewrites) {
     let updatedRewritesCount = 0;
+    const subcatPattern = subcategories.join('|');
     vercelConfig.rewrites = vercelConfig.rewrites.map(rewrite => {
-      if (rewrite.source && rewrite.source.startsWith('/cancer-medicines/:subcategory(')) {
-        const subcatPattern = subcategories.join('|');
-        rewrite.source = `/cancer-medicines/:subcategory(${subcatPattern})`;
+      if (rewrite.source && (
+        rewrite.source.startsWith('/cancer-medicines/:subcategory(') ||
+        rewrite.source.startsWith('/cancer-medicine/:subcategory(') ||
+        rewrite.source.startsWith('/product-range/:subcategory(')
+      )) {
+        let prefix;
+        if (rewrite.source.startsWith('/cancer-medicines/')) prefix = 'cancer-medicines';
+        else if (rewrite.source.startsWith('/cancer-medicine/')) prefix = 'cancer-medicine';
+        else prefix = 'product-range';
+        rewrite.source = `/${prefix}/:subcategory(${subcatPattern})`;
         updatedRewritesCount++;
       }
       return rewrite;

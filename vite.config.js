@@ -395,15 +395,64 @@ export default defineConfig(async ({ mode }) => {
                 return;
               }
             }
-            if (cleanPath.startsWith('/product-range')) {
-              let subPath = cleanPath.slice('/product-range'.length);
-              if (subPath.startsWith('.html')) {
-                subPath = '';
-              }
-              res.statusCode = 301;
-              res.setHeader('Location', '/cancer-medicines' + subPath + qs);
+            if (cleanPath === '/product-range.html') {
+              res.statusCode = 302;
+              res.setHeader('Location', '/product-range' + qs);
               res.end();
               return;
+            }
+            if (cleanPath.startsWith('/product-range')) {
+              const segments = cleanPath.split('/').filter(Boolean);
+              if (segments.length === 2) {
+                const slug = segments[1];
+                if (subcategories.includes(slug)) {
+                  const htmlPath = path.join(process.cwd(), 'cancer-medicines.html');
+                  if (fs.existsSync(htmlPath)) {
+                    res.setHeader('Content-Type', 'text/html');
+                    res.end(fs.readFileSync(htmlPath, 'utf-8'));
+                    return;
+                  }
+                } else {
+                  const htmlPath = path.join(process.cwd(), 'product-detail.html');
+                  if (fs.existsSync(htmlPath)) {
+                    res.setHeader('Content-Type', 'text/html');
+                    res.end(fs.readFileSync(htmlPath, 'utf-8'));
+                    return;
+                  }
+                }
+              } else {
+                const htmlPath = path.join(process.cwd(), 'cancer-medicines.html');
+                if (fs.existsSync(htmlPath)) {
+                  res.setHeader('Content-Type', 'text/html');
+                  res.end(fs.readFileSync(htmlPath, 'utf-8'));
+                  return;
+                }
+              }
+            }
+            // /cancer-medicine/* (singular) — oncology product detail pages
+            if (cleanPath === '/cancer-medicine.html') {
+              res.statusCode = 302;
+              res.setHeader('Location', '/product-range' + qs);
+              res.end();
+              return;
+            }
+            if (cleanPath === '/cancer-medicine' || cleanPath === '/cancer-medicine/' || (cleanPath.startsWith('/cancer-medicine/') && !cleanPath.startsWith('/cancer-medicines'))) {
+              const segments = cleanPath.split('/').filter(Boolean);
+              if (segments[0] === 'cancer-medicine' && segments.length === 2) {
+                // Always a product slug (not a subcategory)
+                const htmlPath = path.join(process.cwd(), 'product-detail.html');
+                if (fs.existsSync(htmlPath)) {
+                  res.setHeader('Content-Type', 'text/html');
+                  res.end(fs.readFileSync(htmlPath, 'utf-8'));
+                  return;
+                }
+              } else {
+                // /cancer-medicine with no slug - redirect to catalog
+                res.statusCode = 302;
+                res.setHeader('Location', '/product-range' + qs);
+                res.end();
+                return;
+              }
             }
             if (cleanPath === '/cancer-medicines.html') {
               res.statusCode = 302;

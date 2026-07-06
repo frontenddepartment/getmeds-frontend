@@ -1,7 +1,102 @@
 <style>
     /* Active nav link — keyed off data-page attribute on each page's <body> */
     body[data-page="home"] a[href="/"] {
-        color: #0D99FF;
+        color: #0D99FF !important;
+    }
+
+    /* Style for home page navbar wrapper */
+    body[data-page="home"] #navbar-container {
+        position: static !important;
+    }
+
+    body[data-page="home"] #global-nav-wrapper {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 100;
+        background: transparent;
+        transition: background-color 0.3s ease;
+    }
+
+    body[data-page="home"] #global-nav-wrapper.scrolled {
+        position: fixed;
+        top: 0;
+        left: 0;
+        background: #ffffff;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        border-bottom: 1px solid #f3f4f6;
+        animation: slideDown 0.4s ease-out forwards;
+    }
+
+    /* Top bar visibility */
+    #global-top-bar {
+        display: none;
+    }
+
+    body[data-page="home"] #global-top-bar {
+        display: block;
+    }
+
+    body[data-page="home"] #global-top-bar.scrolled {
+        display: none;
+    }
+
+    /* Navbar background/border behavior on home */
+    body[data-page="home"] #global-nav {
+        background: transparent !important;
+        border-bottom: none !important;
+        box-shadow: none !important;
+    }
+
+    body[data-page="home"] #global-nav-wrapper.scrolled #global-nav {
+        background: #ffffff !important;
+        border-bottom: 1px solid #f1f5f9 !important;
+    }
+
+    /* Link colors on home page (transparent vs scrolled) */
+    body[data-page="home"] #global-nav-links a {
+        color: #000b5d !important;
+    }
+    body[data-page="home"] #global-nav-links a:hover {
+        color: #0D99FF !important;
+    }
+
+    body[data-page="home"] #global-nav-wrapper.scrolled #global-nav-links a {
+        color: #4b5563 !important; /* Slate/gray like general nav */
+    }
+    body[data-page="home"] #global-nav-wrapper.scrolled #global-nav-links a:hover {
+        color: #0D99FF !important;
+    }
+    body[data-page="home"] #global-nav-wrapper.scrolled #global-nav-links a[href="/"] {
+        color: #0D99FF !important;
+    }
+
+    /* Company and Product Range trigger button coloring on home page */
+    body[data-page="home"] #company-nav-btn,
+    body[data-page="home"] #global-nav-links .group a {
+        color: #000b5d !important;
+    }
+    body[data-page="home"] #company-nav-btn:hover,
+    body[data-page="home"] #global-nav-links .group a:hover {
+        color: #0D99FF !important;
+    }
+
+    body[data-page="home"] #global-nav-wrapper.scrolled #company-nav-btn,
+    body[data-page="home"] #global-nav-wrapper.scrolled #global-nav-links .group a {
+        color: #4b5563 !important;
+    }
+    body[data-page="home"] #global-nav-wrapper.scrolled #company-nav-btn:hover,
+    body[data-page="home"] #global-nav-wrapper.scrolled #global-nav-links .group a:hover {
+        color: #0D99FF !important;
+    }
+
+    /* Hamburger menu color */
+    body[data-page="home"] #mobile-menu-btn {
+        color: #000b5d !important;
+    }
+    body[data-page="home"] #global-nav-wrapper.scrolled #mobile-menu-btn {
+        color: #4b5563 !important;
     }
 
     body[data-page="order-medicines"] a[href="/order-medicines.html"] {
@@ -84,20 +179,46 @@
     }
 </style>
 
-<!-- Navbar -->
-<nav class="w-full bg-white shadow-sm sticky top-0 z-50 border-b border-gray-100">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between h-20 relative">
-            <!-- Logo (Left) -->
-            <div class="w-[140px] lg:w-[200px] flex-shrink-0 flex items-center">
-                <a href="/" class="flex items-center">
-                    <img src="/assets/getmedslogo.png" alt="Getmeds Logo" class="h-10 w-auto object-contain">
-                </a>
+<div id="global-nav-wrapper">
+    <!-- Top Bar (Dark semi-transparent strip) -->
+    <div id="global-top-bar" class="w-full bg-slate-900/40 border-b border-white/10 backdrop-blur-sm py-2.5 px-6">
+        <div class="max-w-7xl mx-auto flex items-center justify-between text-xs text-white/90 font-medium">
+            <div class="flex items-center space-x-2">
+                <span class="font-extrabold text-[11px] uppercase tracking-wider text-white">Connect With Us</span>
             </div>
+            <div class="flex items-center space-x-6">
+                <!-- Phone — Medicine Inquiries -->
+                <a href="tel:+639190769103" class="flex items-center space-x-2 hover:text-primary transition text-white">
+                    <i class="fa-solid fa-phone"></i>
+                    <span>+63 919 076 9103</span>
+                </a>
+                <!-- Socials -->
+                <div class="flex items-center space-x-4 border-l border-white/20 pl-6">
+                    <a href="https://www.facebook.com/getmedsphilippines/" target="_blank" rel="noopener noreferrer" class="hover:text-primary transition text-white">
+                        <i class="fa-brands fa-facebook-f text-[14px]"></i>
+                    </a>
+                    <a href="https://www.linkedin.com/company/getmeds" target="_blank" rel="noopener noreferrer" class="hover:text-primary transition text-white">
+                        <i class="fa-brands fa-linkedin-in text-[14px]"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
 
-            <!-- Desktop Nav Links (Center) -->
-            <div
-                class="hidden lg:flex flex-1 justify-center items-center space-x-8 text-sm font-semibold text-gray-500">
+    <!-- Navbar -->
+    <nav id="global-nav" class="w-full bg-white shadow-sm sticky top-0 z-50 border-b border-gray-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20 relative">
+                <!-- Logo (Left) -->
+                <div class="w-[140px] lg:w-[200px] flex-shrink-0 flex items-center">
+                    <a href="/" class="flex items-center">
+                        <img src="/assets/getmedslogo.png" alt="Getmeds Logo" class="h-10 w-auto object-contain">
+                    </a>
+                </div>
+
+                <!-- Desktop Nav Links (Center) -->
+                <div id="global-nav-links"
+                    class="hidden lg:flex flex-1 justify-center items-center space-x-8 text-sm font-semibold text-gray-500">
                 <a href="/" class="hover:text-primary transition">Home</a>
                 <a href="/order-medicines.html" class="hover:text-primary transition whitespace-nowrap">Order
                     Medicines</a>
@@ -117,37 +238,37 @@
                                     <h4 class="font-semibold text-gray-900 mb-4 border-b pb-2 text-sm">Oncology (Solid
                                         Tumors)</h4>
                                     <ul class="space-y-2 text-[13px]">
-                                        <li><a href="/product-range/breast-cancer"
+                                        <li><a href="/cancer-medicines/breast-cancer"
                                                 class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Breast
                                                 Cancer</a></li>
-                                        <li><a href="/product-range/ovarian-cancer"
+                                        <li><a href="/cancer-medicines/ovarian-cancer"
                                                 class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Ovarian
                                                 Cancer</a></li>
-                                        <li><a href="/product-range/lung-cancer"
+                                        <li><a href="/cancer-medicines/lung-cancer"
                                                 class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Non-Small
                                                 Cell Lung Cancer</a></li>
-                                        <li><a href="/product-range/prostate-cancer"
+                                        <li><a href="/cancer-medicines/prostate-cancer"
                                                 class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Prostate
                                                 Cancer</a></li>
-                                        <li><a href="/product-range/colorectal-cancer"
+                                        <li><a href="/cancer-medicines/colorectal-cancer"
                                                 class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Colorectal
                                                 Cancer</a></li>
-                                        <li><a href="/product-range/pancreatic-cancer"
+                                        <li><a href="/cancer-medicines/pancreatic-cancer"
                                                 class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Pancreatic
                                                 Cancer</a></li>
-                                        <li><a href="/product-range/gastric-cancer"
+                                        <li><a href="/cancer-medicines/gastric-cancer"
                                                 class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Gastric
                                                 Cancer / Gastric Adenocarcinoma</a></li>
-                                        <li><a href="/product-range/head-and-neck-cancer"
+                                        <li><a href="/cancer-medicines/head-and-neck-cancer"
                                                 class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Head
                                                 and Neck Cancer</a></li>
-                                        <li><a href="/product-range/malignant-pleural-mesothelioma"
+                                        <li><a href="/cancer-medicines/malignant-pleural-mesothelioma"
                                                 class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Malignant
                                                 Pleural Mesothelioma</a></li>
-                                        <li><a href="/product-range/malignant-pleural-effusion"
+                                        <li><a href="/cancer-medicines/malignant-pleural-effusion"
                                                 class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Malignant
                                                 Pleural Effusion</a></li>
-                                        <li><a href="/product-range/gastrointestinal-stromal-tumors"
+                                        <li><a href="/cancer-medicines/gastrointestinal-stromal-tumors"
                                                 class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Gastrointestinal
                                                 Stromal Tumors</a></li>
                                     </ul>
@@ -158,37 +279,37 @@
                                     <h4 class="font-semibold text-gray-900 mb-4 border-b pb-2 text-sm">Oncology /
                                         Hematology</h4>
                                     <ul class="space-y-2 text-[13px] mb-6">
-                                        <li><a href="/product-range/aml"
+                                        <li><a href="/cancer-medicines/aml"
                                                 class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Acute
                                                 Myeloid Leukemia</a></li>
-                                        <li><a href="/product-range/cml"
+                                        <li><a href="/cancer-medicines/cml"
                                                 class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Chronic
                                                 Myeloid Leukemia</a></li>
-                                        <li><a href="/product-range/acute-lymphocytic-leukemia"
+                                        <li><a href="/cancer-medicines/acute-lymphocytic-leukemia"
                                                 class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Acute
                                                 Lymphocytic Leukemia</a></li>
-                                        <li><a href="/product-range/chronic-lymphocytic-leukemia"
+                                        <li><a href="/cancer-medicines/chronic-lymphocytic-leukemia"
                                                 class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Chronic
                                                 Lymphocytic Leukemia</a></li>
-                                        <li><a href="/product-range/lymphoma"
+                                        <li><a href="/cancer-medicines/lymphoma"
                                                 class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Hodgkin/Non-Hodgkin's
                                                 Lymphoma</a></li>
-                                        <li><a href="/product-range/mantle-cell-lymphoma"
+                                        <li><a href="/cancer-medicines/mantle-cell-lymphoma"
                                                 class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Mantle
                                                 Cell Lymphoma</a></li>
-                                        <li><a href="/product-range/chronic-myelocytic-leukemia"
+                                        <li><a href="/cancer-medicines/chronic-myelocytic-leukemia"
                                                 class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Chronic
                                                 Myelocytic Leukemia</a></li>
-                                        <li><a href="/product-range/meningeal-leukemia"
+                                        <li><a href="/cancer-medicines/meningeal-leukemia"
                                                 class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Meningeal
                                                 Leukemia</a></li>
-                                        <li><a href="/product-range/acute-lymphoblastic-leukemia"
+                                        <li><a href="/cancer-medicines/acute-lymphoblastic-leukemia"
                                                 class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Acute
                                                 Lymphoblastic Leukemia</a></li>
-                                        <li><a href="/product-range/acute-promyelocytic-leukemia"
+                                        <li><a href="/cancer-medicines/acute-promyelocytic-leukemia"
                                                 class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Acute
                                                 Promyelocytic Leukemia</a></li>
-                                        <li><a href="/product-range/sickle-cell"
+                                        <li><a href="/cancer-medicines/sickle-cell"
                                                 class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Sickle
                                                 Cell Anemia</a></li>
                                     </ul>
@@ -224,7 +345,7 @@
                                     </ul>
                                     <h4 class="font-semibold text-gray-900 mb-4 border-b pb-2 text-sm">Orthopedic</h4>
                                     <ul class="space-y-2 text-[13px] mb-6">
-                                        <li><a href="/product-range/multiple-myeloma"
+                                        <li><a href="/cancer-medicines/multiple-myeloma"
                                                 class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Multiple
                                                 Myeloma</a></li>
                                         <li><a href="/product-range/osteoporosis"
@@ -247,7 +368,7 @@
                                     <h4 class="font-semibold text-gray-900 mb-4 border-b pb-2 text-sm">Neuro-Oncology
                                     </h4>
                                     <ul class="space-y-2 text-[13px] mb-6">
-                                        <li><a href="/product-range/glioblastoma"
+                                        <li><a href="/cancer-medicines/glioblastoma"
                                                 class="relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300">Glioblastoma
                                                 Multiforme</a></li>
                                     </ul>
@@ -519,73 +640,73 @@
                     <!-- Oncology -->
                     <p class="px-3 pt-3 pb-1 text-[10px] font-black uppercase text-gray-400 tracking-wider">Oncology
                         (Solid Tumors)</p>
-                    <a href="/product-range/breast-cancer"
+                    <a href="/cancer-medicines/breast-cancer"
                         class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Breast
                         Cancer</a>
-                    <a href="/product-range/ovarian-cancer"
+                    <a href="/cancer-medicines/ovarian-cancer"
                         class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Ovarian
                         Cancer</a>
-                    <a href="/product-range/lung-cancer"
+                    <a href="/cancer-medicines/lung-cancer"
                         class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Non-Small Cell
                         Lung Cancer</a>
-                    <a href="/product-range/prostate-cancer"
+                    <a href="/cancer-medicines/prostate-cancer"
                         class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Prostate
                         Cancer</a>
-                    <a href="/product-range/colorectal-cancer"
+                    <a href="/cancer-medicines/colorectal-cancer"
                         class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Colorectal
                         Cancer</a>
-                    <a href="/product-range/pancreatic-cancer"
+                    <a href="/cancer-medicines/pancreatic-cancer"
                         class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Pancreatic
                         Cancer</a>
-                    <a href="/product-range/gastric-cancer"
+                    <a href="/cancer-medicines/gastric-cancer"
                         class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Gastric Cancer /
                         Gastric Adenocarcinoma</a>
-                    <a href="/product-range/head-and-neck-cancer"
+                    <a href="/cancer-medicines/head-and-neck-cancer"
                         class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Head and Neck
                         Cancer</a>
-                    <a href="/product-range/malignant-pleural-mesothelioma"
+                    <a href="/cancer-medicines/malignant-pleural-mesothelioma"
                         class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Malignant
                         Pleural Mesothelioma</a>
-                    <a href="/product-range/malignant-pleural-effusion"
+                    <a href="/cancer-medicines/malignant-pleural-effusion"
                         class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Malignant
                         Pleural Effusion</a>
-                    <a href="/product-range/gastrointestinal-stromal-tumors"
+                    <a href="/cancer-medicines/gastrointestinal-stromal-tumors"
                         class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Gastrointestinal
                         Stromal Tumors</a>
                     <!-- Oncology / Hematology -->
                     <p class="px-3 pt-3 pb-1 text-[10px] font-black uppercase text-gray-400 tracking-wider">Oncology /
                         Hematology</p>
-                    <a href="/product-range/aml"
+                    <a href="/cancer-medicines/aml"
                         class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Acute Myeloid
                         Leukemia</a>
-                    <a href="/product-range/cml"
+                    <a href="/cancer-medicines/cml"
                         class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Chronic Myeloid
                         Leukemia</a>
-                    <a href="/product-range/acute-lymphocytic-leukemia"
+                    <a href="/cancer-medicines/acute-lymphocytic-leukemia"
                         class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Acute
                         Lymphocytic Leukemia</a>
-                    <a href="/product-range/chronic-lymphocytic-leukemia"
+                    <a href="/cancer-medicines/chronic-lymphocytic-leukemia"
                         class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Chronic
                         Lymphocytic Leukemia</a>
-                    <a href="/product-range/lymphoma"
+                    <a href="/cancer-medicines/lymphoma"
                         class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Hodgkin/Non-Hodgkin's
                         Lymphoma</a>
-                    <a href="/product-range/mantle-cell-lymphoma"
+                    <a href="/cancer-medicines/mantle-cell-lymphoma"
                         class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Mantle Cell
                         Lymphoma</a>
-                    <a href="/product-range/chronic-myelocytic-leukemia"
+                    <a href="/cancer-medicines/chronic-myelocytic-leukemia"
                         class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Chronic
                         Myelocytic Leukemia</a>
-                    <a href="/product-range/meningeal-leukemia"
+                    <a href="/cancer-medicines/meningeal-leukemia"
                         class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Meningeal
                         Leukemia</a>
-                    <a href="/product-range/acute-lymphoblastic-leukemia"
+                    <a href="/cancer-medicines/acute-lymphoblastic-leukemia"
                         class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Acute
                         Lymphoblastic Leukemia</a>
-                    <a href="/product-range/acute-promyelocytic-leukemia"
+                    <a href="/cancer-medicines/acute-promyelocytic-leukemia"
                         class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Acute
                         Promyelocytic Leukemia</a>
-                    <a href="/product-range/sickle-cell"
+                    <a href="/cancer-medicines/sickle-cell"
                         class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Sickle Cell
                         Anemia</a>
                     <!-- Anti-Infectives -->
@@ -614,7 +735,7 @@
                     <!-- Orthopedic -->
                     <p class="px-3 pt-3 pb-1 text-[10px] font-black uppercase text-gray-400 tracking-wider">Orthopedic
                     </p>
-                    <a href="/product-range/multiple-myeloma"
+                    <a href="/cancer-medicines/multiple-myeloma"
                         class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Multiple
                         Myeloma</a>
                     <a href="/product-range/osteoporosis"
@@ -631,7 +752,7 @@
                     <!-- Neuro-Oncology -->
                     <p class="px-3 pt-3 pb-1 text-[10px] font-black uppercase text-gray-400 tracking-wider">
                         Neuro-Oncology</p>
-                    <a href="/product-range/glioblastoma"
+                    <a href="/cancer-medicines/glioblastoma"
                         class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Glioblastoma
                         Multiforme</a>
                     <!-- Respiratory / Allergy -->
@@ -732,6 +853,7 @@
 
     <!-- Search Bar Removed -->
 </nav>
+</div>
 
 <script>
 
@@ -1150,7 +1272,22 @@
                     { label: 'Sickle Cell Anemia', slug: 'sickle-cell' },
                 ];
 
-                const buildLi = (item) => `<li><a href="/product-range/${item.slug}" class="${linkCls}">${item.label}</a></li>`;
+                // Subcategory slugs whose topic is cancer/oncology — these route through /cancer-medicines,
+                // everything else keeps the /product-range prefix.
+                const cancerSlugs = new Set([
+                    'oncology', 'breast-cancer', 'ovarian-cancer', 'non-small-cell-lung-cancer', 'lung-cancer',
+                    'prostate-cancer', 'gastric-cancer-gastric-adenocarcinoma', 'gastric-cancer', 'pancreatic-cancer', 'colorectal-cancer',
+                    'hodgkin-non-hodgkins-lymphoma', 'hodgkin-non-hodgkin-s-lymphoma', 'lymphoma',
+                    'acute-lymphoblastic-leukemia', 'malignant-pleural-mesothelioma', 'head-and-neck-cancer',
+                    'chronic-myeloid-leukemia', 'cml', 'sickle-cell-anemia', 'sickle-cell',
+                    'malignant-pleural-effusion', 'gastrointestinal-stromal-tumors',
+                    'acute-myeloid-leukemia', 'aml', 'acute-lymphocytic-leukemia', 'chronic-myelocytic-leukemia',
+                    'meningeal-leukemia', 'acute-promyelocytic-leukemia', 'chronic-lymphocytic-leukemia',
+                    'mantle-cell-lymphoma', 'multiple-myeloma', 'neuro-oncology', 'glioblastoma-multiforme', 'glioblastoma'
+                ]);
+                const categoryPrefix = (slug) => cancerSlugs.has(slug) ? '/cancer-medicines/' : '/product-range/';
+
+                const buildLi = (item) => `<li><a href="${categoryPrefix(item.slug)}${item.slug}" class="${linkCls}">${item.label}</a></li>`;
 
                 // Slugs that belong to hardcoded cols — exclude from Sanity-driven cols 2 & 3
                 const hardcodedSlugs = new Set(['oncology', 'hematology', 'oncology-hematology', 'hematology-oncology']);
@@ -1173,7 +1310,7 @@
                     antiInfSanity.forEach(sec => {
                         gridHtml += `<h4 class="font-semibold text-gray-900 mb-4 border-b pb-2 text-sm mt-6">${sec.title}</h4>`;
                         gridHtml += '<ul class="space-y-2 text-[13px]">';
-                        sec.subcategories.forEach(sub => { gridHtml += `<li><a href="/product-range/${getSubcategorySlug(sub)}" class="${linkCls}">${sub}</a></li>`; });
+                        sec.subcategories.forEach(sub => { const subSlug = getSubcategorySlug(sub); gridHtml += `<li><a href="${categoryPrefix(subSlug)}${subSlug}" class="${linkCls}">${sub}</a></li>`; });
                         gridHtml += '</ul>';
                     });
                     gridHtml += '</div>';
@@ -1186,7 +1323,7 @@
                             const h4Class = secIdx > 0 ? 'font-semibold text-gray-900 mb-4 border-b pb-2 text-sm mt-6' : 'font-semibold text-gray-900 mb-4 border-b pb-2 text-sm';
                             const ulClass = secIdx < colSections.length - 1 ? 'space-y-2 text-[13px] mb-6' : 'space-y-2 text-[13px]';
                             gridHtml += `<h4 class="${h4Class}">${sec.title}</h4><ul class="${ulClass}">`;
-                            sec.subcategories.forEach(sub => { gridHtml += `<li><a href="/product-range/${getSubcategorySlug(sub)}" class="${linkCls}">${sub}</a></li>`; });
+                            sec.subcategories.forEach(sub => { const subSlug = getSubcategorySlug(sub); gridHtml += `<li><a href="${categoryPrefix(subSlug)}${subSlug}" class="${linkCls}">${sub}</a></li>`; });
                             gridHtml += '</ul>';
                         });
                         gridHtml += '</div>';
@@ -1201,18 +1338,18 @@
 
                     // Hardcoded Oncology
                     mobileHtml += '<p class="px-3 pt-3 pb-1 text-[10px] font-black uppercase text-gray-400 tracking-wider">Oncology (Solid Tumors)</p>';
-                    hardcodedOncology.forEach(item => { mobileHtml += `<a href="/product-range/${item.slug}" class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">${item.label}</a>`; });
+                    hardcodedOncology.forEach(item => { mobileHtml += `<a href="${categoryPrefix(item.slug)}${item.slug}" class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">${item.label}</a>`; });
 
                     // Hardcoded Oncology / Hematology
                     mobileHtml += '<p class="px-3 pt-3 pb-1 text-[10px] font-black uppercase text-gray-400 tracking-wider">Oncology / Hematology</p>';
-                    hardcodedHematology.forEach(item => { mobileHtml += `<a href="/product-range/${item.slug}" class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">${item.label}</a>`; });
+                    hardcodedHematology.forEach(item => { mobileHtml += `<a href="${categoryPrefix(item.slug)}${item.slug}" class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">${item.label}</a>`; });
 
                     // Sanity-fetched sections (skip oncology/hematology)
                     Object.values(sections).forEach(sec => {
                         if (hardcodedSlugs.has((sec.title || '').toLowerCase().replace(/[\s/]+/g, '-'))) return;
                         if (sec.subcategories.length > 0) {
                             mobileHtml += `<p class="px-3 pt-3 pb-1 text-[10px] font-black uppercase text-gray-400 tracking-wider">${sec.title}</p>`;
-                            sec.subcategories.forEach(sub => { mobileHtml += `<a href="/product-range/${getSubcategorySlug(sub)}" class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">${sub}</a>`; });
+                            sec.subcategories.forEach(sub => { const subSlug = getSubcategorySlug(sub); mobileHtml += `<a href="${categoryPrefix(subSlug)}${subSlug}" class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">${sub}</a>`; });
                         }
                     });
                     mobileAccordion.innerHTML = mobileHtml;
@@ -1524,9 +1661,27 @@
                     const isBackBtn = link.textContent.toLowerCase().includes('back') || link.closest('.back-button') !== null;
                     if (!isBackBtn) {
                         sessionStorage.removeItem('selectedCategory');
-                    }
                 }
             }
         });
+
+        // Scroll listener for home page navbar transparency transition
+        if (document.body.getAttribute('data-page') === 'home') {
+            const wrapper = document.getElementById('global-nav-wrapper');
+            const topBar = document.getElementById('global-top-bar');
+            
+            const handleNavbarScroll = () => {
+                if (window.scrollY > 80) {
+                    wrapper?.classList.add('scrolled');
+                    topBar?.classList.add('scrolled');
+                } else {
+                    wrapper?.classList.remove('scrolled');
+                    topBar?.classList.remove('scrolled');
+                }
+            };
+            
+            window.addEventListener('scroll', handleNavbarScroll);
+            handleNavbarScroll(); // Run once on initialization
+        }
     })();
 </script>
