@@ -1,3 +1,4 @@
+import { client } from './sanity'
 import { sanityQuery } from './sanityProxy'
 import type {
   Product,
