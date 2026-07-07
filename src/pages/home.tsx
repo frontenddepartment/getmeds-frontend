@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useHeroSlides, useImageMapper, useNews, useSiteSettings } from '../lib/useSanity';
+import { useCategories, useHeroSlides, useImageMapper, useNews, useSiteSettings } from '../lib/useSanity';
 import { setPageMeta } from '../lib/seo';
 import { getApiUrl } from '../lib/api';
 import { injectHTML } from '../lib/injectHTML';
 import { urlFor } from '../lib/sanity';
+import { sanityQuery } from '../lib/sanityProxy';
 
 
 // Declare global tailwind interface
@@ -114,6 +115,7 @@ export default function GetMedsHomepage() {
       el.scrollTo({ left: child.offsetLeft - (el.offsetWidth - child.offsetWidth) / 2, behavior: 'smooth' });
     }
   };
+  const { data: categoriesData } = useCategories();
 
 
   // --- Hero Slider ---
@@ -304,7 +306,15 @@ export default function GetMedsHomepage() {
       };
     }
 
-
+    // 4. Scroll listener for sticky transparent header transition
+    const handleScroll = () => {
+      if (window.scrollY > 80) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+    window.addEventListener('scroll', handleScroll);
 
     // 5. Intersection Observer for Scroll Reveals
     const revealOptions = {
@@ -354,6 +364,7 @@ export default function GetMedsHomepage() {
     }
 
     return () => {
+      window.removeEventListener('scroll', handleScroll);
       revealElements.forEach(el => observer.unobserve(el));
       caObserver.disconnect();
     };
@@ -427,7 +438,6 @@ export default function GetMedsHomepage() {
         ))}
 
         {/* No overlay */}
-
 
 
         {/* Hero Content Area — heading, subtext, and buttons hidden on the 2nd slide */}
