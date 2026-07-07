@@ -212,7 +212,7 @@ export default function CancerMedicines() {
         category: cat.category,
         slugs: [cat.slug.current],
         slug: cat.slug.current,
-        subcategory: cat.subcategory.filter(Boolean)
+        subcategory: (cat.subcategory || []).filter(Boolean)
       }));
   }, [categoriesData]);
 

@@ -25,6 +25,7 @@ const Careers: React.FC = () => {
 
   const { getImage, loading: imagesLoading } = useImageMapper('careers');
   const [activeCareersPanel, setActiveCareersPanel] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
   const [heroImgLoaded, setHeroImgLoaded] = useState(false);
   const [jobs, setJobs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -43,6 +44,51 @@ const Careers: React.FC = () => {
   const [successModalOpen, setSuccessModalOpen] = useState(false);
   const [jobDescOpen, setJobDescOpen] = useState(false);
   const activeJob = jobs.find(j => j.job_title === applyingFor);
+
+  const careersSlides = [
+    {
+      imageKey: 'About Us Team Image 1',
+      fallback: 'assets/aboutussix.jpg',
+      alt: 'Getmeds Team',
+      title: 'Build Your Career With Us',
+      description: 'Join a team of passionate professionals dedicated to transforming healthcare access across the Philippines and beyond.',
+    },
+    {
+      imageKey: 'About Us Team Image 2',
+      fallback: 'assets/aboutusseven.jpg',
+      alt: 'Getmeds Learning',
+      title: 'Grow & Learn',
+      description: 'We invest in our people through continuous learning, mentorship, and professional development programs that fuel long-term growth.',
+    },
+    {
+      imageKey: 'About Us Team Image 3',
+      fallback: 'assets/aboutuseight.jpg',
+      alt: 'Getmeds Impact',
+      title: 'Make Real Impact',
+      description: 'Your work directly shapes patient lives. Be part of a mission-driven company where every contribution makes a meaningful difference.',
+    },
+    {
+      imageKey: 'Careers Culture Image 4',
+      fallback: 'assets/employeeone.png',
+      alt: 'Getmeds Collaboration',
+      title: 'Collaborate With Purpose',
+      description: 'Work alongside driven teammates who share ideas openly and turn patient-first goals into daily action.',
+    },
+    {
+      imageKey: 'Careers Culture Image 5',
+      fallback: 'assets/employeetwo.png',
+      alt: 'Getmeds Recognition',
+      title: 'Celebrate Progress',
+      description: 'From milestones to everyday wins, we recognize the effort and dedication that move healthcare forward.',
+    },
+    {
+      imageKey: 'Careers Culture Image 6',
+      fallback: 'assets/employeethree.png',
+      alt: 'Getmeds Growth',
+      title: 'Shape What Comes Next',
+      description: 'Bring your strengths into a growing organization where curiosity, ownership, and care create new possibilities.',
+    },
+  ];
 
   const handleSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault();
@@ -101,6 +147,15 @@ const Careers: React.FC = () => {
       setTimeout(() => setSubmitState('idle'), 3000);
     }
   };
+
+  useEffect(() => {
+    if (isHovered) return;
+    const timer = window.setInterval(() => {
+      setActiveCareersPanel((current) => (current + 1) % careersSlides.length);
+    }, 5000);
+
+    return () => window.clearInterval(timer);
+  }, [careersSlides.length, isHovered]);
 
   useEffect(() => {
     const hash = window.location.hash;
@@ -474,64 +529,47 @@ const Careers: React.FC = () => {
             </div>
           </div>
 
-          {/* Expanding Panels */}
-          <div className="flex gap-3 h-[340px] md:h-[400px] mt-12"
-            onMouseLeave={() => setActiveCareersPanel(0)}>
-
-            {/* Panel 1 — Left */}
-            <div className="ca-anim ca-up relative rounded-2xl overflow-hidden cursor-pointer"
-              style={{ flex: activeCareersPanel === 0 ? 3 : 0.8, minWidth: 0, transition: 'flex 0.5s ease' }}
-              onMouseEnter={() => setActiveCareersPanel(0)}>
-              <img src={getImage('About Us Team Image 1', 'assets/aboutussix.jpg')}
-                alt="Getmeds Team"
-                className="w-full h-full object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
-              <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
-                <h3 className="text-white text-xl md:text-2xl font-bold leading-snug mb-2">
-                  Build Your Career With Us
-                </h3>
-                <p className={`text-white/80 text-[13px] md:text-[14px] leading-relaxed max-w-sm transition-opacity duration-300 ${activeCareersPanel === 0 ? 'opacity-100' : 'opacity-0'}`}>
-                  Join a team of passionate professionals dedicated to transforming healthcare access across the Philippines and beyond.
-                </p>
-              </div>
+          {/* Employee Recognition Header */}
+          <div className="flex flex-col lg:flex-row gap-4 lg:gap-8 items-start mt-16 mb-6">
+            <div className="shrink-0 lg:w-[42%]">
+              <h3 className="ca-anim ca-left text-3xl md:text-4xl font-semibold bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent leading-snug">
+                Employee Recognition
+              </h3>
             </div>
-
-            {/* Panel 2 — Center */}
-            <div className="ca-anim ca-up ca-d2 relative rounded-2xl overflow-hidden cursor-pointer"
-              style={{ flex: activeCareersPanel === 1 ? 3 : 0.8, minWidth: 0, transition: 'flex 0.5s ease' }}
-              onMouseEnter={() => setActiveCareersPanel(1)}>
-              <img src={getImage('About Us Team Image 2', 'assets/aboutusseven.jpg')}
-                alt="Getmeds Learning"
-                className="w-full h-full object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent"></div>
-              <div className="absolute bottom-0 left-0 right-0 p-6">
-                <h3 className="text-white text-lg md:text-xl font-bold leading-snug whitespace-nowrap">
-                  Grow &amp; Learn
-                </h3>
-                <p className={`text-white/70 text-[13px] leading-relaxed mt-2 max-w-xs transition-opacity duration-300 delay-150 ${activeCareersPanel === 1 ? 'opacity-100' : 'opacity-0'}`}>
-                  We invest in our people through continuous learning, mentorship, and professional development programs that fuel long-term growth.
-                </p>
-              </div>
+            <div className="flex-1 flex items-center">
+              <p className="ca-anim ca-right text-gray-500 text-[14px] leading-[1.8]">
+                Great work doesn't fade into the background here. It's recognized, championed, and celebrated.
+              </p>
             </div>
+          </div>
 
-            {/* Panel 3 — Right */}
-            <div className="ca-anim ca-up ca-d4 relative rounded-2xl overflow-hidden cursor-pointer"
-              style={{ flex: activeCareersPanel === 2 ? 3 : 0.8, minWidth: 0, transition: 'flex 0.5s ease' }}
-              onMouseEnter={() => setActiveCareersPanel(2)}>
-              <img src={getImage('About Us Team Image 3', 'assets/aboutuseight.jpg')}
-                alt="Getmeds Impact"
-                className="w-full h-full object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent"></div>
-              <div className="absolute bottom-0 left-0 right-0 p-6">
-                <h3 className="text-white text-lg md:text-xl font-bold leading-snug whitespace-nowrap">
-                  Make Real Impact
-                </h3>
-                <p className={`text-white/70 text-[13px] leading-relaxed mt-2 max-w-xs transition-opacity duration-300 delay-150 ${activeCareersPanel === 2 ? 'opacity-100' : 'opacity-0'}`}>
-                  Your work directly shapes patient lives. Be part of a mission-driven company where every contribution makes a meaningful difference.
-                </p>
+          {/* 6 Expanding Accordion Panels */}
+          <div
+            className="flex gap-3 h-[340px] md:h-[400px] mt-12"
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => {
+              setIsHovered(false);
+              setActiveCareersPanel(0);
+            }}
+          >
+            {careersSlides.map((slide, index) => (
+              <div
+                key={slide.title}
+                className="ca-anim ca-up relative rounded-2xl overflow-hidden cursor-pointer"
+                style={{
+                  flex: activeCareersPanel === index ? 3 : 0.8,
+                  minWidth: 0,
+                  transition: 'flex 0.5s ease',
+                }}
+                onMouseEnter={() => setActiveCareersPanel(index)}
+              >
+                <img
+                  src={`/assets/recognitionimage${index + 1}.jpg`}
+                  alt={slide.alt}
+                  className="w-full h-full object-cover"
+                />
               </div>
-            </div>
-
+            ))}
           </div>
 
           {/* 3 Pillar Cards */}
@@ -723,6 +761,56 @@ const Careers: React.FC = () => {
                   manufacturers to expand collaboration and improve access to quality medicines in the Philippines.</p>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* PHARMACEUTICAL INTERNSHIP SECTION */}
+      <section className="py-12 px-0 md:px-6">
+        <div className="relative max-w-7xl mx-auto rounded-none md:rounded-3xl overflow-hidden pb-10" style={{ background: 'radial-gradient(ellipse at 50% 40%, #ffffff 0%, #c8e8f5 45%, #1D9FDA 100%)' }}>
+
+          {/* Glassy decorative circles */}
+          <div className="pointer-events-none absolute inset-0 overflow-hidden">
+            <div className="absolute rounded-full" style={{ width: 220, height: 220, top: '-60px', left: '-50px', background: 'rgba(255,255,255,0.18)', backdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.35)' }} />
+            <div className="absolute rounded-full" style={{ width: 140, height: 140, top: '30px', right: '10%', background: 'rgba(255,255,255,0.14)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.3)' }} />
+            <div className="absolute rounded-full" style={{ width: 90, height: 90, top: '55%', left: '8%', background: 'rgba(255,255,255,0.20)', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.4)' }} />
+            <div className="absolute rounded-full" style={{ width: 180, height: 180, bottom: '-50px', right: '-40px', background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(14px)', border: '1px solid rgba(255,255,255,0.28)' }} />
+            <div className="absolute rounded-full" style={{ width: 60, height: 60, bottom: '25%', left: '40%', background: 'rgba(255,255,255,0.22)', backdropFilter: 'blur(6px)', border: '1px solid rgba(255,255,255,0.45)' }} />
+            <div className="absolute rounded-full" style={{ width: 110, height: 110, top: '40%', right: '25%', background: 'rgba(255,255,255,0.12)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.25)' }} />
+          </div>
+
+          {/* Header */}
+          <div className="flex flex-col md:flex-row items-start justify-between px-8 pt-10 pb-8 gap-6 md:gap-10">
+            <div className="md:w-1/2">
+              <span className="text-white font-bold uppercase tracking-widest text-[13px] inline-block mb-3 ca-anim ca-left">Internship Program</span>
+              <h2 className="text-2xl md:text-3xl font-semibold text-white leading-tight ca-anim ca-up">
+                Pharmaceutical Internship
+              </h2>
+            </div>
+            <div className="md:w-1/2 ca-anim ca-right mt-2 md:mt-0">
+              <p className="text-gray-500 text-[14px] leading-relaxed">
+                Step into a journey where your work touches real lives. Guided by experienced pharmacists across regulatory affairs, business development, and community pharmacy, you'll gain hands-on experience in healthcare that goes far beyond theory.
+              </p>
+            </div>
+          </div>
+
+          <div
+            className="px-8 pb-2 flex gap-4 overflow-x-auto snap-x snap-mandatory"
+            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' } as React.CSSProperties}
+          >
+            {[1,2,3,4,5,6].map((n, i) => (
+              <div
+                key={n}
+                className={`ca-anim ca-up ca-d${i} flex-shrink-0 snap-center rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow group`}
+                style={{ width: '320px', height: '220px' }}
+              >
+                <img
+                  src={`/assets/${n}.png`}
+                  alt={`Internship ${n}`}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+              </div>
+            ))}
           </div>
         </div>
       </section>
