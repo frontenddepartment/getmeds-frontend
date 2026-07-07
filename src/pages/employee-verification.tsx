@@ -2,7 +2,38 @@ import React, { useEffect, useState } from 'react';
 import { injectHTML } from '../lib/injectHTML';
 import { setPageMeta } from '../lib/seo';
 import { getVerifiedEmployees } from '../lib/queries';
-import { BadgeCheck } from "lucide-react";
+import { BadgeCheck, ShieldCheck } from "lucide-react";
+
+// ─── helpers ─────────────────────────────────────────────────────────────────
+function getPositionFromEmail(email: string): string {
+  const e = (email || '').toLowerCase();
+  if (e.includes('dra1') || e.includes('dra2')) return 'Medical Officer / Doctor';
+  if (e.includes('dra')) return 'Medical Officer / Doctor';
+  if (e.includes('rx')) return 'Licensed Pharmacist';
+  if (e.includes('regulatory')) return 'Regulatory Affairs Specialist';
+  if (e.includes('bd')) return 'Business Development Executive';
+  if (e.includes('gov')) return 'Government Bidding Executive';
+  if (e.includes('finance') || e.includes('fin1') || e.includes('fin@')) return 'Finance Officer';
+  if (e.includes('hr2') || e.includes('hr@')) return 'HR Specialist';
+  if (e.includes('social')) return 'Social Media Coordinator';
+  if (e.includes('salesadmin')) return 'Sales Admin';
+  if (e.includes('sales')) return 'Sales Executive';
+  if (e.includes('care')) return 'Customer Care Representative';
+  if (e.includes('productspecialist')) return 'Product Specialist';
+  if (e.includes('marketing')) return 'Digital Marketing Specialist';
+  if (e.includes('pabaza')) return 'Patient Assistance Coordinator';
+  if (e.includes('msr')) return 'Medical Sales Representative';
+  if (e.includes('ea@')) return 'Executive Assistant';
+  if (e.includes('naresh') || e.includes('saurav') || e.includes('sameen') || e.includes('sumit')) return 'Director';
+  return 'Getmeds Representative';
+}
+
+function getCompanyFromId(empId: string): string {
+  if (empId.startsWith('2MG')) return '2MG Incorporated';
+  if (empId.startsWith('GPI')) return 'GetMeds Philippines Inc.';
+  return 'GetMeds Philippines Inc. / 2MG Incorporated';
+}
+// ─────────────────────────────────────────────────────────────────────────────
 
 export default function EmployeeVerification() {
   useEffect(() => {
@@ -17,7 +48,16 @@ export default function EmployeeVerification() {
   const [submitting, setSubmitting] = useState(false);
   const [modalState, setModalState] = useState<'verified' | 'not-verified' | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
-  const [matchedEmployee, setMatchedEmployee] = useState<{ name: string; employeeId: string } | null>(null);
+  const [matchedEmployee, setMatchedEmployee] = useState<{
+    name: string;
+    initials: string;
+    employeeId: string;
+    position: string;
+    company: string;
+    email: string;
+    phone: string;
+    verificationDate: string;
+  } | null>(null);
   const [searchQueryUsed, setSearchQueryUsed] = useState('');
 
   // Mount the modal first, then flip to visible on the next frame so the
@@ -123,11 +163,55 @@ export default function EmployeeVerification() {
       }
 
       if (found) {
-        const empName = found.fullName?.[0] || 
-                        `${found.firstName?.[0] || ''} ${found.lastName?.[0] || ''}`.trim() || 
-                        'Getmeds Employee';
+        // Build display name — convert "Lastname, Firstname M." → "Firstname M. Lastname"
+        let rawName = found.fullName?.[0] ||
+          `${found.firstName?.[0] || ''} ${found.lastName?.[0] || ''}`.trim() ||
+          'Getmeds Employee';
+        if (rawName.includes(',')) {
+          const [last, rest] = rawName.split(',').map((s: string) => s.trim());
+          rawName = rest ? `${rest} ${last}` : last;
+        }
+        const empName = rawName;
+
         const empId = found.employeeId?.[0] || 'N/A';
-        setMatchedEmployee({ name: empName, employeeId: empId });
+
+        // Initials from display name
+        const words = empName.split(' ').filter(Boolean);
+        const initials = words.length >= 2
+          ? `${words[0][0]}${words[words.length - 1][0]}`.toUpperCase()
+          : (words[0]?.[0] || 'G').toUpperCase();
+
+        // Company derived from employee-id prefix
+        const company = getCompanyFromId(empId);
+
+        // Position inferred from primary company e-mail
+        const primaryEmail = Array.isArray(found.companyEmail)
+          ? (found.companyEmail.filter(Boolean)[0] || '')
+          : (found.companyEmail || '');
+        const position = getPositionFromEmail(primaryEmail);
+
+        // All emails joined
+        const email = Array.isArray(found.companyEmail)
+          ? found.companyEmail.filter(Boolean).join(' / ')
+          : (found.companyEmail || 'N/A');
+
+        // Company-issued number first, fall back to mobile
+        const issuedNums = (found['companyIssuedNo.'] || found.companyIssuedNo || []);
+        const mobileNums = (found.mobileNumber || []);
+        const phoneArr = Array.isArray(issuedNums) ? issuedNums.filter(Boolean) : [];
+        const mobileArr = Array.isArray(mobileNums) ? mobileNums.filter(Boolean) : [];
+        const phone = (phoneArr.length ? phoneArr : mobileArr).join(' / ') || 'N/A';
+
+        // Verification date (timestamp with date and time)
+        const dateStr = new Date().toLocaleDateString('en-US', {
+          year: 'numeric', month: 'long', day: 'numeric'
+        });
+        const timeStr = new Date().toLocaleTimeString('en-US', {
+          hour: 'numeric', minute: '2-digit', hour12: true
+        });
+        const verificationDate = `${dateStr} at ${timeStr}`;
+
+        setMatchedEmployee({ name: empName, initials, employeeId: empId, position, company, email, phone, verificationDate });
         setModalState('verified');
       } else {
         setModalState('not-verified');
@@ -247,98 +331,180 @@ export default function EmployeeVerification() {
       {/* Footer */}
       <div id="footer-container" />
 
-      {/* Verification result modal — same pattern as the partnership inquiry confirmation modal */}
+      {/* Verification result modal */}
       {modalState && (
         <>
-          <style>{`@keyframes checkBounce{0%{transform:scale(0);opacity:0}55%{transform:scale(1.06);opacity:1}75%{transform:scale(0.97)}100%{transform:scale(1);opacity:1}}.check-bounce{animation:checkBounce 0.8s ease-out forwards}`}</style>
+          <style>{`
+            @keyframes slideUp{from{opacity:0;transform:translateY(24px) scale(0.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+            .modal-slide-up{animation:slideUp 0.32s cubic-bezier(.22,1,.36,1) forwards}
+            @keyframes fadeInRow{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}
+            .fade-row{animation:fadeInRow 0.3s ease forwards}
+          `}</style>
+
+          {/* Backdrop */}
           <div
-            className={`fixed inset-0 z-[1000] flex items-center justify-center bg-black/50 backdrop-blur-sm px-4 transition-opacity duration-200 ${modalVisible ? 'opacity-100' : 'opacity-0'}`}
+            className={`fixed inset-0 z-[1000] flex items-center justify-center bg-black/60 backdrop-blur-sm px-4 transition-opacity duration-200 ${modalVisible ? 'opacity-100' : 'opacity-0'}`}
             onClick={closeModal}
           >
-            <div
-              className={`bg-white w-full max-w-[400px] rounded-2xl shadow-2xl relative overflow-hidden transform transition-all duration-200 ${modalVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <button
-                type="button"
-                onClick={closeModal}
-                className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition z-10"
+            {modalState === 'verified' ? (
+              /* ── VERIFIED CARD (landscape) ─────────────────────────── */
+              <div
+                className={`w-full max-w-[680px] rounded-[15px] bg-white shadow-2xl overflow-hidden transform transition-all duration-200 modal-slide-up relative p-7 ${modalVisible ? 'opacity-100' : 'opacity-0'}`}
+                onClick={(e) => e.stopPropagation()}
               >
-                <i className="fa-solid fa-xmark text-base"></i>
-              </button>
+                {/* Slanted repeated watermark background pattern with customized spacing */}
+                <div className="absolute inset-0 overflow-hidden pointer-events-none select-none z-0">
+                  <div
+                    className="absolute -inset-24 grid grid-cols-6 gap-x-12 gap-y-8 justify-items-center align-middle"
+                    style={{ transform: 'rotate(-20deg)' }}
+                  >
+                    {Array.from({ length: 36 }).map((_, idx) => (
+                      <div key={idx} className="flex items-center justify-center">
+                        <img
+                          src="/assets/getmedslogo.png"
+                          alt=""
+                          className="w-30 opacity-[0.20] object-contain"
+                          draggable={false}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
 
-              <div className="px-8 pt-8 pb-5 text-center">
-                <div className="flex justify-center mb-4">
-                  {modalState === 'verified' ? (
+                {/* Top-right corner radial gradient bleed (matches style from image flipped to top-right) */}
+                <div
+                  className="absolute inset-0 pointer-events-none select-none z-0"
+                  style={{
+                    background: 'radial-gradient(circle at 100% 0%, rgba(29, 127, 186, 0.25) 0%, rgba(42, 138, 106, 0.15) 40%, rgba(58, 140, 63, 0.06) 70%, transparent 100%)'
+                  }}
+                />
+
+                {/* Close button */}
+                <button
+                  type="button"
+                  onClick={closeModal}
+                  className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 text-gray-500 hover:text-gray-700 transition z-20"
+                >
+                  <i className="fa-solid fa-xmark text-sm"></i>
+                </button>
+
+                {/* Content wrapper */}
+                <div className="relative z-10 space-y-5">
+                  {/* Top Header Section (No gradient) */}
+                  <div className="flex items-center gap-4 pb-4 border-b border-gray-100">
+                    {/* Circle avatar */}
                     <div
-                      className="check-bounce w-14 h-14 rounded-full flex items-center justify-center"
-                      style={{ background: 'linear-gradient(135deg,#61A644,#1D9FDA)' }}
+                      className="w-14 h-14 rounded-full flex items-center justify-center text-green-700 font-bold text-xl flex-shrink-0 bg-green-50 border border-green-100"
                     >
-                      <i className="fa-solid fa-check text-white text-xl"></i>
+                      {matchedEmployee?.initials}
                     </div>
-                  ) : (
+
+                    <div className="flex-1 min-w-0">
+                      <span className="text-gray-900 font-semibold text-[17px] leading-snug truncate block">
+                        {matchedEmployee?.name}
+                      </span>
+                      <div className="flex items-center gap-1.5 mt-1 text-gray-500">
+                        <ShieldCheck size={14} className="text-green-600" />
+                        <span className="text-[12px]">{matchedEmployee?.employeeId}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 3-column detail grid */}
+                  <div className="grid grid-cols-3 gap-x-6 gap-y-4">
+                    {/* Position */}
+                    <div className="fade-row" style={{ animationDelay: '0.05s' }}>
+                      <span className="block text-[11px] text-gray-400 font-medium mb-1">Position</span>
+                      <span className="text-[13px] text-gray-800 font-medium">{matchedEmployee?.position}</span>
+                    </div>
+
+                    {/* Company */}
+                    <div className="fade-row" style={{ animationDelay: '0.08s' }}>
+                      <span className="block text-[11px] text-gray-400 font-medium mb-1">Company</span>
+                      <span className="text-[13px] text-gray-800 font-medium">{matchedEmployee?.company}</span>
+                    </div>
+
+                    {/* Company Email */}
+                    <div className="fade-row" style={{ animationDelay: '0.11s' }}>
+                      <span className="block text-[11px] text-gray-400 font-medium mb-1">Company Email</span>
+                      <span className="text-[13px] text-gray-800 break-all">{matchedEmployee?.email}</span>
+                    </div>
+
+                    {/* Company No. */}
+                    <div className="fade-row" style={{ animationDelay: '0.14s' }}>
+                      <span className="block text-[11px] text-gray-400 font-medium mb-1">Company No.</span>
+                      <span className="text-[13px] text-gray-800">{matchedEmployee?.phone}</span>
+                    </div>
+
+                    {/* Status */}
+                    <div className="fade-row" style={{ animationDelay: '0.17s' }}>
+                      <span className="block text-[11px] text-gray-400 font-medium mb-1">Status</span>
+                      <span className="inline-flex items-center gap-1.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-green-500 inline-block animate-pulse"></span>
+                        <span className="text-[13px] text-green-700 font-semibold">Active Employee</span>
+                      </span>
+                    </div>
+
+                    {/* Verified On */}
+                    <div className="fade-row" style={{ animationDelay: '0.2s' }}>
+                      <span className="block text-[11px] text-gray-400 font-medium mb-1">Verified On</span>
+                      <span className="text-[13px] text-gray-800">{matchedEmployee?.verificationDate}</span>
+                    </div>
+                  </div>
+
+                  {/* Disclaimer bottom text (no gray container) */}
+                  <div className="pt-4 border-t border-gray-100">
+                    <p className="text-[12px] text-gray-700 leading-relaxed">
+                      This verification portal is intended solely to confirm the identity and employment status of authorized representatives of GetMeds Philippines Inc. and 2MG Incorporated. The information displayed is limited to what is necessary for verification purposes and must not be copied, reproduced, or used for any purpose other than verifying the representative's identity.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              /* ── NOT VERIFIED CARD ──────────────────────────────────── */
+              <div
+                className={`bg-white w-full max-w-[400px] rounded-2xl shadow-2xl relative overflow-hidden transform transition-all duration-200 ${modalVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <button
+                  type="button"
+                  onClick={closeModal}
+                  className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition z-10"
+                >
+                  <i className="fa-solid fa-xmark text-base"></i>
+                </button>
+                <div className="px-8 pt-8 pb-5 text-center">
+                  <div className="flex justify-center mb-4">
                     <div
-                      className="check-bounce w-14 h-14 rounded-full flex items-center justify-center"
+                      className="w-14 h-14 rounded-full flex items-center justify-center"
                       style={{ background: 'linear-gradient(135deg,#EF4444,#F59E0B)' }}
                     >
                       <i className="fa-solid fa-xmark text-white text-xl"></i>
                     </div>
-                  )}
+                  </div>
+                  <h2 className="text-[19px] font-semibold text-gray-900 mb-2 leading-snug">Not on Record</h2>
+                  <p className="text-[13px] text-red-600 font-medium mb-3 leading-relaxed">
+                    The {searchQueryUsed.includes('@') ? 'email' : 'contact number'}{' '}
+                    <span className="break-all font-semibold">"{searchQueryUsed}"</span>{' '}
+                    is not listed as a verified Getmeds employee.
+                  </p>
+                  <p className="text-[13px] text-gray-500 leading-relaxed">
+                    We couldn't find this contact in our employee records. Please don't share personal
+                    information or make any payment based on this contact alone.
+                  </p>
                 </div>
-
-                {modalState === 'verified' ? (
-                  <>
-                    <h2 className="text-[19px] font-semibold text-gray-900 mb-2 leading-snug">Verified Employee</h2>
-                    <div className="bg-gray-50 border border-gray-100 rounded-xl p-4 my-4">
-  <div className="flex items-center justify-center gap-2">
-    {/* Verified Badge */}
-    <BadgeCheck
-      size={18}
-      className="text-green-600 fill-green-100"
-      strokeWidth={2}
-    />
-
-    {/* Name */}
-    <span className="text-[15px] font-medium text-gray-900">
-      {matchedEmployee?.name}
-    </span>
-
-    {/* Company ID Chip */}
-    <span className="inline-flex items-center px-2 py-1 rounded-md bg-green-100 text-green-700 text-[10px] font-semibold">
-      {matchedEmployee?.employeeId}
-    </span>
-  </div>
-</div>
-                    <p className="text-[13px] text-gray-500 leading-relaxed">
-                      This contact matches an active Getmeds Philippines employee record. You can proceed with
-                      confidence.
-                    </p>
-                  </>
-                ) : (
-                  <>
-                    <h2 className="text-[19px] font-semibold text-gray-900 mb-2 leading-snug">Not on Record</h2>
-                    <p className="text-[13px] text-red-600 font-medium mb-3 leading-relaxed">
-                      The {searchQueryUsed.includes('@') ? 'email' : 'contact number'} <span className="break-all font-semibold">"{searchQueryUsed}"</span> is not listed as getmeds verified employees.
-                    </p>
-                    <p className="text-[13px] text-gray-500 leading-relaxed">
-                      We couldn't find this contact in our employee records. Please don't share personal
-                      information or make any payment based on this contact alone.
-                    </p>
-                  </>
-                )}
+                <div className="border-t border-gray-100 px-8 py-3 text-center">
+                  <button
+                    type="button"
+                    onClick={closeModal}
+                    className="text-[13px] font-semibold hover:underline"
+                    style={{ background: 'linear-gradient(to right,#61A644,#1D9FDA)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}
+                  >
+                    Close
+                  </button>
+                </div>
               </div>
-
-              <div className="border-t border-gray-100 px-8 py-3 text-center">
-                <button
-                  type="button"
-                  onClick={closeModal}
-                  className="text-[13px] font-semibold hover:underline"
-                  style={{ background: 'linear-gradient(to right,#61A644,#1D9FDA)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}
-                >
-                  Close
-                </button>
-              </div>
-            </div>
+            )}
           </div>
         </>
       )}

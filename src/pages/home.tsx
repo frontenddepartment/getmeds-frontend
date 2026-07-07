@@ -825,7 +825,7 @@ export default function GetMedsHomepage() {
               </div>
               <div className="flex items-center space-x-6">
                 {/* Phone — Medicine Inquiries (static) */}
-                <a href="tel:+639190769103" className="flex items-center space-x-2 hover:text-primary transition">
+                <a href="tel:+639190769105" className="flex items-center space-x-2 hover:text-primary transition">
                   <i className="fa-solid fa-phone"></i>
                   <span id="topbar-phone">+63 919 076 9105</span>
                 </a>
