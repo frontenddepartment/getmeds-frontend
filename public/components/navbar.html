@@ -1,7 +1,13 @@
 <style>
+    @keyframes slideDown {
+        from { transform: translateY(-100%); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+
     /* Active nav link — keyed off data-page attribute on each page's <body> */
-    body[data-page="home"] a[href="/"] {
-        color: #0D99FF !important;
+    body[data-page="home"] a[href="/"],
+    body[data-page="home"] #global-nav-links a[href="/"] {
+        color: #1D9FDA !important;
     }
 
     /* Style for home page navbar wrapper */
@@ -59,17 +65,17 @@
         color: #000b5d !important;
     }
     body[data-page="home"] #global-nav-links a:hover {
-        color: #0D99FF !important;
+        color: #1D9FDA !important;
     }
 
     body[data-page="home"] #global-nav-wrapper.scrolled #global-nav-links a {
         color: #4b5563 !important; /* Slate/gray like general nav */
     }
     body[data-page="home"] #global-nav-wrapper.scrolled #global-nav-links a:hover {
-        color: #0D99FF !important;
+        color: #1D9FDA !important;
     }
     body[data-page="home"] #global-nav-wrapper.scrolled #global-nav-links a[href="/"] {
-        color: #0D99FF !important;
+        color: #1D9FDA !important;
     }
 
     /* Company and Product Range trigger button coloring on home page */
@@ -79,7 +85,7 @@
     }
     body[data-page="home"] #company-nav-btn:hover,
     body[data-page="home"] #global-nav-links .group a:hover {
-        color: #0D99FF !important;
+        color: #1D9FDA !important;
     }
 
     body[data-page="home"] #global-nav-wrapper.scrolled #company-nav-btn,
@@ -88,7 +94,7 @@
     }
     body[data-page="home"] #global-nav-wrapper.scrolled #company-nav-btn:hover,
     body[data-page="home"] #global-nav-wrapper.scrolled #global-nav-links .group a:hover {
-        color: #0D99FF !important;
+        color: #1D9FDA !important;
     }
 
     /* Hamburger menu color */
@@ -139,6 +145,14 @@
     body[data-page="blog-detail"] #mobile-company-label,
     body[data-page="patient-assistance-program"] #mobile-company-label {
         color: #0D99FF;
+    }
+
+    /* Keep Join Us button text white on all pages/states */
+    #global-nav-links a[href*="join-form"],
+    #global-nav-links a[href*="join-form"]:hover,
+    body[data-page="home"] #global-nav-links .group a[href*="join-form"],
+    body[data-page="home"] #global-nav-links .group a[href*="join-form"]:hover {
+        color: #ffffff !important;
     }
 
     /* Mobile menu smooth slide-in / slide-out */
@@ -542,7 +556,7 @@
                                             </li>
                                             <li class="pt-2">
                                                 <a href="/careers.html#join-form"
-                                                    class="inline-flex items-center px-5 py-2.5 rounded-full text-sm font-semibold text-white transition-all hover:opacity-90 hover:-translate-y-0.5 shadow-md"
+                                                    class="inline-flex items-center px-5 py-2.5 rounded-full text-sm font-semibold text-white transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg shadow-md"
                                                     style="background: linear-gradient(135deg, #61A644, #1D9FDA);">
                                                     Join Us
                                                 </a>
@@ -1667,6 +1681,7 @@
                     const isBackBtn = link.textContent.toLowerCase().includes('back') || link.closest('.back-button') !== null;
                     if (!isBackBtn) {
                         sessionStorage.removeItem('selectedCategory');
+                    }
                 }
             }
         });
