@@ -223,11 +223,15 @@ export default function ProductDetail() {
           : found.description
             ? found.description.slice(0, 160)
             : `${displayName} — available through Getmeds Philippines. Quality pharmaceutical product for healthcare needs.`;
+        const prettySlug = getProductSlug(found) || found.slug?.current || '';
+        const prettyPath = isCancerProduct(found)
+          ? `/cancer-medicine/${prettySlug}`
+          : `/product-range/${prettySlug}`;
         const imgUrl = found.image ? urlFor(found.image).width(1200).url() : undefined;
         setPageMeta({
           title: displayName,
           description,
-          path: `/product-detail.html?product=${found.slug?.current || ''}`,
+          path: prettyPath,
           image: imgUrl,
           type: 'product',
         });

@@ -91,6 +91,44 @@ async function fetchSanityData(query) {
   throw new Error(`Sanity API returned status code ${res.statusCode}`);
 }
 
+const cancerSlugs = new Set([
+  'oncology', 'breast-cancer', 'ovarian-cancer', 'non-small-cell-lung-cancer', 'lung-cancer',
+  'prostate-cancer', 'gastric-cancer-gastric-adenocarcinoma', 'gastric-cancer', 'pancreatic-cancer', 'colorectal-cancer',
+  'hodgkin-non-hodgkins-lymphoma', 'hodgkin-non-hodgkin-s-lymphoma', 'lymphoma',
+  'acute-lymphoblastic-leukemia', 'malignant-pleural-mesothelioma', 'head-and-neck-cancer',
+  'chronic-myeloid-leukemia', 'cml', 'sickle-cell-anemia', 'sickle-cell',
+  'malignant-pleural-effusion', 'gastrointestinal-stromal-tumors',
+  'acute-myeloid-leukemia', 'aml', 'acute-lymphocytic-leukemia', 'chronic-myelocytic-leukemia',
+  'meningeal-leukemia', 'acute-promyelocytic-leukemia', 'chronic-lymphocytic-leukemia',
+  'mantle-cell-lymphoma', 'multiple-myeloma', 'neuro-oncology', 'glioblastoma-multiforme', 'glioblastoma'
+]);
+
+const CANCER_CATEGORY_NAMES = [
+  'oncology',
+  'neuro-oncology',
+  'oncology / hematology',
+  'oncology/hematology',
+  'cancer'
+];
+const CANCER_BRAND_EXCEPTIONS = ['zoloGet'.toLowerCase()];
+
+function isCancerProduct(p) {
+  let catName = '';
+  if (p.category) {
+    if (typeof p.category === 'object') {
+      catName = p.category.category || '';
+    } else if (typeof p.category === 'string') {
+      catName = p.category;
+    }
+  }
+  const normCat = catName.toLowerCase().trim();
+  if (CANCER_CATEGORY_NAMES.includes(normCat)) return true;
+  if (p.excelCategory && CANCER_CATEGORY_NAMES.includes(p.excelCategory.toLowerCase().trim())) return true;
+  
+  const brand = (p.brandName || '').toLowerCase().trim();
+  return CANCER_BRAND_EXCEPTIONS.includes(brand);
+}
+
 async function getAllCancerMedicines() {
   const getProductSlug = (p) => {
     const brand = (p.brandName || '').toLowerCase().trim()
@@ -136,13 +174,14 @@ async function getAllCancerMedicines() {
     
     subcats.forEach(slug => {
       if (slug) {
-        subcategories.push({ path: `cancer-medicines/${slug}`, priority: '0.7', changefreq: 'weekly' });
+        const prefix = cancerSlugs.has(slug) ? 'cancer-medicines' : 'product-range';
+        subcategories.push({ path: `${prefix}/${slug}`, priority: '0.7', changefreq: 'weekly' });
       }
     });
 
     console.log('[Sitemap] Fetching products from Sanity...');
     const excelDoc = await fetchSanityData('*[_type == "product" && (remarks == "present" || remarks == "active") && defined(title)][0] { json_data }');
-    const originalProducts = await fetchSanityData('*[_type == "product" && !defined(title) && (!defined(remarks) || remarks == "present" || remarks == "active")] { _id, slug, name, remarks, brandName, genericName, form, strength }');
+    const originalProducts = await fetchSanityData('*[_type == "product" && !defined(title) && (!defined(remarks) || remarks == "present" || remarks == "active")] { _id, slug, name, remarks, brandName, genericName, form, strength, category->{ category } }');
 
     const originalMap = new Map();
     originalProducts.forEach(op => {
@@ -177,7 +216,8 @@ async function getAllCancerMedicines() {
 
       if (slugStr && !processedSlugs.has(slugStr)) {
         processedSlugs.add(slugStr);
-        products.push({ path: `cancer-medicines/${slugStr}`, priority: '0.6', changefreq: 'monthly' });
+        const prefix = isCancerProduct(merged) ? 'cancer-medicine' : 'product-range';
+        products.push({ path: `${prefix}/${slugStr}`, priority: '0.6', changefreq: 'monthly' });
       }
     });
 
@@ -190,7 +230,8 @@ async function getAllCancerMedicines() {
 
       if (slugStr && !processedSlugs.has(slugStr)) {
         processedSlugs.add(slugStr);
-        products.push({ path: `cancer-medicines/${slugStr}`, priority: '0.6', changefreq: 'monthly' });
+        const prefix = isCancerProduct(op) ? 'cancer-medicine' : 'product-range';
+        products.push({ path: `${prefix}/${slugStr}`, priority: '0.6', changefreq: 'monthly' });
       }
     });
 
