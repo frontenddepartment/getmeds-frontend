@@ -89,12 +89,13 @@ export default function AboutUs() {
     { img: 'MAMMIRA.png', name: 'Ms. Mira Verango', role: 'Executive & Admin Coach' },
     { img: 'MAMVAN.png', name: 'Ms. Vanessa Escalderon', role: 'Hospital Division Coach' },
     { img: 'SIRJAVED.png', name: 'Mr. Javed Shaikh', role: 'Sales & Marketing Coach' },
-    { img: 'SIRNARESH.png', name: 'Mr. Naresh Bishnoi', role: 'Founder & CEO', isCeo: true },
+    { img: 'NARESH.png', name: 'Mr. Naresh Bishnoi', role: 'Founder & CEO', isCeo: true },
     { img: 'MAMBEA.png', name: 'Ms. Beatrice Ampaso', role: "Sales & Business Dev't" },
     { img: 'MAMCHI.png', name: 'Ms. Esther Chiong', role: 'In-Licensing Mentor' },
     { img: 'MAMIVY.png', name: 'Ms. Ivy Varias', role: 'Regulatory Affairs Mentor' },
     { img: 'MAMMALOU.png', name: 'Ms. Malou Jagonoy', role: 'Finance Mentor' },
     { img: 'MAMSARLA.png', name: 'Ms. Sarla Devi', role: 'Finance Coach' },
+    { img: 'HIZON.png', name: 'Mr. Mike Angelo Hizon', role: 'Talent Growth & Development Mentor' },
   ];
 
   useEffect(() => {
@@ -142,7 +143,7 @@ export default function AboutUs() {
 
       {/* Enhanced Hero Section */}
       <section className="w-full mx-auto px-3 sm:px-4 md:px-6 mt-3 md:mt-4 mb-0 max-w-[1600px]">
-        <div className={`relative rounded-[1.5rem] overflow-hidden min-h-[450px] md:min-h-[500px] flex items-end group transition-colors duration-500 ${!heroImgLoaded ? 'bg-gray-200 animate-pulse' : 'bg-gray-100'}`}>
+        <div className={`relative rounded-[10px] md:rounded-[1.5rem] overflow-hidden min-h-[190px] md:min-h-[500px] flex items-end group transition-colors duration-500 ${!heroImgLoaded ? 'bg-gray-200 animate-pulse' : 'bg-gray-100'}`}>
           {/* Background Image — only mount after Sanity resolves so the src never changes */}
           {!imagesLoading && (
             <div className="absolute inset-0 z-0">
@@ -154,26 +155,26 @@ export default function AboutUs() {
           )}
 
           {/* Content */}
-          <div className="relative z-10 w-full px-8 md:px-14 pb-12 md:pb-16 pt-20 max-w-4xl ca-anim ca-up">
-            <h1 className="text-[28px] md:text-[38px] leading-tight font-bold mb-3 tracking-tight">
+          <div className="relative z-10 w-full px-3 md:px-14 pb-3 md:pb-16 pt-10 md:pt-20 max-w-4xl ca-anim ca-up">
+            <h1 className="text-[11px] md:text-[38px] leading-[1.2] font-bold mb-1 md:mb-3 tracking-tight">
               <span data-json="hero.heading" className="text-white">Your Compassionate</span><br />
               <span data-json="hero.headingAccent"
                 className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent leading-tight tracking-tight">Health
                 Ally</span>
             </h1>
-            <p data-json="hero.description" className="text-white/90 text-[13px] md:text-[14px] max-w-[600px] mb-5 leading-normal font-normal">
+            <p data-json="hero.description" className="text-white/90 text-[9px] md:text-[14px] max-w-[600px] mb-2 md:mb-5 leading-normal font-normal">
               A new standard of care for a new generation of patients.
               Advanced science. Trusted medicine. Closer access. Better outcomes. Greater hope.
 
             </p>
-            <div className="flex flex-wrap gap-4">
+            <div className="flex flex-wrap gap-2 md:gap-4">
               <a href="#our-story"
                 onClick={e => { e.preventDefault(); document.getElementById('our-story')?.scrollIntoView({ behavior: 'smooth' }); }}
-                className="btn-gradient text-white font-semibold py-2 px-6 rounded-full text-[13px] inline-flex items-center gap-2 shadow-md">
+                className="btn-gradient text-white font-semibold py-1 px-3.5 md:py-2 md:px-6 rounded-full text-[9px] md:text-[13px] inline-flex items-center gap-1.5 md:gap-2 shadow-md">
                 Discover Our Story <i className="fa-solid fa-arrow-down text-xs"></i>
               </a>
               <a href="contact-us.html"
-                className="bg-white/10 backdrop-blur-md border border-white/25 text-white font-semibold py-2 px-6 rounded-full text-[13px] hover:bg-white/20 transition inline-flex items-center gap-2">
+                className="bg-white/10 backdrop-blur-md border border-white/25 text-white font-semibold py-1 px-3.5 md:py-2 md:px-6 rounded-full text-[9px] md:text-[13px] hover:bg-white/20 transition inline-flex items-center gap-1.5 md:gap-2">
                 Contact Us <i className="fa-solid fa-arrow-right text-xs"></i>
               </a>
             </div>

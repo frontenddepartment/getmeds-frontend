@@ -513,185 +513,99 @@ export default function OrderMedicines() {
         <section className="py-10 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
 
-            {/* Two-column layout */}
+            {/* Guide + Upload layout — guide shown first so users are instructed before uploading */}
             <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
 
-              {/* LEFT: Upload + Guide */}
-              <div className="lg:col-span-3 space-y-6">
-
-                {/* Upload Prescription Card */}
-                <div className="ca-anim ca-left bg-white rounded-[15px] border border-gray-100 p-8 shadow-sm">
-                  <div className="flex items-center gap-4 mb-6">
-                    <div className="w-10 h-10 rounded-[12px] flex items-center justify-center text-white shadow-md"
-                      style={{ background: 'linear-gradient(to right,#61A644,#1D9FDA)' }}>
-                      <i className="fa-solid fa-file-prescription text-lg"></i>
-                    </div>
-                    <div>
-                      <h2 className="text-lg font-semibold text-dark tracking-tight">Upload prescription</h2>
-                      <p className="text-gray-400 text-[11px] mt-0.5">Accepted formats: JPEG, PNG, PDF</p>
-                    </div>
-                  </div>
-
-                  {/* Upload Zone */}
-                  <label className="group cursor-pointer block mb-4">
-                    <input type="file" multiple accept="image/*,.pdf" className="hidden" onChange={handleFileChange} />
-                    <div className="border-2 border-dashed border-gray-200 rounded-[15px] p-8 flex flex-col items-center justify-center text-center transition-all group-hover:border-primary/40 group-hover:bg-blue-50/20">
-                      <div className="text-gray-300 group-hover:text-primary transition-colors duration-200 mb-4">
-                        <i className="fa-solid fa-cloud-arrow-up text-5xl"></i>
+              {/* LEFT: Guide for Valid Prescription */}
+              <div className="lg:col-span-2 ca-anim ca-left bg-white rounded-[15px] border border-gray-100 p-8 shadow-sm">
+                <h2 className="text-[17px] font-semibold text-dark mb-1">Guide for a valid prescription</h2>
+                <p className="text-gray-400 text-[12px] mb-6">Please ensure the document includes:</p>
+                <ul className="space-y-3.5">
+                  {GUIDE_ITEMS.map((item, i) => (
+                    <li key={i} className="flex items-center gap-3">
+                      <div className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
+                        <i className="fa-solid fa-check text-[9px] text-green-600"></i>
                       </div>
-                      <p className="text-[13px] text-gray-400 mb-4">Click to browse — multiple files allowed</p>
-                      <span className="inline-block bg-dark group-hover:bg-primary text-white text-[13px] font-semibold px-6 py-2.5 rounded-[10px] transition-colors duration-200">
-                        Browse files
-                      </span>
-                    </div>
-                  </label>
-
-                  {/* File Preview */}
-                  <div className="border border-gray-100 rounded-[15px] bg-gray-50/50 overflow-hidden" style={{ minHeight: '110px' }}>
-                    {uploadedFiles.length > 0 ? (
-                      <div className="p-3 grid grid-cols-3 gap-2">
-                        {uploadedFiles.map((file, idx) => (
-                          <div key={idx} className="relative group/thumb">
-                            {file.type.startsWith('image/') ? (
-                              <button type="button" onClick={() => setViewingFileUrl(URL.createObjectURL(file))}
-                                className="w-full aspect-square rounded-[10px] overflow-hidden border border-gray-100 bg-white block">
-                                <img src={URL.createObjectURL(file)} alt={file.name}
-                                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-200" />
-                              </button>
-                            ) : (
-                              <div className="w-full aspect-square rounded-[10px] border border-gray-100 bg-white flex flex-col items-center justify-center gap-1 px-1">
-                                <i className="fa-solid fa-file-pdf text-red-400 text-xl"></i>
-                                <span className="text-[9px] text-gray-400 text-center truncate w-full px-1 leading-tight">{file.name}</span>
-                              </div>
-                            )}
-                            <button type="button"
-                              onClick={() => {
-                                const updated = uploadedFiles.filter((_, i) => i !== idx);
-                                setUploadedFiles(updated);
-                                if (updated.length === 0) setUploadComplete(false);
-                              }}
-                              className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-white rounded-full border border-gray-200 shadow-sm flex items-center justify-center text-gray-400 hover:text-red-500 transition opacity-0 group-hover/thumb:opacity-100">
-                              <i className="fa-solid fa-xmark text-[9px]"></i>
-                            </button>
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="flex flex-col items-center justify-center text-center px-4 py-6 h-full">
-                        <i className="fa-regular fa-images text-3xl text-gray-200 mb-2"></i>
-                        <span className="text-gray-300 text-[11px]">Uploaded files appear here</span>
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="mt-4 flex items-start gap-3 p-3 bg-gray-50 rounded-[12px]">
-                    <i className="fa-solid fa-circle-info text-gray-400 mt-0.5 text-sm flex-shrink-0"></i>
-                    <p className="text-[12px] text-gray-500 leading-relaxed">Always upload a clean, legible copy for faster verification.</p>
-                  </div>
-                </div>
-
-                {/* Guide for Valid Prescription */}
-                <div className="ca-anim ca-left ca-d2 bg-white rounded-[15px] border border-gray-100 p-8 shadow-sm">
-                  <h2 className="text-[17px] font-semibold text-dark mb-1">Guide for a valid prescription</h2>
-                  <p className="text-gray-400 text-[12px] mb-6">Please ensure the document includes:</p>
-                  <ul className="space-y-3.5">
-                    {GUIDE_ITEMS.map((item, i) => (
-                      <li key={i} className="flex items-center gap-3">
-                        <div className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
-                          <i className="fa-solid fa-check text-[9px] text-green-600"></i>
-                        </div>
-                        <span className="text-[13px] font-semibold text-gray-800">{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  <p className="text-[12px] text-gray-400 mt-5 leading-relaxed">
-                    All details must be clear and legible for verification.
-                  </p>
-                </div>
+                      <span className="text-[13px] font-semibold text-gray-800">{item}</span>
+                    </li>
+                  ))}
+                </ul>
+                <p className="text-[12px] text-gray-400 mt-5 leading-relaxed">
+                  All details must be clear and legible for verification.
+                </p>
               </div>
 
-              {/* RIGHT: Assistance + Trust Cards */}
-              <div className="lg:col-span-2 space-y-6">
-
-                {/* Need Assistance */}
-                <div className="ca-anim ca-right bg-white p-6 rounded-[15px] border border-gray-100 shadow-sm">
-                  <p className="text-[11px] font-semibold uppercase tracking-widest text-gray-400 mb-1.5">Need Assistance?</p>
-                  <p className="text-[17px] font-semibold mb-5"
-                    style={{ background: 'linear-gradient(to right,#61A644,#1D9FDA)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
-                    Chat with our pharmacist
-                  </p>
-                  <div className="space-y-4">
-                    <a href="tel:+639190769105" className="flex items-center gap-3 group">
-                      <div className="w-9 h-9 rounded-[10px] bg-gray-50 flex items-center justify-center text-dark text-xs group-hover:bg-primary group-hover:text-white transition shadow-sm flex-shrink-0">
-                        <i className="fa-solid fa-phone"></i>
-                      </div>
-                      <div>
-                        <p className="text-[13px] text-gray-400 font-medium">Customer Support</p>
-                        <p className="text-[15px] font-semibold text-dark">+639190769105</p>
-                      </div>
-                    </a>
-                    <a href="mailto:[EMAIL_ADDRESS]" className="flex items-center gap-3 group">
-                      <div className="w-9 h-9 rounded-[10px] bg-gray-50 flex items-center justify-center text-dark text-xs group-hover:bg-primary group-hover:text-white transition shadow-sm flex-shrink-0">
-                        <i className="fa-solid fa-envelope"></i>
-                      </div>
-                      <div>
-                        <p className="text-[13px] text-gray-400 font-medium">Email Address</p>
-                        <p className="text-[15px] font-semibold text-dark">info@getmeds.ph</p>
-                      </div>
-                    </a>
-                  </div>
-                </div>
-
-                {/* Secure Prescription Storage */}
-                <div className="ca-anim ca-right ca-d2 bg-white p-6 rounded-[15px] border border-gray-100 shadow-sm flex items-start gap-4">
-                  <div className="w-10 h-10 rounded-[12px] bg-green-50 flex items-center justify-center text-green-600 flex-shrink-0">
-                    <i className="fa-solid fa-lock text-lg"></i>
+              {/* RIGHT: Upload Prescription Card */}
+              <div className="lg:col-span-3 ca-anim ca-left ca-d2 bg-white rounded-[15px] border border-gray-100 p-6 shadow-sm">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-9 h-9 rounded-[12px] flex items-center justify-center text-white shadow-md"
+                    style={{ background: 'linear-gradient(to right,#61A644,#1D9FDA)' }}>
+                    <i className="fa-solid fa-file-prescription text-base"></i>
                   </div>
                   <div>
-                    <h3 className="text-[15px] font-semibold text-dark mb-2">Secure prescription storage</h3>
-                    <p className="text-[13px] text-gray-400 leading-relaxed">All uploads are encrypted and handled with strict confidentiality.</p>
+                    <h2 className="text-[15px] font-semibold text-dark tracking-tight">Upload prescription</h2>
+                    <p className="text-gray-400 text-[11px] mt-0.5">Accepted formats: JPEG, PNG, PDF</p>
                   </div>
                 </div>
 
-                {/* Compliance & Standards */}
-                <div className="ca-anim ca-right ca-d4 bg-white p-6 rounded-[15px] border border-gray-100 shadow-sm space-y-5">
-                  <div className="flex items-start gap-3">
-                    <div className="w-9 h-9 rounded-[10px] bg-green-50 flex items-center justify-center text-green-600 flex-shrink-0 mt-0.5">
-                      <i className="fa-solid fa-certificate text-base"></i>
+                {/* Upload Zone */}
+                <label className="group cursor-pointer block mb-3">
+                  <input type="file" multiple accept="image/*,.pdf" className="hidden" onChange={handleFileChange} />
+                  <div className="border-2 border-dashed border-gray-200 rounded-[15px] p-5 flex flex-col items-center justify-center text-center transition-all group-hover:border-primary/40 group-hover:bg-blue-50/20">
+                    <div className="text-gray-300 group-hover:text-primary transition-colors duration-200 mb-3">
+                      <i className="fa-solid fa-cloud-arrow-up text-4xl"></i>
                     </div>
-                    <div>
-                      <h3 className="text-[15px] font-semibold text-dark mb-1">Licensed Pharmacy Operations</h3>
-                      <p className="text-[13px] font-semibold text-gray-500 leading-relaxed">FDA Philippines Licensed</p>
-                      <p className="text-[13px] text-gray-400 leading-relaxed">Operating under valid Food and Drug Administration of the Philippines licenses as a wholesaler, distributor, and retail pharmacy.</p>
-                    </div>
+                    <p className="text-[13px] text-gray-400 mb-3">Click to browse — multiple files allowed</p>
+                    <span className="inline-block bg-dark group-hover:bg-primary text-white text-[13px] font-semibold px-5 py-2 rounded-[10px] transition-colors duration-200">
+                      Browse files
+                    </span>
                   </div>
-                  <div className="h-px bg-gray-100" />
-                  <div className="flex items-start gap-3">
-                    <div className="w-9 h-9 rounded-[10px] bg-green-50 flex items-center justify-center text-green-600 flex-shrink-0 mt-0.5">
-                      <i className="fa-solid fa-user-doctor text-base"></i>
+                </label>
+
+                {/* File Preview */}
+                <div className="border border-gray-100 rounded-[15px] bg-gray-50/50 overflow-hidden" style={{ minHeight: '90px' }}>
+                  {uploadedFiles.length > 0 ? (
+                    <div className="p-3 grid grid-cols-3 gap-2">
+                      {uploadedFiles.map((file, idx) => (
+                        <div key={idx} className="relative group/thumb">
+                          {file.type.startsWith('image/') ? (
+                            <button type="button" onClick={() => setViewingFileUrl(URL.createObjectURL(file))}
+                              className="w-full aspect-square rounded-[10px] overflow-hidden border border-gray-100 bg-white block">
+                              <img src={URL.createObjectURL(file)} alt={file.name}
+                                className="w-full h-full object-cover hover:scale-105 transition-transform duration-200" />
+                            </button>
+                          ) : (
+                            <div className="w-full aspect-square rounded-[10px] border border-gray-100 bg-white flex flex-col items-center justify-center gap-1 px-1">
+                              <i className="fa-solid fa-file-pdf text-red-400 text-xl"></i>
+                              <span className="text-[9px] text-gray-400 text-center truncate w-full px-1 leading-tight">{file.name}</span>
+                            </div>
+                          )}
+                          <button type="button"
+                            onClick={() => {
+                              const updated = uploadedFiles.filter((_, i) => i !== idx);
+                              setUploadedFiles(updated);
+                              if (updated.length === 0) setUploadComplete(false);
+                            }}
+                            className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-white rounded-full border border-gray-200 shadow-sm flex items-center justify-center text-gray-400 hover:text-red-500 transition opacity-0 group-hover/thumb:opacity-100">
+                            <i className="fa-solid fa-xmark text-[9px]"></i>
+                          </button>
+                        </div>
+                      ))}
                     </div>
-                    <div>
-                      <h3 className="text-[15px] font-semibold text-dark mb-1">Pharmacist-Verified Dispensing</h3>
-                      <p className="text-[13px] text-gray-400 leading-relaxed">
-                        All medications reviewed and dispensed under the supervision of PRC-licensed Filipino pharmacists, in accordance with the Philippine Pharmacy Act (RA 10918).
-                      </p>
+                  ) : (
+                    <div className="flex flex-col items-center justify-center text-center px-4 py-6 h-full">
+                      <i className="fa-regular fa-images text-3xl text-gray-200 mb-2"></i>
+                      <span className="text-gray-300 text-[11px]">Uploaded files appear here</span>
                     </div>
-                  </div>
-                  <div className="h-px bg-gray-100" />
-                  <div className="flex items-start gap-3">
-                    <div className="w-9 h-9 rounded-[10px] bg-green-50 flex items-center justify-center text-green-600 flex-shrink-0 mt-0.5">
-                      <i className="fa-solid fa-shield-halved text-base"></i>
-                    </div>
-                    <div>
-                      <h3 className="text-[15px] font-semibold text-dark mb-1">Patient Privacy Commitment</h3>
-                      <p className="text-[13px] text-gray-400 leading-relaxed">
-                        Personal and prescription information is handled with care, in line with Philippine Data Privacy Act principles.
-                      </p>
-                    </div>
-                  </div>
+                  )}
                 </div>
 
+                <div className="mt-4 flex items-start gap-3 p-3 bg-gray-50 rounded-[12px]">
+                  <i className="fa-solid fa-circle-info text-gray-400 mt-0.5 text-sm flex-shrink-0"></i>
+                  <p className="text-[12px] text-gray-500 leading-relaxed">Always upload a clean, legible copy for faster verification.</p>
+                </div>
               </div>
+
             </div>
 
             {/* ── Customer Validation Form ── */}
@@ -837,6 +751,92 @@ export default function OrderMedicines() {
                   <span className="font-bold">Medical Disclaimer: </span>
                   Getmeds dispenses prescription medicines only upon receipt of a valid prescription from a licensed physician. This service does not replace professional medical advice, diagnosis, or treatment. Always consult your healthcare provider for any medical concerns.
                 </p>
+              </div>
+            </div>
+
+            {/* ── Support & Trust ── */}
+            <div className="ca-anim ca-up">
+
+              {/* Top row — shorter details */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+
+                {/* Need Assistance */}
+                <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col">
+                  <p className="text-[11px] font-semibold uppercase tracking-widest text-gray-400 mb-1.5">Need Assistance?</p>
+                  <p className="text-[15px] font-semibold mb-4"
+                    style={{ background: 'linear-gradient(to right,#61A644,#1D9FDA)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+                    Chat with our pharmacist
+                  </p>
+                  <div className="mt-auto space-y-3">
+                    <a href="tel:+639190769105" className="flex items-center gap-3 group">
+                      <div className="w-9 h-9 rounded-[10px] bg-gray-50 flex items-center justify-center text-dark text-xs group-hover:bg-primary group-hover:text-white transition shadow-sm flex-shrink-0">
+                        <i className="fa-solid fa-phone"></i>
+                      </div>
+                      <div>
+                        <p className="text-[13px] text-gray-400 font-medium">Customer Support</p>
+                        <p className="text-[15px] font-semibold text-dark">+639190769105</p>
+                      </div>
+                    </a>
+                    <a href="mailto:[EMAIL_ADDRESS]" className="flex items-center gap-3 group">
+                      <div className="w-9 h-9 rounded-[10px] bg-gray-50 flex items-center justify-center text-dark text-xs group-hover:bg-primary group-hover:text-white transition shadow-sm flex-shrink-0">
+                        <i className="fa-solid fa-envelope"></i>
+                      </div>
+                      <div>
+                        <p className="text-[13px] text-gray-400 font-medium">Email Address</p>
+                        <p className="text-[15px] font-semibold text-dark">info@getmeds.ph</p>
+                      </div>
+                    </a>
+                  </div>
+                </div>
+
+                {/* Secure Prescription Storage */}
+                <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col">
+                  <div className="w-11 h-11 rounded-2xl bg-green-50 flex items-center justify-center text-green-600 shadow-sm mb-4">
+                    <i className="fa-solid fa-lock text-lg"></i>
+                  </div>
+                  <h3 className="text-[15px] font-semibold text-dark mb-1">Secure prescription storage</h3>
+                  <p className="text-[13px] text-gray-400 leading-relaxed">All uploads are encrypted and handled with strict confidentiality.</p>
+                </div>
+
+                {/* Patient Privacy Commitment */}
+                <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col">
+                  <div className="w-11 h-11 rounded-2xl bg-green-50 flex items-center justify-center text-green-600 shadow-sm mb-4">
+                    <i className="fa-solid fa-shield-halved text-lg"></i>
+                  </div>
+                  <h3 className="text-[15px] font-semibold text-dark mb-1">Patient Privacy Commitment</h3>
+                  <p className="text-[13px] text-gray-400 leading-relaxed">
+                    Personal and prescription information is handled with care, in line with Philippine Data Privacy Act principles.
+                  </p>
+                </div>
+              </div>
+
+              {/* Bottom row — longest details */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                {/* Licensed Pharmacy Operations */}
+                <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex items-start gap-4">
+                  <div className="w-11 h-11 rounded-[12px] bg-green-50 flex items-center justify-center text-green-600 flex-shrink-0">
+                    <i className="fa-solid fa-certificate text-lg"></i>
+                  </div>
+                  <div>
+                    <h3 className="text-[15px] font-semibold text-dark mb-1">Licensed Pharmacy Operations</h3>
+                    <p className="text-[13px] font-semibold text-gray-500 leading-relaxed">FDA Philippines Licensed</p>
+                    <p className="text-[13px] text-gray-400 leading-relaxed">Operating under valid Food and Drug Administration of the Philippines licenses as a wholesaler, distributor, and retail pharmacy.</p>
+                  </div>
+                </div>
+
+                {/* Pharmacist-Verified Dispensing */}
+                <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex items-start gap-4">
+                  <div className="w-11 h-11 rounded-[12px] bg-green-50 flex items-center justify-center text-green-600 flex-shrink-0">
+                    <i className="fa-solid fa-user-doctor text-lg"></i>
+                  </div>
+                  <div>
+                    <h3 className="text-[15px] font-semibold text-dark mb-1">Pharmacist-Verified Dispensing</h3>
+                    <p className="text-[13px] text-gray-400 leading-relaxed">
+                      All medications reviewed and dispensed under the supervision of PRC-licensed Filipino pharmacists, in accordance with the Philippine Pharmacy Act (RA 10918).
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
 

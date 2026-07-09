@@ -46,7 +46,8 @@ export default function PatientAssistanceProgram() {
     });
   }, []);
 
-  const { getImage } = useImageMapper('pap');
+  const { getImage, loading: imagesLoading } = useImageMapper('pap');
+  const [heroImgLoaded, setHeroImgLoaded] = useState(false);
   const [activeSection, setActiveSection] = useState<SectionTab>('steps');
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
   const [tabBarFloating, setTabBarFloating] = useState(false);
@@ -114,9 +115,9 @@ export default function PatientAssistanceProgram() {
   const toggleFaq = (index: number) => setActiveFaq(activeFaq === index ? null : index);
 
   const TABS: { id: SectionTab; label: string; sub: string }[] = [
-    { id: 'steps',        label: 'Mga Hakbang',    sub: 'PAP GUIDE'  },
-    { id: 'requirements', label: 'Requirements',   sub: 'DOCUMENTS'  },
-    { id: 'faqs',         label: 'FAQs',           sub: 'TANONG'     },
+    { id: 'steps', label: 'Mga Hakbang', sub: 'PAP GUIDE' },
+    { id: 'requirements', label: 'Requirements', sub: 'DOCUMENTS' },
+    { id: 'faqs', label: 'FAQs', sub: 'TANONG' },
   ];
 
   const FAQS: { q: string; a: React.ReactNode }[] = [
@@ -172,9 +173,8 @@ export default function PatientAssistanceProgram() {
               <button
                 key={tab.id}
                 onClick={() => switchTab(tab.id)}
-                className={`cursor-pointer shrink-0 min-w-[150px] sm:flex-1 rounded-xl px-4 py-3.5 flex items-center justify-between gap-3 transition-all duration-200 text-left ${
-                  activeSection === tab.id ? 'shadow-md' : 'hover:bg-gray-50'
-                }`}
+                className={`cursor-pointer shrink-0 min-w-[150px] sm:flex-1 rounded-xl px-4 py-3.5 flex items-center justify-between gap-3 transition-all duration-200 text-left ${activeSection === tab.id ? 'shadow-md' : 'hover:bg-gray-50'
+                  }`}
                 style={activeSection === tab.id ? { background: GRADIENT } : {}}
               >
                 <div className="min-w-0">
@@ -185,9 +185,8 @@ export default function PatientAssistanceProgram() {
                     {tab.label}
                   </p>
                 </div>
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 border transition-all ${
-                  activeSection === tab.id ? 'border-white/40 bg-white/20' : 'border-gray-200 bg-white'
-                }`}>
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 border transition-all ${activeSection === tab.id ? 'border-white/40 bg-white/20' : 'border-gray-200 bg-white'
+                  }`}>
                   <i className={`fa-solid fa-arrow-right text-[10px] ${activeSection === tab.id ? 'text-white' : 'text-gray-400'}`} />
                 </div>
               </button>
@@ -203,12 +202,17 @@ export default function PatientAssistanceProgram() {
       <div className="overflow-x-hidden">
 
         {/* Hero Banner */}
-        <section className="relative w-full overflow-hidden">
-          <img
-            src={getImage('PAP Hero Background', 'assets/papbanner.png')}
-            className="w-full h-auto brightness-90"
-            alt="Medical Support"
-          />
+        <section className="w-full mx-auto px-3 sm:px-4 md:px-6 mt-3 md:mt-4 mb-0 max-w-[1600px]">
+          <div className={`relative rounded-[10px] md:rounded-[1.5rem] overflow-hidden min-h-[140px] md:min-h-[500px] flex items-end group transition-colors duration-500 ${!heroImgLoaded ? 'bg-gray-200 animate-pulse' : 'bg-gray-100'}`}>
+            {!imagesLoading && (
+              <div className="absolute inset-0 z-0">
+                <img src={getImage('PAP Hero Background', 'assets/pap-banner.png')}
+                  onLoad={() => setHeroImgLoaded(true)}
+                  className={`w-full h-full object-cover object-center transform group-hover:scale-105 transition-[opacity,transform] duration-700 ${heroImgLoaded ? 'opacity-100' : 'opacity-0'}`}
+                  alt="Medical Support" />
+              </div>
+            )}
+          </div>
         </section>
 
         {/* Program Intro */}
@@ -276,29 +280,24 @@ export default function PatientAssistanceProgram() {
                 <button
                   key={tab.id}
                   onClick={() => switchTab(tab.id)}
-                  className={`cursor-pointer shrink-0 min-w-[150px] sm:flex-1 rounded-xl px-4 py-3.5 flex items-center justify-between gap-3 transition-all duration-200 text-left ${
-                    activeSection === tab.id ? 'shadow-md' : 'hover:bg-gray-50'
-                  }`}
+                  className={`cursor-pointer shrink-0 min-w-[150px] sm:flex-1 rounded-xl px-4 py-3.5 flex items-center justify-between gap-3 transition-all duration-200 text-left ${activeSection === tab.id ? 'shadow-md' : 'hover:bg-gray-50'
+                    }`}
                   style={activeSection === tab.id ? { background: GRADIENT } : {}}
                 >
                   <div className="min-w-0">
-                    <p className={`text-[9px] font-bold uppercase tracking-widest mb-1 ${
-                      activeSection === tab.id ? 'text-white/70' : 'text-gray-400'
-                    }`}>
+                    <p className={`text-[9px] font-bold uppercase tracking-widest mb-1 ${activeSection === tab.id ? 'text-white/70' : 'text-gray-400'
+                      }`}>
                       {tab.sub}
                     </p>
-                    <p className={`font-bold text-xs sm:text-sm leading-tight ${
-                      activeSection === tab.id ? 'text-white' : 'text-gray-700'
-                    }`}>
+                    <p className={`font-bold text-xs sm:text-sm leading-tight ${activeSection === tab.id ? 'text-white' : 'text-gray-700'
+                      }`}>
                       {tab.label}
                     </p>
                   </div>
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 border transition-all ${
-                    activeSection === tab.id ? 'border-white/40 bg-white/20' : 'border-gray-200 bg-white'
-                  }`}>
-                    <i className={`fa-solid fa-arrow-right text-[10px] ${
-                      activeSection === tab.id ? 'text-white' : 'text-gray-400'
-                    }`} />
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 border transition-all ${activeSection === tab.id ? 'border-white/40 bg-white/20' : 'border-gray-200 bg-white'
+                    }`}>
+                    <i className={`fa-solid fa-arrow-right text-[10px] ${activeSection === tab.id ? 'text-white' : 'text-gray-400'
+                      }`} />
                   </div>
                 </button>
               ))}

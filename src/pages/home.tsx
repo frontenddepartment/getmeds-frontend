@@ -422,8 +422,8 @@ export default function GetMedsHomepage() {
       {/* Navbar */}
       <div id="navbar-container" className="sticky top-0 z-[50]" />
 
-      {/* Hero Container - Slider */}
-      <div className="relative min-h-[70vh] md:min-h-[600px] w-full overflow-hidden flex flex-col justify-between">
+      {/* Desktop Hero Container - Slider */}
+      <div className="hidden md:flex relative min-h-[600px] w-full overflow-hidden flex-col justify-between">
         {/* Slide backgrounds */}
         {heroSlides.map((slide, i) => (
           <div
@@ -437,26 +437,23 @@ export default function GetMedsHomepage() {
           />
         ))}
 
-        {/* No overlay */}
-
-
         {/* Hero Content Area — heading, subtext, and buttons hidden on the 2nd slide */}
         {heroIndex !== 1 && (
-          <div className="max-w-7xl mx-auto px-6 w-full relative z-10 flex-grow flex items-center justify-center md:justify-start pt-20 md:pt-28 pb-16 md:pb-20 text-center md:text-left">
-            <div className="max-w-2xl space-y-3 mx-auto md:mx-0 flex flex-col items-center md:items-start">
+          <div className="max-w-7xl mx-auto px-6 w-full relative z-10 flex-grow flex items-center justify-start pt-20 md:pt-28 pb-16 md:pb-20 text-left">
+            <div className="max-w-2xl space-y-3 flex flex-col items-start">
               <div style={{ opacity: heroFading ? 0 : 1, transition: 'opacity 0.4s ease' }}>
                 <h1 className="text-2xl md:text-5xl lg:text-6xl font-bold leading-[1.1] tracking-tight bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent mb-3">
                   {heroSlides[heroIndex].heading.split('\n').map((line, i, arr) => (
                     <React.Fragment key={i}>{line}{i < arr.length - 1 && <br />}</React.Fragment>
                   ))}
                 </h1>
-                <p className="text-[#000b5d] text-sm md:text-base font-medium leading-relaxed max-w-xl mx-auto md:mx-0">
+                <p className="text-[#000b5d] text-sm md:text-base font-medium leading-relaxed max-w-xl">
                   {heroSlides[heroIndex].sub}
                 </p>
               </div>
 
               {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row justify-center md:justify-start gap-3 pt-2">
+              <div className="flex flex-col sm:flex-row gap-3 pt-2">
                 <a href="/cancer-medicines" className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:opacity-90 text-white text-center font-bold uppercase tracking-wider text-[11px] px-6 py-3 rounded-lg shadow-2xl shadow-blue-500/40 transition-all flex items-center justify-center gap-2 group">
                   Our Solutions <i className="fa-solid fa-chevron-right group-hover:translate-x-1 transition-transform"></i>
                 </a>
@@ -502,6 +499,143 @@ export default function GetMedsHomepage() {
           >
             <i className="fa-solid fa-chevron-right text-white text-xs"></i>
           </button>
+        </div>
+      </div>
+
+      {/* Mobile Hero Container - Card Layout (block md:hidden) */}
+      <div className="block md:hidden pb-4 pt-[120px] bg-white">
+        
+        {/* Horizontal scrollable buttons row */}
+        <div 
+          className="flex gap-2.5 overflow-x-auto pb-4 px-4 scrollbar-none animate-fadeIn"
+          style={{ 
+            scrollbarWidth: 'none', 
+            msOverflowStyle: 'none', 
+            WebkitOverflowScrolling: 'touch' 
+          }}
+        >
+          <style>{`
+            .scrollbar-none::-webkit-scrollbar {
+              display: none;
+            }
+          `}</style>
+          <a 
+            href="/order-medicines.html" 
+            className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:opacity-95 text-white font-bold text-[12.5px] py-2 px-5 rounded-full transition-all shrink-0 flex items-center justify-center"
+          >
+            Order Medicines
+          </a>
+          <a 
+            href="/product-range" 
+            className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:opacity-95 text-white font-bold text-[12.5px] py-2 px-5 rounded-full transition-all shrink-0 flex items-center justify-center"
+          >
+            Product Range
+          </a>
+          <a 
+            href="/services.html" 
+            className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:opacity-95 text-white font-bold text-[12.5px] py-2 px-5 rounded-full transition-all shrink-0 flex items-center justify-center"
+          >
+            Our Services
+          </a>
+          <button 
+            onClick={() => setIsInquiryOpen(true)} 
+            className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:opacity-95 text-white font-bold text-[12.5px] py-2 px-5 rounded-full transition-all shrink-0 flex items-center justify-center"
+          >
+            Become Our Partner
+          </button>
+          <a 
+            href="/contact-us.html" 
+            className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:opacity-95 text-white font-bold text-[12.5px] py-2 px-5 rounded-full transition-all shrink-0 flex items-center justify-center"
+          >
+            Contact Us
+          </a>
+        </div>
+
+        <div className="bg-white px-4">
+          
+          {/* Image Slider Container */}
+          <div className="relative aspect-[16/10] w-full rounded-[20px] overflow-hidden mb-4 bg-gray-100">
+            {/* Slide backgrounds */}
+            {heroSlides.map((slide, i) => (
+              <div
+                key={i}
+                className="absolute inset-0 bg-cover bg-center transition-opacity duration-700"
+                style={{
+                  backgroundImage: `url('${getImage(slide.bg, slide.bg)}')`,
+                  opacity: i === heroIndex ? 1 : 0,
+                  zIndex: 0,
+                }}
+              />
+            ))}
+            
+            {/* Soft white overlay for title contrast */}
+            <div className="absolute inset-0 bg-gradient-to-r from-white/70 via-white/10 to-transparent z-[1]" />
+
+            {/* Overlaid Title on Mobile Slider */}
+            {heroIndex !== 1 && (
+              <div 
+                className="absolute top-4 left-4 right-4 z-10 transition-opacity duration-400"
+                style={{ opacity: heroFading ? 0 : 1 }}
+              >
+                <h1 className="text-[24px] font-black leading-[1.2] tracking-tight max-w-[90%]">
+                  {heroSlides[heroIndex].heading.split('\n').map((line, i, arr) => (
+                    <React.Fragment key={i}>
+                      <span className="bg-gradient-to-r from-[#61A644] via-[#1D9FDA] to-[#61A644] bg-clip-text text-transparent">
+                        {line}
+                      </span>
+                      {i < arr.length - 1 && <br />}
+                    </React.Fragment>
+                  ))}
+                </h1>
+              </div>
+            )}
+
+            {/* Slider Controls (Dots + Arrows) on the Image */}
+            <div className="absolute bottom-3 left-0 right-0 z-20 flex items-center justify-center gap-4">
+              {/* Prev */}
+              <button
+                onClick={() => goToHeroSlide((heroIndex - 1 + heroSlides.length) % heroSlides.length)}
+                className="w-7 h-7 rounded-full bg-white/60 backdrop-blur-sm flex items-center justify-center text-gray-700 hover:bg-white/80 transition"
+              >
+                <i className="fa-solid fa-chevron-left text-[10px]"></i>
+              </button>
+
+              {/* Dots */}
+              <div className="flex items-center gap-1.5">
+                {heroSlides.map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => goToHeroSlide(i)}
+                    className={`transition-all duration-300 rounded-full h-1.5 ${
+                      i === heroIndex ? 'w-4 bg-gradient-to-r from-[#61A644] to-[#1D9FDA]' : 'w-1.5 bg-gray-300'
+                    }`}
+                  />
+                ))}
+              </div>
+
+              {/* Next */}
+              <button
+                onClick={() => goToHeroSlide((heroIndex + 1) % heroSlides.length)}
+                className="w-7 h-7 rounded-full bg-white/60 backdrop-blur-sm flex items-center justify-center text-gray-700 hover:bg-white/80 transition"
+              >
+                <i className="fa-solid fa-chevron-right text-[10px]"></i>
+              </button>
+            </div>
+
+          </div>
+
+          {/* Subtext description below the slider */}
+          {heroIndex !== 1 && (
+            <div 
+              className="px-1 mb-4 transition-opacity duration-400"
+              style={{ opacity: heroFading ? 0 : 1 }}
+            >
+              <p className="text-gray-400 text-[12px] font-normal leading-relaxed text-left">
+                {heroSlides[heroIndex].sub}
+              </p>
+            </div>
+          )}
+
         </div>
       </div>
 
@@ -733,14 +867,22 @@ export default function GetMedsHomepage() {
                   ))}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
                   {/* Card info overlay */}
-                  <div className="absolute bottom-5 left-4 z-10">
-                    <h3 className="text-white text-xs md:text-lg font-bold mb-0.5">{therapCards[therapMobileActive]?.name}</h3>
-                    <div className="overflow-hidden w-48">
-                      <div className="marquee-track">
-                        <span className="text-white/70 text-[11px] pr-4">{therapCards[therapMobileActive]?.marquee}</span>
-                        <span className="text-white/70 text-[11px] pr-4">{therapCards[therapMobileActive]?.marquee}</span>
+                  <div className="absolute bottom-5 left-4 right-4 z-10 flex items-end justify-between">
+                    <div>
+                      <h3 className="text-white text-xs md:text-lg font-bold mb-0.5">{therapCards[therapMobileActive]?.name}</h3>
+                      <div className="overflow-hidden w-40 sm:w-48">
+                        <div className="marquee-track">
+                          <span className="text-white/70 text-[11px] pr-4">{therapCards[therapMobileActive]?.marquee}</span>
+                          <span className="text-white/70 text-[11px] pr-4">{therapCards[therapMobileActive]?.marquee}</span>
+                        </div>
                       </div>
                     </div>
+                    <a 
+                      href={therapCards[therapMobileActive]?.link} 
+                      className="text-[11px] font-semibold text-white bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full px-3.5 py-1.5 transition-colors shrink-0"
+                    >
+                      See All
+                    </a>
                   </div>
                   {/* Progress bar */}
                   <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-white/20 z-10">

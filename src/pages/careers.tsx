@@ -319,7 +319,7 @@ const Careers: React.FC = () => {
 
       {/* HERO SECTION */}
       <section className="w-full mx-auto px-3 sm:px-4 md:px-6 mt-3 md:mt-4 mb-0 max-w-[1600px]">
-        <div className={`relative rounded-[1.5rem] overflow-hidden min-h-[450px] md:min-h-[500px] flex items-end transition-colors duration-500 ${!heroImgLoaded ? 'bg-gray-200 animate-pulse' : 'bg-gray-100'}`}>
+        <div className={`relative rounded-[10px] md:rounded-[1.5rem] overflow-hidden min-h-[190px] md:min-h-[500px] flex items-end transition-colors duration-500 ${!heroImgLoaded ? 'bg-gray-200 animate-pulse' : 'bg-gray-100'}`}>
           {/* Background Image — only mount after Sanity resolves so the src never changes */}
           {!imagesLoading && (
             <img
@@ -329,20 +329,20 @@ const Careers: React.FC = () => {
               className={`absolute inset-0 w-full h-full object-cover object-right-top transition-opacity duration-700 ${heroImgLoaded ? 'opacity-100' : 'opacity-0'}`}
             />
           )}
-          <div className="relative z-10 w-full px-8 md:px-14 pb-7 md:pb-8 pt-0">
-            <div className="inline-block max-w-[60%]">
-              <h1 className="text-2xl md:text-5xl lg:text-6xl leading-[1.1] font-bold mb-4 tracking-tight">
+          <div className="relative z-10 w-full px-3 md:px-14 pb-3 md:pb-8 pt-0">
+            <div className="inline-block max-w-[70%] md:max-w-[60%]">
+              <h1 className="text-[11px] md:text-5xl lg:text-6xl leading-[1.2] font-bold mb-1 md:mb-4 tracking-tight">
                 <span className="hero-l1 block bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">Join the Minds</span>
                 <span className="hero-l2 block bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent whitespace-nowrap">
                   Behind the Medicine
                 </span>
               </h1>
-              <p className="hero-p text-[#000b5d] text-[14px] md:text-[15px] max-w-[420px] mb-6 leading-relaxed font-medium">
+              <p className="hero-p text-[#000b5d] text-[9px] md:text-[15px] max-w-[420px] mb-2 md:mb-6 leading-relaxed font-medium">
                 Join our mission to make healthcare accessible worldwide. We're looking
                 for passionate individuals to innovate and grow with us.
               </p>
               <a href="#join-form"
-                className="hero-btn bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:from-[#1D9FDA] hover:to-[#61A644] text-white font-semibold py-2.5 px-8 rounded-full text-[13px] inline-block transition shadow-lg">
+                className="hero-btn bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:from-[#1D9FDA] hover:to-[#61A644] text-white font-semibold py-1 px-3.5 md:py-2.5 md:px-8 rounded-full text-[9px] md:text-[13px] inline-block transition shadow-lg">
                 Read More
               </a>
             </div>
@@ -543,9 +543,9 @@ const Careers: React.FC = () => {
             </div>
           </div>
 
-          {/* 6 Expanding Accordion Panels */}
+          {/* 6 Expanding Accordion Panels (Desktop Only) */}
           <div
-            className="flex gap-3 h-[340px] md:h-[400px] mt-12"
+            className="hidden md:flex gap-3 h-[400px] mt-12"
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => {
               setIsHovered(false);
@@ -567,6 +567,31 @@ const Careers: React.FC = () => {
                   src={`/assets/recognitionimage${index + 1}.jpg`}
                   alt={slide.alt}
                   className="w-full h-full object-cover"
+                />
+              </div>
+            ))}
+          </div>
+
+          {/* Employee Recognition Horizontal Slider (Mobile Only) */}
+          <div
+            className="flex md:hidden gap-4 overflow-x-auto snap-x snap-mandatory mt-8 pb-2 scrollbar-none"
+            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', WebkitOverflowScrolling: 'touch' } as React.CSSProperties}
+          >
+            <style>{`
+              .scrollbar-none::-webkit-scrollbar {
+                display: none;
+              }
+            `}</style>
+            {careersSlides.map((slide, index) => (
+              <div
+                key={slide.title}
+                className="ca-anim ca-up flex-shrink-0 snap-center rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow group"
+                style={{ width: '320px', height: '220px' }}
+              >
+                <img
+                  src={`/assets/recognitionimage${index + 1}.jpg`}
+                  alt={slide.alt}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
               </div>
             ))}

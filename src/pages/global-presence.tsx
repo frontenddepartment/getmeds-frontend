@@ -69,27 +69,27 @@ export default function GlobalPresence() {
       {/* Header / Hero Section */}
       <section className="w-full mx-auto px-3 sm:px-4 md:px-6 mt-3 md:mt-4 mb-16 max-w-[1600px]">
         <div
-          className="relative rounded-[1.5rem] border border-gray-100/20 overflow-hidden min-h-[450px] md:min-h-[500px] flex items-end">
+          className="relative rounded-[10px] md:rounded-[1.5rem] border border-gray-100/20 overflow-hidden min-h-[190px] md:min-h-[500px] flex items-end">
           <img src={getImage('Global Presence Hero Background', 'assets/globalpresencehero.jpg')} alt="Global Healthcare" data-json-src="hero.image" data-json-alt="hero.imageAlt"
             className="absolute inset-0 w-full h-full object-cover object-center" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
           <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent w-[100%] md:w-[70%]"></div>
 
-          <div className="relative z-10 w-full px-8 md:px-14 pb-12 md:pb-16 pt-20 max-w-4xl">
-            <h1 className="ca-anim ca-up text-[28px] md:text-[38px] leading-tight font-bold mb-3 tracking-tight">
+          <div className="relative z-10 w-full px-3 md:px-14 pb-3 md:pb-16 pt-10 md:pt-20 max-w-4xl">
+            <h1 className="ca-anim ca-up text-[11px] md:text-[38px] leading-[1.2] font-bold mb-1 md:mb-3 tracking-tight">
               <span data-json="hero.headingLine1" className="text-white">Global Healthcare</span><br />
               <span data-json="hero.headingAccent"
                 className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent leading-tight tracking-tight">
                 Without Borders
               </span>
             </h1>
-            <p data-json="hero.description" className="ca-anim ca-up ca-d2 text-white/90 text-[13px] md:text-[14px] max-w-[650px] mb-5 leading-normal font-normal">
+            <p data-json="hero.description" className="ca-anim ca-up ca-d2 text-white/90 text-[9px] md:text-[14px] max-w-[650px] mb-2 md:mb-5 leading-normal font-normal">
               Discover seamless healthcare solutions. Access a world-class medical network worldwide, efficiently
               linking you with top care continuously.
             </p>
             <button
               onClick={() => document.getElementById('gp-content-start')?.scrollIntoView({ behavior: 'smooth' })}
-              className="ca-anim ca-up ca-d3 bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:from-[#1D9FDA] hover:to-[#61A644] text-white font-semibold py-2 px-6 rounded-full text-[13px] inline-block transition shadow-md">
+              className="ca-anim ca-up ca-d3 bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:from-[#1D9FDA] hover:to-[#61A644] text-white font-semibold py-1 px-3.5 md:py-2 md:px-6 rounded-full text-[9px] md:text-[13px] inline-block transition shadow-md">
               Explore Now
             </button>
           </div>

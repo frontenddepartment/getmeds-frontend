@@ -54,20 +54,20 @@ const Ungc: React.FC = () => {
 
       {/* UNGC Hero Section */}
       <section className="w-full mx-auto px-3 sm:px-4 md:px-6 mt-3 md:mt-4 mb-16 max-w-[1600px]">
-        <div className="relative rounded-[1.5rem] border border-white/10 overflow-hidden min-h-[450px] flex items-center justify-center">
+        <div className="relative rounded-[10px] md:rounded-[1.5rem] border border-white/10 overflow-hidden min-h-[190px] md:min-h-[450px] flex items-center justify-center">
           <img src={getImage('UNGC Hero Background', 'assets/ungcimage.jpg')} alt="UN Global Compact" className="absolute inset-0 w-full h-full object-cover" />
           <div className="absolute inset-0 bg-[#0F2642]/75 backdrop-blur-[1px]"></div>
-          <div className="relative z-10 flex flex-col md:flex-row items-center gap-10 md:gap-14 px-8 py-16 max-w-6xl">
+          <div className="relative z-10 flex flex-col md:flex-row items-center gap-3 md:gap-14 px-3 md:px-8 py-4 md:py-16 max-w-6xl">
             <div className="flex-shrink-0">
-              <img src={getImage('UNGC Logo White', 'assets/ungclogowhite.png')} alt="UNGC Logo" className="w-48 md:w-60 h-auto opacity-100" />
+              <img src={getImage('UNGC Logo White', 'assets/ungclogowhite.png')} alt="UNGC Logo" className="w-20 md:w-60 h-auto opacity-100" />
             </div>
             <div className="hidden md:block w-[1.5px] h-56 bg-white/40"></div>
             <div className="text-white text-center md:text-left max-w-xl">
-              <h1 className="text-2xl md:text-[52px] leading-[1.1] font-semibold mb-5 tracking-tight">
+              <h1 className="text-[11px] md:text-[52px] leading-[1.2] font-semibold mb-1 md:mb-5 tracking-tight">
                 <span>United Nations</span><br />
                 <span>Global Compact</span>
               </h1>
-              <p className="text-white/90 text-sm md:text-[15.5px] mb-8 leading-relaxed font-normal max-w-[480px]">
+              <p className="text-white/90 text-[9px] md:text-[15.5px] mb-0 md:mb-8 leading-relaxed font-normal max-w-[480px]">
                 At Getmeds Philippines, we do more than provide medicines—we drive meaningful impact through
                 responsible healthcare, compassion, and sustainable action.
               </p>

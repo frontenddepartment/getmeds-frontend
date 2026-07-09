@@ -147,6 +147,19 @@ export default function CancerMedicines() {
   const [filterAvailability, setFilterAvailability] = useState<'all' | 'instock' | 'outofstock'>('all');
   const [filterForms, setFilterForms] = useState<Set<string>>(new Set());
   const filterPanelRef = useRef<HTMLDivElement>(null);
+  const [inquiryDropdownOpenId, setInquiryDropdownOpenId] = useState<string | null>(null);
+
+  const USER_TYPE_OPTIONS = [
+    { label: 'Patient / Caregiver',                  value: 'patient'  },
+    { label: 'Doctor / Healthcare Professional',      value: 'doctor'   },
+    { label: 'Pharmacy Owner / Retail Pharmacy',      value: 'pharmacy' },
+    { label: 'Hospital / Institution',                value: 'hospital' },
+  ];
+
+  const navigateWithUserType = (p: ProductWithCategory, userType: string) => {
+    const url = getProductDetailUrl(p) + `?userType=${userType}`;
+    window.location.href = url;
+  };
 
   const openFlyout = (cat: any) => {
     if (activeFlyoutCat?.name === cat.name && flyoutVisible) {
@@ -195,6 +208,11 @@ export default function CancerMedicines() {
       }
       if (filterPanelRef.current && !filterPanelRef.current.contains(e.target as Node)) {
         setFilterPanelOpen(false);
+      }
+      // Close inquiry dropdown if click is outside any .inquiry-dropdown-wrapper
+      const target = e.target as HTMLElement;
+      if (!target.closest('.inquiry-dropdown-wrapper')) {
+        setInquiryDropdownOpenId(null);
       }
     };
     document.addEventListener('click', handleClick);
@@ -739,6 +757,8 @@ export default function CancerMedicines() {
         .sidebar-scroll::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 999px; }
         .sidebar-scroll::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
         .sidebar-scroll::-webkit-scrollbar-button { display: none; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
       `}</style>
 
       {/* NAVBAR */}
@@ -1146,13 +1166,30 @@ export default function CancerMedicines() {
                               {p.strength && <span className="text-[11px] text-gray-500"><span className="font-semibold text-gray-400 uppercase tracking-wide">Strength</span> · {formatFieldWithLineBreaks(p.strength)}</span>}
                               {p.form && <span className="text-[11px] text-gray-500"><span className="font-semibold text-gray-400 uppercase tracking-wide">Form</span> · {formatFieldWithLineBreaks(p.form)}</span>}
                             </div>
-                            <button
-                              onClick={() => openModal(p)}
-                              className="w-full justify-center bg-primary hover:bg-blue-600 text-white text-[12px] font-bold px-4 py-2.5 rounded-full transition-all duration-300 shadow-sm inline-flex items-center gap-1.5"
-                            >
-                              <i className="fa-solid fa-paper-plane text-[11px]" />
-                              Send Inquiry
-                            </button>
+                            <div className="relative inquiry-dropdown-wrapper">
+                              <button
+                                onClick={e => { e.stopPropagation(); setInquiryDropdownOpenId(inquiryDropdownOpenId === (p._id || String(i)) ? null : (p._id || String(i))); }}
+                                className="w-full justify-center bg-primary hover:bg-blue-600 text-white text-[12px] font-bold px-4 py-2.5 rounded-full transition-all duration-300 shadow-sm inline-flex items-center gap-1.5"
+                              >
+                                <i className="fa-solid fa-paper-plane text-[11px]" />
+                                Send Inquiry
+                                <i className="fa-solid fa-chevron-down text-[9px] ml-0.5" />
+                              </button>
+                              {inquiryDropdownOpenId === (p._id || String(i)) && (
+                                <div className="absolute left-0 right-0 bottom-full mb-2 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden z-50">
+                                  {USER_TYPE_OPTIONS.map(opt => (
+                                    <button
+                                      key={opt.value}
+                                      onClick={() => { setInquiryDropdownOpenId(null); navigateWithUserType(p, opt.value); }}
+                                      className="w-full text-left px-4 py-2.5 text-[12px] text-gray-700 hover:bg-blue-50 hover:text-primary transition-colors font-medium flex items-center gap-2"
+                                    >
+                                      <i className="fa-solid fa-user-tag text-[10px] text-primary/60" />
+                                      {opt.label}
+                                    </button>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
                           </div>
                         </div>
                       );
@@ -1160,7 +1197,7 @@ export default function CancerMedicines() {
                   </div>
 
                   {/* DESKTOP TABLE */}
-                  <div className="hidden lg:block overflow-x-auto bg-white rounded-[10px] border border-gray-100 shadow-sm">
+                  <div className="hidden lg:block overflow-x-auto no-scrollbar bg-white rounded-[10px] border border-gray-100 shadow-sm">
                     <table className="w-full text-left border-collapse">
                       <thead>
                         <tr className="bg-gray-50/50 border-b border-gray-100">
@@ -1177,6 +1214,7 @@ export default function CancerMedicines() {
                           const displayName = p.brandName && p.genericName && p.brandName !== p.genericName
                             ? `${p.brandName} (${p.genericName})`
                             : p.name || p.brandName || p.genericName || 'Unnamed Product';
+                          const openUpward = i >= paginated.length - 2;
                           return (
                             <tr key={p._id || i} className="hover:bg-blue-50/30 transition-colors group">
                               <td className="px-6 py-4">
@@ -1213,13 +1251,30 @@ export default function CancerMedicines() {
                                 }
                               </td>
                               <td className="px-6 py-4 text-center">
-                                <button
-                                  onClick={() => openModal(p)}
-                                  className="bg-primary hover:bg-blue-600 text-white text-[12px] font-semibold px-4 py-1.5 rounded-full transition-all duration-300 shadow-md hover:shadow-lg active:scale-95 inline-flex items-center justify-center gap-1.5 whitespace-nowrap"
-                                >
-                                  <i className="fa-solid fa-paper-plane text-[10px]" />
-                                  Send Inquiry
-                                </button>
+                                <div className="relative inline-block inquiry-dropdown-wrapper">
+                                  <button
+                                    onClick={e => { e.stopPropagation(); setInquiryDropdownOpenId(inquiryDropdownOpenId === ('dt-' + (p._id || String(i))) ? null : ('dt-' + (p._id || String(i)))); }}
+                                    className="bg-primary hover:bg-blue-600 text-white text-[12px] font-semibold px-4 py-1.5 rounded-full transition-all duration-300 shadow-md hover:shadow-lg active:scale-95 inline-flex items-center justify-center gap-1.5 whitespace-nowrap"
+                                  >
+                                    <i className="fa-solid fa-paper-plane text-[10px]" />
+                                    Send Inquiry
+                                    <i className="fa-solid fa-chevron-down text-[9px]" />
+                                  </button>
+                                  {inquiryDropdownOpenId === ('dt-' + (p._id || String(i))) && (
+                                    <div className={`absolute right-0 w-64 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden z-50 ${openUpward ? 'bottom-full mb-2' : 'top-full mt-2'}`}>
+                                      {USER_TYPE_OPTIONS.map(opt => (
+                                        <button
+                                          key={opt.value}
+                                          onClick={() => { setInquiryDropdownOpenId(null); navigateWithUserType(p, opt.value); }}
+                                          className="w-full text-left px-4 py-2.5 text-[12px] text-gray-700 hover:bg-blue-50 hover:text-primary transition-colors font-medium flex items-center gap-2"
+                                        >
+                                          <i className="fa-solid fa-user-tag text-[10px] text-primary/60" />
+                                          {opt.label}
+                                        </button>
+                                      ))}
+                                    </div>
+                                  )}
+                                </div>
                               </td>
                             </tr>
                           );

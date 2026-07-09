@@ -87,9 +87,8 @@ export default function Services() {
       {/* Navbar */}
       <div id="navbar-container" className="sticky top-0 z-[50]" />
 
-      {/* Enhanced Hero Section */}
-      <section className="w-full mx-auto px-3 sm:px-4 md:px-6 mt-3 md:mt-4 mb-0 max-w-[1600px]">
-        <div className="relative rounded-[1.5rem] overflow-hidden min-h-[450px] md:min-h-[500px] flex items-end group">
+      <section className="w-full mx-auto px-3 sm:px-4 md:px-6 mt-3 md:mt-4 mb-6 max-w-[1600px]">
+        <div className="relative rounded-[10px] md:rounded-[1.5rem] border border-gray-100/20 overflow-hidden min-h-[190px] sm:min-h-[360px] md:min-h-[450px] lg:min-h-[500px] flex items-end shadow-sm group">
           {/* Background Image */}
           <div className="absolute inset-0 z-0">
             <img src={getImage('Services Hero Background', 'assets/services_hero_new.png')} data-json-src="hero.image" data-json-alt="hero.imageAlt"
@@ -98,24 +97,24 @@ export default function Services() {
           </div>
 
           {/* Content */}
-          <div className="relative z-10 w-full px-8 md:px-14 pb-12 md:pb-16 pt-20 max-w-4xl reveal">
-            <h1 className="text-[28px] md:text-[38px] leading-tight font-bold mb-3 tracking-tight">
+          <div className="relative z-10 w-full px-3 sm:px-8 md:px-14 pb-2 sm:pb-5 md:pb-16 pt-10 sm:pt-20 max-w-4xl reveal">
+            <h1 className="text-[11px] sm:text-[28px] md:text-[38px] leading-tight font-bold mb-1 sm:mb-3 tracking-tight">
               <span data-json="hero.headingLine1" className="text-white">Our Premium</span><br />
               <span data-json="hero.headingAccent"
                 className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent leading-tight tracking-tight">Services</span>
             </h1>
-            <p data-json="hero.description" className="text-white/90 text-[13px] md:text-[14px] max-w-[600px] mb-5 leading-normal font-normal">
+            <p data-json="hero.description" className="text-white/90 text-[9px] sm:text-[13px] md:text-[14px] max-w-[90%] sm:max-w-[600px] mb-2 sm:mb-5 leading-normal font-normal">
               Getmeds delivers precision pharmaceutical solutions and nationwide distribution — from regulatory
               compliance and government bidding to pioneering digital oncology care.
             </p>
-            <div className="flex flex-wrap gap-4">
+            <div className="flex flex-wrap gap-1.5 sm:gap-4 pb-1 sm:pb-0">
               <a href="#services-grid"
-                className="btn-gradient text-white font-semibold py-2 px-6 rounded-full text-[13px] inline-flex items-center gap-2 shadow-md">
-                Explore Services <i className="fa-solid fa-arrow-down text-xs"></i>
+                className="btn-gradient text-white font-semibold py-1 px-3 sm:py-2 sm:px-6 rounded-full text-[8.5px] sm:text-[13px] inline-flex items-center gap-1 sm:gap-2 shadow-md">
+                Explore Services <i className="fa-solid fa-arrow-down text-[7px] sm:text-xs"></i>
               </a>
               <a href="contact-us.html"
-                className="bg-white/10 backdrop-blur-md border border-white/25 text-white font-semibold py-2 px-6 rounded-full text-[13px] hover:bg-white/20 transition inline-flex items-center gap-2">
-                Contact Us <i className="fa-solid fa-arrow-right text-xs"></i>
+                className="bg-white/10 backdrop-blur-md border border-white/25 text-white font-semibold py-1 px-3 sm:py-2 sm:px-6 rounded-full text-[8.5px] sm:text-[13px] hover:bg-white/20 transition inline-flex items-center gap-1 sm:gap-2">
+                Contact Us <i className="fa-solid fa-arrow-right text-[7px] sm:text-xs"></i>
               </a>
             </div>
           </div>

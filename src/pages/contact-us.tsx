@@ -192,7 +192,7 @@ export default function ContactUs() {
 
       <section className="w-full mx-auto px-3 sm:px-4 md:px-6 mt-3 md:mt-4 mb-6 max-w-[1600px]">
         <div
-          className={`relative rounded-[1.5rem] border border-gray-100/20 overflow-hidden min-h-[280px] sm:min-h-[360px] md:min-h-[450px] lg:min-h-[500px] flex items-end shadow-sm transition-colors duration-500 ${!heroImgLoaded ? 'bg-gray-200 animate-pulse' : 'bg-gray-100'}`}>
+          className={`relative rounded-[10px] md:rounded-[1.5rem] border border-gray-100/20 overflow-hidden min-h-[190px] sm:min-h-[360px] md:min-h-[450px] lg:min-h-[500px] flex items-end shadow-sm transition-colors duration-500 ${!heroImgLoaded ? 'bg-gray-200 animate-pulse' : 'bg-gray-100'}`}>
           {/* Background Image — only mount after Sanity resolves so the src never changes */}
           {!imagesLoading && (
             <img
@@ -203,12 +203,12 @@ export default function ContactUs() {
             />
           )}
 
-          <div className="relative z-10 w-full px-5 sm:px-8 md:px-14 pb-1 sm:pb-5 md:pb-16 pt-16 sm:pt-20 max-w-4xl">
-            <h1 className="ct-anim ct-up text-[22px] sm:text-[28px] md:text-[42px] leading-tight font-bold mb-3 md:mb-4 tracking-tight">
+          <div className="relative z-10 w-full px-3 sm:px-8 md:px-14 pb-1 sm:pb-5 md:pb-16 pt-10 sm:pt-20 max-w-4xl">
+            <h1 className="ct-anim ct-up text-[11px] sm:text-[28px] md:text-[42px] leading-[1.2] font-bold mb-1 sm:mb-3 md:mb-4 tracking-tight">
               <span className="inline-block bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">For patients, partners,</span><br />
               <span className="inline-block bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">and providers.</span>
             </h1>
-            <p className="ct-anim ct-up ct-d2 text-[#000b5d] text-[12px] sm:text-[13px] md:text-[15px] max-w-[90%] sm:max-w-[480px] md:max-w-[620px] mb-5 leading-relaxed font-medium">
+            <p className="ct-anim ct-up ct-d2 text-[#000b5d] text-[9px] sm:text-[13px] md:text-[15px] max-w-[90%] sm:max-w-[480px] md:max-w-[620px] mb-2 sm:mb-5 leading-relaxed font-medium">
               For inquiries about our pharmaceutical portfolio, partnership opportunities, careers, or patient access programs — our team is ready to help.
             </p>
           </div>

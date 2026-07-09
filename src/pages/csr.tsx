@@ -161,7 +161,7 @@ const Csr: React.FC = () => {
       <div className="overflow-x-hidden">
       {/* HERO SECTION */}
       <section className="w-full mx-auto px-3 sm:px-4 md:px-6 mt-3 md:mt-4 mb-0 max-w-[1600px]">
-      <div className="relative rounded-[1.5rem] overflow-hidden min-h-[450px] md:min-h-[500px] flex items-end group">
+      <div className="relative rounded-[10px] md:rounded-[1.5rem] overflow-hidden min-h-[190px] md:min-h-[500px] flex items-end group">
         <img
           src={getImage('CSR Hero Background', 'assets/patienthand.jpg')}
           alt="Corporate Social Responsibility"
@@ -197,20 +197,20 @@ const Csr: React.FC = () => {
           </svg>
         </div>
 
-        <div className="relative z-10 w-full px-8 md:px-14 pb-12 md:pb-16 pt-20 max-w-4xl reveal z-[3]">
-          <h1 className="text-[28px] md:text-[38px] leading-tight font-bold mb-3 tracking-tight">
+        <div className="relative z-10 w-full px-3 md:px-14 pb-3 md:pb-16 pt-10 md:pt-20 max-w-4xl reveal z-[3]">
+          <h1 className="text-[11px] md:text-[38px] leading-[1.2] font-bold mb-1 md:mb-3 tracking-tight">
             <span className="text-white">Corporate Social</span><br />
             <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent leading-tight tracking-tight">
               Responsibility
             </span>
           </h1>
-          <p className="text-white/90 text-[13px] md:text-[14px] max-w-[650px] mb-5 leading-normal font-normal">
+          <p className="text-white/90 text-[9px] md:text-[14px] max-w-[650px] mb-2 md:mb-5 leading-normal font-normal">
             We don't just distribute medicine; we facilitate healing. Through NGO partnerships and digital
             health advocacy, we ensure no patient navigates their journey alone.
           </p>
           <button
             onClick={() => document.getElementById('csr-content-start')?.scrollIntoView({ behavior: 'smooth' })}
-            className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:from-[#1D9FDA] hover:to-[#61A644] text-white font-semibold py-2 px-6 rounded-full text-[13px] inline-block transition shadow-md">
+            className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:from-[#1D9FDA] hover:to-[#61A644] text-white font-semibold py-1 px-3.5 md:py-2 md:px-6 rounded-full text-[9px] md:text-[13px] inline-block transition shadow-md">
             Read More
           </button>
         </div>

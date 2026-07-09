@@ -48,6 +48,22 @@ export default function ProductDetail() {
   const ageDropdownRef = useRef<HTMLDivElement>(null);
   const [submitState, setSubmitState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
   const [successModalOpen, setSuccessModalOpen] = useState(false);
+  const [userType, setUserType] = useState<string>('patient');
+  const [prescriptionRequiredModalOpen, setPrescriptionRequiredModalOpen] = useState(false);
+  const [prescriptionModalVisible, setPrescriptionModalVisible] = useState(false);
+
+  const USER_TYPE_LABELS: Record<string, string> = {
+    patient:  'Patient / Caregiver',
+    doctor:   'Doctor / Healthcare Professional',
+    pharmacy: 'Pharmacy Owner / Retail Pharmacy',
+    hospital: 'Hospital / Institution',
+  };
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const ut = params.get('userType') || 'patient';
+    setUserType(ut);
+  }, []);
 
   useEffect(() => {
     sanityQuery<any[]>('imageAsset.all')
@@ -137,19 +153,19 @@ export default function ProductDetail() {
 
   const getCategorizationDisplay = (p: ProductWithCategory) => {
     const subcats = getProductSubcategories(p);
-    
+
     // Check if the URL provides context from where the user clicked
     if (typeof window !== 'undefined') {
       const urlParams = new URLSearchParams(window.location.search);
       const categoryFromUrl = urlParams.get('category');
-      
+
       if (categoryFromUrl) {
         // Find a case-insensitive match among the product's subcategories
         const matched = subcats.find(s => s.toLowerCase() === categoryFromUrl.toLowerCase());
         if (matched) return matched;
       }
     }
-    
+
     if (subcats.length === 0) {
       return p.category?.category || 'General';
     }
@@ -159,18 +175,18 @@ export default function ProductDetail() {
   useEffect(() => {
     if (!productsLoading && productsData) {
       let productSlug = '';
-      
+
       const pathParts = window.location.pathname.split('/').filter(Boolean);
       if ((pathParts[0] === 'cancer-medicines' || pathParts[0] === 'cancer-medicine' || pathParts[0] === 'product-range') && pathParts.length === 2) {
         productSlug = pathParts[1];
       }
-      
+
       // Fallback to query param
       if (!productSlug) {
         const urlParams = new URLSearchParams(window.location.search);
         productSlug = urlParams.get('product') || '';
       }
-      
+
       if (!productSlug) {
         setNotFound(true);
         return;
@@ -193,9 +209,9 @@ export default function ProductDetail() {
 
       const found = productsData.find(
         p => getProductSlug(p) === productSlug.toLowerCase() ||
-             p.slug?.current?.toLowerCase() === productSlug.toLowerCase() ||
-             p.brandName?.toLowerCase() === productSlug.toLowerCase() ||
-             decodeURIComponent(productSlug).toLowerCase() === (p.brandName || '').toLowerCase()
+          p.slug?.current?.toLowerCase() === productSlug.toLowerCase() ||
+          p.brandName?.toLowerCase() === productSlug.toLowerCase() ||
+          decodeURIComponent(productSlug).toLowerCase() === (p.brandName || '').toLowerCase()
       );
       if (found) {
         setProduct(found);
@@ -329,6 +345,12 @@ export default function ProductDetail() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    // Block submission for patients without a prescription
+    if (userType === 'patient' && uploadedFiles.length === 0) {
+      setPrescriptionRequiredModalOpen(true);
+      requestAnimationFrame(() => requestAnimationFrame(() => setPrescriptionModalVisible(true)));
+      return;
+    }
     setSubmitState('sending');
     const filesData: { name: string; type: string; base64: string }[] = [];
     for (const file of uploadedFiles) {
@@ -636,6 +658,12 @@ export default function ProductDetail() {
                 <div className="mb-6">
                   <h4 className="text-lg font-bold text-gray-900">Send Inquiry</h4>
                   <p className="text-xs text-gray-500 mt-1">Submit your details to get a formal quote for this product.</p>
+                  {userType && USER_TYPE_LABELS[userType] && (
+                    <span className="inline-flex items-center gap-1.5 mt-2 px-3 py-1 rounded-full text-[11px] font-semibold bg-blue-50 text-primary border border-blue-100">
+                      <i className="fa-solid fa-user-tag text-[9px]" />
+                      {USER_TYPE_LABELS[userType]}
+                    </span>
+                  )}
                 </div>
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div>
@@ -723,8 +751,9 @@ export default function ProductDetail() {
                       className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2.5 text-[13px] text-gray-700 outline-none focus:border-primary transition resize-none"
                     />
                   </div>
+                  {userType === 'patient' && (
                   <div>
-                    <label className="block text-[13px] font-medium text-gray-500 mb-2">Upload Prescription (Optional)</label>
+                    <label className="block text-[13px] font-medium text-gray-500 mb-2">Upload Prescription (Required)</label>
                     <input
                       type="file"
                       multiple
@@ -743,6 +772,7 @@ export default function ProductDetail() {
                       </div>
                     )}
                   </div>
+                  )}
                   <button
                     type="submit"
                     disabled={submitState === 'sending' || submitState === 'sent'}
@@ -792,6 +822,67 @@ export default function ProductDetail() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Prescription Required Modal — styled after "Not on Record" in employee-verification portal */}
+      {prescriptionRequiredModalOpen && (
+        <>
+          <style>{`
+            @keyframes slideUpRx{from{opacity:0;transform:translateY(24px) scale(0.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+            .rx-modal-slide{animation:slideUpRx 0.32s cubic-bezier(.22,1,.36,1) forwards}
+          `}</style>
+          <div
+            className={`fixed inset-0 z-[300] flex items-center justify-center bg-black/60 backdrop-blur-sm px-4 transition-opacity duration-200 ${prescriptionModalVisible ? 'opacity-100' : 'opacity-0'}`}
+            onClick={() => { setPrescriptionModalVisible(false); setTimeout(() => setPrescriptionRequiredModalOpen(false), 200); }}
+          >
+            <div
+              className={`bg-white w-full max-w-[400px] rounded-2xl shadow-2xl relative overflow-hidden rx-modal-slide transform transition-all duration-200 ${prescriptionModalVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}
+              onClick={e => e.stopPropagation()}
+            >
+              {/* Close button */}
+              <button
+                type="button"
+                onClick={() => { setPrescriptionModalVisible(false); setTimeout(() => setPrescriptionRequiredModalOpen(false), 200); }}
+                className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition z-10"
+              >
+                <i className="fa-solid fa-xmark text-base"></i>
+              </button>
+
+              {/* Body */}
+              <div className="px-8 pt-8 pb-5 text-center">
+                <div className="flex justify-center mb-4">
+                  <div
+                    className="w-14 h-14 rounded-full flex items-center justify-center"
+                    style={{ background: 'linear-gradient(135deg,#EF4444,#F59E0B)' }}
+                  >
+                    <i className="fa-solid fa-file-medical text-white text-xl"></i>
+                  </div>
+                </div>
+                <h2 className="text-[19px] font-semibold text-gray-900 mb-2 leading-snug">Prescription Required</h2>
+                <p className="text-[13px] text-red-600 font-medium mb-3 leading-relaxed">
+                  A valid prescription is required before your inquiry can be submitted.
+                </p>
+                <p className="text-[13px] text-gray-500 leading-relaxed">
+                  As a Patient / Caregiver, please attach your doctor-issued prescription (JPG, PNG, or PDF)
+                  to ensure your medicine request complies with Philippine FDA regulations and can be
+                  processed safely by our team.
+                </p>
+              </div>
+
+              {/* Footer */}
+              <div className="border-t border-gray-100 px-8 py-3 text-center">
+                <button
+                  type="button"
+                  onClick={() => { setPrescriptionModalVisible(false); setTimeout(() => setPrescriptionRequiredModalOpen(false), 200); }}
+                  className="text-[13px] font-semibold hover:underline"
+                  style={{ background: 'linear-gradient(to right,#61A644,#1D9FDA)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}
+                >
+                  I Understand, Upload Now
+                </button>
+              </div>
+            </div>
+          </div>
+        </>
       )}
 
       {/* Zoomed Image Modal */}
