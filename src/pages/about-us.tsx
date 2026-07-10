@@ -1,6 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { injectHTML } from '../lib/injectHTML';
-import { useImageMapper } from '../lib/useSanity';
+import { useImageMapper, useTeamMembers } from '../lib/useSanity';
+import { urlFor } from '../lib/sanity';
 import { setPageMeta } from '../lib/seo';
 
 export default function AboutUs() {
@@ -84,28 +85,49 @@ export default function AboutUs() {
 
   const teamTrackRef = useRef<HTMLDivElement>(null);
 
-  const TEAM_MEMBERS: { img: string; name: string; role: string; isCeo?: boolean }[] = [
-    { img: 'SIRSUBIR.png', name: 'Mr. Subir Dey', role: 'Sales & Marketing Coach' },
-    { img: 'MAMMIRA.png', name: 'Ms. Mira Verango', role: 'Executive & Admin Coach' },
-    { img: 'MAMVAN.png', name: 'Ms. Vanessa Escalderon', role: 'Hospital Division Coach' },
-    { img: 'SIRJAVED.png', name: 'Mr. Javed Shaikh', role: 'Sales & Marketing Coach' },
-    { img: 'NARESH.png', name: 'Mr. Naresh Bishnoi', role: 'Founder & CEO', isCeo: true },
-    { img: 'MAMBEA.png', name: 'Ms. Beatrice Ampaso', role: "Sales & Business Dev't" },
-    { img: 'MAMCHI.png', name: 'Ms. Esther Chiong', role: 'In-Licensing Mentor' },
-    { img: 'MAMIVY.png', name: 'Ms. Ivy Varias', role: 'Regulatory Affairs Mentor' },
-    { img: 'MAMMALOU.png', name: 'Ms. Malou Jagonoy', role: 'Finance Mentor' },
-    { img: 'MAMSARLA.png', name: 'Ms. Sarla Devi', role: 'Finance Coach' },
-    { img: 'HIZON.png', name: 'Mr. Mike Angelo Hizon', role: 'Talent Growth & Development Mentor' },
+  // Used only if the Sanity "teams" collection hasn't loaded yet or comes back empty.
+  const FALLBACK_TEAM_MEMBERS: { img: string; name: string; role: string; isCeo?: boolean }[] = [
+    { img: 'SIRSUBIR.png', name: 'Subir Dey', role: 'Sales & Marketing Coach' },
+    { img: 'MAMMIRA.png', name: 'Mira Verango', role: 'Executive & Admin Coach' },
+    { img: 'MAMVAN.png', name: 'Vanessa Escalderon', role: 'Hospital Division Coach' },
+    { img: 'SIRJAVED.png', name: 'Javed Shaikh', role: 'Sales & Marketing Coach' },
+    { img: 'NARESH.png', name: 'Naresh Bishnoi', role: 'Founder & CEO', isCeo: true },
+    { img: 'MAMBEA.png', name: 'Beatrice Ampaso', role: "Sales & Business Dev't" },
+    { img: 'MAMCHI.png', name: 'Esther Chiong', role: 'In-Licensing Mentor' },
+    { img: 'MAMIVY.png', name: 'Ivy Varias', role: 'Regulatory Affairs Mentor' },
+    { img: 'MAMMALOU.png', name: 'Malou Jagonoy', role: 'Finance Mentor' },
+    { img: 'MAMSARLA.png', name: 'Sarla Devi', role: 'Finance Coach' },
+    { img: 'HIZON.png', name: 'Mike Angelo Hizon', role: 'Talent Growth & Development Mentor' },
   ];
+
+  const { data: teamMembersData } = useTeamMembers();
+
+  const TEAM_MEMBERS = useMemo(() => {
+    if (teamMembersData && teamMembersData.length > 0) {
+      return teamMembersData.map(member => ({
+        src: member.image ? urlFor(member.image).width(400).height(550).url() : '',
+        name: member.name,
+        role: member.designation,
+        isCeo: /ceo|founder/i.test(member.designation || ''),
+      }));
+    }
+    return FALLBACK_TEAM_MEMBERS.map(member => ({
+      src: getImage(`assets/${member.img}`, `assets/${member.img}`),
+      name: member.name,
+      role: member.role,
+      isCeo: !!member.isCeo,
+    }));
+  }, [teamMembersData]);
 
   useEffect(() => {
     const el = teamTrackRef.current;
-    if (!el) return;
+    if (!el || TEAM_MEMBERS.length === 0) return;
     setTimeout(() => {
-      const ceoCard = el.children[4] as HTMLElement;
+      const ceoIndex = TEAM_MEMBERS.findIndex(m => m.isCeo);
+      const ceoCard = el.children[ceoIndex >= 0 ? ceoIndex : 0] as HTMLElement;
       if (ceoCard) el.scrollLeft = ceoCard.offsetLeft - (el.offsetWidth / 2) + (ceoCard.offsetWidth / 2);
     }, 80);
-  }, []);
+  }, [TEAM_MEMBERS]);
 
   const scrollTeam = (dir: 'left' | 'right') => {
     if (!teamTrackRef.current) return;
@@ -703,17 +725,11 @@ export default function AboutUs() {
                     <i className="fa-regular fa-image text-white/70" style={{ fontSize: '16px' }}></i>
                     <span className="text-white/70" style={{ fontSize: '10px', fontFamily: 'Poppins, sans-serif' }}>No image</span>
                   </div>
-                  {member.img && (
-                    <img src={getImage(`assets/${member.img}`, `assets/${member.img}`)} alt={member.name}
+                  {member.src && (
+                    <img src={member.src} alt={member.name}
                       onError={(e) => { e.currentTarget.style.display = 'none'; }}
                       className="absolute inset-0 w-full h-full object-cover object-top rounded-[1.3rem] transition-all duration-700 z-[3]" />
                   )}
-                  {/* LinkedIn hover */}
-                  <div className="absolute top-3 right-3 z-20 opacity-0 translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
-                    <a href="#" className="h-7 w-7 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-primary transition shadow-lg">
-                      <i className="fa-brands fa-linkedin-in text-[10px]"></i>
-                    </a>
-                  </div>
                   {/* Name overlay */}
                   <div className="absolute bottom-0 left-0 w-full px-3 py-3 z-10" style={{ background: 'linear-gradient(to top,rgba(29,159,218,0.95) 0%,rgba(97,166,68,0.1) 70%,transparent 100%)' }}>
                     <h4 className="text-white font-semibold leading-tight" style={{ fontSize: '0.92rem', textShadow: '0 2px 10px rgba(0,0,0,0.5)', marginBottom: '2px' }}>{member.name}</h4>

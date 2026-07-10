@@ -344,13 +344,10 @@ export interface Service {
 
 export interface TeamMember {
   _id: string
-  _type: 'teamMember'
+  _type: 'teams'
   name: string
-  role?: string
+  designation: string
   image?: SanityImage
-  ribbonLabel?: string
-  bio?: string
-  socialLinks?: Array<SocialLink & { _key: string }>
 }
 
 export interface Testimonial {

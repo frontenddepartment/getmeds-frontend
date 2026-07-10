@@ -426,7 +426,7 @@ export async function getServices() {
 }
 
 export async function getTeamMembers() {
-  return sanityQuery<TeamMember[]>('teamMember.all')
+  return sanityQuery<TeamMember[]>('teams.all')
 }
 
 export async function getTestimonials() {
