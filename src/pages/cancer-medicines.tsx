@@ -813,7 +813,7 @@ export default function CancerMedicines() {
               sidebarCategories.map(cat => (
                 <button
                    key={cat.name}
-                   onClick={() => { selectCategory(cat.name, 'All'); openFlyout(cat); }}
+                   onClick={() => openFlyout(cat)}
                    className="w-full flex items-center justify-between px-4 py-2.5 rounded-[10px] text-[13px] font-semibold transition-all duration-200 hover:bg-gray-50 group"
                    style={(flyoutVisible ? activeFlyoutCat?.name === cat.name : isCatParentActive(cat))
                      ? { background: 'linear-gradient(to right, #61A644, #1D9FDA)', color: '#fff' }
