@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { injectHTML } from '../lib/injectHTML';
+import { LinkableImage } from '../lib/LinkableImage';
 import { useImageMapper } from '../lib/useSanity';
 import { setPageMeta } from '../lib/seo';
 
@@ -12,7 +13,7 @@ export default function Services() {
     });
   }, []);
 
-  const { getImage } = useImageMapper('services');
+  const { getImage, getImageLink } = useImageMapper('services');
   useEffect(() => {
     const navContainer = document.getElementById('navbar-container');
     if (navContainer && navContainer.innerHTML.trim() === '') {
@@ -91,7 +92,7 @@ export default function Services() {
         <div className="relative rounded-[10px] md:rounded-[1.5rem] border border-gray-100/20 overflow-hidden min-h-[190px] sm:min-h-[360px] md:min-h-[450px] lg:min-h-[500px] flex items-end shadow-sm group">
           {/* Background Image */}
           <div className="absolute inset-0 z-0">
-            <img src={getImage('Services Hero Background', 'assets/services_hero_new.png')} data-json-src="hero.image" data-json-alt="hero.imageAlt"
+            <LinkableImage link={getImageLink('Services Hero Background')} src={getImage('Services Hero Background', 'assets/services_hero_new.png')} data-json-src="hero.image" data-json-alt="hero.imageAlt"
               className="w-full h-full object-cover object-center transform group-hover:scale-105 transition-transform duration-[4s]"
               alt="Healthcare Services" />
           </div>

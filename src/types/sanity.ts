@@ -903,6 +903,8 @@ export interface PageAsset {
   images?: Array<{
     image?: SanityImage
     altText?: string
+    enableLink?: boolean
+    link?: string
   }>
   // Legacy fields (kept for backwards compatibility during migration)
   page?: string
