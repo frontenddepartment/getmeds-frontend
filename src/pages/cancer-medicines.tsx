@@ -75,14 +75,22 @@ const subcategorySpecials: Record<string, string> = {
   'seasonal-allergic-rhinitis': 'allergic-rhinitis',
   'chronic-kidney-disease': 'kidney-disease',
   'chronic-pain': 'pain',
+  'chronic-pain-management': 'pain',
   'inflammatory-disorders': 'rheumatology',
-  'inflammatory-and-rheumatic-disorders': 'rheumatology'
+  'inflammatory-and-rheumatic-disorders': 'rheumatology',
+  'inflammatory-rheumatic-disorders': 'rheumatology',
+  'glucocorticoid-induced-osteoporosis': 'osteoporosis'
 };
 
 const getSubcategorySlug = (name: string) => {
   if (!name) return '';
-  const slug = name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+  const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
   return subcategorySpecials[slug] || slug;
+};
+
+const getCategorySlug = (name: string) => {
+  if (!name) return '';
+  return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 };
 
 const CANCER_CATEGORY_NAMES = [
@@ -129,7 +137,15 @@ export default function CancerMedicines() {
   }, []);
 
   const [openCategories, setOpenCategories] = useState<Set<string>>(new Set());
-  const [currentCategory, setCurrentCategory] = useState('All');
+  const [selectedCategory, setSelectedCategory] = useState<{ category: string; subCategory: string }>({
+    category: 'All',
+    subCategory: 'All'
+  });
+  // Guards the localStorage-save effect: stays false until the restore-from-localStorage
+  // effect has actually run once categories are loaded. Without this, the save effect fires
+  // on first mount with the default {All, All} state and clobbers the real saved selection
+  // before it's ever read back.
+  const hasRestoredCategoryRef = useRef(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -241,128 +257,103 @@ export default function CancerMedicines() {
       }));
   }, [categoriesData]);
 
-  // Synchronize URL Category param or pathname with dynamic categories data
+  // Strip any subcategory slug from the URL immediately, before categories even load.
+  // The URL is never read to decide what's shown — it's cosmetic only. This keeps a
+  // user from manipulating the URL to change what's filtered; the real selection
+  // always comes from localStorage below.
   useEffect(() => {
     const pathParts = window.location.pathname.split('/').filter(Boolean);
-    let categorySlug = '';
-    let isPathnameMatch = false;
     const matchedPrefix = (pathParts[0] === 'cancer-medicines' || pathParts[0] === 'product-range' || pathParts[0] === 'cancer-medicine') ? pathParts[0] : '';
-
-    if (matchedPrefix) {
-      if (pathParts.length >= 2) {
-        categorySlug = pathParts[1];
-        isPathnameMatch = true;
-      }
+    if (matchedPrefix && pathParts.length >= 2) {
+      window.history.replaceState(null, '', `/${matchedPrefix}`);
     }
-    
-    if (!categorySlug) {
-      const urlParams = new URLSearchParams(window.location.search);
-      categorySlug = urlParams.get('category') || '';
-    }
+  }, []);
 
-    let matched = false;
-
-    if (categorySlug && processedCats.length > 0) {
-      const cleanSlug = categorySlug.toLowerCase().trim();
-      
-      // 1. Check if cleanSlug matches any category slugs
-      let matchedCat = processedCats.find(c => {
-        const nameSlug = c.category.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
-        return nameSlug === cleanSlug;
-      });
-
-      if (!matchedCat) {
-        matchedCat = processedCats.find(c => {
-          const hasSlugMatch = c.slugs.some(s => s.toLowerCase() === cleanSlug) || c.slug.toLowerCase() === cleanSlug;
-          return hasSlugMatch;
-        });
-      }
-
-      if (matchedCat) {
-        setCurrentCategory(matchedCat.category);
-        matched = true;
-      } else {
-        // 2. Check if cleanSlug matches any subcategory
-        for (const cat of processedCats) {
-          const matchedSub = cat.subcategory.find(sub => {
-            const subSlug = getSubcategorySlug(sub);
-            return subSlug === cleanSlug || sub.toLowerCase() === cleanSlug;
-          });
-          if (matchedSub) {
-            setCurrentCategory(matchedSub);
-            matched = true;
-            break;
+  // Restore the selected category/subcategory from localStorage — same algorithm the
+  // sidebar/flyout uses to resolve a click, applied here on load instead of on click.
+  useEffect(() => {
+    if (processedCats.length > 0) {
+      const savedCategoryStr = localStorage.getItem('selectedCategory');
+      if (savedCategoryStr) {
+        let savedObj: { category?: string; subCategory?: string } | null = null;
+        try {
+          savedObj = JSON.parse(savedCategoryStr);
+        } catch {
+          // If it was a plain string in old format, wrap it
+          if (savedCategoryStr) {
+            savedObj = { category: 'All', subCategory: savedCategoryStr };
           }
         }
-      }
 
-      if (matched && isPathnameMatch) {
-        // Clean URL pathname so user only sees the matched prefix
-        window.history.replaceState(null, '', `/${matchedPrefix}`);
-      }
-    }
+        if (savedObj) {
+          // Compare via slugs, not raw text — navbar labels are hand-typed and can
+          // drift in punctuation/casing/apostrophes from the CMS's actual subcategory
+          // string, so exact text equality is unreliable.
+          const searchSubSlug = getSubcategorySlug(savedObj.subCategory || '');
+          const searchCatSlug = getCategorySlug(savedObj.category || '');
 
-    // If no category was resolved from the URL, try restoring the session-saved one
-    if (!matched && processedCats.length > 0) {
-      const savedCategory = sessionStorage.getItem('selectedCategory');
-      if (savedCategory) {
-        // Try exact match first
-        const matchedCat = processedCats.find(c => c.category === savedCategory);
-        if (matchedCat) {
-          setCurrentCategory(matchedCat.category);
-        } else {
-          // Check subcategories by exact name
-          let foundSub = '';
-          for (const cat of processedCats) {
-            const sub = cat.subcategory.find(s => s === savedCategory);
-            if (sub) {
-              foundSub = sub;
-              break;
-            }
-          }
-          if (foundSub) {
-            setCurrentCategory(foundSub);
-          } else {
-            // Check if savedCategory is a slug and match it
-            const cleanSlug = savedCategory.toLowerCase().trim();
-            let matchedCatBySlug = processedCats.find(c => {
-              const nameSlug = c.category.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
-              return nameSlug === cleanSlug || c.slugs.some(s => s.toLowerCase() === cleanSlug) || c.slug.toLowerCase() === cleanSlug;
-            });
-            if (matchedCatBySlug) {
-              setCurrentCategory(matchedCatBySlug.category);
-            } else {
-              for (const cat of processedCats) {
-                const sub = cat.subcategory.find(s => getSubcategorySlug(s) === cleanSlug);
-                if (sub) {
-                  setCurrentCategory(sub);
-                  break;
-                }
+          let resolved = false;
+
+          // 1. Try to resolve by subcategory
+          if (searchSubSlug && searchSubSlug !== 'all') {
+            let foundSub = '';
+            let foundParent = '';
+            for (const cat of processedCats) {
+              const sub = cat.subcategory.find(s => getSubcategorySlug(s) === searchSubSlug);
+              if (sub) {
+                foundSub = sub;
+                foundParent = cat.category;
+                break;
               }
             }
+            if (foundSub) {
+              setSelectedCategory({ category: foundParent, subCategory: foundSub });
+              resolved = true;
+            }
+          }
+
+          // 2. Try to resolve by parent category (categories can be combined names like "Oncology / Hematology")
+          if (!resolved && searchCatSlug && searchCatSlug !== 'all') {
+            const searchParts = (savedObj.category || '').split('/').map(s => getCategorySlug(s.trim())).filter(Boolean);
+            const matchedCat = processedCats.find(c => {
+              const cParts = c.category.split('/').map(s => getCategorySlug(s.trim()));
+              return getCategorySlug(c.category) === searchCatSlug || cParts.some(p => searchParts.includes(p));
+            });
+            if (matchedCat) {
+              setSelectedCategory({ category: matchedCat.category, subCategory: 'All' });
+              resolved = true;
+            }
+          }
+
+          // 3. Fallback if resolution was unsuccessful
+          if (!resolved) {
+            setSelectedCategory({ category: 'All', subCategory: 'All' });
           }
         }
       }
+      hasRestoredCategoryRef.current = true;
     }
   }, [processedCats]);
 
-  // Save active category to sessionStorage
+  // Save selected category/subcategory to localStorage as a JSON object. Skipped until
+  // the restore effect above has actually run — otherwise this fires on mount with the
+  // default {All, All} state and overwrites the real saved selection before it's read back.
   useEffect(() => {
-    if (currentCategory) {
-      sessionStorage.setItem('selectedCategory', currentCategory);
-    }
-  }, [currentCategory]);
+    if (!hasRestoredCategoryRef.current) return;
+    localStorage.setItem('selectedCategory', JSON.stringify(selectedCategory));
+  }, [selectedCategory]);
 
   // Synchronize Title to active category
   useEffect(() => {
     const pathParts = window.location.pathname.split('/').filter(Boolean);
     const isCancerPage = pathParts[0] === 'cancer-medicines' || pathParts[0] === 'cancer-medicine';
-    if (currentCategory === 'All') {
+    const displayLabel = selectedCategory.subCategory !== 'All' ? selectedCategory.subCategory : selectedCategory.category;
+    if (displayLabel === 'All') {
       document.title = isCancerPage ? 'Cancer Medicines - Getmeds' : 'Product Range - Getmeds';
     } else {
-      document.title = `${currentCategory} - ${isCancerPage ? 'Cancer Medicines' : 'Product Range'} | Getmeds`;
+      document.title = `${displayLabel} - ${isCancerPage ? 'Cancer Medicines' : 'Product Range'} | Getmeds`;
     }
-  }, [currentCategory]);
+  }, [selectedCategory]);
 
   const brandNameCounts = useMemo(() => {
     const counts = new Map<string, number>()
@@ -490,15 +481,10 @@ export default function CancerMedicines() {
     if (subcats.length === 0) {
       return p.category?.category || 'General';
     }
-    if (currentCategory !== 'All' && categoriesData) {
-      const isSubcategory = categoriesData.some(c => 
-        c.subcategory?.some(sub => sub && typeof sub === 'string' && sub.toLowerCase() === currentCategory.toLowerCase())
-      );
-      if (isSubcategory) {
-        const matched = subcats.find(sub => sub && typeof sub === 'string' && sub.toLowerCase() === currentCategory.toLowerCase());
-        if (matched) {
-          return matched;
-        }
+    if (selectedCategory.subCategory !== 'All') {
+      const matched = subcats.find(sub => sub && typeof sub === 'string' && sub.toLowerCase() === selectedCategory.subCategory.toLowerCase());
+      if (matched) {
+        return matched;
       }
     }
     return subcats.join(' / ');
@@ -512,17 +498,25 @@ export default function CancerMedicines() {
     }));
   }, [processedCats]);
 
-  const getFiltered = (category: string) => {
+  const getFiltered = (sel: { category: string; subCategory: string }) => {
     if (!productsData) return [];
-    if (category === 'All') return productsData;
-    
-    const cleanCategory = category.trim().toLowerCase();
-    
+    if (sel.category === 'All' && sel.subCategory === 'All') return productsData;
+
+    const cleanCategory = sel.category.trim().toLowerCase();
+    const cleanSub = (sel.subCategory || '').trim().toLowerCase();
+
+    if (cleanSub && cleanSub !== 'all') {
+      return productsData.filter(p => {
+        const subcats = getProductSubcategories(p);
+        return subcats.some(part => part.toLowerCase() === cleanSub);
+      });
+    }
+
     // Find if the selected category is one of our processed categories
     const matchedProcessed = processedCats.find(
       c => c.category.trim().toLowerCase() === cleanCategory
     );
-    
+
     if (matchedProcessed) {
       return productsData.filter(p => {
         // Match by category name first (split by / to handle multiple categories)
@@ -534,7 +528,7 @@ export default function CancerMedicines() {
         return subcats.some(sub => matchedProcessed.subcategory.some(s => s.trim().toLowerCase() === sub.toLowerCase()));
       });
     }
-    
+
     // Fallback: search by subcategory name directly
     return productsData.filter(p => {
       const subcats = getProductSubcategories(p);
@@ -543,7 +537,7 @@ export default function CancerMedicines() {
     });
   };
 
-  const categoryFiltered = getFiltered(currentCategory);
+  const categoryFiltered = getFiltered(selectedCategory);
   const searchFiltered = searchTerm
     ? categoryFiltered.filter(p => {
         const search = searchTerm.toLowerCase();
@@ -734,8 +728,8 @@ export default function CancerMedicines() {
     return `/product-range/${cleanProductSlug}`;
   };
 
-  const selectCategory = (category: string) => {
-    setCurrentCategory(category);
+  const selectCategory = (category: string, subCategory: string = 'All') => {
+    setSelectedCategory({ category, subCategory });
     setCurrentPage(1);
   };
 
@@ -766,7 +760,9 @@ export default function CancerMedicines() {
   };
 
   const isCatParentActive = (cat: any) =>
-    cat.subItems.some((s: any) => s.label === currentCategory) || cat.name === currentCategory;
+    selectedCategory.category === cat.name;
+
+  const displayCategory = selectedCategory.subCategory !== 'All' ? selectedCategory.subCategory : selectedCategory.category;
 
   return (
     <div style={{ fontFamily: "'Poppins', sans-serif" }} className="bg-white text-gray-800 antialiased flex flex-col h-screen overflow-hidden">
@@ -803,9 +799,9 @@ export default function CancerMedicines() {
           </div>
           <nav className="px-3 py-3 space-y-0.5">
             <button
-              onClick={() => selectCategory('All')}
+              onClick={() => selectCategory('All', 'All')}
               className="w-full flex items-center justify-between px-4 py-2.5 rounded-[10px] text-[13px] font-semibold transition-all duration-200"
-              style={currentCategory === 'All' && !flyoutVisible
+              style={selectedCategory.category === 'All' && !flyoutVisible
                 ? { background: 'linear-gradient(to right, #61A644, #1D9FDA)', color: '#fff' }
                 : { color: '#374151' }}
             >
@@ -817,7 +813,7 @@ export default function CancerMedicines() {
               sidebarCategories.map(cat => (
                 <button
                    key={cat.name}
-                   onClick={() => { selectCategory(cat.name); openFlyout(cat); }}
+                   onClick={() => { selectCategory(cat.name, 'All'); openFlyout(cat); }}
                    className="w-full flex items-center justify-between px-4 py-2.5 rounded-[10px] text-[13px] font-semibold transition-all duration-200 hover:bg-gray-50 group"
                    style={(flyoutVisible ? activeFlyoutCat?.name === cat.name : isCatParentActive(cat))
                      ? { background: 'linear-gradient(to right, #61A644, #1D9FDA)', color: '#fff' }
@@ -868,9 +864,9 @@ export default function CancerMedicines() {
               {activeFlyoutCat.subItems.map((sub: any, si: number) => (
                 <button
                   key={si}
-                  onClick={() => { selectCategory(sub.label); closeFlyout(); }}
+                  onClick={() => { selectCategory(activeFlyoutCat.name, sub.label); closeFlyout(); }}
                   className="w-full text-left px-3 py-2.5 rounded-[8px] text-[13.5px] transition-all duration-150 hover:bg-gray-50"
-                  style={currentCategory === sub.label
+                  style={selectedCategory.subCategory === sub.label
                     ? { color: '#1D9FDA', fontWeight: 700, background: '#EFF8FF' }
                     : { color: '#6B7280' }}
                 >
@@ -912,16 +908,16 @@ export default function CancerMedicines() {
             <ol className="flex items-center gap-1.5 text-[12px] text-gray-400 flex-wrap">
               <li>
                 <button
-                  onClick={() => selectCategory('All')}
+                  onClick={() => selectCategory('All', 'All')}
                   className="hover:text-primary transition-colors font-medium"
                 >
                   Cancer Medicines
                 </button>
               </li>
-              {currentCategory !== 'All' && (
+              {displayCategory !== 'All' && (
                 <>
                   <li className="text-gray-300"><i className="fa-solid fa-chevron-right text-[9px]" /></li>
-                  <li className="font-semibold text-gray-700 truncate max-w-[200px]">{currentCategory}</li>
+                  <li className="font-semibold text-gray-700 truncate max-w-[200px]">{displayCategory}</li>
                 </>
               )}
             </ol>
@@ -932,7 +928,7 @@ export default function CancerMedicines() {
             {/* Toolbar */}
             <div className="flex flex-col gap-3 mb-6 sm:flex-row sm:items-start sm:justify-between sm:mb-8">
               <h2 className="text-xl font-semibold text-gray-900 leading-snug sm:max-w-[55%]">
-                {currentCategory === 'All' ? 'All Products' : currentCategory}{' '}
+                {displayCategory === 'All' ? 'All Products' : displayCategory}{' '}
                 <span className="text-gray-400 font-normal text-sm ml-1 whitespace-nowrap">({sorted.length} Items)</span>
               </h2>
 

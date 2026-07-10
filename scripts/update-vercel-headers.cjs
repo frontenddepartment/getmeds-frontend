@@ -42,17 +42,18 @@ const subcategorySpecials = {
   'seasonal-allergic-rhinitis': 'allergic-rhinitis',
   'chronic-kidney-disease': 'kidney-disease',
   'chronic-pain': 'pain',
+  'chronic-pain-management': 'pain',
   'inflammatory-disorders': 'rheumatology',
-  'inflammatory-and-rheumatic-disorders': 'rheumatology'
+  'inflammatory-and-rheumatic-disorders': 'rheumatology',
+  'inflammatory-rheumatic-disorders': 'rheumatology',
+  'glucocorticoid-induced-osteoporosis': 'osteoporosis'
 };
 
 const getSubcategorySlug = (name) => {
   return name
     .toLowerCase()
-    .trim()
-    .replace(/\s+/g, '-')
-    .replace(/[^a-z0-9-]/g, '')
-    .replace(/-+/g, '-');
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
 };
 
 async function fetchSanitySubcategories(env) {

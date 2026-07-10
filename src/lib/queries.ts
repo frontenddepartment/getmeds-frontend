@@ -35,6 +35,43 @@ function toTitleCase(str: string): string {
     .join(' ');
 }
 
+function getCorrectParentCategory(sub: string, parentName: string): string {
+  const normSub = sub.toLowerCase();
+  const normParent = parentName.toLowerCase();
+  
+  if (normParent === 'oncology' || normParent === 'hematology') {
+    const isHem = normSub.includes('aml') || 
+                  normSub.includes('cml') || 
+                  normSub.includes('lymphoma') || 
+                  normSub.includes('leukemia') || 
+                  normSub.includes('anemia') || 
+                  normSub.includes('myeloma') || 
+                  normSub.includes('sickle');
+    if (isHem) return 'Hematology';
+    return 'Oncology';
+  }
+  
+  if (normParent === 'respiratory' || normParent === 'allergy') {
+    const isAllergy = normSub.includes('allergy') || normSub.includes('rhinitis');
+    if (isAllergy) return 'Allergy';
+    return 'Respiratory';
+  }
+  
+  if (normParent === 'nephrology' || normParent === 'renal') {
+    const isRenal = normSub.includes('renal');
+    if (isRenal) return 'Renal';
+    return 'Nephrology';
+  }
+  
+  if (normParent === 'gynecology' || normParent === 'obstetrician') {
+    const isOb = normSub.includes('obstetrician') || normSub.includes('pregnancy');
+    if (isOb) return 'Obstetrician';
+    return 'Gynecology';
+  }
+  
+  return parentName;
+}
+
 function cleanWordPressUrl(url: string | undefined | null): string {
   if (!url) return '';
   return url
@@ -259,13 +296,45 @@ export async function searchProducts(query: string) {
 // Categories
 // ─────────────────────────────────────────────
 
+// Adds `sub` under whichever category it actually belongs to (per getCorrectParentCategory),
+// creating that category's bucket if it doesn't exist yet — a subcategory that gets
+// reclassified away from `declaredCategoryName` must land somewhere, not be dropped.
+function addSubcategoryToBucket(
+  catMap: Map<string, Category>,
+  sub: string,
+  declaredCategoryName: string,
+  seed: Partial<Category>
+) {
+  const targetName = getCorrectParentCategory(sub, declaredCategoryName)
+  const catKey = targetName.toUpperCase()
+
+  if (!catMap.has(catKey)) {
+    const slugStr = targetName.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
+    catMap.set(catKey, {
+      ...seed,
+      _type: 'category',
+      category: targetName,
+      slug: { _type: 'slug', current: slugStr },
+      subcategory: []
+    } as Category)
+  }
+
+  const catObj = catMap.get(catKey)!
+  if (!catObj.subcategory) {
+    catObj.subcategory = []
+  }
+  if (!catObj.subcategory.includes(sub)) {
+    catObj.subcategory.push(sub)
+  }
+}
+
 export async function getCategories() {
   const products = await fetchProductsFromExcel()
   // Also get the base Sanity categories so we have their icons, descriptions, etc. if available
   const baseCategories = await sanityQuery<Category[]>('category.all') || []
-  
+
   const catMap = new Map<string, Category>()
-  
+
   // Seed the map with existing Sanity categories
   baseCategories.forEach(c => {
     if (c.category) {
@@ -281,30 +350,34 @@ export async function getCategories() {
             _id: c._id || `temp-${slugStr}`,
             category: titleCasedName,
             slug: { _type: 'slug', current: slugStr },
-            subcategory: c.subcategory ? c.subcategory.map(sub => toTitleCase(sub.trim())) : []
+            subcategory: []
           })
         }
+        c.subcategory?.forEach(rawSub => {
+          const sub = toTitleCase(rawSub.trim())
+          addSubcategoryToBucket(catMap, sub, titleCasedName, { ...c, _id: c._id })
+        })
       })
     }
   })
-  
+
   // Extend with categories and subcategories from products
   products.forEach(p => {
     let catName = p.category?.category || p.excelCategory
     if (!catName) return
-    
+
     // Split combined categories (e.g. "ONCOLOGY / HEMATOLOGY")
     const catNames = catName.split('/').map(s => s.trim()).filter(Boolean)
-    
+
     catNames.forEach(name => {
       const titleCasedName = toTitleCase(name)
       const catKey = titleCasedName.toUpperCase()
-      
+
       const subCategoryStr = p.subCategory || ''
       const subcats = subCategoryStr.split('/')
         .map(s => toTitleCase(s.trim().replace(/,$/, '')))
         .filter(Boolean)
-        
+
       if (!catMap.has(catKey)) {
         const slugStr = name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
         catMap.set(catKey, {
@@ -315,19 +388,15 @@ export async function getCategories() {
           subcategory: []
         })
       }
-      
-      const catObj = catMap.get(catKey)!
+
       subcats.forEach(sub => {
-        if (!catObj.subcategory) {
-          catObj.subcategory = []
-        }
-        if (!catObj.subcategory.includes(sub)) {
-          catObj.subcategory.push(sub)
-        }
+        addSubcategoryToBucket(catMap, sub, titleCasedName, {
+          _id: p.category?._id || `temp-${name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}`
+        })
       })
     })
   })
-  
+
   return Array.from(catMap.values()).sort((a, b) => (a.category || '').localeCompare(b.category || ''))
 }
 
