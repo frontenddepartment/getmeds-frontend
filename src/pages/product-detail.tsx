@@ -134,8 +134,14 @@ export default function ProductDetail() {
   const isCancerProduct = (p: ProductWithCategory | null) => {
     if (!p) return false;
     const catName = (p.category?.category || '').toLowerCase().trim();
-    if (CANCER_CATEGORY_NAMES.includes(catName)) return true;
-    if (p.excelCategory && CANCER_CATEGORY_NAMES.includes(p.excelCategory.toLowerCase().trim())) return true;
+    const excelCat = (p.excelCategory || '').toLowerCase().trim();
+    
+    const catParts = catName.split('/').map(s => s.trim()).filter(Boolean);
+    const excelParts = excelCat.split('/').map(s => s.trim()).filter(Boolean);
+    
+    if (catParts.some(part => CANCER_CATEGORY_NAMES.includes(part))) return true;
+    if (excelParts.some(part => CANCER_CATEGORY_NAMES.includes(part))) return true;
+    
     return CANCER_BRAND_EXCEPTIONS.includes((p.brandName || '').toLowerCase().trim());
   };
 

@@ -27,6 +27,14 @@ import type {
   News,
 } from '../types/sanity'
 
+function toTitleCase(str: string): string {
+  return str
+    .toLowerCase()
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+}
+
 function cleanWordPressUrl(url: string | undefined | null): string {
   if (!url) return '';
   return url
@@ -110,10 +118,13 @@ async function fetchProductsFromExcel(): Promise<Product[]> {
       }
 
       const cleanName = excelCat.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
+      const titleCased = excelCat.split('/')
+        .map(s => toTitleCase(s.trim()))
+        .join(' / ')
       return {
         _id: `temp-${cleanName}`,
         _type: 'reference',
-        category: excelCat,
+        category: titleCased,
         slug: { _type: 'slug', current: cleanName }
       }
     }
@@ -249,11 +260,80 @@ export async function searchProducts(query: string) {
 // ─────────────────────────────────────────────
 
 export async function getCategories() {
-  return sanityQuery<Category[]>('category.all')
+  const products = await fetchProductsFromExcel()
+  // Also get the base Sanity categories so we have their icons, descriptions, etc. if available
+  const baseCategories = await sanityQuery<Category[]>('category.all') || []
+  
+  const catMap = new Map<string, Category>()
+  
+  // Seed the map with existing Sanity categories
+  baseCategories.forEach(c => {
+    if (c.category) {
+      // Split base categories by '/' to match dynamic formatting
+      const names = c.category.split('/').map(s => s.trim()).filter(Boolean)
+      names.forEach(name => {
+        const titleCasedName = toTitleCase(name)
+        const catKey = titleCasedName.toUpperCase()
+        if (!catMap.has(catKey)) {
+          const slugStr = name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
+          catMap.set(catKey, {
+            ...c,
+            _id: c._id || `temp-${slugStr}`,
+            category: titleCasedName,
+            slug: { _type: 'slug', current: slugStr },
+            subcategory: c.subcategory ? c.subcategory.map(sub => toTitleCase(sub.trim())) : []
+          })
+        }
+      })
+    }
+  })
+  
+  // Extend with categories and subcategories from products
+  products.forEach(p => {
+    let catName = p.category?.category || p.excelCategory
+    if (!catName) return
+    
+    // Split combined categories (e.g. "ONCOLOGY / HEMATOLOGY")
+    const catNames = catName.split('/').map(s => s.trim()).filter(Boolean)
+    
+    catNames.forEach(name => {
+      const titleCasedName = toTitleCase(name)
+      const catKey = titleCasedName.toUpperCase()
+      
+      const subCategoryStr = p.subCategory || ''
+      const subcats = subCategoryStr.split('/')
+        .map(s => toTitleCase(s.trim().replace(/,$/, '')))
+        .filter(Boolean)
+        
+      if (!catMap.has(catKey)) {
+        const slugStr = name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
+        catMap.set(catKey, {
+          _id: p.category?._id || `temp-${slugStr}`,
+          _type: 'category',
+          category: titleCasedName,
+          slug: { _type: 'slug', current: slugStr },
+          subcategory: []
+        })
+      }
+      
+      const catObj = catMap.get(catKey)!
+      subcats.forEach(sub => {
+        if (!catObj.subcategory) {
+          catObj.subcategory = []
+        }
+        if (!catObj.subcategory.includes(sub)) {
+          catObj.subcategory.push(sub)
+        }
+      })
+    })
+  })
+  
+  return Array.from(catMap.values()).sort((a, b) => (a.category || '').localeCompare(b.category || ''))
 }
 
 export async function getCategoryBySlug(slug: string) {
-  return sanityQuery<Category>('category.bySlug', { slug })
+  const categories = await getCategories()
+  return categories.find(c => c.slug?.current === slug) || null
 }
 
 // ─────────────────────────────────────────────

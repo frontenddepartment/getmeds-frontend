@@ -98,8 +98,15 @@ const isCancerCategoryName = (name: string) =>
   CANCER_CATEGORY_NAMES.includes((name || '').toLowerCase().trim());
 
 const isCancerProduct = (p: { category?: { category?: string }; excelCategory?: string; brandName?: string }) => {
-  if (isCancerCategoryName(p.category?.category || '')) return true;
-  if (isCancerCategoryName(p.excelCategory || '')) return true;
+  const cat = p.category?.category || '';
+  const excelCat = p.excelCategory || '';
+  
+  const cats = [
+    ...cat.split('/').map(s => s.trim().toLowerCase()),
+    ...excelCat.split('/').map(s => s.trim().toLowerCase())
+  ].filter(Boolean);
+  
+  if (cats.some(c => isCancerCategoryName(c))) return true;
   return CANCER_BRAND_EXCEPTIONS.includes((p.brandName || '').toLowerCase().trim());
 };
 
@@ -518,6 +525,11 @@ export default function CancerMedicines() {
     
     if (matchedProcessed) {
       return productsData.filter(p => {
+        // Match by category name first (split by / to handle multiple categories)
+        const pCat = p.category?.category || p.excelCategory || '';
+        const pCats = pCat.split('/').map(s => s.trim().toLowerCase()).filter(Boolean);
+        if (pCats.includes(cleanCategory)) return true;
+
         const subcats = getProductSubcategories(p);
         return subcats.some(sub => matchedProcessed.subcategory.some(s => s.trim().toLowerCase() === sub.toLowerCase()));
       });
@@ -607,11 +619,14 @@ export default function CancerMedicines() {
         const next = { ...prev };
         const seenCats = new Set<string>();
         matchedProducts.forEach(p => {
-          const cat = p.category?.category;
-          if (cat && !seenCats.has(cat)) {
-            seenCats.add(cat);
-            next[cat] = (next[cat] || 0) + 1;
-          }
+          const cat = p.category?.category || '';
+          const cats = cat.split('/').map(s => s.trim()).filter(Boolean);
+          cats.forEach(c => {
+            if (c && !seenCats.has(c)) {
+              seenCats.add(c);
+              next[c] = (next[c] || 0) + 1;
+            }
+          });
         });
         localStorage.setItem('getmeds-category-counts', JSON.stringify(next));
         return next;
@@ -656,7 +671,11 @@ export default function CancerMedicines() {
     for (const cat of sortedCats) {
       if (suggestions.length >= MAX_SUGGESTIONS) break;
       const catProducts = productsData.filter(
-        p => p.category?.category === cat && !usedIds.has(p._id)
+        p => {
+          const pCat = p.category?.category || p.excelCategory || '';
+          const pCats = pCat.split('/').map(s => s.trim().toLowerCase()).filter(Boolean);
+          return pCats.includes(cat.toLowerCase()) && !usedIds.has(p._id);
+        }
       );
       // Shuffle within category so it's not always the same order
       const shuffled = [...catProducts].sort(() => Math.random() - 0.5);
