@@ -198,10 +198,23 @@ export default function OrderMedicines() {
     age: '',
     dob: '',
     address: '',
+    contactName: '',
+    contactRelationship: '',
     terms: false
   });
+  const [patientIdFile, setPatientIdFile] = useState<File | null>(null);
+  const [contactSameAsPatient, setContactSameAsPatient] = useState(false);
+
+  const handlePatientIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setPatientIdFile(e.target.files[0]);
+      e.target.value = '';
+    }
+  };
   const [submitState, setSubmitState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
   const [successModalOpen, setSuccessModalOpen] = useState(false);
+  const [idRequiredModalOpen, setIdRequiredModalOpen] = useState(false);
+  const [idModalVisible, setIdModalVisible] = useState(false);
 
   const fileToBase64 = (file: File): Promise<string> =>
     new Promise((resolve, reject) => {
@@ -213,8 +226,17 @@ export default function OrderMedicines() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.patientName || !formData.email || !formData.phone || !formData.address) {
-      alert('Please fill in all required fields (Name, Email, Phone, and Delivery Address).');
+    if (!patientIdFile) {
+      setIdRequiredModalOpen(true);
+      requestAnimationFrame(() => requestAnimationFrame(() => setIdModalVisible(true)));
+      return;
+    }
+    if (!formData.patientName || !formData.email || !formData.phone || !formData.age || !formData.address) {
+      alert('Please fill in all required fields.');
+      return;
+    }
+    if (!contactSameAsPatient && !formData.contactName) {
+      alert("Please provide the contact person's full name.");
       return;
     }
     if (!formData.terms) {
@@ -224,7 +246,7 @@ export default function OrderMedicines() {
     setSubmitState('sending');
 
     const filesData: { name: string; type: string; base64: string }[] = [];
-    for (const file of uploadedFiles) {
+    for (const file of [...uploadedFiles, patientIdFile]) {
       try {
         const base64 = await fileToBase64(file);
         filesData.push({ name: file.name, type: file.type, base64 });
@@ -233,17 +255,24 @@ export default function OrderMedicines() {
       }
     }
 
+    const contactInfo = contactSameAsPatient
+      ? 'Same as patient'
+      : `${formData.contactName}${formData.contactRelationship ? ` (${formData.contactRelationship})` : ''}`;
+
     try {
       const payload = {
         inquiryType: 'Order Medicine',
         fullName: formData.patientName,
         email: formData.email,
         phone: formData.phone,
-        message: `Medicine Order Request. DOB: ${formData.dob}, Age: ${formData.age}, Address: ${formData.address}`,
+        message: `Medicine Order Request. DOB: ${formData.dob}, Age: ${formData.age}, Address: ${formData.address}, Contact Person: ${contactInfo}`,
         additionalData: {
           dob: formData.dob,
           age: formData.age,
-          address: formData.address
+          address: formData.address,
+          contactSameAsPatient,
+          contactName: formData.contactName,
+          contactRelationship: formData.contactRelationship
         },
         files: filesData
       };
@@ -481,20 +510,20 @@ export default function OrderMedicines() {
                   {
                     icon: 'fa-cloud-arrow-up',
                     label: '1. Upload',
-                    desc: 'Upload your valid prescription'
+                    desc: 'Upload your valid prescription and contact details.'
                   },
                   {
                     icon: 'fa-phone-volume',
                     label: '2. We reach out',
-                    desc: 'Our team will contact you directly to verify your order'
+                    desc: 'Our pharmacists contact you to verify your order.'
                   },
                   {
                     icon: 'fa-circle-check',
-                    label: '3. Confirmation',
-                    desc: 'Receive your order confirmation and delivery details via your preferred contact'
+                    label: '3. Receive Your Order',
+                    desc: 'Get your order confirmed and delivered.'
                   }
                 ].map((step, i) => (
-                  <div key={i} className={`ca-anim ca-zoom ${['ca-d1','ca-d3','ca-d5'][i]} bg-white/10 backdrop-blur-sm rounded-[15px] border border-white/20 p-4 md:p-6 flex flex-row items-center md:flex-col md:items-center text-left md:text-center cursor-default`}>
+                  <div key={i} className={`ca-anim ca-zoom ${['ca-d1', 'ca-d3', 'ca-d5'][i]} bg-white/10 backdrop-blur-sm rounded-[15px] border border-white/20 p-4 md:p-6 flex flex-row items-center md:flex-col md:items-center text-left md:text-center cursor-default`}>
                     <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-white/20 border border-white/30 flex items-center justify-center flex-shrink-0 mr-4 md:mr-0 md:mb-4">
                       <i className={`fa-solid ${step.icon} text-white text-lg md:text-xl`}></i>
                     </div>
@@ -611,96 +640,187 @@ export default function OrderMedicines() {
             {/* ── Customer Validation Form ── */}
             <div className="ca-anim ca-up bg-white rounded-[15px] border border-gray-100 p-8 md:p-12 shadow-sm">
               <div className="mb-8">
-                <h2 className="text-2xl font-semibold text-gray-900 mb-1">Customer validation</h2>
-                <p className="text-gray-400 text-[13px]">Please provide accurate details for legal verification.</p>
+                <h2 className="text-2xl font-semibold text-gray-900 mb-1">Customer Information</h2>
+                <p className="text-gray-400 text-[13px]">Please provide accurate information so our pharmacists can process your order.</p>
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-6">
+                {/* Patient full name + Upload valid ID — side by side */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
                   <div className="space-y-2">
-                    <label className="text-[14px] font-semibold text-gray-700">Patient full name</label>
-                    <input type="text" placeholder="As written on prescription"
+                    <label className="text-[14px] font-semibold text-gray-700">Patient Full Name</label>
+                    <input type="text" placeholder="Full name as shown on the prescription"
                       required
                       value={formData.patientName}
                       onChange={e => setFormData(prev => ({ ...prev, patientName: e.target.value }))}
                       className="w-full bg-gray-50 border-none rounded-[15px] px-6 py-3.5 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition placeholder-gray-300" />
                   </div>
+
+                  {/* Upload valid ID of the patient */}
                   <div className="space-y-2">
-                    <label className="text-[14px] font-semibold text-gray-700">Email address</label>
+                    <label className="text-[14px] font-semibold text-gray-700">Upload valid ID of the patient</label>
+                    <p className="text-[12px] text-gray-400 leading-relaxed">
+                      Upload a valid government-issued ID of the patient. This helps us process your order faster and ensures the prescription is dispensed to the right person.
+                    </p>
+                    <div className="flex items-center gap-3 flex-wrap pt-1">
+                      {!patientIdFile ? (
+                        <label className="cursor-pointer inline-flex items-center gap-2 hover:opacity-90 text-white text-[13px] font-semibold px-5 py-2.5 rounded-[10px] transition"
+                          style={{ background: 'linear-gradient(to right,#61A644,#1D9FDA)' }}>
+                          <input type="file" accept="image/*,.pdf" className="hidden" onChange={handlePatientIdChange} />
+                          <i className="fa-solid fa-upload text-[11px]"></i>
+                          Upload File
+                        </label>
+                      ) : (
+                        <div className="flex items-center gap-2 bg-gray-50 border border-gray-100 rounded-[10px] pl-1.5 pr-3 py-1.5">
+                          {patientIdFile.type.startsWith('image/') ? (
+                            <button type="button" onClick={() => setViewingFileUrl(URL.createObjectURL(patientIdFile))}
+                              className="w-8 h-8 rounded-[7px] overflow-hidden border border-gray-100 flex-shrink-0">
+                              <img src={URL.createObjectURL(patientIdFile)} alt={patientIdFile.name} className="w-full h-full object-cover" />
+                            </button>
+                          ) : (
+                            <i className="fa-solid fa-file-pdf text-red-400"></i>
+                          )}
+                          <span className="text-[12px] text-gray-600 truncate max-w-[160px]">{patientIdFile.name}</span>
+                          <button type="button" onClick={() => setPatientIdFile(null)}
+                            className="text-gray-400 hover:text-red-500 transition">
+                            <i className="fa-solid fa-xmark text-[11px]"></i>
+                          </button>
+                        </div>
+                      )}
+                      <span className="text-[11px] text-gray-400">Accepted formats: JPG, PNG, PDF</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Contact Person */}
+                <div className="border border-gray-100 rounded-[15px] p-6 bg-gray-50/40 space-y-4">
+                  <h3 className="text-[15px] font-semibold text-gray-800">Contact Person</h3>
+                  <label className="flex items-start gap-3 cursor-pointer">
+                    <input type="checkbox"
+                      checked={contactSameAsPatient}
+                      onChange={e => setContactSameAsPatient(e.target.checked)}
+                      className="w-4 h-4 mt-0.5 rounded-md border-gray-200 text-success focus:ring-success cursor-pointer" />
+                    <span>
+                      <span className="block text-[13px] font-semibold text-gray-700">Same as patient details</span>
+                      <span className="block text-[12px] text-gray-400 mt-0.5">Check this box if the patient is the one placing the order and receiving delivery.</span>
+                    </span>
+                  </label>
+
+                  {!contactSameAsPatient && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 pt-2">
+                      <div className="space-y-2">
+                        <label className="text-[14px] font-semibold text-gray-700">Contact Person's Full Name</label>
+                        <input type="text" placeholder="Person we should contact"
+                          required={!contactSameAsPatient}
+                          value={formData.contactName}
+                          onChange={e => setFormData(prev => ({ ...prev, contactName: e.target.value }))}
+                          className="w-full bg-white border-none rounded-[15px] px-6 py-3.5 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition placeholder-gray-300" />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[14px] font-semibold text-gray-700">Relationship to Patient</label>
+                        <select
+                          value={formData.contactRelationship}
+                          onChange={e => setFormData(prev => ({ ...prev, contactRelationship: e.target.value }))}
+                          className="w-full bg-white border-none rounded-[15px] px-6 py-3.5 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition">
+                          <option value="">Select relationship (optional)</option>
+                          <option value="Family member">Family member</option>
+                          <option value="Caregiver">Caregiver</option>
+                          <option value="Guardian">Guardian</option>
+                          <option value="Healthcare professional">Healthcare professional</option>
+                          <option value="Other">Other</option>
+                        </select>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Remaining fields — Email/Age, Phone/Delivery address */}
+
+
+                <div className="mb-8">
+                  <h2 className="text-2xl font-semibold text-gray-900 mb-1">Contact & Delivery</h2>
+                </div>
+
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                  <div className="space-y-2">
+                    <label className="text-[14px] font-semibold text-gray-700">Email Address</label>
                     <input type="email" placeholder="example@domain.com"
                       required
                       value={formData.email}
                       onChange={e => setFormData(prev => ({ ...prev, email: e.target.value }))}
                       className="w-full bg-gray-50 border-none rounded-[15px] px-6 py-3.5 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition placeholder-gray-300" />
                   </div>
-                  {/* Phone + Age — left column */}
-                  <div className="flex flex-row gap-3 items-end">
-                    <div className="space-y-2 flex-1 min-w-0">
-                      <label className="text-[14px] font-semibold text-gray-700">Phone number</label>
-                      <div className="relative flex items-center bg-gray-50 rounded-[15px] overflow-visible focus-within:ring-2 focus-within:ring-primary/20 transition">
-                        <button type="button" onClick={() => setPhoneCountryOpen(o => !o)}
-                          className="flex items-center gap-1.5 pl-4 pr-2 py-3.5 shrink-0 border-r border-gray-200 text-[13px] text-gray-700 hover:bg-gray-100 rounded-l-[15px] transition">
-                          <span>{phoneCountry.flag}</span>
-                          <span className="font-semibold text-gray-600">{phoneCountry.code}</span>
-                          <i className="fa-solid fa-chevron-down text-[9px] text-gray-400"></i>
-                        </button>
-                        <input ref={phoneInputRef} type="tel" required
-                          placeholder={(() => { const d = '9123456789'; let i = 0; return phoneCountry.mask.replace(/#/g, () => d[i++ % d.length]); })()}
-                          value={formData.phone}
-                          onChange={handlePhoneChange}
-                          className="flex-1 min-w-0 bg-transparent px-4 py-3.5 text-[13px] text-gray-700 outline-none placeholder-gray-300" />
-                        {phoneCountryOpen && (
-                          <div className="absolute top-full left-0 mt-1 w-72 bg-white rounded-[12px] shadow-xl border border-gray-100 z-[60] overflow-hidden" onClick={e => e.stopPropagation()}>
-                            <div className="p-2 border-b border-gray-100">
-                              <input autoFocus type="text" placeholder="Search country..."
-                                value={phoneSearch} onChange={e => setPhoneSearch(e.target.value)}
-                                className="w-full px-3 py-2 text-[12px] bg-gray-50 rounded-[8px] outline-none placeholder-gray-300 text-gray-700" />
-                            </div>
-                            <div className="max-h-52 overflow-y-auto">
-                              {PHONE_COUNTRIES.filter(c =>
-                                c.name.toLowerCase().includes(phoneSearch.toLowerCase()) || c.code.includes(phoneSearch)
-                              ).map(c => (
-                                <button key={c.code + c.name} type="button"
-                                  onClick={() => { setPhoneCountry(c); setPhoneCountryOpen(false); setPhoneSearch(''); setFormData(prev => ({ ...prev, phone: '' })); }}
-                                  className={`w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-gray-50 transition text-[13px] ${phoneCountry.code === c.code && phoneCountry.name === c.name ? 'bg-green-50 text-[#61A644] font-semibold' : 'text-gray-700'}`}>
-                                  <span className="text-base">{c.flag}</span>
-                                  <span className="flex-1">{c.name}</span>
-                                  <span className="text-gray-400 text-[12px]">{c.code}</span>
-                                </button>
-                              ))}
-                            </div>
+
+                  {/* Age — right of Email, same size as the other fields */}
+                  <div className="space-y-2" ref={ageDropdownRef}>
+                    <label className="text-[14px] font-semibold text-gray-700">Age</label>
+                    <div className="relative">
+                      <button type="button"
+                        onClick={() => setAgeDropdownOpen(o => !o)}
+                        className="w-full flex items-center justify-between bg-gray-50 rounded-[15px] px-6 py-3.5 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition cursor-pointer">
+                        <span className={formData.age ? 'text-gray-700' : 'text-gray-300'}>{formData.age || 'Age'}</span>
+                        <i className="fa-solid fa-chevron-down text-[10px] text-gray-400"></i>
+                      </button>
+                      {ageDropdownOpen && (
+                        <div className="absolute top-full left-0 mt-1 w-full bg-white rounded-[12px] shadow-xl border border-gray-100 z-[60] overflow-hidden">
+                          <div className="max-h-48 overflow-y-auto">
+                            {Array.from({ length: 63 }, (_, i) => i + 18).map(age => (
+                              <button key={age} type="button"
+                                onClick={() => { setFormData(prev => ({ ...prev, age: String(age) })); setAgeDropdownOpen(false); }}
+                                className={`w-full text-left px-4 py-2 text-[13px] hover:bg-gray-50 transition ${formData.age === String(age) ? 'bg-green-50 text-[#61A644] font-semibold' : 'text-gray-700'}`}>
+                                {age}
+                              </button>
+                            ))}
                           </div>
-                        )}
-                      </div>
-                    </div>
-                    <div className="space-y-2 w-[90px] shrink-0" ref={ageDropdownRef}>
-                      <label className="text-[14px] font-semibold text-gray-700">Age</label>
-                      <div className="relative">
-                        <button type="button"
-                          onClick={() => setAgeDropdownOpen(o => !o)}
-                          className="w-full flex items-center justify-between bg-gray-50 rounded-[15px] px-4 py-3.5 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition cursor-pointer">
-                          <span className={formData.age ? 'text-gray-700' : 'text-gray-300'}>{formData.age || 'Age'}</span>
-                          <i className="fa-solid fa-chevron-down text-[10px] text-gray-400"></i>
-                        </button>
-                        {ageDropdownOpen && (
-                          <div className="absolute top-full left-0 mt-1 w-full bg-white rounded-[12px] shadow-xl border border-gray-100 z-[60] overflow-hidden">
-                            <div className="max-h-48 overflow-y-auto">
-                              {Array.from({ length: 63 }, (_, i) => i + 18).map(age => (
-                                <button key={age} type="button"
-                                  onClick={() => { setFormData(prev => ({ ...prev, age: String(age) })); setAgeDropdownOpen(false); }}
-                                  className={`w-full text-left px-4 py-2 text-[13px] hover:bg-gray-50 transition ${formData.age === String(age) ? 'bg-green-50 text-[#61A644] font-semibold' : 'text-gray-700'}`}>
-                                  {age}
-                                </button>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-                      </div>
+                        </div>
+                      )}
                     </div>
                   </div>
-                  {/* Delivery address — right column, aligned under Email */}
+
+                  {/* Phone number — under Email */}
                   <div className="space-y-2">
-                    <label className="text-[14px] font-semibold text-gray-700">Delivery address</label>
+                    <label className="text-[14px] font-semibold text-gray-700">Phone Number</label>
+                    <div className="relative flex items-center bg-gray-50 rounded-[15px] overflow-visible focus-within:ring-2 focus-within:ring-primary/20 transition">
+                      <button type="button" onClick={() => setPhoneCountryOpen(o => !o)}
+                        className="flex items-center gap-1.5 pl-4 pr-2 py-3.5 shrink-0 border-r border-gray-200 text-[13px] text-gray-700 hover:bg-gray-100 rounded-l-[15px] transition">
+                        <span>{phoneCountry.flag}</span>
+                        <span className="font-semibold text-gray-600">{phoneCountry.code}</span>
+                        <i className="fa-solid fa-chevron-down text-[9px] text-gray-400"></i>
+                      </button>
+                      <input ref={phoneInputRef} type="tel" required
+                        placeholder={(() => { const d = '9123456789'; let i = 0; return phoneCountry.mask.replace(/#/g, () => d[i++ % d.length]); })()}
+                        value={formData.phone}
+                        onChange={handlePhoneChange}
+                        className="flex-1 min-w-0 bg-transparent px-4 py-3.5 text-[13px] text-gray-700 outline-none placeholder-gray-300" />
+                      {phoneCountryOpen && (
+                        <div className="absolute top-full left-0 mt-1 w-72 bg-white rounded-[12px] shadow-xl border border-gray-100 z-[60] overflow-hidden" onClick={e => e.stopPropagation()}>
+                          <div className="p-2 border-b border-gray-100">
+                            <input autoFocus type="text" placeholder="Search country..."
+                              value={phoneSearch} onChange={e => setPhoneSearch(e.target.value)}
+                              className="w-full px-3 py-2 text-[12px] bg-gray-50 rounded-[8px] outline-none placeholder-gray-300 text-gray-700" />
+                          </div>
+                          <div className="max-h-52 overflow-y-auto">
+                            {PHONE_COUNTRIES.filter(c =>
+                              c.name.toLowerCase().includes(phoneSearch.toLowerCase()) || c.code.includes(phoneSearch)
+                            ).map(c => (
+                              <button key={c.code + c.name} type="button"
+                                onClick={() => { setPhoneCountry(c); setPhoneCountryOpen(false); setPhoneSearch(''); setFormData(prev => ({ ...prev, phone: '' })); }}
+                                className={`w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-gray-50 transition text-[13px] ${phoneCountry.code === c.code && phoneCountry.name === c.name ? 'bg-green-50 text-[#61A644] font-semibold' : 'text-gray-700'}`}>
+                                <span className="text-base">{c.flag}</span>
+                                <span className="flex-1">{c.name}</span>
+                                <span className="text-gray-400 text-[12px]">{c.code}</span>
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Delivery address — under Age */}
+                  <div className="space-y-2">
+                    <label className="text-[14px] font-semibold text-gray-700">Delivery Address</label>
                     <input type="text" placeholder="Complete address for courier delivery"
                       required
                       value={formData.address}
@@ -709,38 +829,47 @@ export default function OrderMedicines() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3 pt-2">
-                  <input type="checkbox" id="terms"
-                    checked={formData.terms}
-                    onChange={e => setFormData(prev => ({ ...prev, terms: e.target.checked }))}
-                    className="w-4 h-4 rounded-md border-gray-200 text-success focus:ring-success cursor-pointer" />
-                  <label htmlFor="terms" className="text-[12px] text-gray-500 cursor-pointer">
-                    I confirm that all provided information is authentic and matches the prescription.
-                  </label>
-                </div>
-
-                {/* After-submit informational note */}
-                <div className="flex items-start gap-2 text-[12px] text-gray-400">
+                {/* After-submit note */}
+                <div className="flex items-start gap-2 text-[12px] text-gray-400 pt-2">
                   <i className="fa-solid fa-circle-info mt-0.5 flex-shrink-0"></i>
-                  <span>After submitting, our pharmacists will reach out using the contact number you provided.</span>
+                  <span>Our pharmacists will contact you on the mobile number provided.</span>
                 </div>
 
-                {/* Action Buttons */}
-                <div className="flex flex-wrap items-center gap-4 pt-2">
-                  <button type="button"
-                    onClick={() => {
-                      setFormData({ patientName: '', email: '', phone: '', age: '', dob: '', address: '', terms: false });
-                      setUploadedFiles([]);
-                      setUploadComplete(false);
-                    }}
-                    className="px-8 py-3.5 rounded-[15px] text-[14px] font-semibold text-gray-600 border border-gray-200 hover:bg-gray-50 transition">
-                    Cancel
-                  </button>
-                  <button type="submit" disabled={submitState === 'sending'}
-                    className="hover:opacity-90 text-white font-bold py-3.5 px-10 rounded-[15px] text-[14px] transition disabled:opacity-50"
-                    style={{ background: 'linear-gradient(to right,#61A644,#1D9FDA)' }}>
-                    {submitState === 'sending' ? 'Submitting...' : 'Submit  '}
-                  </button>
+                <hr className="border-gray-100" />
+
+                <div>
+                  <h3 className="text-[15px] font-semibold text-gray-800 mb-3">Consent Checkbox</h3>
+                  <div className="flex flex-wrap items-center justify-between gap-4">
+                    <div className="flex items-center gap-3">
+                      <input type="checkbox" id="terms"
+                        checked={formData.terms}
+                        onChange={e => setFormData(prev => ({ ...prev, terms: e.target.checked }))}
+                        className="w-4 h-4 rounded-md border-gray-200 text-success focus:ring-success cursor-pointer" />
+                      <label htmlFor="terms" className="text-[12px] text-gray-500 cursor-pointer">
+                        I confirm that the information provided is accurate and the prescription is valid.
+                      </label>
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="flex items-center gap-3 flex-shrink-0">
+                      <button type="button"
+                        onClick={() => {
+                          setFormData({ patientName: '', email: '', phone: '', age: '', dob: '', address: '', contactName: '', contactRelationship: '', terms: false });
+                          setUploadedFiles([]);
+                          setUploadComplete(false);
+                          setPatientIdFile(null);
+                          setContactSameAsPatient(false);
+                        }}
+                        className="shadow-none px-5 py-2 rounded-[15px] text-[13px] font-semibold text-gray-600 border border-gray-200 hover:bg-gray-50 transition">
+                        Cancel
+                      </button>
+                      <button type="submit" disabled={submitState === 'sending'}
+                        className="shadow-none hover:opacity-90 text-white font-bold py-2 px-6 rounded-[15px] text-[13px] transition disabled:opacity-50"
+                        style={{ background: 'linear-gradient(to right,#61A644,#1D9FDA)' }}>
+                        {submitState === 'sending' ? 'Submitting...' : 'Submit'}
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </form>
 
@@ -883,51 +1012,108 @@ export default function OrderMedicines() {
       {/* ── Order Success Modal ── */}
       {successModalOpen && (
         <>
-        <style>{`@keyframes checkBounce{0%{transform:scale(0);opacity:0}55%{transform:scale(1.06);opacity:1}75%{transform:scale(0.97)}100%{transform:scale(1);opacity:1}}.check-bounce{animation:checkBounce 0.8s ease-out forwards}`}</style>
-        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/50 backdrop-blur-sm px-4">
-          <div className="bg-white w-full max-w-[400px] rounded-2xl shadow-2xl relative overflow-hidden">
-            {/* Close button */}
-            <button
-              onClick={() => { setSuccessModalOpen(false); window.location.reload(); }}
-              className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition z-10"
-            >
-              <i className="fa-solid fa-xmark text-base"></i>
-            </button>
-
-            <div className="px-10 pt-12 pb-8 text-center">
-              {/* Illustration */}
-              <div className="flex justify-center mb-7">
-                <div className="check-bounce w-14 h-14 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg,#61A644,#1D9FDA)' }}>
-                  <i className="fa-solid fa-check text-white text-xl"></i>
-                </div>
-              </div>
-
-              {/* Title */}
-              <h2 className="text-[19px] font-semibold text-gray-900 mb-4 leading-snug">
-                Thank you for your order.
-              </h2>
-
-              {/* Message */}
-              <p className="text-[13px] text-gray-500 leading-relaxed">
-                We will contact you shortly to confirm your order details. For urgent concerns, please call{' '}
-                <a href="tel:+639190769105" className="text-[#1D9FDA] font-semibold hover:underline">
-                  +63 919 076 9105
-                </a>.
-              </p>
-            </div>
-
-            {/* Divider + footer */}
-            <div className="border-t border-gray-100 px-10 py-4 text-center">
+          <style>{`@keyframes checkBounce{0%{transform:scale(0);opacity:0}55%{transform:scale(1.06);opacity:1}75%{transform:scale(0.97)}100%{transform:scale(1);opacity:1}}.check-bounce{animation:checkBounce 0.8s ease-out forwards}`}</style>
+          <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/50 backdrop-blur-sm px-4">
+            <div className="bg-white w-full max-w-[400px] rounded-2xl shadow-2xl relative overflow-hidden">
+              {/* Close button */}
               <button
                 onClick={() => { setSuccessModalOpen(false); window.location.reload(); }}
-                className="text-[13px] font-semibold hover:underline"
-                style={{ background: 'linear-gradient(to right,#61A644,#1D9FDA)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}
+                className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition z-10"
               >
-                Close
+                <i className="fa-solid fa-xmark text-base"></i>
               </button>
+
+              <div className="px-10 pt-12 pb-8 text-center">
+                {/* Illustration */}
+                <div className="flex justify-center mb-7">
+                  <div className="check-bounce w-14 h-14 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg,#61A644,#1D9FDA)' }}>
+                    <i className="fa-solid fa-check text-white text-xl"></i>
+                  </div>
+                </div>
+
+                {/* Title */}
+                <h2 className="text-[19px] font-semibold text-gray-900 mb-4 leading-snug">
+                  Thank you for your order.
+                </h2>
+
+                {/* Message */}
+                <p className="text-[13px] text-gray-500 leading-relaxed">
+                  We will contact you shortly to confirm your order details. For urgent concerns, please call{' '}
+                  <a href="tel:+639190769105" className="text-[#1D9FDA] font-semibold hover:underline">
+                    +63 919 076 9105
+                  </a>.
+                </p>
+              </div>
+
+              {/* Divider + footer */}
+              <div className="border-t border-gray-100 px-10 py-4 text-center">
+                <button
+                  onClick={() => { setSuccessModalOpen(false); window.location.reload(); }}
+                  className="text-[13px] font-semibold hover:underline"
+                  style={{ background: 'linear-gradient(to right,#61A644,#1D9FDA)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}
+                >
+                  Close
+                </button>
+              </div>
             </div>
           </div>
-        </div>
+        </>
+      )}
+
+      {/* Valid ID Required Modal — styled after the Prescription Required modal on product-detail */}
+      {idRequiredModalOpen && (
+        <>
+          <style>{`
+            @keyframes slideUpId{from{opacity:0;transform:translateY(24px) scale(0.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+            .id-modal-slide{animation:slideUpId 0.32s cubic-bezier(.22,1,.36,1) forwards}
+          `}</style>
+          <div
+            className={`fixed inset-0 z-[300] flex items-center justify-center bg-black/60 backdrop-blur-sm px-4 transition-opacity duration-200 ${idModalVisible ? 'opacity-100' : 'opacity-0'}`}
+            onClick={() => { setIdModalVisible(false); setTimeout(() => setIdRequiredModalOpen(false), 200); }}
+          >
+            <div
+              className={`bg-white w-full max-w-[400px] rounded-2xl shadow-2xl relative overflow-hidden id-modal-slide transform transition-all duration-200 ${idModalVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}
+              onClick={e => e.stopPropagation()}
+            >
+              {/* Close button */}
+              <button
+                type="button"
+                onClick={() => { setIdModalVisible(false); setTimeout(() => setIdRequiredModalOpen(false), 200); }}
+                className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition z-10"
+              >
+                <i className="fa-solid fa-xmark text-base"></i>
+              </button>
+
+              {/* Body */}
+              <div className="px-8 pt-8 pb-5 text-center">
+                <div className="flex justify-center mb-4">
+                  <div
+                    className="w-14 h-14 rounded-full flex items-center justify-center"
+                    style={{ background: 'linear-gradient(135deg,#EF4444,#F59E0B)' }}
+                  >
+                    <i className="fa-solid fa-id-card text-white text-xl"></i>
+                  </div>
+                </div>
+                <h2 className="text-[19px] font-semibold text-gray-900 mb-2 leading-snug">Valid ID Required</h2>
+                <p className="text-[13px] text-gray-500 leading-relaxed">
+                  Please upload a valid government-issued ID (JPG, PNG, or PDF) of the patient to help us
+                  process your order faster and ensure the prescription is dispensed to the right person.
+                </p>
+              </div>
+
+              {/* Footer */}
+              <div className="border-t border-gray-100 px-8 py-3 text-center">
+                <button
+                  type="button"
+                  onClick={() => { setIdModalVisible(false); setTimeout(() => setIdRequiredModalOpen(false), 200); }}
+                  className="text-[13px] font-semibold hover:underline"
+                  style={{ background: 'linear-gradient(to right,#61A644,#1D9FDA)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}
+                >
+                  I Understand, Upload Now
+                </button>
+              </div>
+            </div>
+          </div>
         </>
       )}
 
