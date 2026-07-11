@@ -339,6 +339,18 @@ export function useImageMapper(_page?: string) {
   }
 
   /**
+   * getImageLink(name) — returns the redirect URL for the named slot's first image,
+   * or null if that image isn't marked clickable (or has no image yet). Use alongside
+   * getImage() to optionally wrap the <img> in an <a>.
+   */
+  const getImageLink = (name: string): string | null => {
+    if (!allAssets) return null
+    const doc = allAssets.find((asset) => asset.name === name)
+    const slide = doc?.images?.[0]
+    return slide?.enableLink && slide.link ? slide.link : null
+  }
+
+  /**
    * getSliderImages(name, defaultPaths) — returns all image URLs for the named slot.
    * Falls back to the local `defaultPaths` array if Sanity has no images yet.
    */
@@ -364,7 +376,18 @@ export function useImageMapper(_page?: string) {
     return defaultPaths
   }
 
-  return { getImage, getSliderImages, loading, error }
+  /**
+   * getSliderImageLinks(name) — returns an array parallel to getSliderImages(), where
+   * each entry is the redirect URL for that slide, or null if it isn't clickable.
+   */
+  const getSliderImageLinks = (name: string): (string | null)[] => {
+    if (!allAssets) return []
+    const doc = allAssets.find((asset) => asset.name === name)
+    if (!doc?.images || !Array.isArray(doc.images)) return []
+    return doc.images.map((slide: any) => (slide?.enableLink && slide.link ? slide.link : null))
+  }
+
+  return { getImage, getImageLink, getSliderImages, getSliderImageLinks, loading, error }
 }
 
 // ─────────────────────────────────────────────

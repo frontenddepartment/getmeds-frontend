@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { injectHTML } from '../lib/injectHTML';
 import { useImageMapper } from '../lib/useSanity';
+import { LinkableImage } from '../lib/LinkableImage';
 import { getCareers } from '../lib/queries';
 import { getApiUrl } from '../lib/api';
 import { setPageMeta } from '../lib/seo';
@@ -23,7 +24,7 @@ const Careers: React.FC = () => {
     });
   }, []);
 
-  const { getImage, loading: imagesLoading } = useImageMapper('careers');
+  const { getImage, getImageLink, loading: imagesLoading } = useImageMapper('careers');
   const [activeCareersPanel, setActiveCareersPanel] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
   const [heroImgLoaded, setHeroImgLoaded] = useState(false);
@@ -322,7 +323,7 @@ const Careers: React.FC = () => {
         <div className={`relative rounded-[10px] md:rounded-[1.5rem] overflow-hidden min-h-[190px] md:min-h-[500px] flex items-end transition-colors duration-500 ${!heroImgLoaded ? 'bg-gray-200 animate-pulse' : 'bg-gray-100'}`}>
           {/* Background Image — only mount after Sanity resolves so the src never changes */}
           {!imagesLoading && (
-            <img
+            <LinkableImage link={getImageLink('Careers Hero Background')}
               src={getImage('Careers Hero Background', 'assets/careershero.png')}
               alt="Getmeds Team"
               onLoad={() => setHeroImgLoaded(true)}
@@ -855,7 +856,7 @@ const Careers: React.FC = () => {
               </div>
             </div>
             <div className="ca-anim ca-right ca-d2 w-52 h-52 md:w-64 md:h-64 flex-shrink-0">
-              <img src={getImage('Naresh Bishnoi Careers Quote Image', 'assets/CEO.jpg')} alt="Naresh Bishnoi, Founder"
+              <LinkableImage link={getImageLink('Naresh Bishnoi Careers Quote Image')} src={getImage('Naresh Bishnoi Careers Quote Image', 'assets/CEO.jpg')} alt="Naresh Bishnoi, Founder"
                 className="w-full h-full object-cover rounded-full shadow-xl border-4 border-white ring-2 ring-gray-100" />
             </div>
           </div>

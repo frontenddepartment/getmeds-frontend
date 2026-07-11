@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { injectHTML } from '../lib/injectHTML';
 import { useImageMapper } from '../lib/useSanity';
 import { setPageMeta } from '../lib/seo';
+import { LinkableImage } from '../lib/LinkableImage';
 
 type SectionTab = 'steps' | 'requirements' | 'faqs';
 
@@ -46,7 +47,7 @@ export default function PatientAssistanceProgram() {
     });
   }, []);
 
-  const { getImage, loading: imagesLoading } = useImageMapper('pap');
+  const { getImage, getImageLink, loading: imagesLoading } = useImageMapper('pap');
   const [heroImgLoaded, setHeroImgLoaded] = useState(false);
   const [activeSection, setActiveSection] = useState<SectionTab>('steps');
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
@@ -206,7 +207,7 @@ export default function PatientAssistanceProgram() {
           <div className={`relative rounded-[10px] md:rounded-[1.5rem] overflow-hidden min-h-[140px] md:min-h-[500px] flex items-end group transition-colors duration-500 ${!heroImgLoaded ? 'bg-gray-200 animate-pulse' : 'bg-gray-100'}`}>
             {!imagesLoading && (
               <div className="absolute inset-0 z-0">
-                <img src={getImage('PAP Hero Background', 'assets/pap-banner.png')}
+                <LinkableImage link={getImageLink('PAP Hero Background')} src={getImage('PAP Hero Background', 'assets/pap-banner.png')}
                   onLoad={() => setHeroImgLoaded(true)}
                   className={`w-full h-full object-cover object-center transform group-hover:scale-105 transition-[opacity,transform] duration-700 ${heroImgLoaded ? 'opacity-100' : 'opacity-0'}`}
                   alt="Medical Support" />
@@ -218,7 +219,7 @@ export default function PatientAssistanceProgram() {
         {/* Program Intro */}
         <section className="w-full overflow-hidden reveal relative bg-white">
           <div className="max-w-7xl mx-auto px-4 pt-1 pb-0 flex items-center gap-3 justify-center mb-0">
-            <img
+            <LinkableImage link={getImageLink('Patient Assistance Program Logo')}
               src={getImage('Patient Assistance Program Logo', 'assets/pap.png')}
               alt="Patient Assistance Program"
               className="w-28 sm:w-40 md:w-64 object-contain shrink-0"
@@ -254,8 +255,8 @@ export default function PatientAssistanceProgram() {
             <div className="order-2 lg:order-1 shrink-0 flex items-end self-end w-56 sm:w-64 lg:w-[420px] xl:w-[480px] mx-auto lg:mx-0 -mb-1">
               <div className="relative inline-block w-full">
                 <div className="hidden lg:block absolute inset-0 shadow-[inset_0_0_120px_60px_white] rounded-[20px] pointer-events-none z-10" />
-                <img src={getImage('Patient Program Flow Diagram', 'assets/patientpap.png')} alt="Cancer Patient" className="lg:hidden w-full object-contain object-bottom rounded-xl" />
-                <img src={getImage('Patient Program Flow Diagram', 'assets/patientpap.png')} alt="Cancer Patient" className="hidden lg:block w-full object-contain object-bottom rounded-[20px]"
+                <LinkableImage link={getImageLink('Patient Program Flow Diagram')} src={getImage('Patient Program Flow Diagram', 'assets/patientpap.png')} alt="Cancer Patient" className="lg:hidden w-full object-contain object-bottom rounded-xl" />
+                <LinkableImage link={getImageLink('Patient Program Flow Diagram')} src={getImage('Patient Program Flow Diagram', 'assets/patientpap.png')} alt="Cancer Patient" className="hidden lg:block w-full object-contain object-bottom rounded-[20px]"
                   style={{ maskImage: 'radial-gradient(ellipse at center, black 40%, transparent 75%)', WebkitMaskImage: 'radial-gradient(ellipse at center, black 40%, transparent 75%)' }} />
               </div>
             </div>

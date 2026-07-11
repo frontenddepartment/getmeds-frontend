@@ -1,7 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { injectHTML } from '../lib/injectHTML';
-import { useImageMapper } from '../lib/useSanity';
+import { useImageMapper, useTeamMembers } from '../lib/useSanity';
+import { urlFor } from '../lib/sanity';
 import { setPageMeta } from '../lib/seo';
+import { LinkableImage } from '../lib/LinkableImage';
 
 export default function AboutUs() {
   useEffect(() => {
@@ -12,7 +14,7 @@ export default function AboutUs() {
     });
   }, []);
 
-  const { getImage, loading: imagesLoading } = useImageMapper('about-us');
+  const { getImage, getImageLink, loading: imagesLoading } = useImageMapper('about-us');
   const valuesContainerRef = useRef<HTMLDivElement>(null);
   const [activePanel, setActivePanel] = useState(0);
   const [heroImgLoaded, setHeroImgLoaded] = useState(false);
@@ -84,28 +86,49 @@ export default function AboutUs() {
 
   const teamTrackRef = useRef<HTMLDivElement>(null);
 
-  const TEAM_MEMBERS: { img: string; name: string; role: string; isCeo?: boolean }[] = [
-    { img: 'SIRSUBIR.png', name: 'Mr. Subir Dey', role: 'Sales & Marketing Coach' },
-    { img: 'MAMMIRA.png', name: 'Ms. Mira Verango', role: 'Executive & Admin Coach' },
-    { img: 'MAMVAN.png', name: 'Ms. Vanessa Escalderon', role: 'Hospital Division Coach' },
-    { img: 'SIRJAVED.png', name: 'Mr. Javed Shaikh', role: 'Sales & Marketing Coach' },
-    { img: 'NARESH.png', name: 'Mr. Naresh Bishnoi', role: 'Founder & CEO', isCeo: true },
-    { img: 'MAMBEA.png', name: 'Ms. Beatrice Ampaso', role: "Sales & Business Dev't" },
-    { img: 'MAMCHI.png', name: 'Ms. Esther Chiong', role: 'In-Licensing Mentor' },
-    { img: 'MAMIVY.png', name: 'Ms. Ivy Varias', role: 'Regulatory Affairs Mentor' },
-    { img: 'MAMMALOU.png', name: 'Ms. Malou Jagonoy', role: 'Finance Mentor' },
-    { img: 'MAMSARLA.png', name: 'Ms. Sarla Devi', role: 'Finance Coach' },
-    { img: 'HIZON.png', name: 'Mr. Mike Angelo Hizon', role: 'Talent Growth & Development Mentor' },
+  // Used only if the Sanity "teams" collection hasn't loaded yet or comes back empty.
+  const FALLBACK_TEAM_MEMBERS: { img: string; name: string; role: string; isCeo?: boolean }[] = [
+    { img: 'SIRSUBIR.png', name: 'Subir Dey', role: 'Sales & Marketing Coach' },
+    { img: 'MAMMIRA.png', name: 'Mira Verango', role: 'Executive & Admin Coach' },
+    { img: 'MAMVAN.png', name: 'Vanessa Escalderon', role: 'Hospital Division Coach' },
+    { img: 'SIRJAVED.png', name: 'Javed Shaikh', role: 'Sales & Marketing Coach' },
+    { img: 'NARESH.png', name: 'Naresh Bishnoi', role: 'Founder & CEO', isCeo: true },
+    { img: 'MAMBEA.png', name: 'Beatrice Ampaso', role: "Sales & Business Dev't" },
+    { img: 'MAMCHI.png', name: 'Esther Chiong', role: 'In-Licensing Mentor' },
+    { img: 'MAMIVY.png', name: 'Ivy Varias', role: 'Regulatory Affairs Mentor' },
+    { img: 'MAMMALOU.png', name: 'Malou Jagonoy', role: 'Finance Mentor' },
+    { img: 'MAMSARLA.png', name: 'Sarla Devi', role: 'Finance Coach' },
+    { img: 'HIZON.png', name: 'Mike Angelo Hizon', role: 'Talent Growth & Development Mentor' },
   ];
+
+  const { data: teamMembersData } = useTeamMembers();
+
+  const TEAM_MEMBERS = useMemo(() => {
+    if (teamMembersData && teamMembersData.length > 0) {
+      return teamMembersData.map(member => ({
+        src: member.image ? urlFor(member.image).width(400).height(550).url() : '',
+        name: member.name,
+        role: member.designation,
+        isCeo: /ceo|founder/i.test(member.designation || ''),
+      }));
+    }
+    return FALLBACK_TEAM_MEMBERS.map(member => ({
+      src: getImage(`assets/${member.img}`, `assets/${member.img}`),
+      name: member.name,
+      role: member.role,
+      isCeo: !!member.isCeo,
+    }));
+  }, [teamMembersData]);
 
   useEffect(() => {
     const el = teamTrackRef.current;
-    if (!el) return;
+    if (!el || TEAM_MEMBERS.length === 0) return;
     setTimeout(() => {
-      const ceoCard = el.children[4] as HTMLElement;
+      const ceoIndex = TEAM_MEMBERS.findIndex(m => m.isCeo);
+      const ceoCard = el.children[ceoIndex >= 0 ? ceoIndex : 0] as HTMLElement;
       if (ceoCard) el.scrollLeft = ceoCard.offsetLeft - (el.offsetWidth / 2) + (ceoCard.offsetWidth / 2);
     }, 80);
-  }, []);
+  }, [TEAM_MEMBERS]);
 
   const scrollTeam = (dir: 'left' | 'right') => {
     if (!teamTrackRef.current) return;
@@ -147,7 +170,7 @@ export default function AboutUs() {
           {/* Background Image — only mount after Sanity resolves so the src never changes */}
           {!imagesLoading && (
             <div className="absolute inset-0 z-0">
-              <img src={getImage('About Us Hero Background', 'assets/fallback.jpg')} data-json-src="hero.image" data-json-alt="hero.imageAlt"
+              <LinkableImage link={getImageLink('About Us Hero Background')} src={getImage('About Us Hero Background', 'assets/fallback.jpg')} data-json-src="hero.image" data-json-alt="hero.imageAlt"
                 onLoad={() => setHeroImgLoaded(true)}
                 className={`w-full h-full object-cover object-center transform group-hover:scale-105 transition-[opacity,transform] duration-700 ${heroImgLoaded ? 'opacity-100' : 'opacity-0'}`}
                 alt="About Getmeds" />
@@ -210,10 +233,10 @@ export default function AboutUs() {
             <div className="relative rounded-2xl overflow-hidden cursor-pointer"
               style={{ flex: activePanel === 0 ? 3 : 0.8, minWidth: 0, transition: 'flex 0.5s ease' }}
               onMouseEnter={() => setActivePanel(0)}>
-              <img src={getImage('About Us Team Image 1', 'assets/aboutussix.jpg')}
+              <LinkableImage link={getImageLink('About Us Team Image 1')} src={getImage('About Us Team Image 1', 'assets/aboutussix.jpg')}
                 alt="Getmeds Team Gathering"
                 className="w-full h-full object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent pointer-events-none"></div>
               <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
                 <h3 className="text-white text-xl md:text-2xl font-bold leading-snug mb-2">
                   One Team, One Mission
@@ -232,10 +255,10 @@ export default function AboutUs() {
             <div className="relative rounded-2xl overflow-hidden cursor-pointer"
               style={{ flex: activePanel === 1 ? 3 : 0.8, minWidth: 0, transition: 'flex 0.5s ease' }}
               onMouseEnter={() => setActivePanel(1)}>
-              <img src={getImage('About Us Team Image 2', 'assets/aboutusseven.jpg')}
+              <LinkableImage link={getImageLink('About Us Team Image 2')} src={getImage('About Us Team Image 2', 'assets/aboutusseven.jpg')}
                 alt="Getmeds Training & Development"
                 className="w-full h-full object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent"></div>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent pointer-events-none"></div>
               <div className="absolute bottom-0 left-0 right-0 p-6">
                 <h3 className="text-white text-lg md:text-xl font-bold leading-snug whitespace-nowrap">
                   Learning &amp; Development
@@ -250,10 +273,10 @@ export default function AboutUs() {
             <div className="relative rounded-2xl overflow-hidden cursor-pointer"
               style={{ flex: activePanel === 2 ? 3 : 0.8, minWidth: 0, transition: 'flex 0.5s ease' }}
               onMouseEnter={() => setActivePanel(2)}>
-              <img src={getImage('About Us Team Image 3', 'assets/aboutuseight.jpg')}
+              <LinkableImage link={getImageLink('About Us Team Image 3')} src={getImage('About Us Team Image 3', 'assets/aboutuseight.jpg')}
                 alt="Getmeds Strategy & Innovation"
                 className="w-full h-full object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent"></div>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent pointer-events-none"></div>
               <div className="absolute bottom-0 left-0 right-0 p-6">
                 <h3 className="text-white text-lg md:text-xl font-bold leading-snug whitespace-nowrap">
                   Strategy &amp; Innovation
@@ -703,17 +726,11 @@ export default function AboutUs() {
                     <i className="fa-regular fa-image text-white/70" style={{ fontSize: '16px' }}></i>
                     <span className="text-white/70" style={{ fontSize: '10px', fontFamily: 'Poppins, sans-serif' }}>No image</span>
                   </div>
-                  {member.img && (
-                    <img src={getImage(`assets/${member.img}`, `assets/${member.img}`)} alt={member.name}
+                  {member.src && (
+                    <img src={member.src} alt={member.name}
                       onError={(e) => { e.currentTarget.style.display = 'none'; }}
                       className="absolute inset-0 w-full h-full object-cover object-top rounded-[1.3rem] transition-all duration-700 z-[3]" />
                   )}
-                  {/* LinkedIn hover */}
-                  <div className="absolute top-3 right-3 z-20 opacity-0 translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
-                    <a href="#" className="h-7 w-7 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-primary transition shadow-lg">
-                      <i className="fa-brands fa-linkedin-in text-[10px]"></i>
-                    </a>
-                  </div>
                   {/* Name overlay */}
                   <div className="absolute bottom-0 left-0 w-full px-3 py-3 z-10" style={{ background: 'linear-gradient(to top,rgba(29,159,218,0.95) 0%,rgba(97,166,68,0.1) 70%,transparent 100%)' }}>
                     <h4 className="text-white font-semibold leading-tight" style={{ fontSize: '0.92rem', textShadow: '0 2px 10px rgba(0,0,0,0.5)', marginBottom: '2px' }}>{member.name}</h4>
@@ -781,7 +798,7 @@ export default function AboutUs() {
             </div>
             <div className="flex items-center justify-center p-6 transition-all duration-300 transform hover:scale-110">
               <div className="flex items-center gap-2 opacity-60">
-                <img src={getImage('UNGC Logo Partner', 'assets/UNGClogo.png')} className="h-10 object-contain" alt="UNGC Logo" />
+                <LinkableImage link={getImageLink('UNGC Logo Partner')} src={getImage('UNGC Logo Partner', 'assets/UNGClogo.png')} className="h-10 object-contain" alt="UNGC Logo" />
               </div>
             </div>
           </div>

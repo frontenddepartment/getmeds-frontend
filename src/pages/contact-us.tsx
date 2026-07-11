@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { injectHTML } from '../lib/injectHTML';
 import { useImageMapper, useSiteSettings } from '../lib/useSanity';
+import { LinkableImage } from '../lib/LinkableImage';
 import { getApiUrl } from '../lib/api';
 import { setPageMeta } from '../lib/seo';
 import type { ContactGroup } from '../types/sanity';
@@ -38,7 +39,7 @@ export default function ContactUs() {
     });
   }, []);
 
-  const { getImage, loading: imagesLoading } = useImageMapper('contact-us');
+  const { getImage, getImageLink, loading: imagesLoading } = useImageMapper('contact-us');
   const { data: settings } = useSiteSettings();
   const [formData, setFormData] = useState({
     name: '',
@@ -195,7 +196,7 @@ export default function ContactUs() {
           className={`relative rounded-[10px] md:rounded-[1.5rem] border border-gray-100/20 overflow-hidden min-h-[190px] sm:min-h-[360px] md:min-h-[450px] lg:min-h-[500px] flex items-end shadow-sm transition-colors duration-500 ${!heroImgLoaded ? 'bg-gray-200 animate-pulse' : 'bg-gray-100'}`}>
           {/* Background Image — only mount after Sanity resolves so the src never changes */}
           {!imagesLoading && (
-            <img
+            <LinkableImage link={getImageLink('Contact Us Hero Background')}
               src={getImage('Contact Us Hero Background', 'assets/contactushero.png')}
               alt="Contact Us"
               onLoad={() => setHeroImgLoaded(true)}

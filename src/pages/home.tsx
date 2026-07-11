@@ -5,6 +5,7 @@ import { getApiUrl } from '../lib/api';
 import { injectHTML } from '../lib/injectHTML';
 import { urlFor } from '../lib/sanity';
 import { sanityQuery } from '../lib/sanityProxy';
+import { LinkableImage } from '../lib/LinkableImage';
 
 
 // Declare global tailwind interface
@@ -85,7 +86,7 @@ export default function GetMedsHomepage() {
     }
   }, []);
 
-  const { getImage } = useImageMapper('home');
+  const { getImage, getImageLink } = useImageMapper('home');
   const { data: newsItems } = useNews();
   const { data: settings } = useSiteSettings();
   const { data: heroSlidesData } = useHeroSlides();
@@ -124,16 +125,19 @@ export default function GetMedsHomepage() {
       bg: 'assets/imagebanner.jpg',
       heading: 'Life-Saving Access.\nRedefining Healthcare Possibilities.',
       sub: 'Getmeds is a global pharmaceutical company advancing healthcare access in the Philippines through high-quality medicines from essential therapies to advanced hospital treatments.',
+      link: null as string | null,
     },
     {
       bg: 'assets/homebanner.png',
       heading: 'Advanced Cancer Medicines.\nHope Delivered to Every Patient.',
       sub: 'From oncology to hematology, we bring world-class cancer treatments directly to Filipino patients and healthcare institutions nationwide.',
+      link: null as string | null,
     },
     {
       bg: 'assets/homebanner3.png',
       heading: 'Compassionate Care.\nA Global Reach, A Local Heart.',
       sub: 'With a presence across multiple countries, Getmeds connects global pharmaceutical innovation with the communities that need it most.',
+      link: null as string | null,
     },
   ];
 
@@ -145,6 +149,7 @@ export default function GetMedsHomepage() {
         bg: s.image ? urlFor(s.image).url() : fallback.bg,
         heading: s.altText || fallback.heading,
         sub: fallback.sub,
+        link: s.enableLink && s.link ? s.link as string : null,
       };
     })
     : fallbackHeroSlides;
@@ -429,17 +434,20 @@ export default function GetMedsHomepage() {
           <div
             key={i}
             className="absolute inset-0 bg-cover bg-center transition-opacity duration-700"
+            onClick={() => { if (slide.link) window.open(slide.link, '_blank', 'noopener,noreferrer'); }}
             style={{
               backgroundImage: `url('${getImage(slide.bg, slide.bg)}')`,
               opacity: i === heroIndex ? 1 : 0,
               zIndex: 0,
+              pointerEvents: i === heroIndex ? 'auto' : 'none',
+              cursor: slide.link ? 'pointer' : 'default',
             }}
           />
         ))}
 
         {/* Hero Content Area — heading, subtext, and buttons hidden on the 2nd slide */}
         {heroIndex !== 1 && (
-          <div className="max-w-7xl mx-auto px-6 w-full relative z-10 flex-grow flex items-center justify-start pt-20 md:pt-28 pb-16 md:pb-20 text-left">
+          <div className="max-w-7xl mx-auto px-6 w-full relative z-10 flex-grow flex items-center justify-start pt-20 md:pt-28 pb-16 md:pb-20 text-left pointer-events-none">
             <div className="max-w-2xl space-y-3 flex flex-col items-start">
               <div style={{ opacity: heroFading ? 0 : 1, transition: 'opacity 0.4s ease' }}>
                 <h1 className="text-2xl md:text-5xl lg:text-6xl font-bold leading-[1.1] tracking-tight bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent mb-3">
@@ -453,7 +461,7 @@ export default function GetMedsHomepage() {
               </div>
 
               {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row gap-3 pt-2">
+              <div className="flex flex-col sm:flex-row gap-3 pt-2 pointer-events-auto">
                 <a href="/cancer-medicines" className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:opacity-90 text-white text-center font-bold uppercase tracking-wider text-[11px] px-6 py-3 rounded-lg shadow-2xl shadow-blue-500/40 transition-all flex items-center justify-center gap-2 group">
                   Our Solutions <i className="fa-solid fa-chevron-right group-hover:translate-x-1 transition-transform"></i>
                 </a>
@@ -560,21 +568,24 @@ export default function GetMedsHomepage() {
               <div
                 key={i}
                 className="absolute inset-0 bg-cover bg-center transition-opacity duration-700"
+                onClick={() => { if (slide.link) window.open(slide.link, '_blank', 'noopener,noreferrer'); }}
                 style={{
                   backgroundImage: `url('${getImage(slide.bg, slide.bg)}')`,
                   opacity: i === heroIndex ? 1 : 0,
                   zIndex: 0,
+                  pointerEvents: i === heroIndex ? 'auto' : 'none',
+                  cursor: slide.link ? 'pointer' : 'default',
                 }}
               />
             ))}
-            
+
             {/* Soft white overlay for title contrast */}
-            <div className="absolute inset-0 bg-gradient-to-r from-white/70 via-white/10 to-transparent z-[1]" />
+            <div className="absolute inset-0 bg-gradient-to-r from-white/70 via-white/10 to-transparent z-[1] pointer-events-none" />
 
             {/* Overlaid Title on Mobile Slider */}
             {heroIndex !== 1 && (
-              <div 
-                className="absolute top-4 left-4 right-4 z-10 transition-opacity duration-400"
+              <div
+                className="absolute top-4 left-4 right-4 z-10 transition-opacity duration-400 pointer-events-none"
                 style={{ opacity: heroFading ? 0 : 1 }}
               >
                 <h1 className="text-[24px] font-black leading-[1.2] tracking-tight max-w-[90%]">
@@ -711,14 +722,16 @@ export default function GetMedsHomepage() {
           {/* Image Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 ca-anim ca-right ca-d2">
             <div className="h-[220px] md:h-[280px] lg:h-[340px]">
-              <img
+              <LinkableImage
+                link={getImageLink('Patient First Section Image')}
                 src={getImage('Patient First Section Image', 'assets/genericslider.jpg')}
                 alt="Medical Professional"
                 className="w-full h-full object-cover object-center rounded-[24px] shadow-lg"
               />
             </div>
             <div className="h-[220px] md:h-[280px] lg:h-[340px]">
-              <img
+              <LinkableImage
+                link={getImageLink('Patient Second Section Image')}
                 src={getImage('Patient Second Section Image', 'assets/test.jpg')}
                 alt="Medical Facility"
                 className="w-full h-full object-cover object-center rounded-[24px] shadow-lg"
