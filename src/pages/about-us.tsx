@@ -4,6 +4,7 @@ import { useImageMapper, useTeamMembers } from '../lib/useSanity';
 import { urlFor } from '../lib/sanity';
 import { setPageMeta } from '../lib/seo';
 import { LinkableImage } from '../lib/LinkableImage';
+import { getApiUrl } from '../lib/api';
 
 export default function AboutUs() {
   useEffect(() => {
@@ -83,6 +84,69 @@ export default function AboutUs() {
       }, 600);
     }
   }, []);
+
+  const [isInquiryOpen, setIsInquiryOpen] = useState(false);
+  const [partnershipData, setPartnershipData] = useState({
+    name: '',
+    company: '',
+    email: '',
+    phone: '',
+    message: '',
+    consent: false
+  });
+  const [submitState, setSubmitState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
+  const [successModalOpen, setSuccessModalOpen] = useState(false);
+
+  const handlePartnershipSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!partnershipData.name || !partnershipData.company || !partnershipData.email || !partnershipData.phone || !partnershipData.message) {
+      alert('Please fill in all required fields.');
+      return;
+    }
+    if (!partnershipData.consent) {
+      alert('Please consent to processing your information.');
+      return;
+    }
+    setSubmitState('sending');
+    try {
+      const payload = {
+        inquiryType: 'Partnership',
+        fullName: partnershipData.name,
+        email: partnershipData.email,
+        phone: partnershipData.phone,
+        subject: partnershipData.company,
+        message: partnershipData.message,
+        files: []
+      };
+
+      const response = await fetch(getApiUrl(), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (!response.ok) {
+        throw new Error('Partnership submission failed.');
+      }
+
+      setSubmitState('sent');
+      setPartnershipData({
+        name: '',
+        company: '',
+        email: '',
+        phone: '',
+        message: '',
+        consent: false
+      });
+      setIsInquiryOpen(false);
+      setSuccessModalOpen(true);
+      setSubmitState('idle');
+    } catch (error) {
+      console.error('Submission error:', error);
+      setSubmitState('error');
+      setTimeout(() => setSubmitState('idle'), 2000);
+    }
+  };
 
   const teamTrackRef = useRef<HTMLDivElement>(null);
 
@@ -167,7 +231,7 @@ export default function AboutUs() {
       {/* Enhanced Hero Section */}
       <section className="w-full mx-auto px-3 sm:px-4 md:px-6 mt-3 md:mt-4 mb-0 max-w-[1600px]">
         <div className={`relative rounded-[10px] md:rounded-[1.5rem] overflow-hidden min-h-[190px] md:min-h-[500px] flex items-end group transition-colors duration-500 ${!heroImgLoaded ? 'bg-gray-200 animate-pulse' : 'bg-gray-100'}`}>
-          {/* Background Image — only mount after Sanity resolves so the src never changes */}
+          {/* Background Image (Sanity) — temporarily disabled in favor of a hardcoded hero video below
           {!imagesLoading && (
             <div className="absolute inset-0 z-0">
               <LinkableImage link={getImageLink('About Us Hero Background')} src={getImage('About Us Hero Background', 'assets/fallback.jpg')} data-json-src="hero.image" data-json-alt="hero.imageAlt"
@@ -176,6 +240,20 @@ export default function AboutUs() {
                 alt="About Getmeds" />
             </div>
           )}
+          */}
+
+          {/* Background Video — hardcoded, temporary (not Sanity-connected) */}
+          <div className="absolute inset-0 z-0">
+            <video
+              src="/assets/aboutusvideo.mp4"
+              autoPlay
+              muted
+              loop
+              playsInline
+              onLoadedData={() => setHeroImgLoaded(true)}
+              className={`w-full h-full object-cover object-center transform group-hover:scale-105 transition-[opacity,transform] duration-700 ${heroImgLoaded ? 'opacity-100' : 'opacity-0'}`}
+            />
+          </div>
 
           {/* Content */}
           <div className="relative z-10 w-full px-3 md:px-14 pb-3 md:pb-16 pt-10 md:pt-20 max-w-4xl ca-anim ca-up">
@@ -814,18 +892,17 @@ export default function AboutUs() {
             <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full transform translate-x-1/3 -translate-y-1/3"></div>
             <div className="absolute bottom-0 left-0 w-48 h-48 bg-white opacity-5 rounded-full transform -translate-x-1/4 translate-y-1/4"></div>
 
-            <h2 className="text-xl md:text-2xl font-bold mb-3 relative z-10">Ready to take control of your health?</h2>
-            <p className="text-blue-50 text-sm md:text-base mb-6 max-w-2xl mx-auto relative z-10">Join thousands of satisfied
-              patients and experience the future of healthcare today.</p>
+            <h2 className="text-xl md:text-2xl font-bold mb-3 relative z-10">Every patient. Every doctor. Every pharmacy. Every partner.</h2>
+            <p className="text-blue-50 text-sm md:text-base mb-6 max-w-2xl mx-auto relative z-10">Getmeds is built for all of them. Whether you're seeking medicine, sourcing therapies, exploring partnerships, or joining our team — one message reaches the right hands.</p>
             <div className="flex flex-col sm:flex-row justify-center gap-3 relative z-10">
-              <a href="order-medicines.html"
-                className="bg-white text-blue-600 font-bold text-sm px-6 py-2.5 rounded-full hover:bg-gray-50 transition transform hover:-translate-y-1">
-                Order Medicines
-              </a>
               <a href="contact-us.html"
-                className="bg-transparent border-2 border-white text-white font-bold text-sm px-6 py-2.5 rounded-full hover:bg-white/10 transition transform hover:-translate-y-1">
+                className="bg-white text-blue-600 font-bold text-sm px-6 py-2.5 rounded-full hover:bg-gray-50 transition transform hover:-translate-y-1">
                 Contact Us
               </a>
+              <button onClick={() => setIsInquiryOpen(true)}
+                className="bg-transparent border-2 border-white text-white font-bold text-sm px-6 py-2.5 rounded-full hover:bg-white/10 transition transform hover:-translate-y-1">
+                Partner With Us
+              </button>
             </div>
           </div>
         </div>
@@ -833,6 +910,139 @@ export default function AboutUs() {
 
       {/* Footer */}
       <div id="footer-container" />
+
+      {/* Slide-out Drawer Overlay */}
+      <div
+        className={`fixed inset-0 z-[150] bg-black/60 backdrop-blur-sm transition-opacity duration-300 ${isInquiryOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+        onClick={() => setIsInquiryOpen(false)}
+      ></div>
+
+      {/* Slide-out Drawer Panel */}
+      <div
+        className={`fixed top-4 right-4 h-[calc(100vh-2rem)] w-[calc(100%-2rem)] max-w-md bg-white shadow-2xl rounded-[15px] z-[160] transform transition-transform duration-500 ease-[cubic-bezier(0.2,0.8,0.2,1)] overflow-y-auto ${isInquiryOpen ? 'translate-x-0' : 'translate-x-[calc(100%+2rem)]'}`}
+      >
+        <div className="p-8">
+          {/* Close Button */}
+          <button
+            onClick={() => setIsInquiryOpen(false)}
+            className="absolute top-6 right-6 text-gray-400 hover:text-gray-900 transition-colors w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200"
+          >
+            <i className="fa-solid fa-xmark text-lg"></i>
+          </button>
+
+          {/* Drawer Header */}
+          <div className="mb-6 pr-8 mt-2">
+            <h2 className="text-[28px] font-semibold text-slate-900 mb-1 leading-tight tracking-tight">Partner with Getmeds</h2>
+            <h3 className="text-sm font-medium text-primary mb-4">Advancing Healthcare Together</h3>
+            <p className="text-[13px] text-gray-600 leading-relaxed text-justify">
+              Join Getmeds in expanding access to quality medicines and innovative healthcare solutions across the Philippines and beyond.<br />We'd like to hear from you.
+            </p>
+          </div>
+
+          {/* Inquiry Form */}
+          <form className="space-y-4" onSubmit={handlePartnershipSubmit}>
+            <div>
+              <label className="block text-xs font-semibold text-gray-600 mb-1">Name <span className="text-red-500">*</span></label>
+              <input type="text" required placeholder="e.g. Juan Dela Cruz"
+                value={partnershipData.name}
+                onChange={e => setPartnershipData(prev => ({ ...prev, name: e.target.value }))}
+                className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-[13px] placeholder-gray-400" />
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-gray-600 mb-1">Company/Organization <span className="text-red-500">*</span></label>
+              <input type="text" required placeholder="e.g. General Hospital Inc."
+                value={partnershipData.company}
+                onChange={e => setPartnershipData(prev => ({ ...prev, company: e.target.value }))}
+                className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-[13px] placeholder-gray-400" />
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-gray-600 mb-1">Email <span className="text-red-500">*</span></label>
+              <input type="email" required placeholder="e.g. juan@hospital.com"
+                value={partnershipData.email}
+                onChange={e => setPartnershipData(prev => ({ ...prev, email: e.target.value }))}
+                className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-[13px] placeholder-gray-400" />
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-gray-600 mb-1">Mobile number <span className="text-red-500">*</span></label>
+              <input type="tel" inputMode="numeric" required placeholder="e.g. +63 912 345 6789"
+                value={partnershipData.phone}
+                onChange={e => setPartnershipData(prev => ({ ...prev, phone: e.target.value.replace(/[^\d+\s\-()]/g, '') }))}
+                className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-[13px] placeholder-gray-400" />
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-gray-600 mb-1">Tell us how we can help <span className="text-red-500">*</span></label>
+              <textarea
+                required
+                rows={4}
+                value={partnershipData.message}
+                onChange={e => setPartnershipData(prev => ({ ...prev, message: e.target.value }))}
+                className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-[13px] resize-none placeholder-gray-400"
+                placeholder="Briefly tell us about your inquiry — whether you're a hospital, pharmacy, manufacturer, or healthcare partner."
+              ></textarea>
+            </div>
+
+            <div className="flex items-start space-x-3 pt-1">
+              <input type="checkbox" required id="consent"
+                checked={partnershipData.consent}
+                onChange={e => setPartnershipData(prev => ({ ...prev, consent: e.target.checked }))}
+                className="mt-[2px] w-3.5 h-3.5 text-primary border-gray-300 rounded focus:ring-primary cursor-pointer" />
+              <label htmlFor="consent" className="text-[11px] text-gray-500 leading-snug cursor-pointer select-none">
+                I consent to Getmeds processing my information in accordance with the Data Privacy Act of 2012. <span className="text-red-500">*</span>
+              </label>
+            </div>
+
+            <div className="pt-2 pb-8">
+              <button
+                type="submit"
+                disabled={submitState === 'sending'}
+                className="w-full bg-gradient-to-r from-primary to-[#1D9FDA] hover:opacity-90 text-white font-semibold py-3.5 px-6 rounded-lg shadow-lg shadow-blue-500/30 transition-all flex items-center justify-center space-x-2 group disabled:opacity-50"
+              >
+                <span>{submitState === 'sending' ? 'Sending...' : 'Send inquiry'}</span>
+                <i className="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+              </button>
+            </div>
+          </form>
+
+        </div>
+      </div>
+
+      {/* Partnership Success Modal */}
+      {successModalOpen && (
+        <>
+          <style>{`@keyframes checkBounce{0%{transform:scale(0);opacity:0}55%{transform:scale(1.06);opacity:1}75%{transform:scale(0.97)}100%{transform:scale(1);opacity:1}}.check-bounce{animation:checkBounce 0.8s ease-out forwards}`}</style>
+          <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/50 backdrop-blur-sm px-4">
+            <div className="bg-white w-full max-w-[400px] rounded-2xl shadow-2xl relative overflow-hidden">
+              <button onClick={() => setSuccessModalOpen(false)}
+                className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition z-10">
+                <i className="fa-solid fa-xmark text-base"></i>
+              </button>
+              <div className="px-10 pt-12 pb-8 text-center">
+                <div className="flex justify-center mb-7">
+                  <div className="check-bounce w-14 h-14 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg,#61A644,#1D9FDA)' }}>
+                    <i className="fa-solid fa-check text-white text-xl"></i>
+                  </div>
+                </div>
+                <h2 className="text-[19px] font-semibold text-gray-900 mb-4 leading-snug">Thank you for considering Getmeds as your partner.</h2>
+                <p className="text-[13px] text-gray-500 leading-relaxed">
+                  Our business development team will contact you within 2 working days to discuss collaboration opportunities. For urgent concerns, please call{' '}
+                  <a href="tel:+639190769103" className="text-[#1D9FDA] font-semibold hover:underline">+63 919 076 9103</a>.
+                </p>
+              </div>
+              <div className="border-t border-gray-100 px-10 py-4 text-center">
+                <button onClick={() => setSuccessModalOpen(false)}
+                  className="text-[13px] font-semibold hover:underline"
+                  style={{ background: 'linear-gradient(to right,#61A644,#1D9FDA)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
 
     </div>
   );

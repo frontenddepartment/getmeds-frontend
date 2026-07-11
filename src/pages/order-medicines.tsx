@@ -245,14 +245,20 @@ export default function OrderMedicines() {
     }
     setSubmitState('sending');
 
-    const filesData: { name: string; type: string; base64: string }[] = [];
-    for (const file of [...uploadedFiles, patientIdFile]) {
+    const filesData: { name: string; type: string; base64: string; category: 'id' | 'prescription' }[] = [];
+    for (const file of uploadedFiles) {
       try {
         const base64 = await fileToBase64(file);
-        filesData.push({ name: file.name, type: file.type, base64 });
+        filesData.push({ name: file.name, type: file.type, base64, category: 'prescription' });
       } catch (err) {
         console.error('Error processing file:', file.name, err);
       }
+    }
+    try {
+      const base64 = await fileToBase64(patientIdFile);
+      filesData.push({ name: patientIdFile.name, type: patientIdFile.type, base64, category: 'id' });
+    } catch (err) {
+      console.error('Error processing file:', patientIdFile.name, err);
     }
 
     const contactInfo = contactSameAsPatient
