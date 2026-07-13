@@ -72,7 +72,7 @@
       "permanent": true
     },
     {
-      "source": "/:slug((?!404|about-us|blog|blog-detail|cancer-medicines|cancer-medicine|careers|contact-us|csr|edit-profile|global-presence|home-preview|meditations|order-medicines|patient-assistance-program|product-range|profile|services|under-development|ungc|api/|wp-json/|wp-content/|assets/|public/|components/|data/|src/|dist/|node_modules/|_vercel/|masteradmin|masteradlorock|masteradlorockpd|masteradlorockpdprocess|masteradlogriyon|adminadlorock|[^/]+\\.[^/]+$)[^/]+)",
+      "source": "/:slug((?!404|about-us|blog|blog-detail|cancer-medicines|cancer-medicine|careers|contact-us|csr|edit-profile|employee-verification|global-presence|home-preview|meditations|order-medicines|patient-assistance-program|product-range|profile|services|under-development|ungc|api/|wp-json/|wp-content/|assets/|public/|components/|data/|src/|dist/|node_modules/|_vercel/|masteradmin|masteradlorock|masteradlorockpd|masteradlorockpdprocess|masteradlogriyon|adminadlorock|[^/]+\\.[^/]+$)[^/]+)",
       "destination": "/blog/:slug",
       "permanent": true
     }
