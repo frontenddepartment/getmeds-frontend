@@ -58,6 +58,15 @@ const formatFieldWithLineBreaks = (text: string | undefined | null) => {
   ));
 };
 
+// Product name shown in the table/cards is always built straight from the
+// brandName/genericName fields — this is intentionally separate from the
+// Site Settings > Product Naming Format, which only governs image matching
+// (see getProductImage / matchProductImageAsset). Never route this through it.
+const getProductDisplayName = (p: { name?: string; brandName?: string; genericName?: string }) =>
+  p.brandName && p.genericName && p.brandName !== p.genericName
+    ? `${p.brandName} (${p.genericName})`
+    : p.name || p.brandName || p.genericName || 'Unnamed Product';
+
 const subcategorySpecials: Record<string, string> = {
   'non-small-cell-lung-cancer': 'lung-cancer',
   'acute-myeloid-leukemia': 'aml',
@@ -1111,9 +1120,7 @@ export default function CancerMedicines() {
                   {/* MOBILE CARDS */}
                   <div className="lg:hidden space-y-3">
                     {paginated.map((p, i) => {
-                      const displayName = p.brandName && p.genericName && p.brandName !== p.genericName
-                        ? `${p.brandName} (${p.genericName})`
-                        : p.name || p.brandName || p.genericName || 'Unnamed Product';
+                      const displayName = getProductDisplayName(p);
                       return (
                         <div key={p._id || i} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 flex gap-3">
                           <div className="w-14 h-14 bg-gray-50 rounded-xl overflow-hidden flex-shrink-0 border border-gray-100 p-1">
@@ -1187,9 +1194,7 @@ export default function CancerMedicines() {
                       </thead>
                       <tbody className="divide-y divide-gray-50">
                         {paginated.map((p, i) => {
-                          const displayName = p.brandName && p.genericName && p.brandName !== p.genericName
-                            ? `${p.brandName} (${p.genericName})`
-                            : p.name || p.brandName || p.genericName || 'Unnamed Product';
+                          const displayName = getProductDisplayName(p);
                           const openUpward = i >= paginated.length - 2;
                           return (
                             <tr key={p._id || i} className="hover:bg-blue-50/30 transition-colors group">
