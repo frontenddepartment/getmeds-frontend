@@ -4,37 +4,6 @@ import { setPageMeta } from '../lib/seo';
 import { getVerifiedEmployees } from '../lib/queries';
 import { BadgeCheck, ShieldCheck } from "lucide-react";
 
-// ─── helpers ─────────────────────────────────────────────────────────────────
-function getPositionFromEmail(email: string): string {
-  const e = (email || '').toLowerCase();
-  if (e.includes('dra1') || e.includes('dra2')) return 'Medical Officer / Doctor';
-  if (e.includes('dra')) return 'Medical Officer / Doctor';
-  if (e.includes('rx')) return 'Licensed Pharmacist';
-  if (e.includes('regulatory')) return 'Regulatory Affairs Specialist';
-  if (e.includes('bd')) return 'Business Development Executive';
-  if (e.includes('gov')) return 'Government Bidding Executive';
-  if (e.includes('finance') || e.includes('fin1') || e.includes('fin@')) return 'Finance Officer';
-  if (e.includes('hr2') || e.includes('hr@')) return 'HR Specialist';
-  if (e.includes('social')) return 'Social Media Coordinator';
-  if (e.includes('salesadmin')) return 'Sales Admin';
-  if (e.includes('sales')) return 'Sales Executive';
-  if (e.includes('care')) return 'Customer Care Representative';
-  if (e.includes('productspecialist')) return 'Product Specialist';
-  if (e.includes('marketing')) return 'Digital Marketing Specialist';
-  if (e.includes('pabaza')) return 'Patient Assistance Coordinator';
-  if (e.includes('msr')) return 'Medical Sales Representative';
-  if (e.includes('ea@')) return 'Executive Assistant';
-  if (e.includes('naresh') || e.includes('saurav') || e.includes('sameen') || e.includes('sumit')) return 'Director';
-  return 'Getmeds Representative';
-}
-
-function getCompanyFromId(empId: string): string {
-  if (empId.startsWith('2MG')) return '2MG Incorporated';
-  if (empId.startsWith('GPI')) return 'GetMeds Philippines Inc.';
-  return 'GetMeds Philippines Inc. / 2MG Incorporated';
-}
-// ─────────────────────────────────────────────────────────────────────────────
-
 export default function EmployeeVerification() {
   useEffect(() => {
     setPageMeta({
@@ -51,11 +20,9 @@ export default function EmployeeVerification() {
   const [matchedEmployee, setMatchedEmployee] = useState<{
     name: string;
     initials: string;
-    employeeId: string;
-    position: string;
-    company: string;
-    email: string;
-    phone: string;
+    employeeId: string | null;
+    email: string | null;
+    phone: string | null;
     verificationDate: string;
   } | null>(null);
   const [searchQueryUsed, setSearchQueryUsed] = useState('');
@@ -173,7 +140,7 @@ export default function EmployeeVerification() {
         }
         const empName = rawName;
 
-        const empId = found.employeeId?.[0] || 'N/A';
+        const empId = found.employeeId?.[0] || null;
 
         // Initials from display name
         const words = empName.split(' ').filter(Boolean);
@@ -181,26 +148,19 @@ export default function EmployeeVerification() {
           ? `${words[0][0]}${words[words.length - 1][0]}`.toUpperCase()
           : (words[0]?.[0] || 'G').toUpperCase();
 
-        // Company derived from employee-id prefix
-        const company = getCompanyFromId(empId);
-
-        // Position inferred from primary company e-mail
-        const primaryEmail = Array.isArray(found.companyEmail)
-          ? (found.companyEmail.filter(Boolean)[0] || '')
-          : (found.companyEmail || '');
-        const position = getPositionFromEmail(primaryEmail);
-
         // All emails joined
-        const email = Array.isArray(found.companyEmail)
+        const emailJoined = Array.isArray(found.companyEmail)
           ? found.companyEmail.filter(Boolean).join(' / ')
-          : (found.companyEmail || 'N/A');
+          : (found.companyEmail || '');
+        const email = emailJoined || null;
 
         // Company-issued number first, fall back to mobile
         const issuedNums = (found['companyIssuedNo.'] || found.companyIssuedNo || []);
         const mobileNums = (found.mobileNumber || []);
         const phoneArr = Array.isArray(issuedNums) ? issuedNums.filter(Boolean) : [];
         const mobileArr = Array.isArray(mobileNums) ? mobileNums.filter(Boolean) : [];
-        const phone = (phoneArr.length ? phoneArr : mobileArr).join(' / ') || 'N/A';
+        const phoneJoined = (phoneArr.length ? phoneArr : mobileArr).join(' / ');
+        const phone = phoneJoined || null;
 
         // Verification date (timestamp with date and time)
         const dateStr = new Date().toLocaleDateString('en-US', {
@@ -211,7 +171,7 @@ export default function EmployeeVerification() {
         });
         const verificationDate = `${dateStr} at ${timeStr}`;
 
-        setMatchedEmployee({ name: empName, initials, employeeId: empId, position, company, email, phone, verificationDate });
+        setMatchedEmployee({ name: empName, initials, employeeId: empId, email, phone, verificationDate });
         setModalState('verified');
       } else {
         setModalState('not-verified');
@@ -223,6 +183,13 @@ export default function EmployeeVerification() {
       setSubmitting(false);
     }
   };
+
+  // Only fields the database actually gave us — no fabricated placeholders,
+  // and the grid auto-flows around whichever ones are missing.
+  const detailRows: { label: string; value: string; breakAll?: boolean }[] = [
+    matchedEmployee?.email ? { label: 'Company Email', value: matchedEmployee.email, breakAll: true } : null,
+    matchedEmployee?.phone ? { label: 'Company No.', value: matchedEmployee.phone } : null,
+  ].filter((row): row is { label: string; value: string; breakAll?: boolean } => row !== null);
 
 
   return (
@@ -403,41 +370,27 @@ export default function EmployeeVerification() {
                       <span className="text-gray-900 font-semibold text-[17px] leading-snug truncate block">
                         {matchedEmployee?.name}
                       </span>
-                      <div className="flex items-center gap-1.5 mt-1 text-gray-500">
-                        <ShieldCheck size={14} className="text-green-600" />
-                        <span className="text-[12px]">{matchedEmployee?.employeeId}</span>
-                      </div>
+                      {matchedEmployee?.employeeId && (
+                        <div className="flex items-center gap-1.5 mt-1 text-gray-500">
+                          <ShieldCheck size={14} className="text-green-600" />
+                          <span className="text-[12px]">{matchedEmployee.employeeId}</span>
+                        </div>
+                      )}
                     </div>
                   </div>
 
-                  {/* 3-column detail grid */}
+                  {/* 3-column detail grid — only fields the database actually provided,
+                      plus the two always-present ones (Status, Verified On) */}
                   <div className="grid grid-cols-3 gap-x-6 gap-y-4">
-                    {/* Position */}
-                    <div className="fade-row" style={{ animationDelay: '0.05s' }}>
-                      <span className="block text-[11px] text-gray-400 font-medium mb-1">Position</span>
-                      <span className="text-[13px] text-gray-800 font-medium">{matchedEmployee?.position}</span>
-                    </div>
-
-                    {/* Company */}
-                    <div className="fade-row" style={{ animationDelay: '0.08s' }}>
-                      <span className="block text-[11px] text-gray-400 font-medium mb-1">Company</span>
-                      <span className="text-[13px] text-gray-800 font-medium">{matchedEmployee?.company}</span>
-                    </div>
-
-                    {/* Company Email */}
-                    <div className="fade-row" style={{ animationDelay: '0.11s' }}>
-                      <span className="block text-[11px] text-gray-400 font-medium mb-1">Company Email</span>
-                      <span className="text-[13px] text-gray-800 break-all">{matchedEmployee?.email}</span>
-                    </div>
-
-                    {/* Company No. */}
-                    <div className="fade-row" style={{ animationDelay: '0.14s' }}>
-                      <span className="block text-[11px] text-gray-400 font-medium mb-1">Company No.</span>
-                      <span className="text-[13px] text-gray-800">{matchedEmployee?.phone}</span>
-                    </div>
+                    {detailRows.map((row, i) => (
+                      <div key={row.label} className="fade-row" style={{ animationDelay: `${0.05 + i * 0.03}s` }}>
+                        <span className="block text-[11px] text-gray-400 font-medium mb-1">{row.label}</span>
+                        <span className={`text-[13px] text-gray-800 font-medium ${row.breakAll ? 'break-all' : ''}`}>{row.value}</span>
+                      </div>
+                    ))}
 
                     {/* Status */}
-                    <div className="fade-row" style={{ animationDelay: '0.17s' }}>
+                    <div className="fade-row" style={{ animationDelay: `${0.05 + detailRows.length * 0.03}s` }}>
                       <span className="block text-[11px] text-gray-400 font-medium mb-1">Status</span>
                       <span className="inline-flex items-center gap-1.5">
                         <span className="w-1.5 h-1.5 rounded-full bg-green-500 inline-block animate-pulse"></span>
@@ -446,7 +399,7 @@ export default function EmployeeVerification() {
                     </div>
 
                     {/* Verified On */}
-                    <div className="fade-row" style={{ animationDelay: '0.2s' }}>
+                    <div className="fade-row" style={{ animationDelay: `${0.05 + (detailRows.length + 1) * 0.03}s` }}>
                       <span className="block text-[11px] text-gray-400 font-medium mb-1">Verified On</span>
                       <span className="text-[13px] text-gray-800">{matchedEmployee?.verificationDate}</span>
                     </div>
