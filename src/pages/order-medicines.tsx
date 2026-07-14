@@ -429,6 +429,10 @@ export default function OrderMedicines() {
   return (
     <div style={{ fontFamily: "'Poppins', sans-serif" }} className="bg-white text-gray-800 antialiased">
       <style>{`
+        @media (max-width: 767px) {
+          html { scroll-behavior: smooth; }
+        }
+
         .ca-anim{opacity:0}
         .ca-anim.ca-in{animation-fill-mode:both}
         .ca-up.ca-in{animation:caFadeUp 0.65s cubic-bezier(0.22,1,0.36,1) both}

@@ -158,6 +158,12 @@ const Csr: React.FC = () => {
 
   return (
     <div style={{ fontFamily: "'Poppins', sans-serif" }} className="bg-white text-gray-800 antialiased">
+      <style>{`
+        @media (max-width: 767px) {
+          html { scroll-behavior: smooth; }
+        }
+      `}</style>
+
       {/* Navbar — outside overflow wrapper so sticky works */}
       <div id="navbar-container" className="sticky top-0 z-[50]" />
 
