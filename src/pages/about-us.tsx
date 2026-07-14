@@ -202,6 +202,10 @@ export default function AboutUs() {
   return (
     <div style={{ fontFamily: "'Poppins', sans-serif" }} className="bg-white text-gray-800 antialiased">
       <style>{`
+        @media (max-width: 767px) {
+          html { scroll-behavior: smooth; }
+        }
+
         @keyframes caFadeUp   { from { opacity:0; transform:translateY(32px); } to { opacity:1; transform:translateY(0); } }
         @keyframes caFadeLeft { from { opacity:0; transform:translateX(-36px); } to { opacity:1; transform:translateX(0); } }
         @keyframes caFadeRight{ from { opacity:0; transform:translateX(36px);  } to { opacity:1; transform:translateX(0); } }

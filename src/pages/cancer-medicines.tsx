@@ -724,6 +724,10 @@ export default function CancerMedicines() {
   return (
     <div style={{ fontFamily: "'Poppins', sans-serif" }} className="bg-white text-gray-800 antialiased flex flex-col h-screen overflow-hidden">
       <style>{`
+        @media (max-width: 767px) {
+          .product-range-scroll { scroll-behavior: smooth; }
+        }
+
         .sidebar-scroll::-webkit-scrollbar { width: 4px; }
         .sidebar-scroll::-webkit-scrollbar-track { background: transparent; }
         .sidebar-scroll::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 999px; }
@@ -835,7 +839,7 @@ export default function CancerMedicines() {
         )}
 
         {/* MAIN CONTENT COLUMN */}
-        <div className="flex-1 min-w-0 overflow-y-auto" style={{ transition: 'all 0.3s ease' }}>
+        <div className="flex-1 min-w-0 overflow-y-auto product-range-scroll" style={{ transition: 'all 0.3s ease' }}>
 
           {/* Hero Banner */}
           <section className="w-full px-4 md:px-6 pt-5 pb-4">
