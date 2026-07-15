@@ -1,13 +1,11 @@
-import React, { useEffect, useState, useRef, useMemo } from 'react';
-import { useProducts, useCategories, useImageMapper, useSiteSettings } from '../lib/useSanity';
+import React, { useEffect, useState, useRef } from 'react';
+import { useProducts, useCategories, useImageMapper } from '../lib/useSanity';
 import { urlFor } from '../lib/sanity';
-import { sanityQuery } from '../lib/sanityProxy';
 import type { Product as SanityProduct, Category } from '../types/sanity';
 import { injectHTML } from '../lib/injectHTML';
 import { getApiUrl } from '../lib/api';
 import { setPageMeta } from '../lib/seo';
 import { PortableText } from '@portabletext/react';
-import { matchProductImageAsset } from '../lib/imageNaming';
 
 interface ProductWithCategory extends Omit<SanityProduct, 'category'> {
   category?: Category;
@@ -37,8 +35,6 @@ export default function ProductDetail() {
   const { data: productsDataRaw, loading: productsLoading } = useProducts();
   const productsData = productsDataRaw as ProductWithCategory[] | null;
   const { data: categoriesData } = useCategories();
-  const { data: settings } = useSiteSettings();
-  const [imageAssets, setImageAssets] = useState<any[]>([]);
   const [product, setProduct] = useState<ProductWithCategory | null>(null);
   const [notFound, setNotFound] = useState(false);
 
@@ -64,12 +60,6 @@ export default function ProductDetail() {
     const params = new URLSearchParams(window.location.search);
     const ut = params.get('userType') || 'patient';
     setUserType(ut);
-  }, []);
-
-  useEffect(() => {
-    sanityQuery<any[]>('imageAsset.all')
-      .then(assets => setImageAssets(assets || []))
-      .catch(err => console.error('Error fetching image assets:', err));
   }, []);
 
   useEffect(() => {
@@ -251,17 +241,6 @@ export default function ProductDetail() {
   const backUrl = isCancerProduct(product) ? '/cancer-medicines' : '/product-range';
 
 
-  const brandNameCounts = useMemo(() => {
-    const counts = new Map<string, number>();
-    if (productsData) {
-      productsData.forEach(p => {
-        const brand = (p.brandName || '').toLowerCase().trim();
-        if (brand) counts.set(brand, (counts.get(brand) || 0) + 1);
-      });
-    }
-    return counts;
-  }, [productsData]);
-
   const getProductImage = (p: ProductWithCategory, size?: number) => {
     if (p.image && p.image.asset) {
       try {
@@ -269,32 +248,6 @@ export default function ProductDetail() {
         return urlFor(p.image).url();
       } catch (err) {
         console.error('Error generating image URL:', err);
-      }
-    }
-
-    if (settings && imageAssets.length > 0) {
-      const primaryImageFormat = settings.primaryImageNamingFormat || '{brandName}';
-      const secondaryImageFormat = settings.fallbackImageNamingFormat || '{brandName}-{strength}';
-      const brandNameKey = (p.brandName || '').toLowerCase().trim();
-      const hasMultipleOutputs = (brandNameCounts.get(brandNameKey) || 0) > 1;
-
-      const formatsToTry = hasMultipleOutputs
-        ? [secondaryImageFormat, primaryImageFormat]
-        : [primaryImageFormat, secondaryImageFormat];
-
-      const matchedAsset = matchProductImageAsset(p, formatsToTry, imageAssets);
-
-      if (matchedAsset) {
-        try {
-          const imageObj = {
-            _type: 'image',
-            asset: { _type: 'reference', _ref: matchedAsset._id }
-          };
-          if (size) return urlFor(imageObj).width(size).height(size).url();
-          return urlFor(imageObj).url();
-        } catch (err) {
-          console.error('Error generating dynamic image URL:', err);
-        }
       }
     }
 

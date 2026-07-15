@@ -1,5 +1,6 @@
 import { client } from './sanity'
 import { sanityQuery } from './sanityProxy'
+import { computeProductKey, findDuplicateBrandNames } from './productImageKey'
 import type {
   Product,
   Category,
@@ -96,14 +97,29 @@ export async function getNavigation() {
 // Products
 // ─────────────────────────────────────────────
 
+interface ProductImageLink {
+  productKey?: string
+  image?: any
+}
+
 async function fetchProductsFromExcel(): Promise<Product[]> {
-  const result = await sanityQuery<{ json_data?: string }>('product.excelJson')
+  const result = await sanityQuery<{ json_data?: string; productImages?: ProductImageLink[] }>('product.excelJson')
   if (!result || !result.json_data) return []
   try {
     const data = JSON.parse(result.json_data)
     const firstSheetName = Object.keys(data)[0]
     if (!firstSheetName) return []
     const rawProducts = data[firstSheetName] || []
+
+    // Images are linked explicitly per product (via the Studio's Product
+    // Images tab) rather than guessed from an uploaded file's name — look
+    // each one up by the same stable key the Studio computed when it was
+    // attached. See productImageKey.ts.
+    const duplicateBrandNames = findDuplicateBrandNames(rawProducts)
+    const imageByKey = new Map<string, any>()
+    ;(result.productImages || []).forEach((link) => {
+      if (link.productKey && link.image) imageByKey.set(link.productKey, link.image)
+    })
 
     // Fetch all individual product documents (which don't have title defined) that are active/present or undefined remarks
     const originalProducts = await sanityQuery<any[]>('product.individualDocs')
@@ -200,7 +216,10 @@ async function fetchProductsFromExcel(): Promise<Product[]> {
         slug,
         category: orig.category || getCategoryReference(p.category),
         excelCategory: p.category,
-        image: orig.image || p.image,
+        image: (() => {
+          const key = computeProductKey(p, duplicateBrandNames)
+          return (key && imageByKey.get(key)) || orig.image
+        })(),
         availability: p.availability === undefined ? (orig.availability ?? true) : (p.availability === true || String(p.availability).toLowerCase() === 'true'),
         // Preserve rich-text / detail fields from the Sanity doc when Excel row is empty
         description: p.description || orig.description,
