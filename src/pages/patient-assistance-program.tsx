@@ -56,6 +56,18 @@ export default function PatientAssistanceProgram() {
   const tabBarPassedRef = useRef(false);
   const lastScrollYRef = useRef(0);
   const sectionRef = useRef<HTMLDivElement>(null);
+  const introHeaderRef = useRef<HTMLDivElement>(null);
+  const [introHeaderWidth, setIntroHeaderWidth] = useState<number | null>(null);
+
+  useEffect(() => {
+    const el = introHeaderRef.current;
+    if (!el) return;
+    const update = () => setIntroHeaderWidth(el.getBoundingClientRect().width);
+    update();
+    const obs = new ResizeObserver(update);
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
 
   useEffect(() => {
     const navContainer = document.getElementById('navbar-container');
@@ -218,22 +230,22 @@ export default function PatientAssistanceProgram() {
 
         {/* Program Intro */}
         <section className="w-full overflow-hidden reveal relative bg-white">
-          <div className="max-w-7xl mx-auto px-4 pt-1 pb-0 flex items-center gap-3 justify-center mb-0">
-            <LinkableImage link={getImageLink('Patient Assistance Program Logo')}
-              src={getImage('Patient Assistance Program Logo', 'assets/pap.png')}
-              alt="Patient Assistance Program"
-              className="w-28 sm:w-40 md:w-64 object-contain shrink-0"
-            />
-            <div className="min-w-0">
-              <p className="text-sm sm:text-lg md:text-2xl lg:text-3xl font-semibold uppercase tracking-normal sm:tracking-widest bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent leading-snug">
-                Chemotherapy at Mga Gamot sa Cancer
-              </p>
-              <div className="mt-2 w-10 h-1 bg-gradient-to-r from-[#61A644] to-[#1D9FDA] rounded-full" />
+          <div className="max-w-7xl mx-auto px-4 pt-6 md:pt-10 pb-0 flex justify-center mb-0">
+            <div ref={introHeaderRef} className="inline-flex items-center">
+              <div className="min-w-0">
+                <p className="text-sm sm:text-lg md:text-2xl lg:text-3xl font-semibold uppercase tracking-normal sm:tracking-widest bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent leading-snug">
+                  Chemotherapy at Mga Gamot sa Cancer
+                </p>
+                <div className="mt-2 w-10 h-1 bg-gradient-to-r from-[#61A644] to-[#1D9FDA] rounded-full" />
+              </div>
             </div>
           </div>
 
-          <div className="max-w-7xl mx-auto px-4 flex flex-col items-center gap-4 mt-2 lg:-mt-10">
-            <div className="flex-1 py-2 space-y-2 text-gray-700 font-medium leading-normal text-sm md:text-base max-w-xl w-full">
+          <div className="max-w-7xl mx-auto px-4 flex flex-col items-center gap-4 mt-2 md:mt-4 lg:mt-6">
+            <div
+              className="py-2 space-y-2 text-gray-700 font-medium leading-normal text-sm md:text-base w-full"
+              style={introHeaderWidth ? { maxWidth: introHeaderWidth } : undefined}
+            >
               <p>
                 Ang Getmeds ay nakatuon sa pagsuporta sa kalusugan at kapakanan ng bawat Pilipinong lumalaban sa cancer. Sa pamamagitan ng aming Patient Assistance Program, nakikipagtulungan kami sa mga ahensya ng gobyerno tulad ng DSWD (AICS) at PCSO (MAP) upang makapagbigay ng tulong medikal, partikular na ang libreng chemotherapy at iba pang gamot sa cancer, sa mga higit na nangangailangan.
               </p>
@@ -411,11 +423,8 @@ export default function PatientAssistanceProgram() {
                     {connectorLine}
                   </div>
                   <div className="flex-1 pb-8">
-                    <div className="flex items-start justify-between gap-4 mb-1.5">
-                      <div>
-                        <h3 className="font-bold text-gray-900 text-base sm:text-lg leading-snug">Makipag-ugnayan sa Aming Team</h3>
-                      </div>
-                      <i className="fa-solid fa-headset shrink-0 mt-1" style={{ fontSize: '2.4rem', background: GRADIENT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }} />
+                    <div className="mb-1.5">
+                      <h3 className="font-bold text-gray-900 text-base sm:text-lg leading-snug">Makipag-ugnayan sa Aming Team</h3>
                     </div>
                     <p className="text-gray-600 text-sm leading-relaxed">
                       Kontakin ang aming Patient Assistance Officer para sa pagsusuri ng inyong requirements at pagkuha ng opisyal na quotation para sa inyong gamot sa cancer.
@@ -430,11 +439,8 @@ export default function PatientAssistanceProgram() {
                     {connectorLine}
                   </div>
                   <div className="flex-1 pb-8">
-                    <div className="flex items-start justify-between gap-4 mb-1.5">
-                      <div>
-                        <h3 className="font-bold text-gray-900 text-base sm:text-lg leading-snug">I-submit ang Iyong Requirements</h3>
-                      </div>
-                      <i className="fa-solid fa-paper-plane shrink-0 mt-1" style={{ fontSize: '2.4rem', background: GRADIENT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }} />
+                    <div className="mb-1.5">
+                      <h3 className="font-bold text-gray-900 text-base sm:text-lg leading-snug">I-submit ang Iyong Requirements</h3>
                     </div>
                     <div className="rounded-xl border border-gray-100 overflow-hidden text-sm">
                       <div className="grid grid-cols-2 bg-gray-50 border-b border-gray-100">
@@ -459,11 +465,8 @@ export default function PatientAssistanceProgram() {
                     <StepNumber n={6} done />
                   </div>
                   <div className="flex-1 pb-2">
-                    <div className="flex items-start justify-between gap-4 mb-1.5">
-                      <div>
-                        <h3 className="font-bold text-gray-900 text-base sm:text-lg leading-snug">Hintayin ang Iyong Guarantee Letter (GL)</h3>
-                      </div>
-                      <i className="fa-solid fa-envelope-open-text shrink-0 mt-1" style={{ fontSize: '2.4rem', background: GRADIENT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }} />
+                    <div className="mb-1.5">
+                      <h3 className="font-bold text-gray-900 text-base sm:text-lg leading-snug">Hintayin ang Iyong Guarantee Letter (GL)</h3>
                     </div>
                     <p className="text-gray-600 text-sm leading-relaxed">
                       Kapag naaprubahan, dalhin ang GL sa nakasaad na supplier para makuha ang gamot. Para sa gabay, makipag-ugnayan sa aming Patient Assistance Officer.

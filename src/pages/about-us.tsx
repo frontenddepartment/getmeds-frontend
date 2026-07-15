@@ -19,6 +19,24 @@ export default function AboutUs() {
   const valuesContainerRef = useRef<HTMLDivElement>(null);
   const [activePanel, setActivePanel] = useState(0);
   const [heroImgLoaded, setHeroImgLoaded] = useState(false);
+  const warehouseVideoRef = useRef<HTMLVideoElement>(null);
+  const ungcVideoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    if (activePanel === 0) warehouseVideoRef.current?.play().catch(() => {});
+    else warehouseVideoRef.current?.pause();
+
+    if (activePanel === 1) ungcVideoRef.current?.play().catch(() => {});
+    else ungcVideoRef.current?.pause();
+  }, [activePanel]);
+
+  const handlePanelFullscreen = (e: React.MouseEvent, ref: React.RefObject<HTMLVideoElement>) => {
+    e.stopPropagation();
+    const el = ref.current as any;
+    if (!el) return;
+    if (el.requestFullscreen) el.requestFullscreen();
+    else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+  };
 
   useEffect(() => {
     const navContainer = document.getElementById('navbar-container');
@@ -315,40 +333,42 @@ export default function AboutUs() {
             <div className="relative rounded-2xl overflow-hidden cursor-pointer"
               style={{ flex: activePanel === 0 ? 3 : 0.8, minWidth: 0, transition: 'flex 0.5s ease' }}
               onMouseEnter={() => setActivePanel(0)}>
-              <LinkableImage link={getImageLink('About Us Team Image 1')} src={getImage('About Us Team Image 1', 'assets/aboutussix.jpg')}
-                alt="Getmeds Team Gathering"
-                className="w-full h-full object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent pointer-events-none"></div>
-              <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
-                <h3 className="text-white text-xl md:text-2xl font-bold leading-snug mb-2">
-                  One Team, One Mission
-                </h3>
-                <p className={`text-white/80 text-[13px] md:text-[14px] leading-relaxed mb-4 max-w-sm transition-opacity duration-300 ${activePanel === 0 ? 'opacity-100' : 'opacity-0'}`}>
-                  United by compassion — our team works together to deliver life-changing medicines across the Philippines and beyond.
-                </p>
-                <a href="/careers"
-                  className={`inline-flex items-center gap-2 bg-white text-gray-900 text-[12px] font-semibold px-4 py-2 rounded-full hover:bg-gray-100 transition-all duration-300 ${activePanel === 0 ? 'opacity-100' : 'opacity-0'}`}>
-                  More Detail <i className="fa-solid fa-arrow-right text-[10px]"></i>
-                </a>
-              </div>
+              <video
+                ref={warehouseVideoRef}
+                src="assets/WAREHOUSE.mp4"
+                muted
+                loop
+                playsInline
+                className="w-full h-full object-cover"
+              />
+              <button
+                onClick={e => handlePanelFullscreen(e, warehouseVideoRef)}
+                className="absolute top-4 right-4 w-10 h-10 rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-sm flex items-center justify-center text-white transition-colors duration-200 z-10"
+                aria-label="View fullscreen"
+              >
+                <i className="fa-solid fa-expand text-sm"></i>
+              </button>
             </div>
 
             {/* Panel 2 — Center */}
             <div className="relative rounded-2xl overflow-hidden cursor-pointer"
               style={{ flex: activePanel === 1 ? 3 : 0.8, minWidth: 0, transition: 'flex 0.5s ease' }}
               onMouseEnter={() => setActivePanel(1)}>
-              <LinkableImage link={getImageLink('About Us Team Image 2')} src={getImage('About Us Team Image 2', 'assets/aboutusseven.jpg')}
-                alt="Getmeds Training & Development"
-                className="w-full h-full object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent pointer-events-none"></div>
-              <div className="absolute bottom-0 left-0 right-0 p-6">
-                <h3 className="text-white text-lg md:text-xl font-bold leading-snug whitespace-nowrap">
-                  Learning &amp; Development
-                </h3>
-                <p className={`text-white/70 text-[13px] leading-relaxed mt-2 max-w-xs transition-opacity duration-300 delay-150 ${activePanel === 1 ? 'opacity-100' : 'opacity-0'}`}>
-                  Continuous growth through training, certification, and professional development programs that empower every member of our team.
-                </p>
-              </div>
+              <video
+                ref={ungcVideoRef}
+                src="assets/UNGC.mp4"
+                muted
+                loop
+                playsInline
+                className="w-full h-full object-cover"
+              />
+              <button
+                onClick={e => handlePanelFullscreen(e, ungcVideoRef)}
+                className="absolute top-4 right-4 w-10 h-10 rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-sm flex items-center justify-center text-white transition-colors duration-200 z-10"
+                aria-label="View fullscreen"
+              >
+                <i className="fa-solid fa-expand text-sm"></i>
+              </button>
             </div>
 
             {/* Panel 3 — Right */}
