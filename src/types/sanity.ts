@@ -395,8 +395,6 @@ export interface SiteSettings {
   copyright?: string
   legalLinks?: Array<LinkItem & { _key: string }>
   appDownloadLinks?: Array<AppDownloadLink & { _key: string }>
-  primaryImageNamingFormat?: string
-  fallbackImageNamingFormat?: string
 }
 
 // ─────────────────────────────────────────────

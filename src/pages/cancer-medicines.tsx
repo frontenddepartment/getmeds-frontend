@@ -1,10 +1,8 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react';
-import { useProducts, useCategories, useImageMapper, useSiteSettings } from '../lib/useSanity';
+import { useProducts, useCategories, useImageMapper } from '../lib/useSanity';
 import { urlFor } from '../lib/sanity';
-import { sanityQuery } from '../lib/sanityProxy';
 import type { Product as SanityProduct, Category } from '../types/sanity';
 import { injectHTML } from '../lib/injectHTML';
-import { matchProductImageAsset } from '../lib/imageNaming';
 
 
 interface ProductWithCategory extends Omit<SanityProduct, 'category'> {
@@ -59,9 +57,7 @@ const formatFieldWithLineBreaks = (text: string | undefined | null) => {
 };
 
 // Product name shown in the table/cards is always built straight from the
-// brandName/genericName fields — this is intentionally separate from the
-// Site Settings > Product Naming Format, which only governs image matching
-// (see getProductImage / matchProductImageAsset). Never route this through it.
+// brandName/genericName fields.
 const getProductDisplayName = (p: { name?: string; brandName?: string; genericName?: string }) =>
   p.brandName && p.genericName && p.brandName !== p.genericName
     ? `${p.brandName} (${p.genericName})`
@@ -133,18 +129,6 @@ export default function CancerMedicines() {
   const { data: productsDataRaw, loading: productsLoading } = useProducts();
   const productsData = productsDataRaw as ProductWithCategory[] | null;
   const { data: categoriesData, loading: categoriesLoading } = useCategories();
-  const { data: settings } = useSiteSettings();
-  const [imageAssets, setImageAssets] = useState<any[]>([]);
-
-  useEffect(() => {
-    sanityQuery<any[]>('imageAsset.all')
-      .then(assets => {
-        setImageAssets(assets || []);
-      })
-      .catch(err => {
-        console.error('Error fetching image assets on frontend:', err);
-      });
-  }, []);
 
   const [openCategories, setOpenCategories] = useState<Set<string>>(new Set());
   const [selectedCategory, setSelectedCategory] = useState<{ category: string; subCategory: string }>({
@@ -368,19 +352,6 @@ export default function CancerMedicines() {
     }
   }, [selectedCategory]);
 
-  const brandNameCounts = useMemo(() => {
-    const counts = new Map<string, number>()
-    if (productsData) {
-      productsData.forEach(p => {
-        const brand = (p.brandName || '').toLowerCase().trim()
-        if (brand) {
-          counts.set(brand, (counts.get(brand) || 0) + 1)
-        }
-      })
-    }
-    return counts
-  }, [productsData])
-
   const getProductImage = (p: ProductWithCategory, size?: number) => {
     if (p.image && p.image.asset) {
       try {
@@ -391,43 +362,6 @@ export default function CancerMedicines() {
       } catch (err) {
         console.error('Error generating image URL:', err);
       }
-    }
-
-    if (settings && imageAssets.length > 0) {
-      const primaryImageFormat = settings.primaryImageNamingFormat || '{brandName}'
-      const secondaryImageFormat = settings.fallbackImageNamingFormat || '{brandName}-{strength}'
-      const brandNameKey = (p.brandName || '').toLowerCase().trim()
-      const hasMultipleOutputs = (brandNameCounts.get(brandNameKey) || 0) > 1
-
-      // Try both formats: preferred first, then alternate
-      const formatsToTry = hasMultipleOutputs
-        ? [secondaryImageFormat, primaryImageFormat]
-        : [primaryImageFormat, secondaryImageFormat]
-
-      const matchedAsset = matchProductImageAsset(p, formatsToTry, imageAssets);
-
-      if (matchedAsset) {
-        try {
-          const imageObj = {
-            _type: 'image',
-            asset: {
-              _type: 'reference',
-              _ref: matchedAsset._id,
-            }
-          }
-          if (size) {
-            return urlFor(imageObj).width(size).height(size).url();
-          }
-          return urlFor(imageObj).url();
-        } catch (err) {
-          console.error('Error generating dynamic image URL:', err);
-        }
-      }
-    }
-
-    const brandLower = (p.brandName || '').toLowerCase().trim()
-    if (brandLower) {
-      return `assets/${brandLower}.png`
     }
 
     return 'assets/no-image.png';
