@@ -232,8 +232,8 @@ export default function PatientAssistanceProgram() {
             </div>
           </div>
 
-          <div className="max-w-7xl mx-auto px-4 flex flex-col lg:flex-row items-center gap-4 mt-2 lg:-mt-10">
-            <div className="order-1 lg:order-2 flex-1 py-2 space-y-2 text-gray-700 font-medium leading-normal text-sm md:text-base max-w-xl w-full">
+          <div className="max-w-7xl mx-auto px-4 flex flex-col items-center gap-4 mt-2 lg:-mt-10">
+            <div className="flex-1 py-2 space-y-2 text-gray-700 font-medium leading-normal text-sm md:text-base max-w-xl w-full">
               <p>
                 Ang Getmeds ay nakatuon sa pagsuporta sa kalusugan at kapakanan ng bawat Pilipinong lumalaban sa cancer. Sa pamamagitan ng aming Patient Assistance Program, nakikipagtulungan kami sa mga ahensya ng gobyerno tulad ng DSWD (AICS) at PCSO (MAP) upang makapagbigay ng tulong medikal, partikular na ang libreng chemotherapy at iba pang gamot sa cancer, sa mga higit na nangangailangan.
               </p>
@@ -249,15 +249,6 @@ export default function PatientAssistanceProgram() {
                     <p className="text-gray-900 text-sm font-semibold">PCSO – Medical Assistance Program</p>
                   </div>
                 </div>
-              </div>
-            </div>
-
-            <div className="order-2 lg:order-1 shrink-0 flex items-end self-end w-56 sm:w-64 lg:w-[420px] xl:w-[480px] mx-auto lg:mx-0 -mb-1">
-              <div className="relative inline-block w-full">
-                <div className="hidden lg:block absolute inset-0 shadow-[inset_0_0_120px_60px_white] rounded-[20px] pointer-events-none z-10" />
-                <LinkableImage link={getImageLink('Patient Program Flow Diagram')} src={getImage('Patient Program Flow Diagram', 'assets/patientpap.png')} alt="Cancer Patient" className="lg:hidden w-full object-contain object-bottom rounded-xl" />
-                <LinkableImage link={getImageLink('Patient Program Flow Diagram')} src={getImage('Patient Program Flow Diagram', 'assets/patientpap.png')} alt="Cancer Patient" className="hidden lg:block w-full object-contain object-bottom rounded-[20px]"
-                  style={{ maskImage: 'radial-gradient(ellipse at center, black 40%, transparent 75%)', WebkitMaskImage: 'radial-gradient(ellipse at center, black 40%, transparent 75%)' }} />
               </div>
             </div>
           </div>
@@ -321,11 +312,8 @@ export default function PatientAssistanceProgram() {
                     {connectorLine}
                   </div>
                   <div className="flex-1 pb-8">
-                    <div className="flex items-start justify-between gap-4 mb-1.5">
-                      <div>
-                        <h3 className="font-bold text-gray-900 text-base sm:text-lg leading-snug">Kumonsulta sa Iyong Doktor</h3>
-                      </div>
-                      <i className="fa-solid fa-stethoscope shrink-0 mt-1" style={{ fontSize: '2.4rem', background: GRADIENT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }} />
+                    <div className="mb-1.5">
+                      <h3 className="font-bold text-gray-900 text-base sm:text-lg leading-snug">Kumonsulta sa Iyong Doktor</h3>
                     </div>
                     <p className="text-gray-600 text-sm leading-relaxed">
                       Tanungin ang iyong attending physician tungkol sa government assistance para sa iyong mga gamot sa cancer.
@@ -340,11 +328,8 @@ export default function PatientAssistanceProgram() {
                     {connectorLine}
                   </div>
                   <div className="flex-1 pb-8">
-                    <div className="flex items-start justify-between gap-4 mb-1.5">
-                      <div>
-                        <h3 className="font-bold text-gray-900 text-base sm:text-lg leading-snug">Ihanda ang Iyong Mga Medical Documents</h3>
-                      </div>
-                      <i className="fa-solid fa-folder-open shrink-0 mt-1" style={{ fontSize: '2.4rem', background: GRADIENT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }} />
+                    <div className="mb-1.5">
+                      <h3 className="font-bold text-gray-900 text-base sm:text-lg leading-snug">Ihanda ang Iyong Mga Medical Documents</h3>
                     </div>
                     <p className="text-gray-600 text-sm leading-relaxed mb-3">
                       Kunin ang sumusunod mula sa iyong doktor — original copy, may buong pangalan, pirma, at license number:
@@ -364,11 +349,8 @@ export default function PatientAssistanceProgram() {
                     {connectorLine}
                   </div>
                   <div className="flex-1 pb-8">
-                    <div className="flex items-start justify-between gap-4 mb-1.5">
-                      <div>
-                        <h3 className="font-bold text-gray-900 text-base sm:text-lg leading-snug">Kumpletuhin ang Iyong Application Documents</h3>
-                      </div>
-                      <i className="fa-solid fa-clipboard-list shrink-0 mt-1" style={{ fontSize: '2.4rem', background: GRADIENT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }} />
+                    <div className="mb-1.5">
+                      <h3 className="font-bold text-gray-900 text-base sm:text-lg leading-snug">Kumpletuhin ang Iyong Application Documents</h3>
                     </div>
                     <p className="text-gray-600 text-sm leading-relaxed mb-4">
                       Bukod sa mga medikal na dokumento mula sa iyong doktor, may karagdagang requirements na kailangang i-submit, na nakadepende sa ahensya ng gobyerno na iyong aaplayan:
