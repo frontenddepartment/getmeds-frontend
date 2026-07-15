@@ -189,8 +189,6 @@ export default function OrderMedicines() {
   const [viewingFileUrl, setViewingFileUrl] = useState<string | null>(null);
   const [uploadComplete, setUploadComplete] = useState(false);
   const [validationSubmitted, setValidationSubmitted] = useState(false);
-  const [stepperVisible, setStepperVisible] = useState(false);
-  const howToOrderRef = useRef<HTMLDivElement>(null);
   const [formData, setFormData] = useState({
     patientName: '',
     email: '',
@@ -378,15 +376,6 @@ export default function OrderMedicines() {
   }, [ageDropdownOpen]);
 
   useEffect(() => {
-    if (uploadComplete || validationSubmitted) { setStepperVisible(true); return; }
-    const el = howToOrderRef.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(([e]) => setStepperVisible(!e.isIntersecting), { threshold: 0 });
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, [uploadComplete, validationSubmitted]);
-
-  useEffect(() => {
     const navContainer = document.getElementById('navbar-container');
     if (navContainer && navContainer.innerHTML.trim() === '') {
       fetch('/components/navbar.html', { cache: 'no-store' })
@@ -453,47 +442,10 @@ export default function OrderMedicines() {
       {/* Navbar */}
       <div id="navbar-container" className="sticky top-0 z-[50]" />
 
-      {/* Sticky Step Progress Bar */}
-      <div className={`fixed top-[90px] left-0 right-0 z-[49] flex justify-center sm:justify-end sm:pr-6 pointer-events-none transition-all duration-500 ease-in-out ${stepperVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}`}>
-        <div className="pointer-events-auto bg-white rounded-xl sm:rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-gray-100 px-3 py-2 sm:px-8 sm:py-3">
-          <div className="flex items-start gap-0">
-            <div className="flex flex-col items-center gap-1 sm:gap-1.5 min-w-[52px] sm:min-w-[80px]">
-              <div className={`w-7 h-7 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold border-2 transition-all duration-300 ${uploadComplete ? 'bg-[#61A644] border-[#61A644] text-white' : 'border-gray-200 text-gray-300 bg-white'}`}>
-                {uploadComplete ? <i className="fa-solid fa-check text-[11px] sm:text-[13px]"></i> : <span>1</span>}
-              </div>
-              <span className={`text-[8px] sm:text-[10px] font-semibold ${uploadComplete ? 'text-gray-900' : 'text-gray-400'}`}>Upload</span>
-              <span className={`text-[7px] sm:text-[9px] px-1 sm:px-1.5 py-0.5 rounded-full font-medium ${uploadComplete ? 'bg-green-50 text-green-600' : 'bg-gray-50 text-gray-300'}`}>
-                {uploadComplete ? 'Completed' : 'Pending'}
-              </span>
-            </div>
-            <div className={`h-[2px] w-8 sm:w-16 md:w-24 mt-[13px] sm:mt-[17px] rounded-full transition-all duration-500 ${uploadComplete ? 'bg-[#61A644]' : 'bg-gray-100'}`} />
-            <div className="flex flex-col items-center gap-1 sm:gap-1.5 min-w-[52px] sm:min-w-[80px]">
-              <div className={`w-7 h-7 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold border-2 transition-all duration-300 ${validationSubmitted ? 'bg-[#61A644] border-[#61A644] text-white' : uploadComplete ? 'border-[#61A644] text-[#61A644] bg-white' : 'border-gray-200 text-gray-300 bg-white'}`}>
-                {validationSubmitted ? <i className="fa-solid fa-check text-[11px] sm:text-[13px]"></i> : <span>2</span>}
-              </div>
-              <span className={`text-[8px] sm:text-[10px] font-semibold ${validationSubmitted || uploadComplete ? 'text-gray-900' : 'text-gray-400'}`}>Validation</span>
-              <span className={`text-[7px] sm:text-[9px] px-1 sm:px-1.5 py-0.5 rounded-full font-medium ${validationSubmitted ? 'bg-green-50 text-green-600' : uploadComplete ? 'bg-blue-50 text-blue-500' : 'bg-gray-50 text-gray-300'}`}>
-                {validationSubmitted ? 'Completed' : uploadComplete ? 'In Progress' : 'Pending'}
-              </span>
-            </div>
-            <div className={`h-[2px] w-8 sm:w-16 md:w-24 mt-[13px] sm:mt-[17px] rounded-full transition-all duration-500 ${validationSubmitted ? 'bg-[#61A644]' : 'bg-gray-100'}`} />
-            <div className="flex flex-col items-center gap-1 sm:gap-1.5 min-w-[52px] sm:min-w-[80px]">
-              <div className={`w-7 h-7 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold border-2 transition-all duration-300 ${validationSubmitted ? 'border-[#1D9FDA] text-[#1D9FDA] bg-white' : 'border-gray-200 text-gray-300 bg-white'}`}>
-                {validationSubmitted ? <i className="fa-solid fa-bell text-[11px] sm:text-[13px]"></i> : <span>3</span>}
-              </div>
-              <span className={`text-[8px] sm:text-[10px] font-semibold text-center leading-tight ${validationSubmitted ? 'text-[#1D9FDA]' : 'text-gray-400'}`}>Await Call<br />or Email</span>
-              {validationSubmitted && (
-                <span className="text-[7px] sm:text-[9px] px-1 sm:px-1.5 py-0.5 rounded-full font-medium bg-blue-50 text-blue-500">Awaiting</span>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-
       <div className="overflow-x-hidden">
 
         {/* ── Hero + Step Cards ── */}
-        <section ref={howToOrderRef} className="w-full px-4 md:px-6 pt-5 pb-4">
+        <section className="w-full px-4 md:px-6 pt-5 pb-4">
           <div
             className="relative rounded-[20px] overflow-hidden px-8 md:px-14 pt-12"
             style={{ background: 'linear-gradient(135deg, #3aaf5c 0%, #1ab8c4 45%, #1a99d6 100%)' }}
