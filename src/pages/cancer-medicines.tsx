@@ -4,6 +4,7 @@ import { urlFor } from '../lib/sanity';
 import { sanityQuery } from '../lib/sanityProxy';
 import type { Product as SanityProduct, Category } from '../types/sanity';
 import { injectHTML } from '../lib/injectHTML';
+import { matchProductImageAsset } from '../lib/imageNaming';
 
 
 interface ProductWithCategory extends Omit<SanityProduct, 'category'> {
@@ -56,6 +57,15 @@ const formatFieldWithLineBreaks = (text: string | undefined | null) => {
     </React.Fragment>
   ));
 };
+
+// Product name shown in the table/cards is always built straight from the
+// brandName/genericName fields — this is intentionally separate from the
+// Site Settings > Product Naming Format, which only governs image matching
+// (see getProductImage / matchProductImageAsset). Never route this through it.
+const getProductDisplayName = (p: { name?: string; brandName?: string; genericName?: string }) =>
+  p.brandName && p.genericName && p.brandName !== p.genericName
+    ? `${p.brandName} (${p.genericName})`
+    : p.name || p.brandName || p.genericName || 'Unnamed Product';
 
 const subcategorySpecials: Record<string, string> = {
   'non-small-cell-lung-cancer': 'lung-cancer',
@@ -386,56 +396,12 @@ export default function CancerMedicines() {
       const brandNameKey = (p.brandName || '').toLowerCase().trim()
       const hasMultipleOutputs = (brandNameCounts.get(brandNameKey) || 0) > 1
 
-      const formatFilenameLocal = (pattern: string, doc: any) => {
-        let name = pattern
-        const fields = ['brandName', 'genericName', 'strength', 'form']
-        for (const field of fields) {
-          const val = String(doc[field] || '').trim()
-          const lowerPlaceholder = `{${field.toLowerCase()}}`
-          const upperPlaceholder = `{${field.toUpperCase()}}`
-          const mixedPlaceholder = `{${field}}`
-          name = name.split(lowerPlaceholder).join(val.toLowerCase())
-          name = name.split(upperPlaceholder).join(val.toUpperCase())
-          name = name.split(mixedPlaceholder).join(val)
-          name = name.replace(new RegExp(`{${field}}`, 'gi'), val)
-        }
-        return name
-      }
-
-      const cleanNameLocal = (str: string) => str.toLowerCase().replace(/[^a-z0-9]/g, '')
-
       // Try both formats: preferred first, then alternate
       const formatsToTry = hasMultipleOutputs
         ? [secondaryImageFormat, primaryImageFormat]
         : [primaryImageFormat, secondaryImageFormat]
 
-      let matchedAsset: any = null
-
-      // Pass 1: Exact match with each format
-      for (const fmt of formatsToTry) {
-        if (matchedAsset) break
-        const targetNormalized = cleanNameLocal(formatFilenameLocal(fmt, p))
-        if (!targetNormalized) continue
-        matchedAsset = imageAssets.find((asset: any) => {
-          if (!asset.originalFilename) return false
-          const baseName = asset.originalFilename.replace(/\.[^/.]+$/, '')
-          return cleanNameLocal(baseName) === targetNormalized
-        })
-      }
-
-      // Pass 2: Fuzzy startsWith fallback (asset starts with target or target starts with asset)
-      if (!matchedAsset) {
-        for (const fmt of formatsToTry) {
-          if (matchedAsset) break
-          const targetNormalized = cleanNameLocal(formatFilenameLocal(fmt, p))
-          if (!targetNormalized || targetNormalized.length < 3) continue
-          matchedAsset = imageAssets.find((asset: any) => {
-            if (!asset.originalFilename) return false
-            const assetNormalized = cleanNameLocal(asset.originalFilename.replace(/\.[^/.]+$/, ''))
-            return assetNormalized.startsWith(targetNormalized) || targetNormalized.startsWith(assetNormalized)
-          })
-        }
-      }
+      const matchedAsset = matchProductImageAsset(p, formatsToTry, imageAssets);
 
       if (matchedAsset) {
         try {
@@ -1154,9 +1120,7 @@ export default function CancerMedicines() {
                   {/* MOBILE CARDS */}
                   <div className="lg:hidden space-y-3">
                     {paginated.map((p, i) => {
-                      const displayName = p.brandName && p.genericName && p.brandName !== p.genericName
-                        ? `${p.brandName} (${p.genericName})`
-                        : p.name || p.brandName || p.genericName || 'Unnamed Product';
+                      const displayName = getProductDisplayName(p);
                       return (
                         <div key={p._id || i} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 flex gap-3">
                           <div className="w-14 h-14 bg-gray-50 rounded-xl overflow-hidden flex-shrink-0 border border-gray-100 p-1">
@@ -1230,9 +1194,7 @@ export default function CancerMedicines() {
                       </thead>
                       <tbody className="divide-y divide-gray-50">
                         {paginated.map((p, i) => {
-                          const displayName = p.brandName && p.genericName && p.brandName !== p.genericName
-                            ? `${p.brandName} (${p.genericName})`
-                            : p.name || p.brandName || p.genericName || 'Unnamed Product';
+                          const displayName = getProductDisplayName(p);
                           const openUpward = i >= paginated.length - 2;
                           return (
                             <tr key={p._id || i} className="hover:bg-blue-50/30 transition-colors group">

@@ -7,6 +7,7 @@ import { injectHTML } from '../lib/injectHTML';
 import { getApiUrl } from '../lib/api';
 import { setPageMeta } from '../lib/seo';
 import { PortableText } from '@portabletext/react';
+import { matchProductImageAsset } from '../lib/imageNaming';
 
 interface ProductWithCategory extends Omit<SanityProduct, 'category'> {
   category?: Category;
@@ -277,50 +278,11 @@ export default function ProductDetail() {
       const brandNameKey = (p.brandName || '').toLowerCase().trim();
       const hasMultipleOutputs = (brandNameCounts.get(brandNameKey) || 0) > 1;
 
-      const formatFilenameLocal = (pattern: string, doc: any) => {
-        let name = pattern;
-        const fields = ['brandName', 'genericName', 'strength', 'form'];
-        for (const field of fields) {
-          const val = String(doc[field] || '').trim();
-          name = name.split(`{${field.toLowerCase()}}`).join(val.toLowerCase());
-          name = name.split(`{${field.toUpperCase()}}`).join(val.toUpperCase());
-          name = name.split(`{${field}}`).join(val);
-          name = name.replace(new RegExp(`{${field}}`, 'gi'), val);
-        }
-        return name;
-      };
-
-      const cleanNameLocal = (str: string) => str.toLowerCase().replace(/[^a-z0-9]/g, '');
-
       const formatsToTry = hasMultipleOutputs
         ? [secondaryImageFormat, primaryImageFormat]
         : [primaryImageFormat, secondaryImageFormat];
 
-      let matchedAsset: any = null;
-
-      for (const fmt of formatsToTry) {
-        if (matchedAsset) break;
-        const targetNormalized = cleanNameLocal(formatFilenameLocal(fmt, p));
-        if (!targetNormalized) continue;
-        matchedAsset = imageAssets.find((asset: any) => {
-          if (!asset.originalFilename) return false;
-          const baseName = asset.originalFilename.replace(/\.[^/.]+$/, '');
-          return cleanNameLocal(baseName) === targetNormalized;
-        });
-      }
-
-      if (!matchedAsset) {
-        for (const fmt of formatsToTry) {
-          if (matchedAsset) break;
-          const targetNormalized = cleanNameLocal(formatFilenameLocal(fmt, p));
-          if (!targetNormalized || targetNormalized.length < 3) continue;
-          matchedAsset = imageAssets.find((asset: any) => {
-            if (!asset.originalFilename) return false;
-            const assetNormalized = cleanNameLocal(asset.originalFilename.replace(/\.[^/.]+$/, ''));
-            return assetNormalized.startsWith(targetNormalized) || targetNormalized.startsWith(assetNormalized);
-          });
-        }
-      }
+      const matchedAsset = matchProductImageAsset(p, formatsToTry, imageAssets);
 
       if (matchedAsset) {
         try {
