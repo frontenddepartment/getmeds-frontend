@@ -45,7 +45,8 @@ export default function ProductDetail() {
   const ageDropdownRef = useRef<HTMLDivElement>(null);
   const [submitState, setSubmitState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
   const [successModalOpen, setSuccessModalOpen] = useState(false);
-  const [userType, setUserType] = useState<string>('patient');
+  const [userType, setUserType] = useState<string>('');
+  const [userTypeConfirmed, setUserTypeConfirmed] = useState(false);
   const [prescriptionRequiredModalOpen, setPrescriptionRequiredModalOpen] = useState(false);
   const [prescriptionModalVisible, setPrescriptionModalVisible] = useState(false);
 
@@ -58,8 +59,11 @@ export default function ProductDetail() {
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const ut = params.get('userType') || 'patient';
-    setUserType(ut);
+    const ut = params.get('userType');
+    if (ut) {
+      setUserType(ut);
+      setUserTypeConfirmed(true);
+    }
   }, []);
 
   useEffect(() => {
@@ -583,13 +587,40 @@ export default function ProductDetail() {
                 <div className="mb-6">
                   <h4 className="text-lg font-bold text-gray-900">Send Inquiry</h4>
                   <p className="text-xs text-gray-500 mt-1">Submit your details to get a formal quote for this product.</p>
-                  {userType && USER_TYPE_LABELS[userType] && (
+                  {userTypeConfirmed && userType && USER_TYPE_LABELS[userType] && (
                     <span className="inline-flex items-center gap-1.5 mt-2 px-3 py-1 rounded-full text-[11px] font-semibold bg-blue-50 text-primary border border-blue-100">
                       <i className="fa-solid fa-user-tag text-[9px]" />
                       {USER_TYPE_LABELS[userType]}
                     </span>
                   )}
                 </div>
+                {!userTypeConfirmed ? (
+                  <div>
+                    <p className="text-[13px] font-medium text-gray-500 mb-3">I am a:</p>
+                    <div className="space-y-2 mb-6">
+                      {Object.entries(USER_TYPE_LABELS).map(([value, label]) => (
+                        <button
+                          key={value}
+                          type="button"
+                          onClick={() => setUserType(value)}
+                          className={`w-full flex items-center gap-2.5 px-4 py-3 rounded-xl border text-left text-[13px] font-semibold transition ${userType === value ? 'border-primary bg-blue-50 text-primary' : 'border-gray-200 text-gray-700 hover:border-gray-300'}`}
+                        >
+                          <i className="fa-solid fa-user-tag text-[11px]" />
+                          {label}
+                        </button>
+                      ))}
+                    </div>
+                    <button
+                      type="button"
+                      disabled={!userType}
+                      onClick={() => setUserTypeConfirmed(true)}
+                      className="w-full text-white font-bold py-3 rounded-xl transition-all duration-300 text-[13px] disabled:opacity-40 disabled:cursor-not-allowed"
+                      style={{ background: 'linear-gradient(to right, #61A644, #0D99FF)' }}
+                    >
+                      Continue
+                    </button>
+                  </div>
+                ) : (
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div>
                     <label className="block text-[13px] font-medium text-gray-500 mb-2">Target Product</label>
@@ -716,6 +747,7 @@ export default function ProductDetail() {
                   </button>
                   <div className="h-8" />
                 </form>
+                )}
               </div>
             </div>
           </div>

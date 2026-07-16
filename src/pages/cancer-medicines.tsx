@@ -302,6 +302,7 @@ export default function CancerMedicines() {
             }
             if (foundSub) {
               setSelectedCategory({ category: foundParent, subCategory: foundSub });
+              setCurrentPage(1);
               resolved = true;
             }
           }
@@ -315,6 +316,7 @@ export default function CancerMedicines() {
             });
             if (matchedCat) {
               setSelectedCategory({ category: matchedCat.category, subCategory: 'All' });
+              setCurrentPage(1);
               resolved = true;
             }
           }
@@ -322,6 +324,7 @@ export default function CancerMedicines() {
           // 3. Fallback if resolution was unsuccessful
           if (!resolved) {
             setSelectedCategory({ category: 'All', subCategory: 'All' });
+            setCurrentPage(1);
           }
         }
       }
@@ -403,52 +406,50 @@ export default function CancerMedicines() {
     if (sel.category === 'All' && sel.subCategory === 'All') return productsData;
 
     const cleanCategory = sel.category.trim().toLowerCase();
+    const cleanCategoryParts = cleanCategory.split('/').map(s => s.trim()).filter(Boolean);
     const cleanSub = (sel.subCategory || '').trim().toLowerCase();
-
-    if (cleanSub && cleanSub !== 'all') {
-      return productsData.filter(p => {
-        const subcats = getProductSubcategories(p);
-        return subcats.some(part => part.toLowerCase() === cleanSub);
-      });
-    }
 
     // Find if the selected category is one of our processed categories
     const matchedProcessed = processedCats.find(
       c => c.category.trim().toLowerCase() === cleanCategory
     );
 
-    if (matchedProcessed) {
-      return productsData.filter(p => {
-        // Match by category name first (split by / to handle multiple categories)
-        const pCat = p.category?.category || p.excelCategory || '';
-        const pCats = pCat.split('/').map(s => s.trim().toLowerCase()).filter(Boolean);
-        if (pCats.includes(cleanCategory)) return true;
+    // Whether a product belongs to the selected parent category. Categories can have
+    // combined names (e.g. "Oncology / Hematology"), so this compares the split token
+    // sets on both sides rather than requiring an exact whole-string match.
+    const matchesParentCategory = (p: ProductWithCategory) => {
+      const pCat = p.category?.category || p.excelCategory || '';
+      const pCats = pCat.split('/').map(s => s.trim().toLowerCase()).filter(Boolean);
+      if (pCat.trim().toLowerCase() === cleanCategory) return true;
+      if (pCats.some(part => cleanCategoryParts.includes(part))) return true;
 
+      if (matchedProcessed) {
         const subcats = getProductSubcategories(p);
         return subcats.some(sub => matchedProcessed.subcategory.some(s => s.trim().toLowerCase() === sub.toLowerCase()));
+      }
+      return false;
+    };
+
+    if (cleanSub && cleanSub !== 'all') {
+      // A subcategory is always scoped to its parent category — otherwise two
+      // categories that happen to share a subcategory label would leak into each other.
+      return productsData.filter(p => {
+        if (!matchesParentCategory(p)) return false;
+        const subcats = getProductSubcategories(p);
+        return subcats.some(part => part.toLowerCase() === cleanSub);
       });
     }
 
-    // Fallback: search by subcategory name directly
+    if (matchedProcessed) {
+      return productsData.filter(matchesParentCategory);
+    }
+
+    // Fallback: category isn't a known processed category — search by subcategory name directly
     return productsData.filter(p => {
       const subcats = getProductSubcategories(p);
-      if (subcats.some(part => part.toLowerCase() === cleanCategory)) return true;
-      return false;
+      return subcats.some(part => part.toLowerCase() === cleanCategory);
     });
   };
-
-  const categoryFiltered = getFiltered(selectedCategory);
-  const searchFiltered = searchTerm
-    ? categoryFiltered.filter(p => {
-        const search = searchTerm.toLowerCase();
-        return (
-          p.name?.toLowerCase().includes(search) ||
-          (p.brandName && p.brandName.toLowerCase().includes(search)) ||
-          (p.genericName && p.genericName.toLowerCase().includes(search)) ||
-          (p.subCategory && p.subCategory.toLowerCase().includes(search))
-        );
-      })
-    : categoryFiltered;
 
   const FORM_GROUPS: { label: string; match: (f: string) => boolean }[] = [
     { label: 'Capsule', match: f => /capsule/i.test(f) },
@@ -459,33 +460,50 @@ export default function CancerMedicines() {
 
   const activeFilterCount = (filterAvailability !== 'all' ? 1 : 0) + filterForms.size;
 
-  const fullyFiltered = searchFiltered.filter(p => {
-    if (filterAvailability === 'instock' && p.availability === false) return false;
-    if (filterAvailability === 'outofstock' && p.availability !== false) return false;
-    if (filterForms.size > 0) {
-      const form = p.form || '';
-      const matched = Array.from(filterForms).some(label => {
-        const group = FORM_GROUPS.find(g => g.label === label);
-        return group ? group.match(form) : false;
-      });
-      if (!matched) return false;
-    }
-    return true;
-  });
+  const sorted = useMemo(() => {
+    const categoryFiltered = getFiltered(selectedCategory);
 
-  const sorted = [...fullyFiltered].sort((a, b) => {
-    const nameA = (a.brandName || a.name || '').toLowerCase();
-    const nameB = (b.brandName || b.name || '').toLowerCase();
-    if (sortBy === 'Name: A → Z') return nameA.localeCompare(nameB);
-    if (sortBy === 'Name: Z → A') return nameB.localeCompare(nameA);
-    if (sortBy === 'In Stock First') {
-      const avA = a.availability === false ? 1 : 0;
-      const avB = b.availability === false ? 1 : 0;
-      return avA - avB;
-    }
-    if (sortBy === 'Form: A → Z') return (a.form || '').localeCompare(b.form || '');
-    return 0;
-  });
+    const searchFiltered = searchTerm
+      ? categoryFiltered.filter(p => {
+          const search = searchTerm.toLowerCase();
+          return (
+            p.name?.toLowerCase().includes(search) ||
+            (p.brandName && p.brandName.toLowerCase().includes(search)) ||
+            (p.genericName && p.genericName.toLowerCase().includes(search)) ||
+            (p.subCategory && p.subCategory.toLowerCase().includes(search))
+          );
+        })
+      : categoryFiltered;
+
+    const fullyFiltered = searchFiltered.filter(p => {
+      if (filterAvailability === 'instock' && p.availability === false) return false;
+      if (filterAvailability === 'outofstock' && p.availability !== false) return false;
+      if (filterForms.size > 0) {
+        const form = p.form || '';
+        const matched = Array.from(filterForms).some(label => {
+          const group = FORM_GROUPS.find(g => g.label === label);
+          return group ? group.match(form) : false;
+        });
+        if (!matched) return false;
+      }
+      return true;
+    });
+
+    return [...fullyFiltered].sort((a, b) => {
+      const nameA = (a.brandName || a.name || '').toLowerCase();
+      const nameB = (b.brandName || b.name || '').toLowerCase();
+      if (sortBy === 'Name: A → Z') return nameA.localeCompare(nameB);
+      if (sortBy === 'Name: Z → A') return nameB.localeCompare(nameA);
+      if (sortBy === 'In Stock First') {
+        const avA = a.availability === false ? 1 : 0;
+        const avB = b.availability === false ? 1 : 0;
+        return avA - avB;
+      }
+      if (sortBy === 'Form: A → Z') return (a.form || '').localeCompare(b.form || '');
+      return 0;
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [productsData, categoriesData, processedCats, selectedCategory, searchTerm, filterAvailability, filterForms, sortBy]);
 
   // ── Search History & Suggestions Logic ──────────────────
   const onEnterSearch = (query: string) => {
@@ -967,6 +985,7 @@ export default function CancerMedicines() {
                             key={`${term}-${idx}`}
                             className="flex items-center justify-between p-2 hover:bg-blue-50/50 rounded-xl cursor-pointer group transition"
                             onClick={() => {
+                              setSelectedCategory({ category: 'All', subCategory: 'All' });
                               setSearchTerm(term);
                               setCurrentPage(1);
                               setShowSuggestions(false);
@@ -1000,6 +1019,7 @@ export default function CancerMedicines() {
                           key={sp._id}
                           className="flex items-center gap-3 p-2 hover:bg-blue-50/50 rounded-xl cursor-pointer transition group"
                           onClick={() => {
+                            setSelectedCategory({ category: 'All', subCategory: 'All' });
                             setSearchTerm(sp.brandName || sp.name || '');
                             setCurrentPage(1);
                             setShowSuggestions(false);
@@ -1049,14 +1069,27 @@ export default function CancerMedicines() {
             <div ref={tableRef}>
               {productsLoading ? (
                 <TableSkeleton />
+              ) : paginated.length === 0 ? (
+                <div className="flex flex-col items-center justify-center text-center bg-white rounded-2xl border border-gray-100 shadow-sm py-16 px-6">
+                  <img
+                    src="assets/noproductsfound.png"
+                    alt="No products found"
+                    className="w-44 sm:w-56 object-contain mb-6"
+                  />
+                  <h3 className="text-lg font-bold text-gray-900 mb-1.5">No Products Found</h3>
+                  <p className="text-sm text-gray-500 max-w-sm">
+                    We couldn't find any products matching your search or filters.
+                  </p>
+                </div>
               ) : (
                 <>
                   {/* MOBILE CARDS */}
                   <div className="lg:hidden space-y-3">
                     {paginated.map((p, i) => {
                       const displayName = getProductDisplayName(p);
+                      const rowId = `${p._id || 'idx'}-${i}`;
                       return (
-                        <div key={p._id || i} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 flex gap-3">
+                        <div key={rowId} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 flex gap-3">
                           <div className="w-14 h-14 bg-gray-50 rounded-xl overflow-hidden flex-shrink-0 border border-gray-100 p-1">
                             <img
                               src={getProductImage(p, 120)}
@@ -1085,14 +1118,14 @@ export default function CancerMedicines() {
                             </div>
                             <div className="relative inquiry-dropdown-wrapper">
                               <button
-                                onClick={e => { e.stopPropagation(); setInquiryDropdownOpenId(inquiryDropdownOpenId === (p._id || String(i)) ? null : (p._id || String(i))); }}
+                                onClick={e => { e.stopPropagation(); setInquiryDropdownOpenId(inquiryDropdownOpenId === rowId ? null : rowId); }}
                                 className="w-full justify-center bg-primary hover:bg-blue-600 text-white text-[12px] font-bold px-4 py-2.5 rounded-full transition-all duration-300 shadow-sm inline-flex items-center gap-1.5"
                               >
                                 <i className="fa-solid fa-paper-plane text-[11px]" />
                                 Send Inquiry
                                 <i className="fa-solid fa-chevron-down text-[9px] ml-0.5" />
                               </button>
-                              {inquiryDropdownOpenId === (p._id || String(i)) && (
+                              {inquiryDropdownOpenId === rowId && (
                                 <div className="absolute left-0 right-0 bottom-full mb-2 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden z-50">
                                   {USER_TYPE_OPTIONS.map(opt => (
                                     <button
@@ -1130,8 +1163,9 @@ export default function CancerMedicines() {
                         {paginated.map((p, i) => {
                           const displayName = getProductDisplayName(p);
                           const openUpward = i >= paginated.length - 2;
+                          const rowId = `dt-${p._id || 'idx'}-${i}`;
                           return (
-                            <tr key={p._id || i} className="hover:bg-blue-50/30 transition-colors group">
+                            <tr key={rowId} className="hover:bg-blue-50/30 transition-colors group">
                               <td className="px-6 py-4">
                                 <div className="flex items-center gap-4">
                                   <div className="w-12 h-12 bg-gray-50 rounded-xl overflow-hidden flex-shrink-0 border border-gray-100 p-1">
@@ -1168,14 +1202,14 @@ export default function CancerMedicines() {
                               <td className="px-6 py-4 text-center">
                                 <div className="relative inline-block inquiry-dropdown-wrapper">
                                   <button
-                                    onClick={e => { e.stopPropagation(); setInquiryDropdownOpenId(inquiryDropdownOpenId === ('dt-' + (p._id || String(i))) ? null : ('dt-' + (p._id || String(i)))); }}
+                                    onClick={e => { e.stopPropagation(); setInquiryDropdownOpenId(inquiryDropdownOpenId === rowId ? null : rowId); }}
                                     className="bg-primary hover:bg-blue-600 text-white text-[12px] font-semibold px-4 py-1.5 rounded-full transition-all duration-300 shadow-md hover:shadow-lg active:scale-95 inline-flex items-center justify-center gap-1.5 whitespace-nowrap"
                                   >
                                     <i className="fa-solid fa-paper-plane text-[10px]" />
                                     Send Inquiry
                                     <i className="fa-solid fa-chevron-down text-[9px]" />
                                   </button>
-                                  {inquiryDropdownOpenId === ('dt-' + (p._id || String(i))) && (
+                                  {inquiryDropdownOpenId === rowId && (
                                     <div className={`absolute right-0 w-64 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden z-50 ${openUpward ? 'bottom-full mb-2' : 'top-full mt-2'}`}>
                                       {USER_TYPE_OPTIONS.map(opt => (
                                         <button

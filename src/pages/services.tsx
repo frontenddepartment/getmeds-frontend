@@ -390,14 +390,13 @@ export default function Services() {
             <div className="lg:w-[48%] reveal">
               <div
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-full badge-pill text-[11px] font-bold uppercase tracking-widest mb-6">
-                <i className="fa-solid fa-medal"></i> Our Promise</div>
-              <h2 className="text-[28px] md:text-[38px] font-bold text-dark leading-tight mb-6 tracking-tight">Why
-                Trust <br /><span
-                  className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">Getmeds</span>
-                {' '}for Your Health?</h2>
-              <p className="text-gray-500 text-[15px] leading-relaxed mb-10 max-w-lg">We don't just distribute
-                medicine; we facilitate healing. Through strict quality standards and advanced digital
-                solutions, we ensure your healthcare journey is safe, private, and efficient.</p>
+                <i className="fa-solid fa-medal"></i> The Getmeds Difference</div>
+              <h2 className="text-[28px] md:text-[38px] font-bold text-dark leading-tight mb-6 tracking-tight">Why patients, doctors, and partners trust{' '}
+                <span
+                  className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">Getmeds</span>.</h2>
+              <p className="text-gray-500 text-[15px] leading-relaxed mb-10 max-w-lg">Pharmaceutical care built on
+                global standards, patient-first values, and Filipino heart. Every medicine is sourced, verified,
+                and delivered with the care your health deserves.</p>
               <a href="about-us.html"
                 className="btn-gradient text-white font-bold py-4 px-10 rounded-xl text-[14px] inline-flex items-center gap-3 shadow-lg">Learn
                 More <i className="fa-solid fa-arrow-right text-xs"></i></a>
@@ -409,65 +408,84 @@ export default function Services() {
               <div className="absolute -top-10 -right-10 w-64 h-64 bg-blue-50 rounded-full blur-3xl opacity-60"></div>
               <div className="absolute -bottom-10 -left-10 w-64 h-64 bg-green-50 rounded-full blur-3xl opacity-60"></div>
 
-              <div className="space-y-6 relative z-10">
+              <div className="space-y-4 relative z-10">
                 {/* Card 1 */}
                 <div
-                  className="bg-white p-7 rounded-2xl shadow-[0_12px_45px_rgba(0,0,0,0.05)] flex items-center gap-6 relative max-w-[540px] group hover:translate-y-[-5px] transition-all duration-300 overflow-hidden">
+                  className="bg-white p-5 rounded-2xl shadow-[0_12px_45px_rgba(0,0,0,0.05)] flex items-center gap-4 relative max-w-[460px] group hover:translate-y-[-5px] transition-all duration-300 overflow-hidden">
                   {/* Gradient Accent */}
                   <div
                     className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-[#61A644] to-[#1D9FDA]">
                   </div>
                   <div
-                    className="flex-shrink-0 h-14 w-14 rounded-full bg-gradient-to-br from-[#61A644]/10 to-[#1D9FDA]/10 flex items-center justify-center text-2xl text-[#61A644]">
-                    <i className="fa-solid fa-shield-halved"></i>
+                    className="flex-shrink-0 h-11 w-11 rounded-full bg-gradient-to-br from-[#61A644]/10 to-[#1D9FDA]/10 flex items-center justify-center text-lg text-[#61A644]">
+                    <i className="fa-solid fa-rocket"></i>
                   </div>
                   <div>
-                    <h4 className="text-[17px] font-bold text-dark mb-1">Verified Authenticity</h4>
-                    <p className="text-gray-400 text-[13px] leading-relaxed">Strict international quality
-                      standards ensuring genuine care.</p>
+                    <h4 className="text-[15px] font-bold text-dark mb-1">First-to-Market Sourcing</h4>
+                    <p className="text-gray-400 text-[12px] leading-relaxed">We move the moment a patent cliffs
+                      globally.</p>
                   </div>
                   <i
-                    className="fa-solid fa-quote-right absolute top-6 right-8 text-gray-100 text-2xl opacity-50"></i>
+                    className="fa-solid fa-quote-right absolute top-4 right-5 text-gray-100 text-lg opacity-50"></i>
                 </div>
 
                 {/* Card 2 (Staggered) */}
                 <div
-                  className="bg-white p-7 rounded-2xl shadow-[0_12px_45px_rgba(0,0,0,0.05)] flex items-center gap-6 relative max-w-[540px] lg:ml-12 group hover:translate-y-[-5px] transition-all duration-300 overflow-hidden">
+                  className="bg-white p-5 rounded-2xl shadow-[0_12px_45px_rgba(0,0,0,0.05)] flex items-center gap-4 relative max-w-[460px] lg:ml-8 group hover:translate-y-[-5px] transition-all duration-300 overflow-hidden">
                   {/* Gradient Accent */}
                   <div
                     className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-[#61A644] to-[#1D9FDA]">
                   </div>
                   <div
-                    className="flex-shrink-0 h-14 w-14 rounded-full bg-gradient-to-br from-[#61A644]/10 to-[#1D9FDA]/10 flex items-center justify-center text-2xl text-[#1D9FDA]">
-                    <i className="fa-solid fa-user-shield"></i>
+                    className="flex-shrink-0 h-11 w-11 rounded-full bg-gradient-to-br from-[#61A644]/10 to-[#1D9FDA]/10 flex items-center justify-center text-lg text-[#1D9FDA]">
+                    <i className="fa-solid fa-snowflake"></i>
                   </div>
                   <div>
-                    <h4 className="text-[17px] font-bold text-dark mb-1">Patient Data Privacy</h4>
-                    <p className="text-gray-400 text-[13px] leading-relaxed">Banking-grade encryption protecting
-                      your health records.</p>
+                    <h4 className="text-[15px] font-bold text-dark mb-1">Cold-Chain Excellence</h4>
+                    <p className="text-gray-400 text-[12px] leading-relaxed">Biologics-ready logistics
+                      nationwide.</p>
                   </div>
                   <i
-                    className="fa-solid fa-quote-right absolute top-6 right-8 text-gray-100 text-2xl opacity-50"></i>
+                    className="fa-solid fa-quote-right absolute top-4 right-5 text-gray-100 text-lg opacity-50"></i>
                 </div>
 
                 {/* Card 3 */}
                 <div
-                  className="bg-white p-7 rounded-2xl shadow-[0_12px_45px_rgba(0,0,0,0.05)] flex items-center gap-6 relative max-w-[540px] group hover:translate-y-[-5px] transition-all duration-300 overflow-hidden">
+                  className="bg-white p-5 rounded-2xl shadow-[0_12px_45px_rgba(0,0,0,0.05)] flex items-center gap-4 relative max-w-[460px] group hover:translate-y-[-5px] transition-all duration-300 overflow-hidden">
                   {/* Gradient Accent */}
                   <div
                     className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-[#61A644] to-[#1D9FDA]">
                   </div>
                   <div
-                    className="flex-shrink-0 h-14 w-14 rounded-full bg-gradient-to-br from-[#61A644]/10 to-[#1D9FDA]/10 flex items-center justify-center text-2xl text-[#61A644]">
-                    <i className="fa-solid fa-clock"></i>
+                    className="flex-shrink-0 h-11 w-11 rounded-full bg-gradient-to-br from-[#61A644]/10 to-[#1D9FDA]/10 flex items-center justify-center text-lg text-[#61A644]">
+                    <i className="fa-solid fa-flag"></i>
                   </div>
                   <div>
-                    <h4 className="text-[17px] font-bold text-dark mb-1">Efficiency Redefined</h4>
-                    <p className="text-gray-400 text-[13px] leading-relaxed">Optimized steps for speed — less
-                      waiting, more healing.</p>
+                    <h4 className="text-[15px] font-bold text-dark mb-1">Filipino-First Formulations</h4>
+                    <p className="text-gray-400 text-[12px] leading-relaxed">Engineered for local disease
+                      patterns.</p>
                   </div>
                   <i
-                    className="fa-solid fa-quote-right absolute top-6 right-8 text-gray-100 text-2xl opacity-50"></i>
+                    className="fa-solid fa-quote-right absolute top-4 right-5 text-gray-100 text-lg opacity-50"></i>
+                </div>
+
+                {/* Card 4 (Staggered) */}
+                <div
+                  className="bg-white p-5 rounded-2xl shadow-[0_12px_45px_rgba(0,0,0,0.05)] flex items-center gap-4 relative max-w-[460px] lg:ml-8 group hover:translate-y-[-5px] transition-all duration-300 overflow-hidden">
+                  {/* Gradient Accent */}
+                  <div
+                    className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-[#61A644] to-[#1D9FDA]">
+                  </div>
+                  <div
+                    className="flex-shrink-0 h-11 w-11 rounded-full bg-gradient-to-br from-[#61A644]/10 to-[#1D9FDA]/10 flex items-center justify-center text-lg text-[#1D9FDA]">
+                    <i className="fa-solid fa-hand-holding-heart"></i>
+                  </div>
+                  <div>
+                    <h4 className="text-[15px] font-bold text-dark mb-1">Patient Assistance Programs</h4>
+                    <p className="text-gray-400 text-[12px] leading-relaxed">Adherence, access, affordability.</p>
+                  </div>
+                  <i
+                    className="fa-solid fa-quote-right absolute top-4 right-5 text-gray-100 text-lg opacity-50"></i>
                 </div>
               </div>
             </div>
