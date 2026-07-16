@@ -537,188 +537,53 @@ export async function getGoogleSpreadsheetBySlug(slug: string) {
 // News & Articles
 // ─────────────────────────────────────────────
 
-const WP_API_BASE = import.meta.env.VITE_WORDPRESS_API_BASE || '/wp-json/wp/v2';
-
 export async function getNews() {
   try {
-    const res = await fetch(`${WP_API_BASE}/posts?per_page=20&_embed=true&_=${Date.now()}`, { cache: 'reload' });
+    const res = await fetch('/api/blog/posts?per_page=20');
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
     const data = await res.json();
-    return data.map((item: any) => {
-      const categories = item._embedded?.['wp:term']?.[0] || [];
-      const tag = categories[0]?.name || 'News';
-
-      const featuredMedia = item._embedded?.['wp:featuredmedia']?.[0];
-      const image = featuredMedia?.source_url || '';
-
-      // Strip HTML tags from excerpt for a clean description snippet
-      const rawExcerpt = item.excerpt?.rendered || '';
-      const description = rawExcerpt
-        .replace(/<[^>]*>/g, '')
-        .replace(/&nbsp;/g, ' ')
-        .replace(/&#\d+;/g, '')
-        .trim();
-
-      // Read time calculation (approx 200 words per minute)
-      const rawContent = item.content?.rendered || '';
-      const textOnly = rawContent.replace(/<[^>]*>/g, '');
-      const wordCount = textOnly.split(/\s+/).filter(Boolean).length;
-      const minutes = Math.max(1, Math.round(wordCount / 200));
-      const readTime = `${minutes} min read`;
-
-      return {
-        _id: String(item.id),
-        _type: 'news' as const,
-        tag: tag,
-        title: item.title?.rendered || '',
-        slug: item.slug || '',
-        date: item.date,
-        description: description,
-        readTime: readTime,
-        image: cleanWordPressUrl(image),
-        contentHtml: rawContent,
-        source_link: item.link
-      };
-    });
+    return data.items || [];
   } catch (err) {
-    console.error('Error fetching news from WordPress API:', err);
+    console.error('Error fetching news from backend API:', err);
     return [];
   }
 }
 
 export async function getNewsPage(page: number, perPage: number = 20): Promise<{ items: News[]; totalPages: number }> {
   try {
-    const res = await fetch(`${WP_API_BASE}/posts?per_page=${perPage}&page=${page}&_embed=true&_=${Date.now()}`, { cache: 'reload' });
+    const res = await fetch(`/api/blog/posts?per_page=${perPage}&page=${page}`);
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-    const totalPages = parseInt(res.headers.get('X-WP-TotalPages') || '1', 10);
     const data = await res.json();
-    const items: News[] = data.map((item: any) => {
-      const categories = item._embedded?.['wp:term']?.[0] || [];
-      const tag = categories[0]?.name || 'News';
-
-      const featuredMedia = item._embedded?.['wp:featuredmedia']?.[0];
-      const image = featuredMedia?.source_url || '';
-
-      const rawExcerpt = item.excerpt?.rendered || '';
-      const description = rawExcerpt
-        .replace(/<[^>]*>/g, '')
-        .replace(/&nbsp;/g, ' ')
-        .replace(/&#\d+;/g, '')
-        .trim();
-
-      const rawContent = item.content?.rendered || '';
-      const textOnly = rawContent.replace(/<[^>]*>/g, '');
-      const wordCount = textOnly.split(/\s+/).filter(Boolean).length;
-      const minutes = Math.max(1, Math.round(wordCount / 200));
-      const readTime = `${minutes} min read`;
-
-      return {
-        _id: String(item.id),
-        _type: 'news' as const,
-        tag: tag,
-        title: item.title?.rendered || '',
-        slug: item.slug || '',
-        date: item.date,
-        description: description,
-        readTime: readTime,
-        image: cleanWordPressUrl(image),
-        contentHtml: rawContent,
-        source_link: item.link
-      };
-    });
-    return { items, totalPages };
+    return {
+      items: data.items || [],
+      totalPages: data.totalPages || 1
+    };
   } catch (err) {
-    console.error(`Error fetching news page ${page} from WordPress API:`, err);
+    console.error(`Error fetching news page ${page} from backend API:`, err);
     return { items: [], totalPages: 0 };
   }
 }
 
 export async function getNewsById(id: string) {
   try {
-    const res = await fetch(`${WP_API_BASE}/posts/${id}?_embed=true&_=${Date.now()}`, { cache: 'reload' });
+    const res = await fetch(`/api/blog/posts/${id}`);
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-    const item = await res.json();
-
-    const categories = item._embedded?.['wp:term']?.[0] || [];
-    const tag = categories[0]?.name || 'News';
-
-    const featuredMedia = item._embedded?.['wp:featuredmedia']?.[0];
-    const image = featuredMedia?.source_url || '';
-
-    const rawExcerpt = item.excerpt?.rendered || '';
-    const description = rawExcerpt
-      .replace(/<[^>]*>/g, '')
-      .replace(/&nbsp;/g, ' ')
-      .replace(/&#\d+;/g, '')
-      .trim();
-
-    const rawContent = item.content?.rendered || '';
-    const textOnly = rawContent.replace(/<[^>]*>/g, '');
-    const wordCount = textOnly.split(/\s+/).filter(Boolean).length;
-    const minutes = Math.max(1, Math.round(wordCount / 200));
-    const readTime = `${minutes} min read`;
-
-    return {
-      _id: String(item.id),
-      _type: 'news' as const,
-      tag: tag,
-      title: item.title?.rendered || '',
-      slug: item.slug || '',
-      date: item.date,
-      description: description,
-      readTime: readTime,
-      image: cleanWordPressUrl(image),
-      contentHtml: rawContent,
-      source_link: item.link
-    };
+    return await res.json();
   } catch (err) {
-    console.error(`Error fetching news item ${id} from WordPress API:`, err);
+    console.error(`Error fetching news item ${id} from backend API:`, err);
     return null;
   }
 }
 
 export async function getNewsBySlug(slug: string) {
   try {
-    const res = await fetch(`${WP_API_BASE}/posts?slug=${slug}&_embed=true&_=${Date.now()}`, { cache: 'reload' });
+    const res = await fetch(`/api/blog/posts?slug=${slug}`);
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-    const posts = await res.json();
-    if (!posts || posts.length === 0) return null;
-    const item = posts[0];
-
-    const categories = item._embedded?.['wp:term']?.[0] || [];
-    const tag = categories[0]?.name || 'News';
-
-    const featuredMedia = item._embedded?.['wp:featuredmedia']?.[0];
-    const image = featuredMedia?.source_url || '';
-
-    const rawExcerpt = item.excerpt?.rendered || '';
-    const description = rawExcerpt
-      .replace(/<[^>]*>/g, '')
-      .replace(/&nbsp;/g, ' ')
-      .replace(/&#\d+;/g, '')
-      .trim();
-
-    const rawContent = item.content?.rendered || '';
-    const textOnly = rawContent.replace(/<[^>]*>/g, '');
-    const wordCount = textOnly.split(/\s+/).filter(Boolean).length;
-    const minutes = Math.max(1, Math.round(wordCount / 200));
-    const readTime = `${minutes} min read`;
-
-    return {
-      _id: String(item.id),
-      _type: 'news' as const,
-      tag: tag,
-      title: item.title?.rendered || '',
-      slug: item.slug || '',
-      date: item.date,
-      description: description,
-      readTime: readTime,
-      image: cleanWordPressUrl(image),
-      contentHtml: rawContent,
-      source_link: item.link
-    };
+    const data = await res.json();
+    if (!data.items || data.items.length === 0) return null;
+    return data.items[0];
   } catch (err) {
-    console.error(`Error fetching news item by slug ${slug} from WordPress API:`, err);
+    console.error(`Error fetching news item by slug ${slug} from backend API:`, err);
     return null;
   }
 }
