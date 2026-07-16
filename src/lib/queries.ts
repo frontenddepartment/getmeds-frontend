@@ -1,6 +1,6 @@
 import { client } from './sanity'
 import { sanityQuery } from './sanityProxy'
-import { computeProductKey, findDuplicateBrandNames } from './productImageKey'
+import { computeProductKey } from './productImageKey'
 import type {
   Product,
   Category,
@@ -115,7 +115,6 @@ async function fetchProductsFromExcel(): Promise<Product[]> {
     // Images tab) rather than guessed from an uploaded file's name — look
     // each one up by the same stable key the Studio computed when it was
     // attached. See productImageKey.ts.
-    const duplicateBrandNames = findDuplicateBrandNames(rawProducts)
     const imageByKey = new Map<string, any>()
     ;(result.productImages || []).forEach((link) => {
       if (link.productKey && link.image) imageByKey.set(link.productKey, link.image)
@@ -217,7 +216,7 @@ async function fetchProductsFromExcel(): Promise<Product[]> {
         category: orig.category || getCategoryReference(p.category),
         excelCategory: p.category,
         image: (() => {
-          const key = computeProductKey(p, duplicateBrandNames)
+          const key = computeProductKey(p)
           return (key && imageByKey.get(key)) || orig.image
         })(),
         availability: p.availability === undefined ? (orig.availability ?? true) : (p.availability === true || String(p.availability).toLowerCase() === 'true'),

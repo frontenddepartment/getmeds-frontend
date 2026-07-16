@@ -21,6 +21,7 @@ export interface KeyableProduct {
   genericName?: string
   name?: string
   strength?: string
+  form?: string
 }
 
 /** Brand names (lowercased/trimmed) that appear on more than one product row. */
@@ -38,19 +39,24 @@ export function findDuplicateBrandNames(products: KeyableProduct[]): Set<string>
 }
 
 /**
- * Stable key for linking an image to a product: brandName alone, unless that
- * brand name is shared by multiple rows, in which case strength is appended
- * to disambiguate. Returns null if there isn't enough data to key on.
+ * Stable key for linking an image to a product: brandName + genericName +
+ * strength + form, joined together. Keying on the full tuple (rather than
+ * brand name alone, previously disambiguated only by strength) means two
+ * products that share a brand name — but differ in generic, strength, or
+ * form (e.g. same brand as tablet vs. syrup) — never collide on the same
+ * key, so an image uploaded for one can't overwrite/duplicate onto another.
+ * Returns null if there isn't enough data to key on.
  */
-export function computeProductKey(product: KeyableProduct, duplicateBrandNames: Set<string>): string | null {
-  const base = normalizeKeyPart(product.brandName || product.genericName || product.name)
-  if (!base) return null
+export function computeProductKey(product: KeyableProduct): string | null {
+  const parts = [
+    normalizeKeyPart(product.brandName),
+    normalizeKeyPart(product.genericName),
+    normalizeKeyPart(product.strength),
+    normalizeKeyPart(product.form),
+  ].filter(Boolean)
 
-  const brandLower = (product.brandName || '').toLowerCase().trim()
-  if (brandLower && duplicateBrandNames.has(brandLower)) {
-    const strength = normalizeKeyPart(product.strength)
-    if (strength) return `${base}-${strength}`
-  }
+  if (parts.length) return parts.join('-')
 
-  return base
+  // Fall back to the bare product name when none of the identifying fields are present.
+  return normalizeKeyPart(product.name) || null
 }
