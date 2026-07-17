@@ -25,27 +25,29 @@ jobs:
       - name: Build
         run: npm run build
         env:
-          # Populate these as repo secrets once real production values exist.
+          # Non-sensitive values read from Environment variables (vars.*).
           # If left unset, vite.config.js/scripts fall back to their
           # development defaults, so the build still succeeds either way.
           VITE_DEPLOYMENT: production
-          VITE_CHATBOT_API_URL: ${{ secrets.VITE_CHATBOT_API_URL }}
-          VITE_SPREADSHEET_API_URL: ${{ secrets.VITE_SPREADSHEET_API_URL }}
-          VITE_SANITY_PROJECT_ID: ${{ secrets.VITE_SANITY_PROJECT_ID }}
-          VITE_SANITY_DATASET: ${{ secrets.VITE_SANITY_DATASET }}
-          VITE_SANITY_API_VERSION: ${{ secrets.VITE_SANITY_API_VERSION }}
-          VITE_WORDPRESS_API_BASE: ${{ secrets.VITE_WORDPRESS_API_BASE }}
-          VITE_WORDPRESS_API_ROOT: ${{ secrets.VITE_WORDPRESS_API_ROOT }}
-          VITE_ALLOWED_CORS_ORIGIN: ${{ secrets.VITE_ALLOWED_CORS_ORIGIN }}
+          VITE_CHATBOT_API_URL: ${{ vars.VITE_CHATBOT_API_URL }}
+          VITE_SPREADSHEET_API_URL: ${{ vars.VITE_SPREADSHEET_API_URL }}
+          VITE_SANITY_PROJECT_ID: ${{ vars.VITE_SANITY_PROJECT_ID }}
+          VITE_SANITY_DATASET: ${{ vars.VITE_SANITY_DATASET }}
+          VITE_SANITY_API_VERSION: ${{ vars.VITE_SANITY_API_VERSION }}
+          VITE_WORDPRESS_API_BASE: ${{ vars.VITE_WORDPRESS_API_BASE }}
+          VITE_WORDPRESS_API_ROOT: ${{ vars.VITE_WORDPRESS_API_ROOT }}
+          VITE_ALLOWED_CORS_ORIGIN: ${{ vars.VITE_ALLOWED_CORS_ORIGIN }}
+          # Sensitive — must live in Environment SECRETS, not variables.
           SANITY_WRITE_TOKEN: ${{ secrets.SANITY_WRITE_TOKEN }}
 
       - name: Deploy to cPanel via FTPS
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
+          server: ${{ vars.FTP_SERVER }}
+          username: ${{ vars.FTP_USERNAME }}
+          # Sensitive — must live in Environment SECRETS, not variables.
           password: ${{ secrets.FTP_PASSWORD }}
-          server-dir: ${{ secrets.FTP_SERVER_DIR }}
+          server-dir: ${{ vars.FTP_SERVER_DIR }}
           local-dir: ./dist/
           exclude: |
             **/.git*
