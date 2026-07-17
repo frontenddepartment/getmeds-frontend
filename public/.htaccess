@@ -35,7 +35,7 @@ RewriteBase /
 # Unlike vercel.json (which can only hold ONE static origin), this reflects
 # whichever allowed origin actually sent the request.
 # -----------------------------------------------------------------------------
-SetEnvIf Origin "^https://(www\.)?getmeds\.ph$" CORS_ALLOW_ORIGIN=$0
+SetEnvIf Origin "^https://(www\.|development\.)?getmeds\.ph$" CORS_ALLOW_ORIGIN=$0
 # Uncomment while testing locally against this server:
 # SetEnvIf Origin "^http://localhost:(5173|3000)$" CORS_ALLOW_ORIGIN=$0
 
