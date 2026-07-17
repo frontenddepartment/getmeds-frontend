@@ -1,5 +1,5 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
-import { useCategories, useHeroSlides, useImageMapper, useNews, useSiteSettings } from '../lib/useSanity';
+﻿import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { useCategories, useHeroSlides, useImageMapper, useNews, useProducts, useSiteSettings } from '../lib/useSanity';
 import { setPageMeta } from '../lib/seo';
 import { getApiUrl } from '../lib/api';
 import { injectHTML } from '../lib/injectHTML';
@@ -90,6 +90,7 @@ export default function GetMedsHomepage() {
   const { data: newsItems } = useNews();
   const { data: settings } = useSiteSettings();
   const { data: heroSlidesData } = useHeroSlides();
+  const { data: therapProductsData } = useProducts();
   const newsSliderRef = useRef<HTMLDivElement>(null);
   const [activeNewsSlide, setActiveNewsSlide] = useState(0);
 
@@ -118,6 +119,48 @@ export default function GetMedsHomepage() {
   };
   const { data: categoriesData } = useCategories();
 
+  // Therapeutic area cards, ordered dynamically by real product count (highest first) —
+  // not a hardcoded order. Falls back to the static order below until product/category data loads.
+  const therapCards = useMemo(() => {
+    const base = [
+      { name: "Oncology", img: getImage("assets/therapeuticareaoncology.png", "assets/therapeuticareaoncology.png"), marquee: "Breast Cancer • Ovarian Cancer • Non-Small Cell Lung Cancer • Prostate Cancer • Colorectal Cancer • Pancreatic Cancer • ", link: "/cancer-medicines/oncology" },
+      { name: "Cardiology", img: getImage("assets/therapeuticareacardiology.png", "assets/therapeuticareacardiology.png"), marquee: "Arrhythmia Management • Hypertension/Angina • Heart Failure • Atrial Fibrillation • Coronary Artery Disease • ", link: "/cancer-medicines/cardiology" },
+      { name: "Neurology", img: getImage("assets/therapeuticareaneurology.png", "assets/therapeuticareaneurology.png"), marquee: "Glioblastoma Multiforme • Chronic Pain • Inflammatory Disorders • Osteoporosis • Multiple Myeloma • Neuro-Oncology • ", link: "/cancer-medicines/neuro-oncology" },
+      { name: "Hematology", img: getImage("assets/therapeuticareahematology.png", "assets/therapeuticareahematology.png"), marquee: "Acute Myeloid Leukemia • Chronic Myeloid Leukemia • Hodgkin/Non-Hodgkin's Lymphoma • Sickle Cell Anemia • ", link: "/cancer-medicines/hematology" },
+      { name: "Anti-Infectives", img: getImage("assets/therapeuticareaantiinfectives.jpg", "assets/therapeuticareaantiinfectives.jpg"), marquee: "Respiratory Infections • Urinary Tract Infections • Skin and Soft Tissue Infections • Bone and Joint Infections • ", link: "/cancer-medicines/anti-infectives" },
+      { name: "Endocrinology", img: getImage("assets/therapeuticareaendocrinology.jpg", "assets/therapeuticareaendocrinology.jpg"), marquee: "Endometriosis • Fibrocystic Breast Disease • Diabetes Management • Thyroid Disorders • Metabolic Syndrome • ", link: "/cancer-medicines/endocrinology" },
+      { name: "Orthopedic", img: getImage("assets/orthopedic.jpg", "assets/orthopedic.jpg"), marquee: "Multiple Myeloma • Osteoporosis • Joint Replacement Support • Fracture Recovery • Bone Metastases • ", link: "/cancer-medicines/orthopedic" },
+      { name: "Respiratory", img: getImage("assets/respiratory.jpg", "assets/respiratory.jpg"), marquee: "Seasonal Allergic Rhinitis • Asthma • COPD • Bronchitis • Pulmonary Hypertension • Chronic Kidney Disease • ", link: "/cancer-medicines/respiratory" },
+      { name: "Essential Medicines", img: getImage("assets/essential-medicines.jpg", "assets/essential-medicines.jpg"), marquee: "Generic Medicines • OTC Products • Vitamins & Supplements • First-line Treatments • Essential Drug List • ", link: "/cancer-medicines" },
+      { name: "Biologicals & Vaccines", img: getImage("assets/biologicals-vaccines.jpg", "assets/biologicals-vaccines.jpg"), marquee: "Hepatitis B • HPV • Influenza • Pneumococcal • Monoclonal Antibodies • Biosimilars • ", link: "/cancer-medicines" },
+      { name: "Medical Devices", img: getImage("assets/medical-devices.jpg", "assets/medical-devices.jpg"), marquee: "Diagnostic Equipment • Surgical Instruments • Patient Monitoring • Infusion Devices • Wound Care • ", link: "/cancer-medicines" },
+      { name: "Rare Diseases", img: getImage("assets/rare-diseases.jpg", "assets/rare-diseases.jpg"), marquee: "Orphan Drugs • Enzyme Replacement Therapy • Gene Therapy • Ultra-rare Conditions • Patient Programs • ", link: "/cancer-medicines" },
+    ];
+
+    if (!therapProductsData || !categoriesData) return base;
+
+    // Count real products per category name (lowercased), splitting combined "A / B" category strings.
+    const countByCatName: Record<string, number> = {};
+    for (const p of therapProductsData as any[]) {
+      const raw = (p.category && p.category.category) || p.excelCategory || '';
+      raw.split('/').map((s: string) => s.trim()).filter(Boolean).forEach((part: string) => {
+        const key = part.toLowerCase();
+        countByCatName[key] = (countByCatName[key] || 0) + 1;
+      });
+    }
+
+    // Resolve each card's real category name via its link slug (falls back to its own name),
+    // so hardcoded card labels can't drift from the actual Sanity category name.
+    const getCount = (card: typeof base[number]) => {
+      const slug = card.link.split('/').filter(Boolean).pop();
+      const matchedCat = (categoriesData as any[]).find(c => c.slug?.current === slug);
+      const catName = (matchedCat?.category || card.name).toLowerCase();
+      return countByCatName[catName] ?? -1;
+    };
+
+    return [...base].sort((a, b) => getCount(b) - getCount(a));
+  }, [therapProductsData, categoriesData, getImage]);
+
 
   // --- Hero Slider ---
   const fallbackHeroSlides = [
@@ -135,7 +178,7 @@ export default function GetMedsHomepage() {
     },
     {
       bg: 'assets/homebanner3.png',
-      heading: 'Compassionate Care.\nA Global Reach, A Local Heart.',
+      heading: 'Compassionate Care.\nA Global Reach,\nA Local Heart.',
       sub: 'With a presence across multiple countries, Getmeds connects global pharmaceutical innovation with the communities that need it most.',
       link: null as string | null,
     },
@@ -512,14 +555,14 @@ export default function GetMedsHomepage() {
 
       {/* Mobile Hero Container - Card Layout (block md:hidden) */}
       <div className="block md:hidden pb-4 pt-[120px] bg-white">
-        
+
         {/* Horizontal scrollable buttons row */}
-        <div 
+        <div
           className="flex gap-2.5 overflow-x-auto pb-4 px-4 scrollbar-none animate-fadeIn"
-          style={{ 
-            scrollbarWidth: 'none', 
-            msOverflowStyle: 'none', 
-            WebkitOverflowScrolling: 'touch' 
+          style={{
+            scrollbarWidth: 'none',
+            msOverflowStyle: 'none',
+            WebkitOverflowScrolling: 'touch'
           }}
         >
           <style>{`
@@ -527,32 +570,32 @@ export default function GetMedsHomepage() {
               display: none;
             }
           `}</style>
-          <a 
-            href="/order-medicines.html" 
+          <a
+            href="/order-medicines.html"
             className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:opacity-95 text-white font-bold text-[12.5px] py-2 px-5 rounded-full transition-all shrink-0 flex items-center justify-center"
           >
             Order Medicines
           </a>
-          <a 
-            href="/product-range" 
+          <a
+            href="/product-range"
             className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:opacity-95 text-white font-bold text-[12.5px] py-2 px-5 rounded-full transition-all shrink-0 flex items-center justify-center"
           >
             Product Range
           </a>
-          <a 
-            href="/services.html" 
+          <a
+            href="/services.html"
             className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:opacity-95 text-white font-bold text-[12.5px] py-2 px-5 rounded-full transition-all shrink-0 flex items-center justify-center"
           >
             Our Services
           </a>
-          <button 
-            onClick={() => setIsInquiryOpen(true)} 
+          <button
+            onClick={() => setIsInquiryOpen(true)}
             className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:opacity-95 text-white font-bold text-[12.5px] py-2 px-5 rounded-full transition-all shrink-0 flex items-center justify-center"
           >
             Become Our Partner
           </button>
-          <a 
-            href="/contact-us.html" 
+          <a
+            href="/contact-us.html"
             className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:opacity-95 text-white font-bold text-[12.5px] py-2 px-5 rounded-full transition-all shrink-0 flex items-center justify-center"
           >
             Contact Us
@@ -560,7 +603,7 @@ export default function GetMedsHomepage() {
         </div>
 
         <div className="bg-white px-4">
-          
+
           {/* Image Slider Container */}
           <div className="relative aspect-[16/10] w-full rounded-[20px] overflow-hidden mb-4 bg-gray-100">
             {/* Slide backgrounds */}
@@ -617,9 +660,8 @@ export default function GetMedsHomepage() {
                   <button
                     key={i}
                     onClick={() => goToHeroSlide(i)}
-                    className={`transition-all duration-300 rounded-full h-1.5 ${
-                      i === heroIndex ? 'w-4 bg-gradient-to-r from-[#61A644] to-[#1D9FDA]' : 'w-1.5 bg-gray-300'
-                    }`}
+                    className={`transition-all duration-300 rounded-full h-1.5 ${i === heroIndex ? 'w-4 bg-gradient-to-r from-[#61A644] to-[#1D9FDA]' : 'w-1.5 bg-gray-300'
+                      }`}
                   />
                 ))}
               </div>
@@ -637,7 +679,7 @@ export default function GetMedsHomepage() {
 
           {/* Subtext description below the slider */}
           {heroIndex !== 1 && (
-            <div 
+            <div
               className="px-1 mb-4 transition-opacity duration-400"
               style={{ opacity: heroFading ? 0 : 1 }}
             >
@@ -705,13 +747,18 @@ export default function GetMedsHomepage() {
             <p className="text-gray-500 leading-relaxed text-sm md:text-[15px]">
               A box of medicine isn't a product. It's a stage-IV oncology mother in Cebu waiting for her next dose. A child in Mindanao fighting leukemia. A father in Quezon City heading into surgery, trusting that the anesthesia is ready. Getmeds exists so distance, cost, and complexity never decide who lives.
             </p>
+            <div className="mt-6 md:hidden">
+              <a href="/about-us" className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] text-white font-bold text-sm px-8 py-3 rounded-full transition-transform hover:opacity-90 inline-block whitespace-nowrap">
+                Learn More
+              </a>
+            </div>
           </div>
         </div>
 
         {/* Bottom Area: Images & Floating Button */}
         <div className="relative mt-8">
-          {/* Floating Button Cutout Style */}
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
+          {/* Floating Button Cutout Style (desktop/tablet only — shown inline under the description on mobile) */}
+          <div className="hidden md:block absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
             <div className="bg-white p-2.5 rounded-full">
               <a href="/about-us" className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] text-white font-bold text-sm px-8 py-3 rounded-full transition-transform hover:opacity-90 inline-block whitespace-nowrap">
                 Learn More
@@ -726,7 +773,7 @@ export default function GetMedsHomepage() {
                 link={getImageLink('Patient First Section Image')}
                 src={getImage('Patient First Section Image', 'assets/genericslider.jpg')}
                 alt="Medical Professional"
-                className="w-full h-full object-cover object-center rounded-[24px] shadow-lg"
+                className="w-full h-full object-cover object-center rounded-[15px] sm:rounded-[24px] shadow-lg"
               />
             </div>
             <div className="h-[220px] md:h-[280px] lg:h-[340px]">
@@ -734,7 +781,7 @@ export default function GetMedsHomepage() {
                 link={getImageLink('Patient Second Section Image')}
                 src={getImage('Patient Second Section Image', 'assets/test.jpg')}
                 alt="Medical Facility"
-                className="w-full h-full object-cover object-center rounded-[24px] shadow-lg"
+                className="w-full h-full object-cover object-center rounded-[15px] sm:rounded-[24px] shadow-lg"
               />
             </div>
           </div>
@@ -834,20 +881,6 @@ export default function GetMedsHomepage() {
 
       {/* Therapeutic Areas Section */}
       {(() => {
-        const therapCards = [
-          { name: "Oncology", badge: "50+ Products", img: getImage("assets/therapeuticareaoncology.png", "assets/therapeuticareaoncology.png"), marquee: "Breast Cancer • Ovarian Cancer • Non-Small Cell Lung Cancer • Prostate Cancer • Colorectal Cancer • Pancreatic Cancer • ", link: "/cancer-medicines/oncology" },
-          { name: "Cardiology", badge: "35+ Products", img: getImage("assets/therapeuticareacardiology.png", "assets/therapeuticareacardiology.png"), marquee: "Arrhythmia Management • Hypertension/Angina • Heart Failure • Atrial Fibrillation • Coronary Artery Disease • ", link: "/cancer-medicines/cardiology" },
-          { name: "Neurology", badge: "40+ Products", img: getImage("assets/therapeuticareaneurology.png", "assets/therapeuticareaneurology.png"), marquee: "Glioblastoma Multiforme • Chronic Pain • Inflammatory Disorders • Osteoporosis • Multiple Myeloma • Neuro-Oncology • ", link: "/cancer-medicines/neuro-oncology" },
-          { name: "Hematology", badge: "60+ Products", img: getImage("assets/therapeuticareahematology.png", "assets/therapeuticareahematology.png"), marquee: "Acute Myeloid Leukemia • Chronic Myeloid Leukemia • Hodgkin/Non-Hodgkin's Lymphoma • Sickle Cell Anemia • ", link: "/cancer-medicines/hematology" },
-          { name: "Anti-Infectives", badge: "45+ Products", img: getImage("assets/therapeuticareaantiinfectives.jpg", "assets/therapeuticareaantiinfectives.jpg"), marquee: "Respiratory Infections • Urinary Tract Infections • Skin and Soft Tissue Infections • Bone and Joint Infections • ", link: "/cancer-medicines/anti-infectives" },
-          { name: "Endocrinology", badge: "30+ Products", img: getImage("assets/therapeuticareaendocrinology.jpg", "assets/therapeuticareaendocrinology.jpg"), marquee: "Endometriosis • Fibrocystic Breast Disease • Diabetes Management • Thyroid Disorders • Metabolic Syndrome • ", link: "/cancer-medicines/endocrinology" },
-          { name: "Orthopedic", badge: "25+ Products", img: getImage("assets/orthopedic.jpg", "assets/orthopedic.jpg"), marquee: "Multiple Myeloma • Osteoporosis • Joint Replacement Support • Fracture Recovery • Bone Metastases • ", link: "/cancer-medicines/orthopedic" },
-          { name: "Respiratory", badge: "35+ Products", img: getImage("assets/respiratory.jpg", "assets/respiratory.jpg"), marquee: "Seasonal Allergic Rhinitis • Asthma • COPD • Bronchitis • Pulmonary Hypertension • Chronic Kidney Disease • ", link: "/cancer-medicines/respiratory" },
-          { name: "Essential Medicines", badge: "100+ Products", img: getImage("assets/essential-medicines.jpg", "assets/essential-medicines.jpg"), marquee: "Generic Medicines • OTC Products • Vitamins & Supplements • First-line Treatments • Essential Drug List • ", link: "/cancer-medicines" },
-          { name: "Biologicals & Vaccines", badge: "20+ Products", img: getImage("assets/biologicals-vaccines.jpg", "assets/biologicals-vaccines.jpg"), marquee: "Hepatitis B • HPV • Influenza • Pneumococcal • Monoclonal Antibodies • Biosimilars • ", link: "/cancer-medicines" },
-          { name: "Medical Devices", badge: "50+ Devices", img: getImage("assets/medical-devices.jpg", "assets/medical-devices.jpg"), marquee: "Diagnostic Equipment • Surgical Instruments • Patient Monitoring • Infusion Devices • Wound Care • ", link: "/cancer-medicines" },
-          { name: "Rare Diseases", badge: "15+ Products", img: getImage("assets/rare-diseases.jpg", "assets/rare-diseases.jpg"), marquee: "Orphan Drugs • Enzyme Replacement Therapy • Gene Therapy • Ultra-rare Conditions • Patient Programs • ", link: "/cancer-medicines" },
-        ];
         const totalPages = Math.ceil(therapCards.length / 4);
         return (
           <section className="py-12 px-0 md:px-6 reveal">
@@ -890,8 +923,8 @@ export default function GetMedsHomepage() {
                         </div>
                       </div>
                     </div>
-                    <a 
-                      href={therapCards[therapMobileActive]?.link} 
+                    <a
+                      href={therapCards[therapMobileActive]?.link}
                       className="text-[11px] font-semibold text-white bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full px-3.5 py-1.5 transition-colors shrink-0"
                     >
                       See All

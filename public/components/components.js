@@ -1278,6 +1278,24 @@
                         if (modal) modal.classList.remove('hidden');
                     });
                     footerLegal.appendChild(disclaimerBtn);
+
+                    // Always append these policy links regardless of Sanity config (same treatment as Medical Disclaimer)
+                    [
+                        { label: 'Prescription Policy', modalId: 'prescription-policy-modal' },
+                        { label: 'Shipping & Delivery Policy', modalId: 'shipping-delivery-policy-modal' },
+                        { label: 'Return & Refund Policy', modalId: 'return-refund-policy-modal' },
+                    ].forEach(({ label, modalId }) => {
+                        const btn = document.createElement('button');
+                        btn.type = 'button';
+                        btn.className = 'footer-link text-gray-500 hover:text-white bg-transparent border-none cursor-pointer text-xs p-0';
+                        btn.textContent = label;
+                        btn.addEventListener('click', function () {
+                            const modal = document.getElementById(modalId);
+                            if (modal) modal.classList.remove('hidden');
+                        });
+                        footerLegal.appendChild(btn);
+                    });
+
                     footerLegal.dataset.populated = 'true';
                 }
             }
