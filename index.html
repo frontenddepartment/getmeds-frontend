@@ -24,13 +24,22 @@
             'data', 'src', 'node_modules', 'dist'
           ]);
           var firstSegment = cleanPath.split('/')[0];
-          if (
-            !ourPages.has(firstSegment) && 
-            !cleanPath.includes('.') && 
-            !pathname.startsWith('/api/') && 
+          var willRedirect = (
+            !ourPages.has(firstSegment) &&
+            !cleanPath.includes('.') &&
+            !pathname.startsWith('/api/') &&
             !pathname.startsWith('/wp-json/') &&
             !pathname.startsWith('/_vercel/')
-          ) {
+          );
+          console.log('[legacy-redirect] index.html loaded for pathname="' + pathname + '"', {
+            cleanPath: cleanPath,
+            firstSegment: firstSegment,
+            inOurPages: ourPages.has(firstSegment),
+            willRedirect: willRedirect,
+            redirectTarget: willRedirect ? ('/blog/' + cleanPath + window.location.search + window.location.hash) : null
+          });
+          if (willRedirect) {
+            console.warn('[legacy-redirect] REDIRECTING because "' + firstSegment + '" is not in ourPages — if this page should exist, add it to the list.');
             window.location.replace('/blog/' + cleanPath + window.location.search + window.location.hash);
           }
         }

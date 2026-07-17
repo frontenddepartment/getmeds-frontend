@@ -200,9 +200,15 @@ export default function BlogDetail() {
       const hash = urlParts[1] ? `#${urlParts[1]}` : '';
 
       // Check if it looks like a WordPress post slug path (e.g. not one of our pages)
-      if (pathOnly && !ourPages.has(pathOnly.split('/')[0]) && !pathOnly.includes('.')) {
-        e.preventDefault();
+      const firstSegment = pathOnly.split('/')[0];
+      const willIntercept = Boolean(pathOnly) && !ourPages.has(firstSegment) && !pathOnly.includes('.');
+      console.log(`[blog-detail-interceptor] click on href="${href}"`, {
+        cleanPath, pathOnly, firstSegment, inOurPages: ourPages.has(firstSegment), willIntercept,
+      });
+      if (willIntercept) {
         const postSlug = pathOnly.split('/').pop() || '';
+        console.warn(`[blog-detail-interceptor] INTERCEPTING because "${firstSegment}" is not in ourPages — redirecting to /blog/${postSlug} instead of following href="${href}". If this href should be a real page, add "${firstSegment}" to ourPages.`);
+        e.preventDefault();
         if (postSlug) {
           window.location.href = `/blog/${postSlug}${hash}`;
         }
