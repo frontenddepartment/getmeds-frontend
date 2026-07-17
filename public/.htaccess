@@ -142,9 +142,14 @@ RewriteRule ^(cancer-medicines|cancer-medicine|product-range)/(breast-cancer|ova
 RewriteRule ^(cancer-medicines|cancer-medicine|product-range)/([^/]+)/?$ /product-detail.html [L]
 RewriteRule ^(cancer-medicines|cancer-medicine|product-range)/?$ /cancer-medicines.html [L]
 
-# Blog article detail pages
+# Blog article detail pages. The bare-name-only pattern here matters: an
+# earlier version accepted an optional trailing ".html", which matched its
+# own rewritten output on the per-directory rewrite restart and caused an
+# infinite loop (-> 500 Internal Server Error). Literal *.html hits are
+# already redirected to the clean URL earlier in this file, so by the time
+# rules reach here there's never a real ".html" suffix left to match.
 RewriteRule ^blog/(.+)$ /blog-detail.html [L]
-RewriteRule ^blog-detail(\.html)?/?$ /blog-detail.html [L]
+RewriteRule ^blog-detail/?$ /blog-detail.html [L]
 
 # Known static top-level pages, matched explicitly by name rather than by
 # testing "does $1.html exist on disk" — that filesystem-check idiom proved

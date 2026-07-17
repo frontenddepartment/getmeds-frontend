@@ -188,8 +188,11 @@ export default function BlogDetail() {
         .replace(/^https?:\/\/173\.231\.197\.156/i, '');
       
       const ourPages = new Set([
-        '404', 'blog', 'blog-detail', 'articles', 'article-detail', 'about-us', 'contact-us', 'product-range', 'cancer-medicines', 'meditations',
-        'patient-assistance-program', 'careers', 'services', 'csr', 'ungc', 'index.html'
+        '404', 'blog', 'blog-detail', 'blog-preview', 'articles', 'article-detail', 'about-us', 'contact-us', 'product-range',
+        'cancer-medicines', 'cancer-medicine', 'product-detail', 'meditations', 'patient-assistance-program',
+        'patient-assistance-program-preview', 'careers', 'services', 'csr', 'ungc', 'order-medicines',
+        'employee-verification', 'global-presence', 'edit-profile', 'profile', 'under-development', 'home-preview',
+        'index.html'
       ]);
 
       const urlParts = cleanPath.split('#');
