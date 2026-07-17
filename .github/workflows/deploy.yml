@@ -1,0 +1,53 @@
+name: Deploy to cPanel
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+        env:
+          # Populate these as repo secrets once real production values exist.
+          # If left unset, vite.config.js/scripts fall back to their
+          # development defaults, so the build still succeeds either way.
+          VITE_DEPLOYMENT: production
+          VITE_CHATBOT_API_URL: ${{ secrets.VITE_CHATBOT_API_URL }}
+          VITE_SPREADSHEET_API_URL: ${{ secrets.VITE_SPREADSHEET_API_URL }}
+          VITE_SANITY_PROJECT_ID: ${{ secrets.VITE_SANITY_PROJECT_ID }}
+          VITE_SANITY_DATASET: ${{ secrets.VITE_SANITY_DATASET }}
+          VITE_SANITY_API_VERSION: ${{ secrets.VITE_SANITY_API_VERSION }}
+          VITE_WORDPRESS_API_BASE: ${{ secrets.VITE_WORDPRESS_API_BASE }}
+          VITE_WORDPRESS_API_ROOT: ${{ secrets.VITE_WORDPRESS_API_ROOT }}
+          VITE_ALLOWED_CORS_ORIGIN: ${{ secrets.VITE_ALLOWED_CORS_ORIGIN }}
+          SANITY_WRITE_TOKEN: ${{ secrets.SANITY_WRITE_TOKEN }}
+
+      - name: Deploy to cPanel via FTPS
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: ${{ secrets.FTP_SERVER_DIR }}
+          local-dir: ./dist/
+          exclude: |
+            **/.git*
+            **/.git*/**
+          # This action includes dotfiles (like .htaccess) by default —
+          # do not add .htaccess to the exclude list above.
