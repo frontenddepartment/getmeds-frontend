@@ -146,14 +146,12 @@ RewriteRule ^(cancer-medicines|cancer-medicine|product-range)/?$ /cancer-medicin
 RewriteRule ^blog/(.+)$ /blog-detail.html [L]
 RewriteRule ^blog-detail(\.html)?/?$ /blog-detail.html [L]
 
-# Generic clean-URL resolver: /any-page -> any-page.html, if that file exists.
-# Covers about-us, careers, contact-us, csr, edit-profile,
-# employee-verification, global-presence, meditations, order-medicines,
-# patient-assistance-program, profile, services, under-development, ungc, etc.
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteCond %{DOCUMENT_ROOT}/$1.html -f
-RewriteRule ^([^/]+)/?$ $1.html [L]
+# Known static top-level pages, matched explicitly by name rather than by
+# testing "does $1.html exist on disk" — that filesystem-check idiom proved
+# unreliable on this host (confirmed: about-us/etc. always fell through to
+# the final index.html fallback despite about-us.html existing). Update this
+# list if a new top-level page is added.
+RewriteRule ^(404|about-us|blog|blog-preview|careers|contact-us|csr|edit-profile|employee-verification|global-presence|home-preview|meditations|order-medicines|patient-assistance-program|patient-assistance-program-preview|product-detail|profile|services|under-development|ungc)/?$ /$1.html [L]
 
 # -----------------------------------------------------------------------------
 # Unknown single-segment slugs -> resolve-slug lookup (vercel.json's
