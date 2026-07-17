@@ -45,3 +45,5 @@ To prevent search engines from indexation of the backend WordPress domain (`cms.
 1. **X-Robots-Tag:** An HTTP header set to `noindex, nofollow, noarchive` for all traffic matching the CMS host.
 2. **Headless Redirection (410 Gone):** Configured via `.htaccess` on the Apache server. All public-facing page requests served directly by the CMS return an HTTP status code of `410 Gone`. This immediately drops CMS-served pages from search indexes.
 3. **Excluded Endpoints:** Critical paths (e.g., `wp-admin`, `wp-json` API endpoints, `wp-content/wp-includes` assets, and `robots.txt`) remain fully accessible to facilitate headless API queries.
+
+##
