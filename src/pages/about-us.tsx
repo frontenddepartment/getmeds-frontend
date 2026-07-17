@@ -38,6 +38,21 @@ export default function AboutUs() {
     else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
   };
 
+  // Mobile-only slider version of the panels above (md:hidden) — desktop keeps the hover-expand layout untouched.
+  const [aboutSlide, setAboutSlide] = useState(0);
+  const mobileWarehouseRef = useRef<HTMLVideoElement>(null);
+  const mobileUngcRef = useRef<HTMLVideoElement>(null);
+  const [mobileWarehousePlaying, setMobileWarehousePlaying] = useState(false);
+  const [mobileUngcPlaying, setMobileUngcPlaying] = useState(false);
+  const [mobileWarehouseMuted, setMobileWarehouseMuted] = useState(true);
+  const [mobileUngcMuted, setMobileUngcMuted] = useState(true);
+  const ABOUT_SLIDE_COUNT = 3;
+
+  useEffect(() => {
+    if (aboutSlide !== 0) mobileWarehouseRef.current?.pause();
+    if (aboutSlide !== 1) mobileUngcRef.current?.pause();
+  }, [aboutSlide]);
+
   useEffect(() => {
     const navContainer = document.getElementById('navbar-container');
     if (navContainer && navContainer.innerHTML.trim() === '') {
@@ -325,8 +340,8 @@ export default function AboutUs() {
             </div>
           </div>
 
-          {/* Expanding Panels */}
-          <div className="flex gap-3 h-[340px] md:h-[400px] mb-20 ca-anim ca-fade"
+          {/* Expanding Panels (desktop/tablet only — mobile uses the full-width slider below) */}
+          <div className="hidden md:flex gap-3 h-[340px] md:h-[400px] mb-20 ca-anim ca-fade"
             onMouseLeave={() => setActivePanel(0)}>
 
             {/* Panel 1 — Left */}
@@ -389,6 +404,157 @@ export default function AboutUs() {
               </div>
             </div>
 
+          </div>
+
+          {/* Mobile Slider (mobile only — desktop keeps the hover-expand panels above) */}
+          <div className="md:hidden relative rounded-2xl overflow-hidden aspect-video mb-20 ca-anim ca-fade">
+
+            {/* Slide 1 — Warehouse video */}
+            <div className={`absolute inset-0 transition-opacity duration-500 ${aboutSlide === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'}`}>
+              <video
+                ref={mobileWarehouseRef}
+                src="assets/WAREHOUSE.mp4"
+                muted={mobileWarehouseMuted}
+                loop
+                playsInline
+                onPlay={() => setMobileWarehousePlaying(true)}
+                onPause={() => setMobileWarehousePlaying(false)}
+                className="w-full h-full object-contain bg-black"
+              />
+              {!mobileWarehousePlaying && (
+                <button
+                  onClick={() => mobileWarehouseRef.current?.play()}
+                  className="absolute inset-0 flex items-center justify-center bg-black/20"
+                  aria-label="Play video"
+                >
+                  <span className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center shadow-lg">
+                    <i className="fa-solid fa-play text-gray-900 text-xl ml-1"></i>
+                  </span>
+                </button>
+              )}
+              <button
+                onClick={e => handlePanelFullscreen(e, mobileWarehouseRef)}
+                className="absolute top-4 right-4 w-10 h-10 rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-sm flex items-center justify-center text-white transition-colors duration-200 z-10"
+                aria-label="View fullscreen"
+              >
+                <i className="fa-solid fa-expand text-sm"></i>
+              </button>
+            </div>
+
+            {/* Slide 2 — UNGC video */}
+            <div className={`absolute inset-0 transition-opacity duration-500 ${aboutSlide === 1 ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'}`}>
+              <video
+                ref={mobileUngcRef}
+                src="assets/UNGC.mp4"
+                muted={mobileUngcMuted}
+                loop
+                playsInline
+                onPlay={() => setMobileUngcPlaying(true)}
+                onPause={() => setMobileUngcPlaying(false)}
+                className="w-full h-full object-contain bg-black"
+              />
+              {!mobileUngcPlaying && (
+                <button
+                  onClick={() => mobileUngcRef.current?.play()}
+                  className="absolute inset-0 flex items-center justify-center bg-black/20"
+                  aria-label="Play video"
+                >
+                  <span className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center shadow-lg">
+                    <i className="fa-solid fa-play text-gray-900 text-xl ml-1"></i>
+                  </span>
+                </button>
+              )}
+              <button
+                onClick={e => handlePanelFullscreen(e, mobileUngcRef)}
+                className="absolute top-4 right-4 w-10 h-10 rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-sm flex items-center justify-center text-white transition-colors duration-200 z-10"
+                aria-label="View fullscreen"
+              >
+                <i className="fa-solid fa-expand text-sm"></i>
+              </button>
+            </div>
+
+            {/* Slide 3 — Strategy & Innovation image */}
+            <div className={`absolute inset-0 transition-opacity duration-500 ${aboutSlide === 2 ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'}`}>
+              <LinkableImage link={getImageLink('About Us Team Image 3')} src={getImage('About Us Team Image 3', 'assets/aboutuseight.jpg')}
+                alt="Getmeds Strategy & Innovation"
+                className="w-full h-full object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent pointer-events-none"></div>
+              <div className="absolute bottom-14 left-0 right-0 p-6">
+                <h3 className="text-white text-lg font-bold leading-snug whitespace-nowrap">
+                  Strategy &amp; Innovation
+                </h3>
+                <p className="text-white/70 text-[13px] leading-relaxed mt-2 max-w-xs">
+                  Data-driven decisions and strategic partnerships that advance pharmaceutical access across Asia-Pacific and beyond.
+                </p>
+              </div>
+            </div>
+
+            {/* Slider Controls */}
+            <div className="absolute bottom-4 left-0 right-0 z-20 flex items-center justify-between px-4">
+              {/* Left: pause + volume (video slides only) */}
+              <div className="flex items-center gap-2" style={{ minWidth: '76px' }}>
+                {(aboutSlide === 0 || aboutSlide === 1) && (() => {
+                  const videoRef = aboutSlide === 0 ? mobileWarehouseRef : mobileUngcRef;
+                  const playing = aboutSlide === 0 ? mobileWarehousePlaying : mobileUngcPlaying;
+                  const muted = aboutSlide === 0 ? mobileWarehouseMuted : mobileUngcMuted;
+                  const setMuted = aboutSlide === 0 ? setMobileWarehouseMuted : setMobileUngcMuted;
+                  return (
+                    <>
+                      <button
+                        onClick={() => { playing ? videoRef.current?.pause() : videoRef.current?.play(); }}
+                        className="w-8 h-8 rounded-full bg-white/20 hover:bg-white/40 backdrop-blur-sm flex items-center justify-center text-white transition"
+                        aria-label={playing ? 'Pause video' : 'Play video'}
+                      >
+                        <i className={`fa-solid ${playing ? 'fa-pause' : 'fa-play'} text-xs`}></i>
+                      </button>
+                      <button
+                        onClick={() => setMuted(m => !m)}
+                        className="w-8 h-8 rounded-full bg-white/20 hover:bg-white/40 backdrop-blur-sm flex items-center justify-center text-white transition"
+                        aria-label={muted ? 'Unmute video' : 'Mute video'}
+                      >
+                        <i className={`fa-solid ${muted ? 'fa-volume-xmark' : 'fa-volume-high'} text-xs`}></i>
+                      </button>
+                    </>
+                  );
+                })()}
+              </div>
+
+              {/* Center: prev / dots / next */}
+              <div className="flex items-center gap-4">
+                <button
+                  onClick={() => setAboutSlide(s => (s - 1 + ABOUT_SLIDE_COUNT) % ABOUT_SLIDE_COUNT)}
+                  className="w-8 h-8 rounded-full bg-white/20 hover:bg-white/40 backdrop-blur-sm flex items-center justify-center transition"
+                  aria-label="Previous slide"
+                >
+                  <i className="fa-solid fa-chevron-left text-white text-xs"></i>
+                </button>
+                <div className="flex items-center gap-2">
+                  {Array.from({ length: ABOUT_SLIDE_COUNT }).map((_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setAboutSlide(i)}
+                      className="transition-all duration-300 rounded-full"
+                      style={{
+                        width: i === aboutSlide ? '24px' : '8px',
+                        height: '8px',
+                        background: i === aboutSlide ? 'white' : 'rgba(255,255,255,0.45)',
+                      }}
+                      aria-label={`Go to slide ${i + 1}`}
+                    />
+                  ))}
+                </div>
+                <button
+                  onClick={() => setAboutSlide(s => (s + 1) % ABOUT_SLIDE_COUNT)}
+                  className="w-8 h-8 rounded-full bg-white/20 hover:bg-white/40 backdrop-blur-sm flex items-center justify-center transition"
+                  aria-label="Next slide"
+                >
+                  <i className="fa-solid fa-chevron-right text-white text-xs"></i>
+                </button>
+              </div>
+
+              {/* Right spacer to balance the left group so the slide controls stay centered */}
+              <div style={{ minWidth: '76px' }} />
+            </div>
           </div>
 
           {/* Content Section (Bottom) */}

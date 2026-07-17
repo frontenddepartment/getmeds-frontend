@@ -198,7 +198,8 @@ export default function OrderMedicines() {
     address: '',
     contactName: '',
     contactRelationship: '',
-    terms: false
+    terms: false,
+    privacyConsent: false
   });
   const [patientIdFile, setPatientIdFile] = useState<File | null>(null);
   const [contactSameAsPatient, setContactSameAsPatient] = useState(false);
@@ -241,6 +242,10 @@ export default function OrderMedicines() {
       alert('Please confirm that all provided information is authentic.');
       return;
     }
+    if (!formData.privacyConsent) {
+      alert('Please consent to the Privacy Policy to proceed.');
+      return;
+    }
     setSubmitState('sending');
 
     const filesData: { name: string; type: string; base64: string; category: 'id' | 'prescription' }[] = [];
@@ -276,7 +281,8 @@ export default function OrderMedicines() {
           address: formData.address,
           contactSameAsPatient,
           contactName: formData.contactName,
-          contactRelationship: formData.contactRelationship
+          contactRelationship: formData.contactRelationship,
+          privacyPolicyConsent: formData.privacyConsent
         },
         files: filesData
       };
@@ -801,22 +807,39 @@ export default function OrderMedicines() {
 
                 <div>
                   <h3 className="text-[15px] font-semibold text-gray-800 mb-3">Consent Checkbox</h3>
-                  <div className="flex flex-wrap items-center justify-between gap-4">
-                    <div className="flex items-center gap-3">
-                      <input type="checkbox" id="terms"
-                        checked={formData.terms}
-                        onChange={e => setFormData(prev => ({ ...prev, terms: e.target.checked }))}
-                        className="w-4 h-4 rounded-md border-gray-200 text-success focus:ring-success cursor-pointer" />
-                      <label htmlFor="terms" className="text-[12px] text-gray-500 cursor-pointer">
-                        I confirm that the information provided is accurate and the prescription is valid.
-                      </label>
+                  <div className="flex flex-wrap items-start justify-between gap-4">
+                    <div className="flex flex-col gap-3 max-w-xl">
+                      <div className="flex items-start gap-3">
+                        <input type="checkbox" id="terms"
+                          checked={formData.terms}
+                          onChange={e => setFormData(prev => ({ ...prev, terms: e.target.checked }))}
+                          className="w-4 h-4 mt-0.5 rounded-md border-gray-200 text-success focus:ring-success cursor-pointer" />
+                        <label htmlFor="terms" className="text-[12px] text-gray-500 cursor-pointer">
+                          I confirm that the information provided is accurate and that the prescription submitted is valid.
+                        </label>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <input type="checkbox" id="privacyConsent"
+                          checked={formData.privacyConsent}
+                          onChange={e => setFormData(prev => ({ ...prev, privacyConsent: e.target.checked }))}
+                          className="w-4 h-4 mt-0.5 rounded-md border-gray-200 text-success focus:ring-success cursor-pointer" />
+                        <label htmlFor="privacyConsent" className="text-[12px] text-gray-500 cursor-pointer">
+                          I have read and understood the{' '}
+                          <button type="button"
+                            onClick={(e) => { e.preventDefault(); document.getElementById('privacy-policy-modal')?.classList.remove('hidden'); }}
+                            className="text-primary font-semibold hover:underline">
+                            Privacy Policy
+                          </button>
+                          {' '}and consent to the collection, use, and processing of my personal and sensitive personal information for the purpose of verifying, processing, dispensing, and delivering my order.
+                        </label>
+                      </div>
                     </div>
 
                     {/* Action Buttons */}
                     <div className="flex items-center gap-3 flex-shrink-0">
                       <button type="button"
                         onClick={() => {
-                          setFormData({ patientName: '', email: '', phone: '', age: '', dob: '', address: '', contactName: '', contactRelationship: '', terms: false });
+                          setFormData({ patientName: '', email: '', phone: '', age: '', dob: '', address: '', contactName: '', contactRelationship: '', terms: false, privacyConsent: false });
                           setUploadedFiles([]);
                           setUploadComplete(false);
                           setPatientIdFile(null);
