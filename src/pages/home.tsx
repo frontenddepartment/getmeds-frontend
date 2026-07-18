@@ -285,7 +285,6 @@ export default function GetMedsHomepage() {
   const [therapMobileActive, setTherapMobileActive] = useState(0);
   const [openFaq, setOpenFaq] = useState(0);
 
-
   // Therapeutic Areas mobile slider — auto-advance every 5s (12 cards)
   useEffect(() => {
     const timer = setInterval(() => {

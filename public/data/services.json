@@ -18,55 +18,103 @@
   ],
   "sectionLabel": "Corporate Services",
   "sectionHeading": "Our Core Competencies",
-  "sectionDescription": "We provide specialized pharmaceutical solutions designed for reliability, compliance, and nationwide impact across the healthcare sector. Our commitment to excellence ensures that every partner and patient receives the highest standard of care through innovative distribution and strategic collaboration.",
-  "services": [
+  "sectionDescription": "Ten capabilities. Four focus areas. One complete pharmaceutical partner for Filipino patients, doctors, hospitals, pharmacies, and manufacturers.",
+  "focusAreas": [
     {
-      "id": "regulatory-compliance",
-      "icon": "fa-solid fa-file-shield",
-      "title": "Regulatory & Compliance",
-      "badge": "FDA Registration",
-      "description": "We ensure full compliance with the Food and Drug Administration (FDA) regulations and industry standards, maintaining proper product registration, documentation, and adherence to guarantee safe, legal, and reliable healthcare solutions. Our dedicated compliance team manages every detail of the regulatory lifecycle to keep operations seamless and secure.",
-      "tags": ["FDA Quality Standards", "Proper Product Registration", "Documentation Adherence"]
+      "id": "foundation",
+      "number": "01",
+      "label": "Foundation",
+      "tagline": "The global backbone behind every Getmeds medicine.",
+      "stats": "50+ manufacturers · 5 international standards · Full lifecycle regulatory management",
+      "services": [
+        {
+          "id": "global-manufacturer-network",
+          "icon": "fa-solid fa-earth-asia",
+          "title": "Global Network of Pharma Manufacturers",
+          "description": "Strategic sourcing partnerships with 50+ manufacturers across India, China, Europe, and the US — all WHO, PIC/S, US FDA, EU MHRA, and UK MHRA recognized. Every partner facility meets international quality standards, ensuring the medicines Filipino doctors prescribe and patients receive are backed by globally verified manufacturing."
+        },
+        {
+          "id": "regulatory-compliance",
+          "icon": "fa-solid fa-file-shield",
+          "title": "Regulatory & Compliance",
+          "description": "FDA Philippines, DOH, PDEA (S-4 and S-5), BOC, and EDPMS expertise across product registration, post-market compliance, and pharmacovigilance. Our regulatory team manages the full lifecycle — from Certificate of Product Registration application to license renewals — so partners can operate with confidence and speed."
+        }
+      ]
     },
     {
-      "id": "precision-supply-chain",
-      "icon": "fa-solid fa-truck-ramp-box",
-      "title": "Precision Supply Chain",
-      "badge": "Nationwide Logistics",
-      "description": "A precision-managed supply chain that ensures every medicine batch is tracked, handled, and delivered with maximum control and accountability. Backed by rapid response and flexible delivery schedules, we move beyond fixed timetables to support urgent and critical patient needs — because access to life-saving medicines should never be delayed.",
-      "tags": ["Flexible Delivery Schedules", "Batch-level Accountability", "Urgent Response Systems"]
+      "id": "reach",
+      "number": "02",
+      "label": "Reach",
+      "tagline": "How our medicines get to every corner of Filipino healthcare.",
+      "stats": "5,000+ pharmacies · 500+ hospitals · Nationwide reach · Government bidding expertise",
+      "services": [
+        {
+          "id": "precision-supply-chain",
+          "icon": "fa-solid fa-truck-ramp-box",
+          "title": "Precision Supply Chain & Nationwide Distribution",
+          "description": "WHO GSDP-compliant cold-chain logistics with batch-level traceability and urgent-response delivery across Luzon, Visayas, and Mindanao. Built for the urgency of Filipino healthcare, with specialized handling for biologics, oncology therapies, and specialty molecules."
+        },
+        {
+          "id": "sales-distribution",
+          "icon": "fa-solid fa-handshake",
+          "title": "Sales and Distribution",
+          "description": "5,000+ pharmacy accounts served through dedicated nationwide sales teams across Luzon, Visayas, and Mindanao. Long-term partnership approach with account-managed service, product training, and market development support."
+        },
+        {
+          "id": "government-bidding",
+          "icon": "fa-solid fa-building-columns",
+          "title": "Government Bidding & Public Sector Access",
+          "description": "Proven tender experience supplying oncology, hematology, and anesthesia medicines to public hospitals nationwide. Dedicated bidding specialists handle full documentation, compliance protocols, and competitive quotation preparation."
+        }
+      ]
     },
     {
-      "id": "sales-distribution",
-      "icon": "fa-solid fa-handshake",
-      "title": "Sales and Distribution",
-      "badge": "Market Solutions",
-      "description": "We deliver comprehensive solutions for the pharmaceutical sector, building strong connections with partners and clients across the industry. Our services extend to distributors, wholesalers, traders, drugstores, and standalone clinics, ensuring seamless collaboration, reliable access to high-quality medicines, and support for the efficient growth of every business we work with.",
-      "tags": ["Strategic Telemarketing", "Agile Solutions", "Nationwide Reach"]
+      "id": "who-we-serve",
+      "number": "03",
+      "label": "Who We Serve",
+      "tagline": "The patients, doctors, and hospitals we're built for.",
+      "stats": "500+ hospitals · Filipino oncologists, hematologists, anesthesiologists · Compassionate access for rare disease patients",
+      "services": [
+        {
+          "id": "hospital-partnerships",
+          "icon": "fa-solid fa-hospital",
+          "title": "Hospital Partnerships & Institutional Supply",
+          "description": "Trusted by 500+ Filipino hospitals across public and private healthcare — with dedicated account managers, cold-chain oncology handling, and urgent-response supply for ICU and critical care units. Formulary-ready documentation for hospital pharmacy committees and specialty procurement for hard-to-source therapies."
+        },
+        {
+          "id": "doctor-support",
+          "icon": "fa-solid fa-user-doctor",
+          "title": "Doctor & Healthcare Professional Support",
+          "description": "Partnership with Filipino oncologists, hematologists, anesthesiologists, and specialists across the country. Product education, clinical information, and Named-Patient Access Program coordination — because doctors succeed when their prescribed medicines actually reach their patients."
+        },
+        {
+          "id": "direct-to-patient-care",
+          "icon": "fa-solid fa-hand-holding-medical",
+          "title": "Direct-to-Patient Care & Access Programs",
+          "description": "Prescription order fulfillment, refill support, affordable pricing, and nationwide delivery for Filipino patients. Patient Assistance Programs (PAP), Named-Patient Access Programs (NPAP), and Compassionate Special Permit (CSP) imports ensure continuous access to life-saving medicines — especially for oncology and rare disease treatments."
+        }
+      ]
     },
     {
-      "id": "government-bidding",
-      "icon": "fa-solid fa-building-columns",
-      "title": "Government Bidding",
-      "badge": "Public Healthcare",
-      "description": "Fully equipped to participate in government bidding across large public hospitals nationwide, we provide competitive, high-quality Oncology, Hematology, and Anesthesiology medicines. Our bidding specialists, with over 15 years of experience, bring unmatched connections, expertise, and competence to every participation, ensuring strict compliance and the delivery of safe, reliable healthcare solutions.",
-      "tags": ["15+ Years Proven Experience", "Nationwide Public Hospitals", "Strict Bidding Compliance"]
-    },
-    {
-      "id": "clidp",
-      "icon": "fa-solid fa-box-open",
-      "title": "Certificate of Listing (CLIDP)",
-      "badge": "Rebranding",
-      "description": "We provide CLIDP services across our CPR portfolio, enabling partners to rebrand and commercialize their own product lines with fast-track processing, efficient execution, and shorter time-to-market. We grow with our clients through every stage of their expansion, providing the infrastructure needed for low-risk growth.",
-      "tags": ["End-to-End Execution", "Low-Risk & Flexible MOQs", "Prioritized Manufacturing"]
-    },
-    {
-      "id": "digital-smart-solutions",
-      "icon": "fa-solid fa-mobile-screen-button",
-      "title": "Digital & Smart Solutions",
-      "badge": "Innovation",
-      "description": "Introducing Getmeds, the first to pioneer fully digital oncology care in the Philippines. We deliver fast, reliable, and flexible access to life-saving medicines anytime, anywhere through our innovative e-commerce platform and mobile app. Smart, tech-driven solutions that put patients first — setting a new standard in pharmaceutical services.",
-      "tags": ["Pioneering Digital Oncology", "Innovative E-commerce Platform", "Mobile App Integration"]
+      "id": "programs-access",
+      "number": "04",
+      "label": "Programs & Access",
+      "tagline": "Specialized services for government and pharmaceutical partners.",
+      "stats": "DSWD · PCSO · OVP · OP accredited · CLIDP for pharmaceutical partners",
+      "services": [
+        {
+          "id": "government-medical-assistance",
+          "icon": "fa-solid fa-landmark",
+          "title": "Government Medical Assistance & Program Accreditation",
+          "description": "Accredited chemotherapy and cancer medicine provider for DSWD, PCSO, Office of the Vice President (OVP), and Office of the President (OP) medical assistance programs. Fast quotations and streamlined guarantee letter processing ensure Filipino patients receive their medicines quickly and without administrative barriers."
+        },
+        {
+          "id": "clidp",
+          "icon": "fa-solid fa-box-open",
+          "title": "Certificate of Listing of Identical Drug Product (CLIDP) Services",
+          "description": "End-to-end CLIDP application, certification, and ongoing compliance management across our Certificate of Product Registration portfolio. Fast-track processing, low-risk market entry, and flexible minimum order quantities for pharmaceutical partners."
+        }
+      ]
     }
   ],
   "whyTrust": {

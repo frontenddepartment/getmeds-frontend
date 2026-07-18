@@ -126,23 +126,23 @@ export default function Services() {
       <section className="max-w-[1600px] mx-auto px-3 sm:px-4 md:px-6 mb-10">
         <div className="rounded-b-[2rem] px-8 py-7 grid grid-cols-2 md:grid-cols-4 divide-x divide-gray-100">
           <div className="stat-item flex flex-col items-center px-6 py-2 border-r border-gray-100 last:border-0 reveal">
-            <span className="text-[32px] font-black text-gradient leading-none" data-target="120">0</span>
-            <span className="text-gray-400 text-[11px] font-semibold uppercase tracking-widest mt-2">Countries
+            <span className="text-3xl md:text-4xl font-black bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent mb-2" data-target="120">0</span>
+            <span className="text-gray-600 font-bold text-sm md:text-base leading-tight">Countries
               Served</span>
           </div>
           <div className="stat-item flex flex-col items-center px-6 py-2 border-r border-gray-100 last:border-0 reveal">
-            <span className="text-[32px] font-black text-gradient leading-none" data-target="50000">0</span>
-            <span className="text-gray-400 text-[11px] font-semibold uppercase tracking-widest mt-2">Patients
+            <span className="text-3xl md:text-4xl font-black bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent mb-2" data-target="50000">0</span>
+            <span className="text-gray-600 font-bold text-sm md:text-base leading-tight">Patients
               Helped</span>
           </div>
           <div className="stat-item flex flex-col items-center px-6 py-2 border-r border-gray-100 last:border-0 reveal">
-            <span className="text-[32px] font-black text-gradient leading-none" data-target="500">0</span>
-            <span className="text-gray-400 text-[11px] font-semibold uppercase tracking-widest mt-2">Partner
+            <span className="text-3xl md:text-4xl font-black bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent mb-2" data-target="500">0</span>
+            <span className="text-gray-600 font-bold text-sm md:text-base leading-tight">Partner
               Clinics</span>
           </div>
           <div className="stat-item flex flex-col items-center px-6 py-2 last:border-0 reveal">
-            <span className="text-[32px] font-black text-gradient leading-none" data-target="24">0</span>
-            <span className="text-gray-400 text-[11px] font-semibold uppercase tracking-widest mt-2">Hour Support</span>
+            <span className="text-3xl md:text-4xl font-black bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent mb-2" data-target="24">0</span>
+            <span className="text-gray-600 font-bold text-sm md:text-base leading-tight">Hour Support</span>
           </div>
         </div>
       </section>
@@ -152,232 +152,238 @@ export default function Services() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
           {/* Section Header */}
-          <div className="mb-16 reveal">
-            <div
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full badge-pill text-[11px] font-bold uppercase tracking-widest mb-4">
-              <i className="fa-solid fa-briefcase-medical"></i> Corporate Services
-            </div>
-            <h2 className="text-2xl md:text-3xl font-bold mb-4 tracking-tight text-[#2A2A2A]"><span
-              className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">Our</span>
-              {' '}Core Competencies</h2>
-            <p data-json="sectionDescription" className="text-gray-500 mt-3 text-[15px] max-w-none">We provide specialized pharmaceutical solutions
-              designed for reliability, compliance, and nationwide impact across the healthcare sector. Our
-              commitment to excellence ensures that every partner and patient receives the highest standard of
-              care through innovative distribution and strategic collaboration.</p>
+          <div className="text-center max-w-2xl mx-auto mb-16 reveal">
+            <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent font-bold text-sm uppercase tracking-widest mb-4 block">Corporate Services</span>
+            <h2 className="text-3xl md:text-4xl font-semibold text-dark mb-4">Our Core{' '}
+              <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent inline-block">Competencies</span></h2>
+            <p data-json="sectionDescription" className="text-gray-500 text-[15px]">Ten capabilities.
+              Four focus areas. One complete pharmaceutical partner for Filipino patients, doctors, hospitals,
+              pharmacies, and manufacturers.</p>
           </div>
 
-          {/* Divider list of services */}
-          <div className="divide-y divide-gray-100">
-
-            {/* Service 1: Regulatory & Compliance */}
-            <div className="flex flex-col md:flex-row gap-6 py-12 reveal">
-              <div className="flex-shrink-0">
-                <div
-                  className="h-14 w-14 rounded-full bg-gradient-to-br from-[#61A644] to-[#1D9FDA] flex items-center justify-center text-xl text-white shadow-lg">
-                  <i className="fa-solid fa-file-shield"></i>
+          {/* Focus Area 01: Foundation */}
+          <div className="mb-16 reveal">
+            <div className="mb-8 pb-6 border-b border-gray-100">
+              <span className="text-[13px] font-black uppercase tracking-widest text-gradient block mb-3">01 &middot; Foundation</span>
+              <div className="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-4">
+              <h3 className="text-[19px] sm:text-[26px] md:text-[36px] font-semibold text-dark leading-tight tracking-tight max-w-2xl">The
+                  global backbone behind every Getmeds medicine.</h3>
+              <div className="flex flex-wrap gap-2 xl:justify-end xl:max-w-[520px] xl:flex-shrink-0">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default">
+                  <i className="fa-solid fa-circle-check text-[#1D9FDA] text-[10px]"></i>
+                  <span className="text-[11px] font-medium text-gray-600">50+ manufacturers</span>
+                </div>
+                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default">
+                  <i className="fa-solid fa-circle-check text-[#1D9FDA] text-[10px]"></i>
+                  <span className="text-[11px] font-medium text-gray-600">5 international standards</span>
+                </div>
+                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default">
+                  <i className="fa-solid fa-circle-check text-[#1D9FDA] text-[10px]"></i>
+                  <span className="text-[11px] font-medium text-gray-600">Full lifecycle regulatory management</span>
                 </div>
               </div>
-              <div className="flex-1">
-                <div className="flex flex-wrap items-center gap-3 mb-2">
-                  <h3 className="text-[20px] font-bold text-dark">Regulatory &amp; <span
-                    className="text-gradient">Compliance</span></h3>
-                  <span
-                    className="text-[10px] font-black uppercase tracking-widest text-blue-400 bg-blue-50 px-3 py-1 rounded-full">FDA
-                    Registration</span>
-                </div>
-                <p className="text-gray-500 text-[15px] leading-[1.8] mb-5">We ensure full compliance with the Food
-                  and Drug Administration (FDA) regulations and industry standards, maintaining proper product
-                  registration, documentation, and adherence to guarantee safe, legal, and reliable healthcare
-                  solutions. Our dedicated compliance team manages every detail of the regulatory lifecycle to
-                  keep operations seamless and secure.</p>
-                <div className="flex flex-wrap gap-2 mb-4">
-                  <span
-                    className="text-[12px] bg-gray-50 border border-gray-100 text-gray-600 px-3 py-1 rounded-full">FDA
-                    Quality Standards</span>
-                  <span
-                    className="text-[12px] bg-gray-50 border border-gray-100 text-gray-600 px-3 py-1 rounded-full">Proper
-                    Product Registration</span>
-                  <span
-                    className="text-[12px] bg-gray-50 border border-gray-100 text-gray-600 px-3 py-1 rounded-full">Documentation
-                    Adherence</span>
-                </div>
               </div>
             </div>
 
-            {/* Service 2: Precision Supply Chain */}
-            <div className="flex flex-col md:flex-row gap-6 py-12 reveal">
-              <div className="flex-shrink-0">
-                <div
-                  className="h-14 w-14 rounded-full bg-gradient-to-br from-[#61A644] to-[#1D9FDA] flex items-center justify-center text-xl text-white shadow-lg">
-                  <i className="fa-solid fa-truck-ramp-box"></i>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="bg-white p-7 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                <i className="fa-solid fa-earth-asia text-2xl text-gray-800 mb-5 block"></i>
+                <h4 className="text-[13px] font-bold text-gray-900 mb-3 uppercase tracking-wider">Global Network of
+                  Pharma Manufacturers</h4>
+                <p className="text-sm text-gray-500 leading-relaxed">Strategic sourcing partnerships with 50+
+                  manufacturers across India, China, Europe, and the US — all WHO, PIC/S, US FDA, EU MHRA, and UK
+                  MHRA recognized. Every partner facility meets international quality standards, ensuring the
+                  medicines Filipino doctors prescribe and patients receive are backed by globally verified
+                  manufacturing.</p>
+              </div>
+
+              <div className="bg-white p-7 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                <i className="fa-solid fa-file-shield text-2xl text-gray-800 mb-5 block"></i>
+                <h4 className="text-[13px] font-bold text-gray-900 mb-3 uppercase tracking-wider">Regulatory &amp;
+                  Compliance</h4>
+                <p className="text-sm text-gray-500 leading-relaxed">FDA Philippines, DOH, PDEA (S-4 and S-5),
+                  BOC, and EDPMS expertise across product registration, post-market compliance, and
+                  pharmacovigilance. Our regulatory team manages the full lifecycle — from Certificate of Product
+                  Registration application to license renewals — so partners can operate with confidence and
+                  speed.</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Focus Area 02: Reach */}
+          <div className="mb-16 reveal">
+            <div className="mb-8 pb-6 border-b border-gray-100">
+              <span className="text-[13px] font-black uppercase tracking-widest text-gradient block mb-3">02 &middot; Reach</span>
+              <div className="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-4">
+              <h3 className="text-[19px] sm:text-[26px] md:text-[36px] font-semibold text-dark leading-tight tracking-tight max-w-2xl">How
+                  our medicines get to every corner of Filipino healthcare.</h3>
+              <div className="flex flex-wrap gap-2 xl:justify-end xl:max-w-[520px] xl:flex-shrink-0">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default">
+                  <i className="fa-solid fa-circle-check text-[#1D9FDA] text-[10px]"></i>
+                  <span className="text-[11px] font-medium text-gray-600">5,000+ pharmacies</span>
+                </div>
+                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default">
+                  <i className="fa-solid fa-circle-check text-[#1D9FDA] text-[10px]"></i>
+                  <span className="text-[11px] font-medium text-gray-600">500+ hospitals</span>
+                </div>
+                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default">
+                  <i className="fa-solid fa-circle-check text-[#1D9FDA] text-[10px]"></i>
+                  <span className="text-[11px] font-medium text-gray-600">Nationwide reach</span>
+                </div>
+                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default">
+                  <i className="fa-solid fa-circle-check text-[#1D9FDA] text-[10px]"></i>
+                  <span className="text-[11px] font-medium text-gray-600">Government bidding expertise</span>
                 </div>
               </div>
-              <div className="flex-1">
-                <div className="flex flex-wrap items-center gap-3 mb-2">
-                  <h3 className="text-[20px] font-bold text-dark">Precision Supply <span
-                    className="text-gradient">Chain</span></h3>
-                  <span
-                    className="text-[10px] font-black uppercase tracking-widest text-purple-400 bg-purple-50 px-3 py-1 rounded-full">Nationwide
-                    Logistics</span>
-                </div>
-                <p className="text-gray-500 text-[15px] leading-[1.8] mb-5">A precision-managed supply chain that
-                  ensures every medicine batch is tracked, handled, and delivered with maximum control and
-                  accountability. Backed by rapid response and flexible delivery schedules, we move beyond
-                  fixed timetables to support urgent and critical patient needs — because access to
-                  life-saving medicines should never be delayed.</p>
-                <div className="flex flex-wrap gap-2 mb-4">
-                  <span
-                    className="text-[12px] bg-gray-50 border border-gray-100 text-gray-600 px-3 py-1 rounded-full">Flexible
-                    Delivery Schedules</span>
-                  <span
-                    className="text-[12px] bg-gray-50 border border-gray-100 text-gray-600 px-3 py-1 rounded-full">Batch-level
-                    Accountability</span>
-                  <span
-                    className="text-[12px] bg-gray-50 border border-gray-100 text-gray-600 px-3 py-1 rounded-full">Urgent
-                    Response Systems</span>
-                </div>
               </div>
             </div>
 
-            {/* Service 3: Sales and Distribution */}
-            <div className="flex flex-col md:flex-row gap-6 py-12 reveal">
-              <div className="flex-shrink-0">
-                <div
-                  className="h-14 w-14 rounded-full bg-gradient-to-br from-[#61A644] to-[#1D9FDA] flex items-center justify-center text-xl text-white shadow-lg">
-                  <i className="fa-solid fa-handshake"></i>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="bg-white p-7 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                <i className="fa-solid fa-truck-ramp-box text-2xl text-gray-800 mb-5 block"></i>
+                <h4 className="text-[13px] font-bold text-gray-900 mb-3 uppercase tracking-wider">Precision Supply
+                  Chain &amp; Nationwide Distribution</h4>
+                <p className="text-sm text-gray-500 leading-relaxed">WHO GSDP-compliant cold-chain logistics
+                  with batch-level traceability and urgent-response delivery across Luzon, Visayas, and Mindanao.
+                  Built for the urgency of Filipino healthcare, with specialized handling for biologics, oncology
+                  therapies, and specialty molecules.</p>
+              </div>
+
+              <div className="bg-white p-7 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                <i className="fa-solid fa-handshake text-2xl text-gray-800 mb-5 block"></i>
+                <h4 className="text-[13px] font-bold text-gray-900 mb-3 uppercase tracking-wider">Sales and
+                  Distribution</h4>
+                <p className="text-sm text-gray-500 leading-relaxed">5,000+ pharmacy accounts served through
+                  dedicated nationwide sales teams across Luzon, Visayas, and Mindanao. Long-term partnership
+                  approach with account-managed service, product training, and market development support.</p>
+              </div>
+
+              <div className="bg-white p-7 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                <i className="fa-solid fa-building-columns text-2xl text-gray-800 mb-5 block"></i>
+                <h4 className="text-[13px] font-bold text-gray-900 mb-3 uppercase tracking-wider">Government
+                  Bidding &amp; Public Sector Access</h4>
+                <p className="text-sm text-gray-500 leading-relaxed">Proven tender experience supplying
+                  oncology, hematology, and anesthesia medicines to public hospitals nationwide. Dedicated
+                  bidding specialists handle full documentation, compliance protocols, and competitive quotation
+                  preparation.</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Focus Area 03: Who We Serve */}
+          <div className="mb-16 reveal">
+            <div className="mb-8 pb-6 border-b border-gray-100">
+              <span className="text-[13px] font-black uppercase tracking-widest text-gradient block mb-3">03 &middot; Who We
+                Serve</span>
+              <div className="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-4">
+              <h3 className="text-[19px] sm:text-[26px] md:text-[36px] font-semibold text-dark leading-tight tracking-tight max-w-2xl">The
+                  patients, doctors, and hospitals we&apos;re built for.</h3>
+              <div className="flex flex-wrap gap-2 xl:justify-end xl:max-w-[520px] xl:flex-shrink-0">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default">
+                  <i className="fa-solid fa-circle-check text-[#1D9FDA] text-[10px]"></i>
+                  <span className="text-[11px] font-medium text-gray-600">500+ hospitals</span>
+                </div>
+                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default">
+                  <i className="fa-solid fa-circle-check text-[#1D9FDA] text-[10px]"></i>
+                  <span className="text-[11px] font-medium text-gray-600">Filipino oncologists, hematologists, anesthesiologists</span>
+                </div>
+                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default">
+                  <i className="fa-solid fa-circle-check text-[#1D9FDA] text-[10px]"></i>
+                  <span className="text-[11px] font-medium text-gray-600">Compassionate access for rare disease patients</span>
                 </div>
               </div>
-              <div className="flex-1">
-                <div className="flex flex-wrap items-center gap-3 mb-2">
-                  <h3 className="text-[20px] font-bold text-dark">Sales and <span
-                    className="text-gradient">Distribution</span></h3>
-                  <span
-                    className="text-[10px] font-black uppercase tracking-widest text-teal-500 bg-teal-50 px-3 py-1 rounded-full">Market
-                    Solutions</span>
-                </div>
-                <p className="text-gray-500 text-[15px] leading-[1.8] mb-5">We deliver comprehensive solutions for
-                  the pharmaceutical sector, building strong connections with partners and clients across the
-                  industry. Our services extend to distributors, wholesalers, traders, drugstores, and
-                  standalone clinics, ensuring seamless collaboration, reliable access to high-quality
-                  medicines, and support for the efficient growth of every business we work with.</p>
-                <div className="flex flex-wrap gap-2 mb-4">
-                  <span
-                    className="text-[12px] bg-gray-50 border border-gray-100 text-gray-600 px-3 py-1 rounded-full">Strategic
-                    Telemarketing</span>
-                  <span
-                    className="text-[12px] bg-gray-50 border border-gray-100 text-gray-600 px-3 py-1 rounded-full">Agile
-                    Solutions</span>
-                  <span
-                    className="text-[12px] bg-gray-50 border border-gray-100 text-gray-600 px-3 py-1 rounded-full">Nationwide
-                    Reach</span>
-                </div>
               </div>
             </div>
 
-            {/* Service 4: Government Bidding */}
-            <div className="flex flex-col md:flex-row gap-6 py-12 reveal">
-              <div className="flex-shrink-0">
-                <div
-                  className="h-14 w-14 rounded-full bg-gradient-to-br from-[#61A644] to-[#1D9FDA] flex items-center justify-center text-xl text-white shadow-lg">
-                  <i className="fa-solid fa-building-columns"></i>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="bg-white p-7 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                <i className="fa-solid fa-hospital text-2xl text-gray-800 mb-5 block"></i>
+                <h4 className="text-[13px] font-bold text-gray-900 mb-3 uppercase tracking-wider">Hospital
+                  Partnerships &amp; Institutional Supply</h4>
+                <p className="text-sm text-gray-500 leading-relaxed">Trusted by 500+ Filipino hospitals across
+                  public and private healthcare — with dedicated account managers, cold-chain oncology handling,
+                  and urgent-response supply for ICU and critical care units. Formulary-ready documentation for
+                  hospital pharmacy committees and specialty procurement for hard-to-source therapies.</p>
+              </div>
+
+              <div className="bg-white p-7 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                <i className="fa-solid fa-user-doctor text-2xl text-gray-800 mb-5 block"></i>
+                <h4 className="text-[13px] font-bold text-gray-900 mb-3 uppercase tracking-wider">Doctor &amp;
+                  Healthcare Professional Support</h4>
+                <p className="text-sm text-gray-500 leading-relaxed">Partnership with Filipino oncologists,
+                  hematologists, anesthesiologists, and specialists across the country. Product education,
+                  clinical information, and Named-Patient Access Program coordination — because doctors succeed
+                  when their prescribed medicines actually reach their patients.</p>
+              </div>
+
+              <div className="bg-white p-7 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                <i className="fa-solid fa-hand-holding-medical text-2xl text-gray-800 mb-5 block"></i>
+                <h4 className="text-[13px] font-bold text-gray-900 mb-3 uppercase tracking-wider">Direct-to-Patient
+                  Care &amp; Access Programs</h4>
+                <p className="text-sm text-gray-500 leading-relaxed">Prescription order fulfillment, refill
+                  support, affordable pricing, and nationwide delivery for Filipino patients. Patient Assistance
+                  Programs (PAP), Named-Patient Access Programs (NPAP), and Compassionate Special Permit (CSP)
+                  imports ensure continuous access to life-saving medicines — especially for oncology and rare
+                  disease treatments.</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Focus Area 04: Programs & Access */}
+          <div className="mb-4 reveal">
+            <div className="mb-8 pb-6 border-b border-gray-100">
+              <span className="text-[13px] font-black uppercase tracking-widest text-gradient block mb-3">04 &middot;
+                Programs &amp; Access</span>
+              <div className="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-4">
+              <h3 className="text-[19px] sm:text-[26px] md:text-[36px] font-semibold text-dark leading-tight tracking-tight max-w-2xl">Specialized
+                  services for government and pharmaceutical partners.</h3>
+              <div className="flex flex-wrap gap-2 xl:justify-end xl:max-w-[520px] xl:flex-shrink-0">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default">
+                  <i className="fa-solid fa-circle-check text-[#1D9FDA] text-[10px]"></i>
+                  <span className="text-[11px] font-medium text-gray-600">DSWD</span>
+                </div>
+                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default">
+                  <i className="fa-solid fa-circle-check text-[#1D9FDA] text-[10px]"></i>
+                  <span className="text-[11px] font-medium text-gray-600">PCSO</span>
+                </div>
+                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default">
+                  <i className="fa-solid fa-circle-check text-[#1D9FDA] text-[10px]"></i>
+                  <span className="text-[11px] font-medium text-gray-600">OVP</span>
+                </div>
+                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default">
+                  <i className="fa-solid fa-circle-check text-[#1D9FDA] text-[10px]"></i>
+                  <span className="text-[11px] font-medium text-gray-600">OP accredited</span>
+                </div>
+                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default">
+                  <i className="fa-solid fa-circle-check text-[#1D9FDA] text-[10px]"></i>
+                  <span className="text-[11px] font-medium text-gray-600">CLIDP for pharmaceutical partners</span>
                 </div>
               </div>
-              <div className="flex-1">
-                <div className="flex flex-wrap items-center gap-3 mb-2">
-                  <h3 className="text-[20px] font-bold text-dark">Government <span
-                    className="text-gradient">Bidding</span></h3>
-                  <span
-                    className="text-[10px] font-black uppercase tracking-widest text-rose-400 bg-rose-50 px-3 py-1 rounded-full">Public
-                    Healthcare</span>
-                </div>
-                <p className="text-gray-500 text-[15px] leading-[1.8] mb-5">Fully equipped to participate in
-                  government bidding across large public hospitals nationwide, we provide competitive,
-                  high-quality Oncology, Hematology, and Anesthesiology medicines. Our bidding specialists,
-                  with over 15 years of experience, bring unmatched connections, expertise, and competence to
-                  every participation, ensuring strict compliance and the delivery of safe, reliable
-                  healthcare solutions.</p>
-                <div className="flex flex-wrap gap-2 mb-4">
-                  <span
-                    className="text-[12px] bg-gray-50 border border-gray-100 text-gray-600 px-3 py-1 rounded-full">15+
-                    Years Proven Experience</span>
-                  <span
-                    className="text-[12px] bg-gray-50 border border-gray-100 text-gray-600 px-3 py-1 rounded-full">Nationwide
-                    Public Hospitals</span>
-                  <span
-                    className="text-[12px] bg-gray-50 border border-gray-100 text-gray-600 px-3 py-1 rounded-full">Strict
-                    Bidding Compliance</span>
-                </div>
               </div>
             </div>
 
-            {/* Service 5: Certificate of Listing (CLIDP) */}
-            <div className="flex flex-col md:flex-row gap-6 py-12 reveal">
-              <div className="flex-shrink-0">
-                <div
-                  className="h-14 w-14 rounded-full bg-gradient-to-br from-[#61A644] to-[#1D9FDA] flex items-center justify-center text-xl text-white shadow-lg">
-                  <i className="fa-solid fa-box-open"></i>
-                </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="bg-white p-7 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                <i className="fa-solid fa-landmark text-2xl text-gray-800 mb-5 block"></i>
+                <h4 className="text-[13px] font-bold text-gray-900 mb-3 uppercase tracking-wider">Government
+                  Medical Assistance &amp; Program Accreditation</h4>
+                <p className="text-sm text-gray-500 leading-relaxed">Accredited chemotherapy and cancer
+                  medicine provider for DSWD, PCSO, Office of the Vice President (OVP), and Office of the
+                  President (OP) medical assistance programs. Fast quotations and streamlined guarantee letter
+                  processing ensure Filipino patients receive their medicines quickly and without administrative
+                  barriers.</p>
               </div>
-              <div className="flex-1">
-                <div className="flex flex-wrap items-center gap-3 mb-2">
-                  <h3 className="text-[20px] font-bold text-dark">Certificate of Listing <span
-                    className="text-gradient">(CLIDP)</span></h3>
-                  <span
-                    className="text-[10px] font-black uppercase tracking-widest text-orange-400 bg-orange-50 px-3 py-1 rounded-full">Rebranding</span>
-                </div>
-                <p className="text-gray-500 text-[15px] leading-[1.8] mb-5">We provide CLIDP services across our CPR
-                  portfolio, enabling partners to rebrand and commercialize their own product lines with
-                  fast-track processing, efficient execution, and shorter time-to-market. We grow with our
-                  clients through every stage of their expansion, providing the infrastructure needed for
-                  low-risk growth.</p>
-                <div className="flex flex-wrap gap-2 mb-4">
-                  <span
-                    className="text-[12px] bg-gray-50 border border-gray-100 text-gray-600 px-3 py-1 rounded-full">End-to-End
-                    Execution</span>
-                  <span
-                    className="text-[12px] bg-gray-50 border border-gray-100 text-gray-600 px-3 py-1 rounded-full">Low-Risk
-                    &amp; Flexible MOQs</span>
-                  <span
-                    className="text-[12px] bg-gray-50 border border-gray-100 text-gray-600 px-3 py-1 rounded-full">Prioritized
-                    Manufacturing</span>
-                </div>
+
+              <div className="bg-white p-7 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                <i className="fa-solid fa-box-open text-2xl text-gray-800 mb-5 block"></i>
+                <h4 className="text-[13px] font-bold text-gray-900 mb-3 uppercase tracking-wider">Certificate of
+                  Listing of Identical Drug Product (CLIDP) Services</h4>
+                <p className="text-sm text-gray-500 leading-relaxed">End-to-end CLIDP application,
+                  certification, and ongoing compliance management across our Certificate of Product Registration
+                  portfolio. Fast-track processing, low-risk market entry, and flexible minimum order quantities
+                  for pharmaceutical partners.</p>
               </div>
             </div>
-
-            {/* Service 6: Digital & Smart Solutions */}
-            <div className="flex flex-col md:flex-row gap-6 py-12 reveal">
-              <div className="flex-shrink-0">
-                <div
-                  className="h-14 w-14 rounded-full bg-gradient-to-br from-[#61A644] to-[#1D9FDA] flex items-center justify-center text-xl text-white shadow-lg">
-                  <i className="fa-solid fa-mobile-screen-button"></i>
-                </div>
-              </div>
-              <div className="flex-1">
-                <div className="flex flex-wrap items-center gap-3 mb-2">
-                  <h3 className="text-[20px] font-bold text-dark">Digital &amp; Smart <span
-                    className="text-gradient">Solutions</span></h3>
-                  <span
-                    className="text-[10px] font-black uppercase tracking-widest text-green-500 bg-green-50 px-3 py-1 rounded-full">Innovation</span>
-                </div>
-                <p className="text-gray-500 text-[15px] leading-[1.8] mb-5">Introducing Getmeds, the first to
-                  pioneer fully digital oncology care in the Philippines. We deliver fast, reliable, and
-                  flexible access to life-saving medicines anytime, anywhere through our innovative e-commerce
-                  platform and mobile app. Smart, tech-driven solutions that put patients first — setting a
-                  new standard in pharmaceutical services.</p>
-                <div className="flex flex-wrap gap-2 mb-4">
-                  <span
-                    className="text-[12px] bg-gray-50 border border-gray-100 text-gray-600 px-3 py-1 rounded-full">Pioneering
-                    Digital Oncology</span>
-                  <span
-                    className="text-[12px] bg-gray-50 border border-gray-100 text-gray-600 px-3 py-1 rounded-full">Innovative
-                    E-commerce Platform</span>
-                  <span
-                    className="text-[12px] bg-gray-50 border border-gray-100 text-gray-600 px-3 py-1 rounded-full">Mobile
-                    App Integration</span>
-                </div>
-              </div>
-            </div>
-
           </div>
         </div>
       </section>

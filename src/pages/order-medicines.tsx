@@ -806,7 +806,7 @@ export default function OrderMedicines() {
                 <hr className="border-gray-100" />
 
                 <div>
-                  <h3 className="text-[15px] font-semibold text-gray-800 mb-3">Consent Checkbox</h3>
+                  <h3 className="text-[15px] font-semibold text-gray-800 mb-3">Declarations and Consent</h3>
                   <div className="flex flex-wrap items-start justify-between gap-4">
                     <div className="flex flex-col gap-3 max-w-xl">
                       <div className="flex items-start gap-3">
