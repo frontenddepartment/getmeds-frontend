@@ -188,8 +188,11 @@ export default function BlogDetail() {
         .replace(/^https?:\/\/173\.231\.197\.156/i, '');
       
       const ourPages = new Set([
-        '404', 'blog', 'blog-detail', 'articles', 'article-detail', 'about-us', 'contact-us', 'product-range', 'cancer-medicines', 'meditations',
-        'patient-assistance-program', 'careers', 'services', 'csr', 'ungc', 'index.html'
+        '404', 'blog', 'blog-detail', 'blog-preview', 'articles', 'article-detail', 'about-us', 'contact-us', 'product-range',
+        'cancer-medicines', 'cancer-medicine', 'product-detail', 'meditations', 'patient-assistance-program',
+        'patient-assistance-program-preview', 'careers', 'services', 'csr', 'ungc', 'order-medicines',
+        'employee-verification', 'global-presence', 'edit-profile', 'profile', 'under-development', 'home-preview',
+        'index.html'
       ]);
 
       const urlParts = cleanPath.split('#');
@@ -197,9 +200,15 @@ export default function BlogDetail() {
       const hash = urlParts[1] ? `#${urlParts[1]}` : '';
 
       // Check if it looks like a WordPress post slug path (e.g. not one of our pages)
-      if (pathOnly && !ourPages.has(pathOnly.split('/')[0]) && !pathOnly.includes('.')) {
-        e.preventDefault();
+      const firstSegment = pathOnly.split('/')[0];
+      const willIntercept = Boolean(pathOnly) && !ourPages.has(firstSegment) && !pathOnly.includes('.');
+      console.log(`[blog-detail-interceptor] click on href="${href}"`, {
+        cleanPath, pathOnly, firstSegment, inOurPages: ourPages.has(firstSegment), willIntercept,
+      });
+      if (willIntercept) {
         const postSlug = pathOnly.split('/').pop() || '';
+        console.warn(`[blog-detail-interceptor] INTERCEPTING because "${firstSegment}" is not in ourPages — redirecting to /blog/${postSlug} instead of following href="${href}". If this href should be a real page, add "${firstSegment}" to ourPages.`);
+        e.preventDefault();
         if (postSlug) {
           window.location.href = `/blog/${postSlug}${hash}`;
         }

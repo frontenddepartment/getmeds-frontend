@@ -17,19 +17,29 @@
         var cleanPath = pathname.replace(/^\/|\/$/g, '');
         if (cleanPath) {
           var ourPages = new Set([
-            'blog', 'blog-detail', 'blog-preview', 'about-us', 'contact-us', 'product-range', 'meditations',
-            'patient-assistance-program', 'patient-assistance-program-preview', 'careers', 'services', 'csr', 'ungc', 'index.html', 'edit-profile', 'profile',
-            'under-development', 'order-medicines', 'global-presence', 'home-preview', 'assets', 'components', 
+            '404', 'blog', 'blog-detail', 'blog-preview', 'about-us', 'contact-us', 'product-range', 'cancer-medicines', 'cancer-medicine',
+            'product-detail', 'meditations', 'patient-assistance-program', 'patient-assistance-program-preview', 'careers', 'services', 'csr',
+            'ungc', 'index.html', 'edit-profile', 'profile', 'employee-verification',
+            'under-development', 'order-medicines', 'global-presence', 'home-preview', 'assets', 'components',
             'data', 'src', 'node_modules', 'dist'
           ]);
           var firstSegment = cleanPath.split('/')[0];
-          if (
-            !ourPages.has(firstSegment) && 
-            !cleanPath.includes('.') && 
-            !pathname.startsWith('/api/') && 
+          var willRedirect = (
+            !ourPages.has(firstSegment) &&
+            !cleanPath.includes('.') &&
+            !pathname.startsWith('/api/') &&
             !pathname.startsWith('/wp-json/') &&
             !pathname.startsWith('/_vercel/')
-          ) {
+          );
+          console.log('[legacy-redirect] index.html loaded for pathname="' + pathname + '"', {
+            cleanPath: cleanPath,
+            firstSegment: firstSegment,
+            inOurPages: ourPages.has(firstSegment),
+            willRedirect: willRedirect,
+            redirectTarget: willRedirect ? ('/blog/' + cleanPath + window.location.search + window.location.hash) : null
+          });
+          if (willRedirect) {
+            console.warn('[legacy-redirect] REDIRECTING because "' + firstSegment + '" is not in ourPages — if this page should exist, add it to the list.');
             window.location.replace('/blog/' + cleanPath + window.location.search + window.location.hash);
           }
         }

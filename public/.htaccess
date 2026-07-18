@@ -1,0 +1,183 @@
+# =============================================================================
+# .htaccess — Apache/cPanel equivalent of vercel.json
+# Lives in public/ so Vite copies it into dist/ on every `npm run build`,
+# exactly like vercel.json used to travel with the Vercel deploy.
+#
+# REQUIRES these Apache modules enabled (ask your host / check WHM > Apache
+# Configuration > Include Editor, or "Apache Modules" if you have WHM access):
+#   - mod_rewrite      (routing / redirects)          — almost always on
+#   - mod_headers      (security + CORS headers)      — almost always on
+#   - mod_proxy        (reverse-proxying /api, /wp-json, /masteradmin, etc.)
+#   - mod_proxy_http    "
+#   - mod_ssl          (needed because proxy targets are all https://)
+#
+# mod_proxy is the one shared cPanel hosts most often disable. If the proxy
+# block below doesn't work (you get a 500 error on /wp-json, /api/*, etc.),
+# jump to the "NO mod_proxy FALLBACK" section near the bottom, comment out
+# the proxy block, and uncomment the fallback block instead.
+# =============================================================================
+
+RewriteEngine On
+RewriteBase /
+
+# -----------------------------------------------------------------------------
+# Security headers (vercel.json "headers" -> source: "/(.*)")
+# -----------------------------------------------------------------------------
+<IfModule mod_headers.c>
+  Header always set X-Frame-Options "DENY"
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# -----------------------------------------------------------------------------
+# CORS origin whitelist for proxied routes.
+# Mirrors VITE_ALLOWED_CORS_ORIGIN in .env — update this list if that changes.
+# Unlike vercel.json (which can only hold ONE static origin), this reflects
+# whichever allowed origin actually sent the request.
+# -----------------------------------------------------------------------------
+SetEnvIf Origin "^https://(www\.|development\.)?getmeds\.ph$" CORS_ALLOW_ORIGIN=$0
+# Uncomment while testing locally against this server:
+# SetEnvIf Origin "^http://localhost:(5173|3000)$" CORS_ALLOW_ORIGIN=$0
+
+<IfModule mod_headers.c>
+  Header always set Access-Control-Allow-Origin %{CORS_ALLOW_ORIGIN}e env=CORS_ALLOW_ORIGIN
+  Header always set Access-Control-Allow-Methods "GET,OPTIONS,PATCH,DELETE,POST,PUT" env=CORS_ALLOW_ORIGIN
+  Header always set Access-Control-Allow-Headers "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization" env=CORS_ALLOW_ORIGIN
+  Header always set Access-Control-Allow-Credentials "true" env=CORS_ALLOW_ORIGIN
+</IfModule>
+
+# -----------------------------------------------------------------------------
+# Exact slug-typo fixes (vercel.json "redirects" — the amloget/vancoget/gemget
+# URL-encoded-space entries). 301 = permanent, matches vercel.json.
+# -----------------------------------------------------------------------------
+RewriteRule ^cancer-medicines/amloget\ 10-amlodipine-10-mg-tablet$ /cancer-medicines/amloget-10-amlodipine-10-mg-tablet [R=301,L,NE]
+RewriteRule ^cancer-medicines/amloget\ 5-amlodipine-5-mg-tablet$ /cancer-medicines/amloget-5-amlodipine-5-mg-tablet [R=301,L,NE]
+RewriteRule ^cancer-medicines/vancoget\ 500-vancomycin-500-mg-powder-for-injection-i-v$ /cancer-medicines/vancoget-500-vancomycin-500-mg-powder-for-injection-i-v [R=301,L,NE]
+RewriteRule ^cancer-medicines/vancoget\ 1000-vancomycin-1-g-powder-for-injection-i-v$ /cancer-medicines/vancoget-1000-vancomycin-1-g-powder-for-injection-i-v [R=301,L,NE]
+RewriteRule ^cancer-medicines/gemget\ 200-gemcitabine-200-mg-lyophilized-powder-for-injection-iv$ /cancer-medicines/gemget-200-gemcitabine-200-mg-lyophilized-powder-for-injection-iv [R=301,L,NE]
+
+# -----------------------------------------------------------------------------
+# General redirects (vercel.json "redirects")
+# -----------------------------------------------------------------------------
+RewriteRule ^articles\.html$ /blog [R=301,L]
+RewriteRule ^articles/?$ /blog [R=301,L]
+RewriteRule ^articles/(.+)$ /blog/$1 [R=301,L]
+RewriteRule ^article-detail(\.html)?$ /blog-detail [R=301,L]
+RewriteRule ^product-range\.html$ /product-range [R=301,L]
+RewriteRule ^pap(\.html)?$ /patient-assistance-program [R=301,L]
+
+# -----------------------------------------------------------------------------
+# Generic cleanUrls:true behavior — any *other* direct hit on a real .html
+# file (e.g. someone links to /careers.html) gets bounced to the extensionless
+# URL. Matched against THE_REQUEST (the raw request line), not the internally
+# rewritten URI, so this can't loop with the $1.html forwarding rules below.
+# -----------------------------------------------------------------------------
+RewriteCond %{THE_REQUEST} \s/+(index)\.html[\s?] [NC]
+RewriteRule ^ /? [R=301,L]
+
+RewriteCond %{THE_REQUEST} \s/+([^\s?]+)\.html[\s?] [NC]
+RewriteRule ^ /%1? [R=301,L]
+
+# =============================================================================
+# Reverse proxies (vercel.json "rewrites" that point at http:// or https://)
+# Requires mod_proxy + mod_proxy_http + mod_ssl. See fallback section if these
+# 500 on your host.
+# =============================================================================
+<IfModule mod_proxy_http.c>
+  RewriteRule ^wp-json/(.*)$ https://cms.getmeds.ph/wp-json/$1 [P,L]
+  RewriteRule ^wp-content/(.*)$ https://cms.getmeds.ph/wp-content/$1 [P,L]
+
+  RewriteRule ^api/careers$ https://getmeds-test-creation.vercel.app/api/careers [P,L]
+  RewriteRule ^api/(.*)$ https://getmeds-admin.vercel.app/api/$1 [P,L]
+
+  RewriteRule ^public/(.*)$ https://admin.getmeds.ph/public/$1 [P,L]
+
+  RewriteRule ^masteradmin$ https://admin.getmeds.ph/masteradmin [P,L]
+  RewriteRule ^masteradmin/(.*)$ https://admin.getmeds.ph/masteradmin/$1 [P,L]
+  RewriteRule ^masteradlorock$ https://admin.getmeds.ph/masteradlorock [P,L]
+  RewriteRule ^masteradlorock/(.*)$ https://admin.getmeds.ph/masteradlorock/$1 [P,L]
+  RewriteRule ^masteradlorockpd$ https://admin.getmeds.ph/masteradlorockpd [P,L]
+  RewriteRule ^masteradlorockpd/(.*)$ https://admin.getmeds.ph/masteradlorockpd/$1 [P,L]
+  RewriteRule ^masteradlorockpdprocess$ https://admin.getmeds.ph/masteradlorockpdprocess [P,L]
+  RewriteRule ^masteradlorockpdprocess/(.*)$ https://admin.getmeds.ph/masteradlorockpdprocess/$1 [P,L]
+  RewriteRule ^masteradlogriyon$ https://admin.getmeds.ph/masteradlogriyon [P,L]
+  RewriteRule ^masteradlogriyon/(.*)$ https://admin.getmeds.ph/masteradlogriyon/$1 [P,L]
+  RewriteRule ^adminadlorock$ https://admin.getmeds.ph/adminadlorock [P,L]
+  RewriteRule ^adminadlorock/(.*)$ https://admin.getmeds.ph/adminadlorock/$1 [P,L]
+</IfModule>
+
+# -----------------------------------------------------------------------------
+# NO mod_proxy FALLBACK — if the block above 500s on your host, comment out
+# the <IfModule mod_proxy_http.c> block and uncomment this one instead.
+# This can't hide the target domain (it 302-redirects the browser there
+# instead of masking it), but it works on any shared host with no extra
+# modules.
+# -----------------------------------------------------------------------------
+# RewriteRule ^wp-json/(.*)$ https://cms.getmeds.ph/wp-json/$1 [R=302,L]
+# RewriteRule ^wp-content/(.*)$ https://cms.getmeds.ph/wp-content/$1 [R=302,L]
+# RewriteRule ^api/careers$ https://getmeds-test-creation.vercel.app/api/careers [R=302,L]
+# RewriteRule ^api/(.*)$ https://getmeds-admin.vercel.app/api/$1 [R=302,L]
+# RewriteRule ^public/(.*)$ https://admin.getmeds.ph/public/$1 [R=302,L]
+# RewriteRule ^masteradmin(/.*)?$ https://admin.getmeds.ph/masteradmin$1 [R=302,L]
+# RewriteRule ^masteradlorock(/.*)?$ https://admin.getmeds.ph/masteradlorock$1 [R=302,L]
+# RewriteRule ^masteradlorockpd(/.*)?$ https://admin.getmeds.ph/masteradlorockpd$1 [R=302,L]
+# RewriteRule ^masteradlorockpdprocess(/.*)?$ https://admin.getmeds.ph/masteradlorockpdprocess$1 [R=302,L]
+# RewriteRule ^masteradlogriyon(/.*)?$ https://admin.getmeds.ph/masteradlogriyon$1 [R=302,L]
+# RewriteRule ^adminadlorock(/.*)?$ https://admin.getmeds.ph/adminadlorock$1 [R=302,L]
+
+# =============================================================================
+# Clean-URL page routing (vercel.json cleanUrls:true + the per-page rewrites)
+# =============================================================================
+
+# Known disease/product subcategory slugs (kept in sync with the fallback list
+# in vite.config.js / scripts/update-vercel-headers.cjs — update in all three
+# places if Sanity categories change). Inlined directly (rather than via
+# Apache's Define + ${VAR} interpolation) for compatibility with older
+# Apache/EasyApache builds still common on shared cPanel hosting.
+#
+# cancer-medicines / cancer-medicine / product-range all behave identically:
+# a known subcategory slug -> the category listing page, anything else
+# one level deep -> the product detail page, bare prefix -> listing page.
+RewriteRule ^(cancer-medicines|cancer-medicine|product-range)/(breast-cancer|ovarian-cancer|lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|aml|cml|lymphoma|sickle-cell|respiratory|uti|skin-infections|bone-infections|endometriosis|fibrocystic|multiple-myeloma|osteoporosis|arrhythmia|hypertension|glioblastoma|allergic-rhinitis|kidney-disease|pain|rheumatology|chronic-lymphocytic-leukemia|acute-lymphoblastic-leukemia|malignant-pleural-mesothelioma|head-and-neck-cancer|chronic-myeloid-leukemia|sickle-cell-anemia|malignant-pleural-effusion|gastrointestinal-stromal-tumors|acute-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-myelocytic-leukemia|meningeal-leukemia|acute-promyelocytic-leukemia|mantle-cell-lymphoma|neuro-oncology|glioblastoma-multiforme|obstetrician|folate-deficiency-anemia|iron-deficiency-anemia|allergy|seasonal-allergic-rhinitis|chronic-pain-management|inflammatory-rheumatic-disorders|endocrinology|fibrocystic-breast-disease|benign-prostatic-hyperplasia|cardiology|arrhythmia-management|hypertension-angina|renal|radiology|radiologic-imaging-enhancement-ct-scans-angiography-urography|hematology|orthopedic|glucocorticoid-induced-osteoporosis|gynecology|anti-infectives|respiratory-infections|urinary-tract-infections|gynecological-infections|intra-abdominal-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|bloodstream-infections|ocular-or-topical-infections|nephrology)/?$ /cancer-medicines.html [L]
+RewriteRule ^(cancer-medicines|cancer-medicine|product-range)/([^/]+)/?$ /product-detail.html [L]
+RewriteRule ^(cancer-medicines|cancer-medicine|product-range)/?$ /cancer-medicines.html [L]
+
+# Blog article detail pages. The bare-name-only pattern here matters: an
+# earlier version accepted an optional trailing ".html", which matched its
+# own rewritten output on the per-directory rewrite restart and caused an
+# infinite loop (-> 500 Internal Server Error). Literal *.html hits are
+# already redirected to the clean URL earlier in this file, so by the time
+# rules reach here there's never a real ".html" suffix left to match.
+RewriteRule ^blog/(.+)$ /blog-detail.html [L]
+RewriteRule ^blog-detail/?$ /blog-detail.html [L]
+
+# Known static top-level pages, matched explicitly by name rather than by
+# testing "does $1.html exist on disk" — that filesystem-check idiom proved
+# unreliable on this host (confirmed: about-us/etc. always fell through to
+# the final index.html fallback despite about-us.html existing). Update this
+# list if a new top-level page is added.
+RewriteRule ^(404|about-us|blog|blog-preview|careers|contact-us|csr|edit-profile|employee-verification|global-presence|home-preview|meditations|order-medicines|patient-assistance-program|patient-assistance-program-preview|product-detail|profile|services|under-development|ungc)/?$ /$1.html [L]
+
+# -----------------------------------------------------------------------------
+# Unknown single-segment slugs -> resolve-slug lookup (vercel.json's
+# negative-lookahead catch-all rewrite). Anything that isn't a known route,
+# an existing file, or a Vercel/internal path falls through to here.
+# -----------------------------------------------------------------------------
+<IfModule mod_proxy_http.c>
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_URI} !^/(404|about-us|blog|blog-detail|cancer-medicines|cancer-medicine|careers|contact-us|csr|edit-profile|employee-verification|global-presence|home-preview|meditations|order-medicines|patient-assistance-program|product-range|profile|services|under-development|ungc|api|wp-json|wp-content|assets|public|components|data|src|dist|node_modules|_vercel|masteradmin|masteradlorock|masteradlorockpd|masteradlorockpdprocess|masteradlogriyon|adminadlorock)(/|$)
+  RewriteRule ^([^/]+)$ https://getmeds-admin.vercel.app/api/resolve-slug/$1 [P,L]
+</IfModule>
+
+# -----------------------------------------------------------------------------
+# Final fallback (vercel.json's last rewrite: "/:path*" -> "/index.html")
+# -----------------------------------------------------------------------------
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ /index.html [L]
+
+# -----------------------------------------------------------------------------
+# Custom 404 page (matches the 404.html shipped in this project)
+# -----------------------------------------------------------------------------
+ErrorDocument 404 /404.html
