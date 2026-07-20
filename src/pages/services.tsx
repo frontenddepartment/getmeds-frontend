@@ -34,13 +34,13 @@ export default function Services() {
     const animateCounters = () => {
       document.querySelectorAll<HTMLElement>('[data-target]').forEach(el => {
         const target = parseInt(el.dataset.target || '0');
+        const suffix = el.dataset.suffix ?? '+';
         let current = 0;
         const step = target / (1800 / 16);
         const timer = setInterval(() => {
           current = Math.min(current + step, target);
-          el.textContent = target >= 1000
-            ? Math.floor(current).toLocaleString() + '+'
-            : Math.floor(current) + (target === 24 ? '/7' : '+');
+          const value = target >= 1000 ? Math.floor(current).toLocaleString() : Math.floor(current);
+          el.textContent = value + suffix;
           if (current >= target) clearInterval(timer);
         }, 16);
       });
@@ -126,23 +126,24 @@ export default function Services() {
       <section className="max-w-[1600px] mx-auto px-3 sm:px-4 md:px-6 mb-10">
         <div className="rounded-b-[2rem] px-8 py-7 grid grid-cols-2 md:grid-cols-4 divide-x divide-gray-100">
           <div className="stat-item flex flex-col items-center px-6 py-2 border-r border-gray-100 last:border-0 reveal">
-            <span className="text-3xl md:text-4xl font-black bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent mb-2" data-target="120">0</span>
-            <span className="text-gray-600 font-bold text-sm md:text-base leading-tight">Countries
-              Served</span>
+            <span className="text-3xl md:text-4xl font-black bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent mb-2" data-target="2000">0</span>
+            <span className="text-gray-600 font-bold text-sm md:text-base leading-tight">Molecules
+              in portfolio</span>
           </div>
           <div className="stat-item flex flex-col items-center px-6 py-2 border-r border-gray-100 last:border-0 reveal">
-            <span className="text-3xl md:text-4xl font-black bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent mb-2" data-target="50000">0</span>
-            <span className="text-gray-600 font-bold text-sm md:text-base leading-tight">Patients
-              Helped</span>
+            <span className="text-3xl md:text-4xl font-black bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent mb-2" data-target="10000">0</span>
+            <span className="text-gray-600 font-bold text-sm md:text-base leading-tight">Pharmacies
+              nationwide</span>
           </div>
           <div className="stat-item flex flex-col items-center px-6 py-2 border-r border-gray-100 last:border-0 reveal">
             <span className="text-3xl md:text-4xl font-black bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent mb-2" data-target="500">0</span>
-            <span className="text-gray-600 font-bold text-sm md:text-base leading-tight">Partner
-              Clinics</span>
+            <span className="text-gray-600 font-bold text-sm md:text-base leading-tight">Hospitals
+              served</span>
           </div>
           <div className="stat-item flex flex-col items-center px-6 py-2 last:border-0 reveal">
-            <span className="text-3xl md:text-4xl font-black bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent mb-2" data-target="24">0</span>
-            <span className="text-gray-600 font-bold text-sm md:text-base leading-tight">Hour Support</span>
+            <span className="text-3xl md:text-4xl font-black bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent mb-2" data-target="2" data-suffix="M+">0</span>
+            <span className="text-gray-600 font-bold text-sm md:text-base leading-tight">Filipino
+              lives touched</span>
           </div>
         </div>
       </section>
