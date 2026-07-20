@@ -1147,7 +1147,7 @@ export default function GetMedsHomepage() {
               <div className="col-span-6 md:col-span-2 bg-gradient-to-br from-white to-indigo-100/60 rounded-2xl p-6 relative overflow-hidden flex flex-col justify-between hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer" style={{ minHeight: '220px' }}>
                 <div className="relative z-10">
                   <h3 className="text-base font-bold text-gray-900 mb-2">Government Bidding & Public Sector Access</h3>
-                  <p className="text-gray-500 text-sm leading-relaxed">DOH, LGU, and PhilHealth tender participation with full documentation and compliance support.</p>
+                  <p className="text-gray-500 text-sm leading-relaxed">Partnering with government hospitals through competitive bidding to enhance access to quality healthcare and essential medicines.</p>
                 </div>
                 <div className="absolute bottom-0 right-0 w-28 h-28 pointer-events-none opacity-[0.08]">
                   <svg viewBox="0 0 100 100" className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
