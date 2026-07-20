@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { injectHTML } from '../lib/injectHTML';
 import { setPageMeta } from '../lib/seo';
 import { getVerifiedEmployees } from '../lib/queries';
-import { BadgeCheck, ShieldCheck } from "lucide-react";
+import { BadgeCheck, ShieldCheck, User } from "lucide-react";
 
 export default function EmployeeVerification() {
   useEffect(() => {
@@ -17,6 +17,7 @@ export default function EmployeeVerification() {
   const [submitting, setSubmitting] = useState(false);
   const [modalState, setModalState] = useState<'verified' | 'not-verified' | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [imageError, setImageError] = useState(false);
   const [matchedEmployee, setMatchedEmployee] = useState<{
     name: string;
     initials: string;
@@ -24,6 +25,7 @@ export default function EmployeeVerification() {
     email: string | null;
     phone: string | null;
     verificationDate: string;
+    imageUrl?: string | null;
   } | null>(null);
   const [searchQueryUsed, setSearchQueryUsed] = useState('');
 
@@ -68,6 +70,7 @@ export default function EmployeeVerification() {
     setSubmitting(true);
     setModalState(null);
     setMatchedEmployee(null);
+    setImageError(false);
     setSearchQueryUsed(query.trim());
 
     try {
@@ -171,7 +174,9 @@ export default function EmployeeVerification() {
         });
         const verificationDate = `${dateStr} at ${timeStr}`;
 
-        setMatchedEmployee({ name: empName, initials, employeeId: empId, email, phone, verificationDate });
+        const imageUrl = found.image?.[0] || found.imageUrl?.[0] || found.photo?.[0] || found.avatar?.[0] || null;
+
+        setMatchedEmployee({ name: empName, initials, employeeId: empId, email, phone, verificationDate, imageUrl });
         setModalState('verified');
       } else {
         setModalState('not-verified');
@@ -360,11 +365,18 @@ export default function EmployeeVerification() {
                   {/* Top Header Section (No gradient) */}
                   <div className="flex items-center gap-4 pb-4 border-b border-gray-100">
                     {/* Circle avatar */}
-                    <div
-                      className="w-14 h-14 rounded-full flex items-center justify-center text-green-700 font-bold text-xl flex-shrink-0 bg-green-50 border border-green-100"
-                    >
-                      {matchedEmployee?.initials}
-                    </div>
+                    {matchedEmployee?.imageUrl && !imageError ? (
+                      <img
+                        src={matchedEmployee.imageUrl}
+                        alt={matchedEmployee.name}
+                        className="w-14 h-14 rounded-full object-cover flex-shrink-0 border border-gray-200 shadow-sm"
+                        onError={() => setImageError(true)}
+                      />
+                    ) : (
+                      <div className="w-14 h-14 rounded-full flex items-center justify-center text-slate-400 bg-slate-50 border border-slate-100 flex-shrink-0 shadow-inner">
+                        <User size={28} className="text-slate-400/80" />
+                      </div>
+                    )}
 
                     <div className="flex-1 min-w-0">
                       <span className="text-gray-900 font-semibold text-[17px] leading-snug truncate block">
