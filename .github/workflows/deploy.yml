@@ -54,3 +54,7 @@ jobs:
             **/.git*/**
           # This action includes dotfiles (like .htaccess) by default —
           # do not add .htaccess to the exclude list above.
+          # Wipes server-dir before every upload so manually-dropped test
+          # files (e.g. a placeholder index.php) or a deleted sync-state
+          # file never linger and shadow the real build output.
+          dangerous-clean-slate: true
