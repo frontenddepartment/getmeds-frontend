@@ -746,11 +746,20 @@ const Careers: React.FC = () => {
               </div>
             </div>
 
-            <div className="ca-anim ca-up ca-d5 bg-gradient-to-br from-[#61A644] to-[#1D9FDA] rounded-2xl p-5 flex items-center shadow-sm hover:shadow-xl transition-all duration-300">
+            <div className="ca-anim ca-up ca-d5 bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 p-5 flex items-center gap-4">
+              <div className="relative w-28 h-28 shrink-0 rounded-xl overflow-hidden">
+                <img
+                  src="/assets/conventioneight.jpg"
+                  alt="Philippine College of Radiology Annual Convention"
+                  className="w-full h-full object-cover"
+                />
+              </div>
               <div className="flex-1">
-                <h4 className="text-white text-[15px] font-semibold mb-2">Growing Nationwide</h4>
-                <p className="text-white/80 text-[13px] leading-relaxed">Beyond these five conventions, we continue
-                  building lasting partnerships with medical societies across the Philippines.</p>
+                <h4 className="text-[15px] font-semibold text-dark mb-2">Philippine College of Radiology Annual
+                  Convention</h4>
+                <p className="text-[13px] text-gray-500 leading-relaxed">Collaborated with radiology professionals
+                  to advance diagnostic imaging and support improved patient care through high-quality contrast
+                  media solutions.</p>
               </div>
             </div>
           </div>
@@ -766,7 +775,12 @@ const Careers: React.FC = () => {
                 />
               </div>
               <div className="flex-1">
-                <h4 className="text-[15px] font-semibold text-dark mb-2">CPHI</h4>
+                <div className="flex flex-wrap items-center gap-x-2 gap-y-1 mb-2">
+                  <h4 className="text-[15px] font-semibold text-dark">CPHI</h4>
+                  <span className="text-[11px] text-gray-400">
+                    {['Southeast Asia', 'Korea', 'Japan', 'America', 'India', 'Europe', 'China'].join(' · ')}
+                  </span>
+                </div>
                 <p className="text-[13px] text-gray-500 leading-relaxed">Strengthened global pharmaceutical
                   partnerships and explored innovative healthcare solutions through one of the world's leading pharma
                   exhibitions.</p>
@@ -776,7 +790,7 @@ const Careers: React.FC = () => {
             <div className="ca-anim ca-up ca-d7 bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 p-5 flex items-center gap-4">
               <div className="relative w-28 h-28 shrink-0 rounded-xl overflow-hidden">
                 <img
-                  src="/assets/conventionseventh.jpg"
+                  src="/assets/conventionsevent.jpg"
                   alt="IPHEX"
                   className="w-full h-full object-cover"
                 />
@@ -824,7 +838,7 @@ const Careers: React.FC = () => {
             className="px-8 pb-2 flex gap-4 overflow-x-auto snap-x snap-mandatory"
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' } as React.CSSProperties}
           >
-            {[1,2,3,4,5,6].map((n, i) => (
+            {[1, 2, 3, 4, 5, 6].map((n, i) => (
               <div
                 key={n}
                 className={`ca-anim ca-up ca-d${i} flex-shrink-0 snap-center rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow group`}

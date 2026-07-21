@@ -89,7 +89,7 @@ export default function Services() {
       <div id="navbar-container" className="sticky top-0 z-[50]" />
 
       <section className="w-full mx-auto px-3 sm:px-4 md:px-6 mt-3 md:mt-4 mb-6 max-w-[1600px]">
-        <div className="relative rounded-[10px] md:rounded-[1.5rem] border border-gray-100/20 overflow-hidden min-h-[190px] sm:min-h-[360px] md:min-h-[450px] lg:min-h-[500px] flex items-end shadow-sm group">
+        <div className="relative rounded-[10px] md:rounded-[1.5rem] border border-gray-100/20 overflow-hidden min-h-[190px] sm:min-h-[360px] md:min-h-[450px] lg:min-h-[500px] flex items-end group">
           {/* Background Image */}
           <div className="absolute inset-0 z-0">
             <LinkableImage link={getImageLink('Services Hero Background')} src={getImage('Services Hero Background', 'assets/services_hero_new.png')} data-json-src="hero.image" data-json-alt="hero.imageAlt"
@@ -100,13 +100,13 @@ export default function Services() {
           {/* Content */}
           <div className="relative z-10 w-full px-3 sm:px-8 md:px-14 pb-2 sm:pb-5 md:pb-16 pt-10 sm:pt-20 max-w-4xl reveal">
             <h1 className="text-[11px] sm:text-[28px] md:text-[38px] leading-tight font-bold mb-1 sm:mb-3 tracking-tight">
-              <span data-json="hero.headingLine1" className="text-white">Our Premium</span><br />
+              <span data-json="hero.headingLine1" className="text-white">Our</span><br />
               <span data-json="hero.headingAccent"
                 className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent leading-tight tracking-tight">Services</span>
             </h1>
             <p data-json="hero.description" className="text-white/90 text-[9px] sm:text-[13px] md:text-[14px] max-w-[90%] sm:max-w-[600px] mb-2 sm:mb-5 leading-normal font-normal">
-              Getmeds delivers precision pharmaceutical solutions and nationwide distribution — from regulatory
-              compliance and government bidding to pioneering digital oncology care.
+              Getmeds connects globally certified pharmaceutical manufacturers with Filipino patients, doctors, and
+              hospitals — bridging the gap between world-class treatment and local access.
             </p>
             <div className="flex flex-wrap gap-1.5 sm:gap-4 pb-1 sm:pb-0">
               <a href="#services-grid"

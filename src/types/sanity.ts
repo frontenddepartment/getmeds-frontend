@@ -228,7 +228,6 @@ export interface Product {
   dosageAndAdministrationMarketingVersion2030WordsMax?: string
   importer?: string
   supplier?: string
-
   // ── "Products Range" workbook fields (current algorithm) ──────────────
   // Product Group: a finer grouping than brand (e.g. "PacliGet — Paclitaxel")
   productGroup?: string
@@ -254,6 +253,7 @@ export interface Product {
   metaDescription?: string
   status?: string
   notes?: string
+  prescription?: string
 }
 
 // ─────────────────────────────────────────────
