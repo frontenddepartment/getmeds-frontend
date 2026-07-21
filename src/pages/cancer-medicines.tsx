@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 import { useProducts, useCategories, useImageMapper } from '../lib/useSanity';
 import { urlFor } from '../lib/sanity';
 import type { Product as SanityProduct, Category } from '../types/sanity';
@@ -164,7 +165,13 @@ export default function CancerMedicines() {
   const [filterAvailability, setFilterAvailability] = useState<'all' | 'instock' | 'outofstock'>('all');
   const [filterForms, setFilterForms] = useState<Set<string>>(new Set());
   const filterPanelRef = useRef<HTMLDivElement>(null);
-  const [inquiryDropdownOpenId, setInquiryDropdownOpenId] = useState<string | null>(null);
+  const [inquiryDropdown, setInquiryDropdown] = useState<{
+    rowId: string;
+    product: ProductWithCategory;
+    top: number;
+    left: number;
+    width: number;
+  } | null>(null);
 
   const USER_TYPE_OPTIONS = [
     { label: 'Patient / Caregiver',                  value: 'patient'  },
@@ -176,6 +183,28 @@ export default function CancerMedicines() {
   const navigateWithUserType = (p: ProductWithCategory, userType: string) => {
     const url = getProductDetailUrl(p) + `?userType=${userType}`;
     window.location.href = url;
+  };
+
+  // Positions the inquiry dropdown as a fixed-position portal anchored to the
+  // trigger button's rect, so it renders above the table/card instead of being
+  // clipped by the table's scroll container or covered by the floating chat widget.
+  const toggleInquiryDropdown = (e: React.MouseEvent, rowId: string, p: ProductWithCategory, mode: 'fixed' | 'fill') => {
+    e.stopPropagation();
+    if (inquiryDropdown?.rowId === rowId) {
+      setInquiryDropdown(null);
+      return;
+    }
+    const wrapper = (e.currentTarget as HTMLElement).closest('.inquiry-dropdown-wrapper') as HTMLElement;
+    const rect = wrapper.getBoundingClientRect();
+    const width = mode === 'fill' ? rect.width : 256;
+    const dropdownHeight = USER_TYPE_OPTIONS.length * 40 + 16;
+    const openUpward = rect.bottom + dropdownHeight > window.innerHeight;
+    let left = mode === 'fill' ? rect.left : rect.right - width;
+    const maxLeft = window.innerWidth - width - 8;
+    if (left > maxLeft) left = maxLeft;
+    if (left < 8) left = 8;
+    const top = openUpward ? rect.top - dropdownHeight - 8 : rect.bottom + 8;
+    setInquiryDropdown({ rowId, product: p, top, left, width });
   };
 
   const openFlyout = (cat: any) => {
@@ -226,15 +255,24 @@ export default function CancerMedicines() {
       if (filterPanelRef.current && !filterPanelRef.current.contains(e.target as Node)) {
         setFilterPanelOpen(false);
       }
-      // Close inquiry dropdown if click is outside any .inquiry-dropdown-wrapper
+      // Close inquiry dropdown if click is outside the trigger wrapper or the portaled menu itself
       const target = e.target as HTMLElement;
-      if (!target.closest('.inquiry-dropdown-wrapper')) {
-        setInquiryDropdownOpenId(null);
+      if (!target.closest('.inquiry-dropdown-wrapper') && !target.closest('.inquiry-dropdown-portal')) {
+        setInquiryDropdown(null);
       }
     };
     document.addEventListener('click', handleClick);
     return () => document.removeEventListener('click', handleClick);
   }, []);
+
+  // Close the inquiry dropdown on scroll since it's fixed-position and won't
+  // follow the table/card it's anchored to.
+  useEffect(() => {
+    if (!inquiryDropdown) return;
+    const closeOnScroll = () => setInquiryDropdown(null);
+    window.addEventListener('scroll', closeOnScroll, true);
+    return () => window.removeEventListener('scroll', closeOnScroll, true);
+  }, [inquiryDropdown]);
 
   // Process dynamic categories into 4 columns using Jaccard Similarity Graph Grouping (sim >= 0.5)
   // Process dynamic categories directly from Sanity (no redundant grouping)
@@ -1118,27 +1156,13 @@ export default function CancerMedicines() {
                             </div>
                             <div className="relative inquiry-dropdown-wrapper">
                               <button
-                                onClick={e => { e.stopPropagation(); setInquiryDropdownOpenId(inquiryDropdownOpenId === rowId ? null : rowId); }}
+                                onClick={e => toggleInquiryDropdown(e, rowId, p, 'fill')}
                                 className="w-full justify-center bg-primary hover:bg-blue-600 text-white text-[12px] font-bold px-4 py-2.5 rounded-full transition-all duration-300 shadow-sm inline-flex items-center gap-1.5"
                               >
                                 <i className="fa-solid fa-paper-plane text-[11px]" />
                                 Send Inquiry
                                 <i className="fa-solid fa-chevron-down text-[9px] ml-0.5" />
                               </button>
-                              {inquiryDropdownOpenId === rowId && (
-                                <div className="absolute left-0 right-0 bottom-full mb-2 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden z-50">
-                                  {USER_TYPE_OPTIONS.map(opt => (
-                                    <button
-                                      key={opt.value}
-                                      onClick={() => { setInquiryDropdownOpenId(null); navigateWithUserType(p, opt.value); }}
-                                      className="w-full text-left px-4 py-2.5 text-[12px] text-gray-700 hover:bg-blue-50 hover:text-primary transition-colors font-medium flex items-center gap-2"
-                                    >
-                                      <i className="fa-solid fa-user-tag text-[10px] text-primary/60" />
-                                      {opt.label}
-                                    </button>
-                                  ))}
-                                </div>
-                              )}
                             </div>
                           </div>
                         </div>
@@ -1162,7 +1186,6 @@ export default function CancerMedicines() {
                       <tbody className="divide-y divide-gray-50">
                         {paginated.map((p, i) => {
                           const displayName = getProductDisplayName(p);
-                          const openUpward = i >= paginated.length - 2;
                           const rowId = `dt-${p._id || 'idx'}-${i}`;
                           return (
                             <tr key={rowId} className="hover:bg-blue-50/30 transition-colors group">
@@ -1202,27 +1225,13 @@ export default function CancerMedicines() {
                               <td className="px-6 py-4 text-center">
                                 <div className="relative inline-block inquiry-dropdown-wrapper">
                                   <button
-                                    onClick={e => { e.stopPropagation(); setInquiryDropdownOpenId(inquiryDropdownOpenId === rowId ? null : rowId); }}
+                                    onClick={e => toggleInquiryDropdown(e, rowId, p, 'fixed')}
                                     className="bg-primary hover:bg-blue-600 text-white text-[12px] font-semibold px-4 py-1.5 rounded-full transition-all duration-300 shadow-md hover:shadow-lg active:scale-95 inline-flex items-center justify-center gap-1.5 whitespace-nowrap"
                                   >
                                     <i className="fa-solid fa-paper-plane text-[10px]" />
                                     Send Inquiry
                                     <i className="fa-solid fa-chevron-down text-[9px]" />
                                   </button>
-                                  {inquiryDropdownOpenId === rowId && (
-                                    <div className={`absolute right-0 w-64 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden z-50 ${openUpward ? 'bottom-full mb-2' : 'top-full mt-2'}`}>
-                                      {USER_TYPE_OPTIONS.map(opt => (
-                                        <button
-                                          key={opt.value}
-                                          onClick={() => { setInquiryDropdownOpenId(null); navigateWithUserType(p, opt.value); }}
-                                          className="w-full text-left px-4 py-2.5 text-[12px] text-gray-700 hover:bg-blue-50 hover:text-primary transition-colors font-medium flex items-center gap-2"
-                                        >
-                                          <i className="fa-solid fa-user-tag text-[10px] text-primary/60" />
-                                          {opt.label}
-                                        </button>
-                                      ))}
-                                    </div>
-                                  )}
                                 </div>
                               </td>
                             </tr>
@@ -1270,6 +1279,30 @@ export default function CancerMedicines() {
           </section>
 
           <div id="footer-container" />
+
+          {/* ── Inquiry User-Type Dropdown (portaled so it isn't clipped by the table/card scroll containers) ── */}
+          {inquiryDropdown && createPortal(
+            <div
+              className="inquiry-dropdown-portal fixed bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden z-[100]"
+              style={{ top: inquiryDropdown.top, left: inquiryDropdown.left, width: inquiryDropdown.width }}
+            >
+              {USER_TYPE_OPTIONS.map(opt => (
+                <button
+                  key={opt.value}
+                  onClick={() => {
+                    const prod = inquiryDropdown.product;
+                    setInquiryDropdown(null);
+                    navigateWithUserType(prod, opt.value);
+                  }}
+                  className="w-full text-left px-4 py-2.5 text-[12px] text-gray-700 hover:bg-blue-50 hover:text-primary transition-colors font-medium flex items-center gap-2"
+                >
+                  <i className="fa-solid fa-user-tag text-[10px] text-primary/60" />
+                  {opt.label}
+                </button>
+              ))}
+            </div>,
+            document.body
+          )}
 
           {/* ── Product Inquiry Success Modal ── */}
           {successModalOpen && (
