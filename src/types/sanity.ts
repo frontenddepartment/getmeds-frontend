@@ -228,6 +228,7 @@ export interface Product {
   dosageAndAdministrationMarketingVersion2030WordsMax?: string
   importer?: string
   supplier?: string
+  prescription?: string
 }
 
 // ─────────────────────────────────────────────

@@ -37,6 +37,7 @@ export default function ProductDetail() {
   const { data: categoriesData } = useCategories();
   const [product, setProduct] = useState<ProductWithCategory | null>(null);
   const [notFound, setNotFound] = useState(false);
+  const [descriptionTab, setDescriptionTab] = useState<'description' | 'prescription'>('description');
 
   const [zoomedImageOpen, setZoomedImageOpen] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
@@ -450,6 +451,14 @@ export default function ProductDetail() {
                       <span className="capitalize font-medium leading-snug" style={{ color: '#0D99FF' }}>
                         {getCategorizationDisplay(product)}
                       </span>
+                      {product.prescription === 'RX' && (
+                        <>
+                          <span className="text-gray-300 whitespace-nowrap">|</span>
+                          <span className="font-medium whitespace-nowrap text-red-600">
+                            Rx — Prescription Required
+                          </span>
+                        </>
+                      )}
                     </div>
                     <h1 className="text-xl font-bold text-gray-900 mb-4 leading-tight">
                       {product.brandName && product.genericName && product.brandName !== product.genericName
@@ -509,51 +518,80 @@ export default function ProductDetail() {
 
                 {/* Description */}
                 <div className="bg-white rounded-[15px] border border-gray-100 p-5">
-                  <div className="border-b border-gray-100 mb-5">
-                    <span className="inline-block pb-3 text-[13px] font-semibold" style={{ color: '#0D99FF', borderBottom: '2px solid #0D99FF' }}>Description</span>
+                  <div className="border-b border-gray-100 mb-5 flex items-center gap-5">
+                    <button
+                      type="button"
+                      onClick={() => setDescriptionTab('description')}
+                      className="inline-block pb-3 text-[13px] font-semibold transition-colors"
+                      style={descriptionTab === 'description'
+                        ? { color: '#0D99FF', borderBottom: '2px solid #0D99FF' }
+                        : { color: '#9CA3AF', borderBottom: '2px solid transparent' }}
+                    >
+                      Description
+                    </button>
+                    {product.prescription === 'RX' && (
+                      <button
+                        type="button"
+                        onClick={() => setDescriptionTab('prescription')}
+                        className="inline-block pb-3 text-[13px] font-semibold transition-colors"
+                        style={descriptionTab === 'prescription'
+                          ? { color: '#DC2626', borderBottom: '2px solid #DC2626' }
+                          : { color: '#9CA3AF', borderBottom: '2px solid transparent' }}
+                      >
+                        Prescription Requirement
+                      </button>
+                    )}
                   </div>
-                  <div className="text-[14px] text-gray-600 leading-relaxed max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
-                    <div className="space-y-4">
-                      {product.description && (
-                        <div className="text-[14px] text-gray-600 leading-relaxed">
-                          {renderRichContent(product.description)}
-                        </div>
-                      )}
-                      {(product.indications || (product as any).indication) && (
-                        <div>
-                          <span className="block text-[13px] font-semibold mb-1 text-gray-400">Indications</span>
+                  {descriptionTab === 'description' ? (
+                    <div className="text-[14px] text-gray-600 leading-relaxed max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+                      <div className="space-y-4">
+                        {product.description && (
                           <div className="text-[14px] text-gray-600 leading-relaxed">
-                            {renderRichContent(product.indications || (product as any).indication)}
-                          </div>
-                        </div>
-                      )}
-                      {(product.dosageAdministration || (product as any).dosageAndAdministration) && (
-                        <div>
-                          <span className="block text-[13px] font-semibold mb-1 text-gray-400">Dosage & Administration</span>
-                          <div className="text-[14px] text-gray-600 leading-relaxed">
-                            {renderRichContent(product.dosageAdministration || (product as any).dosageAndAdministration)}
-                          </div>
-                        </div>
-                      )}
-                      {!product.description && !product.indications && !(product as any).indication && !product.dosageAdministration && !(product as any).dosageAndAdministration && (
-                        <p>Detailed therapeutic description is not available.</p>
-                      )}
-                      <div className="mt-4 border-t border-gray-100 pt-4 grid grid-cols-2 gap-4">
-                        {product.packaging && (
-                          <div>
-                            <span className="block text-[11px] text-gray-400 uppercase font-semibold">Packaging</span>
-                            <span className="text-gray-800 font-medium text-[13px]">{product.packaging}</span>
+                            {renderRichContent(product.description)}
                           </div>
                         )}
-                        {product.innovator && (
+                        {(product.indications || (product as any).indication) && (
                           <div>
-                            <span className="block text-[11px] text-gray-400 uppercase font-semibold">Innovator</span>
-                            <span className="text-gray-800 font-medium text-[13px]">{product.innovator}</span>
+                            <span className="block text-[13px] font-semibold mb-1 text-gray-400">Indications</span>
+                            <div className="text-[14px] text-gray-600 leading-relaxed">
+                              {renderRichContent(product.indications || (product as any).indication)}
+                            </div>
                           </div>
                         )}
+                        {(product.dosageAdministration || (product as any).dosageAndAdministration) && (
+                          <div>
+                            <span className="block text-[13px] font-semibold mb-1 text-gray-400">Dosage & Administration</span>
+                            <div className="text-[14px] text-gray-600 leading-relaxed">
+                              {renderRichContent(product.dosageAdministration || (product as any).dosageAndAdministration)}
+                            </div>
+                          </div>
+                        )}
+                        {!product.description && !product.indications && !(product as any).indication && !product.dosageAdministration && !(product as any).dosageAndAdministration && (
+                          <p>Detailed therapeutic description is not available.</p>
+                        )}
+                        <div className="mt-4 border-t border-gray-100 pt-4 grid grid-cols-2 gap-4">
+                          {product.packaging && (
+                            <div>
+                              <span className="block text-[11px] text-gray-400 uppercase font-semibold">Packaging</span>
+                              <span className="text-gray-800 font-medium text-[13px]">{product.packaging}</span>
+                            </div>
+                          )}
+                          {product.innovator && (
+                            <div>
+                              <span className="block text-[11px] text-gray-400 uppercase font-semibold">Innovator</span>
+                              <span className="text-gray-800 font-medium text-[13px]">{product.innovator}</span>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  ) : (
+                    <div className="text-[14px] text-gray-600 leading-relaxed">
+                      This medicine is prescription-only (Rx). A valid prescription from a licensed
+                      healthcare professional is required for purchase and dispensing, as regulated by
+                      FDA Philippines under RA 9711.
+                    </div>
+                  )}
                 </div>
 
                 {/* Also used for */}
