@@ -36,43 +36,6 @@ function toTitleCase(str: string): string {
     .join(' ');
 }
 
-function getCorrectParentCategory(sub: string, parentName: string): string {
-  const normSub = sub.toLowerCase();
-  const normParent = parentName.toLowerCase();
-  
-  if (normParent === 'oncology' || normParent === 'hematology') {
-    const isHem = normSub.includes('aml') || 
-                  normSub.includes('cml') || 
-                  normSub.includes('lymphoma') || 
-                  normSub.includes('leukemia') || 
-                  normSub.includes('anemia') || 
-                  normSub.includes('myeloma') || 
-                  normSub.includes('sickle');
-    if (isHem) return 'Hematology';
-    return 'Oncology';
-  }
-  
-  if (normParent === 'respiratory' || normParent === 'allergy') {
-    const isAllergy = normSub.includes('allergy') || normSub.includes('rhinitis');
-    if (isAllergy) return 'Allergy';
-    return 'Respiratory';
-  }
-  
-  if (normParent === 'nephrology' || normParent === 'renal') {
-    const isRenal = normSub.includes('renal');
-    if (isRenal) return 'Renal';
-    return 'Nephrology';
-  }
-  
-  if (normParent === 'gynecology' || normParent === 'obstetrician') {
-    const isOb = normSub.includes('obstetrician') || normSub.includes('pregnancy');
-    if (isOb) return 'Obstetrician';
-    return 'Gynecology';
-  }
-  
-  return parentName;
-}
-
 function cleanWordPressUrl(url: string | undefined | null): string {
   if (!url) return '';
   return url
@@ -102,6 +65,32 @@ interface ProductImageLink {
   image?: any
 }
 
+// The "Products Range" sheet repeats a product once per condition it's
+// relevant to (each repeat carries the same Product URL Slug, with the other
+// conditions listed in "Also Linked From") rather than one row per product.
+// This builds a lookup from condition name -> its own condition slug/hub url
+// across *all* raw rows (before rows sharing a slug are collapsed to one
+// canonical product below), so a product can still link to the hub page of
+// a condition it's "also linked from" even though that condition's row was
+// deduped away.
+function buildConditionSlugLookup(rawProducts: any[]): Map<string, { conditionSlug?: string; conditionHubUrl?: string }> {
+  const lookup = new Map<string, { conditionSlug?: string; conditionHubUrl?: string }>()
+  rawProducts.forEach((p) => {
+    const name = (p.subCategory || '').trim()
+    if (!name || lookup.has(name.toLowerCase())) return
+    lookup.set(name.toLowerCase(), { conditionSlug: p.conditionSlug, conditionHubUrl: p.conditionHubUrl })
+  })
+  return lookup
+}
+
+function splitConditionList(value: any): string[] {
+  if (!value) return []
+  return String(value)
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean)
+}
+
 async function fetchProductsFromExcel(): Promise<Product[]> {
   const result = await sanityQuery<{ json_data?: string; productImages?: ProductImageLink[] }>('product.excelJson')
   if (!result || !result.json_data) return []
@@ -109,7 +98,46 @@ async function fetchProductsFromExcel(): Promise<Product[]> {
     const data = JSON.parse(result.json_data)
     const firstSheetName = Object.keys(data)[0]
     if (!firstSheetName) return []
-    const rawProducts = data[firstSheetName] || []
+    // The sheet's used range can extend well past the last real row (trailing
+    // blank rows still parse as objects with every value ''), so anything with
+    // no identifying data at all is dropped before it can become a phantom product.
+    const allRawRows = (data[firstSheetName] || []).filter(
+      (r: any) => r && (r.brandName || r.genericName || r.name || r.slug || r['slug.current'])
+    )
+    const conditionSlugLookup = buildConditionSlugLookup(allRawRows)
+
+    // Collapse rows that share the same Product URL Slug into a single
+    // canonical product (first occurrence wins for display fields), merging
+    // every row's condition + "Also Linked From" names into one `conditions`
+    // list — this is what drives which condition hub pages the product
+    // surfaces on, without duplicating the product page itself.
+    const bySlug = new Map<string, any>()
+    const slugOrder: string[] = []
+    allRawRows.forEach((p: any) => {
+      const slugKey = String(p.slug || p['slug.current'] || p._id || '').toLowerCase().trim()
+      if (!slugKey) {
+        // No slug to dedupe on — keep as its own row.
+        slugOrder.push(`__noslug-${slugOrder.length}`)
+        bySlug.set(slugOrder[slugOrder.length - 1], p)
+        return
+      }
+      const allConditions = new Set<string>(
+        [p.subCategory, ...splitConditionList(p.alsoLinkedFrom)].map((s) => (s || '').trim()).filter(Boolean)
+      )
+      if (!bySlug.has(slugKey)) {
+        slugOrder.push(slugKey)
+        bySlug.set(slugKey, { ...p, _conditions: allConditions })
+      } else {
+        const existing = bySlug.get(slugKey)
+        allConditions.forEach((c) => existing._conditions.add(c))
+      }
+    })
+    const rawProducts = slugOrder.map((key) => {
+      const row = bySlug.get(key)
+      const conditions: string[] = Array.from(row._conditions || [])
+      delete row._conditions
+      return { ...row, conditions }
+    })
 
     // Images are linked explicitly per product (via the Studio's Product
     // Images tab) rather than guessed from an uploaded file's name — look
@@ -229,7 +257,26 @@ async function fetchProductsFromExcel(): Promise<Product[]> {
         storageCondition: p.storageCondition || orig.storageCondition,
         packaging: p.packaging || orig.packaging,
         innovator: p.innovator || orig.innovator,
+        // ── "Products Range" workbook fields — read directly, no re-derivation ──
+        productGroup: p.productGroup || orig.productGroup,
+        categoryFolder: p.categoryFolder || orig.categoryFolder,
+        conditionSlug: p.conditionSlug || orig.conditionSlug,
+        conditionHubUrl: p.conditionHubUrl || orig.conditionHubUrl,
+        productPageUrl: p.productPageUrl || orig.productPageUrl,
+        breadcrumb: p.breadcrumb || orig.breadcrumb,
+        alsoLinkedFrom: p.alsoLinkedFrom || orig.alsoLinkedFrom,
+        conditions: (p.conditions && p.conditions.length ? p.conditions : undefined) || orig.conditions,
+        metaTitle: p.metaTitle || orig.metaTitle,
+        metaDescription: p.metaDescription || orig.metaDescription,
+        status: p.status || orig.status,
+        notes: p.notes || orig.notes,
       } as Product;
+
+      // Every condition this product belongs under gets its own hub slug/url,
+      // even conditions whose own sheet row got deduped away above.
+      merged.conditionSlugsByName = Object.fromEntries(
+        (merged.conditions || []).map((name) => [name, conditionSlugLookup.get(name.toLowerCase())])
+      )
 
       if ((merged.brandName || '').toLowerCase().includes('abira')) {
         console.log("DEBUG [fetchProductsFromExcel]: Merged AbiraGet product fields:", {
@@ -314,104 +361,46 @@ export async function searchProducts(query: string) {
 // Categories
 // ─────────────────────────────────────────────
 
-// Adds `sub` under whichever category it actually belongs to (per getCorrectParentCategory),
-// creating that category's bucket if it doesn't exist yet — a subcategory that gets
-// reclassified away from `declaredCategoryName` must land somewhere, not be dropped.
-function addSubcategoryToBucket(
-  catMap: Map<string, Category>,
-  sub: string,
-  declaredCategoryName: string,
-  seed: Partial<Category>
-) {
-  const targetName = getCorrectParentCategory(sub, declaredCategoryName)
-  const catKey = targetName.toUpperCase()
-
-  if (!catMap.has(catKey)) {
-    const slugStr = targetName.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
-    catMap.set(catKey, {
-      ...seed,
-      _type: 'category',
-      category: targetName,
-      slug: { _type: 'slug', current: slugStr },
-      subcategory: []
-    } as Category)
-  }
-
-  const catObj = catMap.get(catKey)!
-  if (!catObj.subcategory) {
-    catObj.subcategory = []
-  }
-  if (!catObj.subcategory.includes(sub)) {
-    catObj.subcategory.push(sub)
-  }
+// A "category" for site navigation/routing purposes is now keyed on the
+// Excel's Category Folder (the URL section a product lives under), not on
+// the Product Range name — one Product Range can span more than one folder
+// (e.g. Endocrinology → both "hormonal-therapy" and "diabetes-medicines"),
+// so the folder is the real routing unit. Everything here comes straight
+// from the sheet; there's no fuzzy string-matching or reclassification.
+function folderDisplayName(folder: string): string {
+  return folder
+    .split('-')
+    .filter(Boolean)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ')
 }
 
 export async function getCategories() {
   const products = await fetchProductsFromExcel()
-  // Also get the base Sanity categories so we have their icons, descriptions, etc. if available
-  const baseCategories = await sanityQuery<Category[]>('category.all') || []
-
   const catMap = new Map<string, Category>()
 
-  // Seed the map with existing Sanity categories
-  baseCategories.forEach(c => {
-    if (c.category) {
-      // Split base categories by '/' to match dynamic formatting
-      const names = c.category.split('/').map(s => s.trim()).filter(Boolean)
-      names.forEach(name => {
-        const titleCasedName = toTitleCase(name)
-        const catKey = titleCasedName.toUpperCase()
-        if (!catMap.has(catKey)) {
-          const slugStr = name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
-          catMap.set(catKey, {
-            ...c,
-            _id: c._id || `temp-${slugStr}`,
-            category: titleCasedName,
-            slug: { _type: 'slug', current: slugStr },
-            subcategory: []
-          })
-        }
-        c.subcategory?.forEach(rawSub => {
-          const sub = toTitleCase(rawSub.trim())
-          addSubcategoryToBucket(catMap, sub, titleCasedName, { ...c, _id: c._id })
-        })
-      })
-    }
-  })
-
-  // Extend with categories and subcategories from products
-  products.forEach(p => {
-    let catName = p.category?.category || p.excelCategory
+  products.forEach((p: any) => {
+    const rawCategory = p.excelCategory || (typeof p.category === 'string' ? p.category : p.category?.category) || (p.categoryFolder ? folderDisplayName(p.categoryFolder) : '')
+    const catName = (rawCategory || '').trim()
     if (!catName) return
 
-    // Split combined categories (e.g. "ONCOLOGY / HEMATOLOGY")
-    const catNames = catName.split('/').map(s => s.trim()).filter(Boolean)
+    const key = catName.toLowerCase()
+    const folder = p.categoryFolder || key.replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
 
-    catNames.forEach(name => {
-      const titleCasedName = toTitleCase(name)
-      const catKey = titleCasedName.toUpperCase()
+    if (!catMap.has(key)) {
+      catMap.set(key, {
+        _id: `cat-${key}`,
+        _type: 'category',
+        category: catName,
+        slug: { _type: 'slug', current: folder },
+        subcategory: [],
+      } as Category)
+    }
 
-      const subCategoryStr = p.subCategory || ''
-      const subcats = subCategoryStr.split('/')
-        .map(s => toTitleCase(s.trim().replace(/,$/, '')))
-        .filter(Boolean)
-
-      if (!catMap.has(catKey)) {
-        const slugStr = name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
-        catMap.set(catKey, {
-          _id: p.category?._id || `temp-${slugStr}`,
-          _type: 'category',
-          category: titleCasedName,
-          slug: { _type: 'slug', current: slugStr },
-          subcategory: []
-        })
-      }
-
-      subcats.forEach(sub => {
-        addSubcategoryToBucket(catMap, sub, titleCasedName, {
-          _id: p.category?._id || `temp-${name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}`
-        })
-      })
+    const catObj = catMap.get(key)!
+    const conditions = p.conditions && p.conditions.length ? p.conditions : (p.subCategory ? [p.subCategory] : [])
+    conditions.forEach((sub: string) => {
+      if (sub && !catObj.subcategory!.includes(sub)) catObj.subcategory!.push(sub)
     })
   })
 

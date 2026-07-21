@@ -17,99 +17,96 @@ const getHtmlInputs = () => {
   return inputs;
 };
 
-const subcategorySpecials = {
-  'non-small-cell-lung-cancer': 'lung-cancer',
-  'acute-myeloid-leukemia': 'aml',
-  'chronic-myeloid-leukemia': 'cml',
-  'hodgkin-non-hodgkins-lymphoma': 'lymphoma',
-  'hodgkin-non-hodgkin-s-lymphoma': 'lymphoma',
-  'sickle-cell-anemia': 'sickle-cell',
-  'respiratory-infections': 'respiratory',
-  'urinary-tract-infections': 'uti',
-  'skin-and-soft-tissue-infections': 'skin-infections',
-  'bone-and-joint-infections': 'bone-infections',
-  'fibrocystic-breast-disease': 'fibrocystic',
-  'arrhythmia-management': 'arrhythmia',
-  'hypertension-angina': 'hypertension',
-  'hypertension-and-angina': 'hypertension',
-  'seasonal-allergic-rhinitis': 'allergic-rhinitis',
-  'chronic-kidney-disease': 'kidney-disease',
-  'chronic-pain': 'pain',
-  'inflammatory-disorders': 'rheumatology',
-  'inflammatory-and-rheumatic-disorders': 'rheumatology'
-};
-
-const getSubcategorySlug = (name) => {
-  return name
-    .toLowerCase()
-    .trim()
-    .replace(/\s+/g, '-')
-    .replace(/[^a-z0-9-]/g, '')
-    .replace(/-+/g, '-');
-};
-
-async function fetchSanitySubcategories(env) {
-  const projectId = env.VITE_SANITY_PROJECT_ID || 'q9y7lsh1';
+// Routing is driven entirely by the "Products Range" workbook's own URL
+// columns (read from the product doc's json_data) — not by legacy `category`
+// Sanity documents or any hardcoded subcategory-name-to-slug table. Per the
+// sheet's own URL columns:
+//   - Category Folder is a top-level section (e.g. /cancer-medicines,
+//     /antibiotics) — every path under it is a PRODUCT page, matching
+//     "Product Page URL (auto)" (e.g. /cancer-medicines/pacliget-...).
+//   - Condition Slug lives in its own separate "/conditions/:slug" namespace,
+//     matching "Condition Hub URL (auto)" (e.g. /conditions/breast-cancer) —
+//     it is never nested under the Category Folder.
+// So there's no more ambiguity to resolve inside a folder path: a folder with
+// a second path segment is always a product.
+async function fetchProductRouting(env) {
+  const projectId = env.VITE_SANITY_PROJECT_ID || 's7ocz8zp';
   const dataset = env.VITE_SANITY_DATASET || 'production';
-  const query = '*[_type == "category"] { category, subcategory }';
+  // NOTE: deliberately not filtering on defined(json_data) here — GROQ silently
+  // fails to match that against this field once it's large (200KB+ of parsed
+  // Excel data), even though the field is genuinely present. Presence is
+  // checked in JS below instead.
+  const query = '*[_type == "product" && (remarks == "present" || remarks == "active")] | order(_updatedAt desc)[0]{ json_data }';
   const url = `https://${projectId}.api.sanity.io/v2023-08-01/data/query/${dataset}?query=${encodeURIComponent(query)}`;
 
   try {
     const res = await fetch(url);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const json = await res.json();
-    const subcats = new Set();
+    const jsonData = json.result?.json_data;
+    if (!jsonData) throw new Error('No json_data on active product doc');
 
-    if (json.result) {
-      json.result.forEach(cat => {
-        if (cat.category) {
-          const clean = getSubcategorySlug(cat.category);
-          subcats.add(clean);
-          if (subcategorySpecials[clean]) {
-            subcats.add(subcategorySpecials[clean]);
-          }
-        }
-        if (Array.isArray(cat.subcategory)) {
-          cat.subcategory.forEach(sub => {
-            if (sub) {
-              const clean = getSubcategorySlug(sub);
-              subcats.add(clean);
-              if (subcategorySpecials[clean]) {
-                subcats.add(subcategorySpecials[clean]);
-              }
-            }
-          });
-        }
-      });
-    }
+    const parsed = JSON.parse(jsonData);
+    const firstSheet = Object.keys(parsed)[0];
+    const rows = firstSheet ? (parsed[firstSheet] || []) : [];
 
-    const list = Array.from(subcats).filter(Boolean);
-    if (list.length > 0) {
-      return list;
+    const folders = new Set();
+    const conditionSlugs = new Set();
+    rows.forEach((row) => {
+      if (row.categoryFolder) folders.add(String(row.categoryFolder).trim())
+      if (row.conditionSlug) conditionSlugs.add(String(row.conditionSlug).trim())
+    });
+
+    if (folders.size > 0) {
+      return { folders: Array.from(folders).filter(Boolean), conditionSlugs: Array.from(conditionSlugs).filter(Boolean) };
     }
   } catch (error) {
-    // fallback silently or log warning
+    // fallback silently below or log a warning
   }
-  return [
-    'breast-cancer', 'ovarian-cancer', 'lung-cancer', 'prostate-cancer', 'colorectal-cancer',
-    'pancreatic-cancer', 'aml', 'cml', 'lymphoma', 'sickle-cell', 'respiratory', 'uti',
-    'skin-infections', 'bone-infections', 'endometriosis', 'fibrocystic', 'multiple-myeloma',
-    'osteoporosis', 'arrhythmia', 'hypertension', 'glioblastoma', 'allergic-rhinitis',
-    'kidney-disease', 'pain', 'rheumatology', 'chronic-lymphocytic-leukemia',
-    'acute-lymphoblastic-leukemia', 'malignant-pleural-mesothelioma', 'head-and-neck-cancer',
-    'chronic-myeloid-leukemia', 'sickle-cell-anemia', 'malignant-pleural-effusion',
-    'gastrointestinal-stromal-tumors', 'acute-myeloid-leukemia', 'acute-lymphocytic-leukemia',
-    'chronic-myelocytic-leukemia', 'meningeal-leukemia', 'acute-promyelocytic-leukemia',
-    'mantle-cell-lymphoma', 'neuro-oncology', 'glioblastoma-multiforme', 'obstetrician',
-    'folate-deficiency-anemia', 'iron-deficiency-anemia', 'allergy', 'seasonal-allergic-rhinitis',
-    'chronic-pain-management', 'inflammatory-rheumatic-disorders', 'endocrinology',
-    'fibrocystic-breast-disease', 'benign-prostatic-hyperplasia', 'cardiology', 'arrhythmia-management',
-    'hypertension-angina', 'renal', 'radiology', 'radiologic-imaging-enhancement-ct-scans-angiography-urography',
-    'hematology', 'orthopedic', 'glucocorticoid-induced-osteoporosis', 'gynecology', 'anti-infectives',
-    'respiratory-infections', 'urinary-tract-infections', 'gynecological-infections', 'intra-abdominal-infections',
-    'skin-and-soft-tissue-infections', 'bone-and-joint-infections', 'bloodstream-infections', 'ocular-or-topical-infections',
-    'nephrology'
-  ];
+
+  // Robust offline fallback if Sanity is unreachable or the sheet is empty
+  return getFallbackProductRouting();
+}
+
+// Cached with a short TTL so the dev server picks up Sanity/Excel changes
+// (new category folders, new conditions) within a minute without needing a
+// restart, instead of only ever seeing whatever was true when Vite started.
+let _routingCache = null;
+const ROUTING_CACHE_TTL_MS = 30_000;
+async function getProductRoutingCached(env) {
+  const now = Date.now();
+  if (_routingCache && now - _routingCache.fetchedAt < ROUTING_CACHE_TTL_MS) {
+    return _routingCache.data;
+  }
+  const data = await fetchProductRouting(env);
+  _routingCache = { data, fetchedAt: now };
+  return data;
+}
+
+function getFallbackProductRouting() {
+  return {
+    folders: ['cancer-medicines'],
+    conditionSlugs: [
+      'breast-cancer', 'ovarian-cancer', 'lung-cancer', 'prostate-cancer', 'colorectal-cancer',
+      'pancreatic-cancer', 'aml', 'cml', 'lymphoma', 'sickle-cell', 'respiratory', 'uti',
+      'skin-infections', 'bone-infections', 'endometriosis', 'fibrocystic', 'multiple-myeloma',
+      'osteoporosis', 'arrhythmia', 'hypertension', 'glioblastoma', 'allergic-rhinitis',
+      'kidney-disease', 'pain', 'rheumatology', 'chronic-lymphocytic-leukemia',
+      'acute-lymphoblastic-leukemia', 'malignant-pleural-mesothelioma', 'head-and-neck-cancer',
+      'chronic-myeloid-leukemia', 'sickle-cell-anemia', 'malignant-pleural-effusion',
+      'gastrointestinal-stromal-tumors', 'acute-myeloid-leukemia', 'acute-lymphocytic-leukemia',
+      'chronic-myelocytic-leukemia', 'meningeal-leukemia', 'acute-promyelocytic-leukemia',
+      'mantle-cell-lymphoma', 'neuro-oncology', 'glioblastoma-multiforme', 'obstetrician',
+      'folate-deficiency-anemia', 'iron-deficiency-anemia', 'allergy', 'seasonal-allergic-rhinitis',
+      'chronic-pain-management', 'inflammatory-rheumatic-disorders', 'endocrinology',
+      'fibrocystic-breast-disease', 'benign-prostatic-hyperplasia', 'cardiology', 'arrhythmia-management',
+      'hypertension-angina', 'renal', 'radiology', 'radiologic-imaging-enhancement-ct-scans-angiography-urography',
+      'hematology', 'orthopedic', 'glucocorticoid-induced-osteoporosis', 'gynecology', 'anti-infectives',
+      'respiratory-infections', 'urinary-tract-infections', 'gynecological-infections', 'intra-abdominal-infections',
+      'skin-and-soft-tissue-infections', 'bone-and-joint-infections', 'bloodstream-infections', 'ocular-or-topical-infections',
+      'nephrology'
+    ]
+  };
 }
 
 export default defineConfig(async ({ mode }) => {
@@ -122,7 +119,9 @@ export default defineConfig(async ({ mode }) => {
     console.error('[CORS Script] Warning: Failed to run update-vercel-headers.cjs:', err.message);
   }
 
-  const subcategories = await fetchSanitySubcategories(env);
+  // Product routing (category folders / condition slugs) is fetched fresh per
+  // request inside the dev middleware below (getProductRoutingCached), not once
+  // here — so it doesn't go stale until the server is restarted.
 
   // Expose Sanity env vars to Node plugin context (plugins run before Vite sets process.env)
   process.env.VITE_SANITY_PROJECT_ID  = env.VITE_SANITY_PROJECT_ID  || 's7ocz8zp'
@@ -289,7 +288,11 @@ export default defineConfig(async ({ mode }) => {
       name: 'pap-tsx-rewrite',
       configureServer(server) {
         if (process.env.NODE_ENV !== 'production') {
-          server.middlewares.use((req, res, next) => {
+          server.middlewares.use(async (req, res, next) => {
+            // Re-fetched (with a short cache) on every request instead of once at
+            // server startup, so new/changed categories, conditions, or products in
+            // Sanity show up without needing to restart the dev server.
+            const { folders: categoryFolders, conditionSlugs } = await getProductRoutingCached(env);
             const urlPath = (req.url || '').split('?')[0];
             const cleanPath = urlPath.startsWith('/') ? urlPath : '/' + urlPath;
             const qs = (req.url || '').includes('?') ? req.url.slice(req.url.indexOf('?')) : '';
@@ -459,51 +462,17 @@ export default defineConfig(async ({ mode }) => {
                 return;
               }
             }
-            if (cleanPath === '/product-range.html') {
-              res.statusCode = 302;
-              res.setHeader('Location', '/product-range' + qs);
-              res.end();
-              return;
-            }
-            if (cleanPath.startsWith('/product-range')) {
-              const segments = cleanPath.split('/').filter(Boolean);
-              if (segments.length === 2) {
-                const slug = segments[1];
-                if (subcategories.includes(slug)) {
-                  const htmlPath = path.join(process.cwd(), 'cancer-medicines.html');
-                  if (fs.existsSync(htmlPath)) {
-                    res.setHeader('Content-Type', 'text/html');
-                    res.end(fs.readFileSync(htmlPath, 'utf-8'));
-                    return;
-                  }
-                } else {
-                  const htmlPath = path.join(process.cwd(), 'product-detail.html');
-                  if (fs.existsSync(htmlPath)) {
-                    res.setHeader('Content-Type', 'text/html');
-                    res.end(fs.readFileSync(htmlPath, 'utf-8'));
-                    return;
-                  }
-                }
-              } else {
-                const htmlPath = path.join(process.cwd(), 'cancer-medicines.html');
-                if (fs.existsSync(htmlPath)) {
-                  res.setHeader('Content-Type', 'text/html');
-                  res.end(fs.readFileSync(htmlPath, 'utf-8'));
-                  return;
-                }
-              }
-            }
-            // /cancer-medicine/* (singular) — oncology product detail pages
+            // /cancer-medicine/* (singular) — legacy oncology product-detail alias,
+            // always a product slug, never a condition hub.
             if (cleanPath === '/cancer-medicine.html') {
               res.statusCode = 302;
-              res.setHeader('Location', '/product-range' + qs);
+              res.setHeader('Location', '/cancer-medicines' + qs);
               res.end();
               return;
             }
             if (cleanPath === '/cancer-medicine' || cleanPath === '/cancer-medicine/' || (cleanPath.startsWith('/cancer-medicine/') && !cleanPath.startsWith('/cancer-medicines'))) {
               const segments = cleanPath.split('/').filter(Boolean);
               if (segments[0] === 'cancer-medicine' && segments.length === 2) {
-                // Always a product slug (not a subcategory)
                 const htmlPath = path.join(process.cwd(), 'product-detail.html');
                 if (fs.existsSync(htmlPath)) {
                   res.setHeader('Content-Type', 'text/html');
@@ -511,45 +480,58 @@ export default defineConfig(async ({ mode }) => {
                   return;
                 }
               } else {
-                // /cancer-medicine with no slug - redirect to catalog
                 res.statusCode = 302;
-                res.setHeader('Location', '/product-range' + qs);
+                res.setHeader('Location', '/cancer-medicines' + qs);
                 res.end();
                 return;
               }
             }
-            if (cleanPath === '/cancer-medicines.html') {
+
+            // "/conditions/:slug" — the sheet's own Condition Hub URL (auto) namespace.
+            // This exists so a crawler following sitemap.xml lands on real content
+            // instead of a 404; the app itself never actively resolves or filters by
+            // this URL (see cancer-medicines.tsx) — all in-app links use the category
+            // folder from Product Page URL (auto) instead.
+            if (cleanPath === '/conditions.html') {
               res.statusCode = 302;
               res.setHeader('Location', '/cancer-medicines' + qs);
               res.end();
               return;
             }
-            if (cleanPath.startsWith('/cancer-medicines')) {
-              const segments = cleanPath.split('/').filter(Boolean);
-              if (segments.length === 2) {
-                const slug = segments[1];
-                if (subcategories.includes(slug)) {
-                  const htmlPath = path.join(process.cwd(), 'cancer-medicines.html');
-                  if (fs.existsSync(htmlPath)) {
-                    res.setHeader('Content-Type', 'text/html');
-                    res.end(fs.readFileSync(htmlPath, 'utf-8'));
-                    return;
-                  }
-                } else {
-                  const htmlPath = path.join(process.cwd(), 'product-detail.html');
-                  if (fs.existsSync(htmlPath)) {
-                    res.setHeader('Content-Type', 'text/html');
-                    res.end(fs.readFileSync(htmlPath, 'utf-8'));
-                    return;
-                  }
-                }
-              } else {
-                const htmlPath = path.join(process.cwd(), 'cancer-medicines.html');
-                if (fs.existsSync(htmlPath)) {
-                  res.setHeader('Content-Type', 'text/html');
-                  res.end(fs.readFileSync(htmlPath, 'utf-8'));
-                  return;
-                }
+            if (cleanPath.startsWith('/conditions/') || cleanPath === '/conditions') {
+              const htmlPath = path.join(process.cwd(), 'cancer-medicines.html');
+              if (fs.existsSync(htmlPath)) {
+                res.setHeader('Content-Type', 'text/html');
+                res.end(fs.readFileSync(htmlPath, 'utf-8'));
+                return;
+              }
+            }
+
+            // Every real Category Folder from the sheet (cancer-medicines,
+            // antibiotics, heart-medicines, ...): a bare folder is the listing
+            // page (cancer-medicines.html); anything else under it is always a
+            // product page (product-detail.html) — matching "Product Page URL
+            // (auto)" exactly, since condition hubs live under /conditions/ now,
+            // never nested here. The legacy "product-range" alias is the one
+            // exception still needing the old listing-vs-product guess, since
+            // it's a catch-all for pre-rename bookmarked links, not a real folder.
+            const routableFolders = [...categoryFolders, 'product-range'];
+            const folderSegments = cleanPath.split('/').filter(Boolean);
+            const requestedFolder = folderSegments[0];
+            if (requestedFolder && routableFolders.includes(requestedFolder)) {
+              if (cleanPath === `/${requestedFolder}.html`) {
+                res.statusCode = 302;
+                res.setHeader('Location', `/${requestedFolder}` + qs);
+                res.end();
+                return;
+              }
+              const isListing = folderSegments.length === 1
+                || conditionSlugs.includes(folderSegments[1]);
+              const htmlPath = path.join(process.cwd(), isListing ? 'cancer-medicines.html' : 'product-detail.html');
+              if (fs.existsSync(htmlPath)) {
+                res.setHeader('Content-Type', 'text/html');
+                res.end(fs.readFileSync(htmlPath, 'utf-8'));
+                return;
               }
             }
             if (cleanPath === '/product-detail.html') {

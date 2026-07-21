@@ -228,6 +228,32 @@ export interface Product {
   dosageAndAdministrationMarketingVersion2030WordsMax?: string
   importer?: string
   supplier?: string
+
+  // ── "Products Range" workbook fields (current algorithm) ──────────────
+  // Product Group: a finer grouping than brand (e.g. "PacliGet — Paclitaxel")
+  productGroup?: string
+  // URL category trail — the top-level section folder, e.g. "cancer-medicines"
+  categoryFolder?: string
+  // URL condition trail — the condition hub slug within categoryFolder, e.g. "breast-cancer"
+  conditionSlug?: string
+  conditionHubUrl?: string
+  // Official product page URL when visited directly (categoryFolder + product slug)
+  productPageUrl?: string
+  // Precomputed "Home > Category > Condition > Product" breadcrumb trail
+  breadcrumb?: string
+  // Other condition names (comma-separated in the sheet) this same product page
+  // is also linked from, so it can surface under more than one condition hub
+  // without duplicating the product page itself.
+  alsoLinkedFrom?: string
+  // All condition names this product belongs under (subCategory + alsoLinkedFrom, deduped)
+  conditions?: string[]
+  // Per-condition hub slug/url lookup, keyed by condition name — covers conditions
+  // whose own sheet row got deduped away when collapsing by Product URL Slug.
+  conditionSlugsByName?: Record<string, { conditionSlug?: string; conditionHubUrl?: string } | undefined>
+  metaTitle?: string
+  metaDescription?: string
+  status?: string
+  notes?: string
 }
 
 // ─────────────────────────────────────────────

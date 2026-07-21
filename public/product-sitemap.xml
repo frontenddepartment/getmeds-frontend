@@ -2,338 +2,368 @@
 <?xml-stylesheet type="text/xsl" href="/sitemap.xsl"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://getmeds.ph/cancer-medicine/pacliget-paclitaxel-6-mg-ml-100mg-16-7ml-solution-for-iv-infusion</loc>
-    <lastmod>2026-07-17</lastmod>
+    <loc>https://getmeds.ph/cancer-medicines/pacliget-paclitaxel-100mg-16.7ml-injection</loc>
+    <lastmod>2026-07-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://getmeds.ph/cancer-medicine/pacliget-260-paclitaxel-6mg-ml-260-mg-43-4-ml-solution-for-injection-iv-infusion</loc>
-    <lastmod>2026-07-17</lastmod>
+    <loc>https://getmeds.ph/cancer-medicines/pacliget-paclitaxel-300mg-50ml-injection</loc>
+    <lastmod>2026-07-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://getmeds.ph/cancer-medicine/pacliget-300-paclitaxel-6mg-ml-300-mg-50ml-solution-for-iv-injection</loc>
-    <lastmod>2026-07-17</lastmod>
+    <loc>https://getmeds.ph/cancer-medicines/doseget-20-docetaxel-20mg-0.5ml-infusion</loc>
+    <lastmod>2026-07-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://getmeds.ph/cancer-medicine/doseget-20-docetaxel-20-mg-0-5-ml-concentrate-solution-for-iv-infusion</loc>
-    <lastmod>2026-07-17</lastmod>
+    <loc>https://getmeds.ph/cancer-medicines/doseget-80-docetaxel-80mg-2ml-infusion</loc>
+    <lastmod>2026-07-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://getmeds.ph/cancer-medicine/doseget-120-docetaxel-120-mg-3-ml-concentrate-solution-for-iv-infusion</loc>
-    <lastmod>2026-07-17</lastmod>
+    <loc>https://getmeds.ph/cancer-medicines/doseget-120-docetaxel-120mg-3ml-infusion</loc>
+    <lastmod>2026-07-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://getmeds.ph/cancer-medicine/gemget-gemcitabine-1-g-lyophilized-powder-for-injection-iv</loc>
-    <lastmod>2026-07-17</lastmod>
+    <loc>https://getmeds.ph/cancer-medicines/gemget-200-gemcitabine-200mg-injection</loc>
+    <lastmod>2026-07-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://getmeds.ph/cancer-medicine/letroget-letrozole-2-5-mg-film-coated-tablet</loc>
-    <lastmod>2026-07-17</lastmod>
+    <loc>https://getmeds.ph/cancer-medicines/gemget-gemcitabine-1g-injection</loc>
+    <lastmod>2026-07-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://getmeds.ph/cancer-medicine/anagaling-anastrozole-1-mg-film-coated-tablet</loc>
-    <lastmod>2026-07-17</lastmod>
+    <loc>https://getmeds.ph/cancer-medicines/capeget-capecitabine-500mg-tablet</loc>
+    <lastmod>2026-07-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://getmeds.ph/cancer-medicine/sykloget-500-cyclophosphamide-500-mg-lyophilized-powder-for-injection-iv</loc>
-    <lastmod>2026-07-17</lastmod>
+    <loc>https://getmeds.ph/cancer-medicines/letroget-letrozole-2.5mg-tablet</loc>
+    <lastmod>2026-07-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://getmeds.ph/cancer-medicine/doseget-120-docetaxel-rtu-120-mg-3-ml-concentrate-solution-for-iv-infusion</loc>
-    <lastmod>2026-07-17</lastmod>
+    <loc>https://getmeds.ph/cancer-medicines/anagaling-anastrozole-1mg-tablet</loc>
+    <lastmod>2026-07-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://getmeds.ph/cancer-medicine/lapanib-lapatinib-250-mg-film-coated-tablet</loc>
-    <lastmod>2026-07-17</lastmod>
+    <loc>https://getmeds.ph/cancer-medicines/sykloget-500-cyclophosphamide-500mg-injection</loc>
+    <lastmod>2026-07-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://getmeds.ph/cancer-medicine/oxaliget-50-oxaliplatin-2mg-ml-50mg-25ml-solution-for-iv-infusion</loc>
-    <lastmod>2026-07-17</lastmod>
+    <loc>https://getmeds.ph/cancer-medicines/sykloget-1000-cyclophosphamide-1g-injection</loc>
+    <lastmod>2026-07-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://getmeds.ph/cancer-medicine/hydroxyget-hydroxyurea-500-mg-capsule</loc>
-    <lastmod>2026-07-17</lastmod>
+    <loc>https://getmeds.ph/cancer-medicines/doseget-docetaxel-rtu-20mg-injection</loc>
+    <lastmod>2026-07-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://getmeds.ph/cancer-medicine/imonib-100-imatinib-100-mg-film-coated-tablet</loc>
-    <lastmod>2026-07-17</lastmod>
+    <loc>https://getmeds.ph/cancer-medicines/doseget-docetaxel-rtu-80mg-injection</loc>
+    <lastmod>2026-07-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://getmeds.ph/cancer-medicine/cytaget-cytarabine-100-mg-ml-solution-for-injection-iv-sc</loc>
-    <lastmod>2026-07-17</lastmod>
+    <loc>https://getmeds.ph/cancer-medicines/methoget-500-methotrexate-500mg-5ml-injection</loc>
+    <lastmod>2026-07-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://getmeds.ph/cancer-medicine/cytaget-cytarabine-500-mg-solution-for-injection-iv-sc</loc>
-    <lastmod>2026-07-17</lastmod>
+    <loc>https://getmeds.ph/cancer-medicines/lapanib-lapatinib-250mg-tablet</loc>
+    <lastmod>2026-07-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://getmeds.ph/cancer-medicine/bendaget-bendamustine-100-mg-lyophilized-powder-for-concentrate-solution-for-iv-infusion</loc>
-    <lastmod>2026-07-17</lastmod>
+    <loc>https://getmeds.ph/cancer-medicines/carboget-carboplatin-150mg-injection</loc>
+    <lastmod>2026-07-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://getmeds.ph/cancer-medicine/borteget-bortezomib-3-5-mg-lyophilized-powder-for-solution-for-injection-i-v-s-c</loc>
-    <lastmod>2026-07-17</lastmod>
+    <loc>https://getmeds.ph/cancer-medicines/carboget-carboplatin-450mg-injection</loc>
+    <lastmod>2026-07-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://getmeds.ph/product-range/foliget-folic-acid-5-mg-tablet</loc>
-    <lastmod>2026-07-17</lastmod>
+    <loc>https://getmeds.ph/cancer-medicines/pemiget-pemetrexed-500mg-infusion</loc>
+    <lastmod>2026-07-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://getmeds.ph/product-range/irose-ferrous-sulfate-200-mg-film-coated-tablet</loc>
-    <lastmod>2026-07-17</lastmod>
+    <loc>https://getmeds.ph/cancer-medicines/abiraget-abiraterone-acetate-250mg-tablet</loc>
+    <lastmod>2026-07-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://getmeds.ph/product-range/cefoxiget-cefoxitin-1-g-powder-for-solution-for-injection-im-iv</loc>
-    <lastmod>2026-07-17</lastmod>
+    <loc>https://getmeds.ph/cancer-medicines/oxaliget-50-oxaliplatin-50mg-25ml-infusion</loc>
+    <lastmod>2026-07-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://getmeds.ph/product-range/cefazoget-cefazolin-1-g-powder-for-solution-for-injection-im-iv-iv-infusion</loc>
-    <lastmod>2026-07-17</lastmod>
+    <loc>https://getmeds.ph/cancer-medicines/oxaliget-oxaliplatin-100mg-50ml-infusion</loc>
+    <lastmod>2026-07-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://getmeds.ph/product-range/vancoget-500-vancomycin-500-mg-powder-for-injection-i-v</loc>
-    <lastmod>2026-07-17</lastmod>
+    <loc>https://getmeds.ph/cancer-medicines/fluoroget-500-fluorouracil-500mg-10ml-injection</loc>
+    <lastmod>2026-07-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://getmeds.ph/product-range/finaget-5-finasteride-5-mg-tablet</loc>
-    <lastmod>2026-07-17</lastmod>
+    <loc>https://getmeds.ph/cancer-medicines/hydroxyget-hydroxyurea-500mg-capsule</loc>
+    <lastmod>2026-07-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://getmeds.ph/product-range/amioget-amiodarone-hydrochloride-50mg-ml-concentrate-for-solution-for-iv-infusion</loc>
-    <lastmod>2026-07-17</lastmod>
+    <loc>https://getmeds.ph/cancer-medicines/bleoget-bleomycin-15units-injection</loc>
+    <lastmod>2026-07-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://getmeds.ph/product-range/amloget-5-amlodipine-5-mg-tablet</loc>
-    <lastmod>2026-07-17</lastmod>
+    <loc>https://getmeds.ph/cancer-medicines/cisplaget-cisplatin-50mg-50ml-infusion</loc>
+    <lastmod>2026-07-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://getmeds.ph/product-range/sevelamed-sevelamer-carbonate-800-mg-tablet</loc>
-    <lastmod>2026-07-17</lastmod>
+    <loc>https://getmeds.ph/cancer-medicines/topoget-topotecan-hydrochloride-2.5mg-injection</loc>
+    <lastmod>2026-07-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://getmeds.ph/product-range/dexget-dexamethasone-4mg-ml-8mg-2ml-solution-for-injection-im-iv</loc>
-    <lastmod>2026-07-17</lastmod>
+    <loc>https://getmeds.ph/cancer-medicines/pazoget-200-pazopanib-200mg-tablet</loc>
+    <lastmod>2026-07-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://getmeds.ph/cancer-medicine/capeget-capecitabine-500-mg-film-coated-tablet</loc>
-    <lastmod>2026-07-17</lastmod>
+    <loc>https://getmeds.ph/cancer-medicines/pazoget-400-pazopanib-400mg-tablet</loc>
+    <lastmod>2026-07-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://getmeds.ph/cancer-medicine/sykloget-1000-cyclophosphamide-1g-lyophilized-powder-for-injection-iv</loc>
-    <lastmod>2026-07-17</lastmod>
+    <loc>https://getmeds.ph/cancer-medicines/soraget-sorafenib-200mg-tablet</loc>
+    <lastmod>2026-07-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://getmeds.ph/cancer-medicine/doseget-80-docetaxel-rtu-40-mg-ml-n-80-mg-2-ml-concentrate-solution-for-iv-infusion</loc>
-    <lastmod>2026-07-17</lastmod>
+    <loc>https://getmeds.ph/blood-disorder-medicines/cytaget-cytarabine-100mg-ml-injection</loc>
+    <lastmod>2026-07-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://getmeds.ph/cancer-medicine/abiraget-abiraterone-acetate-250-mg-tablet</loc>
-    <lastmod>2026-07-17</lastmod>
+    <loc>https://getmeds.ph/blood-disorder-medicines/cytaget-cytarabine-500mg-injection</loc>
+    <lastmod>2026-07-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://getmeds.ph/cancer-medicine/fluoroget-500-fluorouracil-50mg-ml-n-500-mg-10-ml-solution-for-injection-iv-infusion</loc>
-    <lastmod>2026-07-17</lastmod>
+    <loc>https://getmeds.ph/blood-disorder-medicines/idaget-5-idarubicin-hydrochloride-5mg-injection</loc>
+    <lastmod>2026-07-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://getmeds.ph/cancer-medicine/bleoget-bleomycin-15-units-lyophilized-powder-for-injection-im-iv-sc</loc>
-    <lastmod>2026-07-17</lastmod>
+    <loc>https://getmeds.ph/blood-disorder-medicines/imonib-100-imatinib-100mg-tablet</loc>
+    <lastmod>2026-07-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://getmeds.ph/cancer-medicine/cytaget-cytarabine-100-mg-ml-500-mg-5-ml-solution-for-injection-iv-sc</loc>
-    <lastmod>2026-07-17</lastmod>
+    <loc>https://getmeds.ph/blood-disorder-medicines/vincriget-vincristine-1mg-ml-injection</loc>
+    <lastmod>2026-07-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://getmeds.ph/product-range/vancoget-1000-vancomycin-1-g-powder-for-injection-i-v</loc>
-    <lastmod>2026-07-17</lastmod>
+    <loc>https://getmeds.ph/blood-disorder-medicines/bendaget-bendamustine-100mg-infusion</loc>
+    <lastmod>2026-07-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://getmeds.ph/cancer-medicine/doseget-80-docetaxel-40-mg-ml-n-80-mg-2-ml-concentrate-solution-for-iv-infusion</loc>
-    <lastmod>2026-07-17</lastmod>
+    <loc>https://getmeds.ph/blood-disorder-medicines/bortemed-bortezomib-3.5mg-injection</loc>
+    <lastmod>2026-07-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://getmeds.ph/cancer-medicine/gemget-200-gemcitabine-200-mg-lyophilized-powder-for-injection-iv</loc>
-    <lastmod>2026-07-17</lastmod>
+    <loc>https://getmeds.ph/anemia-medicines/foliget-folic-acid-5mg-tablet</loc>
+    <lastmod>2026-07-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://getmeds.ph/cancer-medicine/doseget-20-docetaxel-rtu-20-mg-ml-concentrate-solution-for-iv-infusion</loc>
-    <lastmod>2026-07-17</lastmod>
+    <loc>https://getmeds.ph/anemia-medicines/irose-ferrous-sulfate-200mg-tablet</loc>
+    <lastmod>2026-07-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://getmeds.ph/cancer-medicine/methoget-500-methotrexate-100mg-ml-n-n-500mg-5ml-solution-for-injection-n-n-im-iv-intra-arterial-intrathecal</loc>
-    <lastmod>2026-07-17</lastmod>
+    <loc>https://getmeds.ph/antibiotics/amiget-amikacin-sulfate-500mg-2ml-injection</loc>
+    <lastmod>2026-07-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://getmeds.ph/cancer-medicine/carboget-carboplatin-150-mg-15-ml-10-mg-ml-solution-for-intravenous-infusion</loc>
-    <lastmod>2026-07-17</lastmod>
+    <loc>https://getmeds.ph/antibiotics/cefoxiget-cefoxitin-sodium-1g-injection</loc>
+    <lastmod>2026-07-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://getmeds.ph/cancer-medicine/carboget-carboplatin-450-mg-45-ml-n-10-mg-ml-solution-for-intravenous-infusion</loc>
-    <lastmod>2026-07-17</lastmod>
+    <loc>https://getmeds.ph/antibiotics/cefazoget-cefazolin-sodium-1g-injection</loc>
+    <lastmod>2026-07-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://getmeds.ph/cancer-medicine/pemiget-pemetrexed-500-mg-lyophilized-powder-for-concentrate-solution-for-iv-infusion</loc>
-    <lastmod>2026-07-17</lastmod>
+    <loc>https://getmeds.ph/antibiotics/vancoget-500-vancomycin-hydrochloride-500mg-injection</loc>
+    <lastmod>2026-07-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://getmeds.ph/cancer-medicine/oxaliget-oxaliplatin-2mg-ml-100mg-50ml-solution-for-iv-infusion</loc>
-    <lastmod>2026-07-17</lastmod>
+    <loc>https://getmeds.ph/antibiotics/vancoget-1000-vancomycin-hydrochloride-1g-injection</loc>
+    <lastmod>2026-07-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://getmeds.ph/cancer-medicine/idaget-5-idarubicin-hydrochloride-5-mg-lyophilized-powder-for-injection-iv</loc>
-    <lastmod>2026-07-17</lastmod>
+    <loc>https://getmeds.ph/antibiotics/myxiget-polymyxin-b-500000-units-injection</loc>
+    <lastmod>2026-07-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://getmeds.ph/cancer-medicine/vincriget-vincristine-1-mg-ml-solution-for-injection-iv</loc>
-    <lastmod>2026-07-17</lastmod>
+    <loc>https://getmeds.ph/hormonal-therapy/danaget-danazol-200mg-capsule</loc>
+    <lastmod>2026-07-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://getmeds.ph/product-range/amiget-amikacin-250-mg-ml-500-mg-2ml-solution-for-injection-n-i-m-i-v</loc>
-    <lastmod>2026-07-17</lastmod>
+    <loc>https://getmeds.ph/hormonal-therapy/finaget-5-finasteride-5mg-tablet</loc>
+    <lastmod>2026-07-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://getmeds.ph/product-range/myxiget-polymyxin-b-500-000-units-lyophilized-powder-for-injection</loc>
-    <lastmod>2026-07-17</lastmod>
+    <loc>https://getmeds.ph/diabetes-medicines/akuglip50-sitagliptin-phosphate-50mg-tablet</loc>
+    <lastmod>2026-07-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://getmeds.ph/product-range/danaget-danazol-200-mg-capsule</loc>
-    <lastmod>2026-07-17</lastmod>
+    <loc>https://getmeds.ph/diabetes-medicines/akuvilda-m-1000-vildagliptin-metformin-50mg-1000mg-tablet</loc>
+    <lastmod>2026-07-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://getmeds.ph/cancer-medicine/zologet-zoledronic-acid-4-mg-lyophilized-powder-for-iv-infusion</loc>
-    <lastmod>2026-07-17</lastmod>
+    <loc>https://getmeds.ph/bone-health-medicines/zologet-zoledronic-acid-monohydrate-4mg-infusion</loc>
+    <lastmod>2026-07-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://getmeds.ph/product-range/amloget-10-amlodipine-10-mg-tablet</loc>
-    <lastmod>2026-07-17</lastmod>
+    <loc>https://getmeds.ph/heart-medicines/amioget-amiodarone-hydrochloride-50mg-ml-infusion</loc>
+    <lastmod>2026-07-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://getmeds.ph/cancer-medicine/temoget-temozolomide-100-mg-capsule</loc>
-    <lastmod>2026-07-17</lastmod>
+    <loc>https://getmeds.ph/heart-medicines/amloget-5-amlodipine-besilate-5mg-tablet</loc>
+    <lastmod>2026-07-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://getmeds.ph/product-range/alislergy-loratadine-10-mg-tablet</loc>
-    <lastmod>2026-07-17</lastmod>
+    <loc>https://getmeds.ph/heart-medicines/amloget-10-amlodipine-besilate-10mg-tablet</loc>
+    <lastmod>2026-07-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://getmeds.ph/product-range/cetriget-cetirizine-hydrochloride-10-mg-tablet</loc>
-    <lastmod>2026-07-17</lastmod>
+    <loc>https://getmeds.ph/heart-medicines/losaget-losartan-potassium-50mg-tablet</loc>
+    <lastmod>2026-07-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://getmeds.ph/product-range/tradmin-tramadol-50-mg-solution-for-injection-or-infusion-iv-im</loc>
-    <lastmod>2026-07-17</lastmod>
+    <loc>https://getmeds.ph/contrast-media/iohexiget-iohexol-contrast-350mg-ml-injection</loc>
+    <lastmod>2026-07-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://getmeds.ph/product-range/iohexiget-iodine-350-mg-ml-equivalent-to-755mg-iohexol-100-ml-35-g-solution-for-injection</loc>
-    <lastmod>2026-07-17</lastmod>
+    <loc>https://getmeds.ph/anti-inflammatory-medicines/dexget-dexamethasone-8mg-2ml-injection</loc>
+    <lastmod>2026-07-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://getmeds.ph/pain-management/tradmin-tramadol-50mg-injection-iv</loc>
+    <lastmod>2026-07-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://getmeds.ph/kidney-medicines/sevelamed-sevelamer-carbonate-800mg-tablet</loc>
+    <lastmod>2026-07-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://getmeds.ph/allergy-medicines/alislergy-loratadine-10mg-tablet</loc>
+    <lastmod>2026-07-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://getmeds.ph/allergy-medicines/cetriget-cetirizine-hydrochloride-10mg-tablet</loc>
+    <lastmod>2026-07-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://getmeds.ph/brain-cancer-medicines/temoget-temozolomide-100mg-capsule</loc>
+    <lastmod>2026-07-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>

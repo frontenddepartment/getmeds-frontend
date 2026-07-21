@@ -24,103 +24,74 @@ function loadEnv() {
   return env;
 }
 
-const subcategorySpecials = {
-  'non-small-cell-lung-cancer': 'lung-cancer',
-  'acute-myeloid-leukemia': 'aml',
-  'chronic-myeloid-leukemia': 'cml',
-  'hodgkin-non-hodgkins-lymphoma': 'lymphoma',
-  'hodgkin-non-hodgkin-s-lymphoma': 'lymphoma',
-  'sickle-cell-anemia': 'sickle-cell',
-  'respiratory-infections': 'respiratory',
-  'urinary-tract-infections': 'uti',
-  'skin-and-soft-tissue-infections': 'skin-infections',
-  'bone-and-joint-infections': 'bone-infections',
-  'fibrocystic-breast-disease': 'fibrocystic',
-  'arrhythmia-management': 'arrhythmia',
-  'hypertension-angina': 'hypertension',
-  'hypertension-and-angina': 'hypertension',
-  'seasonal-allergic-rhinitis': 'allergic-rhinitis',
-  'chronic-kidney-disease': 'kidney-disease',
-  'chronic-pain': 'pain',
-  'chronic-pain-management': 'pain',
-  'inflammatory-disorders': 'rheumatology',
-  'inflammatory-and-rheumatic-disorders': 'rheumatology',
-  'inflammatory-rheumatic-disorders': 'rheumatology',
-  'glucocorticoid-induced-osteoporosis': 'osteoporosis'
-};
-
-const getSubcategorySlug = (name) => {
-  return name
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
-};
-
-async function fetchSanitySubcategories(env) {
-  const projectId = env.VITE_SANITY_PROJECT_ID || 'q9y7lsh1';
+// Routing is driven entirely by the "Products Range" workbook's own
+// "Category Folder" / "Condition Slug (auto)" columns (read from the active
+// product doc's json_data) — not by legacy `category` Sanity documents or
+// any hardcoded subcategory-name-to-slug table. Kept as a second copy of the
+// same fetch used in vite.config.js, since that file is ESM and this one is
+// CJS (this script runs standalone via `node`, before Vite loads).
+async function fetchProductRouting(env) {
+  const projectId = env.VITE_SANITY_PROJECT_ID || 's7ocz8zp';
   const dataset = env.VITE_SANITY_DATASET || 'production';
-  const query = '*[_type == "category"] { category, subcategory }';
+  // NOTE: deliberately not filtering on defined(json_data) here — GROQ silently
+  // fails to match that against this field once it's large (200KB+ of parsed
+  // Excel data), even though the field is genuinely present. Presence is
+  // checked in JS below instead.
+  const query = '*[_type == "product" && (remarks == "present" || remarks == "active")] | order(_updatedAt desc)[0]{ json_data }';
   const url = `https://${projectId}.api.sanity.io/v2023-08-01/data/query/${dataset}?query=${encodeURIComponent(query)}`;
 
   try {
     const res = await fetch(url);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const json = await res.json();
-    const subcats = new Set();
+    const jsonData = json.result?.json_data;
+    if (!jsonData) throw new Error('No json_data on active product doc');
 
-    if (json.result) {
-      json.result.forEach(cat => {
-        if (cat.category) {
-          const clean = getSubcategorySlug(cat.category);
-          subcats.add(clean);
-          if (subcategorySpecials[clean]) {
-            subcats.add(subcategorySpecials[clean]);
-          }
-        }
-        if (Array.isArray(cat.subcategory)) {
-          cat.subcategory.forEach(sub => {
-            if (sub) {
-              const clean = getSubcategorySlug(sub);
-              subcats.add(clean);
-              if (subcategorySpecials[clean]) {
-                subcats.add(subcategorySpecials[clean]);
-              }
-            }
-          });
-        }
-      });
-    }
+    const parsed = JSON.parse(jsonData);
+    const firstSheet = Object.keys(parsed)[0];
+    const rows = firstSheet ? (parsed[firstSheet] || []) : [];
 
-    const list = Array.from(subcats).filter(Boolean);
-    if (list.length > 0) {
-      console.log(`[Sanity Fetch] Loaded ${list.length} dynamic categories/subcategories from Sanity.`);
-      return list;
+    const folders = new Set();
+    const conditionSlugs = new Set();
+    rows.forEach((row) => {
+      if (row.categoryFolder) folders.add(String(row.categoryFolder).trim())
+      if (row.conditionSlug) conditionSlugs.add(String(row.conditionSlug).trim())
+    });
+
+    if (folders.size > 0) {
+      const folderList = Array.from(folders).filter(Boolean);
+      const conditionList = Array.from(conditionSlugs).filter(Boolean);
+      console.log(`[Sanity Fetch] Loaded ${folderList.length} category folders and ${conditionList.length} condition slugs from the active product sheet.`);
+      return { folders: folderList, conditionSlugs: conditionList };
     }
   } catch (error) {
     console.warn('[Sanity Fetch] Warn: Failed to fetch from Sanity, using robust offline fallback. Error:', error.message);
   }
 
-  // Robust fallback subcategories
-  return [
-    'breast-cancer', 'ovarian-cancer', 'lung-cancer', 'prostate-cancer', 'colorectal-cancer',
-    'pancreatic-cancer', 'aml', 'cml', 'lymphoma', 'sickle-cell', 'respiratory', 'uti',
-    'skin-infections', 'bone-infections', 'endometriosis', 'fibrocystic', 'multiple-myeloma',
-    'osteoporosis', 'arrhythmia', 'hypertension', 'glioblastoma', 'allergic-rhinitis',
-    'kidney-disease', 'pain', 'rheumatology', 'chronic-lymphocytic-leukemia',
-    'acute-lymphoblastic-leukemia', 'malignant-pleural-mesothelioma', 'head-and-neck-cancer',
-    'chronic-myeloid-leukemia', 'sickle-cell-anemia', 'malignant-pleural-effusion',
-    'gastrointestinal-stromal-tumors', 'acute-myeloid-leukemia', 'acute-lymphocytic-leukemia',
-    'chronic-myelocytic-leukemia', 'meningeal-leukemia', 'acute-promyelocytic-leukemia',
-    'mantle-cell-lymphoma', 'neuro-oncology', 'glioblastoma-multiforme', 'obstetrician',
-    'folate-deficiency-anemia', 'iron-deficiency-anemia', 'allergy', 'seasonal-allergic-rhinitis',
-    'chronic-pain-management', 'inflammatory-rheumatic-disorders', 'endocrinology',
-    'fibrocystic-breast-disease', 'benign-prostatic-hyperplasia', 'cardiology', 'arrhythmia-management',
-    'hypertension-angina', 'renal', 'radiology', 'radiologic-imaging-enhancement-ct-scans-angiography-urography',
-    'hematology', 'orthopedic', 'glucocorticoid-induced-osteoporosis', 'gynecology', 'anti-infectives',
-    'respiratory-infections', 'urinary-tract-infections', 'gynecological-infections', 'intra-abdominal-infections',
-    'skin-and-soft-tissue-infections', 'bone-and-joint-infections', 'bloodstream-infections', 'ocular-or-topical-infections',
-    'nephrology'
-  ];
+  // Robust offline fallback if Sanity is unreachable or the sheet is empty
+  return {
+    folders: ['cancer-medicines'],
+    conditionSlugs: [
+      'breast-cancer', 'ovarian-cancer', 'lung-cancer', 'prostate-cancer', 'colorectal-cancer',
+      'pancreatic-cancer', 'aml', 'cml', 'lymphoma', 'sickle-cell', 'respiratory', 'uti',
+      'skin-infections', 'bone-infections', 'endometriosis', 'fibrocystic', 'multiple-myeloma',
+      'osteoporosis', 'arrhythmia', 'hypertension', 'glioblastoma', 'allergic-rhinitis',
+      'kidney-disease', 'pain', 'rheumatology', 'chronic-lymphocytic-leukemia',
+      'acute-lymphoblastic-leukemia', 'malignant-pleural-mesothelioma', 'head-and-neck-cancer',
+      'chronic-myeloid-leukemia', 'sickle-cell-anemia', 'malignant-pleural-effusion',
+      'gastrointestinal-stromal-tumors', 'acute-myeloid-leukemia', 'acute-lymphocytic-leukemia',
+      'chronic-myelocytic-leukemia', 'meningeal-leukemia', 'acute-promyelocytic-leukemia',
+      'mantle-cell-lymphoma', 'neuro-oncology', 'glioblastoma-multiforme', 'obstetrician',
+      'folate-deficiency-anemia', 'iron-deficiency-anemia', 'allergy', 'seasonal-allergic-rhinitis',
+      'chronic-pain-management', 'inflammatory-rheumatic-disorders', 'endocrinology',
+      'fibrocystic-breast-disease', 'benign-prostatic-hyperplasia', 'cardiology', 'arrhythmia-management',
+      'hypertension-angina', 'renal', 'radiology', 'radiologic-imaging-enhancement-ct-scans-angiography-urography',
+      'hematology', 'orthopedic', 'glucocorticoid-induced-osteoporosis', 'gynecology', 'anti-infectives',
+      'respiratory-infections', 'urinary-tract-infections', 'gynecological-infections', 'intra-abdominal-infections',
+      'skin-and-soft-tissue-infections', 'bone-and-joint-infections', 'bloodstream-infections', 'ocular-or-topical-infections',
+      'nephrology'
+    ]
+  };
 }
 
 async function run() {
@@ -199,27 +170,77 @@ async function run() {
 
   vercelConfig.headers = newHeaders;
 
-  // Fetch and update Sanity subcategories in rewrites
-  const subcategories = await fetchSanitySubcategories(env);
+  // Rebuild the product-section rewrites from the sheet's own URL columns.
+  // Per the sheet: a Category Folder (cancer-medicines, antibiotics, ...) is a
+  // top-level section where every path beneath it is a PRODUCT page (matches
+  // "Product Page URL (auto)") — condition hubs are NOT nested under it, they
+  // live in their own "/conditions/:slug" namespace (matches "Condition Hub
+  // URL (auto)"). The legacy "product-range" alias is the one exception still
+  // needing the old listing-vs-product guess, since it's a catch-all for
+  // pre-rename bookmarked links spanning many folders, not a real folder.
+  const routing = await fetchProductRouting(env);
+  const allFolders = Array.from(new Set([...routing.folders, 'product-range']));
+  const conditionPattern = routing.conditionSlugs.join('|');
+
+  const STATIC_PAGE_NAMES = [
+    '404', 'about-us', 'blog', 'blog-detail', 'careers', 'contact-us', 'conditions', 'csr', 'edit-profile',
+    'employee-verification', 'global-presence', 'home-preview', 'meditations', 'order-medicines',
+    'patient-assistance-program', 'product-detail', 'profile', 'services', 'under-development', 'ungc',
+    'cancer-medicine', ...allFolders
+  ];
+  const STATIC_EXCLUSIONS = `${STATIC_PAGE_NAMES.join('|')}|api/|wp-json/|wp-content/|assets/|public/|components/|data/|src/|dist/|node_modules/|_vercel/|masteradmin|masteradlorock|masteradlorockpd|masteradlorockpdprocess|masteradlogriyon|adminadlorock|[^/]+\\.[^/]+$`;
+  const catchAllSource = `/:slug((?!${STATIC_EXCLUSIONS})[^/]+)`;
+
+  const folderRewrites = allFolders.flatMap((folder) => {
+    return [
+      { source: `/${folder}/:subcategory(${conditionPattern})`, destination: '/cancer-medicines' },
+      { source: `/${folder}/:product`, destination: '/product-detail' },
+      { source: `/${folder}`, destination: '/cancer-medicines' },
+    ];
+  });
+  const conditionRewrites = [
+    { source: `/conditions/:subcategory(${conditionPattern})`, destination: '/cancer-medicines' },
+    { source: '/conditions', destination: '/cancer-medicines' },
+  ];
+  const cancerMedicineSingularRewrites = [
+    { source: '/cancer-medicine/:product', destination: '/product-detail' },
+    { source: '/cancer-medicine', destination: '/cancer-medicines' },
+  ];
+
   if (vercelConfig.rewrites) {
-    let updatedRewritesCount = 0;
-    const subcatPattern = subcategories.join('|');
-    vercelConfig.rewrites = vercelConfig.rewrites.map(rewrite => {
-      if (rewrite.source && (
-        rewrite.source.startsWith('/cancer-medicines/:subcategory(') ||
-        rewrite.source.startsWith('/cancer-medicine/:subcategory(') ||
-        rewrite.source.startsWith('/product-range/:subcategory(')
-      )) {
-        let prefix;
-        if (rewrite.source.startsWith('/cancer-medicines/')) prefix = 'cancer-medicines';
-        else if (rewrite.source.startsWith('/cancer-medicine/')) prefix = 'cancer-medicine';
-        else prefix = 'product-range';
-        rewrite.source = `/${prefix}/:subcategory(${subcatPattern})`;
-        updatedRewritesCount++;
-      }
-      return rewrite;
+    // Strip every previously-generated folder-specific rewrite and the old
+    // static-list catch-all; everything else (wp-json proxy, blog, etc.) is
+    // left exactly as it was.
+    const keep = vercelConfig.rewrites.filter((r) => {
+      if (!r.source) return true;
+      if (r.source.startsWith('/cancer-medicines')) return false;
+      if (r.source === '/cancer-medicine' || r.source.startsWith('/cancer-medicine/')) return false;
+      if (r.source.startsWith('/product-range')) return false;
+      if (r.source.startsWith('/conditions')) return false;
+      if (r.source.startsWith('/:slug(')) return false;
+      return true;
     });
-    console.log(`[Sanity Fetch] Successfully updated ${updatedRewritesCount} rewrite routes in vercel.json.`);
+    const fallback = keep.filter((r) => r.source === '/:path*');
+    const rest = keep.filter((r) => r.source !== '/:path*');
+
+    vercelConfig.rewrites = [
+      ...rest,
+      ...folderRewrites,
+      ...conditionRewrites,
+      ...cancerMedicineSingularRewrites,
+      { source: catchAllSource, destination: 'https://getmeds-admin.vercel.app/api/resolve-slug/:slug' },
+      ...fallback,
+    ];
+    console.log(`[Sanity Fetch] Rebuilt rewrites for ${allFolders.length} category folder(s) + /conditions namespace (${conditionPattern.split('|').length} condition slugs).`);
+  }
+
+  if (Array.isArray(vercelConfig.headers)) {
+    vercelConfig.headers = vercelConfig.headers.map((h) => {
+      if (h.source && h.source.startsWith('/:slug(')) {
+        return { ...h, source: catchAllSource };
+      }
+      return h;
+    });
   }
 
   fs.writeFileSync(vercelConfigPath, JSON.stringify(vercelConfig, null, 2) + '\n', 'utf8');
