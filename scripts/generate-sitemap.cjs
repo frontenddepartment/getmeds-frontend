@@ -47,36 +47,12 @@ function loadEnv() {
   return env;
 }
 
-const subcategorySpecials = {
-  'non-small-cell-lung-cancer': 'lung-cancer',
-  'acute-myeloid-leukemia': 'aml',
-  'chronic-myeloid-leukemia': 'cml',
-  'hodgkin-non-hodgkins-lymphoma': 'lymphoma',
-  'hodgkin-non-hodgkin-s-lymphoma': 'lymphoma',
-  'sickle-cell-anemia': 'sickle-cell',
-  'respiratory-infections': 'respiratory',
-  'urinary-tract-infections': 'uti',
-  'skin-and-soft-tissue-infections': 'skin-infections',
-  'bone-and-joint-infections': 'bone-infections',
-  'fibrocystic-breast-disease': 'fibrocystic',
-  'arrhythmia-management': 'arrhythmia',
-  'hypertension-angina': 'hypertension',
-  'hypertension-and-angina': 'hypertension',
-  'seasonal-allergic-rhinitis': 'allergic-rhinitis',
-  'chronic-kidney-disease': 'kidney-disease',
-  'chronic-pain': 'pain',
-  'inflammatory-disorders': 'rheumatology',
-  'inflammatory-and-rheumatic-disorders': 'rheumatology'
-};
-
-const getSubcategorySlug = (name) => {
-  return name
-    .toLowerCase()
-    .trim()
-    .replace(/\s+/g, '-')
-    .replace(/[^a-z0-9-]/g, '')
-    .replace(/-+/g, '-');
-};
+// Strips a bare domain-prefixed URL from the sheet (e.g. "getmeds.ph/cancer-medicines/x",
+// with or without a protocol) down to just its path, e.g. "cancer-medicines/x".
+function stripDomain(url) {
+  if (!url) return '';
+  return String(url).replace(/^https?:\/\//, '').replace(/^[^/]+\/?/, '');
+}
 
 async function fetchSanityData(query) {
   const env = loadEnv();
@@ -91,155 +67,72 @@ async function fetchSanityData(query) {
   throw new Error(`Sanity API returned status code ${res.statusCode}`);
 }
 
-const cancerSlugs = new Set([
-  'oncology', 'breast-cancer', 'ovarian-cancer', 'non-small-cell-lung-cancer', 'lung-cancer',
-  'prostate-cancer', 'gastric-cancer-gastric-adenocarcinoma', 'gastric-cancer', 'pancreatic-cancer', 'colorectal-cancer',
-  'hodgkin-non-hodgkins-lymphoma', 'hodgkin-non-hodgkin-s-lymphoma', 'lymphoma',
-  'acute-lymphoblastic-leukemia', 'malignant-pleural-mesothelioma', 'head-and-neck-cancer',
-  'chronic-myeloid-leukemia', 'cml', 'sickle-cell-anemia', 'sickle-cell',
-  'malignant-pleural-effusion', 'gastrointestinal-stromal-tumors',
-  'acute-myeloid-leukemia', 'aml', 'acute-lymphocytic-leukemia', 'chronic-myelocytic-leukemia',
-  'meningeal-leukemia', 'acute-promyelocytic-leukemia', 'chronic-lymphocytic-leukemia',
-  'mantle-cell-lymphoma', 'multiple-myeloma', 'neuro-oncology', 'glioblastoma-multiforme', 'glioblastoma'
-]);
-
-const CANCER_CATEGORY_NAMES = [
-  'oncology',
-  'neuro-oncology',
-  'oncology / hematology',
-  'oncology/hematology',
-  'cancer'
-];
-const CANCER_BRAND_EXCEPTIONS = ['zoloGet'.toLowerCase()];
-
-function isCancerProduct(p) {
-  let catName = '';
-  if (p.category) {
-    if (typeof p.category === 'object') {
-      catName = p.category.category || '';
-    } else if (typeof p.category === 'string') {
-      catName = p.category;
-    }
-  }
-  const normCat = catName.toLowerCase().trim();
-  if (CANCER_CATEGORY_NAMES.includes(normCat)) return true;
-  if (p.excelCategory && CANCER_CATEGORY_NAMES.includes(p.excelCategory.toLowerCase().trim())) return true;
-  
-  const brand = (p.brandName || '').toLowerCase().trim();
-  return CANCER_BRAND_EXCEPTIONS.includes(brand);
-}
-
-async function getAllCancerMedicines() {
-  const getProductSlug = (p) => {
-    const brand = (p.brandName || '').toLowerCase().trim()
-      .replace(/[^a-z0-9]+/g, '-');
-    const molecule = (p.genericName || '').toLowerCase().trim()
-      .replace(/\s*\(as\s+[^)]+\)/gi, '')
-      .replace(/[^a-z0-9]+/g, '-');
-    const form = (p.form || '').toLowerCase().trim()
-      .replace(/[^a-z0-9]+/g, '-');
-    const strength = (p.strength || '').toLowerCase().trim()
-      .replace(/[^a-z0-9]+/g, '-');
-    
-    const parts = [brand, molecule, strength, form].filter(Boolean).join('-');
-    return parts.replace(/-+/g, '-').replace(/(^-|-$)/g, '');
-  };
-
-  const subcategories = [];
+// Sitemap URLs are read directly from the sheet's own URL columns — no more
+// hardcoded cancer/subcategory slug tables or a hand-rolled slug builder.
+// Product pages use "Product Page URL (auto)" (categoryFolder + slug); the
+// condition hub URLs below use "Condition Hub URL (auto)" directly — that's
+// the ONE place conditions get a URL at all, since they're sitemap/crawl-only
+// and not an in-app route the frontend actively resolves.
+async function getAllProductRoutes() {
+  const folderUrls = [];
+  const conditionUrls = [];
   const products = [];
   try {
-    console.log('[Sitemap] Fetching subcategories from Sanity...');
-    const categories = await fetchSanityData('*[_type == "category"] { category, subcategory }');
-    const subcats = new Set();
-    categories.forEach(cat => {
-      if (cat.category) {
-        const clean = getSubcategorySlug(cat.category);
-        subcats.add(clean);
-        if (subcategorySpecials[clean]) {
-          subcats.add(subcategorySpecials[clean]);
-        }
-      }
-      if (Array.isArray(cat.subcategory)) {
-        cat.subcategory.forEach(sub => {
-          if (sub) {
-            const clean = getSubcategorySlug(sub);
-            subcats.add(clean);
-            if (subcategorySpecials[clean]) {
-              subcats.add(subcategorySpecials[clean]);
-            }
-          }
-        });
-      }
-    });
-    
-    subcats.forEach(slug => {
-      if (slug) {
-        const prefix = cancerSlugs.has(slug) ? 'cancer-medicines' : 'product-range';
-        subcategories.push({ path: `${prefix}/${slug}`, priority: '0.7', changefreq: 'weekly' });
-      }
-    });
+    console.log('[Sitemap] Fetching active product sheet from Sanity...');
+    // NOTE: not filtering on defined(json_data) — GROQ silently fails to match
+    // that against this field once it's large (200KB+ of parsed Excel data),
+    // even though the field is genuinely present.
+    const excelDoc = await fetchSanityData('*[_type == "product" && (remarks == "present" || remarks == "active") && defined(title)] | order(_updatedAt desc)[0] { json_data }');
 
-    console.log('[Sitemap] Fetching products from Sanity...');
-    const excelDoc = await fetchSanityData('*[_type == "product" && (remarks == "present" || remarks == "active") && defined(title)][0] { json_data }');
-    const originalProducts = await fetchSanityData('*[_type == "product" && !defined(title) && (!defined(remarks) || remarks == "present" || remarks == "active")] { _id, slug, name, remarks, brandName, genericName, form, strength, category->{ category } }');
-
-    const originalMap = new Map();
-    originalProducts.forEach(op => {
-      originalMap.set(op._id, op);
-    });
-
-    let rawProducts = [];
+    let rawRows = [];
     if (excelDoc && excelDoc.json_data) {
       try {
         const data = JSON.parse(excelDoc.json_data);
         const firstSheetName = Object.keys(data)[0];
-        if (firstSheetName) {
-          rawProducts = data[firstSheetName] || [];
-        }
+        if (firstSheetName) rawRows = data[firstSheetName] || [];
       } catch (e) {
         console.error('[Sitemap] Failed to parse Excel json_data:', e.message);
       }
     }
+    // Sheet rows can include trailing blanks past the last real row of data.
+    rawRows = rawRows.filter(r => r && (r.brandName || r.genericName || r.name || r.slug));
 
-    const excelProductIds = new Set(rawProducts.map(p => p._id));
-    const processedSlugs = new Set();
+    const folders = new Set();
+    const conditions = new Map(); // conditionSlug -> conditionHubUrl
+    const productsBySlug = new Map();
 
-    // Process Excel Products
-    rawProducts.forEach(p => {
-      const orig = originalMap.get(p._id) || {};
-      if (orig.remarks && orig.remarks !== 'present' && orig.remarks !== 'active') {
-        return;
+    rawRows.forEach(row => {
+      if (row.categoryFolder) folders.add(String(row.categoryFolder).trim());
+      if (row.conditionSlug && row.conditionHubUrl) {
+        conditions.set(String(row.conditionSlug).trim(), row.conditionHubUrl);
       }
-
-      const merged = { ...orig, ...p };
-      const slugStr = getProductSlug(merged);
-
-      if (slugStr && !processedSlugs.has(slugStr)) {
-        processedSlugs.add(slugStr);
-        const prefix = isCancerProduct(merged) ? 'cancer-medicine' : 'product-range';
-        products.push({ path: `${prefix}/${slugStr}`, priority: '0.6', changefreq: 'monthly' });
+      const slugKey = String(row.slug || '').toLowerCase().trim();
+      if (slugKey && !productsBySlug.has(slugKey)) {
+        productsBySlug.set(slugKey, row);
       }
     });
 
-    // Process Individual-only products
-    originalProducts.forEach(op => {
-      if (excelProductIds.has(op._id)) return;
-      if (op.remarks !== 'present' && op.remarks !== 'active') return;
-
-      const slugStr = getProductSlug(op);
-
-      if (slugStr && !processedSlugs.has(slugStr)) {
-        processedSlugs.add(slugStr);
-        const prefix = isCancerProduct(op) ? 'cancer-medicine' : 'product-range';
-        products.push({ path: `${prefix}/${slugStr}`, priority: '0.6', changefreq: 'monthly' });
-      }
+    folders.forEach(folder => {
+      folderUrls.push({ path: folder, priority: '0.7', changefreq: 'weekly' });
     });
 
-    console.log(`[Sitemap] Successfully processed ${subcats.size} subcategories and ${processedSlugs.size} products from Sanity.`);
+    conditions.forEach(hubUrl => {
+      const p = stripDomain(hubUrl);
+      if (p) conditionUrls.push({ path: p, priority: '0.6', changefreq: 'weekly' });
+    });
+
+    productsBySlug.forEach(row => {
+      const p = row.productPageUrl
+        ? stripDomain(row.productPageUrl)
+        : (row.categoryFolder && row.slug ? `${row.categoryFolder}/${row.slug}` : '');
+      if (p) products.push({ path: p, priority: '0.6', changefreq: 'monthly' });
+    });
+
+    console.log(`[Sitemap] Successfully processed ${folders.size} category folders, ${conditions.size} condition hubs, and ${productsBySlug.size} products from Sanity.`);
   } catch (err) {
-    console.error('[Sitemap] Failed to retrieve products/categories from Sanity:', err.message);
+    console.error('[Sitemap] Failed to retrieve products from Sanity:', err.message);
   }
-  return { subcategories, products };
+  return { subcategories: [...folderUrls, ...conditionUrls], products };
 }
 
 // Fetch a single page of posts from WordPress API, with IP fallback if DNS fails
@@ -316,7 +209,8 @@ async function generate() {
     { path: '', priority: '1.0', changefreq: 'daily' },
     { path: 'about-us', priority: '0.8', changefreq: 'monthly' },
     { path: 'services', priority: '0.8', changefreq: 'monthly' },
-    { path: 'cancer-medicines', priority: '0.8', changefreq: 'weekly' },
+    // Category folders (cancer-medicines, antibiotics, ...) come from
+    // getAllProductRoutes() below now, straight from the sheet.
     { path: 'order-medicines', priority: '0.8', changefreq: 'monthly' },
     { path: 'careers', priority: '0.7', changefreq: 'monthly' },
     { path: 'contact-us', priority: '0.7', changefreq: 'monthly' },
@@ -329,7 +223,7 @@ async function generate() {
   ];
 
   const posts = await getAllPosts();
-  const { subcategories, products } = await getAllCancerMedicines();
+  const { subcategories, products } = await getAllProductRoutes();
 
   const publicDir = path.join(__dirname, '..', 'public');
   if (!fs.existsSync(publicDir)) {

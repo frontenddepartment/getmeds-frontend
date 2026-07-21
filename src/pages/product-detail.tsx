@@ -93,65 +93,10 @@ export default function ProductDetail() {
     return () => document.removeEventListener('mousedown', close);
   }, [ageDropdownOpen]);
 
-  const getSubcategorySlug = (name: string) => {
-    const slug = name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
-    const specials: Record<string, string> = {
-      'non-small-cell-lung-cancer': 'lung-cancer',
-      'acute-myeloid-leukemia': 'aml',
-      'chronic-myeloid-leukemia': 'cml',
-      'hodgkin-non-hodgkins-lymphoma': 'lymphoma',
-      'hodgkin-non-hodgkin-s-lymphoma': 'lymphoma',
-      'sickle-cell-anemia': 'sickle-cell',
-      'respiratory-infections': 'respiratory',
-      'urinary-tract-infections': 'uti',
-      'skin-and-soft-tissue-infections': 'skin-infections',
-      'bone-and-joint-infections': 'bone-infections',
-      'fibrocystic-breast-disease': 'fibrocystic',
-      'arrhythmia-management': 'arrhythmia',
-      'hypertension-angina': 'hypertension',
-      'hypertension-and-angina': 'hypertension',
-      'seasonal-allergic-rhinitis': 'allergic-rhinitis',
-      'chronic-kidney-disease': 'kidney-disease',
-      'chronic-pain': 'pain',
-      'inflammatory-disorders': 'rheumatology',
-      'inflammatory-and-rheumatic-disorders': 'rheumatology'
-    };
-    return specials[slug] || slug;
-  };
-
-  const CANCER_CATEGORY_NAMES = [
-    'oncology',
-    'neuro-oncology',
-    'oncology / hematology',
-    'oncology/hematology',
-    'cancer'
-  ];
-  const CANCER_BRAND_EXCEPTIONS = ['zoloGet'.toLowerCase()];
-  const isCancerProduct = (p: ProductWithCategory | null) => {
-    if (!p) return false;
-    const catName = (p.category?.category || '').toLowerCase().trim();
-    const excelCat = (p.excelCategory || '').toLowerCase().trim();
-    
-    const catParts = catName.split('/').map(s => s.trim()).filter(Boolean);
-    const excelParts = excelCat.split('/').map(s => s.trim()).filter(Boolean);
-    
-    if (catParts.some(part => CANCER_CATEGORY_NAMES.includes(part))) return true;
-    if (excelParts.some(part => CANCER_CATEGORY_NAMES.includes(part))) return true;
-    
-    return CANCER_BRAND_EXCEPTIONS.includes((p.brandName || '').toLowerCase().trim());
-  };
-
-  const getProductSubcategories = (p: ProductWithCategory) => {
-    if (!p.subCategory) return [];
-    const parts = p.subCategory.split('/').map(s => s.trim().replace(/,$/, '')).filter(Boolean);
-    const catDoc = categoriesData?.find(c => c._id === p.category?._id || (c.category && p.category?.category && c.category === p.category?.category));
-    const masterSubcategories = catDoc?.subcategory || [];
-    if (masterSubcategories.length === 0) return parts;
-    return parts.map(part => {
-      const matched = masterSubcategories.find(m => m && typeof m === 'string' && m.toLowerCase() === part.toLowerCase());
-      return matched || part;
-    });
-  };
+  // Conditions this product belongs under (primary subCategory + "Also Linked
+  // From") come straight from the sheet now — see queries.ts `conditions`.
+  const getProductSubcategories = (p: ProductWithCategory) =>
+    p.conditions && p.conditions.length ? p.conditions : (p.subCategory ? [p.subCategory] : []);
 
   const getCategorizationDisplay = (p: ProductWithCategory) => {
     const subcats = getProductSubcategories(p);
@@ -174,12 +119,19 @@ export default function ProductDetail() {
     return subcats[0] || 'General';
   };
 
+  // "Home > Category > Condition > Product" — precomputed in the sheet
+  // (Breadcrumb (auto)), not re-derived here.
+  const getBreadcrumbParts = (p: ProductWithCategory | null) => {
+    if (!p?.breadcrumb) return [];
+    return p.breadcrumb.split('>').map(s => s.trim()).filter(Boolean);
+  };
+
   useEffect(() => {
     if (!productsLoading && productsData) {
       let productSlug = '';
 
       const pathParts = window.location.pathname.split('/').filter(Boolean);
-      if ((pathParts[0] === 'cancer-medicines' || pathParts[0] === 'cancer-medicine' || pathParts[0] === 'product-range') && pathParts.length === 2) {
+      if (pathParts.length === 2) {
         productSlug = pathParts[1];
       }
 
@@ -194,45 +146,42 @@ export default function ProductDetail() {
         return;
       }
 
-      // Generate slug in format brandname-molecule-dosage-strength
-      const getProductSlug = (p: ProductWithCategory) => {
-        const brand = (p.brandName || '').toLowerCase().trim()
-          .replace(/[^a-z0-9]+/g, '-');
-        const molecule = (p.genericName || '').toLowerCase().trim()
-          .replace(/\s*\(as\s+[^)]+\)/gi, '')
-          .replace(/[^a-z0-9]+/g, '-');
-        const form = (p.form || '').toLowerCase().trim()
-          .replace(/[^a-z0-9]+/g, '-');
-        const strength = (p.strength || '').toLowerCase().trim()
-          .replace(/[^a-z0-9]+/g, '-');
-        const parts = [brand, molecule, strength, form].filter(Boolean).join('-');
-        return parts.replace(/-+/g, '-').replace(/(^-|-$)/g, '');
-      };
+      const targetSlug = productSlug.toLowerCase();
+      const decodedTarget = decodeURIComponent(productSlug).toLowerCase();
 
-      const found = productsData.find(
-        p => getProductSlug(p) === productSlug.toLowerCase() ||
-          p.slug?.current?.toLowerCase() === productSlug.toLowerCase() ||
-          p.brandName?.toLowerCase() === productSlug.toLowerCase() ||
-          decodeURIComponent(productSlug).toLowerCase() === (p.brandName || '').toLowerCase()
-      );
+      const found = productsData.find(p => {
+        const pSlug = p.slug?.current?.toLowerCase();
+        const bName = p.brandName?.toLowerCase();
+
+        if (pSlug === targetSlug || pSlug === decodedTarget) return true;
+        if (bName === targetSlug || bName === decodedTarget) return true;
+
+        if (p.productPageUrl) {
+          const stripped = p.productPageUrl.replace(/^https?:\/\//, '').replace(/^[^/]+\/?/, '').toLowerCase();
+          const pageSlug = stripped.split('/').filter(Boolean).pop();
+          if (pageSlug === targetSlug || pageSlug === decodedTarget) return true;
+        }
+
+        return false;
+      });
       if (found) {
         setProduct(found);
         const displayName = found.brandName && found.genericName && found.brandName !== found.genericName
           ? `${found.brandName} (${found.genericName})`
           : found.name || found.brandName || 'Product Details';
-        const description = found.indications
-          ? found.indications.slice(0, 160)
-          : found.description
-            ? found.description.slice(0, 160)
-            : `${displayName} — available through Getmeds Philippines. Quality pharmaceutical product for healthcare needs.`;
-        const prettySlug = getProductSlug(found) || found.slug?.current || '';
-        const prettyPath = isCancerProduct(found)
-          ? `/cancer-medicine/${prettySlug}`
-          : `/product-range/${prettySlug}`;
+        const description = found.metaDescription
+          || found.indications
+          || found.description
+          || `${displayName} — available through Getmeds Philippines. Quality pharmaceutical product for healthcare needs.`;
+        // productPageUrl from the sheet has no protocol (e.g. "getmeds.ph/cancer-medicines/..."),
+        // so the leading domain segment has to be stripped even without an "https://" to match.
+        const prettyPath = found.productPageUrl
+          ? '/' + found.productPageUrl.replace(/^https?:\/\//, '').replace(/^[^/]+\/?/, '')
+          : `/${found.categoryFolder || 'product-range'}/${found.slug?.current || ''}`;
         const imgUrl = found.image ? urlFor(found.image).width(1200).url() : undefined;
         setPageMeta({
-          title: displayName,
-          description,
+          title: found.metaTitle || displayName,
+          description: description.slice(0, 160),
           path: prettyPath,
           image: imgUrl,
           type: 'product',
@@ -243,7 +192,7 @@ export default function ProductDetail() {
     }
   }, [productsLoading, productsData, categoriesData]);
 
-  const backUrl = isCancerProduct(product) ? '/cancer-medicines' : '/product-range';
+  const backUrl = product?.categoryFolder ? `/${product.categoryFolder}` : '/cancer-medicines';
 
 
   const getProductImage = (p: ProductWithCategory, size?: number) => {
@@ -256,7 +205,7 @@ export default function ProductDetail() {
       }
     }
 
-    return 'assets/no-image.png';
+    return '/assets/no-image.png';
   };
 
 
@@ -348,30 +297,43 @@ export default function ProductDetail() {
           <nav aria-label="Breadcrumb">
             <ol className="flex items-center gap-1.5 text-[12px] flex-wrap">
               <li>
-                <a
-                  href="/cancer-medicines"
-                  className="text-gray-400 hover:text-primary transition-colors font-medium"
-                >
-                  Cancer Medicines
+                <a href="/" className="text-gray-400 hover:text-primary transition-colors font-medium">
+                  Home
                 </a>
               </li>
-              {product && (
-                <>
-                  <li className="text-gray-300"><i className="fa-solid fa-chevron-right text-[9px]" /></li>
-                  <li>
-                    <a
-                      href={`/cancer-medicines/${encodeURIComponent(getSubcategorySlug(getCategorizationDisplay(product)))}`}
-                      className="text-gray-400 hover:text-primary transition-colors font-medium max-w-[120px] truncate inline-block align-bottom"
-                    >
-                      {getCategorizationDisplay(product)}
-                    </a>
-                  </li>
-                  <li className="text-gray-300"><i className="fa-solid fa-chevron-right text-[9px]" /></li>
-                  <li className="font-semibold text-gray-700 max-w-[160px] truncate">
-                    {product.brandName || product.name || 'Product Details'}
-                  </li>
-                </>
-              )}
+              {product && (() => {
+                // "Home > Category > Condition > Product" — precomputed in the
+                // sheet (Breadcrumb (auto)); only "Home" is replaced above since
+                // it should link to "/" instead of being plain text.
+                const parts = getBreadcrumbParts(product).filter(p => p.toLowerCase() !== 'home');
+                const fallbackParts = parts.length ? parts : [getCategorizationDisplay(product), product.brandName || product.name || 'Product Details'];
+                return fallbackParts.map((part, idx) => {
+                  const isLast = idx === fallbackParts.length - 1;
+                  const isCondition = idx === fallbackParts.length - 2;
+                  // Condition Hub URL (auto) is a separate "/conditions/:slug" namespace
+                  // used only for the sitemap/crawling, not an in-app destination — every
+                  // breadcrumb link here uses the category folder from Product Page URL
+                  // (auto) instead, same as the rest of the app's internal navigation.
+                  let href: string | null = null;
+                  if (!isLast && product.categoryFolder && (idx === 0 || isCondition)) {
+                    href = `/${product.categoryFolder}`;
+                  }
+                  return (
+                    <React.Fragment key={idx}>
+                      <li className="text-gray-300"><i className="fa-solid fa-chevron-right text-[9px]" /></li>
+                      <li className={isLast ? 'font-semibold text-gray-700' : ''}>
+                        {href ? (
+                          <a href={href} className="text-gray-400 hover:text-primary transition-colors font-medium">
+                            {part}
+                          </a>
+                        ) : (
+                          part
+                        )}
+                      </li>
+                    </React.Fragment>
+                  );
+                });
+              })()}
               {!product && (
                 <>
                   <li className="text-gray-300"><i className="fa-solid fa-chevron-right text-[9px]" /></li>
@@ -495,7 +457,7 @@ export default function ProductDetail() {
                                 src={resolvedImageUrl}
                                 className="w-full h-full object-contain mix-blend-multiply group-hover/zoom:scale-105 transition-transform duration-500"
                                 alt={product.name}
-                                onError={(e) => { (e.target as HTMLImageElement).src = 'assets/no-image.png'; }}
+                                onError={(e) => { const img = e.currentTarget; img.onerror = null; img.src = '/assets/no-image.png'; }}
                               />
                               <div className="absolute inset-0 bg-black/5 opacity-0 group-hover/zoom:opacity-100 flex items-center justify-center transition-opacity duration-300">
                                 <div className="bg-white/95 backdrop-blur-sm text-gray-800 rounded-full px-3 py-1.5 flex items-center gap-1.5 shadow-sm text-xs font-semibold">
@@ -594,7 +556,8 @@ export default function ProductDetail() {
                   )}
                 </div>
 
-                {/* Also used for */}
+                {/* Also used for — "Also Linked From" (auto), the other condition
+                    hubs this same product page is also linked from */}
                 {(() => {
                   const allSubcats = getProductSubcategories(product);
                   const primarySubcat = getCategorizationDisplay(product);
@@ -604,16 +567,21 @@ export default function ProductDetail() {
                     <div className="mt-4 px-5 pb-5">
                       <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-2.5">Also used for</p>
                       <div className="flex flex-wrap gap-2">
-                        {otherSubcats.map((sub, idx) => (
-                          <a
-                            key={idx}
-                            href={`/cancer-medicines/${encodeURIComponent(getSubcategorySlug(sub))}`}
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-medium border border-blue-100 bg-blue-50 text-primary hover:bg-primary hover:text-white hover:border-primary transition-all duration-200"
-                          >
-                            <i className="fa-solid fa-arrow-right-to-bracket text-[9px]" />
-                            {sub}
-                          </a>
-                        ))}
+                        {otherSubcats.map((sub, idx) => {
+                          // Condition Hub URL (auto) is a separate "/conditions/:slug" namespace
+                          // used only for the sitemap/crawling — in-app, this links to the
+                          // category folder from Product Page URL (auto) instead.
+                          return (
+                            <a
+                              key={idx}
+                              href={`/${product.categoryFolder || 'product-range'}`}
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-medium border border-blue-100 bg-blue-50 text-primary hover:bg-primary hover:text-white hover:border-primary transition-all duration-200"
+                            >
+                              <i className="fa-solid fa-arrow-right-to-bracket text-[9px]" />
+                              {sub}
+                            </a>
+                          );
+                        })}
                       </div>
                     </div>
                   );
@@ -900,7 +868,7 @@ export default function ProductDetail() {
               src={getProductImage(product)}
               className="max-w-full max-h-[80vh] object-contain transition-transform duration-300 hover:scale-150 cursor-zoom-in"
               alt={product.name}
-              onError={(e) => { (e.target as HTMLImageElement).src = 'assets/no-image.png'; }}
+              onError={(e) => { const img = e.currentTarget; img.onerror = null; img.src = '/assets/no-image.png'; }}
             />
           </div>
         </div>

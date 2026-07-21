@@ -64,66 +64,13 @@ const getProductDisplayName = (p: { name?: string; brandName?: string; genericNa
     ? `${p.brandName} (${p.genericName})`
     : p.name || p.brandName || p.genericName || 'Unnamed Product';
 
-const subcategorySpecials: Record<string, string> = {
-  'non-small-cell-lung-cancer': 'lung-cancer',
-  'acute-myeloid-leukemia': 'aml',
-  'chronic-myeloid-leukemia': 'cml',
-  'hodgkin-non-hodgkins-lymphoma': 'lymphoma',
-  'hodgkin-non-hodgkin-s-lymphoma': 'lymphoma',
-  'sickle-cell-anemia': 'sickle-cell',
-  'respiratory-infections': 'respiratory',
-  'urinary-tract-infections': 'uti',
-  'skin-and-soft-tissue-infections': 'skin-infections',
-  'bone-and-joint-infections': 'bone-infections',
-  'fibrocystic-breast-disease': 'fibrocystic',
-  'arrhythmia-management': 'arrhythmia',
-  'hypertension-angina': 'hypertension',
-  'hypertension-and-angina': 'hypertension',
-  'seasonal-allergic-rhinitis': 'allergic-rhinitis',
-  'chronic-kidney-disease': 'kidney-disease',
-  'chronic-pain': 'pain',
-  'chronic-pain-management': 'pain',
-  'inflammatory-disorders': 'rheumatology',
-  'inflammatory-and-rheumatic-disorders': 'rheumatology',
-  'inflammatory-rheumatic-disorders': 'rheumatology',
-  'glucocorticoid-induced-osteoporosis': 'osteoporosis'
-};
-
-const getSubcategorySlug = (name: string) => {
-  if (!name) return '';
-  const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
-  return subcategorySpecials[slug] || slug;
-};
-
-const getCategorySlug = (name: string) => {
-  if (!name) return '';
-  return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
-};
-
-const CANCER_CATEGORY_NAMES = [
-  'oncology',
-  'neuro-oncology',
-  'oncology / hematology',
-  'oncology/hematology',
-  'cancer'
-];
-const CANCER_BRAND_EXCEPTIONS = ['zoloGet'.toLowerCase()];
-
-const isCancerCategoryName = (name: string) =>
-  CANCER_CATEGORY_NAMES.includes((name || '').toLowerCase().trim());
-
-const isCancerProduct = (p: { category?: { category?: string }; excelCategory?: string; brandName?: string }) => {
-  const cat = p.category?.category || '';
-  const excelCat = p.excelCategory || '';
-  
-  const cats = [
-    ...cat.split('/').map(s => s.trim().toLowerCase()),
-    ...excelCat.split('/').map(s => s.trim().toLowerCase())
-  ].filter(Boolean);
-  
-  if (cats.some(c => isCancerCategoryName(c))) return true;
-  return CANCER_BRAND_EXCEPTIONS.includes((p.brandName || '').toLowerCase().trim());
-};
+// Categories/subcategories are keyed on the sheet's own Category Folder /
+// Condition (+ Condition Slug) columns now (see queries.ts getCategories()),
+// so there's no more hardcoded name->slug remap table or cancer/non-cancer
+// classification here — a product's own `categoryFolder`/`conditionSlug`
+// fields are used directly wherever a URL or slug is needed.
+const getProductConditions = (p: { conditions?: string[]; subCategory?: string }) =>
+  p.conditions && p.conditions.length ? p.conditions : (p.subCategory ? [p.subCategory] : []);
 
 export default function CancerMedicines() {
   const { getImage } = useImageMapper('product-range');
@@ -289,83 +236,114 @@ export default function CancerMedicines() {
       }));
   }, [categoriesData]);
 
-  // Strip any subcategory slug from the URL immediately, before categories even load.
-  // The URL is never read to decide what's shown — it's cosmetic only. This keeps a
-  // user from manipulating the URL to change what's filtered; the real selection
-  // always comes from localStorage below.
-  useEffect(() => {
-    const pathParts = window.location.pathname.split('/').filter(Boolean);
-    const matchedPrefix = (pathParts[0] === 'cancer-medicines' || pathParts[0] === 'product-range' || pathParts[0] === 'cancer-medicine') ? pathParts[0] : '';
-    if (matchedPrefix && pathParts.length >= 2) {
-      window.history.replaceState(null, '', `/${matchedPrefix}`);
+  // Helper to resolve condition by slug or display name
+  const resolveConditionName = (target: string, cats: typeof processedCats) => {
+    const cleanTarget = target.trim().toLowerCase();
+    for (const cat of cats) {
+      const sub = cat.subcategory.find(s => {
+        const sLower = s.toLowerCase();
+        const sSlug = sLower.replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+        return sLower === cleanTarget || sSlug === cleanTarget;
+      });
+      if (sub) {
+        return { category: cat.category, subCategory: sub };
+      }
     }
-  }, []);
+    return null;
+  };
 
-  // Restore the selected category/subcategory from localStorage — same algorithm the
-  // sidebar/flyout uses to resolve a click, applied here on load instead of on click.
+  // Restore the selected category/subcategory from URL or localStorage
   useEffect(() => {
     if (processedCats.length > 0) {
-      const savedCategoryStr = localStorage.getItem('selectedCategory');
-      if (savedCategoryStr) {
-        let savedObj: { category?: string; subCategory?: string } | null = null;
-        try {
-          savedObj = JSON.parse(savedCategoryStr);
-        } catch {
-          // If it was a plain string in old format, wrap it
-          if (savedCategoryStr) {
-            savedObj = { category: 'All', subCategory: savedCategoryStr };
-          }
+      let resolved = false;
+
+      // 1. Check if URL path has condition segment (e.g. /conditions/breast-cancer or /cancer-medicines/breast-cancer)
+      const pathParts = typeof window !== 'undefined' ? window.location.pathname.split('/').filter(Boolean) : [];
+      if (pathParts.length >= 2) {
+        const urlParam = decodeURIComponent(pathParts[1]);
+        const match = resolveConditionName(urlParam, processedCats);
+        if (match) {
+          setSelectedCategory(match);
+          setCurrentPage(1);
+          resolved = true;
         }
+      }
 
-        if (savedObj) {
-          // Compare via slugs, not raw text — navbar labels are hand-typed and can
-          // drift in punctuation/casing/apostrophes from the CMS's actual subcategory
-          // string, so exact text equality is unreliable.
-          const searchSubSlug = getSubcategorySlug(savedObj.subCategory || '');
-          const searchCatSlug = getCategorySlug(savedObj.category || '');
-
-          let resolved = false;
-
-          // 1. Try to resolve by subcategory
-          if (searchSubSlug && searchSubSlug !== 'all') {
-            let foundSub = '';
-            let foundParent = '';
-            for (const cat of processedCats) {
-              const sub = cat.subcategory.find(s => getSubcategorySlug(s) === searchSubSlug);
-              if (sub) {
-                foundSub = sub;
-                foundParent = cat.category;
-                break;
-              }
-            }
-            if (foundSub) {
-              setSelectedCategory({ category: foundParent, subCategory: foundSub });
-              setCurrentPage(1);
-              resolved = true;
-            }
-          }
-
-          // 2. Try to resolve by parent category (categories can be combined names like "Oncology / Hematology")
-          if (!resolved && searchCatSlug && searchCatSlug !== 'all') {
-            const searchParts = (savedObj.category || '').split('/').map(s => getCategorySlug(s.trim())).filter(Boolean);
-            const matchedCat = processedCats.find(c => {
-              const cParts = c.category.split('/').map(s => getCategorySlug(s.trim()));
-              return getCategorySlug(c.category) === searchCatSlug || cParts.some(p => searchParts.includes(p));
-            });
-            if (matchedCat) {
-              setSelectedCategory({ category: matchedCat.category, subCategory: 'All' });
-              setCurrentPage(1);
-              resolved = true;
-            }
-          }
-
-          // 3. Fallback if resolution was unsuccessful
-          if (!resolved) {
-            setSelectedCategory({ category: 'All', subCategory: 'All' });
+      // 2. Check if URL path has 1 segment matching a category folder slug or category name (e.g. /bone-health-medicines, /antibiotics, /heart-medicines)
+      if (!resolved && pathParts.length >= 1) {
+        const firstSeg = decodeURIComponent(pathParts[0]).trim().toLowerCase();
+        if (firstSeg !== 'cancer-medicines' && firstSeg !== 'product-range' && firstSeg !== 'conditions') {
+          const matchedCat = processedCats.find(c => {
+            const catSlug = (c.slug || '').toLowerCase();
+            const catNameSlug = c.category.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+            const catNameLower = c.category.toLowerCase();
+            return catSlug === firstSeg || catNameSlug === firstSeg || catNameLower === firstSeg;
+          });
+          if (matchedCat) {
+            setSelectedCategory({ category: matchedCat.category, subCategory: 'All' });
             setCurrentPage(1);
+            resolved = true;
           }
         }
       }
+
+      // 2. Check query param (e.g. ?category=breast-cancer)
+      if (!resolved && typeof window !== 'undefined') {
+        const urlParams = new URLSearchParams(window.location.search);
+        const categoryFromUrl = urlParams.get('category');
+        if (categoryFromUrl) {
+          const match = resolveConditionName(categoryFromUrl, processedCats);
+          if (match) {
+            setSelectedCategory(match);
+            setCurrentPage(1);
+            resolved = true;
+          }
+        }
+      }
+
+      // 3. Fallback to localStorage saved selection
+      if (!resolved) {
+        const savedCategoryStr = localStorage.getItem('selectedCategory');
+        if (savedCategoryStr) {
+          let savedObj: { category?: string; subCategory?: string } | null = null;
+          try {
+            savedObj = JSON.parse(savedCategoryStr);
+          } catch {
+            if (savedCategoryStr) {
+              savedObj = { category: 'All', subCategory: savedCategoryStr };
+            }
+          }
+
+          if (savedObj) {
+            const searchSub = (savedObj.subCategory || '').trim();
+            const searchCat = (savedObj.category || '').trim();
+
+            if (searchSub && searchSub.toLowerCase() !== 'all') {
+              const match = resolveConditionName(searchSub, processedCats);
+              if (match) {
+                setSelectedCategory(match);
+                setCurrentPage(1);
+                resolved = true;
+              }
+            }
+
+            if (!resolved && searchCat && searchCat.toLowerCase() !== 'all') {
+              const matchedCat = processedCats.find(c => c.category.toLowerCase() === searchCat.toLowerCase());
+              if (matchedCat) {
+                setSelectedCategory({ category: matchedCat.category, subCategory: 'All' });
+                setCurrentPage(1);
+                resolved = true;
+              }
+            }
+          }
+        }
+      }
+
+      if (!resolved) {
+        setSelectedCategory({ category: 'All', subCategory: 'All' });
+        setCurrentPage(1);
+      }
+
       hasRestoredCategoryRef.current = true;
     }
   }, [processedCats]);
@@ -380,13 +358,12 @@ export default function CancerMedicines() {
 
   // Synchronize Title to active category
   useEffect(() => {
-    const pathParts = window.location.pathname.split('/').filter(Boolean);
-    const isCancerPage = pathParts[0] === 'cancer-medicines' || pathParts[0] === 'cancer-medicine';
+    const sectionLabel = selectedCategory.category !== 'All' ? selectedCategory.category : 'Products';
     const displayLabel = selectedCategory.subCategory !== 'All' ? selectedCategory.subCategory : selectedCategory.category;
     if (displayLabel === 'All') {
-      document.title = isCancerPage ? 'Cancer Medicines - Getmeds' : 'Product Range - Getmeds';
+      document.title = 'Products - Getmeds';
     } else {
-      document.title = `${displayLabel} - ${isCancerPage ? 'Cancer Medicines' : 'Product Range'} | Getmeds`;
+      document.title = `${displayLabel} - ${sectionLabel} | Getmeds`;
     }
   }, [selectedCategory]);
 
@@ -402,23 +379,11 @@ export default function CancerMedicines() {
       }
     }
 
-    return 'assets/no-image.png';
-  };
-
-  const getProductSubcategories = (p: ProductWithCategory) => {
-    if (!p.subCategory) return [];
-    const parts = p.subCategory.split('/').map(s => s.trim().replace(/,$/, '')).filter(Boolean);
-    const catDoc = categoriesData?.find(c => c._id === p.category?._id || (c.category && p.category?.category && c.category === p.category?.category));
-    const masterSubcategories = catDoc?.subcategory || [];
-    if (masterSubcategories.length === 0) return parts;
-    return parts.map(part => {
-      const matched = masterSubcategories.find(m => m && typeof m === 'string' && m.toLowerCase() === part.toLowerCase());
-      return matched || part;
-    });
+    return '/assets/no-image.png';
   };
 
   const getCategorizationDisplay = (p: ProductWithCategory) => {
-    const subcats = getProductSubcategories(p);
+    const subcats = getProductConditions(p);
     if (subcats.length === 0) {
       return p.category?.category || 'General';
     }
@@ -444,37 +409,34 @@ export default function CancerMedicines() {
     if (sel.category === 'All' && sel.subCategory === 'All') return productsData;
 
     const cleanCategory = sel.category.trim().toLowerCase();
-    const cleanCategoryParts = cleanCategory.split('/').map(s => s.trim()).filter(Boolean);
     const cleanSub = (sel.subCategory || '').trim().toLowerCase();
 
-    // Find if the selected category is one of our processed categories
+    // Each processed category is keyed on its Category Folder (queries.ts
+    // getCategories()), so matching a product to its parent category is just
+    // an exact categoryFolder comparison — no more combined-name splitting.
     const matchedProcessed = processedCats.find(
       c => c.category.trim().toLowerCase() === cleanCategory
     );
 
-    // Whether a product belongs to the selected parent category. Categories can have
-    // combined names (e.g. "Oncology / Hematology"), so this compares the split token
-    // sets on both sides rather than requiring an exact whole-string match.
     const matchesParentCategory = (p: ProductWithCategory) => {
-      const pCat = p.category?.category || p.excelCategory || '';
-      const pCats = pCat.split('/').map(s => s.trim().toLowerCase()).filter(Boolean);
-      if (pCat.trim().toLowerCase() === cleanCategory) return true;
-      if (pCats.some(part => cleanCategoryParts.includes(part))) return true;
+      if (!cleanCategory || cleanCategory === 'all') return true;
+
+      const pCat = (p.excelCategory || (typeof p.category === 'string' ? p.category : p.category?.category) || '').trim().toLowerCase();
+      const pFolder = (p.categoryFolder || '').trim().toLowerCase();
 
       if (matchedProcessed) {
-        const subcats = getProductSubcategories(p);
-        return subcats.some(sub => matchedProcessed.subcategory.some(s => s.trim().toLowerCase() === sub.toLowerCase()));
+        return pCat === cleanCategory || pFolder === matchedProcessed.slug || pFolder === cleanCategory;
       }
-      return false;
+      return pCat === cleanCategory || pFolder === cleanCategory;
     };
 
     if (cleanSub && cleanSub !== 'all') {
-      // A subcategory is always scoped to its parent category — otherwise two
-      // categories that happen to share a subcategory label would leak into each other.
+      // A condition is always scoped to its parent category folder — otherwise two
+      // categories that happen to share a condition label would leak into each other.
       return productsData.filter(p => {
         if (!matchesParentCategory(p)) return false;
-        const subcats = getProductSubcategories(p);
-        return subcats.some(part => part.toLowerCase() === cleanSub);
+        const conditions = getProductConditions(p);
+        return conditions.some(part => part.toLowerCase() === cleanSub);
       });
     }
 
@@ -482,10 +444,10 @@ export default function CancerMedicines() {
       return productsData.filter(matchesParentCategory);
     }
 
-    // Fallback: category isn't a known processed category — search by subcategory name directly
+    // Fallback: category isn't a known processed category — search by condition name directly
     return productsData.filter(p => {
-      const subcats = getProductSubcategories(p);
-      return subcats.some(part => part.toLowerCase() === cleanCategory);
+      const conditions = getProductConditions(p);
+      return conditions.some(part => part.toLowerCase() === cleanCategory);
     });
   };
 
@@ -663,30 +625,33 @@ export default function CancerMedicines() {
   };
 
   const getProductDetailUrl = (p: ProductWithCategory) => {
-    const brand = (p.brandName || '').toLowerCase().trim()
-      .replace(/[^a-z0-9]+/g, '-');
-    const molecule = (p.genericName || '').toLowerCase().trim()
-      .replace(/\s*\(as\s+[^)]+\)/gi, '')
-      .replace(/[^a-z0-9]+/g, '-');
-    const form = (p.form || '').toLowerCase().trim()
-      .replace(/[^a-z0-9]+/g, '-');
-    const strength = (p.strength || '').toLowerCase().trim()
-      .replace(/[^a-z0-9]+/g, '-');
-
-    const parts = [brand, molecule, strength, form].filter(Boolean).join('-');
-    const cleanProductSlug = parts.replace(/-+/g, '-').replace(/(^-|-$)/g, '');
-
-    // Oncology and Neuro-Oncology products → /cancer-medicine/[slug]
-    // All other products → /product-range/[slug]
-    if (isCancerProduct(p)) {
-      return `/cancer-medicine/${cleanProductSlug}`;
+    // productPageUrl from the sheet has no protocol (e.g. "getmeds.ph/cancer-medicines/..."),
+    // so the leading domain segment has to be stripped even without an "https://" to match.
+    if (p.productPageUrl) {
+      return '/' + p.productPageUrl.replace(/^https?:\/\//, '').replace(/^[^/]+\/?/, '');
     }
-    return `/product-range/${cleanProductSlug}`;
+    return `/${p.categoryFolder || 'product-range'}/${p.slug?.current || ''}`;
   };
 
   const selectCategory = (category: string, subCategory: string = 'All') => {
     setSelectedCategory({ category, subCategory });
     setCurrentPage(1);
+
+    if (typeof window !== 'undefined') {
+      const matched = processedCats.find(c => c.category.toLowerCase() === category.toLowerCase());
+      if (matched && matched.slug) {
+        const targetPath = subCategory !== 'All' 
+          ? `/${matched.slug}/${subCategory.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}`
+          : `/${matched.slug}`;
+        if (window.location.pathname !== targetPath) {
+          window.history.pushState(null, '', targetPath);
+        }
+      } else if (category === 'All' && subCategory === 'All') {
+        if (window.location.pathname !== '/cancer-medicines' && window.location.pathname !== '/product-range') {
+          window.history.pushState(null, '', '/cancer-medicines');
+        }
+      }
+    }
   };
 
   const openModal = (product: ProductWithCategory) => {
@@ -815,7 +780,12 @@ export default function CancerMedicines() {
             }}
           >
             <div className="px-4 py-4 border-b border-gray-100 flex items-center justify-between shrink-0">
-              <p className="font-semibold text-gray-800 text-[13px] leading-snug">{activeFlyoutCat.name}</p>
+              <p
+                className="font-semibold text-gray-800 text-[13px] leading-snug cursor-pointer hover:text-primary transition-colors"
+                onClick={() => { selectCategory(activeFlyoutCat.name, 'All'); closeFlyout(); }}
+              >
+                {activeFlyoutCat.name}
+              </p>
               <button onClick={closeFlyout} className="w-10 h-10 rounded-full hover:bg-gray-100 flex items-center justify-center transition-colors">
                 <i className="fa-solid fa-xmark text-gray-500 text-[16px]" />
               </button>
@@ -856,7 +826,7 @@ export default function CancerMedicines() {
               <div className="absolute pointer-events-none" style={{ width: 280, height: 80, borderRadius: '50%', bottom: '-48px', left: '22%', background: 'radial-gradient(ellipse at 50% 40%, rgba(40,160,230,0.38), rgba(20,130,210,0.18))', backdropFilter: 'blur(2px)' }} />
               <div className="relative z-10 transition-all duration-300">
                 <h1 className="text-xl sm:text-2xl md:text-3xl font-semibold text-white tracking-tight leading-tight">
-                  Cancer Medicines
+                  {selectedCategory.category !== 'All' ? selectedCategory.category : 'Products'}
                 </h1>
                 <p className="text-white/75 text-[12px] sm:text-[13px] mt-1 font-medium">Comprehensive catalog of pharmaceutical solutions. Browse categories and send inquiries directly.</p>
               </div>
@@ -871,13 +841,13 @@ export default function CancerMedicines() {
                   onClick={() => selectCategory('All', 'All')}
                   className="hover:text-primary transition-colors font-medium"
                 >
-                  Cancer Medicines
+                  All Products
                 </button>
               </li>
               {displayCategory !== 'All' && (
                 <>
                   <li className="text-gray-300"><i className="fa-solid fa-chevron-right text-[9px]" /></li>
-                  <li className="font-semibold text-gray-700 truncate max-w-[200px]">{displayCategory}</li>
+                  <li className="font-semibold text-gray-700">{displayCategory}</li>
                 </>
               )}
             </ol>
@@ -1068,7 +1038,7 @@ export default function CancerMedicines() {
                               src={getProductImage(sp, 80)}
                               className="w-full h-full object-contain mix-blend-multiply group-hover:scale-110 transition duration-300"
                               alt={sp.brandName || sp.name || 'Product'}
-                              onError={(e) => { (e.target as HTMLImageElement).src = 'assets/no-image.png'; }}
+                              onError={(e) => { const img = e.currentTarget; img.onerror = null; img.src = '/assets/no-image.png'; }}
                             />
                           </div>
                           <div className="min-w-0">
@@ -1110,7 +1080,7 @@ export default function CancerMedicines() {
               ) : paginated.length === 0 ? (
                 <div className="flex flex-col items-center justify-center text-center bg-white rounded-2xl border border-gray-100 shadow-sm py-16 px-6">
                   <img
-                    src="assets/noproductsfound.png"
+                    src="/assets/noproductsfound.png"
                     alt="No products found"
                     className="w-44 sm:w-56 object-contain mb-6"
                   />
@@ -1133,7 +1103,7 @@ export default function CancerMedicines() {
                               src={getProductImage(p, 120)}
                               alt={displayName}
                               className="w-full h-full object-contain mix-blend-multiply"
-                              onError={(e) => { (e.target as HTMLImageElement).src = 'assets/no-image.png'; }}
+                              onError={(e) => { const img = e.currentTarget; img.onerror = null; img.src = '/assets/no-image.png'; }}
                             />
                           </div>
                           <div className="flex-1 min-w-0">
@@ -1196,7 +1166,7 @@ export default function CancerMedicines() {
                                       src={getProductImage(p, 120)}
                                       alt={displayName}
                                       className="w-full h-full object-contain mix-blend-multiply"
-                                      onError={(e) => { (e.target as HTMLImageElement).src = 'assets/no-image.png'; }}
+                                      onError={(e) => { const img = e.currentTarget; img.onerror = null; img.src = '/assets/no-image.png'; }}
                                     />
                                   </div>
                                   <span

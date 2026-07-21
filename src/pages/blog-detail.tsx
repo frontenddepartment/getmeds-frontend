@@ -189,10 +189,12 @@ export default function BlogDetail() {
       
       const ourPages = new Set([
         '404', 'blog', 'blog-detail', 'blog-preview', 'articles', 'article-detail', 'about-us', 'contact-us', 'product-range',
-        'cancer-medicines', 'cancer-medicine', 'product-detail', 'meditations', 'patient-assistance-program',
+        'cancer-medicines', 'cancer-medicine', 'conditions', 'product-detail', 'meditations', 'patient-assistance-program',
         'patient-assistance-program-preview', 'careers', 'services', 'csr', 'ungc', 'order-medicines',
         'employee-verification', 'global-presence', 'edit-profile', 'profile', 'under-development', 'home-preview',
-        'index.html'
+        'index.html', 'antibiotics', 'blood-disorder-medicines', 'anemia-medicines', 'hormonal-therapy',
+        'diabetes-medicines', 'bone-health-medicines', 'heart-medicines', 'contrast-media',
+        'anti-inflammatory-medicines', 'pain-management', 'kidney-medicines', 'allergy-medicines'
       ]);
 
       const urlParts = cleanPath.split('#');
