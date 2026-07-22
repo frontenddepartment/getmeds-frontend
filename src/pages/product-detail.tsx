@@ -41,7 +41,10 @@ export default function ProductDetail() {
 
   const [zoomedImageOpen, setZoomedImageOpen] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
-  const [formData, setFormData] = useState({ name: '', phone: '', email: '', message: '', age: '' });
+  const [formData, setFormData] = useState({
+    name: '', phone: '', email: '', message: '', age: '',
+    address: '', contactName: '', contactRelationship: '', terms: false, privacyConsent: false
+  });
   const [ageDropdownOpen, setAgeDropdownOpen] = useState(false);
   const ageDropdownRef = useRef<HTMLDivElement>(null);
   const [submitState, setSubmitState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
@@ -50,6 +53,12 @@ export default function ProductDetail() {
   const [userTypeConfirmed, setUserTypeConfirmed] = useState(false);
   const [prescriptionRequiredModalOpen, setPrescriptionRequiredModalOpen] = useState(false);
   const [prescriptionModalVisible, setPrescriptionModalVisible] = useState(false);
+  // Patient/Caregiver flow only — mirrors the Customer Information form on order-medicines.tsx
+  const [patientIdFile, setPatientIdFile] = useState<File | null>(null);
+  const [contactSameAsPatient, setContactSameAsPatient] = useState(false);
+  const [viewingFileUrl, setViewingFileUrl] = useState<string | null>(null);
+  const [idRequiredModalOpen, setIdRequiredModalOpen] = useState(false);
+  const [idModalVisible, setIdModalVisible] = useState(false);
 
   const USER_TYPE_LABELS: Record<string, string> = {
     patient:  'Patient / Caregiver',
@@ -214,6 +223,20 @@ export default function ProductDetail() {
     if (e.target.files) setUploadedFiles(Array.from(e.target.files));
   };
 
+  const handlePatientIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setPatientIdFile(e.target.files[0]);
+      e.target.value = '';
+    }
+  };
+
+  const resetForm = () => {
+    setFormData({ name: '', phone: '', email: '', message: '', age: '', address: '', contactName: '', contactRelationship: '', terms: false, privacyConsent: false });
+    setUploadedFiles([]);
+    setPatientIdFile(null);
+    setContactSameAsPatient(false);
+  };
+
   const fileToBase64 = (file: File): Promise<string> =>
     new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -224,36 +247,93 @@ export default function ProductDetail() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Block submission for patients without a prescription
-    if (userType === 'patient' && uploadedFiles.length === 0) {
-      setPrescriptionRequiredModalOpen(true);
-      requestAnimationFrame(() => requestAnimationFrame(() => setPrescriptionModalVisible(true)));
-      return;
+
+    if (userType === 'patient') {
+      // Block submission for patients without a prescription
+      if (uploadedFiles.length === 0) {
+        setPrescriptionRequiredModalOpen(true);
+        requestAnimationFrame(() => requestAnimationFrame(() => setPrescriptionModalVisible(true)));
+        return;
+      }
+      if (!patientIdFile) {
+        setIdRequiredModalOpen(true);
+        requestAnimationFrame(() => requestAnimationFrame(() => setIdModalVisible(true)));
+        return;
+      }
+      if (!formData.name || !formData.email || !formData.phone || !formData.age || !formData.address) {
+        alert('Please fill in all required fields.');
+        return;
+      }
+      if (!contactSameAsPatient && !formData.contactName) {
+        alert("Please provide the contact person's full name.");
+        return;
+      }
+      if (!formData.terms) {
+        alert('Please confirm that all provided information is authentic.');
+        return;
+      }
+      if (!formData.privacyConsent) {
+        alert('Please consent to the Privacy Policy to proceed.');
+        return;
+      }
     }
+
     setSubmitState('sending');
-    const filesData: { name: string; type: string; base64: string }[] = [];
+    const filesData: { name: string; type: string; base64: string; category?: 'id' | 'prescription' }[] = [];
     for (const file of uploadedFiles) {
       try {
         const base64 = await fileToBase64(file);
-        filesData.push({ name: file.name, type: file.type, base64 });
+        filesData.push(userType === 'patient'
+          ? { name: file.name, type: file.type, base64, category: 'prescription' }
+          : { name: file.name, type: file.type, base64 });
       } catch (err) {
         console.error('Error processing file:', file.name, err);
       }
     }
+    if (userType === 'patient' && patientIdFile) {
+      try {
+        const base64 = await fileToBase64(patientIdFile);
+        filesData.push({ name: patientIdFile.name, type: patientIdFile.type, base64, category: 'id' });
+      } catch (err) {
+        console.error('Error processing file:', patientIdFile.name, err);
+      }
+    }
 
     try {
-      const payload = {
-        inquiryType: 'Product Inquiry',
-        fullName: formData.name,
-        email: formData.email,
-        phone: formData.phone,
-        message: formData.message,
-        additionalData: {
-          productName: product?.brandName || product?.name || '',
-          age: formData.age
-        },
-        files: filesData
-      };
+      const contactInfo = contactSameAsPatient
+        ? 'Same as patient'
+        : `${formData.contactName}${formData.contactRelationship ? ` (${formData.contactRelationship})` : ''}`;
+
+      const payload = userType === 'patient'
+        ? {
+            inquiryType: 'Product Inquiry',
+            fullName: formData.name,
+            email: formData.email,
+            phone: formData.phone,
+            message: `Product Inquiry Request. Age: ${formData.age}, Address: ${formData.address}, Contact Person: ${contactInfo}`,
+            additionalData: {
+              productName: product?.brandName || product?.name || '',
+              age: formData.age,
+              address: formData.address,
+              contactSameAsPatient,
+              contactName: formData.contactName,
+              contactRelationship: formData.contactRelationship,
+              privacyPolicyConsent: formData.privacyConsent
+            },
+            files: filesData
+          }
+        : {
+            inquiryType: 'Product Inquiry',
+            fullName: formData.name,
+            email: formData.email,
+            phone: formData.phone,
+            message: formData.message,
+            additionalData: {
+              productName: product?.brandName || product?.name || '',
+              age: formData.age
+            },
+            files: filesData
+          };
 
       const response = await fetch(getApiUrl(), {
         method: 'POST',
@@ -264,8 +344,7 @@ export default function ProductDetail() {
       if (!response.ok) throw new Error('Form submission failed.');
 
       setSubmitState('sent');
-      setFormData({ name: '', phone: '', email: '', message: '', age: '' });
-      setUploadedFiles([]);
+      resetForm();
       setSuccessModalOpen(true);
       setTimeout(() => setSubmitState('idle'), 300);
     } catch (error) {
@@ -275,12 +354,7 @@ export default function ProductDetail() {
     }
   };
 
-  if (product) {
-    console.log("DEBUG [product-detail]: product object before rendering:", product);
-    console.log("DEBUG [product-detail]: description field type/value:", typeof product.description, Array.isArray(product.description) ? "array/portable-text" : "not array", product.description);
-    console.log("DEBUG [product-detail]: indications field type/value:", typeof product.indications, Array.isArray(product.indications) ? "array/portable-text" : "not array", product.indications);
-    console.log("DEBUG [product-detail]: dosageAdministration field type/value:", typeof product.dosageAdministration, Array.isArray(product.dosageAdministration) ? "array/portable-text" : "not array", product.dosageAdministration);
-  }
+
 
   return (
     <div style={{ fontFamily: "'Poppins', sans-serif" }} className="bg-white text-gray-800 antialiased min-h-screen flex flex-col">
@@ -413,7 +487,7 @@ export default function ProductDetail() {
                       <span className="capitalize font-medium leading-snug" style={{ color: '#0D99FF' }}>
                         {getCategorizationDisplay(product)}
                       </span>
-                      {product.prescription === 'RX' && (
+                      {product.prescription?.toUpperCase() === 'RX' && (
                         <>
                           <span className="text-gray-300 whitespace-nowrap">|</span>
                           <span className="font-medium whitespace-nowrap text-red-600">
@@ -491,7 +565,7 @@ export default function ProductDetail() {
                     >
                       Description
                     </button>
-                    {product.prescription === 'RX' && (
+                    {product.prescription?.toUpperCase() === 'RX' && (
                       <button
                         type="button"
                         onClick={() => setDescriptionTab('prescription')}
@@ -568,13 +642,16 @@ export default function ProductDetail() {
                       <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-2.5">Also used for</p>
                       <div className="flex flex-wrap gap-2">
                         {otherSubcats.map((sub, idx) => {
-                          // Condition Hub URL (auto) is a separate "/conditions/:slug" namespace
-                          // used only for the sitemap/crawling — in-app, this links to the
-                          // category folder from Product Page URL (auto) instead.
+                          // Resolve the condition slug: prefer the precomputed slug from the sheet,
+                          // fall back to slugifying the condition name (same algorithm cancer-medicines.tsx uses)
+                          const conditionSlug =
+                            product.conditionSlugsByName?.[sub]?.conditionSlug ||
+                            sub.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+                          const href = `/${product.categoryFolder || 'cancer-medicines'}/${conditionSlug}`;
                           return (
                             <a
                               key={idx}
-                              href={`/${product.categoryFolder || 'product-range'}`}
+                              href={href}
                               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-medium border border-blue-100 bg-blue-50 text-primary hover:bg-primary hover:text-white hover:border-primary transition-all duration-200"
                             >
                               <i className="fa-solid fa-arrow-right-to-bracket text-[9px]" />
@@ -626,6 +703,249 @@ export default function ProductDetail() {
                       Continue
                     </button>
                   </div>
+                ) : userType === 'patient' ? (
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div>
+                    <label className="block text-[13px] font-medium text-gray-500 mb-2">Target Product</label>
+                    <input
+                      type="text"
+                      readOnly
+                      value={product.name || ''}
+                      className="w-full bg-gray-50 border border-gray-100 rounded-xl px-3 py-2.5 text-[13px] font-semibold outline-none cursor-default"
+                      style={{ color: '#0D99FF' }}
+                    />
+                  </div>
+
+                  {/* Patient full name + Upload valid ID — mirrors order-medicines.tsx Customer Information */}
+                  <div>
+                    <label className="block text-[13px] font-medium text-gray-500 mb-2">Patient Full Name</label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="Full name as shown on the prescription"
+                      value={formData.name}
+                      onChange={e => setFormData(f => ({ ...f, name: e.target.value }))}
+                      className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2.5 text-[13px] text-gray-700 outline-none focus:border-primary transition"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="block text-[13px] font-medium text-gray-500">Upload valid ID of the patient</label>
+                    <p className="text-[11px] text-gray-400 leading-relaxed">
+                      A valid government-issued ID of the patient helps us process your order faster and ensures the prescription is dispensed to the right person.
+                    </p>
+                    <div className="flex items-center gap-3 flex-wrap pt-1">
+                      {!patientIdFile ? (
+                        <label className="cursor-pointer inline-flex items-center gap-2 hover:opacity-90 text-white text-[12px] font-semibold px-4 py-2.5 rounded-xl transition"
+                          style={{ background: 'linear-gradient(to right,#61A644,#1D9FDA)' }}>
+                          <input type="file" accept="image/*,.pdf" className="hidden" onChange={handlePatientIdChange} />
+                          <i className="fa-solid fa-upload text-[11px]"></i>
+                          Upload File
+                        </label>
+                      ) : (
+                        <div className="flex items-center gap-2 bg-gray-50 border border-gray-100 rounded-xl pl-1.5 pr-3 py-1.5">
+                          {patientIdFile.type.startsWith('image/') ? (
+                            <button type="button" onClick={() => setViewingFileUrl(URL.createObjectURL(patientIdFile))}
+                              className="w-8 h-8 rounded-[7px] overflow-hidden border border-gray-100 flex-shrink-0">
+                              <img src={URL.createObjectURL(patientIdFile)} alt={patientIdFile.name} className="w-full h-full object-cover" />
+                            </button>
+                          ) : (
+                            <i className="fa-solid fa-file-pdf text-red-400"></i>
+                          )}
+                          <span className="text-[12px] text-gray-600 truncate max-w-[160px]">{patientIdFile.name}</span>
+                          <button type="button" onClick={() => setPatientIdFile(null)}
+                            className="text-gray-400 hover:text-red-500 transition">
+                            <i className="fa-solid fa-xmark text-[11px]"></i>
+                          </button>
+                        </div>
+                      )}
+                      <span className="text-[11px] text-gray-400">JPG, PNG, PDF</span>
+                    </div>
+                  </div>
+
+                  {/* Contact Person */}
+                  <div className="border border-gray-100 rounded-xl p-4 bg-gray-50/40 space-y-3">
+                    <h3 className="text-[13px] font-semibold text-gray-800">Contact Person</h3>
+                    <label className="flex items-start gap-2.5 cursor-pointer">
+                      <input type="checkbox"
+                        checked={contactSameAsPatient}
+                        onChange={e => setContactSameAsPatient(e.target.checked)}
+                        className="w-4 h-4 mt-0.5 rounded-md border-gray-200 text-success focus:ring-success cursor-pointer" />
+                      <span>
+                        <span className="block text-[12px] font-semibold text-gray-700">Same as patient details</span>
+                        <span className="block text-[11px] text-gray-400 mt-0.5">Check this if the patient is the one placing the inquiry.</span>
+                      </span>
+                    </label>
+
+                    {!contactSameAsPatient && (
+                      <div className="grid grid-cols-1 gap-3 pt-1">
+                        <div className="space-y-1.5">
+                          <label className="block text-[12px] font-medium text-gray-500">Contact Person's Full Name</label>
+                          <input type="text" placeholder="Person we should contact"
+                            required={!contactSameAsPatient}
+                            value={formData.contactName}
+                            onChange={e => setFormData(f => ({ ...f, contactName: e.target.value }))}
+                            className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2.5 text-[13px] text-gray-700 outline-none focus:border-primary transition" />
+                        </div>
+                        <div className="space-y-1.5">
+                          <label className="block text-[12px] font-medium text-gray-500">Relationship to Patient</label>
+                          <select
+                            value={formData.contactRelationship}
+                            onChange={e => setFormData(f => ({ ...f, contactRelationship: e.target.value }))}
+                            className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2.5 text-[13px] text-gray-700 outline-none focus:border-primary transition">
+                            <option value="">Select relationship (optional)</option>
+                            <option value="Family member">Family member</option>
+                            <option value="Caregiver">Caregiver</option>
+                            <option value="Guardian">Guardian</option>
+                            <option value="Healthcare professional">Healthcare professional</option>
+                            <option value="Other">Other</option>
+                          </select>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-[13px] font-medium text-gray-500 mb-2">Email Address</label>
+                    <input
+                      type="email"
+                      required
+                      placeholder="john@example.com"
+                      value={formData.email}
+                      onChange={e => setFormData(f => ({ ...f, email: e.target.value }))}
+                      className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2.5 text-[13px] text-gray-700 outline-none focus:border-primary transition"
+                    />
+                  </div>
+                  <div className="flex gap-3 items-end">
+                    <div className="flex-1 min-w-0">
+                      <label className="block text-[13px] font-medium text-gray-500 mb-2">Phone Number</label>
+                      <input
+                        type="tel"
+                        required
+                        placeholder="+63 900 000 0000"
+                        value={formData.phone}
+                        onChange={e => setFormData(f => ({ ...f, phone: e.target.value.replace(/[^\d+\s\-()]/g, '') }))}
+                        inputMode="numeric"
+                        className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2.5 text-[13px] text-gray-700 outline-none focus:border-primary transition"
+                      />
+                    </div>
+                    <div className="w-[90px] shrink-0" ref={ageDropdownRef}>
+                      <label className="block text-[13px] font-medium text-gray-500 mb-2">Age</label>
+                      <div className="relative">
+                        <button
+                          type="button"
+                          onClick={() => setAgeDropdownOpen(o => !o)}
+                          className="w-full flex items-center justify-between bg-white border border-gray-200 rounded-xl px-3 py-2.5 text-[13px] text-gray-700 outline-none focus:border-primary transition cursor-pointer"
+                        >
+                          <span className={formData.age ? 'text-gray-700' : 'text-gray-400'}>{formData.age || 'Age'}</span>
+                          <i className="fa-solid fa-chevron-down text-[10px] text-gray-400" />
+                        </button>
+                        {ageDropdownOpen && (
+                          <div className="absolute top-full left-0 mt-1 w-full bg-white rounded-xl shadow-xl border border-gray-100 z-[60] overflow-hidden">
+                            <div className="max-h-48 overflow-y-auto">
+                              {Array.from({ length: 63 }, (_, i) => i + 18).map(age => (
+                                <button
+                                  key={age}
+                                  type="button"
+                                  onClick={() => { setFormData(f => ({ ...f, age: String(age) })); setAgeDropdownOpen(false); }}
+                                  className={`w-full text-left px-3 py-2 text-[13px] hover:bg-gray-50 transition ${formData.age === String(age) ? 'bg-blue-50 text-primary font-semibold' : 'text-gray-700'}`}
+                                >
+                                  {age}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-[13px] font-medium text-gray-500 mb-2">Delivery Address</label>
+                    <input type="text" placeholder="Complete address for courier delivery"
+                      required
+                      value={formData.address}
+                      onChange={e => setFormData(f => ({ ...f, address: e.target.value }))}
+                      className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2.5 text-[13px] text-gray-700 outline-none focus:border-primary transition" />
+                  </div>
+
+                  <div>
+                    <label className="block text-[13px] font-medium text-gray-500 mb-2">Upload Prescription (Required)</label>
+                    <input
+                      type="file"
+                      multiple
+                      accept=".png,.jpg,.jpeg,.pdf"
+                      onChange={handleFileChange}
+                      className="w-full text-[13px] text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-[12px] file:font-medium file:bg-primary/10 file:text-primary hover:file:bg-primary/20 transition cursor-pointer border border-gray-200 rounded-xl p-1.5 bg-white outline-none"
+                    />
+                    {uploadedFiles.length > 0 && (
+                      <div className="mt-2 space-y-1">
+                        {uploadedFiles.map((file, fi) => (
+                          <div key={fi} className="flex items-center text-[11px] text-gray-500 bg-gray-50 px-2 py-1.5 rounded-md border border-gray-100">
+                            <i className="fa-solid fa-file-lines mr-2" style={{ color: 'rgba(13,153,255,0.7)' }} />
+                            <span className="truncate">{file.name}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex items-start gap-2 text-[11px] text-gray-400 pt-1">
+                    <i className="fa-solid fa-circle-info mt-0.5 flex-shrink-0"></i>
+                    <span>Our pharmacists will contact you on the mobile number provided.</span>
+                  </div>
+
+                  <hr className="border-gray-100" />
+
+                  <div className="space-y-2.5">
+                    <h3 className="text-[13px] font-semibold text-gray-800">Declarations and Consent</h3>
+                    <div className="flex items-start gap-2.5">
+                      <input type="checkbox" id="pd-terms"
+                        checked={formData.terms}
+                        onChange={e => setFormData(f => ({ ...f, terms: e.target.checked }))}
+                        className="w-4 h-4 mt-0.5 rounded-md border-gray-200 text-success focus:ring-success cursor-pointer" />
+                      <label htmlFor="pd-terms" className="text-[11px] text-gray-500 cursor-pointer">
+                        I confirm that the information provided is accurate and that the prescription submitted is valid.
+                      </label>
+                    </div>
+                    <div className="flex items-start gap-2.5">
+                      <input type="checkbox" id="pd-privacyConsent"
+                        checked={formData.privacyConsent}
+                        onChange={e => setFormData(f => ({ ...f, privacyConsent: e.target.checked }))}
+                        className="w-4 h-4 mt-0.5 rounded-md border-gray-200 text-success focus:ring-success cursor-pointer" />
+                      <label htmlFor="pd-privacyConsent" className="text-[11px] text-gray-500 cursor-pointer">
+                        I have read and understood the Privacy Policy and consent to the collection, use, and processing of my personal and sensitive personal information for the purpose of verifying and processing this inquiry.
+                      </label>
+                    </div>
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={submitState === 'sending' || submitState === 'sent'}
+                    className="w-full text-white font-bold py-3 rounded-xl transition-all duration-500 transform active:scale-[0.98] mt-6 mb-4 text-[13px]"
+                    style={submitState === 'sent'
+                      ? { background: '#61A644' }
+                      : { background: 'linear-gradient(to right, #61A644, #0D99FF)' }}
+                  >
+                    {submitState === 'sending'
+                      ? 'Sending...'
+                      : submitState === 'sent'
+                        ? '✓ Inquiry Sent Successfully!'
+                        : submitState === 'error'
+                          ? 'Failed to submit. Try again.'
+                          : 'Submit Inquiry Request'}
+                  </button>
+
+                  {/* Medical Disclaimer */}
+                  <div className="p-4 bg-amber-50 border border-amber-100 rounded-xl flex items-start gap-2.5 mb-4">
+                    <i className="fa-solid fa-triangle-exclamation text-amber-500 mt-0.5 flex-shrink-0 text-sm"></i>
+                    <p className="text-[10.5px] text-amber-800 leading-relaxed">
+                      <span className="font-bold">Medical Disclaimer: </span>
+                      Getmeds dispenses prescription medicines only upon receipt of a valid prescription from a licensed physician. This service does not replace professional medical advice, diagnosis, or treatment.
+                    </p>
+                  </div>
+                  <div className="h-4" />
+                </form>
                 ) : (
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div>
@@ -713,28 +1033,6 @@ export default function ProductDetail() {
                       className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2.5 text-[13px] text-gray-700 outline-none focus:border-primary transition resize-none"
                     />
                   </div>
-                  {userType === 'patient' && (
-                  <div>
-                    <label className="block text-[13px] font-medium text-gray-500 mb-2">Upload Prescription (Required)</label>
-                    <input
-                      type="file"
-                      multiple
-                      accept=".png,.jpg,.jpeg,.pdf"
-                      onChange={handleFileChange}
-                      className="w-full text-[13px] text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-[12px] file:font-medium file:bg-primary/10 file:text-primary hover:file:bg-primary/20 transition cursor-pointer border border-gray-200 rounded-xl p-1.5 bg-white outline-none"
-                    />
-                    {uploadedFiles.length > 0 && (
-                      <div className="mt-2 space-y-1">
-                        {uploadedFiles.map((file, fi) => (
-                          <div key={fi} className="flex items-center text-[11px] text-gray-500 bg-gray-50 px-2 py-1.5 rounded-md border border-gray-100">
-                            <i className="fa-solid fa-file-lines mr-2" style={{ color: 'rgba(13,153,255,0.7)' }} />
-                            <span className="truncate">{file.name}</span>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                  )}
                   <button
                     type="submit"
                     disabled={submitState === 'sending' || submitState === 'sent'}
@@ -846,6 +1144,88 @@ export default function ProductDetail() {
             </div>
           </div>
         </>
+      )}
+
+      {/* ID Required Modal — Patient/Caregiver flow, mirrors order-medicines.tsx's ID-required prompt */}
+      {idRequiredModalOpen && (
+        <>
+          <style>{`
+            @keyframes slideUpId{from{opacity:0;transform:translateY(24px) scale(0.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+            .id-modal-slide{animation:slideUpId 0.32s cubic-bezier(.22,1,.36,1) forwards}
+          `}</style>
+          <div
+            className={`fixed inset-0 z-[300] flex items-center justify-center bg-black/60 backdrop-blur-sm px-4 transition-opacity duration-200 ${idModalVisible ? 'opacity-100' : 'opacity-0'}`}
+            onClick={() => { setIdModalVisible(false); setTimeout(() => setIdRequiredModalOpen(false), 200); }}
+          >
+            <div
+              className={`bg-white w-full max-w-[400px] rounded-2xl shadow-2xl relative overflow-hidden id-modal-slide transform transition-all duration-200 ${idModalVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}
+              onClick={e => e.stopPropagation()}
+            >
+              <button
+                type="button"
+                onClick={() => { setIdModalVisible(false); setTimeout(() => setIdRequiredModalOpen(false), 200); }}
+                className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition z-10"
+              >
+                <i className="fa-solid fa-xmark text-base"></i>
+              </button>
+
+              <div className="px-8 pt-8 pb-5 text-center">
+                <div className="flex justify-center mb-4">
+                  <div
+                    className="w-14 h-14 rounded-full flex items-center justify-center"
+                    style={{ background: 'linear-gradient(135deg,#EF4444,#F59E0B)' }}
+                  >
+                    <i className="fa-solid fa-id-card text-white text-xl"></i>
+                  </div>
+                </div>
+                <h2 className="text-[19px] font-semibold text-gray-900 mb-2 leading-snug">Valid ID Required</h2>
+                <p className="text-[13px] text-red-600 font-medium mb-3 leading-relaxed">
+                  A valid ID of the patient is required before your inquiry can be submitted.
+                </p>
+                <p className="text-[13px] text-gray-500 leading-relaxed">
+                  Please upload a valid government-issued ID (JPG, PNG, or PDF) so we can confirm the
+                  prescription is being dispensed to the right person.
+                </p>
+              </div>
+
+              <div className="border-t border-gray-100 px-8 py-3 text-center">
+                <button
+                  type="button"
+                  onClick={() => { setIdModalVisible(false); setTimeout(() => setIdRequiredModalOpen(false), 200); }}
+                  className="text-[13px] font-semibold hover:underline"
+                  style={{ background: 'linear-gradient(to right,#61A644,#1D9FDA)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}
+                >
+                  I Understand, Upload Now
+                </button>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Uploaded ID Preview Modal — Patient/Caregiver flow */}
+      {viewingFileUrl && (
+        <div
+          className="fixed inset-0 z-[300] flex items-center justify-center p-4 bg-black/85 backdrop-blur-md transition-all duration-300"
+          onClick={() => setViewingFileUrl(null)}
+        >
+          <button
+            className="absolute top-6 right-6 w-12 h-12 bg-white/10 hover:bg-white/20 text-white rounded-full flex items-center justify-center transition-colors cursor-pointer"
+            onClick={() => setViewingFileUrl(null)}
+          >
+            <i className="fa-solid fa-xmark text-xl" />
+          </button>
+          <div
+            className="max-w-[90vw] max-h-[90vh] overflow-hidden rounded-2xl bg-white p-4 shadow-2xl relative"
+            onClick={e => e.stopPropagation()}
+          >
+            <img
+              src={viewingFileUrl}
+              className="max-w-full max-h-[80vh] object-contain"
+              alt="Uploaded ID"
+            />
+          </div>
+        </div>
       )}
 
       {/* Zoomed Image Modal */}
