@@ -244,7 +244,7 @@ async function fetchProductsFromExcel(): Promise<Product[]> {
         category: orig.category || getCategoryReference(p.category),
         excelCategory: p.category,
         image: (() => {
-          const key = computeProductKey(p)
+          const key = computeProductKey({ ...p, slug })
           return (key && imageByKey.get(key)) || orig.image
         })(),
         availability: p.availability === undefined ? (orig.availability ?? true) : (p.availability === true || String(p.availability).toLowerCase() === 'true'),

@@ -100,7 +100,7 @@ export function sanityImageSyncPlugin() {
         useCdn: false,
       })
 
-      const pagesDir = path.resolve(__dirname, '../src/pages')
+      const pagesDir = path.resolve(__dirname, '../pages')
       const nameToPageMap = scanAllPageSlots(pagesDir)
 
       if (nameToPageMap.size === 0) {
