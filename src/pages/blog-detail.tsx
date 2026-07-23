@@ -44,27 +44,31 @@ const slugify = (text: string | undefined | null) => {
 export default function BlogDetail() {
   const [slug, setSlug] = useState<string>('');
   const [articleId, setArticleId] = useState<string>('');
+  const [isPreview, setIsPreview] = useState<boolean>(false);
   const [activeSection, setActiveSection] = useState(0);
 
   useEffect(() => {
     const pathname = window.location.pathname;
     const segments = pathname.split('/').filter(Boolean); // e.g. ["blog", "some-blog-slug"]
-    
-    // Check if path starts with /blog/
-    if (segments[0] === 'blog' && segments[1]) {
+    const params = new URLSearchParams(window.location.search);
+    const isPrev = params.get('preview') === 'true';
+    const previewId = params.get('preview_id') || params.get('p') || params.get('id') || '';
+
+    if (isPrev) {
+      setIsPreview(true);
+    }
+
+    if (previewId && (isPrev || !segments[1])) {
+      setArticleId(previewId);
+    } else if (segments[0] === 'blog' && segments[1]) {
       setSlug(segments[1]);
-    } else {
-      // Fallback to query params if accessing via legacy /article-detail?id=123
-      const params = new URLSearchParams(window.location.search);
-      const id = params.get('id') || params.get('preview_id') || params.get('p') || '';
-      if (id) {
-        setArticleId(id);
-      }
+    } else if (previewId) {
+      setArticleId(previewId);
     }
   }, []);
 
-  const { data: articleBySlug, loading: loadingSlug } = useNewsBySlug(slug);
-  const { data: articleById, loading: loadingId } = useNewsById(articleId);
+  const { data: articleBySlug, loading: loadingSlug } = useNewsBySlug(slug, isPreview);
+  const { data: articleById, loading: loadingId } = useNewsById(articleId, isPreview);
 
   const article = slug ? articleBySlug : articleById;
   const loading = slug ? loadingSlug : loadingId;
@@ -572,6 +576,13 @@ export default function BlogDetail() {
       style={{ fontFamily: "'Poppins', sans-serif", background: '#ffffff' }}
       className="min-h-screen relative"
     >
+
+      {/* Preview Mode Banner */}
+      {isPreview && (
+        <div className="bg-amber-100 text-amber-900 px-4 py-2 text-center text-xs md:text-sm font-semibold border-b border-amber-200 sticky top-0 z-[60] shadow-sm flex items-center justify-center gap-2">
+          <span>👁️ <strong>Preview Mode</strong> — You are viewing an un-published draft / preview version of this blog post.</span>
+        </div>
+      )}
 
       {/* Navbar */}
       <div id="navbar-container" className="sticky top-0 z-[50]" />

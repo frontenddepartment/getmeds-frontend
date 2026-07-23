@@ -398,12 +398,12 @@ export function useNews() {
   return useFetch<News[]>(getNews)
 }
 
-export function useNewsById(id: string) {
-  return useFetchWithParam<News | null, string>(getNewsById, id)
+export function useNewsById(id: string, preview: boolean = false) {
+  return useFetchWithParam<News | null, string>((paramId) => getNewsById(paramId, preview), id)
 }
 
-export function useNewsBySlug(slug: string) {
-  return useFetchWithParam<News | null, string>(getNewsBySlug, slug)
+export function useNewsBySlug(slug: string, preview: boolean = false) {
+  return useFetchWithParam<News | null, string>((paramSlug) => getNewsBySlug(paramSlug, preview), slug)
 }
 
 export function useNewsPaginated(perPage: number = 20) {

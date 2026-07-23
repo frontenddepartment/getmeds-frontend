@@ -553,9 +553,10 @@ export async function getNewsPage(page: number, perPage: number = 20): Promise<{
   }
 }
 
-export async function getNewsById(id: string) {
+export async function getNewsById(id: string, preview: boolean = false) {
   try {
-    const res = await fetch(`/api/blog/posts/${id}`);
+    const url = preview ? `/api/blog/posts/${id}?preview=true` : `/api/blog/posts/${id}`;
+    const res = await fetch(url, preview ? { cache: 'no-store' } : undefined);
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
     return await res.json();
   } catch (err) {
@@ -564,9 +565,10 @@ export async function getNewsById(id: string) {
   }
 }
 
-export async function getNewsBySlug(slug: string) {
+export async function getNewsBySlug(slug: string, preview: boolean = false) {
   try {
-    const res = await fetch(`/api/blog/posts?slug=${slug}`);
+    const url = preview ? `/api/blog/posts?slug=${slug}&preview=true` : `/api/blog/posts?slug=${slug}`;
+    const res = await fetch(url, preview ? { cache: 'no-store' } : undefined);
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
     const data = await res.json();
     if (!data.items || data.items.length === 0) return null;
