@@ -262,6 +262,9 @@ export default defineConfig(async ({ mode }) => {
         }
       }
     },
+    esbuild: {
+      drop: isProduction ? ['console', 'debugger'] : []
+    },
     build: {
       rollupOptions: {
         input: getHtmlInputs()

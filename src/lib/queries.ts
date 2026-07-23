@@ -153,8 +153,7 @@ async function fetchProductsFromExcel(): Promise<Product[]> {
     // Fetch all category documents to resolve category references
     const categories = await sanityQuery<Category[]>('category.all') || []
 
-    console.log("DEBUG [fetchProductsFromExcel]: Excel products rows count:", rawProducts.length);
-    console.log("DEBUG [fetchProductsFromExcel]: Sanity individual products count:", originalProducts.length);
+
 
     // Create a lookup map for original products by their document _id
     const originalMap = new Map<string, any>()
@@ -270,6 +269,7 @@ async function fetchProductsFromExcel(): Promise<Product[]> {
         metaDescription: p.metaDescription || orig.metaDescription,
         status: p.status || orig.status,
         notes: p.notes || orig.notes,
+        prescription: p.prescription || (p as any).Prescription || orig.prescription,
       } as Product;
 
       // Every condition this product belongs under gets its own hub slug/url,
@@ -278,14 +278,7 @@ async function fetchProductsFromExcel(): Promise<Product[]> {
         (merged.conditions || []).map((name) => [name, conditionSlugLookup.get(name.toLowerCase())])
       )
 
-      if ((merged.brandName || '').toLowerCase().includes('abira')) {
-        console.log("DEBUG [fetchProductsFromExcel]: Merged AbiraGet product fields:", {
-          brandName: merged.brandName,
-          indications: merged.indications,
-          description: merged.description,
-          dosageAdministration: merged.dosageAdministration
-        });
-      }
+
 
       return merged;
     }).filter(Boolean) as Product[]
