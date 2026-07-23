@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { Eye } from 'lucide-react';
 import { PortableText } from '@portabletext/react';
 import DOMPurify from 'dompurify';
 import { injectHTML } from '../lib/injectHTML';
@@ -576,8 +577,9 @@ export default function BlogDetail() {
 
       {/* Preview Mode Banner */}
       {isPreview && (
-        <div className="bg-amber-100 text-amber-900 px-4 py-2 text-center text-xs md:text-sm font-semibold border-b border-amber-200 sticky top-0 z-[60] shadow-sm flex items-center justify-center gap-2">
-          <span>👁️ <strong>Preview Mode</strong> — You are viewing an un-published draft / preview version of this blog post.</span>
+        <div className="bg-blue-100 text-black-900 px-4 py-2 text-center text-xs md:text-sm font-semibold border-b border-blue-200 sticky top-0 z-[60] shadow-sm flex items-center justify-center gap-2">
+          <Eye className="w-4 h-4 shrink-0" aria-hidden="true" />
+          <span><strong>Preview Mode — This page isn't public yet. Only people with this link can see it.</strong></span>
         </div>
       )}
 
