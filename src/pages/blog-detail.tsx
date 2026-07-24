@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { Eye } from 'lucide-react';
 import { PortableText } from '@portabletext/react';
 import DOMPurify from 'dompurify';
 import { injectHTML } from '../lib/injectHTML';
@@ -44,27 +45,31 @@ const slugify = (text: string | undefined | null) => {
 export default function BlogDetail() {
   const [slug, setSlug] = useState<string>('');
   const [articleId, setArticleId] = useState<string>('');
+  const [isPreview, setIsPreview] = useState<boolean>(false);
   const [activeSection, setActiveSection] = useState(0);
 
   useEffect(() => {
     const pathname = window.location.pathname;
     const segments = pathname.split('/').filter(Boolean); // e.g. ["blog", "some-blog-slug"]
-    
-    // Check if path starts with /blog/
-    if (segments[0] === 'blog' && segments[1]) {
+    const params = new URLSearchParams(window.location.search);
+    const isPrev = params.get('preview') === 'true';
+    const previewId = params.get('preview_id') || params.get('p') || params.get('id') || '';
+
+    if (isPrev) {
+      setIsPreview(true);
+    }
+
+    if (previewId && (isPrev || !segments[1])) {
+      setArticleId(previewId);
+    } else if (segments[0] === 'blog' && segments[1]) {
       setSlug(segments[1]);
-    } else {
-      // Fallback to query params if accessing via legacy /article-detail?id=123
-      const params = new URLSearchParams(window.location.search);
-      const id = params.get('id') || params.get('preview_id') || params.get('p') || '';
-      if (id) {
-        setArticleId(id);
-      }
+    } else if (previewId) {
+      setArticleId(previewId);
     }
   }, []);
 
-  const { data: articleBySlug, loading: loadingSlug } = useNewsBySlug(slug);
-  const { data: articleById, loading: loadingId } = useNewsById(articleId);
+  const { data: articleBySlug, loading: loadingSlug } = useNewsBySlug(slug, isPreview);
+  const { data: articleById, loading: loadingId } = useNewsById(articleId, isPreview);
 
   const article = slug ? articleBySlug : articleById;
   const loading = slug ? loadingSlug : loadingId;
@@ -569,6 +574,14 @@ export default function BlogDetail() {
       style={{ fontFamily: "'Poppins', sans-serif", background: '#ffffff' }}
       className="min-h-screen relative"
     >
+
+      {/* Preview Mode Banner */}
+      {isPreview && (
+        <div className="bg-blue-100 text-black-900 px-4 py-2 text-center text-xs md:text-sm font-semibold border-b border-blue-200 sticky top-0 z-[60] shadow-sm flex items-center justify-center gap-2">
+          <Eye className="w-4 h-4 shrink-0" aria-hidden="true" />
+          <span><strong>Preview Mode — This page isn't public yet. Only people with this link can see it.</strong></span>
+        </div>
+      )}
 
       {/* Navbar */}
       <div id="navbar-container" className="sticky top-0 z-[50]" />

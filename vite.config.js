@@ -146,6 +146,10 @@ export default defineConfig(async ({ mode }) => {
   const wordpressApiBase = env.VITE_WORDPRESS_API_BASE || '/wp-json/wp/v2';
   const wordpressApiRoot = env.VITE_WORDPRESS_API_ROOT || 'https://cms.getmeds.ph';
 
+  const backendApiUrl = isProduction
+    ? (env.VITE_BACKEND_API_URL || 'https://getmeds-admin.vercel.app')
+    : (env.VITE_BACKEND_API_URL || 'http://localhost:8000');
+
   return {
     define: {
       'import.meta.env.VITE_DEPLOYMENT': JSON.stringify(deploymentMode),
@@ -248,6 +252,11 @@ export default defineConfig(async ({ mode }) => {
         },
         '/api/careers': {
           target: 'https://getmeds-test-creation.vercel.app',
+          changeOrigin: true,
+          secure: false,
+        },
+        '/api': {
+          target: backendApiUrl,
           changeOrigin: true,
           secure: false,
         }
