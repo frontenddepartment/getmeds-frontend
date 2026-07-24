@@ -102,6 +102,13 @@ export default function ProductDetail() {
     return () => document.removeEventListener('mousedown', close);
   }, [ageDropdownOpen]);
 
+  // Excel rows often only populate brandName/genericName and leave `name` blank,
+  // so every display spot needs the same brandName+genericName fallback chain.
+  const getProductDisplayName = (p: ProductWithCategory) =>
+    p.brandName && p.genericName && p.brandName !== p.genericName
+      ? `${p.brandName} (${p.genericName})`
+      : p.name || p.brandName || p.genericName || 'Product Details';
+
   // Conditions this product belongs under (primary subCategory + "Also Linked
   // From") come straight from the sheet now — see queries.ts `conditions`.
   const getProductSubcategories = (p: ProductWithCategory) =>
@@ -306,7 +313,9 @@ export default function ProductDetail() {
 
       const payload = userType === 'patient'
         ? {
-            inquiryType: 'Product Inquiry',
+            // Patient/Caregiver submissions use the same fields as the Order Medicines form,
+            // so they're routed to that same Google Sheet instead of the Product Inquiry one.
+            inquiryType: 'Order Medicine',
             fullName: formData.name,
             email: formData.email,
             phone: formData.phone,
@@ -497,9 +506,7 @@ export default function ProductDetail() {
                       )}
                     </div>
                     <h1 className="text-xl font-bold text-gray-900 mb-4 leading-tight">
-                      {product.brandName && product.genericName && product.brandName !== product.genericName
-                        ? `${product.brandName} (${product.genericName})`
-                        : product.name || product.brandName || product.genericName || 'Product Details'}
+                      {getProductDisplayName(product)}
                     </h1>
                     <div className="flex flex-wrap gap-x-6 gap-y-2">
                       {product.strength && (
@@ -710,7 +717,7 @@ export default function ProductDetail() {
                     <input
                       type="text"
                       readOnly
-                      value={product.name || ''}
+                      value={getProductDisplayName(product)}
                       className="w-full bg-gray-50 border border-gray-100 rounded-xl px-3 py-2.5 text-[13px] font-semibold outline-none cursor-default"
                       style={{ color: '#0D99FF' }}
                     />
@@ -953,7 +960,7 @@ export default function ProductDetail() {
                     <input
                       type="text"
                       readOnly
-                      value={product.name || ''}
+                      value={getProductDisplayName(product)}
                       className="w-full bg-gray-50 border border-gray-100 rounded-xl px-3 py-2.5 text-[13px] font-semibold outline-none cursor-default"
                       style={{ color: '#0D99FF' }}
                     />
