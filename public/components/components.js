@@ -1179,7 +1179,7 @@
                 const currentYear = new Date().getFullYear().toString();
                 const base = settings.copyright
                     ? settings.copyright.replace(/Getmeds/g, 'Getmeds').replace(/\b\d{4}\b/, currentYear)
-                    : `© ${currentYear} Getmeds. All rights reserved.`;
+                    : `© ${currentYear} Getmeds Philippines, Inc. All rights reserved.`;
                 if (footerCopyright.textContent.trim() !== base.trim()) {
                     footerCopyright.textContent = base;
                 }
