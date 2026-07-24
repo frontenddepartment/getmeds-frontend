@@ -627,7 +627,7 @@ export default function AboutUs() {
                   <ul className="flex flex-wrap gap-2 md:grid md:grid-cols-3 md:gap-y-3 md:gap-x-8 md:text-[14px] text-gray-500 font-medium">
                     {[
                       'Precision Pharmaceutical Distribution',
-                      'Patient Access Programs',
+                      'Patient Assistance Program',
                       'Strategic Global Sourcing',
                       'Cold-Chain & Last-Mile Delivery',
                       'Regulatory Compliance & FDA Philippines Licensing',

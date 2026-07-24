@@ -1,5 +1,5 @@
 ﻿import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { useCategories, useHeroSlides, useImageMapper, useNews, useProducts, useSiteSettings } from '../lib/useSanity';
+import { useHeroSlides, useImageMapper, useNews, useSiteSettings } from '../lib/useSanity';
 import { setPageMeta } from '../lib/seo';
 import { getApiUrl } from '../lib/api';
 import { injectHTML } from '../lib/injectHTML';
@@ -90,7 +90,6 @@ export default function GetMedsHomepage() {
   const { data: newsItems } = useNews();
   const { data: settings } = useSiteSettings();
   const { data: heroSlidesData } = useHeroSlides();
-  const { data: therapProductsData } = useProducts();
   const newsSliderRef = useRef<HTMLDivElement>(null);
   const [activeNewsSlide, setActiveNewsSlide] = useState(0);
 
@@ -117,49 +116,24 @@ export default function GetMedsHomepage() {
       el.scrollTo({ left: child.offsetLeft - (el.offsetWidth - child.offsetWidth) / 2, behavior: 'smooth' });
     }
   };
-  const { data: categoriesData } = useCategories();
 
-  // Therapeutic area cards, ordered dynamically by real product count (highest first) —
-  // not a hardcoded order. Falls back to the static order below until product/category data loads.
-  const therapCards = useMemo(() => {
-    const base = [
-      { name: "Oncology", img: getImage("assets/therapeuticareaoncology.png", "assets/therapeuticareaoncology.png"), marquee: "Breast Cancer • Ovarian Cancer • Non-Small Cell Lung Cancer • Prostate Cancer • Colorectal Cancer • Pancreatic Cancer • ", link: "/cancer-medicines/oncology" },
-      { name: "Cardiology", img: getImage("assets/therapeuticareacardiology.png", "assets/therapeuticareacardiology.png"), marquee: "Arrhythmia Management • Hypertension/Angina • Heart Failure • Atrial Fibrillation • Coronary Artery Disease • ", link: "/cancer-medicines/cardiology" },
-      { name: "Neurology", img: getImage("assets/therapeuticareaneurology.png", "assets/therapeuticareaneurology.png"), marquee: "Glioblastoma Multiforme • Chronic Pain • Inflammatory Disorders • Osteoporosis • Multiple Myeloma • Neuro-Oncology • ", link: "/cancer-medicines/neuro-oncology" },
-      { name: "Hematology", img: getImage("assets/therapeuticareahematology.png", "assets/therapeuticareahematology.png"), marquee: "Acute Myeloid Leukemia • Chronic Myeloid Leukemia • Hodgkin/Non-Hodgkin's Lymphoma • Sickle Cell Anemia • ", link: "/cancer-medicines/hematology" },
-      { name: "Anti-Infectives", img: getImage("assets/therapeuticareaantiinfectives.jpg", "assets/therapeuticareaantiinfectives.jpg"), marquee: "Respiratory Infections • Urinary Tract Infections • Skin and Soft Tissue Infections • Bone and Joint Infections • ", link: "/cancer-medicines/anti-infectives" },
-      { name: "Endocrinology", img: getImage("assets/therapeuticareaendocrinology.jpg", "assets/therapeuticareaendocrinology.jpg"), marquee: "Endometriosis • Fibrocystic Breast Disease • Diabetes Management • Thyroid Disorders • Metabolic Syndrome • ", link: "/cancer-medicines/endocrinology" },
-      { name: "Orthopedic", img: getImage("assets/orthopedic.jpg", "assets/orthopedic.jpg"), marquee: "Multiple Myeloma • Osteoporosis • Joint Replacement Support • Fracture Recovery • Bone Metastases • ", link: "/cancer-medicines/orthopedic" },
-      { name: "Respiratory", img: getImage("assets/respiratory.jpg", "assets/respiratory.jpg"), marquee: "Seasonal Allergic Rhinitis • Asthma • COPD • Bronchitis • Pulmonary Hypertension • Chronic Kidney Disease • ", link: "/cancer-medicines/respiratory" },
-      { name: "Essential Medicines", img: getImage("assets/essential-medicines.jpg", "assets/essential-medicines.jpg"), marquee: "Generic Medicines • OTC Products • Vitamins & Supplements • First-line Treatments • Essential Drug List • ", link: "/cancer-medicines" },
-      { name: "Biologicals & Vaccines", img: getImage("assets/biologicals-vaccines.jpg", "assets/biologicals-vaccines.jpg"), marquee: "Hepatitis B • HPV • Influenza • Pneumococcal • Monoclonal Antibodies • Biosimilars • ", link: "/cancer-medicines" },
-      { name: "Medical Devices", img: getImage("assets/medical-devices.jpg", "assets/medical-devices.jpg"), marquee: "Diagnostic Equipment • Surgical Instruments • Patient Monitoring • Infusion Devices • Wound Care • ", link: "/cancer-medicines" },
-      { name: "Rare Diseases", img: getImage("assets/rare-diseases.jpg", "assets/rare-diseases.jpg"), marquee: "Orphan Drugs • Enzyme Replacement Therapy • Gene Therapy • Ultra-rare Conditions • Patient Programs • ", link: "/cancer-medicines" },
-    ];
-
-    if (!therapProductsData || !categoriesData) return base;
-
-    // Count real products per category name (lowercased), splitting combined "A / B" category strings.
-    const countByCatName: Record<string, number> = {};
-    for (const p of therapProductsData as any[]) {
-      const raw = (p.category && p.category.category) || p.excelCategory || '';
-      raw.split('/').map((s: string) => s.trim()).filter(Boolean).forEach((part: string) => {
-        const key = part.toLowerCase();
-        countByCatName[key] = (countByCatName[key] || 0) + 1;
-      });
-    }
-
-    // Resolve each card's real category name via its link slug (falls back to its own name),
-    // so hardcoded card labels can't drift from the actual Sanity category name.
-    const getCount = (card: typeof base[number]) => {
-      const slug = card.link.split('/').filter(Boolean).pop();
-      const matchedCat = (categoriesData as any[]).find(c => c.slug?.current === slug);
-      const catName = (matchedCat?.category || card.name).toLowerCase();
-      return countByCatName[catName] ?? -1;
-    };
-
-    return [...base].sort((a, b) => getCount(b) - getCount(a));
-  }, [therapProductsData, categoriesData, getImage]);
+  // Therapeutic area cards — fixed order matching the "Getmeds — All Categories URL Map
+  // Summary" reference spreadsheet's Product Range column (Hematology / OB-GYN omitted, since
+  // it's already covered under Hematology).
+  const therapCards = useMemo(() => [
+    { name: "Oncology", img: getImage("assets/therapeuticareaoncology.png", "assets/therapeuticareaoncology.png"), marquee: "Breast Cancer • Ovarian Cancer • Non-Small Cell Lung Cancer • Prostate Cancer • Colorectal Cancer • Pancreatic Cancer • ", link: "/cancer-medicines/oncology" },
+    { name: "Hematology", img: getImage("assets/therapeuticareahematology.png", "assets/therapeuticareahematology.png"), marquee: "Acute Myeloid Leukemia • Chronic Myeloid Leukemia • Hodgkin/Non-Hodgkin's Lymphoma • Sickle Cell Anemia • ", link: "/cancer-medicines/hematology" },
+    { name: "Anti-Infectives", img: getImage("assets/therapeuticareaantiinfectives.jpg", "assets/therapeuticareaantiinfectives.jpg"), marquee: "Respiratory Infections • Urinary Tract Infections • Skin and Soft Tissue Infections • Bone and Joint Infections • ", link: "/cancer-medicines/anti-infectives" },
+    { name: "Endocrinology", img: getImage("assets/therapeuticareaendocrinology.jpg", "assets/therapeuticareaendocrinology.jpg"), marquee: "Endometriosis • Fibrocystic Breast Disease • Diabetes Management • Thyroid Disorders • Metabolic Syndrome • ", link: "/cancer-medicines/endocrinology" },
+    { name: "Orthopedic", img: getImage("assets/orthopedic.jpg", "assets/orthopedic.jpg"), marquee: "Multiple Myeloma • Osteoporosis • Joint Replacement Support • Fracture Recovery • Bone Metastases • ", link: "/cancer-medicines/orthopedic" },
+    { name: "Cardiology", img: getImage("assets/therapeuticareacardiology.png", "assets/therapeuticareacardiology.png"), marquee: "Arrhythmia Management • Hypertension/Angina • Heart Failure • Atrial Fibrillation • Coronary Artery Disease • ", link: "/cancer-medicines/cardiology" },
+    { name: "Radiology", img: getImage("assets/radiology.jpg", "assets/radiology.jpg"), marquee: "Contrast Media • Diagnostic Imaging • CT & MRI Contrast Agents • Nuclear Medicine • Radiopharmaceuticals • ", link: "/cancer-medicines/radiology" },
+    { name: "Rheumatology", img: getImage("assets/rheumatology.jpg", "assets/rheumatology.jpg"), marquee: "Rheumatoid Arthritis • Osteoarthritis • Lupus • Gout • Ankylosing Spondylitis • ", link: "/cancer-medicines/rheumatology" },
+    { name: "Pain Management", img: getImage("assets/pain-management.jpg", "assets/pain-management.jpg"), marquee: "Chronic Pain • Post-Surgical Pain • Neuropathic Pain • Analgesics • Anesthesia Support • ", link: "/cancer-medicines/pain-management" },
+    { name: "Nephrology / Renal", img: getImage("assets/nephrology-renal.jpg", "assets/nephrology-renal.jpg"), marquee: "Chronic Kidney Disease • Dialysis Support • Renal Anemia • Electrolyte Management • Nephrotic Syndrome • ", link: "/cancer-medicines/nephrology-renal" },
+    { name: "Respiratory", img: getImage("assets/respiratory.jpg", "assets/respiratory.jpg"), marquee: "Seasonal Allergic Rhinitis • Asthma • COPD • Bronchitis • Pulmonary Hypertension • Chronic Kidney Disease • ", link: "/cancer-medicines/respiratory" },
+    { name: "Neurology", img: getImage("assets/therapeuticareaneurology.png", "assets/therapeuticareaneurology.png"), marquee: "Glioblastoma Multiforme • Chronic Pain • Inflammatory Disorders • Osteoporosis • Multiple Myeloma • Neuro-Oncology • ", link: "/cancer-medicines/neuro-oncology" },
+  ], [getImage]);
 
 
   // --- Hero Slider ---
@@ -1129,7 +1103,7 @@ export default function GetMedsHomepage() {
               <div className="col-span-6 md:col-span-2 bg-gradient-to-br from-white to-orange-100/60 rounded-2xl p-6 relative overflow-hidden flex flex-col justify-between hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer" style={{ minHeight: '220px' }}>
                 <div className="relative z-10">
                   <h3 className="text-base font-bold text-gray-900 mb-2">Sales and Distribution</h3>
-                  <p className="text-gray-500 text-sm leading-relaxed">5,000+ pharmacy and 500+ hospital accounts served through dedicated nationwide sales teams.</p>
+                  <p className="text-gray-500 text-sm leading-relaxed">10,000+ pharmacy and 500+ hospital accounts served through dedicated nationwide sales teams.</p>
                 </div>
                 <div className="absolute bottom-0 right-0 w-28 h-28 pointer-events-none opacity-[0.08]">
                   <svg viewBox="0 0 100 100" className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
@@ -1262,7 +1236,7 @@ export default function GetMedsHomepage() {
           { icon: 'fa-bolt', accent: '#F97316', title: 'First-to-market sourcing', desc: 'We move the moment a patent cliffs globally.' },
           { icon: 'fa-snowflake', accent: '#0EA5E9', title: 'Cold-chain excellence', desc: 'Biologics-ready logistics nationwide.' },
           { icon: 'fa-flag', accent: '#6366F1', title: 'Filipino-first formulations', desc: 'Engineered for local disease patterns.' },
-          { icon: 'fa-heart-pulse', accent: '#F43F5E', title: 'Patient support programs', desc: 'Adherence, access, affordability.' },
+          { icon: 'fa-heart-pulse', accent: '#F43F5E', title: 'Patient Assistance Program', desc: 'Adherence, access, affordability.' },
         ];
         return (
           <section className="py-20 px-6 bg-white reveal relative">

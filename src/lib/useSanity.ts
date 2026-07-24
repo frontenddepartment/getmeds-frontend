@@ -51,7 +51,7 @@ import {
   getNewsPage,
 } from './queries'
 
-import { urlFor } from './sanity'
+import { urlFor, getLowResUrl } from './sanity'
 
 import type {
   Product,
@@ -339,6 +339,37 @@ export function useImageMapper(_page?: string) {
   }
 
   /**
+   * getLowResImage(name, fallback) — returns a placeholder URL for the named slot's first image,
+   * for use as a blur-up preview while the full image loads. Prefers an editor-uploaded
+   * `lowResImage`; otherwise derives a tiny/blurred version of the main image via CDN query
+   * params. Returns `fallback` unchanged (so callers can detect "no placeholder available").
+   */
+  const getLowResImage = (name: string, fallback: string): string => {
+    if (!allAssets) return fallback
+
+    const doc = allAssets.find((asset) => asset.name === name)
+    const slide = doc?.images?.[0]
+
+    if (slide?.lowResImage) {
+      try {
+        return urlFor(slide.lowResImage).url()
+      } catch (err) {
+        console.error('Error generating low-res URL in getLowResImage:', err)
+      }
+    }
+
+    if (slide?.image) {
+      try {
+        return getLowResUrl(urlFor(slide.image).url())
+      } catch (err) {
+        console.error('Error deriving low-res URL in getLowResImage:', err)
+      }
+    }
+
+    return fallback
+  }
+
+  /**
    * getImageLink(name) — returns the redirect URL for the named slot's first image,
    * or null if that image isn't marked clickable (or has no image yet). Use alongside
    * getImage() to optionally wrap the <img> in an <a>.
@@ -387,7 +418,7 @@ export function useImageMapper(_page?: string) {
     return doc.images.map((slide: any) => (slide?.enableLink && slide.link ? slide.link : null))
   }
 
-  return { getImage, getImageLink, getSliderImages, getSliderImageLinks, loading, error }
+  return { getImage, getLowResImage, getImageLink, getSliderImages, getSliderImageLinks, loading, error }
 }
 
 // ─────────────────────────────────────────────

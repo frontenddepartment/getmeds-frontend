@@ -3,6 +3,7 @@ import { injectHTML } from '../lib/injectHTML';
 import { useImageMapper } from '../lib/useSanity';
 import { setPageMeta } from '../lib/seo';
 import { LinkableImage } from '../lib/LinkableImage';
+import { ProgressiveHeroImage } from '../lib/ProgressiveHeroImage';
 
 const Csr: React.FC = () => {
   useEffect(() => {
@@ -13,7 +14,7 @@ const Csr: React.FC = () => {
     });
   }, []);
 
-  const { getImage, getImageLink, getSliderImages, getSliderImageLinks } = useImageMapper('csr');
+  const { getImage, getLowResImage, getImageLink, getSliderImages, getSliderImageLinks } = useImageMapper('csr');
 
   const csrSliderImages = getSliderImages('CSR Slider Gallery', [
     'assets/csrslider3.png',
@@ -171,12 +172,19 @@ const Csr: React.FC = () => {
       {/* HERO SECTION */}
       <section className="w-full mx-auto px-3 sm:px-4 md:px-6 mt-3 md:mt-4 mb-0 max-w-[1600px]">
       <div className="relative rounded-[10px] md:rounded-[1.5rem] overflow-hidden min-h-[190px] md:min-h-[500px] flex items-end group">
-        <LinkableImage
-          link={getImageLink('CSR Hero Background')}
-          src={getImage('CSR Hero Background', 'assets/patienthand.jpg')}
-          alt="Corporate Social Responsibility"
-          className="absolute inset-0 w-full h-full object-cover object-center brightness-90 transform group-hover:scale-105 transition-transform duration-[4s]"
-        />
+        {(() => {
+          const heroFullSrc = getImage('CSR Hero Background', 'assets/patienthand.jpg');
+          return (
+            <ProgressiveHeroImage
+              link={getImageLink('CSR Hero Background')}
+              fullSrc={heroFullSrc}
+              lowSrc={getLowResImage('CSR Hero Background', heroFullSrc)}
+              alt="Corporate Social Responsibility"
+              className="absolute inset-0 w-full h-full object-cover object-center brightness-90 transform group-hover:scale-105"
+              transitionClassName="transition-[opacity_0.7s,transform_4s]"
+            />
+          );
+        })()}
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent pointer-events-none"></div>
 
         {/* Decorative dot grid + arc overlay */}

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { injectHTML } from '../lib/injectHTML';
 import { useImageMapper, useSiteSettings } from '../lib/useSanity';
-import { LinkableImage } from '../lib/LinkableImage';
+import { ProgressiveHeroImage } from '../lib/ProgressiveHeroImage';
 import { getApiUrl } from '../lib/api';
 import { setPageMeta } from '../lib/seo';
 import type { ContactGroup } from '../types/sanity';
@@ -39,7 +39,7 @@ export default function ContactUs() {
     });
   }, []);
 
-  const { getImage, getImageLink, loading: imagesLoading } = useImageMapper('contact-us');
+  const { getImage, getLowResImage, getImageLink, loading: imagesLoading } = useImageMapper('contact-us');
   const { data: settings } = useSiteSettings();
   const [formData, setFormData] = useState({
     name: '',
@@ -195,14 +195,19 @@ export default function ContactUs() {
         <div
           className={`relative rounded-[10px] md:rounded-[1.5rem] border border-gray-100/20 overflow-hidden min-h-[190px] sm:min-h-[360px] md:min-h-[450px] lg:min-h-[500px] flex items-end shadow-sm transition-colors duration-500 ${!heroImgLoaded ? 'bg-gray-200 animate-pulse' : 'bg-gray-100'}`}>
           {/* Background Image — only mount after Sanity resolves so the src never changes */}
-          {!imagesLoading && (
-            <LinkableImage link={getImageLink('Contact Us Hero Background')}
-              src={getImage('Contact Us Hero Background', 'assets/contactushero.png')}
-              alt="Contact Us"
-              onLoad={() => setHeroImgLoaded(true)}
-              className={`absolute inset-0 w-full h-full object-cover object-[78%_top] sm:object-[82%_center] md:object-[80%_center] lg:object-center transition-opacity duration-700 ${heroImgLoaded ? 'opacity-100' : 'opacity-0'}`}
-            />
-          )}
+          {!imagesLoading && (() => {
+            const heroFullSrc = getImage('Contact Us Hero Background', 'assets/contactushero.png');
+            return (
+              <ProgressiveHeroImage
+                link={getImageLink('Contact Us Hero Background')}
+                fullSrc={heroFullSrc}
+                lowSrc={getLowResImage('Contact Us Hero Background', heroFullSrc)}
+                alt="Contact Us"
+                onLoaded={() => setHeroImgLoaded(true)}
+                className="absolute inset-0 w-full h-full object-cover object-[78%_top] sm:object-[82%_center] md:object-[80%_center] lg:object-center"
+              />
+            );
+          })()}
 
           <div className="relative z-10 w-full px-3 sm:px-8 md:px-14 pb-1 sm:pb-5 md:pb-16 pt-10 sm:pt-20 max-w-4xl">
             <h1 className="ct-anim ct-up text-[11px] sm:text-[28px] md:text-[42px] leading-[1.2] font-bold mb-1 sm:mb-3 md:mb-4 tracking-tight">

@@ -3,6 +3,7 @@ import { injectHTML } from '../lib/injectHTML';
 import { useImageMapper } from '../lib/useSanity';
 import { setPageMeta } from '../lib/seo';
 import { LinkableImage } from '../lib/LinkableImage';
+import { ProgressiveHeroImage } from '../lib/ProgressiveHeroImage';
 
 const Ungc: React.FC = () => {
   useEffect(() => {
@@ -13,7 +14,7 @@ const Ungc: React.FC = () => {
     });
   }, []);
 
-  const { getImage, getImageLink } = useImageMapper('ungc');
+  const { getImage, getLowResImage, getImageLink } = useImageMapper('ungc');
   const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
 
   // Navbar / Footer injection
@@ -56,7 +57,18 @@ const Ungc: React.FC = () => {
       {/* UNGC Hero Section */}
       <section className="w-full mx-auto px-3 sm:px-4 md:px-6 mt-3 md:mt-4 mb-16 max-w-[1600px]">
         <div className="relative rounded-[10px] md:rounded-[1.5rem] border border-white/10 overflow-hidden min-h-[190px] md:min-h-[450px] flex items-center justify-center">
-          <LinkableImage link={getImageLink('UNGC Hero Background')} src={getImage('UNGC Hero Background', 'assets/ungcimage.jpg')} alt="UN Global Compact" className="absolute inset-0 w-full h-full object-cover" />
+          {(() => {
+            const heroFullSrc = getImage('UNGC Hero Background', 'assets/ungcimage.jpg');
+            return (
+              <ProgressiveHeroImage
+                link={getImageLink('UNGC Hero Background')}
+                fullSrc={heroFullSrc}
+                lowSrc={getLowResImage('UNGC Hero Background', heroFullSrc)}
+                alt="UN Global Compact"
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+            );
+          })()}
           <div className="absolute inset-0 bg-[#0F2642]/75 backdrop-blur-[1px] pointer-events-none"></div>
           <div className="relative z-10 flex flex-col md:flex-row items-center gap-3 md:gap-14 px-3 md:px-8 py-4 md:py-16 max-w-6xl">
             <div className="flex-shrink-0">

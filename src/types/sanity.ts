@@ -926,6 +926,7 @@ export interface PageAsset {
   name: string
   images?: Array<{
     image?: SanityImage
+    lowResImage?: SanityImage
     altText?: string
     enableLink?: boolean
     link?: string

@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { injectHTML } from '../lib/injectHTML';
-import { LinkableImage } from '../lib/LinkableImage';
+import { ProgressiveHeroImage } from '../lib/ProgressiveHeroImage';
 import { useImageMapper } from '../lib/useSanity';
 import { setPageMeta } from '../lib/seo';
 
@@ -13,7 +13,7 @@ export default function Services() {
     });
   }, []);
 
-  const { getImage, getImageLink } = useImageMapper('services');
+  const { getImage, getLowResImage, getImageLink } = useImageMapper('services');
   useEffect(() => {
     const navContainer = document.getElementById('navbar-container');
     if (navContainer && navContainer.innerHTML.trim() === '') {
@@ -92,9 +92,21 @@ export default function Services() {
         <div className="relative rounded-[10px] md:rounded-[1.5rem] border border-gray-100/20 overflow-hidden min-h-[190px] sm:min-h-[360px] md:min-h-[450px] lg:min-h-[500px] flex items-end group">
           {/* Background Image */}
           <div className="absolute inset-0 z-0">
-            <LinkableImage link={getImageLink('Services Hero Background')} src={getImage('Services Hero Background', 'assets/services_hero_new.png')} data-json-src="hero.image" data-json-alt="hero.imageAlt"
-              className="w-full h-full object-cover object-center transform group-hover:scale-105 transition-transform duration-[4s]"
-              alt="Healthcare Services" />
+            {(() => {
+              const heroFullSrc = getImage('Services Hero Background', 'assets/services_hero_new.png');
+              return (
+                <ProgressiveHeroImage
+                  link={getImageLink('Services Hero Background')}
+                  fullSrc={heroFullSrc}
+                  lowSrc={getLowResImage('Services Hero Background', heroFullSrc)}
+                  dataJsonSrc="hero.image"
+                  dataJsonAlt="hero.imageAlt"
+                  className="w-full h-full object-cover object-center transform group-hover:scale-105"
+                  transitionClassName="transition-[opacity_0.7s,transform_4s]"
+                  alt="Healthcare Services"
+                />
+              );
+            })()}
           </div>
 
           {/* Content */}
@@ -221,7 +233,7 @@ export default function Services() {
               <div className="flex flex-wrap gap-2 xl:justify-end xl:max-w-[520px] xl:flex-shrink-0">
                 <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default">
                   <i className="fa-solid fa-circle-check text-[#1D9FDA] text-[10px]"></i>
-                  <span className="text-[11px] font-medium text-gray-600">5,000+ pharmacies</span>
+                  <span className="text-[11px] font-medium text-gray-600">10,000+ pharmacies</span>
                 </div>
                 <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default">
                   <i className="fa-solid fa-circle-check text-[#1D9FDA] text-[10px]"></i>
@@ -254,7 +266,7 @@ export default function Services() {
                 <i className="fa-solid fa-handshake text-2xl text-gray-800 mb-5 block"></i>
                 <h4 className="text-[13px] font-bold text-gray-900 mb-3 uppercase tracking-wider">Sales and
                   Distribution</h4>
-                <p className="text-sm text-gray-500 leading-relaxed">5,000+ pharmacy accounts served through
+                <p className="text-sm text-gray-500 leading-relaxed">10,000+ pharmacy accounts served through
                   dedicated nationwide sales teams across Luzon, Visayas, and Mindanao. Long-term partnership
                   approach with account-managed service, product training, and market development support.</p>
               </div>

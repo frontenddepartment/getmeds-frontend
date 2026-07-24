@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { injectHTML } from '../lib/injectHTML';
 import { useImageMapper } from '../lib/useSanity';
 import { LinkableImage } from '../lib/LinkableImage';
+import { ProgressiveHeroImage } from '../lib/ProgressiveHeroImage';
 import { getCareers } from '../lib/queries';
 import { getApiUrl } from '../lib/api';
 import { setPageMeta } from '../lib/seo';
@@ -24,7 +25,7 @@ const Careers: React.FC = () => {
     });
   }, []);
 
-  const { getImage, getImageLink, loading: imagesLoading } = useImageMapper('careers');
+  const { getImage, getLowResImage, getImageLink, loading: imagesLoading } = useImageMapper('careers');
   const [activeCareersPanel, setActiveCareersPanel] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
   const [heroImgLoaded, setHeroImgLoaded] = useState(false);
@@ -322,14 +323,19 @@ const Careers: React.FC = () => {
       <section className="w-full mx-auto px-3 sm:px-4 md:px-6 mt-3 md:mt-4 mb-0 max-w-[1600px]">
         <div className={`relative rounded-[10px] md:rounded-[1.5rem] overflow-hidden min-h-[190px] md:min-h-[500px] flex items-end transition-colors duration-500 ${!heroImgLoaded ? 'bg-gray-200 animate-pulse' : 'bg-gray-100'}`}>
           {/* Background Image — only mount after Sanity resolves so the src never changes */}
-          {!imagesLoading && (
-            <LinkableImage link={getImageLink('Careers Hero Background')}
-              src={getImage('Careers Hero Background', 'assets/careershero.png')}
-              alt="Getmeds Team"
-              onLoad={() => setHeroImgLoaded(true)}
-              className={`absolute inset-0 w-full h-full object-cover object-right-top transition-opacity duration-700 ${heroImgLoaded ? 'opacity-100' : 'opacity-0'}`}
-            />
-          )}
+          {!imagesLoading && (() => {
+            const heroFullSrc = getImage('Careers Hero Background', 'assets/careershero.png');
+            return (
+              <ProgressiveHeroImage
+                link={getImageLink('Careers Hero Background')}
+                fullSrc={heroFullSrc}
+                lowSrc={getLowResImage('Careers Hero Background', heroFullSrc)}
+                alt="Getmeds Team"
+                onLoaded={() => setHeroImgLoaded(true)}
+                className="absolute inset-0 w-full h-full object-cover object-right-top"
+              />
+            );
+          })()}
           <div className="relative z-10 w-full px-3 md:px-14 pb-3 md:pb-8 pt-0">
             <div className="inline-block max-w-[70%] md:max-w-[60%]">
               <h1 className="text-[11px] md:text-5xl lg:text-6xl leading-[1.2] font-bold mb-1 md:mb-4 tracking-tight">

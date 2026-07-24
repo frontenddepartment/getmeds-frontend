@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { injectHTML } from '../lib/injectHTML';
 import { useImageMapper } from '../lib/useSanity';
 import { setPageMeta } from '../lib/seo';
-import { LinkableImage } from '../lib/LinkableImage';
+import { ProgressiveHeroImage } from '../lib/ProgressiveHeroImage';
 
 type SectionTab = 'steps' | 'requirements' | 'faqs';
 
@@ -47,7 +47,7 @@ export default function PatientAssistanceProgram() {
     });
   }, []);
 
-  const { getImage, getImageLink, loading: imagesLoading } = useImageMapper('pap');
+  const { getImage, getLowResImage, getImageLink, loading: imagesLoading } = useImageMapper('pap');
   const [heroImgLoaded, setHeroImgLoaded] = useState(false);
   const [activeSection, setActiveSection] = useState<SectionTab>('steps');
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
@@ -217,14 +217,22 @@ export default function PatientAssistanceProgram() {
         {/* Hero Banner */}
         <section className="w-full mx-auto px-3 sm:px-4 md:px-6 mt-3 md:mt-4 mb-0 max-w-[1600px]">
           <div className={`relative rounded-[10px] md:rounded-[1.5rem] overflow-hidden min-h-[140px] md:min-h-[500px] flex items-end group transition-colors duration-500 ${!heroImgLoaded ? 'bg-gray-200 animate-pulse' : 'bg-gray-100'}`}>
-            {!imagesLoading && (
-              <div className="absolute inset-0 z-0">
-                <LinkableImage link={getImageLink('PAP Hero Background')} src={getImage('PAP Hero Background', 'assets/pap-banner.png')}
-                  onLoad={() => setHeroImgLoaded(true)}
-                  className={`w-full h-full object-cover object-center transform group-hover:scale-105 transition-[opacity,transform] duration-700 ${heroImgLoaded ? 'opacity-100' : 'opacity-0'}`}
-                  alt="Medical Support" />
-              </div>
-            )}
+            {!imagesLoading && (() => {
+              const heroFullSrc = getImage('PAP Hero Background', 'assets/pap-banner.png');
+              return (
+                <div className="absolute inset-0 z-0">
+                  <ProgressiveHeroImage
+                    link={getImageLink('PAP Hero Background')}
+                    fullSrc={heroFullSrc}
+                    lowSrc={getLowResImage('PAP Hero Background', heroFullSrc)}
+                    onLoaded={() => setHeroImgLoaded(true)}
+                    className="w-full h-full object-cover object-center transform group-hover:scale-105"
+                    transitionClassName="transition-[opacity,transform] duration-700"
+                    alt="Medical Support"
+                  />
+                </div>
+              );
+            })()}
           </div>
         </section>
 

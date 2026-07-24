@@ -246,7 +246,12 @@ async function fetchProductsFromExcel(): Promise<Product[]> {
           const key = computeProductKey({ ...p, slug })
           return (key && imageByKey.get(key)) || orig.image
         })(),
-        availability: p.availability === undefined ? (orig.availability ?? true) : (p.availability === true || String(p.availability).toLowerCase() === 'true'),
+        // A blank/whitespace Availability cell in the Excel sheet comes through as `undefined`
+        // (SheetJS omits the key entirely rather than writing an empty string), not `null` — so
+        // this must not default blank cells to available. Only an exact `true` (boolean or the
+        // string "true", case-insensitive) counts; anything else, including a missing column,
+        // resolves to false and gets filtered out below.
+        availability: p.availability === true || String(p.availability ?? '').trim().toLowerCase() === 'true',
         // Preserve rich-text / detail fields from the Sanity doc when Excel row is empty
         description: p.description || orig.description,
         indications: p.indications || orig.indications,
@@ -312,7 +317,10 @@ async function fetchProductsFromExcel(): Promise<Product[]> {
       } as Product
     })
 
-    return [...allowedProducts, ...individualOnlyProducts]
+    // Rows whose Availability column isn't literally true (blank/null, "Needs Review", etc.)
+    // aren't confirmed for public display yet — exclude them everywhere, not just from the
+    // in-stock/out-of-stock filter toggle on the product listing page.
+    return [...allowedProducts, ...individualOnlyProducts].filter((p) => p.availability === true)
   } catch (err) {
     console.error('Failed to parse Excel products:', err)
     return []

@@ -3,6 +3,7 @@ import { injectHTML } from '../lib/injectHTML';
 import { useImageMapper } from '../lib/useSanity';
 import { setPageMeta } from '../lib/seo';
 import { LinkableImage } from '../lib/LinkableImage';
+import { ProgressiveHeroImage } from '../lib/ProgressiveHeroImage';
 
 export default function GlobalPresence() {
   useEffect(() => {
@@ -13,7 +14,7 @@ export default function GlobalPresence() {
     });
   }, []);
 
-  const { getImage, getImageLink } = useImageMapper('global-presence');
+  const { getImage, getLowResImage, getImageLink } = useImageMapper('global-presence');
 
   useEffect(() => {
     const navContainer = document.getElementById('navbar-container');
@@ -71,8 +72,20 @@ export default function GlobalPresence() {
       <section className="w-full mx-auto px-3 sm:px-4 md:px-6 mt-3 md:mt-4 mb-16 max-w-[1600px]">
         <div
           className="relative rounded-[10px] md:rounded-[1.5rem] border border-gray-100/20 overflow-hidden min-h-[190px] md:min-h-[500px] flex items-end">
-          <LinkableImage link={getImageLink('Global Presence Hero Background')} src={getImage('Global Presence Hero Background', 'assets/globalpresencehero.jpg')} alt="Global Healthcare" data-json-src="hero.image" data-json-alt="hero.imageAlt"
-            className="absolute inset-0 w-full h-full object-cover object-center" />
+          {(() => {
+            const heroFullSrc = getImage('Global Presence Hero Background', 'assets/globalpresencehero.jpg');
+            return (
+              <ProgressiveHeroImage
+                link={getImageLink('Global Presence Hero Background')}
+                fullSrc={heroFullSrc}
+                lowSrc={getLowResImage('Global Presence Hero Background', heroFullSrc)}
+                alt="Global Healthcare"
+                dataJsonSrc="hero.image"
+                dataJsonAlt="hero.imageAlt"
+                className="absolute inset-0 w-full h-full object-cover object-center"
+              />
+            );
+          })()}
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none"></div>
           <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent w-[100%] md:w-[70%] pointer-events-none"></div>
 

@@ -155,6 +155,7 @@ const SANITY_QUERIES: Record<string, string> = {
       name,
       images[] {
         image,
+        lowResImage,
         altText,
         enableLink,
         link
@@ -167,6 +168,7 @@ const SANITY_QUERIES: Record<string, string> = {
       name,
       images[] {
         image { ..., asset-> },
+        lowResImage { ..., asset-> },
         altText,
         enableLink,
         link
