@@ -226,7 +226,7 @@ export default function PatientAssistanceProgram() {
                     fullSrc={heroFullSrc}
                     lowSrc={getLowResImage('PAP Hero Background', heroFullSrc)}
                     onLoaded={() => setHeroImgLoaded(true)}
-                    className="w-full h-full object-cover object-center transform group-hover:scale-105"
+                    className="absolute inset-0 w-full h-full object-cover object-center transform group-hover:scale-105"
                     transitionClassName="transition-[opacity,transform] duration-700"
                     alt="Medical Support"
                   />

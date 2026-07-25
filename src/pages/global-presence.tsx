@@ -223,7 +223,7 @@ export default function GlobalPresence() {
                 { flag: 'https://flagcdn.com/w80/la.png', name: 'Laos', desc: 'Spearheading programs to enhance healthcare delivery and foster long-term partnerships.' },
                 { flag: 'https://flagcdn.com/w80/mm.png', name: 'Myanmar', desc: 'Pioneering operations to accelerate healthcare development and operational excellence.' },
               ].map((c, idx) => (
-                <div key={c.name} className={`ca-anim ca-up ${['ca-d1','ca-d2','ca-d3','ca-d4'][idx]} relative bg-white border border-gray-100 rounded-2xl p-4 shadow-[0_2px_12px_rgba(0,0,0,0.05)] hover:shadow-[0_4px_20px_rgba(0,0,0,0.09)] hover:-translate-y-0.5 transition-all duration-200`}>
+                <div key={c.name} className={`ca-anim ca-up ${['ca-d1', 'ca-d2', 'ca-d3', 'ca-d4'][idx]} relative bg-white border border-gray-100 rounded-2xl p-4 shadow-[0_2px_12px_rgba(0,0,0,0.05)] hover:shadow-[0_4px_20px_rgba(0,0,0,0.09)] hover:-translate-y-0.5 transition-all duration-200`}>
                   <span className="absolute top-3 right-3 text-[11px] font-semibold px-3 py-1.5 rounded-full border bg-gray-100 text-gray-500 border-gray-200">SE Asia</span>
                   <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-gray-100 shadow-sm mb-2.5">
                     <img src={c.flag} alt={c.name} className="w-full h-full object-cover" />

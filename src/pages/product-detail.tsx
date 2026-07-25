@@ -47,6 +47,8 @@ export default function ProductDetail() {
   });
   const [ageDropdownOpen, setAgeDropdownOpen] = useState(false);
   const ageDropdownRef = useRef<HTMLDivElement>(null);
+  const [userTypeMenuOpen, setUserTypeMenuOpen] = useState(false);
+  const userTypeMenuRef = useRef<HTMLDivElement>(null);
   const [submitState, setSubmitState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
   const [successModalOpen, setSuccessModalOpen] = useState(false);
   const [userType, setUserType] = useState<string>('');
@@ -101,6 +103,17 @@ export default function ProductDetail() {
     document.addEventListener('mousedown', close);
     return () => document.removeEventListener('mousedown', close);
   }, [ageDropdownOpen]);
+
+  useEffect(() => {
+    if (!userTypeMenuOpen) return;
+    const close = (e: MouseEvent) => {
+      if (userTypeMenuRef.current && !userTypeMenuRef.current.contains(e.target as Node)) {
+        setUserTypeMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', close);
+    return () => document.removeEventListener('mousedown', close);
+  }, [userTypeMenuOpen]);
 
   // Excel rows often only populate brandName/genericName and leave `name` blank,
   // so every display spot needs the same brandName+genericName fallback chain.
@@ -678,10 +691,31 @@ export default function ProductDetail() {
                   <h4 className="text-lg font-bold text-gray-900">Send Inquiry</h4>
                   <p className="text-xs text-gray-500 mt-1">Submit your details to get a formal quote for this product.</p>
                   {userTypeConfirmed && userType && USER_TYPE_LABELS[userType] && (
-                    <span className="inline-flex items-center gap-1.5 mt-2 px-3 py-1 rounded-full text-[11px] font-semibold bg-blue-50 text-primary border border-blue-100">
-                      <i className="fa-solid fa-user-tag text-[9px]" />
-                      {USER_TYPE_LABELS[userType]}
-                    </span>
+                    <div className="relative inline-block mt-2" ref={userTypeMenuRef}>
+                      <button
+                        type="button"
+                        onClick={() => setUserTypeMenuOpen(o => !o)}
+                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-blue-50 text-primary border border-blue-100 hover:bg-blue-100 transition"
+                      >
+                        <i className="fa-solid fa-user-tag text-[9px]" />
+                        {USER_TYPE_LABELS[userType]}
+                        <i className={`fa-solid fa-chevron-down text-[8px] transition-transform ${userTypeMenuOpen ? 'rotate-180' : ''}`} />
+                      </button>
+                      {userTypeMenuOpen && (
+                        <div className="absolute top-full left-0 mt-1 w-56 bg-white rounded-xl shadow-xl border border-gray-100 z-[60] overflow-hidden">
+                          {Object.entries(USER_TYPE_LABELS).map(([value, label]) => (
+                            <button
+                              key={value}
+                              type="button"
+                              onClick={() => { setUserType(value); setUserTypeMenuOpen(false); }}
+                              className={`w-full text-left px-3 py-2 text-[12px] font-medium transition ${userType === value ? 'bg-blue-50 text-primary font-semibold' : 'text-gray-600 hover:bg-gray-50'}`}
+                            >
+                              {label}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   )}
                 </div>
                 {!userTypeConfirmed ? (

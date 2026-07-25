@@ -68,45 +68,45 @@
     }
 
     /* Link colors on home page (transparent vs scrolled) */
-    body[data-page="home"] #global-nav-links > a {
+    body[data-page="home"] #global-nav-links>a {
         color: #000b5d !important;
     }
 
-    body[data-page="home"] #global-nav-links > a:hover {
+    body[data-page="home"] #global-nav-links>a:hover {
         color: #1D9FDA !important;
     }
 
-    body[data-page="home"] #global-nav-wrapper.scrolled #global-nav-links > a {
+    body[data-page="home"] #global-nav-wrapper.scrolled #global-nav-links>a {
         color: #4b5563 !important;
         /* Slate/gray like general nav */
     }
 
-    body[data-page="home"] #global-nav-wrapper.scrolled #global-nav-links > a:hover {
+    body[data-page="home"] #global-nav-wrapper.scrolled #global-nav-links>a:hover {
         color: #1D9FDA !important;
     }
 
-    body[data-page="home"] #global-nav-wrapper.scrolled #global-nav-links > a[href="/"] {
+    body[data-page="home"] #global-nav-wrapper.scrolled #global-nav-links>a[href="/"] {
         color: #1D9FDA !important;
     }
 
     /* Company and Product Range trigger button coloring on home page */
     body[data-page="home"] #company-nav-btn,
-    body[data-page="home"] #global-nav-links .group > a {
+    body[data-page="home"] #global-nav-links .group>a {
         color: #000b5d !important;
     }
 
     body[data-page="home"] #company-nav-btn:hover,
-    body[data-page="home"] #global-nav-links .group > a:hover {
+    body[data-page="home"] #global-nav-links .group>a:hover {
         color: #1D9FDA !important;
     }
 
     body[data-page="home"] #global-nav-wrapper.scrolled #company-nav-btn,
-    body[data-page="home"] #global-nav-wrapper.scrolled #global-nav-links .group > a {
+    body[data-page="home"] #global-nav-wrapper.scrolled #global-nav-links .group>a {
         color: #4b5563 !important;
     }
 
     body[data-page="home"] #global-nav-wrapper.scrolled #company-nav-btn:hover,
-    body[data-page="home"] #global-nav-wrapper.scrolled #global-nav-links .group > a:hover {
+    body[data-page="home"] #global-nav-wrapper.scrolled #global-nav-links .group>a:hover {
         color: #1D9FDA !important;
     }
 
@@ -213,27 +213,30 @@
 
 <div id="global-nav-wrapper">
     <!-- Top Bar (Dark semi-transparent strip) -->
-    <div id="global-top-bar" class="w-full bg-slate-900/40 border-b border-white/10 backdrop-blur-sm py-2.5 px-6">
-        <div class="max-w-7xl mx-auto flex items-center justify-between text-xs text-white/90 font-medium">
-            <div class="flex items-center space-x-2">
-                <span class="font-extrabold text-[11px] uppercase tracking-wider text-white">Connect With Us</span>
+    <div id="global-top-bar"
+        class="w-full bg-slate-900/40 border-b border-white/10 backdrop-blur-sm py-2 px-3 sm:py-2.5 sm:px-6">
+        <div class="max-w-7xl mx-auto flex items-center justify-between text-xs text-white/90 font-medium gap-2">
+            <div class="flex items-center space-x-2 min-w-0">
+                <span
+                    class="font-bold text-[9px] sm:text-[11px] uppercase tracking-tight sm:tracking-wider text-white whitespace-nowrap">Connect
+                    With Us</span>
             </div>
-            <div class="flex items-center space-x-6">
+            <div class="flex items-center space-x-2 sm:space-x-6 shrink-0">
                 <!-- Phone — Medicine Inquiries -->
                 <a href="tel:+639190769103"
-                    class="flex items-center space-x-2 hover:text-primary transiti  on text-white">
-                    <i class="fa-solid fa-phone"></i>
-                    <span>+63 919 076 9105</span>
+                    class="flex items-center space-x-1 sm:space-x-2 hover:text-primary transition text-white whitespace-nowrap">
+                    <i class="fa-solid fa-phone text-[10px] sm:text-xs"></i>
+                    <span class="text-[10px] sm:text-xs">+63 919 076 9105</span>
                 </a>
                 <!-- Socials -->
-                <div class="flex items-center space-x-4 border-l border-white/20 pl-6">
+                <div class="flex items-center space-x-2 sm:space-x-4 border-l border-white/20 pl-2 sm:pl-6">
                     <a href="https://www.facebook.com/getmedsphilippines/" target="_blank" rel="noopener noreferrer"
                         class="hover:text-primary transition text-white">
-                        <i class="fa-brands fa-facebook-f text-[14px]"></i>
+                        <i class="fa-brands fa-facebook-f text-[11px] sm:text-[14px]"></i>
                     </a>
                     <a href="https://www.linkedin.com/company/getmeds" target="_blank" rel="noopener noreferrer"
                         class="hover:text-primary transition text-white">
-                        <i class="fa-brands fa-linkedin-in text-[14px]"></i>
+                        <i class="fa-brands fa-linkedin-in text-[11px] sm:text-[14px]"></i>
                     </a>
                 </div>
             </div>

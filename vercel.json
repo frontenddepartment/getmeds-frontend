@@ -4158,7 +4158,787 @@
       "destination": "/cancer-medicines"
     },
     {
-      "source": "/cancer-medicines/:subcategory(breast-cancer|ovarian-cancer|lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|aml|cml|lymphoma|sickle-cell|respiratory|uti|skin-infections|bone-infections|endometriosis|fibrocystic|multiple-myeloma|osteoporosis|arrhythmia|hypertension|glioblastoma|allergic-rhinitis|kidney-disease|pain|rheumatology|chronic-lymphocytic-leukemia|acute-lymphoblastic-leukemia|malignant-pleural-mesothelioma|head-and-neck-cancer|chronic-myeloid-leukemia|sickle-cell-anemia|malignant-pleural-effusion|gastrointestinal-stromal-tumors|acute-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-myelocytic-leukemia|meningeal-leukemia|acute-promyelocytic-leukemia|mantle-cell-lymphoma|neuro-oncology|glioblastoma-multiforme|obstetrician|folate-deficiency-anemia|iron-deficiency-anemia|allergy|seasonal-allergic-rhinitis|chronic-pain-management|inflammatory-rheumatic-disorders|endocrinology|fibrocystic-breast-disease|benign-prostatic-hyperplasia|cardiology|arrhythmia-management|hypertension-angina|renal|radiology|radiologic-imaging-enhancement-ct-scans-angiography-urography|hematology|orthopedic|glucocorticoid-induced-osteoporosis|gynecology|anti-infectives|respiratory-infections|urinary-tract-infections|gynecological-infections|intra-abdominal-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|bloodstream-infections|ocular-or-topical-infections|nephrology)",
+      "source": "/blood-disorder-medicines/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/blood-disorder-medicines/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/blood-disorder-medicines",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/anemia-medicines/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/anemia-medicines/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/anemia-medicines",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/antibiotics/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/antibiotics/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/antibiotics",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/hormonal-therapy/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/hormonal-therapy/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/hormonal-therapy",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/diabetes-medicines/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/diabetes-medicines/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/diabetes-medicines",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/bone-health-medicines/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/bone-health-medicines/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/bone-health-medicines",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/heart-medicines/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/heart-medicines/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/heart-medicines",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/contrast-media/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/contrast-media/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/contrast-media",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/anti-inflammatory-medicines/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/anti-inflammatory-medicines/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/anti-inflammatory-medicines",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/pain-management/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/pain-management/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/pain-management",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/kidney-medicines/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/kidney-medicines/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/kidney-medicines",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/allergy-medicines/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/allergy-medicines/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/allergy-medicines",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/brain-cancer-medicines/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/brain-cancer-medicines/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/brain-cancer-medicines",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/blood-disorder-medicines/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/blood-disorder-medicines/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/blood-disorder-medicines",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/anemia-medicines/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/anemia-medicines/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/anemia-medicines",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/antibiotics/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/antibiotics/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/antibiotics",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/hormonal-therapy/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/hormonal-therapy/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/hormonal-therapy",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/diabetes-medicines/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/diabetes-medicines/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/diabetes-medicines",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/bone-health-medicines/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/bone-health-medicines/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/bone-health-medicines",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/heart-medicines/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/heart-medicines/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/heart-medicines",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/contrast-media/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/contrast-media/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/contrast-media",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/anti-inflammatory-medicines/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/anti-inflammatory-medicines/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/anti-inflammatory-medicines",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/pain-management/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/pain-management/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/pain-management",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/kidney-medicines/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/kidney-medicines/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/kidney-medicines",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/allergy-medicines/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/allergy-medicines/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/allergy-medicines",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/brain-cancer-medicines/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/brain-cancer-medicines/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/brain-cancer-medicines",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/blood-disorder-medicines/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/blood-disorder-medicines/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/blood-disorder-medicines",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/anemia-medicines/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/anemia-medicines/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/anemia-medicines",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/antibiotics/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/antibiotics/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/antibiotics",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/hormonal-therapy/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/hormonal-therapy/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/hormonal-therapy",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/diabetes-medicines/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/diabetes-medicines/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/diabetes-medicines",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/bone-health-medicines/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/bone-health-medicines/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/bone-health-medicines",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/heart-medicines/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/heart-medicines/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/heart-medicines",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/contrast-media/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/contrast-media/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/contrast-media",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/anti-inflammatory-medicines/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/anti-inflammatory-medicines/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/anti-inflammatory-medicines",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/pain-management/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/pain-management/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/pain-management",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/kidney-medicines/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/kidney-medicines/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/kidney-medicines",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/allergy-medicines/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/allergy-medicines/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/allergy-medicines",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/brain-cancer-medicines/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/brain-cancer-medicines/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/brain-cancer-medicines",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/blood-disorder-medicines/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/blood-disorder-medicines/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/blood-disorder-medicines",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/anemia-medicines/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/anemia-medicines/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/anemia-medicines",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/antibiotics/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/antibiotics/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/antibiotics",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/hormonal-therapy/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/hormonal-therapy/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/hormonal-therapy",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/diabetes-medicines/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/diabetes-medicines/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/diabetes-medicines",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/bone-health-medicines/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/bone-health-medicines/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/bone-health-medicines",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/heart-medicines/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/heart-medicines/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/heart-medicines",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/contrast-media/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/contrast-media/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/contrast-media",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/anti-inflammatory-medicines/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/anti-inflammatory-medicines/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/anti-inflammatory-medicines",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/pain-management/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/pain-management/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/pain-management",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/kidney-medicines/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/kidney-medicines/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/kidney-medicines",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/allergy-medicines/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/allergy-medicines/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/allergy-medicines",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/brain-cancer-medicines/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/brain-cancer-medicines/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/brain-cancer-medicines",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/blood-disorder-medicines/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/blood-disorder-medicines/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/blood-disorder-medicines",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/anemia-medicines/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/anemia-medicines/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/anemia-medicines",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/antibiotics/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/antibiotics/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/antibiotics",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/hormonal-therapy/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/hormonal-therapy/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/hormonal-therapy",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/diabetes-medicines/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/diabetes-medicines/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/diabetes-medicines",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/bone-health-medicines/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/bone-health-medicines/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/bone-health-medicines",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/heart-medicines/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/heart-medicines/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/heart-medicines",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/contrast-media/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/contrast-media/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/contrast-media",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/anti-inflammatory-medicines/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/anti-inflammatory-medicines/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/anti-inflammatory-medicines",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/pain-management/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/pain-management/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/pain-management",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/kidney-medicines/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/kidney-medicines/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/kidney-medicines",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/allergy-medicines/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/allergy-medicines/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/allergy-medicines",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/brain-cancer-medicines/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/brain-cancer-medicines/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/brain-cancer-medicines",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/cancer-medicines/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
       "destination": "/cancer-medicines"
     },
     {
@@ -4170,7 +4950,163 @@
       "destination": "/cancer-medicines"
     },
     {
-      "source": "/product-range/:subcategory(breast-cancer|ovarian-cancer|lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|aml|cml|lymphoma|sickle-cell|respiratory|uti|skin-infections|bone-infections|endometriosis|fibrocystic|multiple-myeloma|osteoporosis|arrhythmia|hypertension|glioblastoma|allergic-rhinitis|kidney-disease|pain|rheumatology|chronic-lymphocytic-leukemia|acute-lymphoblastic-leukemia|malignant-pleural-mesothelioma|head-and-neck-cancer|chronic-myeloid-leukemia|sickle-cell-anemia|malignant-pleural-effusion|gastrointestinal-stromal-tumors|acute-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-myelocytic-leukemia|meningeal-leukemia|acute-promyelocytic-leukemia|mantle-cell-lymphoma|neuro-oncology|glioblastoma-multiforme|obstetrician|folate-deficiency-anemia|iron-deficiency-anemia|allergy|seasonal-allergic-rhinitis|chronic-pain-management|inflammatory-rheumatic-disorders|endocrinology|fibrocystic-breast-disease|benign-prostatic-hyperplasia|cardiology|arrhythmia-management|hypertension-angina|renal|radiology|radiologic-imaging-enhancement-ct-scans-angiography-urography|hematology|orthopedic|glucocorticoid-induced-osteoporosis|gynecology|anti-infectives|respiratory-infections|urinary-tract-infections|gynecological-infections|intra-abdominal-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|bloodstream-infections|ocular-or-topical-infections|nephrology)",
+      "source": "/blood-disorder-medicines/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/blood-disorder-medicines/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/blood-disorder-medicines",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/anemia-medicines/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/anemia-medicines/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/anemia-medicines",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/antibiotics/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/antibiotics/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/antibiotics",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/hormonal-therapy/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/hormonal-therapy/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/hormonal-therapy",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/diabetes-medicines/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/diabetes-medicines/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/diabetes-medicines",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/bone-health-medicines/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/bone-health-medicines/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/bone-health-medicines",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/heart-medicines/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/heart-medicines/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/heart-medicines",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/contrast-media/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/contrast-media/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/contrast-media",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/anti-inflammatory-medicines/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/anti-inflammatory-medicines/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/anti-inflammatory-medicines",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/pain-management/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/pain-management/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/pain-management",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/kidney-medicines/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/kidney-medicines/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/kidney-medicines",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/allergy-medicines/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/allergy-medicines/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/allergy-medicines",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/brain-cancer-medicines/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/brain-cancer-medicines/:product",
+      "destination": "/product-detail"
+    },
+    {
+      "source": "/brain-cancer-medicines",
+      "destination": "/cancer-medicines"
+    },
+    {
+      "source": "/product-range/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
       "destination": "/cancer-medicines"
     },
     {
@@ -4182,7 +5118,7 @@
       "destination": "/cancer-medicines"
     },
     {
-      "source": "/conditions/:subcategory(breast-cancer|ovarian-cancer|lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|aml|cml|lymphoma|sickle-cell|respiratory|uti|skin-infections|bone-infections|endometriosis|fibrocystic|multiple-myeloma|osteoporosis|arrhythmia|hypertension|glioblastoma|allergic-rhinitis|kidney-disease|pain|rheumatology|chronic-lymphocytic-leukemia|acute-lymphoblastic-leukemia|malignant-pleural-mesothelioma|head-and-neck-cancer|chronic-myeloid-leukemia|sickle-cell-anemia|malignant-pleural-effusion|gastrointestinal-stromal-tumors|acute-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-myelocytic-leukemia|meningeal-leukemia|acute-promyelocytic-leukemia|mantle-cell-lymphoma|neuro-oncology|glioblastoma-multiforme|obstetrician|folate-deficiency-anemia|iron-deficiency-anemia|allergy|seasonal-allergic-rhinitis|chronic-pain-management|inflammatory-rheumatic-disorders|endocrinology|fibrocystic-breast-disease|benign-prostatic-hyperplasia|cardiology|arrhythmia-management|hypertension-angina|renal|radiology|radiologic-imaging-enhancement-ct-scans-angiography-urography|hematology|orthopedic|glucocorticoid-induced-osteoporosis|gynecology|anti-infectives|respiratory-infections|urinary-tract-infections|gynecological-infections|intra-abdominal-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|bloodstream-infections|ocular-or-topical-infections|nephrology)",
+      "source": "/conditions/:subcategory(breast-cancer|ovarian-cancer|non-small-cell-lung-cancer|prostate-cancer|colorectal-cancer|pancreatic-cancer|gastric-cancer-gastric-adenocarcinoma|head-and-neck-cancer|malignant-pleural-mesothelioma|malignant-pleural-effusion|renal-cell-carcinoma|bladder-cancer|cervical-cancer|hepatocellular-carcinoma|small-cell-lung-cancer|thyroid-cancer|testicular-cancer|soft-tissue-sarcoma|acute-myeloid-leukemia|chronic-myeloid-leukemia|acute-lymphocytic-leukemia|chronic-lymphocytic-leukemia|hodgkin-non-hodgkins-lymphoma|mantle-cell-lymphoma|chronic-myelocytic-leukemia|meningeal-leukemia|acute-lymphoblastic-leukemia|acute-promyelocytic-leukemia|sickle-cell-anemia|folate-deficiency-anemia|iron-deficiency-anemia|respiratory-infections|urinary-tract-infections|skin-and-soft-tissue-infections|bone-and-joint-infections|gynecological-infections|intra-abdominal-infections|bloodstream-infections|ocular-or-topical-infections|endometriosis|fibrocystic-breast-disease|benign-prostatic-hyperplasia|type-2-diabetes-mellitus|multiple-myeloma|glucocorticoid-induced-osteoporosis|arrhythmia-management|hypertension-angina|radiology|inflammatory-and-rheumatic-disorders|chronic-pain-management|chronic-kidney-disease|seasonal-allergies-allergic-rhinitis|glioblastoma-multiforme)",
       "destination": "/cancer-medicines"
     },
     {
@@ -4198,7 +5134,7 @@
       "destination": "/cancer-medicines"
     },
     {
-      "source": "/:slug((?!404|about-us|blog|blog-detail|careers|contact-us|conditions|csr|edit-profile|employee-verification|global-presence|home-preview|meditations|order-medicines|patient-assistance-program|product-detail|profile|services|under-development|ungc|cancer-medicine|cancer-medicines|product-range|api/|wp-json/|wp-content/|assets/|public/|components/|data/|src/|dist/|node_modules/|_vercel/|masteradmin|masteradlorock|masteradlorockpd|masteradlorockpdprocess|masteradlogriyon|adminadlorock|[^/]+\\.[^/]+$)[^/]+)",
+      "source": "/:slug((?!404|about-us|blog|blog-detail|careers|contact-us|conditions|csr|edit-profile|employee-verification|global-presence|home-preview|meditations|order-medicines|patient-assistance-program|product-detail|profile|services|under-development|ungc|cancer-medicine|cancer-medicines|blood-disorder-medicines|anemia-medicines|antibiotics|hormonal-therapy|diabetes-medicines|bone-health-medicines|heart-medicines|contrast-media|anti-inflammatory-medicines|pain-management|kidney-medicines|allergy-medicines|brain-cancer-medicines|product-range|api/|wp-json/|wp-content/|assets/|public/|components/|data/|src/|dist/|node_modules/|_vercel/|masteradmin|masteradlorock|masteradlorockpd|masteradlorockpdprocess|masteradlogriyon|adminadlorock|[^/]+\\.[^/]+$)[^/]+)",
       "destination": "https://getmeds-admin.vercel.app/api/resolve-slug/:slug"
     },
     {
@@ -4582,7 +5518,7 @@
       ]
     },
     {
-      "source": "/:slug((?!404|about-us|blog|blog-detail|careers|contact-us|conditions|csr|edit-profile|employee-verification|global-presence|home-preview|meditations|order-medicines|patient-assistance-program|product-detail|profile|services|under-development|ungc|cancer-medicine|cancer-medicines|product-range|api/|wp-json/|wp-content/|assets/|public/|components/|data/|src/|dist/|node_modules/|_vercel/|masteradmin|masteradlorock|masteradlorockpd|masteradlorockpdprocess|masteradlogriyon|adminadlorock|[^/]+\\.[^/]+$)[^/]+)",
+      "source": "/:slug((?!404|about-us|blog|blog-detail|careers|contact-us|conditions|csr|edit-profile|employee-verification|global-presence|home-preview|meditations|order-medicines|patient-assistance-program|product-detail|profile|services|under-development|ungc|cancer-medicine|cancer-medicines|blood-disorder-medicines|anemia-medicines|antibiotics|hormonal-therapy|diabetes-medicines|bone-health-medicines|heart-medicines|contrast-media|anti-inflammatory-medicines|pain-management|kidney-medicines|allergy-medicines|brain-cancer-medicines|product-range|api/|wp-json/|wp-content/|assets/|public/|components/|data/|src/|dist/|node_modules/|_vercel/|masteradmin|masteradlorock|masteradlorockpd|masteradlorockpdprocess|masteradlogriyon|adminadlorock|[^/]+\\.[^/]+$)[^/]+)",
       "headers": [
         {
           "key": "Access-Control-Allow-Origin",

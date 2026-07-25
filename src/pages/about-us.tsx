@@ -23,14 +23,14 @@ export default function AboutUs() {
   const ungcVideoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
-    if (activePanel === 0) warehouseVideoRef.current?.play().catch(() => {});
+    if (activePanel === 0) warehouseVideoRef.current?.play().catch(() => { });
     else warehouseVideoRef.current?.pause();
 
-    if (activePanel === 1) ungcVideoRef.current?.play().catch(() => {});
+    if (activePanel === 1) ungcVideoRef.current?.play().catch(() => { });
     else ungcVideoRef.current?.pause();
   }, [activePanel]);
 
-  const handlePanelFullscreen = (e: React.MouseEvent, ref: React.RefObject<HTMLVideoElement>) => {
+  const handlePanelFullscreen = (e: React.MouseEvent, ref: React.RefObject<HTMLVideoElement | null>) => {
     e.stopPropagation();
     const el = ref.current as any;
     if (!el) return;
@@ -331,7 +331,7 @@ export default function AboutUs() {
             </h2>
             <div className="flex flex-col items-start gap-3 md:max-w-sm">
               <p className="text-gray-500 text-[14px] leading-relaxed line-clamp-2">
-                From training rooms to international conferences, our team is united by one shared mission — making life-saving medicine accessible to all.
+                From training rooms to international conferences, our team is united by one shared mission.
               </p>
               <a href="/careers"
                 className="inline-flex items-center gap-2 bg-primary text-white text-[13px] font-semibold px-5 py-2.5 rounded-full hover:opacity-90 transition-opacity">

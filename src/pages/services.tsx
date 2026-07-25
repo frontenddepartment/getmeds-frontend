@@ -101,7 +101,7 @@ export default function Services() {
                   lowSrc={getLowResImage('Services Hero Background', heroFullSrc)}
                   dataJsonSrc="hero.image"
                   dataJsonAlt="hero.imageAlt"
-                  className="w-full h-full object-cover object-center transform group-hover:scale-105"
+                  className="absolute inset-0 w-full h-full object-cover object-center transform group-hover:scale-105"
                   transitionClassName="transition-[opacity_0.7s,transform_4s]"
                   alt="Healthcare Services"
                 />
@@ -112,11 +112,10 @@ export default function Services() {
           {/* Content */}
           <div className="relative z-10 w-full px-3 sm:px-8 md:px-14 pb-2 sm:pb-5 md:pb-16 pt-10 sm:pt-20 max-w-4xl reveal">
             <h1 className="text-[11px] sm:text-[28px] md:text-[38px] leading-tight font-bold mb-1 sm:mb-3 tracking-tight">
-              <span data-json="hero.headingLine1" className="text-white">Our</span><br />
               <span data-json="hero.headingAccent"
-                className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent leading-tight tracking-tight">Services</span>
+                className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent leading-tight tracking-tight">Our Services</span>
             </h1>
-            <p data-json="hero.description" className="text-white/90 text-[9px] sm:text-[13px] md:text-[14px] max-w-[90%] sm:max-w-[600px] mb-2 sm:mb-5 leading-normal font-normal">
+            <p data-json="hero.description" className="text-[#000b5d] text-[9px] sm:text-[13px] md:text-[14px] max-w-[90%] sm:max-w-[600px] mb-2 sm:mb-5 leading-normal font-normal">
               Getmeds connects globally certified pharmaceutical manufacturers with Filipino patients, doctors, and
               hospitals — bridging the gap between world-class treatment and local access.
             </p>
@@ -179,22 +178,22 @@ export default function Services() {
             <div className="mb-8 pb-6 border-b border-gray-100">
               <span className="text-[13px] font-black uppercase tracking-widest text-gradient block mb-3">01 &middot; Foundation</span>
               <div className="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-4">
-              <h3 className="text-[19px] sm:text-[26px] md:text-[36px] font-semibold text-dark leading-tight tracking-tight max-w-2xl">The
+                <h3 className="text-[19px] sm:text-[26px] md:text-[36px] font-semibold text-dark leading-tight tracking-tight max-w-2xl">The
                   global backbone behind every Getmeds medicine.</h3>
-              <div className="flex flex-wrap gap-2 xl:justify-end xl:max-w-[520px] xl:flex-shrink-0">
-                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default">
-                  <i className="fa-solid fa-circle-check text-[#1D9FDA] text-[10px]"></i>
-                  <span className="text-[11px] font-medium text-gray-600">50+ manufacturers</span>
+                <div className="flex flex-wrap gap-2 xl:justify-end xl:max-w-[520px] xl:flex-shrink-0">
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default">
+                    <i className="fa-solid fa-circle-check text-[#1D9FDA] text-[10px]"></i>
+                    <span className="text-[11px] font-medium text-gray-600">50+ manufacturers</span>
+                  </div>
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default">
+                    <i className="fa-solid fa-circle-check text-[#1D9FDA] text-[10px]"></i>
+                    <span className="text-[11px] font-medium text-gray-600">5 international standards</span>
+                  </div>
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default">
+                    <i className="fa-solid fa-circle-check text-[#1D9FDA] text-[10px]"></i>
+                    <span className="text-[11px] font-medium text-gray-600">Full lifecycle regulatory management</span>
+                  </div>
                 </div>
-                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default">
-                  <i className="fa-solid fa-circle-check text-[#1D9FDA] text-[10px]"></i>
-                  <span className="text-[11px] font-medium text-gray-600">5 international standards</span>
-                </div>
-                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default">
-                  <i className="fa-solid fa-circle-check text-[#1D9FDA] text-[10px]"></i>
-                  <span className="text-[11px] font-medium text-gray-600">Full lifecycle regulatory management</span>
-                </div>
-              </div>
               </div>
             </div>
 
@@ -228,26 +227,26 @@ export default function Services() {
             <div className="mb-8 pb-6 border-b border-gray-100">
               <span className="text-[13px] font-black uppercase tracking-widest text-gradient block mb-3">02 &middot; Reach</span>
               <div className="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-4">
-              <h3 className="text-[19px] sm:text-[26px] md:text-[36px] font-semibold text-dark leading-tight tracking-tight max-w-2xl">How
+                <h3 className="text-[19px] sm:text-[26px] md:text-[36px] font-semibold text-dark leading-tight tracking-tight max-w-2xl">How
                   our medicines get to every corner of Filipino healthcare.</h3>
-              <div className="flex flex-wrap gap-2 xl:justify-end xl:max-w-[520px] xl:flex-shrink-0">
-                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default">
-                  <i className="fa-solid fa-circle-check text-[#1D9FDA] text-[10px]"></i>
-                  <span className="text-[11px] font-medium text-gray-600">10,000+ pharmacies</span>
+                <div className="flex flex-wrap gap-2 xl:justify-end xl:max-w-[520px] xl:flex-shrink-0">
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default">
+                    <i className="fa-solid fa-circle-check text-[#1D9FDA] text-[10px]"></i>
+                    <span className="text-[11px] font-medium text-gray-600">10,000+ pharmacies</span>
+                  </div>
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default">
+                    <i className="fa-solid fa-circle-check text-[#1D9FDA] text-[10px]"></i>
+                    <span className="text-[11px] font-medium text-gray-600">500+ hospitals</span>
+                  </div>
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default">
+                    <i className="fa-solid fa-circle-check text-[#1D9FDA] text-[10px]"></i>
+                    <span className="text-[11px] font-medium text-gray-600">Nationwide reach</span>
+                  </div>
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default">
+                    <i className="fa-solid fa-circle-check text-[#1D9FDA] text-[10px]"></i>
+                    <span className="text-[11px] font-medium text-gray-600">Government bidding expertise</span>
+                  </div>
                 </div>
-                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default">
-                  <i className="fa-solid fa-circle-check text-[#1D9FDA] text-[10px]"></i>
-                  <span className="text-[11px] font-medium text-gray-600">500+ hospitals</span>
-                </div>
-                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default">
-                  <i className="fa-solid fa-circle-check text-[#1D9FDA] text-[10px]"></i>
-                  <span className="text-[11px] font-medium text-gray-600">Nationwide reach</span>
-                </div>
-                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default">
-                  <i className="fa-solid fa-circle-check text-[#1D9FDA] text-[10px]"></i>
-                  <span className="text-[11px] font-medium text-gray-600">Government bidding expertise</span>
-                </div>
-              </div>
               </div>
             </div>
 
@@ -289,22 +288,22 @@ export default function Services() {
               <span className="text-[13px] font-black uppercase tracking-widest text-gradient block mb-3">03 &middot; Who We
                 Serve</span>
               <div className="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-4">
-              <h3 className="text-[19px] sm:text-[26px] md:text-[36px] font-semibold text-dark leading-tight tracking-tight max-w-2xl">The
+                <h3 className="text-[19px] sm:text-[26px] md:text-[36px] font-semibold text-dark leading-tight tracking-tight max-w-2xl">The
                   patients, doctors, and hospitals we&apos;re built for.</h3>
-              <div className="flex flex-wrap gap-2 xl:justify-end xl:max-w-[520px] xl:flex-shrink-0">
-                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default">
-                  <i className="fa-solid fa-circle-check text-[#1D9FDA] text-[10px]"></i>
-                  <span className="text-[11px] font-medium text-gray-600">500+ hospitals</span>
+                <div className="flex flex-wrap gap-2 xl:justify-end xl:max-w-[520px] xl:flex-shrink-0">
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default">
+                    <i className="fa-solid fa-circle-check text-[#1D9FDA] text-[10px]"></i>
+                    <span className="text-[11px] font-medium text-gray-600">500+ hospitals</span>
+                  </div>
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default">
+                    <i className="fa-solid fa-circle-check text-[#1D9FDA] text-[10px]"></i>
+                    <span className="text-[11px] font-medium text-gray-600">Filipino oncologists, hematologists, anesthesiologists</span>
+                  </div>
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default">
+                    <i className="fa-solid fa-circle-check text-[#1D9FDA] text-[10px]"></i>
+                    <span className="text-[11px] font-medium text-gray-600">Compassionate access for rare disease patients</span>
+                  </div>
                 </div>
-                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default">
-                  <i className="fa-solid fa-circle-check text-[#1D9FDA] text-[10px]"></i>
-                  <span className="text-[11px] font-medium text-gray-600">Filipino oncologists, hematologists, anesthesiologists</span>
-                </div>
-                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default">
-                  <i className="fa-solid fa-circle-check text-[#1D9FDA] text-[10px]"></i>
-                  <span className="text-[11px] font-medium text-gray-600">Compassionate access for rare disease patients</span>
-                </div>
-              </div>
               </div>
             </div>
 
@@ -348,30 +347,30 @@ export default function Services() {
               <span className="text-[13px] font-black uppercase tracking-widest text-gradient block mb-3">04 &middot;
                 Programs &amp; Access</span>
               <div className="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-4">
-              <h3 className="text-[19px] sm:text-[26px] md:text-[36px] font-semibold text-dark leading-tight tracking-tight max-w-2xl">Specialized
+                <h3 className="text-[19px] sm:text-[26px] md:text-[36px] font-semibold text-dark leading-tight tracking-tight max-w-2xl">Specialized
                   services for government and pharmaceutical partners.</h3>
-              <div className="flex flex-wrap gap-2 xl:justify-end xl:max-w-[520px] xl:flex-shrink-0">
-                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default">
-                  <i className="fa-solid fa-circle-check text-[#1D9FDA] text-[10px]"></i>
-                  <span className="text-[11px] font-medium text-gray-600">DSWD</span>
+                <div className="flex flex-wrap gap-2 xl:justify-end xl:max-w-[520px] xl:flex-shrink-0">
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default">
+                    <i className="fa-solid fa-circle-check text-[#1D9FDA] text-[10px]"></i>
+                    <span className="text-[11px] font-medium text-gray-600">DSWD</span>
+                  </div>
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default">
+                    <i className="fa-solid fa-circle-check text-[#1D9FDA] text-[10px]"></i>
+                    <span className="text-[11px] font-medium text-gray-600">PCSO</span>
+                  </div>
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default">
+                    <i className="fa-solid fa-circle-check text-[#1D9FDA] text-[10px]"></i>
+                    <span className="text-[11px] font-medium text-gray-600">OVP</span>
+                  </div>
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default">
+                    <i className="fa-solid fa-circle-check text-[#1D9FDA] text-[10px]"></i>
+                    <span className="text-[11px] font-medium text-gray-600">OP accredited</span>
+                  </div>
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default">
+                    <i className="fa-solid fa-circle-check text-[#1D9FDA] text-[10px]"></i>
+                    <span className="text-[11px] font-medium text-gray-600">CLIDP for pharmaceutical partners</span>
+                  </div>
                 </div>
-                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default">
-                  <i className="fa-solid fa-circle-check text-[#1D9FDA] text-[10px]"></i>
-                  <span className="text-[11px] font-medium text-gray-600">PCSO</span>
-                </div>
-                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default">
-                  <i className="fa-solid fa-circle-check text-[#1D9FDA] text-[10px]"></i>
-                  <span className="text-[11px] font-medium text-gray-600">OVP</span>
-                </div>
-                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default">
-                  <i className="fa-solid fa-circle-check text-[#1D9FDA] text-[10px]"></i>
-                  <span className="text-[11px] font-medium text-gray-600">OP accredited</span>
-                </div>
-                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default">
-                  <i className="fa-solid fa-circle-check text-[#1D9FDA] text-[10px]"></i>
-                  <span className="text-[11px] font-medium text-gray-600">CLIDP for pharmaceutical partners</span>
-                </div>
-              </div>
               </div>
             </div>
 
