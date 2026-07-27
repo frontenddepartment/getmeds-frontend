@@ -127,21 +127,44 @@ export default function ProductDetail() {
   const getProductSubcategories = (p: ProductWithCategory) =>
     p.conditions && p.conditions.length ? p.conditions : (p.subCategory ? [p.subCategory] : []);
 
-  const getCategorizationDisplay = (p: ProductWithCategory) => {
+  // Which condition the user was actually browsing under, so the badge and
+  // breadcrumb agree with the listing page instead of always showing the
+  // product's primary condition. Checked in order: explicit "?category="
+  // link, then the cancer-medicines listing's saved `selectedCategory`
+  // (localStorage) — same key cancer-medicines.tsx reads/writes.
+  const getContextCondition = (p: ProductWithCategory) => {
+    if (typeof window === 'undefined') return null;
     const subcats = getProductSubcategories(p);
+    if (subcats.length === 0) return null;
 
-    // Check if the URL provides context from where the user clicked
-    if (typeof window !== 'undefined') {
-      const urlParams = new URLSearchParams(window.location.search);
-      const categoryFromUrl = urlParams.get('category');
-
-      if (categoryFromUrl) {
-        // Find a case-insensitive match among the product's subcategories
-        const matched = subcats.find(s => s.toLowerCase() === categoryFromUrl.toLowerCase());
-        if (matched) return matched;
-      }
+    const urlParams = new URLSearchParams(window.location.search);
+    const categoryFromUrl = urlParams.get('category');
+    if (categoryFromUrl) {
+      const matched = subcats.find(s => s.toLowerCase() === categoryFromUrl.toLowerCase());
+      if (matched) return matched;
     }
 
+    try {
+      const saved = localStorage.getItem('selectedCategory');
+      if (saved) {
+        const savedObj = JSON.parse(saved) as { subCategory?: string };
+        if (savedObj?.subCategory && savedObj.subCategory !== 'All') {
+          const matched = subcats.find(s => s.toLowerCase() === savedObj.subCategory!.toLowerCase());
+          if (matched) return matched;
+        }
+      }
+    } catch {
+      // Ignore malformed localStorage value
+    }
+
+    return null;
+  };
+
+  const getCategorizationDisplay = (p: ProductWithCategory) => {
+    const contextCondition = getContextCondition(p);
+    if (contextCondition) return contextCondition;
+
+    const subcats = getProductSubcategories(p);
     if (subcats.length === 0) {
       return p.category?.category || 'General';
     }
@@ -149,10 +172,19 @@ export default function ProductDetail() {
   };
 
   // "Home > Category > Condition > Product" — precomputed in the sheet
-  // (Breadcrumb (auto)), not re-derived here.
+  // (Breadcrumb (auto)). The Condition segment is swapped for the actual
+  // browsing context (see getContextCondition) so it matches the badge above
+  // instead of always showing the product's primary condition.
   const getBreadcrumbParts = (p: ProductWithCategory | null) => {
     if (!p?.breadcrumb) return [];
-    return p.breadcrumb.split('>').map(s => s.trim()).filter(Boolean);
+    const parts = p.breadcrumb.split('>').map(s => s.trim()).filter(Boolean);
+    if (parts.length >= 2) {
+      const contextCondition = getContextCondition(p);
+      if (contextCondition) {
+        parts[parts.length - 2] = contextCondition;
+      }
+    }
+    return parts;
   };
 
   useEffect(() => {
