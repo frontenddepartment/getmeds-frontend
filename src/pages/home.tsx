@@ -449,10 +449,23 @@ export default function GetMedsHomepage() {
         {heroSlides.map((slide, i) => (
           <div
             key={i}
-            className="absolute inset-0 bg-cover bg-center transition-opacity duration-700"
+            className="absolute inset-0 bg-center transition-opacity duration-700"
             onClick={() => { if (slide.link) window.open(slide.link, '_blank', 'noopener,noreferrer'); }}
             style={{
               backgroundImage: `url('${getImage(slide.bg, slide.bg)}')`,
+              // Slide 2 is a self-contained banner graphic (its own logo/text baked
+              // in — see the `heroIndex !== 1` check below that hides the overlay
+              // heading for it) with a much more panoramic aspect ratio than the
+              // photographic slides, so `cover` crops too much off its edges;
+              // `contain` keeps the whole banner intact. Anchored left (instead of
+              // centered) so the empty margin `contain` leaves lands entirely on
+              // the right instead of splitting into a visible seam on both sides,
+              // and the container is forced white so that margin matches the page
+              // instead of showing the image's own slightly off-white edge tone.
+              backgroundSize: i === 1 ? 'contain' : 'cover',
+              backgroundPosition: i === 1 ? 'left center' : 'center',
+              backgroundColor: i === 1 ? '#ffffff' : undefined,
+              backgroundRepeat: 'no-repeat',
               opacity: i === heroIndex ? 1 : 0,
               zIndex: 0,
               pointerEvents: i === heroIndex ? 'auto' : 'none',
@@ -583,10 +596,19 @@ export default function GetMedsHomepage() {
             {heroSlides.map((slide, i) => (
               <div
                 key={i}
-                className="absolute inset-0 bg-cover bg-center transition-opacity duration-700"
+                className="absolute inset-0 bg-center transition-opacity duration-700"
                 onClick={() => { if (slide.link) window.open(slide.link, '_blank', 'noopener,noreferrer'); }}
                 style={{
                   backgroundImage: `url('${getImage(slide.bg, slide.bg)}')`,
+                  // See matching comment on the desktop hero slide backgrounds above.
+                  // Forcing white here also covers the parent's `bg-gray-100`, which
+                  // otherwise shows through as gray bars above/below this slide's
+                  // `contain`-fit image (it's narrower/taller relative to this
+                  // card than the photographic slides, so it doesn't fill the height).
+                  backgroundSize: i === 1 ? 'contain' : 'cover',
+                  backgroundPosition: i === 1 ? 'left center' : 'center',
+                  backgroundColor: i === 1 ? '#ffffff' : undefined,
+                  backgroundRepeat: 'no-repeat',
                   opacity: i === heroIndex ? 1 : 0,
                   zIndex: 0,
                   pointerEvents: i === heroIndex ? 'auto' : 'none',
