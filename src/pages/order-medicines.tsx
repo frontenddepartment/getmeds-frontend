@@ -2,6 +2,7 @@
 import { injectHTML } from '../lib/injectHTML';
 import { getApiUrl } from '../lib/api';
 import { setPageMeta } from '../lib/seo';
+import { validateFiles, ALLOWED_FILE_TYPES_ACCEPT } from '../lib/fileUpload';
 
 
 export default function OrderMedicines() {
@@ -206,7 +207,9 @@ export default function OrderMedicines() {
 
   const handlePatientIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-      setPatientIdFile(e.target.files[0]);
+      const { valid, errors } = validateFiles([e.target.files[0]]);
+      if (errors.length > 0) alert(errors.join('\n'));
+      if (valid.length > 0) setPatientIdFile(valid[0]);
       e.target.value = '';
     }
   };
@@ -232,6 +235,11 @@ export default function OrderMedicines() {
     }
     if (!formData.patientName || !formData.email || !formData.phone || !formData.age || !formData.address) {
       alert('Please fill in all required fields.');
+      return;
+    }
+    const expectedPhoneDigits = (phoneCountry.mask.match(/#/g) || []).length;
+    if (formData.phone.replace(/\D/g, '').length !== expectedPhoneDigits) {
+      alert('Please enter a valid phone number.');
       return;
     }
     if (!contactSameAsPatient && !formData.contactName) {
@@ -273,7 +281,7 @@ export default function OrderMedicines() {
         inquiryType: 'Order Medicine',
         fullName: formData.patientName,
         email: formData.email,
-        phone: formData.phone,
+        phone: `${phoneCountry.code} ${formData.phone}`,
         message: `Medicine Order Request. DOB: ${formData.dob}, Age: ${formData.age}, Address: ${formData.address}, Contact Person: ${contactInfo}`,
         additionalData: {
           dob: formData.dob,
@@ -356,9 +364,12 @@ export default function OrderMedicines() {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-      const newFiles = Array.from(e.target.files);
-      setUploadedFiles(prev => [...prev, ...newFiles]);
-      openUploadModal();
+      const { valid, errors } = validateFiles(Array.from(e.target.files));
+      if (errors.length > 0) alert(errors.join('\n'));
+      if (valid.length > 0) {
+        setUploadedFiles(prev => [...prev, ...valid]);
+        openUploadModal();
+      }
       e.target.value = '';
     }
   };
@@ -547,7 +558,7 @@ export default function OrderMedicines() {
 
                 {/* Upload Zone */}
                 <label className="group cursor-pointer block mb-3">
-                  <input type="file" multiple accept="image/*,.pdf" className="hidden" onChange={handleFileChange} />
+                  <input type="file" multiple accept={ALLOWED_FILE_TYPES_ACCEPT} className="hidden" onChange={handleFileChange} />
                   <div className="border-2 border-dashed border-gray-200 rounded-[15px] p-5 flex flex-col items-center justify-center text-center transition-all group-hover:border-primary/40 group-hover:bg-blue-50/20">
                     <div className="text-gray-300 group-hover:text-primary transition-colors duration-200 mb-3">
                       <i className="fa-solid fa-cloud-arrow-up text-4xl"></i>
@@ -634,7 +645,7 @@ export default function OrderMedicines() {
                       {!patientIdFile ? (
                         <label className="cursor-pointer inline-flex items-center gap-2 hover:opacity-90 text-white text-[13px] font-semibold px-5 py-2.5 rounded-[10px] transition"
                           style={{ background: 'linear-gradient(to right,#61A644,#1D9FDA)' }}>
-                          <input type="file" accept="image/*,.pdf" className="hidden" onChange={handlePatientIdChange} />
+                          <input type="file" accept={ALLOWED_FILE_TYPES_ACCEPT} className="hidden" onChange={handlePatientIdChange} />
                           <i className="fa-solid fa-upload text-[11px]"></i>
                           Upload File
                         </label>
