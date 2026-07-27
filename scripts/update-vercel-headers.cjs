@@ -210,13 +210,19 @@ async function run() {
   if (vercelConfig.rewrites) {
     // Strip every previously-generated folder-specific rewrite and the old
     // static-list catch-all; everything else (wp-json proxy, blog, etc.) is
-    // left exactly as it was.
+    // left exactly as it was. Matched by DESTINATION/fixed-source rather than
+    // by hardcoding folder names — `allFolders` is fetched fresh from the
+    // sheet on every run, so a folder-name allowlist here would silently stop
+    // matching any folder renamed/removed from the sheet, leaving its old
+    // rewrites stuck in the file forever and re-appending a fresh full set
+    // for every folder on every run (this is what produced ~39x duplicate
+    // rewrites per folder before this fix).
     const keep = vercelConfig.rewrites.filter((r) => {
       if (!r.source) return true;
-      if (r.source.startsWith('/cancer-medicines')) return false;
+      if (r.destination === '/cancer-medicines' || r.destination === '/product-detail') return false;
       if (r.source === '/cancer-medicine' || r.source.startsWith('/cancer-medicine/')) return false;
-      if (r.source.startsWith('/product-range')) return false;
       if (r.source.startsWith('/conditions')) return false;
+      if (r.destination && r.destination.startsWith('https://getmeds-admin.vercel.app/api/resolve-slug/')) return false;
       if (r.source.startsWith('/:slug(')) return false;
       return true;
     });
