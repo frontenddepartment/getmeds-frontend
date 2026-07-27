@@ -369,12 +369,12 @@ export default function EmployeeVerification() {
                       <img
                         src={matchedEmployee.imageUrl}
                         alt={matchedEmployee.name}
-                        className="w-14 h-14 rounded-full object-cover flex-shrink-0 border border-gray-200 shadow-sm"
+                        className="w-20 h-20 rounded-full object-cover flex-shrink-0 border border-gray-200 shadow-sm"
                         onError={() => setImageError(true)}
                       />
                     ) : (
-                      <div className="w-14 h-14 rounded-full flex items-center justify-center text-slate-400 bg-slate-50 border border-slate-100 flex-shrink-0 shadow-inner">
-                        <User size={28} className="text-slate-400/80" />
+                      <div className="w-20 h-20 rounded-full flex items-center justify-center text-slate-400 bg-slate-50 border border-slate-100 flex-shrink-0 shadow-inner">
+                        <User size={38} className="text-slate-400/80" />
                       </div>
                     )}
 
