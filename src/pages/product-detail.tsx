@@ -384,7 +384,8 @@ export default function ProductDetail() {
             message: formData.message,
             additionalData: {
               productName: product?.brandName || product?.name || '',
-              age: formData.age
+              age: formData.age,
+              customerType: USER_TYPE_LABELS[userType] || userType
             },
             files: filesData
           };
