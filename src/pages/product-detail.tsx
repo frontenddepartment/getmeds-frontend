@@ -444,8 +444,16 @@ export default function ProductDetail() {
                   // breadcrumb link here uses the category folder from Product Page URL
                   // (auto) instead, same as the rest of the app's internal navigation.
                   let href: string | null = null;
-                  if (!isLast && product.categoryFolder && (idx === 0 || isCondition)) {
-                    href = `/${product.categoryFolder}`;
+                  if (!isLast && product.categoryFolder) {
+                    if (idx === 0) {
+                      href = `/${product.categoryFolder}`;
+                    } else if (isCondition) {
+                      const conditionSlug =
+                        product.conditionSlugsByName?.[part]?.conditionSlug ||
+                        product.conditionSlug ||
+                        part.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+                      href = `/${product.categoryFolder}/${conditionSlug}`;
+                    }
                   }
                   return (
                     <React.Fragment key={idx}>

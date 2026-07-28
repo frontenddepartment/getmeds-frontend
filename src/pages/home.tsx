@@ -591,7 +591,7 @@ export default function GetMedsHomepage() {
         <div className="bg-white px-4">
 
           {/* Image Slider Container */}
-          <div className="relative aspect-[16/10] w-full rounded-[20px] overflow-hidden mb-4 bg-gray-100">
+          <div className="relative aspect-[16/10] w-full rounded-[10px] overflow-hidden mb-4 bg-gray-100">
             {/* Slide backgrounds */}
             {heroSlides.map((slide, i) => (
               <div
@@ -617,8 +617,11 @@ export default function GetMedsHomepage() {
               />
             ))}
 
-            {/* Soft white overlay for title contrast */}
-            <div className="absolute inset-0 bg-gradient-to-r from-white/70 via-white/10 to-transparent z-[1] pointer-events-none" />
+            {/* Soft white overlay for title contrast — skipped on slide 2 (index 1),
+                whose banner graphic has its own baked-in text and no overlaid title */}
+            {heroIndex !== 1 && (
+              <div className="absolute inset-0 bg-gradient-to-r from-white/70 via-white/10 to-transparent z-[1] pointer-events-none" />
+            )}
 
             {/* Overlaid Title on Mobile Slider */}
             {heroIndex !== 1 && (
