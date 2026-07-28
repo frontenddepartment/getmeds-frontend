@@ -5,6 +5,8 @@ import type { Product as SanityProduct, Category } from '../types/sanity';
 import { injectHTML } from '../lib/injectHTML';
 import { getApiUrl } from '../lib/api';
 import { setPageMeta } from '../lib/seo';
+import { validateFiles, ALLOWED_FILE_TYPES_ACCEPT } from '../lib/fileUpload';
+import AlertModal from '../lib/AlertModal';
 import { PortableText } from '@portabletext/react';
 
 interface ProductWithCategory extends Omit<SanityProduct, 'category'> {
@@ -58,6 +60,8 @@ export default function ProductDetail() {
   // Patient/Caregiver flow only — mirrors the Customer Information form on order-medicines.tsx
   const [patientIdFile, setPatientIdFile] = useState<File | null>(null);
   const [contactSameAsPatient, setContactSameAsPatient] = useState(false);
+  const [alertModal, setAlertModal] = useState<{ title?: string; message: string | string[] } | null>(null);
+  const showAlert = (message: string | string[], title?: string) => setAlertModal({ title, message });
   const [viewingFileUrl, setViewingFileUrl] = useState<string | null>(null);
   const [idRequiredModalOpen, setIdRequiredModalOpen] = useState(false);
   const [idModalVisible, setIdModalVisible] = useState(false);
@@ -272,12 +276,18 @@ export default function ProductDetail() {
 
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) setUploadedFiles(Array.from(e.target.files));
+    if (e.target.files) {
+      const { valid, errors } = validateFiles(Array.from(e.target.files));
+      if (errors.length > 0) showAlert(errors, 'Invalid File');
+      setUploadedFiles(valid);
+    }
   };
 
   const handlePatientIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-      setPatientIdFile(e.target.files[0]);
+      const { valid, errors } = validateFiles([e.target.files[0]]);
+      if (errors.length > 0) showAlert(errors, 'Invalid File');
+      if (valid.length > 0) setPatientIdFile(valid[0]);
       e.target.value = '';
     }
   };
@@ -313,21 +323,27 @@ export default function ProductDetail() {
         return;
       }
       if (!formData.name || !formData.email || !formData.phone || !formData.age || !formData.address) {
-        alert('Please fill in all required fields.');
+        showAlert('Please fill in all required fields.');
         return;
       }
       if (!contactSameAsPatient && !formData.contactName) {
-        alert("Please provide the contact person's full name.");
+        showAlert("Please provide the contact person's full name.");
         return;
       }
       if (!formData.terms) {
-        alert('Please confirm that all provided information is authentic.');
+        showAlert('Please confirm that all provided information is authentic.');
         return;
       }
       if (!formData.privacyConsent) {
-        alert('Please consent to the Privacy Policy to proceed.');
+        showAlert('Please consent to the Privacy Policy to proceed.');
         return;
       }
+    }
+
+    const phoneDigits = formData.phone.replace(/\D/g, '');
+    if (formData.phone && (phoneDigits.length < 7 || phoneDigits.length > 15)) {
+      showAlert('Please enter a valid phone number.');
+      return;
     }
 
     setSubmitState('sending');
@@ -820,7 +836,7 @@ export default function ProductDetail() {
                       {!patientIdFile ? (
                         <label className="cursor-pointer inline-flex items-center gap-2 hover:opacity-90 text-white text-[12px] font-semibold px-4 py-2.5 rounded-xl transition"
                           style={{ background: 'linear-gradient(to right,#61A644,#1D9FDA)' }}>
-                          <input type="file" accept="image/*,.pdf" className="hidden" onChange={handlePatientIdChange} />
+                          <input type="file" accept={ALLOWED_FILE_TYPES_ACCEPT} className="hidden" onChange={handlePatientIdChange} />
                           <i className="fa-solid fa-upload text-[11px]"></i>
                           Upload File
                         </label>
@@ -956,7 +972,7 @@ export default function ProductDetail() {
                     <input
                       type="file"
                       multiple
-                      accept=".png,.jpg,.jpeg,.pdf"
+                      accept={ALLOWED_FILE_TYPES_ACCEPT}
                       onChange={handleFileChange}
                       className="w-full text-[13px] text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-[12px] file:font-medium file:bg-primary/10 file:text-primary hover:file:bg-primary/20 transition cursor-pointer border border-gray-200 rounded-xl p-1.5 bg-white outline-none"
                     />
@@ -1337,6 +1353,13 @@ export default function ProductDetail() {
       )}
 
       <div id="footer-container" />
+
+      <AlertModal
+        open={!!alertModal}
+        onClose={() => setAlertModal(null)}
+        title={alertModal?.title}
+        message={alertModal?.message ?? ''}
+      />
     </div>
   );
 }
