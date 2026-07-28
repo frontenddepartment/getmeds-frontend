@@ -3,6 +3,7 @@ import { injectHTML } from '../lib/injectHTML';
 import { getApiUrl } from '../lib/api';
 import { setPageMeta } from '../lib/seo';
 import { validateFiles, ALLOWED_FILE_TYPES_ACCEPT } from '../lib/fileUpload';
+import AlertModal from '../lib/AlertModal';
 
 
 export default function OrderMedicines() {
@@ -204,11 +205,13 @@ export default function OrderMedicines() {
   });
   const [patientIdFile, setPatientIdFile] = useState<File | null>(null);
   const [contactSameAsPatient, setContactSameAsPatient] = useState(false);
+  const [alertModal, setAlertModal] = useState<{ title?: string; message: string | string[] } | null>(null);
+  const showAlert = (message: string | string[], title?: string) => setAlertModal({ title, message });
 
   const handlePatientIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const { valid, errors } = validateFiles([e.target.files[0]]);
-      if (errors.length > 0) alert(errors.join('\n'));
+      if (errors.length > 0) showAlert(errors, 'Invalid File');
       if (valid.length > 0) setPatientIdFile(valid[0]);
       e.target.value = '';
     }
@@ -234,24 +237,24 @@ export default function OrderMedicines() {
       return;
     }
     if (!formData.patientName || !formData.email || !formData.phone || !formData.age || !formData.address) {
-      alert('Please fill in all required fields.');
+      showAlert('Please fill in all required fields.');
       return;
     }
     const expectedPhoneDigits = (phoneCountry.mask.match(/#/g) || []).length;
     if (formData.phone.replace(/\D/g, '').length !== expectedPhoneDigits) {
-      alert('Please enter a valid phone number.');
+      showAlert('Please enter a valid phone number.');
       return;
     }
     if (!contactSameAsPatient && !formData.contactName) {
-      alert("Please provide the contact person's full name.");
+      showAlert("Please provide the contact person's full name.");
       return;
     }
     if (!formData.terms) {
-      alert('Please confirm that all provided information is authentic.');
+      showAlert('Please confirm that all provided information is authentic.');
       return;
     }
     if (!formData.privacyConsent) {
-      alert('Please consent to the Privacy Policy to proceed.');
+      showAlert('Please consent to the Privacy Policy to proceed.');
       return;
     }
     setSubmitState('sending');
@@ -365,7 +368,7 @@ export default function OrderMedicines() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const { valid, errors } = validateFiles(Array.from(e.target.files));
-      if (errors.length > 0) alert(errors.join('\n'));
+      if (errors.length > 0) showAlert(errors, 'Invalid File');
       if (valid.length > 0) {
         setUploadedFiles(prev => [...prev, ...valid]);
         openUploadModal();
@@ -1126,6 +1129,13 @@ export default function OrderMedicines() {
           </button>
         </div>
       )}
+
+      <AlertModal
+        open={!!alertModal}
+        onClose={() => setAlertModal(null)}
+        title={alertModal?.title}
+        message={alertModal?.message ?? ''}
+      />
 
     </div>
   );
