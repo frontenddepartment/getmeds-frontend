@@ -288,48 +288,73 @@ export default function AboutUs() {
       {/* Navbar */}
       <div id="navbar-container" className="sticky top-0 z-[50]" />
 
-      {/* Enhanced Hero Section */}
-      <section className="w-full mx-auto px-3 sm:px-4 md:px-6 mt-3 md:mt-4 mb-0 max-w-[1600px]">
-        <div className={`relative rounded-[10px] md:rounded-[1.5rem] overflow-hidden min-h-[190px] md:min-h-[500px] flex items-end group transition-colors duration-500 ${!heroImgLoaded ? 'bg-gray-200 animate-pulse' : 'bg-gray-100'}`}>
+      {/* Desktop Enhanced Hero Section */}
+      <section className="hidden sm:block w-full mx-auto px-3 sm:px-4 md:px-6 mt-3 md:mt-4 mb-0 max-w-[1600px]">
+        <div className={`relative rounded-[10px] md:rounded-[1.5rem] overflow-hidden flex items-end min-h-[360px] md:min-h-[500px] group transition-colors duration-500 bg-[#0f172a] ${!heroImgLoaded ? 'animate-pulse' : ''}`}>
           {/* Background Video */}
-          <div className="absolute inset-0 z-0">
-            <video
-              src={getVideo('About Us Hero Background', '') || undefined}
-              poster={getVideoThumbnail('About Us Hero Background', '') || undefined}
-              autoPlay
-              muted
-              loop
-              playsInline
-              onLoadedData={() => setHeroImgLoaded(true)}
-              className={`w-full h-full object-cover object-center transform group-hover:scale-105 transition-[opacity,transform] duration-700 ${heroImgLoaded ? 'opacity-100' : 'opacity-0'}`}
-            />
-          </div>
+          <video
+            src={getVideo('About Us Hero Background', '') || undefined}
+            poster={getVideoThumbnail('About Us Hero Background', '') || undefined}
+            autoPlay
+            muted
+            loop
+            playsInline
+            onLoadedData={() => setHeroImgLoaded(true)}
+            className={`absolute inset-0 w-full h-full object-cover object-center transform group-hover:scale-105 transition-[opacity,transform] duration-700 ${heroImgLoaded ? 'opacity-100' : 'opacity-0'}`}
+          />
 
           {/* Content */}
-          <div className="relative z-10 w-full px-3 md:px-14 pb-3 md:pb-16 pt-10 md:pt-20 max-w-4xl ca-anim ca-up">
-            <h1 className="text-[11px] md:text-[38px] leading-[1.2] font-bold mb-1 md:mb-3 tracking-tight">
+          <div className="relative z-10 w-full px-8 md:px-14 pb-5 md:pb-16 pt-20 max-w-4xl ca-anim ca-up">
+            <h1 className="text-[28px] md:text-[38px] leading-[1.2] font-bold mb-3 tracking-tight">
               <span data-json="hero.heading" className="text-white">Your Compassionate</span><br />
               <span data-json="hero.headingAccent"
                 className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent leading-tight tracking-tight">Health
                 Ally</span>
             </h1>
-            <p data-json="hero.description" className="text-white/90 text-[9px] md:text-[14px] max-w-[600px] mb-2 md:mb-5 leading-normal font-normal">
+            <p data-json="hero.description" className="text-white/90 text-[13px] md:text-[14px] max-w-[600px] mb-5 leading-normal font-normal">
               A new standard of care for a new generation of patients.
               Advanced science. Trusted medicine. Closer access. Better outcomes. Greater hope.
-
             </p>
             <div className="flex flex-wrap gap-2 md:gap-4">
               <a href="#our-story"
                 onClick={e => { e.preventDefault(); document.getElementById('our-story')?.scrollIntoView({ behavior: 'smooth' }); }}
-                className="btn-gradient text-white font-semibold py-1 px-3.5 md:py-2 md:px-6 rounded-full text-[9px] md:text-[13px] inline-flex items-center gap-1.5 md:gap-2 shadow-md">
+                className="btn-gradient text-white font-semibold py-2 px-6 rounded-full text-[13px] inline-flex items-center gap-2 shadow-md">
                 Discover Our Story <i className="fa-solid fa-arrow-down text-xs"></i>
               </a>
               <a href="contact-us.html"
-                className="bg-white/10 backdrop-blur-md border border-white/25 text-white font-semibold py-1 px-3.5 md:py-2 md:px-6 rounded-full text-[9px] md:text-[13px] hover:bg-white/20 transition inline-flex items-center gap-1.5 md:gap-2">
+                className="bg-white/10 backdrop-blur-md border border-white/25 text-white font-semibold py-2 px-6 rounded-full text-[13px] hover:bg-white/20 transition inline-flex items-center gap-2">
                 Contact Us <i className="fa-solid fa-arrow-right text-xs"></i>
               </a>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Mobile Hero Section */}
+      <section className="block sm:hidden w-full px-3 mt-3 mb-4">
+        <div className={`relative aspect-[16/10] w-full rounded-[10px] overflow-hidden mb-3 bg-[#0f172a] shadow-sm ${!heroImgLoaded ? 'animate-pulse' : ''}`}>
+          <video
+            src={getVideo('About Us Hero Background', '') || undefined}
+            poster={getVideoThumbnail('About Us Hero Background', '') || undefined}
+            autoPlay
+            muted
+            loop
+            playsInline
+            onLoadedData={() => setHeroImgLoaded(true)}
+            className={`absolute inset-0 w-full h-full object-cover object-center transition-opacity duration-700 ${heroImgLoaded ? 'opacity-100' : 'opacity-0'}`}
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none"></div>
+        </div>
+        <div className="px-1 ca-anim ca-up">
+          <h1 className="text-xl font-bold leading-tight mb-2 tracking-tight">
+            <span data-json="hero.heading" className="text-gray-900">Your Compassionate </span>
+            <span data-json="hero.headingAccent"
+              className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">Health Ally</span>
+          </h1>
+          <p data-json="hero.description" className="text-gray-600 text-xs mb-3 leading-relaxed font-normal text-justify">
+            A new standard of care for a new generation of patients.
+            Advanced science. Trusted medicine. Closer access. Better outcomes. Greater hope.
+          </p>
         </div>
       </section>
 
@@ -340,7 +365,8 @@ export default function AboutUs() {
           {/* Header Row */}
           <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-8 ca-anim ca-up">
             <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 leading-tight max-w-lg">
-              Inside Getmeds: Our People &amp; Culture
+              Inside Getmeds<br />
+              Our People &amp; Culture
             </h2>
             <div className="flex flex-col items-start gap-3 md:max-w-sm">
               <p className="text-gray-500 text-[14px] leading-relaxed line-clamp-2">
@@ -882,8 +908,7 @@ export default function AboutUs() {
           <div className="text-center mb-10 md:mb-14 ca-anim ca-up">
             <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent font-bold text-sm uppercase tracking-widest mb-4 block">Core Values</span>
             <h2 className="text-[28px] md:text-[38px] leading-tight font-semibold text-dark mb-3 tracking-tight">
-              The Heart of Our{' '}
-              <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">Purpose</span>
+              The Heart of Our Purpose
             </h2>
           </div>
 
@@ -994,8 +1019,7 @@ export default function AboutUs() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-16 ca-anim ca-up">
             <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent font-bold text-sm uppercase tracking-wider mb-2 block">Our Advantages</span>
-            <h2 className="text-3xl md:text-4xl font-semibold text-dark mb-4">Why Choose <span
-              className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent inline-block">Getmeds</span>?
+            <h2 className="text-3xl md:text-4xl font-semibold text-dark mb-4">Why Choose Getmeds?
             </h2>
             <p className="text-gray-500 text-[15px]">We go above and beyond to ensure our services exceed your
               expectations when it comes to your health and convenience.</p>
@@ -1034,8 +1058,7 @@ export default function AboutUs() {
         <div className="relative z-10">
           <div className="text-center max-w-2xl mx-auto mb-16 px-4 ca-anim ca-zoom">
             <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent font-bold text-sm uppercase tracking-[0.2em] mb-4 block">Our Leaders</span>
-            <h2 className="text-3xl md:text-4xl font-semibold text-dark mb-4">The People Behind <span
-              className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent inline-block">Getmeds</span>
+            <h2 className="text-3xl md:text-4xl font-semibold text-dark mb-4">The People Behind Getmeds
             </h2>
             <p className="text-gray-500 text-[15px]">With combined expertise across pharmaceutical operations, sales and business development, in-licensing, regulatory affairs, finance, and supply chain, our team brings decades of experience guided by compassion, driven by innovation, and grounded in quality.</p>
           </div>

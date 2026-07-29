@@ -191,10 +191,10 @@ export default function ContactUs() {
 
       {/* Contact Us Hero Section */}
 
-      <section className="w-full mx-auto px-3 sm:px-4 md:px-6 mt-3 md:mt-4 mb-6 max-w-[1600px]">
+      {/* Desktop Hero Section */}
+      <section className="hidden sm:block w-full mx-auto px-3 sm:px-4 md:px-6 mt-3 md:mt-4 mb-6 max-w-[1600px]">
         <div
-          className={`relative rounded-[10px] md:rounded-[1.5rem] border border-gray-100/20 overflow-hidden min-h-[190px] sm:min-h-[360px] md:min-h-[450px] lg:min-h-[500px] flex items-end shadow-sm transition-colors duration-500 ${!heroImgLoaded ? 'bg-gray-200 animate-pulse' : 'bg-gray-100'}`}>
-          {/* Background Image — only mount after Sanity resolves so the src never changes */}
+          className={`relative rounded-[10px] md:rounded-[1.5rem] border border-gray-100/20 overflow-hidden min-h-[360px] md:min-h-[450px] lg:min-h-[500px] flex items-end shadow-sm transition-colors duration-500 ${!heroImgLoaded ? 'bg-gray-200 animate-pulse' : 'bg-gray-100'}`}>
           {!imagesLoading && (() => {
             const heroFullSrc = getImage('Contact Us Hero Background', 'assets/contactushero.png');
             return (
@@ -209,15 +209,42 @@ export default function ContactUs() {
             );
           })()}
 
-          <div className="relative z-10 w-full px-3 sm:px-8 md:px-14 pb-1 sm:pb-5 md:pb-16 pt-10 sm:pt-20 max-w-4xl">
-            <h1 className="ct-anim ct-up text-[11px] sm:text-[28px] md:text-[42px] leading-[1.2] font-bold mb-1 sm:mb-3 md:mb-4 tracking-tight">
+          <div className="relative z-10 w-full px-8 md:px-14 pb-5 md:pb-16 pt-20 max-w-4xl">
+            <h1 className="ct-anim ct-up text-[28px] md:text-[42px] leading-[1.2] font-bold mb-3 md:mb-4 tracking-tight">
               <span className="inline-block bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">For patients, partners,</span><br />
               <span className="inline-block bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">and providers.</span>
             </h1>
-            <p className="ct-anim ct-up ct-d2 text-[#000b5d] text-[9px] sm:text-[13px] md:text-[15px] max-w-[90%] sm:max-w-[480px] md:max-w-[620px] mb-2 sm:mb-5 leading-relaxed font-medium">
+            <p className="ct-anim ct-up ct-d2 text-[#000b5d] text-[13px] md:text-[15px] max-w-[480px] md:max-w-[620px] mb-5 leading-relaxed font-medium">
               For inquiries about our pharmaceutical portfolio, partnership opportunities, careers, or patient access programs — our team is ready to help.
             </p>
           </div>
+        </div>
+      </section>
+
+      {/* Mobile Hero Section */}
+      <section className="block sm:hidden w-full px-3 mt-3 mb-6">
+        <div className={`relative aspect-[16/10] w-full rounded-[10px] overflow-hidden mb-3 border border-gray-100/20 shadow-sm transition-colors duration-500 ${!heroImgLoaded ? 'bg-gray-200 animate-pulse' : 'bg-gray-100'}`}>
+          {!imagesLoading && (() => {
+            const heroFullSrc = getImage('Contact Us Hero Background', 'assets/contactushero.png');
+            return (
+              <ProgressiveHeroImage
+                link={getImageLink('Contact Us Hero Background')}
+                fullSrc={heroFullSrc}
+                lowSrc={getLowResImage('Contact Us Hero Background', heroFullSrc)}
+                alt="Contact Us"
+                onLoaded={() => setHeroImgLoaded(true)}
+                className="absolute inset-0 w-full h-full object-cover object-[78%_top]"
+              />
+            );
+          })()}
+        </div>
+        <div className="px-1">
+          <h1 className="ct-anim ct-up text-xl font-bold leading-snug mb-2 tracking-tight">
+            <span className="inline-block bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">For patients, partners, and providers.</span>
+          </h1>
+          <p className="ct-anim ct-up ct-d2 text-gray-600 text-xs leading-relaxed font-normal text-justify">
+            For inquiries about our pharmaceutical portfolio, partnership opportunities, careers, or patient access programs — our team is ready to help.
+          </p>
         </div>
       </section>
 
@@ -226,11 +253,11 @@ export default function ContactUs() {
         <div className="flex flex-col lg:flex-row gap-16 lg:gap-24 items-start">
 
           {/* Left Info Area */}
-          <div className="w-full lg:w-[45%] lg:pt-2">
+          <div className="w-full lg:w-[45%] lg:pt-2 text-center lg:text-left">
             <h2 className="ct-anim ct-left text-2xl md:text-[28px] font-bold text-dark mb-3 leading-tight tracking-tight">
               How to Reach Us
             </h2>
-            <p className="ct-anim ct-left ct-d1 text-gray-500 text-[14px] mb-6 lg:mb-10 leading-relaxed max-w-[90%]">
+            <p className="ct-anim ct-left ct-d1 text-gray-500 text-[14px] mb-6 lg:mb-10 leading-relaxed max-w-[90%] mx-auto lg:mx-0">
               Pick the channel that fits your need. General inquiries, careers, and partnerships are routed directly to the right team for faster response.
             </p>
 

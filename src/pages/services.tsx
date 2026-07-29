@@ -99,9 +99,9 @@ export default function Services() {
       {/* Navbar */}
       <div id="navbar-container" className="sticky top-0 z-[50]" />
 
-      <section className="w-full mx-auto px-3 sm:px-4 md:px-6 mt-3 md:mt-4 mb-6 max-w-[1600px]">
-        <div className="relative rounded-[10px] md:rounded-[1.5rem] border border-gray-100/20 overflow-hidden min-h-[190px] sm:min-h-[360px] md:min-h-[450px] lg:min-h-[500px] flex items-end group">
-          {/* Background Image */}
+      {/* Desktop Hero Section */}
+      <section className="hidden sm:block w-full mx-auto px-3 sm:px-4 md:px-6 mt-3 md:mt-4 mb-6 max-w-[1600px]">
+        <div className="relative rounded-[10px] md:rounded-[1.5rem] border border-gray-100/20 overflow-hidden min-h-[360px] md:min-h-[450px] lg:min-h-[500px] flex items-end group shadow-sm bg-gray-100">
           <div className="absolute inset-0 z-0">
             {(() => {
               const heroFullSrc = getImage('Services Hero Background', 'assets/services_hero_new.png');
@@ -120,27 +120,57 @@ export default function Services() {
             })()}
           </div>
 
-          {/* Content */}
-          <div className="relative z-10 w-full px-3 sm:px-8 md:px-14 pb-2 sm:pb-5 md:pb-16 pt-10 sm:pt-20 max-w-4xl reveal">
-            <h1 className="text-[11px] sm:text-[28px] md:text-[38px] leading-tight font-bold mb-1 sm:mb-3 tracking-tight">
+          <div className="relative z-10 w-full px-8 md:px-14 pb-5 md:pb-16 pt-20 max-w-4xl reveal">
+            <h1 className="text-[28px] md:text-[38px] leading-tight font-bold mb-3 tracking-tight">
               <span data-json="hero.headingAccent"
                 className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent leading-tight tracking-tight">Our Services</span>
             </h1>
-            <p data-json="hero.description" className="text-[#000b5d] text-[9px] sm:text-[13px] md:text-[14px] max-w-[90%] sm:max-w-[600px] mb-2 sm:mb-5 leading-normal font-normal">
+            <p data-json="hero.description" className="text-[#000b5d] text-[13px] md:text-[14px] max-w-[600px] mb-5 leading-normal font-normal">
               Getmeds connects globally certified pharmaceutical manufacturers with Filipino patients, doctors, and
               hospitals — bridging the gap between world-class treatment and local access.
             </p>
-            <div className="flex flex-wrap gap-1.5 sm:gap-4 pb-1 sm:pb-0">
+            <div className="flex flex-wrap gap-4">
               <a href="#services-grid"
-                className="btn-gradient text-white font-semibold py-1 px-3 sm:py-2 sm:px-6 rounded-full text-[8.5px] sm:text-[13px] inline-flex items-center gap-1 sm:gap-2 shadow-md">
-                Explore Services <i className="fa-solid fa-arrow-down text-[7px] sm:text-xs"></i>
+                className="btn-gradient text-white font-semibold py-2 px-6 rounded-full text-[13px] inline-flex items-center gap-2 shadow-md">
+                Explore Services <i className="fa-solid fa-arrow-down text-xs"></i>
               </a>
               <a href="contact-us.html"
-                className="bg-white/10 backdrop-blur-md border border-white/25 text-white font-semibold py-1 px-3 sm:py-2 sm:px-6 rounded-full text-[8.5px] sm:text-[13px] hover:bg-white/20 transition inline-flex items-center gap-1 sm:gap-2">
-                Contact Us <i className="fa-solid fa-arrow-right text-[7px] sm:text-xs"></i>
+                className="bg-white/10 backdrop-blur-md border border-white/25 text-white font-semibold py-2 px-6 rounded-full text-[13px] hover:bg-white/20 transition inline-flex items-center gap-2">
+                Contact Us <i className="fa-solid fa-arrow-right text-xs"></i>
               </a>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Mobile Hero Section */}
+      <section className="block sm:hidden w-full px-3 mt-3 mb-6">
+        <div className="relative aspect-[16/10] w-full rounded-[10px] border border-gray-100/20 overflow-hidden mb-3 bg-gray-100 shadow-sm">
+          {(() => {
+            const heroFullSrc = getImage('Services Hero Background', 'assets/services_hero_new.png');
+            return (
+              <ProgressiveHeroImage
+                link={getImageLink('Services Hero Background')}
+                fullSrc={heroFullSrc}
+                lowSrc={getLowResImage('Services Hero Background', heroFullSrc)}
+                dataJsonSrc="hero.image"
+                dataJsonAlt="hero.imageAlt"
+                className="absolute inset-0 w-full h-full object-cover object-center"
+                transitionClassName="transition-[opacity_0.7s,transform_4s]"
+                alt="Healthcare Services"
+              />
+            );
+          })()}
+        </div>
+        <div className="px-1 reveal">
+          <h1 className="text-xl font-bold leading-tight mb-2 tracking-tight">
+            <span data-json="hero.headingAccent"
+              className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent leading-tight tracking-tight">Our Services</span>
+          </h1>
+          <p data-json="hero.description" className="text-gray-600 text-xs mb-3 leading-relaxed font-normal text-justify">
+            Getmeds connects globally certified pharmaceutical manufacturers with Filipino patients, doctors, and
+            hospitals — bridging the gap between world-class treatment and local access.
+          </p>
         </div>
       </section>
 
@@ -177,8 +207,7 @@ export default function Services() {
           {/* Section Header */}
           <div className="text-center max-w-2xl mx-auto mb-16 reveal">
             <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent font-bold text-sm uppercase tracking-widest mb-4 block">Corporate Services</span>
-            <h2 className="text-3xl md:text-4xl font-semibold text-dark mb-4">Our Core{' '}
-              <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent inline-block">Competencies</span></h2>
+            <h2 className="text-3xl md:text-4xl font-semibold text-dark mb-4">Our Core Competencies</h2>
             <p data-json="sectionDescription" className="text-gray-500 text-[15px]">Ten capabilities.
               Four focus areas. One complete pharmaceutical partner for Filipino patients, doctors, hospitals,
               pharmacies, and manufacturers.</p>
@@ -420,9 +449,7 @@ export default function Services() {
               <div
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-full badge-pill text-[11px] font-bold uppercase tracking-widest mb-6">
                 <i className="fa-solid fa-medal"></i> The Getmeds Difference</div>
-              <h2 className="text-[28px] md:text-[38px] font-bold text-dark leading-tight mb-6 tracking-tight">Why patients, doctors, and partners trust{' '}
-                <span
-                  className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">Getmeds</span>.</h2>
+              <h2 className="text-[28px] md:text-[38px] font-bold text-dark leading-tight mb-6 tracking-tight">Why patients, doctors, and partners trust Getmeds.</h2>
               <p className="text-gray-500 text-[15px] leading-relaxed mb-10 max-w-lg">Pharmaceutical care built on
                 global standards, patient-first values, and Filipino heart. Every medicine is sourced, verified,
                 and delivered with the care your health deserves.</p>

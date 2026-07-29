@@ -234,8 +234,7 @@ export default function Blog() {
         <div className="mb-10">
           <span className="bl-anim bl-up inline-block bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent font-bold uppercase tracking-widest text-sm mb-3">Our Blog</span>
           <h1 className="bl-anim bl-up bl-d1 text-3xl md:text-4xl font-semibold text-gray-900 leading-tight mb-3">
-            Insights from{' '}
-            <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">Getmeds</span>
+            Insights from Getmeds
           </h1>
           <p className="bl-anim bl-up bl-d2 text-gray-500 text-[15px] max-w-full leading-relaxed">
             Stay informed with the latest news, health guides, and updates from Getmeds — your trusted source for pharmaceutical insights and patient care resources in the Philippines.
