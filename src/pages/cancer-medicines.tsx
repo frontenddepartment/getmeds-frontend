@@ -694,12 +694,18 @@ export default function CancerMedicines() {
   // shifts and scrollIntoView's target ends up miscalculated. Setting
   // scrollTop directly on the container is unambiguous regardless of layout.
   const scrollToTable = () => {
-    if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollTop = 0;
-    }
-    if (typeof window !== 'undefined') {
-      window.scrollTo({ top: 0, behavior: 'auto' });
-    }
+    setTimeout(() => {
+      if (scrollContainerRef.current) {
+        scrollContainerRef.current.scrollTop = 0;
+      }
+      if (typeof window !== 'undefined') {
+        window.scrollTo(0, 0);
+        document.body.scrollTop = 0;
+        if (document.documentElement) {
+          document.documentElement.scrollTop = 0;
+        }
+      }
+    }, 50);
   };
 
   const isCatParentActive = (cat: any) =>
