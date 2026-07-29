@@ -6,6 +6,7 @@ import { injectHTML } from '../lib/injectHTML';
 import { urlFor } from '../lib/sanity';
 import { sanityQuery } from '../lib/sanityProxy';
 import { LinkableImage } from '../lib/LinkableImage';
+import { computeCategoryKey } from '../lib/categoryImageKey';
 
 
 // Declare global tailwind interface
@@ -86,7 +87,7 @@ export default function GetMedsHomepage() {
     }
   }, []);
 
-  const { getImage, getImageLink } = useImageMapper('home');
+  const { getImage, getImageLink, getCategoryImage, categoryImages, categoryImagesLoading } = useImageMapper('home');
   const { data: newsItems } = useNews();
   const { data: settings } = useSiteSettings();
   const { data: heroSlidesData } = useHeroSlides();
@@ -117,23 +118,72 @@ export default function GetMedsHomepage() {
     }
   };
 
-  // Therapeutic area cards — fixed order matching the "Getmeds — All Categories URL Map
-  // Summary" reference spreadsheet's Product Range column (Hematology / OB-GYN omitted, since
-  // it's already covered under Hematology).
-  const therapCards = useMemo(() => [
-    { name: "Oncology", img: getImage("assets/therapeuticareaoncology.png", "assets/therapeuticareaoncology.png"), marquee: "Breast Cancer • Ovarian Cancer • Non-Small Cell Lung Cancer • Prostate Cancer • Colorectal Cancer • Pancreatic Cancer • ", link: "/cancer-medicines/oncology" },
-    { name: "Hematology", img: getImage("assets/therapeuticareahematology.png", "assets/therapeuticareahematology.png"), marquee: "Acute Myeloid Leukemia • Chronic Myeloid Leukemia • Hodgkin/Non-Hodgkin's Lymphoma • Sickle Cell Anemia • ", link: "/cancer-medicines/hematology" },
-    { name: "Anti-Infectives", img: getImage("assets/therapeuticareaantiinfectives.jpg", "assets/therapeuticareaantiinfectives.jpg"), marquee: "Respiratory Infections • Urinary Tract Infections • Skin and Soft Tissue Infections • Bone and Joint Infections • ", link: "/cancer-medicines/anti-infectives" },
-    { name: "Endocrinology", img: getImage("assets/therapeuticareaendocrinology.jpg", "assets/therapeuticareaendocrinology.jpg"), marquee: "Endometriosis • Fibrocystic Breast Disease • Diabetes Management • Thyroid Disorders • Metabolic Syndrome • ", link: "/cancer-medicines/endocrinology" },
-    { name: "Orthopedic", img: getImage("assets/orthopedic.jpg", "assets/orthopedic.jpg"), marquee: "Multiple Myeloma • Osteoporosis • Joint Replacement Support • Fracture Recovery • Bone Metastases • ", link: "/cancer-medicines/orthopedic" },
-    { name: "Cardiology", img: getImage("assets/therapeuticareacardiology.png", "assets/therapeuticareacardiology.png"), marquee: "Arrhythmia Management • Hypertension/Angina • Heart Failure • Atrial Fibrillation • Coronary Artery Disease • ", link: "/cancer-medicines/cardiology" },
-    { name: "Radiology", img: getImage("assets/radiology.jpg", "assets/radiology.jpg"), marquee: "Contrast Media • Diagnostic Imaging • CT & MRI Contrast Agents • Nuclear Medicine • Radiopharmaceuticals • ", link: "/cancer-medicines/radiology" },
-    { name: "Rheumatology", img: getImage("assets/rheumatology.jpg", "assets/rheumatology.jpg"), marquee: "Rheumatoid Arthritis • Osteoarthritis • Lupus • Gout • Ankylosing Spondylitis • ", link: "/cancer-medicines/rheumatology" },
-    { name: "Pain Management", img: getImage("assets/pain-management.jpg", "assets/pain-management.jpg"), marquee: "Chronic Pain • Post-Surgical Pain • Neuropathic Pain • Analgesics • Anesthesia Support • ", link: "/cancer-medicines/pain-management" },
-    { name: "Nephrology / Renal", img: getImage("assets/nephrology-renal.jpg", "assets/nephrology-renal.jpg"), marquee: "Chronic Kidney Disease • Dialysis Support • Renal Anemia • Electrolyte Management • Nephrotic Syndrome • ", link: "/cancer-medicines/nephrology-renal" },
-    { name: "Respiratory", img: getImage("assets/respiratory.jpg", "assets/respiratory.jpg"), marquee: "Seasonal Allergic Rhinitis • Asthma • COPD • Bronchitis • Pulmonary Hypertension • Chronic Kidney Disease • ", link: "/cancer-medicines/respiratory" },
-    { name: "Neurology", img: getImage("assets/therapeuticareaneurology.png", "assets/therapeuticareaneurology.png"), marquee: "Glioblastoma Multiforme • Chronic Pain • Inflammatory Disorders • Osteoporosis • Multiple Myeloma • Neuro-Oncology • ", link: "/cancer-medicines/neuro-oncology" },
-  ], [getImage]);
+  // Reference data (marquee condition text + routing link) for the therapeutic areas this
+  // site knows how to describe — keyed by category name. There's no Sanity field for this text
+  // yet, so it's still hardcoded here; which of these actually show on the home page, and in
+  // what order, is driven entirely by the Products document's "Category Featured" Studio tab
+  // (see therapCards below) — a category dragged/added there that isn't in this list still
+  // shows (with its own label/image), just without marquee text or a dedicated link.
+  const therapCardsBase = useMemo(() => [
+    { name: "Oncology", fallback: "assets/therapeuticareaoncology.png", marquee: "Breast Cancer • Ovarian Cancer • Non-Small Cell Lung Cancer • Prostate Cancer • Colorectal Cancer • Pancreatic Cancer • ", link: "/cancer-medicines/oncology" },
+    { name: "Hematology", fallback: "assets/therapeuticareahematology.png", marquee: "Acute Myeloid Leukemia • Chronic Myeloid Leukemia • Hodgkin/Non-Hodgkin's Lymphoma • Sickle Cell Anemia • ", link: "/cancer-medicines/hematology" },
+    { name: "Anti-Infectives", fallback: "assets/therapeuticareaantiinfectives.jpg", marquee: "Respiratory Infections • Urinary Tract Infections • Skin and Soft Tissue Infections • Bone and Joint Infections • ", link: "/cancer-medicines/anti-infectives" },
+    { name: "Endocrinology", fallback: "assets/therapeuticareaendocrinology.jpg", marquee: "Endometriosis • Fibrocystic Breast Disease • Diabetes Management • Thyroid Disorders • Metabolic Syndrome • ", link: "/cancer-medicines/endocrinology" },
+    { name: "Orthopedic", fallback: "assets/orthopedic.jpg", marquee: "Multiple Myeloma • Osteoporosis • Joint Replacement Support • Fracture Recovery • Bone Metastases • ", link: "/cancer-medicines/orthopedic" },
+    { name: "Cardiology", fallback: "assets/therapeuticareacardiology.png", marquee: "Arrhythmia Management • Hypertension/Angina • Heart Failure • Atrial Fibrillation • Coronary Artery Disease • ", link: "/cancer-medicines/cardiology" },
+    { name: "Radiology", fallback: "assets/radiology.jpg", marquee: "Contrast Media • Diagnostic Imaging • CT & MRI Contrast Agents • Nuclear Medicine • Radiopharmaceuticals • ", link: "/cancer-medicines/radiology" },
+    { name: "Rheumatology", fallback: "assets/rheumatology.jpg", marquee: "Rheumatoid Arthritis • Osteoarthritis • Lupus • Gout • Ankylosing Spondylitis • ", link: "/cancer-medicines/rheumatology" },
+    { name: "Pain Management", fallback: "assets/pain-management.jpg", marquee: "Chronic Pain • Post-Surgical Pain • Neuropathic Pain • Analgesics • Anesthesia Support • ", link: "/cancer-medicines/pain-management" },
+    { name: "Nephrology / Renal", fallback: "assets/nephrology-renal.jpg", marquee: "Chronic Kidney Disease • Dialysis Support • Renal Anemia • Electrolyte Management • Nephrotic Syndrome • ", link: "/cancer-medicines/nephrology-renal" },
+    { name: "Respiratory", fallback: "assets/respiratory.jpg", marquee: "Seasonal Allergic Rhinitis • Asthma • COPD • Bronchitis • Pulmonary Hypertension • Chronic Kidney Disease • ", link: "/cancer-medicines/respiratory" },
+    { name: "Neurology", fallback: "assets/therapeuticareaneurology.png", marquee: "Glioblastoma Multiforme • Chronic Pain • Inflammatory Disorders • Osteoporosis • Multiple Myeloma • Neuro-Oncology • ", link: "/cancer-medicines/neuro-oncology" },
+  ], []);
+
+  const therapBaseByKey = useMemo(() => {
+    const map = new Map<string, typeof therapCardsBase[number]>();
+    therapCardsBase.forEach((card) => map.set(computeCategoryKey(card.name), card));
+    return map;
+  }, [therapCardsBase]);
+
+  const therapCards = useMemo(() => {
+    // Still waiting on the Studio's "Category Featured" list — render nothing rather than the
+    // hardcoded default set: showing the static images first and then swapping to the real
+    // featured ones a moment later is exactly the flash/twitch this was causing.
+    if (categoryImagesLoading) return [];
+
+    // The fetch finished and nothing has ever been featured yet — fall back to the full
+    // default set so the section isn't permanently empty. This only renders once data has
+    // settled, so it doesn't flicker the way showing it during loading did.
+    if (!categoryImages || categoryImages.length === 0) {
+      return therapCardsBase.map((card) => ({
+        ...card,
+        // Fall back straight to the bundled local asset — not through getImage()'s old
+        // pageAsset lookup, which resolves independently of categoryImages and can (based on
+        // which of the two async fetches happens to land first) hand back one of the old,
+        // orphaned "Home Page Assets" pageAsset docs' broken Sanity URLs instead of a real
+        // image, causing the card to intermittently show the no-image placeholder on reload.
+        img: getCategoryImage(card.name, card.fallback),
+      }));
+    }
+
+    // Otherwise, show exactly what's featured, in the order set there (drag-and-drop in the
+    // Studio) — a category removed from Featured disappears from the home page, not just
+    // falls to the end.
+    const sorted = [...categoryImages].sort(
+      (a, b) => (a.order ?? Number.MAX_SAFE_INTEGER) - (b.order ?? Number.MAX_SAFE_INTEGER)
+    );
+    return sorted.map((entry) => {
+      const base = therapBaseByKey.get(entry.categoryKey);
+      const fallback = base?.fallback || "assets/therapeuticareaoncology.png";
+      return {
+        name: base?.name || entry.categoryLabel || entry.categoryKey,
+        marquee: base?.marquee || "",
+        link: base?.link || `/cancer-medicines/${entry.categoryKey}`,
+        fallback,
+        img: getCategoryImage(entry.categoryKey, fallback),
+      };
+    });
+  }, [categoryImages, categoryImagesLoading, therapCardsBase, therapBaseByKey, getCategoryImage]);
 
 
   // --- Hero Slider ---
@@ -880,6 +930,32 @@ export default function GetMedsHomepage() {
       {/* Therapeutic Areas Section */}
       {(() => {
         const totalPages = Math.ceil(therapCards.length / 4);
+
+        if (categoryImagesLoading) {
+          return (
+            <section className="py-12 px-0 md:px-6 reveal">
+              <style>{`
+                @keyframes therapSkeletonPulse { 0%, 100% { opacity: 1 } 50% { opacity: 0.6 } }
+                .therap-skeleton { animation: therapSkeletonPulse 1.6s ease-in-out infinite; }
+              `}</style>
+              <div className="max-w-7xl mx-auto bg-gray-100 rounded-none md:rounded-3xl overflow-hidden">
+                <div className="flex items-start justify-between px-8 pt-8 pb-6 gap-4">
+                  <h2 className="text-2xl md:text-3xl font-semibold text-gray-900 max-w-md leading-tight">Therapeutic areas we serve across the Philippines.</h2>
+                  <a href="/product-range" className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:opacity-90 text-white text-xs md:text-sm font-medium rounded-full px-3 py-1.5 md:px-6 md:py-2.5 transition-opacity shrink-0">View All</a>
+                </div>
+                <div className="md:hidden px-0">
+                  <div className="therap-skeleton bg-gray-200" style={{ aspectRatio: '5/4' }} />
+                </div>
+                <div className="hidden md:grid grid-cols-4 gap-4 px-8 pb-8">
+                  {Array.from({ length: 4 }).map((_, i) => (
+                    <div key={i} className="therap-skeleton bg-gray-200 rounded-2xl aspect-[3/4]" />
+                  ))}
+                </div>
+              </div>
+            </section>
+          );
+        }
+
         return (
           <section className="py-12 px-0 md:px-6 reveal">
             <style>{`
@@ -955,6 +1031,13 @@ export default function GetMedsHomepage() {
                         className="w-full h-full object-cover"
                         onError={(e) => {
                           const t = e.currentTarget;
+                          // Sanity image broke (deleted/orphaned asset) — retry once with the
+                          // bundled local fallback before giving up and showing the placeholder icon.
+                          if (t.dataset.fallbackTried !== '1' && t.src !== card.fallback) {
+                            t.dataset.fallbackTried = '1';
+                            t.src = card.fallback;
+                            return;
+                          }
                           t.style.display = 'none';
                           const parent = t.parentElement;
                           if (parent && !parent.querySelector('.img-fallback')) {
@@ -987,6 +1070,13 @@ export default function GetMedsHomepage() {
                               alt={card.name}
                               onError={(e) => {
                                 const t = e.currentTarget;
+                                // Sanity image broke (deleted/orphaned asset) — retry once with the
+                                // bundled local fallback before giving up and showing the placeholder icon.
+                                if (t.dataset.fallbackTried !== '1' && t.src !== card.fallback) {
+                                  t.dataset.fallbackTried = '1';
+                                  t.src = card.fallback;
+                                  return;
+                                }
                                 t.style.display = 'none';
                                 const parent = t.parentElement;
                                 if (parent && !parent.querySelector('.img-fallback')) {
