@@ -925,6 +925,23 @@
     </nav>
 </div>
 
+<!-- Category/condition menu data + link-building logic lives in navbar-data.js so it can be
+     edited in one place — every page shares this same navbar.html via injectHTML(). navbar.html
+     itself is always fetched fresh (`cache: 'no-store'` in every page's injectHTML() call site),
+     but a plain `<script src>` here would still be subject to the browser's normal HTTP cache
+     for that URL, which can silently serve a stale copy of the menu data/logic after an edit —
+     the cache-busting query param below forces a fresh fetch on every navbar injection. -->
+<script>
+    (function () {
+        const s = document.createElement('script');
+        s.src = '/components/navbar-data.js?v=' + Date.now();
+        s.onload = function () {
+            if (typeof fetchAndPopulateDropdown === 'function') fetchAndPopulateDropdown();
+        };
+        document.currentScript.parentNode.insertBefore(s, document.currentScript.nextSibling);
+    })();
+</script>
+
 <script>
 
     // Mark active nav link based on current page
@@ -1103,333 +1120,8 @@
         }
     });
 
-    // Dynamically populate Cancer Medicines dropdown and mobile accordion from Sanity Category schema
-    function fetchAndPopulateDropdown() {
-        const query = '*[_type == "category"] { category, "slug": slug.current, subcategory }';
-        const projectId = document.querySelector('meta[name="getmeds-sanity-project-id"]')?.content || 's7ocz8zp';
-        const dataset = document.querySelector('meta[name="getmeds-sanity-dataset"]')?.content || 'production';
-        const apiVersion = document.querySelector('meta[name="getmeds-sanity-api-version"]')?.content || '2021-10-21';
-        const url = `https://${projectId}.api.sanity.io/v${apiVersion}/data/query/${dataset}?query=` + encodeURIComponent(query);
-
-        fetch(url)
-            .then(res => res.json())
-            .then(data => {
-                const categories = data?.result || [];
-                if (categories.length === 0) return;
-
-                // Grouping config to keep the static layout and style
-                const categoryConfig = {
-                    'oncology': { col: 0, title: 'Oncology' },
-                    'hematology': { col: 1, title: 'Hematology' },
-                    'anti-infectives': { col: 1, title: 'Anti-Infectives' },
-                    'endocrinology': { col: 2, title: 'Endocrinology' },
-                    'orthopedic': { col: 2, title: 'Orthopedic' },
-                    'cardiology': { col: 2, title: 'Cardiology' },
-                    'neuro-oncology': { col: 3, title: 'Neuro-Oncology' },
-                    'respiratory': { col: 3, title: 'Respiratory / Allergy', mergeWith: 'allergy' },
-                    'allergy': { col: 3, title: 'Respiratory / Allergy', mergeWith: 'respiratory' },
-                    'renal': { col: 3, title: 'Nephrology / Renal', mergeWith: 'nephrology' },
-                    'nephrology': { col: 3, title: 'Nephrology / Renal', mergeWith: 'renal' },
-                    'pain-management': { col: 3, title: 'Pain Mgt.' },
-                    'rheumatology': { col: 3, title: 'Rheumatology' },
-                    'gynecology': { col: 2, title: 'Gynecology' },
-                    'obstetrician': { col: 2, title: 'Obstetrician' },
-                    'radiology': { col: 1, title: 'Radiology' }
-                };
-
-                const subcategorySpecials = {
-                    'non-small-cell-lung-cancer': 'lung-cancer',
-                    'acute-myeloid-leukemia': 'aml',
-                    'chronic-myeloid-leukemia': 'cml',
-                    'hodgkin-non-hodgkins-lymphoma': 'lymphoma',
-                    'hodgkin-non-hodgkin-s-lymphoma': 'lymphoma',
-                    'sickle-cell-anemia': 'sickle-cell',
-                    'respiratory-infections': 'respiratory',
-                    'urinary-tract-infections': 'uti',
-                    'skin-and-soft-tissue-infections': 'skin-infections',
-                    'bone-and-joint-infections': 'bone-infections',
-                    'fibrocystic-breast-disease': 'fibrocystic',
-                    'arrhythmia-management': 'arrhythmia',
-                    'hypertension-angina': 'hypertension',
-                    'hypertension-and-angina': 'hypertension',
-                    'seasonal-allergic-rhinitis': 'allergic-rhinitis',
-                    'chronic-kidney-disease': 'kidney-disease',
-                    'chronic-pain': 'pain',
-                    'inflammatory-disorders': 'rheumatology',
-                    'inflammatory-and-rheumatic-disorders': 'rheumatology'
-                };
-
-                const getSubcategorySlug = (name) => {
-                    const slug = name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
-                    return subcategorySpecials[slug] || slug;
-                };
-
-                // Group categories that have overlapping subcategories using Jaccard Similarity Graph Grouping (sim >= 0.5)
-                const validCats = categories.filter(cat => cat.subcategory && Array.isArray(cat.subcategory) && cat.subcategory.length > 0);
-
-                const jaccardSimilarity = (arr1, arr2) => {
-                    const setA = new Set(arr1.map(x => x.trim().toLowerCase()));
-                    const setB = new Set(arr2.map(x => x.trim().toLowerCase()));
-                    const intersection = new Set([...setA].filter(x => setB.has(x)));
-                    const union = new Set([...setA, ...setB]);
-                    return union.size === 0 ? 0 : (intersection.size / union.size);
-                };
-
-                const visited = new Set();
-                const groups = [];
-
-                for (let i = 0; i < validCats.length; i++) {
-                    if (visited.has(i)) continue;
-
-                    const component = [];
-                    const queue = [i];
-                    visited.add(i);
-
-                    while (queue.length > 0) {
-                        const currIdx = queue.shift();
-                        const currCat = validCats[currIdx];
-                        component.push(currCat);
-
-                        for (let j = 0; j < validCats.length; j++) {
-                            if (visited.has(j)) continue;
-
-                            const sim = jaccardSimilarity(currCat.subcategory, validCats[j].subcategory);
-                            if (sim >= 0.5) {
-                                visited.add(j);
-                                queue.push(j);
-                            }
-                        }
-                    }
-                    groups.push(component);
-                }
-
-                const processedCategories = [];
-                groups.forEach(groupCats => {
-                    if (groupCats.length === 1) {
-                        processedCategories.push({
-                            category: groupCats[0].category,
-                            slugs: [groupCats[0].slug],
-                            slug: groupCats[0].slug,
-                            subcategory: groupCats[0].subcategory
-                        });
-                    } else {
-                        const sortedCats = [...groupCats].sort((a, b) => a.category.localeCompare(b.category));
-                        const combinedName = sortedCats.map(c => c.category).join(' / ');
-
-                        // Find shared subcategories
-                        const subMaps = sortedCats.map(cat => {
-                            const map = new Map();
-                            cat.subcategory.forEach(sub => {
-                                map.set(sub.trim().toLowerCase(), sub);
-                            });
-                            return map;
-                        });
-
-                        const firstMap = subMaps[0];
-                        const sharedKeys = [];
-                        for (const key of firstMap.keys()) {
-                            let inAll = true;
-                            for (let k = 1; k < subMaps.length; k++) {
-                                if (!subMaps[k].has(key)) {
-                                    inAll = false;
-                                    break;
-                                }
-                            }
-                            if (inAll) {
-                                sharedKeys.push(key);
-                            }
-                        }
-
-                        const sharedSubcategories = sharedKeys.map(key => firstMap.get(key));
-
-                        if (sharedSubcategories.length > 0) {
-                            processedCategories.push({
-                                category: combinedName,
-                                slugs: sortedCats.map(c => c.slug),
-                                slug: sortedCats[0].slug,
-                                subcategory: sharedSubcategories
-                            });
-                        }
-
-                        // Add unique subcategories for each category in the group
-                        sortedCats.forEach(cat => {
-                            const uniqueSubs = cat.subcategory.filter(sub => {
-                                const norm = sub.trim().toLowerCase();
-                                return !sharedKeys.includes(norm);
-                            });
-
-                            if (uniqueSubs.length > 0) {
-                                processedCategories.push({
-                                    category: cat.category,
-                                    slugs: [cat.slug],
-                                    slug: cat.slug,
-                                    subcategory: uniqueSubs
-                                });
-                            }
-                        });
-                    }
-                });
-
-                const sections = {};
-                processedCategories.forEach(cat => {
-                    const slugsToCheck = cat.slugs;
-                    let minCol = 3;
-                    let confTitle = null;
-
-                    for (const s of slugsToCheck) {
-                        if (categoryConfig[s]) {
-                            if (categoryConfig[s].col < minCol) {
-                                minCol = categoryConfig[s].col;
-                            }
-                            if (!confTitle) {
-                                confTitle = categoryConfig[s].title;
-                            }
-                        }
-                    }
-
-                    const title = (slugsToCheck.length > 1) ? cat.category : (confTitle || cat.category);
-                    const col = minCol;
-
-                    if (!sections[title]) {
-                        sections[title] = {
-                            title: title,
-                            col: col,
-                            subcategories: []
-                        };
-                    }
-
-                    cat.subcategory.forEach(sub => {
-                        if (sub && !sections[title].subcategories.includes(sub)) {
-                            sections[title].subcategories.push(sub);
-                        }
-                    });
-                });
-
-                const desktopColumns = [[], [], [], []];
-                Object.values(sections).forEach(sec => {
-                    if (sec.subcategories.length > 0) {
-                        desktopColumns[sec.col].push(sec);
-                    }
-                });
-
-                const linkCls = "relative inline-block text-gray-500 hover:text-primary transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-full after:h-[1px] after:bg-primary after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300";
-
-                // Hardcoded col 0 and col 1 — always exactly these items regardless of Sanity data
-                const hardcodedOncology = [
-                    { label: 'Breast Cancer', slug: 'breast-cancer' },
-                    { label: 'Ovarian Cancer', slug: 'ovarian-cancer' },
-                    { label: 'Non-Small Cell Lung Cancer', slug: 'lung-cancer' },
-                    { label: 'Prostate Cancer', slug: 'prostate-cancer' },
-                    { label: 'Colorectal Cancer', slug: 'colorectal-cancer' },
-                    { label: 'Pancreatic Cancer', slug: 'pancreatic-cancer' },
-                    { label: 'Gastric Cancer / Gastric Adenocarcinoma', slug: 'gastric-cancer' },
-                    { label: 'Head and Neck Cancer', slug: 'head-and-neck-cancer' },
-                    { label: 'Malignant Pleural Mesothelioma', slug: 'malignant-pleural-mesothelioma' },
-                    { label: 'Malignant Pleural Effusion', slug: 'malignant-pleural-effusion' },
-                    { label: 'Gastrointestinal Stromal Tumors', slug: 'gastrointestinal-stromal-tumors' },
-                ];
-                const hardcodedHematology = [
-                    { label: 'Acute Myeloid Leukemia', slug: 'aml' },
-                    { label: 'Chronic Myeloid Leukemia', slug: 'cml' },
-                    { label: 'Acute Lymphocytic Leukemia', slug: 'acute-lymphocytic-leukemia' },
-                    { label: 'Chronic Lymphocytic Leukemia', slug: 'chronic-lymphocytic-leukemia' },
-                    { label: "Hodgkin/Non-Hodgkin's Lymphoma", slug: 'lymphoma' },
-                    { label: 'Mantle Cell Lymphoma', slug: 'mantle-cell-lymphoma' },
-                    { label: 'Chronic Myelocytic Leukemia', slug: 'chronic-myelocytic-leukemia' },
-                    { label: 'Meningeal Leukemia', slug: 'meningeal-leukemia' },
-                    { label: 'Acute Lymphoblastic Leukemia', slug: 'acute-lymphoblastic-leukemia' },
-                    { label: 'Acute Promyelocytic Leukemia', slug: 'acute-promyelocytic-leukemia' },
-                    { label: 'Sickle Cell Anemia', slug: 'sickle-cell' },
-                ];
-
-                // Subcategory slugs whose topic is cancer/oncology — these route through /cancer-medicines,
-                // everything else keeps the /product-range prefix.
-                const cancerSlugs = new Set([
-                    'oncology', 'breast-cancer', 'ovarian-cancer', 'non-small-cell-lung-cancer', 'lung-cancer',
-                    'prostate-cancer', 'gastric-cancer-gastric-adenocarcinoma', 'gastric-cancer', 'pancreatic-cancer', 'colorectal-cancer',
-                    'hodgkin-non-hodgkins-lymphoma', 'hodgkin-non-hodgkin-s-lymphoma', 'lymphoma',
-                    'acute-lymphoblastic-leukemia', 'malignant-pleural-mesothelioma', 'head-and-neck-cancer',
-                    'chronic-myeloid-leukemia', 'cml', 'sickle-cell-anemia', 'sickle-cell',
-                    'malignant-pleural-effusion', 'gastrointestinal-stromal-tumors',
-                    'acute-myeloid-leukemia', 'aml', 'acute-lymphocytic-leukemia', 'chronic-myelocytic-leukemia',
-                    'meningeal-leukemia', 'acute-promyelocytic-leukemia', 'chronic-lymphocytic-leukemia',
-                    'mantle-cell-lymphoma', 'multiple-myeloma', 'neuro-oncology', 'glioblastoma-multiforme', 'glioblastoma'
-                ]);
-                const categoryPrefix = (slug) => cancerSlugs.has(slug) ? '/cancer-medicines/' : '/product-range/';
-
-                const buildLi = (item) => `<li><a href="${categoryPrefix(item.slug)}${item.slug}" class="${linkCls}">${item.label}</a></li>`;
-
-                // Slugs that belong to hardcoded cols — exclude from Sanity-driven cols 2 & 3
-                const hardcodedSlugs = new Set(['oncology', 'hematology', 'oncology-hematology', 'hematology-oncology']);
-
-                const desktopGrid = document.getElementById('desktop-dropdown-grid');
-                if (desktopGrid) {
-                    let gridHtml = '';
-
-                    // Col 0: Hardcoded Oncology (Solid Tumors)
-                    gridHtml += '<div>';
-                    gridHtml += '<h4 class="font-semibold text-gray-900 mb-4 border-b pb-2 text-sm">Oncology (Solid Tumors)</h4>';
-                    gridHtml += '<ul class="space-y-2 text-[13px]">' + hardcodedOncology.map(buildLi).join('') + '</ul>';
-                    gridHtml += '</div>';
-
-                    // Col 1: Hardcoded Oncology / Hematology + Anti-Infectives from Sanity if present
-                    const antiInfSanity = (desktopColumns[1] || []).filter(s => !hardcodedSlugs.has((s.title || '').toLowerCase().replace(/[\s/]+/g, '-')));
-                    gridHtml += '<div>';
-                    gridHtml += '<h4 class="font-semibold text-gray-900 mb-4 border-b pb-2 text-sm">Oncology / Hematology</h4>';
-                    gridHtml += '<ul class="space-y-2 text-[13px]' + (antiInfSanity.length ? ' mb-6' : '') + '">' + hardcodedHematology.map(buildLi).join('') + '</ul>';
-                    antiInfSanity.forEach(sec => {
-                        gridHtml += `<h4 class="font-semibold text-gray-900 mb-4 border-b pb-2 text-sm mt-6">${sec.title}</h4>`;
-                        gridHtml += '<ul class="space-y-2 text-[13px]">';
-                        sec.subcategories.forEach(sub => { const subSlug = getSubcategorySlug(sub); gridHtml += `<li><a href="${categoryPrefix(subSlug)}${subSlug}" class="${linkCls}">${sub}</a></li>`; });
-                        gridHtml += '</ul>';
-                    });
-                    gridHtml += '</div>';
-
-                    // Cols 2 & 3: Sanity data only (skip oncology/hematology slugs)
-                    [2, 3].forEach(colIdx => {
-                        const colSections = (desktopColumns[colIdx] || []).filter(s => !hardcodedSlugs.has((s.title || '').toLowerCase().replace(/[\s/]+/g, '-')));
-                        gridHtml += '<div>';
-                        colSections.forEach((sec, secIdx) => {
-                            const h4Class = secIdx > 0 ? 'font-semibold text-gray-900 mb-4 border-b pb-2 text-sm mt-6' : 'font-semibold text-gray-900 mb-4 border-b pb-2 text-sm';
-                            const ulClass = secIdx < colSections.length - 1 ? 'space-y-2 text-[13px] mb-6' : 'space-y-2 text-[13px]';
-                            gridHtml += `<h4 class="${h4Class}">${sec.title}</h4><ul class="${ulClass}">`;
-                            sec.subcategories.forEach(sub => { const subSlug = getSubcategorySlug(sub); gridHtml += `<li><a href="${categoryPrefix(subSlug)}${subSlug}" class="${linkCls}">${sub}</a></li>`; });
-                            gridHtml += '</ul>';
-                        });
-                        gridHtml += '</div>';
-                    });
-
-                    desktopGrid.innerHTML = gridHtml;
-                }
-
-                const mobileAccordion = document.getElementById('mobile-products');
-                if (mobileAccordion) {
-                    let mobileHtml = '';
-
-                    // Hardcoded Oncology
-                    mobileHtml += '<p class="px-3 pt-3 pb-1 text-[10px] font-black uppercase text-gray-400 tracking-wider">Oncology (Solid Tumors)</p>';
-                    hardcodedOncology.forEach(item => { mobileHtml += `<a href="${categoryPrefix(item.slug)}${item.slug}" class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">${item.label}</a>`; });
-
-                    // Hardcoded Oncology / Hematology
-                    mobileHtml += '<p class="px-3 pt-3 pb-1 text-[10px] font-black uppercase text-gray-400 tracking-wider">Oncology / Hematology</p>';
-                    hardcodedHematology.forEach(item => { mobileHtml += `<a href="${categoryPrefix(item.slug)}${item.slug}" class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">${item.label}</a>`; });
-
-                    // Sanity-fetched sections (skip oncology/hematology)
-                    Object.values(sections).forEach(sec => {
-                        if (hardcodedSlugs.has((sec.title || '').toLowerCase().replace(/[\s/]+/g, '-'))) return;
-                        if (sec.subcategories.length > 0) {
-                            mobileHtml += `<p class="px-3 pt-3 pb-1 text-[10px] font-black uppercase text-gray-400 tracking-wider">${sec.title}</p>`;
-                            sec.subcategories.forEach(sub => { const subSlug = getSubcategorySlug(sub); mobileHtml += `<a href="${categoryPrefix(subSlug)}${subSlug}" class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">${sub}</a>`; });
-                        }
-                    });
-                    mobileAccordion.innerHTML = mobileHtml;
-                }
-            })
-            .catch(err => console.warn('[Getmeds] Failed to populate dropdown with dynamic categories:', err));
-    }
-
-    // Run dynamic populate
-    fetchAndPopulateDropdown();
+    // fetchAndPopulateDropdown() is invoked from the cache-busted navbar-data.js loader's
+    // onload callback above, once the (always-fresh) script has actually finished loading.
 </script>
 
 <script>
@@ -1704,6 +1396,23 @@
             setTimeout(() => clearInterval(checkSliderInterval), 5000);
         }
 
+        // Finds the section heading a menu link belongs to. Desktop columns 2 & 3 stack
+        // multiple "<h4>Section</h4><ul>...</ul>" pairs inside ONE shared column <div>
+        // (e.g. "Oncology / Hematology" then "Anti-Infectives") — a naive
+        // closest('div').querySelector('h4') always grabbed the FIRST h4 in that div,
+        // mislabeling every Product Range item that isn't in the first section with
+        // whatever cancer-related heading happened to come before it. The mobile
+        // accordion has no <ul> wrapper at all and uses <p> labels instead of <h4>, so
+        // this walks backward from whichever ancestor is appropriate for each structure.
+        function findMenuSectionHeading(link) {
+            let node = link.closest('ul') || link;
+            node = node.previousElementSibling;
+            while (node && node.tagName !== 'H4' && node.tagName !== 'P') {
+                node = node.previousElementSibling;
+            }
+            return node ? node.textContent.replace(/\s+/g, ' ').trim() : 'All';
+        }
+
         // Intercept category/subcategory menu clicks and general links to /cancer-medicines
         document.addEventListener('click', (e) => {
             const link = e.target.closest('a');
@@ -1715,15 +1424,36 @@
                     const parts = pathname.split('/').filter(Boolean);
                     if (parts.length === 2) {
                         e.preventDefault();
-                        const headingEl = link.closest('div')?.querySelector('h4');
-                        const parentCategory = headingEl ? headingEl.textContent.replace(/\s+/g, ' ').trim() : 'All';
+                        const parentCategory = findMenuSectionHeading(link);
                         const subCategory = link.textContent.replace(/\s+/g, ' ').trim();
+
+                        // The href on this link may be a hardcoded/guessed URL (static markup in
+                        // this file, or navbar-data.js's self-slugified fallback) — the database
+                        // is the actual source of truth, so look up the real conditionHubUrl by
+                        // NAME at click time instead of trusting whatever's in the DOM. This makes
+                        // clicking any condition link "just work" from Sanity even if the href it
+                        // was rendered with wasn't the real one.
+                        const realPath = window.getmedsResolveConditionHubPath?.(subCategory);
+                        if (realPath) {
+                            window.location.href = realPath;
+                            return;
+                        }
 
                         localStorage.setItem('selectedCategory', JSON.stringify({
                             category: parentCategory,
                             subCategory: subCategory
                         }));
-                        window.location.href = prefix;
+                        // If we're already sitting on the bare listing page (e.g. viewing "All"
+                        // and clicking a different condition that also falls back to this same
+                        // prefix), assigning location.href to the URL we're already on is a
+                        // no-op in most browsers — no reload happens, so the page never re-reads
+                        // the localStorage value we just wrote and nothing appears to happen.
+                        // Force a reload in that case instead of a fresh navigation.
+                        if (window.location.pathname === prefix || window.location.pathname === prefix + '/') {
+                            window.location.reload();
+                        } else {
+                            window.location.href = prefix;
+                        }
                     }
                 } else if (pathname === '/cancer-medicines' || pathname === '/cancer-medicines/' || pathname === '/product-range' || pathname === '/product-range/') {
                     const isBackBtn = link.textContent.toLowerCase().includes('back') || link.closest('.back-button') !== null;
