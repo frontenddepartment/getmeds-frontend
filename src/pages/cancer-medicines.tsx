@@ -608,11 +608,36 @@ export default function CancerMedicines() {
     });
   };
 
+  // Strips a bare domain-prefixed URL from the sheet (e.g. "getmeds.ph/conditions/x", with or
+  // without a protocol) down to just its path, e.g. "/conditions/x" — same pattern already
+  // used for productPageUrl below.
+  const toPath = (url: string) => '/' + url.replace(/^https?:\/\//, '').replace(/^[^/]+\/?/, '');
+
+  // Condition/subcategory name (lowercased) -> its precomputed "Condition Hub URL (Auto)"
+  // path, sourced straight from the product catalog (each product carries its own
+  // conditionHubUrl plus a conditionSlugsByName map for every condition it's linked to — see
+  // fetchProductsFromExcel() in src/lib/queries.ts). This is the DB's canonical URL for a
+  // condition; selectCategory() below prefers it over self-slugifying the name.
+  const conditionHubPaths = useMemo(() => {
+    const map = new Map<string, string>();
+    productsData?.forEach((p: any) => {
+      if (p.subCategory && p.conditionHubUrl && !map.has(p.subCategory.toLowerCase())) {
+        map.set(p.subCategory.toLowerCase(), toPath(p.conditionHubUrl));
+      }
+      Object.entries(p.conditionSlugsByName || {}).forEach(([name, info]: [string, any]) => {
+        if (info?.conditionHubUrl && !map.has(name.toLowerCase())) {
+          map.set(name.toLowerCase(), toPath(info.conditionHubUrl));
+        }
+      });
+    });
+    return map;
+  }, [productsData]);
+
   const getProductDetailUrl = (p: ProductWithCategory) => {
     // productPageUrl from the sheet has no protocol (e.g. "getmeds.ph/cancer-medicines/..."),
     // so the leading domain segment has to be stripped even without an "https://" to match.
     if (p.productPageUrl) {
-      return '/' + p.productPageUrl.replace(/^https?:\/\//, '').replace(/^[^/]+\/?/, '');
+      return toPath(p.productPageUrl);
     }
     return `/${p.categoryFolder || 'product-range'}/${p.slug?.current || ''}`;
   };
@@ -624,8 +649,9 @@ export default function CancerMedicines() {
     if (typeof window !== 'undefined') {
       const matched = processedCats.find(c => c.category.toLowerCase() === category.toLowerCase());
       if (matched && matched.slug) {
-        const targetPath = subCategory !== 'All' 
-          ? `/${matched.slug}/${subCategory.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}`
+        const targetPath = subCategory !== 'All'
+          ? conditionHubPaths.get(subCategory.toLowerCase())
+            ?? `/${matched.slug}/${subCategory.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}`
           : `/${matched.slug}`;
         if (window.location.pathname !== targetPath) {
           window.history.pushState(null, '', targetPath);
