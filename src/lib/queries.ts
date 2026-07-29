@@ -525,7 +525,9 @@ export async function getHeroSlides() {
 // ─────────────────────────────────────────────
 
 export interface CategoryImageLink {
-  categoryKey: string
+  categoryKeys?: string[]
+  /** @deprecated superseded by categoryKeys — kept for entries published before merging support */
+  categoryKey?: string
   categoryLabel?: string
   image?: any
   order?: number

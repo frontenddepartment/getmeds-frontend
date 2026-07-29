@@ -1,12 +1,12 @@
 ﻿import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { useHeroSlides, useImageMapper, useNews, useSiteSettings } from '../lib/useSanity';
+import { useHeroSlides, useImageMapper, useNews, useSiteSettings, useCategories } from '../lib/useSanity';
 import { setPageMeta } from '../lib/seo';
 import { getApiUrl } from '../lib/api';
 import { injectHTML } from '../lib/injectHTML';
 import { urlFor } from '../lib/sanity';
 import { sanityQuery } from '../lib/sanityProxy';
 import { LinkableImage } from '../lib/LinkableImage';
-import { computeCategoryKey } from '../lib/categoryImageKey';
+import { computeCategoryKey, linkCategoryKeys } from '../lib/categoryImageKey';
 
 
 // Declare global tailwind interface
@@ -91,6 +91,10 @@ export default function GetMedsHomepage() {
   const { data: newsItems } = useNews();
   const { data: settings } = useSiteSettings();
   const { data: heroSlidesData } = useHeroSlides();
+  // Same subcategory data already used for the sidebar flyout on the product-range/cancer-medicines
+  // pages (getCategories() aggregates each Excel product's condition/subCategory names under its
+  // Product Range category) — reused here rather than inventing a separate data source.
+  const { data: excelCategories } = useCategories();
   const newsSliderRef = useRef<HTMLDivElement>(null);
   const [activeNewsSlide, setActiveNewsSlide] = useState(0);
 
@@ -145,6 +149,31 @@ export default function GetMedsHomepage() {
     return map;
   }, [therapCardsBase]);
 
+  // Real (non-fabricated) subcategory names per Product Range category — the same aggregation
+  // getCategories() already builds for the cancer-medicines sidebar flyout, keyed here by every
+  // individual category name a multi-category Excel cell splits into (so it lines up with how
+  // "Category Featured" keys — and merged cards — are derived; see categoryImageKey.ts).
+  const subcategoriesByKey = useMemo(() => {
+    const map = new Map<string, Set<string>>();
+    (excelCategories || []).forEach((cat) => {
+      String(cat.category || '')
+        .split(/[\/,]/)
+        .map((s) => s.trim())
+        .filter(Boolean)
+        .forEach((name) => {
+          const key = computeCategoryKey(name);
+          if (!key) return;
+          const set = map.get(key) || new Set<string>();
+          (cat.subcategory || []).forEach((sub) => set.add(sub));
+          map.set(key, set);
+        });
+    });
+    return map;
+  }, [excelCategories]);
+
+  const subcategoriesForKeys = (keys: string[]): string[] =>
+    Array.from(new Set(keys.flatMap((k) => Array.from(subcategoriesByKey.get(k) || []))));
+
   const therapCards = useMemo(() => {
     // Still waiting on the Studio's "Category Featured" list — render nothing rather than the
     // hardcoded default set: showing the static images first and then swapping to the real
@@ -163,27 +192,32 @@ export default function GetMedsHomepage() {
         // orphaned "Home Page Assets" pageAsset docs' broken Sanity URLs instead of a real
         // image, causing the card to intermittently show the no-image placeholder on reload.
         img: getCategoryImage(card.name, card.fallback),
+        subcategories: subcategoriesForKeys([computeCategoryKey(card.name)]),
       }));
     }
 
     // Otherwise, show exactly what's featured, in the order set there (drag-and-drop in the
     // Studio) — a category removed from Featured disappears from the home page, not just
-    // falls to the end.
+    // falls to the end. A card can merge 2+ categories (linkCategoryKeys), shown as "Category 1
+    // / Category 2" via categoryLabel, with subcategories pooled from every merged category.
     const sorted = [...categoryImages].sort(
       (a, b) => (a.order ?? Number.MAX_SAFE_INTEGER) - (b.order ?? Number.MAX_SAFE_INTEGER)
     );
     return sorted.map((entry) => {
-      const base = therapBaseByKey.get(entry.categoryKey);
+      const keys = linkCategoryKeys(entry);
+      const base = keys.length === 1 ? therapBaseByKey.get(keys[0]) : undefined;
       const fallback = base?.fallback || "assets/therapeuticareaoncology.png";
+      const primaryKey = keys[0] || '';
       return {
-        name: base?.name || entry.categoryLabel || entry.categoryKey,
+        name: entry.categoryLabel || base?.name || primaryKey,
         marquee: base?.marquee || "",
-        link: base?.link || `/cancer-medicines/${entry.categoryKey}`,
+        link: base?.link || `/cancer-medicines/${primaryKey}`,
         fallback,
-        img: getCategoryImage(entry.categoryKey, fallback),
+        img: getCategoryImage(primaryKey, fallback),
+        subcategories: subcategoriesForKeys(keys),
       };
     });
-  }, [categoryImages, categoryImagesLoading, therapCardsBase, therapBaseByKey, getCategoryImage]);
+  }, [categoryImages, categoryImagesLoading, therapCardsBase, therapBaseByKey, getCategoryImage, subcategoriesByKey]);
 
 
   // --- Hero Slider ---
@@ -417,7 +451,39 @@ export default function GetMedsHomepage() {
       },
       { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
     );
-    document.querySelectorAll('.ca-anim').forEach(el => caObserver.observe(el));
+    const observeCaAnim = (el: Element) => {
+      if (!el.classList.contains('ca-in')) caObserver.observe(el);
+    };
+    document.querySelectorAll('.ca-anim').forEach(observeCaAnim);
+
+    // A one-time querySelectorAll only catches elements already in the DOM at mount. Anything
+    // that gains the ca-anim class later never gets picked up otherwise — e.g. the Therapeutic
+    // Areas header, which is gated behind the "Category Featured" data still loading: React
+    // reconciles the loading-skeleton's plain <h2> and the loaded real <h2> as the same DOM node
+    // (same tag, same position) and just patches its className, rather than replacing the node —
+    // so this needs to watch attribute changes, not just newly-inserted nodes (childList alone
+    // misses it, since no new node is ever inserted for this case).
+    const caMutationObserver = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.type === 'attributes') {
+          if (mutation.target instanceof Element && mutation.target.matches('.ca-anim')) {
+            observeCaAnim(mutation.target);
+          }
+          return;
+        }
+        mutation.addedNodes.forEach((node) => {
+          if (!(node instanceof Element)) return;
+          if (node.matches('.ca-anim')) observeCaAnim(node);
+          node.querySelectorAll?.('.ca-anim').forEach(observeCaAnim);
+        });
+      });
+    });
+    caMutationObserver.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['class'],
+    });
 
     // 6. Dynamically load the navbar and footer components
     const navContainer = document.getElementById('navbar-container');
@@ -438,6 +504,7 @@ export default function GetMedsHomepage() {
       window.removeEventListener('scroll', handleScroll);
       revealElements.forEach(el => observer.unobserve(el));
       caObserver.disconnect();
+      caMutationObserver.disconnect();
     };
   }, []);
 
@@ -961,6 +1028,38 @@ export default function GetMedsHomepage() {
             <style>{`
               @keyframes therapProgress { from { width: 0% } to { width: 100% } }
               .therap-progress-anim { animation: therapProgress 5s linear forwards; }
+
+              /*
+               * Fallback styling for the card gradient/text overlay, independent of Tailwind's
+               * runtime CDN script (cdn.tailwindcss.com generates utility CSS in JS on page
+               * load). Content that only appears after the async category data resolves can
+               * end up unstyled if that script hasn't (re)scanned the DOM in time — showing a
+               * bright, uncovered image with no name/marquee/link text. These plain-CSS rules
+               * guarantee the overlay renders correctly regardless of the CDN script's timing.
+               */
+              .therap-card-gradient {
+                background-image: linear-gradient(to top, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0));
+              }
+              .therap-card-gradient-mobile {
+                background-image: linear-gradient(to top, rgba(0, 0, 0, 0.70), rgba(0, 0, 0, 0.20), rgba(0, 0, 0, 0));
+              }
+              .therap-card-text h3 {
+                color: #fff;
+              }
+              .therap-card-text .marquee-track span {
+                color: rgba(255, 255, 255, 0.75);
+              }
+              .therap-card-pill {
+                color: #fff;
+                background-color: rgba(255, 255, 255, 0.2);
+              }
+              .therap-card-pill:hover {
+                background-color: rgba(255, 255, 255, 0.3);
+              }
+              .therap-card-subpill {
+                color: rgba(255, 255, 255, 0.9);
+                background-color: rgba(255, 255, 255, 0.15);
+              }
             `}</style>
             <div className="max-w-7xl mx-auto bg-gray-100 rounded-none md:rounded-3xl overflow-hidden">
 
@@ -985,9 +1084,9 @@ export default function GetMedsHomepage() {
                       }}
                     />
                   ))}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent therap-card-gradient-mobile" />
                   {/* Card info overlay */}
-                  <div className="absolute bottom-5 left-4 right-4 z-10 flex items-end justify-between">
+                  <div className="absolute bottom-5 left-4 right-4 z-10 flex items-end justify-between therap-card-text">
                     <div>
                       <h3 className="text-white text-xs md:text-lg font-bold mb-0.5">{therapCards[therapMobileActive]?.name}</h3>
                       <div className="overflow-hidden w-40 sm:w-48">
@@ -996,10 +1095,20 @@ export default function GetMedsHomepage() {
                           <span className="text-white/70 text-[11px] pr-4">{therapCards[therapMobileActive]?.marquee}</span>
                         </div>
                       </div>
+                      {!!therapCards[therapMobileActive]?.subcategories?.length && (
+                        <div className="flex flex-wrap gap-1 mt-1">
+                          {therapCards[therapMobileActive].subcategories.slice(0, 2).map((sub) => (
+                            <span key={sub} className="text-white/90 text-[9px] bg-white/15 rounded-full px-2 py-0.5 therap-card-subpill">{sub}</span>
+                          ))}
+                          {therapCards[therapMobileActive].subcategories.length > 2 && (
+                            <span className="text-white/70 text-[9px]">+{therapCards[therapMobileActive].subcategories.length - 2}</span>
+                          )}
+                        </div>
+                      )}
                     </div>
                     <a
                       href={therapCards[therapMobileActive]?.link}
-                      className="text-[11px] font-semibold text-white bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full px-3.5 py-1.5 transition-colors shrink-0"
+                      className="text-[11px] font-semibold text-white bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full px-3.5 py-1.5 transition-colors shrink-0 therap-card-pill"
                     >
                       See All
                     </a>
@@ -1087,16 +1196,17 @@ export default function GetMedsHomepage() {
                                 }
                               }}
                             />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/15 to-transparent"></div>
-                            <div className="absolute bottom-0 left-0 right-0 p-4">
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/15 to-transparent therap-card-gradient"></div>
+                            <div className="absolute bottom-0 left-0 right-0 p-4 therap-card-text">
                               <h3 className="text-white text-xl font-bold mb-1">{card.name}</h3>
                               <div className="overflow-hidden mb-1">
                                 <div className="marquee-track">
-                                  <span className="text-white/75 text-xs pr-6">{card.marquee}</span>
-                                  <span className="text-white/75 text-xs pr-6">{card.marquee}</span>
+                                  <span className="text-white/75 text-xs pr-6">{card.subcategories?.join(' • ')}</span>
+                                  <span className="text-white/75 text-xs pr-6">{'•'}</span>
+                                  <span className="text-white/75 text-xs pr-6">{card.subcategories?.join(' • ')}</span>
                                 </div>
                               </div>
-                              <a href={card.link} className="text-xs font-semibold text-white bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full px-3 py-1 transition-colors">See All</a>
+                              <a href={card.link} className="text-xs font-semibold text-white bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full px-3 py-1 transition-colors therap-card-pill">See All</a>
                             </div>
                           </div>
                         ))}
