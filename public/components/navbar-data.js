@@ -67,8 +67,54 @@ function deriveCategories(rows) {
 // Dynamically populate Cancer Medicines dropdown and mobile accordion from the live product
 // catalog — the same "bulk catalog" doc the frontend reads (see fetchProductsFromExcel() in
 // src/lib/queries.ts).
+// Mirrors normalizeKeyPart()/linkCategoryKeys() in src/lib/categoryImageKey.ts.
+function normalizeKeyPart(value) {
+    return String(value || '')
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+}
+
+function linkCategoryKeys(link) {
+    if (link.categoryKeys && link.categoryKeys.length) return link.categoryKeys;
+    return link.categoryKey ? [link.categoryKey] : [];
+}
+
+// Mirrors getFeaturedCategoryOrder() in src/lib/categoryImageKey.ts — splits a (possibly already
+// merged, e.g. "Nephrology / Renal") category name on "/" and "," and requires EVERY part to
+// belong to the same featured entry ("any part" would wrongly match e.g. "Hematology / OB-GYN"
+// against a featured "Hematology" entry just because they share that one word). Returns
+// undefined (not featured) if nothing matches.
+function getFeaturedOrder(categoryName, categoryImages) {
+    if (!categoryImages || categoryImages.length === 0) return undefined;
+    const parts = String(categoryName)
+        .split(/[\/,]/)
+        .map((s) => normalizeKeyPart(s.trim()))
+        .filter(Boolean);
+    if (parts.length === 0) return undefined;
+    for (const link of categoryImages) {
+        const keys = linkCategoryKeys(link);
+        if (parts.every((p) => keys.includes(p))) return link.order;
+    }
+    return undefined;
+}
+
+// Sorts categories by Category Featured order (Studio drag order) first, then preserves each
+// unfeatured category's existing relative order after every featured one.
+function sortByFeaturedOrder(categories, categoryImages) {
+    return categories
+        .map((cat, index) => ({ cat, index, order: getFeaturedOrder(cat.category, categoryImages) }))
+        .sort((a, b) => {
+            const ao = a.order === undefined ? Number.MAX_SAFE_INTEGER : a.order;
+            const bo = b.order === undefined ? Number.MAX_SAFE_INTEGER : b.order;
+            return ao !== bo ? ao - bo : a.index - b.index;
+        })
+        .map((entry) => entry.cat);
+}
+
 function fetchAndPopulateDropdown() {
-    const catalogQuery = '*[_type == "product" && (remarks == "present" || remarks == "active") && defined(title)] | order(_updatedAt desc)[0]{ json_data }';
+    const catalogQuery = '*[_type == "product" && (remarks == "present" || remarks == "active") && defined(title)] | order(_updatedAt desc)[0]{ json_data, categoryImages }';
     const projectId = document.querySelector('meta[name="getmeds-sanity-project-id"]')?.content || 's7ocz8zp';
     const dataset = document.querySelector('meta[name="getmeds-sanity-dataset"]')?.content || 'production';
     const apiVersion = document.querySelector('meta[name="getmeds-sanity-api-version"]')?.content || '2021-10-21';
@@ -88,6 +134,8 @@ function fetchAndPopulateDropdown() {
                 console.warn('[Getmeds] Failed to parse product catalog:', err);
             }
             if (rows.length === 0) return;
+
+            const categoryImages = catalogData?.result?.categoryImages || [];
 
             const subcategorySpecials = {
                 'non-small-cell-lung-cancer': 'lung-cancer',
@@ -158,7 +206,12 @@ function fetchAndPopulateDropdown() {
             // live category data to build a menu display from.
             window.getmedsResolveConditionHubPath = (name) => resolveHubPath(name, getSubcategorySlug(name));
 
-            const categories = deriveCategories(rows);
+            // Featured categories (Studio's "Category Featured" tab, drag-ordered) come first, in
+            // that order; unfeatured ones keep deriveCategories()'s alphabetical order, after them.
+            // This reordering flows through the Jaccard grouping and categoryConfig column
+            // assignment below unchanged — it only changes relative order within a column/list,
+            // not which column a category lands in or how categories get merged.
+            const categories = sortByFeaturedOrder(deriveCategories(rows), categoryImages);
             if (categories.length === 0) return;
 
             // Grouping config to keep the static layout and style
@@ -174,7 +227,7 @@ function fetchAndPopulateDropdown() {
                 'allergy': { col: 3, title: 'Respiratory / Allergy', mergeWith: 'respiratory' },
                 'renal': { col: 3, title: 'Nephrology / Renal', mergeWith: 'nephrology' },
                 'nephrology': { col: 3, title: 'Nephrology / Renal', mergeWith: 'renal' },
-                'pain-management': { col: 3, title: 'Pain Mgt.' },
+                'pain-management': { col: 3, title: 'Pain Management' },
                 'rheumatology': { col: 3, title: 'Rheumatology' },
                 'gynecology': { col: 2, title: 'Gynecology' },
                 'obstetrician': { col: 2, title: 'Obstetrician' },

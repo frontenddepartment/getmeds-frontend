@@ -4,6 +4,7 @@ import { useProducts, useCategories, useImageMapper } from '../lib/useSanity';
 import { urlFor } from '../lib/sanity';
 import type { Product as SanityProduct, Category } from '../types/sanity';
 import { injectHTML } from '../lib/injectHTML';
+import { sortByFeaturedOrder } from '../lib/categoryImageKey';
 
 
 interface ProductWithCategory extends Omit<SanityProduct, 'category'> {
@@ -73,7 +74,7 @@ const getProductConditions = (p: { conditions?: string[]; subCategory?: string }
   p.conditions && p.conditions.length ? p.conditions : (p.subCategory ? [p.subCategory] : []);
 
 export default function CancerMedicines() {
-  const { getImage } = useImageMapper('product-range');
+  const { getImage, categoryImages } = useImageMapper('product-range');
   const { data: productsDataRaw, loading: productsLoading } = useProducts();
   const productsData = productsDataRaw as ProductWithCategory[] | null;
   const { data: categoriesData, loading: categoriesLoading } = useCategories();
@@ -225,7 +226,7 @@ export default function CancerMedicines() {
   const processedCats = useMemo(() => {
     if (!categoriesData) return [];
 
-    return categoriesData
+    const mapped = categoriesData
       .filter((cat) => cat.category && cat.slug?.current && cat.subcategory && Array.isArray(cat.subcategory) && cat.subcategory.length > 0)
       .map((cat) => ({
         category: cat.category,
@@ -233,7 +234,12 @@ export default function CancerMedicines() {
         slug: cat.slug.current,
         subcategory: (cat.subcategory || []).filter(Boolean)
       }));
-  }, [categoriesData]);
+
+    // Featured categories (Studio's "Category Featured" tab, drag-ordered) show first, in that
+    // order; everything else keeps its existing (alphabetical) relative order, after them. Drives
+    // both the sidebar list and the Therapeutic Areas filter, which both consume this array.
+    return sortByFeaturedOrder(mapped, (cat) => cat.category, categoryImages);
+  }, [categoriesData, categoryImages]);
 
   // Helper to resolve condition by slug or display name
   const resolveConditionName = (target: string, cats: typeof processedCats) => {
