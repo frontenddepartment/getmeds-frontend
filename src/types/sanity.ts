@@ -931,6 +931,13 @@ export interface PageAsset {
     enableLink?: boolean
     link?: string
   }>
+  videos?: Array<{
+    video?: { asset?: { url?: string; originalFilename?: string; mimeType?: string } }
+    thumbnail?: SanityImage
+    altText?: string
+    enableLink?: boolean
+    link?: string
+  }>
   // Legacy fields (kept for backwards compatibility during migration)
   page?: string
   location?: string

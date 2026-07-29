@@ -427,6 +427,49 @@ export function useImageMapper(_page?: string) {
   }
 
   /**
+   * getVideo(name, fallback) — returns the URL of the first video in the named slot.
+   * Falls back to the local `fallback` path if Sanity has no video yet. Unlike images,
+   * Sanity file assets resolve to a plain CDN URL already, so no urlFor() is needed.
+   */
+  const getVideo = (name: string, fallback: string): string => {
+    if (!allAssets) return fallback
+    const doc = allAssets.find((asset) => asset.name === name)
+    const url = doc?.videos?.[0]?.video?.asset?.url
+    return url || fallback
+  }
+
+  /**
+   * getVideoThumbnail(name, fallback) — returns the poster image URL for the named
+   * slot's first video. Only returns a URL if the editor uploaded a custom thumbnail
+   * (there's no way to auto-derive a video poster the way getLowResImage does for images);
+   * otherwise returns `fallback` unchanged (pass '' to mean "no poster").
+   */
+  const getVideoThumbnail = (name: string, fallback: string): string => {
+    if (!allAssets) return fallback
+    const doc = allAssets.find((asset) => asset.name === name)
+    const thumbnail = doc?.videos?.[0]?.thumbnail
+    if (thumbnail) {
+      try {
+        return urlFor(thumbnail).url()
+      } catch (err) {
+        console.error('Error generating URL in getVideoThumbnail:', err)
+      }
+    }
+    return fallback
+  }
+
+  /**
+   * getVideoLink(name) — returns the redirect URL for the named slot's first video,
+   * or null if that video isn't marked clickable (or has no video yet).
+   */
+  const getVideoLink = (name: string): string | null => {
+    if (!allAssets) return null
+    const doc = allAssets.find((asset) => asset.name === name)
+    const slide = doc?.videos?.[0]
+    return slide?.enableLink && slide.link ? slide.link : null
+  }
+
+  /**
    * getCategoryImage(categoryName, fallback) — returns the image URL linked to the named
    * Product Range category on the Products document's "Category Featured" tab (matching any
    * category merged into that entry, not just a single-category one). Falls back to the local
@@ -462,6 +505,9 @@ export function useImageMapper(_page?: string) {
     getImageLink,
     getSliderImages,
     getSliderImageLinks,
+    getVideo,
+    getVideoThumbnail,
+    getVideoLink,
     getCategoryImage,
     getCategoryOrder,
     // The raw curated "Category Featured" list (which categories are featured, and in what
