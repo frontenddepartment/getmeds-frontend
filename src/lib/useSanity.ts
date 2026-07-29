@@ -45,6 +45,8 @@ import {
   getPageAssets,
   getPageAssetsByPage,
   getHeroSlides,
+  getCategoryImages,
+  type CategoryImageLink,
   getNews,
   getNewsById,
   getNewsBySlug,
@@ -52,6 +54,7 @@ import {
 } from './queries'
 
 import { urlFor, getLowResUrl } from './sanity'
+import { computeCategoryKey } from './categoryImageKey'
 
 import type {
   Product,
@@ -284,6 +287,10 @@ export function usePageAssets(_page?: string) {
   return useFetch<PageAsset[]>(getPageAssets)
 }
 
+export function useCategoryImages() {
+  return useFetch<CategoryImageLink[]>(getCategoryImages)
+}
+
 export function useHeroSlides() {
   const { data, loading, error } = useFetch<PageAsset>(getHeroSlides as any)
   return { data: data?.images || null, loading, error }
@@ -308,6 +315,7 @@ export function useHeroSlides() {
 export function useImageMapper(_page?: string) {
   const { data: allAssets, loading, error } = usePageAssets()
   const { data: settings } = useSiteSettings()
+  const { data: categoryImages, loading: categoryImagesLoading } = useCategoryImages()
 
   /**
    * getImage(name, fallback) — returns the first image URL for the named slot.
@@ -418,7 +426,51 @@ export function useImageMapper(_page?: string) {
     return doc.images.map((slide: any) => (slide?.enableLink && slide.link ? slide.link : null))
   }
 
-  return { getImage, getLowResImage, getImageLink, getSliderImages, getSliderImageLinks, loading, error }
+  /**
+   * getCategoryImage(categoryName, fallback) — returns the image URL linked to the named
+   * Product Range category on the Products document's "Category Image" tab. Falls back to
+   * the local `fallback` path if that category has no image linked yet.
+   */
+  const getCategoryImage = (categoryName: string, fallback: string): string => {
+    if (!categoryImages) return fallback
+    const key = computeCategoryKey(categoryName)
+    const link = categoryImages.find((c) => c.categoryKey === key)
+    if (link?.image) {
+      try {
+        return urlFor(link.image).url()
+      } catch (err) {
+        console.error('Error generating category image URL:', err)
+      }
+    }
+    return fallback
+  }
+
+  /**
+   * getCategoryOrder(categoryName) — returns the display order set for the named category on
+   * the Products document's "Category Featured" tab, or undefined if it isn't featured there.
+   */
+  const getCategoryOrder = (categoryName: string): number | undefined => {
+    if (!categoryImages) return undefined
+    const key = computeCategoryKey(categoryName)
+    return categoryImages.find((c) => c.categoryKey === key)?.order
+  }
+
+  return {
+    getImage,
+    getLowResImage,
+    getImageLink,
+    getSliderImages,
+    getSliderImageLinks,
+    getCategoryImage,
+    getCategoryOrder,
+    // The raw curated "Category Featured" list (which categories are featured, and in what
+    // order) — for pages that need to build their own list/grid from it (see home.tsx's
+    // Therapeutic Areas section) rather than just looking up one category at a time.
+    categoryImages,
+    categoryImagesLoading,
+    loading,
+    error,
+  }
 }
 
 // ─────────────────────────────────────────────

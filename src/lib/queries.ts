@@ -519,6 +519,23 @@ export async function getHeroSlides() {
   return sanityQuery<PageAsset[]>('pageAsset.heroSlides')
 }
 
+// ─────────────────────────────────────────────
+// Category Images (per Product Range category, managed on the Products
+// document's "Category Image" Studio tab)
+// ─────────────────────────────────────────────
+
+export interface CategoryImageLink {
+  categoryKey: string
+  categoryLabel?: string
+  image?: any
+  order?: number
+}
+
+export async function getCategoryImages(): Promise<CategoryImageLink[]> {
+  const result = await sanityQuery<{ categoryImages?: CategoryImageLink[] }>('product.categoryImages')
+  return result?.categoryImages || []
+}
+
 export async function getGoogleSpreadsheetBySlug(slug: string) {
   return sanityQuery<{ _id: string; spreadsheetId: string; link: string } | null>('googleSpreadsheet.bySlug', { slug })
 }

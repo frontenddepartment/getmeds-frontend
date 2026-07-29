@@ -16,6 +16,11 @@ const SANITY_QUERIES: Record<string, string> = {
       productImages
     }
   `,
+  "product.categoryImages": `
+    *[_type == "product" && (remarks == "present" || remarks == "active") && defined(title)] | order(_updatedAt desc)[0] {
+      categoryImages
+    }
+  `,
   "product.individualDocs": `
     *[_type == "product" && !defined(title) && (!defined(remarks) || remarks == "present" || remarks == "active")] {
       _id,
