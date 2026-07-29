@@ -54,7 +54,7 @@ import {
 } from './queries'
 
 import { urlFor, getLowResUrl } from './sanity'
-import { computeCategoryKey } from './categoryImageKey'
+import { computeCategoryKey, linkCategoryKeys } from './categoryImageKey'
 
 import type {
   Product,
@@ -471,13 +471,14 @@ export function useImageMapper(_page?: string) {
 
   /**
    * getCategoryImage(categoryName, fallback) — returns the image URL linked to the named
-   * Product Range category on the Products document's "Category Image" tab. Falls back to
-   * the local `fallback` path if that category has no image linked yet.
+   * Product Range category on the Products document's "Category Featured" tab (matching any
+   * category merged into that entry, not just a single-category one). Falls back to the local
+   * `fallback` path if that category has no image linked yet.
    */
   const getCategoryImage = (categoryName: string, fallback: string): string => {
     if (!categoryImages) return fallback
     const key = computeCategoryKey(categoryName)
-    const link = categoryImages.find((c) => c.categoryKey === key)
+    const link = categoryImages.find((c) => linkCategoryKeys(c).includes(key))
     if (link?.image) {
       try {
         return urlFor(link.image).url()
@@ -495,7 +496,7 @@ export function useImageMapper(_page?: string) {
   const getCategoryOrder = (categoryName: string): number | undefined => {
     if (!categoryImages) return undefined
     const key = computeCategoryKey(categoryName)
-    return categoryImages.find((c) => c.categoryKey === key)?.order
+    return categoryImages.find((c) => linkCategoryKeys(c).includes(key))?.order
   }
 
   return {

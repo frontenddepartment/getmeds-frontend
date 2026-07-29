@@ -14,3 +14,18 @@ function normalizeKeyPart(value: any): string {
 export function computeCategoryKey(categoryName: string): string {
   return normalizeKeyPart(categoryName)
 }
+
+export interface MergeableCategoryLink {
+  categoryKeys?: string[]
+  categoryKey?: string
+}
+
+/**
+ * The category keys a Category Featured entry actually covers — categoryKeys when present
+ * (one entry, or several when merged into one card, e.g. "Nephrology / Renal"), falling back to
+ * the legacy single categoryKey field for entries published before merging was supported.
+ */
+export function linkCategoryKeys(link: MergeableCategoryLink): string[] {
+  if (link.categoryKeys && link.categoryKeys.length) return link.categoryKeys
+  return link.categoryKey ? [link.categoryKey] : []
+}
