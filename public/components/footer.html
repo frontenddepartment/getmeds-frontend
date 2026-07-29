@@ -1,5 +1,5 @@
 <!-- Footer -->
-<footer class="bg-[#1A1D2B] text-gray-300 pt-16 pb-8">
+<footer id="site-footer" class="bg-[#1A1D2B] text-gray-300 pt-16 pb-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-12">
 
@@ -410,6 +410,90 @@
 </div>
 
 <style>
+    /*
+     * Fallback styling: the site loads Tailwind via the runtime CDN script
+     * (cdn.tailwindcss.com), which generates utility CSS in JS on page load.
+     * If that script is blocked, delayed, or throttled (content blockers,
+     * Low Power Mode, in-app browsers — seen on some iPhones), the footer
+     * would render as unstyled white/stacked HTML. These plain-CSS rules
+     * replicate the intended look independently of Tailwind so the footer
+     * is consistent across devices/browsers regardless of CDN reliability.
+     */
+    #site-footer {
+        background-color: #1A1D2B;
+        color: #d1d5db;
+        padding-top: 4rem;
+        padding-bottom: 2rem;
+    }
+    #site-footer > .max-w-7xl {
+        max-width: 80rem;
+        margin-left: auto;
+        margin-right: auto;
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    #site-footer h4 {
+        color: #fff;
+    }
+    #site-footer .grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+    #site-footer .space-y-6 > * + * {
+        margin-top: 1.5rem;
+    }
+    #site-footer #footer-contact-list > li + li {
+        margin-top: 1rem;
+    }
+    #site-footer .border-t {
+        border-top: 1px solid #1f2937;
+        padding-top: 2rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.75rem;
+        color: #6b7280;
+    }
+    #site-footer #footer-legal-links {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.5rem 1.5rem;
+        margin-top: 1rem;
+    }
+    @media (min-width: 640px) {
+        #site-footer > .max-w-7xl {
+            padding-left: 1.5rem;
+            padding-right: 1.5rem;
+        }
+    }
+    @media (min-width: 768px) {
+        #site-footer .grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        #site-footer .border-t {
+            flex-direction: row;
+        }
+        #site-footer #footer-legal-links {
+            margin-top: 0;
+        }
+    }
+    @media (min-width: 1024px) {
+        #site-footer > .max-w-7xl {
+            padding-left: 2rem;
+            padding-right: 2rem;
+        }
+        #site-footer .grid {
+            grid-template-columns: repeat(5, 1fr);
+        }
+        #site-footer .lg\:col-span-2 {
+            grid-column: span 2;
+        }
+    }
+
     .footer-nav-grid {
         list-style: none;
         display: flex;
