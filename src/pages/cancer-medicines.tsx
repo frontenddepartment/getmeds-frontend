@@ -109,8 +109,6 @@ export default function CancerMedicines() {
   const [activeFlyoutCat, setActiveFlyoutCat] = useState<any | null>(null);
   const [flyoutVisible, setFlyoutVisible] = useState(false);
   const [filterPanelOpen, setFilterPanelOpen] = useState(false);
-  const [filterAvailability, setFilterAvailability] = useState<'all' | 'instock' | 'outofstock'>('all');
-  const [filterForms, setFilterForms] = useState<Set<string>>(new Set());
   const filterPanelRef = useRef<HTMLDivElement>(null);
   const [inquiryDropdown, setInquiryDropdown] = useState<{
     rowId: string;
@@ -176,6 +174,7 @@ export default function CancerMedicines() {
 
   const searchWrapperRef = useRef<HTMLDivElement>(null);
   const tableRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const navContainer = document.getElementById('navbar-container');
@@ -451,14 +450,7 @@ export default function CancerMedicines() {
     });
   };
 
-  const FORM_GROUPS: { label: string; match: (f: string) => boolean }[] = [
-    { label: 'Capsule', match: f => /capsule/i.test(f) },
-    { label: 'Tablet',  match: f => /tablet/i.test(f) },
-    { label: 'Vial',    match: f => /inject|infus|lyophil|powder\s+for|concentrate|ampoule|vial/i.test(f) },
-    { label: 'Bottle',  match: f => /bottle|syrup|oral\s+sol|oral\s+susp|drops/i.test(f) },
-  ];
-
-  const activeFilterCount = (filterAvailability !== 'all' ? 1 : 0) + filterForms.size;
+  const activeFilterCount = selectedCategory.category !== 'All' ? 1 : 0;
 
   const sorted = useMemo(() => {
     const categoryFiltered = getFiltered(selectedCategory);
@@ -466,30 +458,22 @@ export default function CancerMedicines() {
     const searchFiltered = searchTerm
       ? categoryFiltered.filter(p => {
           const search = searchTerm.toLowerCase();
+          const categoryText = (p.excelCategory || (typeof p.category === 'string' ? p.category : p.category?.category) || '').toLowerCase();
+          const categoryFolderText = (p.categoryFolder || '').toLowerCase();
+          const conditions = getProductConditions(p);
           return (
             p.name?.toLowerCase().includes(search) ||
             (p.brandName && p.brandName.toLowerCase().includes(search)) ||
             (p.genericName && p.genericName.toLowerCase().includes(search)) ||
-            (p.subCategory && p.subCategory.toLowerCase().includes(search))
+            (p.subCategory && p.subCategory.toLowerCase().includes(search)) ||
+            categoryText.includes(search) ||
+            categoryFolderText.includes(search) ||
+            conditions.some(c => c.toLowerCase().includes(search))
           );
         })
       : categoryFiltered;
 
-    const fullyFiltered = searchFiltered.filter(p => {
-      if (filterAvailability === 'instock' && p.availability === false) return false;
-      if (filterAvailability === 'outofstock' && p.availability !== false) return false;
-      if (filterForms.size > 0) {
-        const form = p.form || '';
-        const matched = Array.from(filterForms).some(label => {
-          const group = FORM_GROUPS.find(g => g.label === label);
-          return group ? group.match(form) : false;
-        });
-        if (!matched) return false;
-      }
-      return true;
-    });
-
-    return [...fullyFiltered].sort((a, b) => {
+    return [...searchFiltered].sort((a, b) => {
       const nameA = (a.brandName || a.name || '').toLowerCase();
       const nameB = (b.brandName || b.name || '').toLowerCase();
       if (sortBy === 'Name: A → Z') return nameA.localeCompare(nameB);
@@ -503,7 +487,7 @@ export default function CancerMedicines() {
       return 0;
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [productsData, categoriesData, processedCats, selectedCategory, searchTerm, filterAvailability, filterForms, sortBy]);
+  }, [productsData, categoriesData, processedCats, selectedCategory, searchTerm, sortBy]);
 
   // ── Search History & Suggestions Logic ──────────────────
   const onEnterSearch = (query: string) => {
@@ -702,8 +686,14 @@ export default function CancerMedicines() {
     return pages;
   };
 
+  // Scrolls the product list's own scroll container back to the top (hero
+  // section) on page change. Using scrollIntoView on tableRef here caused
+  // mobile Safari/Chrome to land near the footer instead — once the page
+  // content re-renders with a different item count, the element's position
+  // shifts and scrollIntoView's target ends up miscalculated. Setting
+  // scrollTop directly on the container is unambiguous regardless of layout.
   const scrollToTable = () => {
-    if (tableRef.current) tableRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (scrollContainerRef.current) scrollContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const isCatParentActive = (cat: any) =>
@@ -834,7 +824,7 @@ export default function CancerMedicines() {
         )}
 
         {/* MAIN CONTENT COLUMN */}
-        <div className="flex-1 min-w-0 overflow-y-auto product-range-scroll" style={{ transition: 'all 0.3s ease' }}>
+        <div ref={scrollContainerRef} className="flex-1 min-w-0 overflow-y-auto product-range-scroll" style={{ transition: 'all 0.3s ease' }}>
 
           {/* Hero Banner */}
           <section className="w-full px-4 md:px-6 pt-5 pb-4">
@@ -906,7 +896,7 @@ export default function CancerMedicines() {
                     <i className="fa-solid fa-magnifying-glass text-gray-400 text-[13px]" />
                     <input
                       type="text"
-                      placeholder="Search products..."
+                      placeholder="Search by brand, generic name, category, or disease..."
                       value={searchTerm}
                       onChange={e => { setSearchTerm(e.target.value); setCurrentPage(1); }}
                       onFocus={() => setShowSuggestions(true)}
@@ -932,14 +922,15 @@ export default function CancerMedicines() {
                       )}
                     </button>
 
-                    {/* Filter Panel */}
+                    {/* Filter Panel — pick a therapeutic area/category to filter the
+                        table, the same selection the sidebar drives */}
                     {filterPanelOpen && (
-                      <div className="absolute right-0 top-full mt-2 w-72 bg-white rounded-2xl shadow-xl border border-gray-100 p-4 z-50">
+                      <div className="absolute right-0 top-full mt-2 w-72 bg-white rounded-2xl shadow-xl border border-gray-100 p-4 z-50 max-h-80 overflow-y-auto">
                         <div className="flex items-center justify-between mb-4">
-                          <h4 className="text-[13px] font-semibold text-gray-800">Filter Products</h4>
+                          <h4 className="text-[13px] font-semibold text-gray-800">Therapeutic Areas</h4>
                           {activeFilterCount > 0 && (
                             <button
-                              onClick={() => { setFilterAvailability('all'); setFilterForms(new Set()); setCurrentPage(1); }}
+                              onClick={() => { selectCategory('All', 'All'); setFilterPanelOpen(false); }}
                               className="text-[11px] font-semibold text-primary hover:text-blue-700 transition"
                             >
                               Clear all
@@ -947,51 +938,30 @@ export default function CancerMedicines() {
                           )}
                         </div>
 
-                        {/* Availability */}
-                        <div className="mb-4">
-                          <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-2">Availability</p>
-                          <div className="flex gap-2">
-                            {(['all', 'instock', 'outofstock'] as const).map(v => (
-                              <button
-                                key={v}
-                                onClick={() => { setFilterAvailability(v); setCurrentPage(1); }}
-                                className={`px-3 py-1.5 rounded-full text-[11px] font-semibold border transition-all ${
-                                  filterAvailability === v
-                                    ? 'bg-primary text-white border-primary'
-                                    : 'bg-white text-gray-600 border-gray-200 hover:border-primary hover:text-primary'
-                                }`}
-                              >
-                                {v === 'all' ? 'All' : v === 'instock' ? 'In Stock' : 'Out of Stock'}
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-
-                        {/* Form */}
-                        <div>
-                          <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-2">Form</p>
-                          <div className="flex flex-wrap gap-2">
-                            {FORM_GROUPS.map(({ label }) => (
-                              <button
-                                key={label}
-                                onClick={() => {
-                                  setFilterForms(prev => {
-                                    const next = new Set(prev);
-                                    next.has(label) ? next.delete(label) : next.add(label);
-                                    return next;
-                                  });
-                                  setCurrentPage(1);
-                                }}
-                                className={`px-3 py-1.5 rounded-full text-[11px] font-semibold border transition-all ${
-                                  filterForms.has(label)
-                                    ? 'bg-primary text-white border-primary'
-                                    : 'bg-white text-gray-600 border-gray-200 hover:border-primary hover:text-primary'
-                                }`}
-                              >
-                                {label}
-                              </button>
-                            ))}
-                          </div>
+                        <div className="flex flex-wrap gap-2">
+                          <button
+                            onClick={() => { selectCategory('All', 'All'); setFilterPanelOpen(false); }}
+                            className={`px-3 py-1.5 rounded-full text-[11px] font-semibold border transition-all ${
+                              selectedCategory.category === 'All'
+                                ? 'bg-primary text-white border-primary'
+                                : 'bg-white text-gray-600 border-gray-200 hover:border-primary hover:text-primary'
+                            }`}
+                          >
+                            All
+                          </button>
+                          {processedCats.map(cat => (
+                            <button
+                              key={cat.slug}
+                              onClick={() => { selectCategory(cat.category, 'All'); setFilterPanelOpen(false); }}
+                              className={`px-3 py-1.5 rounded-full text-[11px] font-semibold border transition-all ${
+                                selectedCategory.category === cat.category
+                                  ? 'bg-primary text-white border-primary'
+                                  : 'bg-white text-gray-600 border-gray-200 hover:border-primary hover:text-primary'
+                              }`}
+                            >
+                              {cat.category}
+                            </button>
+                          ))}
                         </div>
                       </div>
                     )}

@@ -235,7 +235,7 @@ export default function ContactUs() {
             </p>
 
             {/* Dynamic contact groups grid */}
-            <div className="grid grid-cols-2 lg:grid-cols-2 gap-3 lg:gap-y-10 lg:gap-x-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 lg:gap-y-10 lg:gap-x-8">
               {contactGroups.map((group, idx) => (
                 <div key={group._key} className={`ct-anim ct-up ct-d${Math.min(idx + 2, 6)} bg-white rounded-2xl p-4 border border-gray-100 shadow-sm lg:bg-transparent lg:rounded-none lg:p-0 lg:border-0 lg:shadow-none`}>
                   {/* Purpose heading with icon */}
@@ -259,24 +259,18 @@ export default function ContactUs() {
                     </div>
                   )}
 
-                  {/* Phones */}
-                  {group.phones && group.phones.length > 0 && (
-                    <div className="mb-2">
-                      {group.phones.map((ph, i) => (
-                        <a key={i} href={`tel:${ph.replace(/[^+\d]/g, '')}`}
+                  {/* Phones & Emails — on the same row, wrapping only if the card is too narrow */}
+                  {((group.phones && group.phones.length > 0) || (group.emails && group.emails.length > 0)) && (
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5">
+                      {group.phones?.map((ph, i) => (
+                        <a key={`ph-${i}`} href={`tel:${ph.replace(/[^+\d]/g, '')}`}
                           className="flex items-center gap-1.5 text-gray-500 text-[13px] hover:text-primary transition font-medium">
                           <i className="fa-solid fa-phone text-primary text-[11px] flex-shrink-0"></i>
                           {ph}
                         </a>
                       ))}
-                    </div>
-                  )}
-
-                  {/* Emails */}
-                  {group.emails && group.emails.length > 0 && (
-                    <div>
-                      {group.emails.map((em, i) => (
-                        <a key={i} href={`mailto:${em}`}
+                      {group.emails?.map((em, i) => (
+                        <a key={`em-${i}`} href={`mailto:${em}`}
                           className="flex items-center gap-1.5 text-gray-500 text-[13px] hover:text-primary transition font-medium">
                           <i className="fa-solid fa-envelope text-primary text-[11px] flex-shrink-0"></i>
                           {em}
