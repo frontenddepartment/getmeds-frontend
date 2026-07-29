@@ -251,6 +251,17 @@ export default function AboutUs() {
           html { scroll-behavior: smooth; }
         }
 
+        /* Plain CSS (not a Tailwind before: utility) — Tailwind's before:/after: utilities
+           always set content: var(--tw-content) on the pseudo-element, which resets Font
+           Awesome's own icon glyph (also set via ::before) back to empty, making the icon
+           disappear. */
+        .icon-gradient::before {
+          background: linear-gradient(90deg, #61A644, #1D9FDA);
+          -webkit-background-clip: text;
+          background-clip: text;
+          color: transparent;
+        }
+
         @keyframes caFadeUp   { from { opacity:0; transform:translateY(32px); } to { opacity:1; transform:translateY(0); } }
         @keyframes caFadeLeft { from { opacity:0; transform:translateX(-36px); } to { opacity:1; transform:translateX(0); } }
         @keyframes caFadeRight{ from { opacity:0; transform:translateX(36px);  } to { opacity:1; transform:translateX(0); } }
@@ -820,7 +831,7 @@ export default function AboutUs() {
 
             {/* Collaboration and Excellence */}
             <div className="ca-anim ca-up bg-white p-7 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-              <i className="fa-solid fa-handshake text-2xl text-gray-800 mb-5 block"></i>
+              <i className="fa-solid fa-handshake text-2xl mb-5 block icon-gradient"></i>
               <h4 className="text-[13px] font-bold text-gray-900 mb-3 uppercase tracking-wider">Collaboration and Excellence</h4>
               <p className="text-sm text-gray-500 leading-relaxed">By fostering collaborations with leading medical professionals, researchers, and partners, we strive for synergistic partnerships that aim to accelerate breakthroughs and reshape the future of healthcare.</p>
             </div>
@@ -835,28 +846,28 @@ export default function AboutUs() {
 
             {/* Pioneering Medicine Solutions */}
             <div className="ca-anim ca-up ca-d4 bg-white p-7 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-              <i className="fa-solid fa-flask text-2xl text-gray-800 mb-5 block"></i>
+              <i className="fa-solid fa-flask text-2xl mb-5 block icon-gradient"></i>
               <h4 className="text-[13px] font-bold text-gray-900 mb-3 uppercase tracking-wider">Pioneering Medicine Solutions</h4>
               <p className="text-sm text-gray-500 leading-relaxed">We are dedicated to delivering medicine solutions that address the unmet needs of patients worldwide, exploring novel therapies that make a difference in challenging medical conditions.</p>
             </div>
 
             {/* Global Accessibility */}
             <div className="ca-anim ca-up ca-d1 bg-white p-7 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-              <i className="fa-solid fa-earth-americas text-2xl text-gray-800 mb-5 block"></i>
+              <i className="fa-solid fa-earth-americas text-2xl mb-5 block icon-gradient"></i>
               <h4 className="text-[13px] font-bold text-gray-900 mb-3 uppercase tracking-wider">Global Accessibility</h4>
               <p className="text-sm text-gray-500 leading-relaxed">We believe healthcare knows no boundaries. Our commitment to a seamless global presence through synergistic partnerships ensures the needs of patients are met globally without delay.</p>
             </div>
 
             {/* Empowering Patients */}
             <div className="ca-anim ca-up ca-d3 bg-white p-7 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-              <i className="fa-solid fa-user-shield text-2xl text-gray-800 mb-5 block"></i>
+              <i className="fa-solid fa-user-shield text-2xl mb-5 block icon-gradient"></i>
               <h4 className="text-[13px] font-bold text-gray-900 mb-3 uppercase tracking-wider">Empowering Patients</h4>
               <p className="text-sm text-gray-500 leading-relaxed">We strive to empower patients by providing them with accessible connection to life-saving medicines and providers, cutting-edge treatments, and vital healthcare resources.</p>
             </div>
 
             {/* Advancing Healthcare E-Commerce */}
             <div className="ca-anim ca-up ca-d5 bg-white p-7 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-              <i className="fa-solid fa-cart-shopping text-2xl text-gray-800 mb-5 block"></i>
+              <i className="fa-solid fa-cart-shopping text-2xl mb-5 block icon-gradient"></i>
               <h4 className="text-[13px] font-bold text-gray-900 mb-3 uppercase tracking-wider">Advancing Healthcare E-Commerce</h4>
               <p className="text-sm text-gray-500 leading-relaxed">Through our state-of-the-art e-commerce platform, we aim to redefine healthcare accessibility. Our seamless and secure online marketplace will ensure patients and providers can access medications regardless of geographic boundaries.</p>
             </div>

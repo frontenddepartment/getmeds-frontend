@@ -746,7 +746,7 @@
                     </button>
                     <div id="mobile-products" class="hidden px-2 pb-3">
                         <!-- Oncology -->
-                        <p class="px-3 pt-3 pb-1 text-[10px] font-black uppercase text-gray-400 tracking-wider">Oncology
+                        <p class="px-3 pt-3 pb-1 text-[12px] font-semibold uppercase text-black tracking-wider">Oncology
                             (Solid Tumors)</p>
                         <a href="/cancer-medicines/breast-cancer"
                             class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Breast
@@ -785,7 +785,7 @@
                             class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Gastrointestinal
                             Stromal Tumors</a>
                         <!-- Oncology / Hematology -->
-                        <p class="px-3 pt-3 pb-1 text-[10px] font-black uppercase text-gray-400 tracking-wider">Oncology
+                        <p class="px-3 pt-3 pb-1 text-[12px] font-semibold uppercase text-black tracking-wider">Oncology
                             /
                             Hematology</p>
                         <a href="/cancer-medicines/aml"
@@ -824,7 +824,7 @@
                             class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Sickle Cell
                             Anemia</a>
                         <!-- Anti-Infectives -->
-                        <p class="px-3 pt-3 pb-1 text-[10px] font-black uppercase text-gray-400 tracking-wider">
+                        <p class="px-3 pt-3 pb-1 text-[12px] font-semibold uppercase text-black tracking-wider">
                             Anti-Infectives</p>
                         <a href="/product-range/respiratory"
                             class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Respiratory
@@ -842,7 +842,7 @@
                             Joint
                             Infections</a>
                         <!-- Endocrinology -->
-                        <p class="px-3 pt-3 pb-1 text-[10px] font-black uppercase text-gray-400 tracking-wider">
+                        <p class="px-3 pt-3 pb-1 text-[12px] font-semibold uppercase text-black tracking-wider">
                             Endocrinology</p>
                         <a href="/product-range/endometriosis"
                             class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Endometriosis</a>
@@ -850,7 +850,7 @@
                             class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Fibrocystic
                             Breast Disease</a>
                         <!-- Orthopedic -->
-                        <p class="px-3 pt-3 pb-1 text-[10px] font-black uppercase text-gray-400 tracking-wider">
+                        <p class="px-3 pt-3 pb-1 text-[12px] font-semibold uppercase text-black tracking-wider">
                             Orthopedic
                         </p>
                         <a href="/cancer-medicines/multiple-myeloma"
@@ -859,7 +859,7 @@
                         <a href="/product-range/osteoporosis"
                             class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Osteoporosis</a>
                         <!-- Cardiology -->
-                        <p class="px-3 pt-3 pb-1 text-[10px] font-black uppercase text-gray-400 tracking-wider">
+                        <p class="px-3 pt-3 pb-1 text-[12px] font-semibold uppercase text-black tracking-wider">
                             Cardiology
                         </p>
                         <a href="/product-range/arrhythmia"
@@ -870,20 +870,20 @@
                             /
                             Angina</a>
                         <!-- Neuro-Oncology -->
-                        <p class="px-3 pt-3 pb-1 text-[10px] font-black uppercase text-gray-400 tracking-wider">
+                        <p class="px-3 pt-3 pb-1 text-[12px] font-semibold uppercase text-black tracking-wider">
                             Neuro-Oncology</p>
                         <a href="/cancer-medicines/glioblastoma"
                             class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Glioblastoma
                             Multiforme</a>
                         <!-- Respiratory / Allergy -->
-                        <p class="px-3 pt-3 pb-1 text-[10px] font-black uppercase text-gray-400 tracking-wider">
+                        <p class="px-3 pt-3 pb-1 text-[12px] font-semibold uppercase text-black tracking-wider">
                             Respiratory
                             - Allergy</p>
                         <a href="/product-range/allergic-rhinitis"
                             class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Seasonal
                             Allergic Rhinitis</a>
                         <!-- Nephrology -->
-                        <p class="px-3 pt-3 pb-1 text-[10px] font-black uppercase text-gray-400 tracking-wider">
+                        <p class="px-3 pt-3 pb-1 text-[12px] font-semibold uppercase text-black tracking-wider">
                             Nephrology -
                             Renal</p>
                         <a href="/product-range/kidney-disease"
@@ -891,12 +891,12 @@
                             Kidney
                             Disease</a>
                         <!-- Pain / Rheumatology -->
-                        <p class="px-3 pt-3 pb-1 text-[10px] font-black uppercase text-gray-400 tracking-wider">Pain
+                        <p class="px-3 pt-3 pb-1 text-[12px] font-semibold uppercase text-black tracking-wider">Pain
                             Management</p>
                         <a href="/product-range/pain"
                             class="block pl-5 py-2 text-[13px] text-gray-600 hover:text-primary transition">Chronic
                             Pain</a>
-                        <p class="px-3 pt-3 pb-1 text-[10px] font-black uppercase text-gray-400 tracking-wider">
+                        <p class="px-3 pt-3 pb-1 text-[12px] font-semibold uppercase text-black tracking-wider">
                             Rheumatology
                         </p>
                         <a href="/product-range/rheumatology"
@@ -1003,6 +1003,38 @@
 
 <script>
 
+    // Highlight the active sub-link inside the mobile "Product Range" accordion, and
+    // auto-expand that accordion so the current location is still visible next time the
+    // mobile menu is opened. Exposed globally (not just run inline below) because the
+    // accordion's real links are rebuilt asynchronously by fetchAndPopulateDropdown() in
+    // navbar-data.js, using live hrefs (e.g. "/conditions/fibrocystic-breast-disease") that
+    // replace this file's placeholder markup (e.g. "/product-range/fibrocystic") entirely —
+    // whatever this checked on initial load would be checking content that's about to be
+    // thrown away. navbar-data.js calls this again once it has rebuilt the real links.
+    window.getmedsHighlightActiveProductLink = function () {
+        const path = window.location.pathname.replace(/^\//, '').replace(/\.html$/, '').replace(/\/$/, '') || 'index';
+        const mobileProducts = document.getElementById('mobile-products');
+        const mobileProductsIcon = document.getElementById('mobile-products-icon');
+        if (!mobileProducts) return;
+
+        let matched = false;
+        mobileProducts.querySelectorAll('a[href]').forEach(link => {
+            link.classList.remove('text-primary');
+            link.classList.add('text-gray-600');
+            const href = (link.getAttribute('href') || '').replace(/^\//, '').replace(/\/$/, '');
+            if (href && href === path) {
+                link.classList.add('text-primary');
+                link.classList.remove('text-gray-600');
+                matched = true;
+            }
+        });
+
+        if (matched) {
+            mobileProducts.classList.remove('hidden');
+            if (mobileProductsIcon) mobileProductsIcon.style.transform = 'rotate(180deg)';
+        }
+    };
+
     // Mark active nav link based on current page
     (function () {
         const rawPath = window.location.pathname;
@@ -1050,6 +1082,11 @@
                 }
             });
         }
+
+        // Run once now (covers the placeholder markup, and the case where dynamic population
+        // never runs/fails) — see getmedsHighlightActiveProductLink's own comment above for
+        // why this also has to run again later, from navbar-data.js.
+        window.getmedsHighlightActiveProductLink();
     })();
 
     window.toggleSearchBar = function () {
