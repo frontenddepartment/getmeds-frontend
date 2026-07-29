@@ -218,8 +218,100 @@ export default function OrderMedicines() {
   };
   const [submitState, setSubmitState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
   const [successModalOpen, setSuccessModalOpen] = useState(false);
+  const [successKind, setSuccessKind] = useState<'order' | 'inquiry'>('order');
   const [idRequiredModalOpen, setIdRequiredModalOpen] = useState(false);
   const [idModalVisible, setIdModalVisible] = useState(false);
+
+  // ── User type gate — Patient uses the prescription order form below as-is;
+  // Doctor/Hospital/Pharmacy Owner get the shorter generic inquiry form instead
+  // (mirrors the non-patient branch on product-detail.tsx). Persisted so a
+  // returning visitor skips straight to their form. The primary way to pick a
+  // type is now the "Order Medicines" navbar dropdown (writes the same
+  // localStorage key before navigating here), so this modal no longer opens
+  // automatically on visit — it's only a fallback: an unset/skipped type falls
+  // back to the patient view, and clicking either upload control there
+  // re-opens this modal since we still don't know which form they need.
+  const ORDER_USERTYPE_KEY = 'getmeds-order-usertype';
+  const USER_TYPE_LABELS: Record<string, string> = {
+    patient:  'Patient / Caregiver',
+    doctor:   'Doctor / Healthcare Professional',
+    pharmacy: 'Pharmacy Owner / Retail Pharmacy',
+    hospital: 'Hospital / Institution',
+  };
+  const [orderUserType, setOrderUserTypeState] = useState<string>(() => {
+    try { return localStorage.getItem(ORDER_USERTYPE_KEY) || ''; } catch { return ''; }
+  });
+  const [userTypeModalOpen, setUserTypeModalOpen] = useState(false);
+  const isProfessionalUserType = orderUserType === 'doctor' || orderUserType === 'hospital' || orderUserType === 'pharmacy';
+
+  const selectOrderUserType = (type: string) => {
+    setOrderUserTypeState(type);
+    try { localStorage.setItem(ORDER_USERTYPE_KEY, type); } catch { /* ignore */ }
+    setUserTypeModalOpen(false);
+  };
+
+  const skipUserTypeModal = () => setUserTypeModalOpen(false);
+
+  const requireUserType = (e: React.MouseEvent<HTMLLabelElement>) => {
+    if (!orderUserType) {
+      e.preventDefault();
+      setUserTypeModalOpen(true);
+    }
+  };
+
+  // ── Generic professional inquiry form (Doctor/Hospital/Pharmacy Owner) ──
+  const [inquiryFormData, setInquiryFormData] = useState({ name: '', phone: '', email: '', message: '', age: '' });
+  const [inquirySubmitState, setInquirySubmitState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
+  const [inquiryAgeDropdownOpen, setInquiryAgeDropdownOpen] = useState(false);
+  const inquiryAgeDropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!inquiryAgeDropdownOpen) return;
+    const close = (e: MouseEvent) => {
+      if (inquiryAgeDropdownRef.current && !inquiryAgeDropdownRef.current.contains(e.target as Node)) {
+        setInquiryAgeDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', close);
+    return () => document.removeEventListener('mousedown', close);
+  }, [inquiryAgeDropdownOpen]);
+
+  const handleInquirySubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setInquirySubmitState('sending');
+    try {
+      const payload = {
+        inquiryType: 'Product Inquiry',
+        fullName: inquiryFormData.name,
+        email: inquiryFormData.email,
+        phone: inquiryFormData.phone,
+        message: inquiryFormData.message,
+        additionalData: {
+          age: inquiryFormData.age,
+          customerType: USER_TYPE_LABELS[orderUserType] || orderUserType,
+        },
+        files: []
+      };
+
+      const response = await fetch(getApiUrl(), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (!response.ok) throw new Error('Inquiry submission failed.');
+
+      setInquirySubmitState('sent');
+      setInquiryFormData({ name: '', phone: '', email: '', message: '', age: '' });
+      setSuccessKind('inquiry');
+      setSuccessModalOpen(true);
+      setTimeout(() => setInquirySubmitState('idle'), 300);
+    } catch (error) {
+      console.error('Inquiry submission error:', error);
+      setInquirySubmitState('error');
+      setTimeout(() => setInquirySubmitState('idle'), 2000);
+    }
+  };
 
   const fileToBase64 = (file: File): Promise<string> =>
     new Promise((resolve, reject) => {
@@ -308,6 +400,7 @@ export default function OrderMedicines() {
 
       setSubmitState('sent');
       setValidationSubmitted(true);
+      setSuccessKind('order');
       setSuccessModalOpen(true);
     } catch (error) {
       console.error('Submission error:', error);
@@ -480,42 +573,46 @@ export default function OrderMedicines() {
 
             <div className="relative z-10">
               <h1 className="ca-anim ca-up text-xl sm:text-2xl md:text-3xl font-semibold text-white tracking-tight leading-tight mb-1">
-                How to order with prescription
+                {isProfessionalUserType ? 'Professional & Partner Inquiries' : 'How to order with prescription'}
               </h1>
               <p className="ca-anim ca-up ca-d2 text-white/75 text-[12px] sm:text-[13px] mt-1 font-medium mb-10">
-                A simple 3-step process designed for your convenience.
+                {isProfessionalUserType
+                  ? 'Send us your requirements and our team will follow up with a formal response.'
+                  : 'A simple 3-step process designed for your convenience.'}
               </p>
 
-              {/* Step Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pb-10">
-                {[
-                  {
-                    icon: 'fa-cloud-arrow-up',
-                    label: '1. Upload',
-                    desc: 'Upload your valid prescription and contact details.'
-                  },
-                  {
-                    icon: 'fa-phone-volume',
-                    label: '2. We reach out',
-                    desc: 'Our pharmacists contact you to verify your order.'
-                  },
-                  {
-                    icon: 'fa-circle-check',
-                    label: '3. Receive Your Order',
-                    desc: 'Get your order confirmed and delivered.'
-                  }
-                ].map((step, i) => (
-                  <div key={i} className={`ca-anim ca-zoom ${['ca-d1', 'ca-d3', 'ca-d5'][i]} bg-white/10 backdrop-blur-sm rounded-[15px] border border-white/20 p-4 md:p-6 flex flex-row items-center md:flex-col md:items-center text-left md:text-center cursor-default`}>
-                    <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-white/20 border border-white/30 flex items-center justify-center flex-shrink-0 mr-4 md:mr-0 md:mb-4">
-                      <i className={`fa-solid ${step.icon} text-white text-lg md:text-xl`}></i>
+              {/* Step Cards — patient prescription flow only */}
+              {!isProfessionalUserType && (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pb-10">
+                  {[
+                    {
+                      icon: 'fa-cloud-arrow-up',
+                      label: '1. Upload',
+                      desc: 'Upload your valid prescription and contact details.'
+                    },
+                    {
+                      icon: 'fa-phone-volume',
+                      label: '2. We reach out',
+                      desc: 'Our pharmacists contact you to verify your order.'
+                    },
+                    {
+                      icon: 'fa-circle-check',
+                      label: '3. Receive Your Order',
+                      desc: 'Get your order confirmed and delivered.'
+                    }
+                  ].map((step, i) => (
+                    <div key={i} className={`ca-anim ca-zoom ${['ca-d1', 'ca-d3', 'ca-d5'][i]} bg-white/10 backdrop-blur-sm rounded-[15px] border border-white/20 p-4 md:p-6 flex flex-row items-center md:flex-col md:items-center text-left md:text-center cursor-default`}>
+                      <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-white/20 border border-white/30 flex items-center justify-center flex-shrink-0 mr-4 md:mr-0 md:mb-4">
+                        <i className={`fa-solid ${step.icon} text-white text-lg md:text-xl`}></i>
+                      </div>
+                      <div className="flex flex-col">
+                        <h3 className="text-white font-bold text-[14px] md:text-[15px] mb-1 md:mb-3">{step.label}</h3>
+                        <p className="text-white/80 md:text-white text-[12px] leading-relaxed">{step.desc}</p>
+                      </div>
                     </div>
-                    <div className="flex flex-col">
-                      <h3 className="text-white font-bold text-[14px] md:text-[15px] mb-1 md:mb-3">{step.label}</h3>
-                      <p className="text-white/80 md:text-white text-[12px] leading-relaxed">{step.desc}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </section>
@@ -524,6 +621,9 @@ export default function OrderMedicines() {
         <section className="py-10 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
 
+            {/* Patient prescription-order flow (default/unset/skipped user type) */}
+            {!isProfessionalUserType && (
+            <>
             {/* Guide + Upload layout — guide shown first so users are instructed before uploading */}
             <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
 
@@ -560,7 +660,7 @@ export default function OrderMedicines() {
                 </div>
 
                 {/* Upload Zone */}
-                <label className="group cursor-pointer block mb-3">
+                <label className="group cursor-pointer block mb-3" onClick={requireUserType}>
                   <input type="file" multiple accept={ALLOWED_FILE_TYPES_ACCEPT} className="hidden" onChange={handleFileChange} />
                   <div className="border-2 border-dashed border-gray-200 rounded-[15px] p-5 flex flex-col items-center justify-center text-center transition-all group-hover:border-primary/40 group-hover:bg-blue-50/20">
                     <div className="text-gray-300 group-hover:text-primary transition-colors duration-200 mb-3">
@@ -647,7 +747,8 @@ export default function OrderMedicines() {
                     <div className="flex items-center gap-3 flex-wrap pt-1">
                       {!patientIdFile ? (
                         <label className="cursor-pointer inline-flex items-center gap-2 hover:opacity-90 text-white text-[13px] font-semibold px-5 py-2.5 rounded-[10px] transition"
-                          style={{ background: 'linear-gradient(to right,#61A644,#1D9FDA)' }}>
+                          style={{ background: 'linear-gradient(to right,#61A644,#1D9FDA)' }}
+                          onClick={requireUserType}>
                           <input type="file" accept={ALLOWED_FILE_TYPES_ACCEPT} className="hidden" onChange={handlePatientIdChange} />
                           <i className="fa-solid fa-upload text-[11px]"></i>
                           Upload File
@@ -881,6 +982,100 @@ export default function OrderMedicines() {
                 </p>
               </div>
             </div>
+            </>
+            )}
+
+            {/* Doctor / Hospital / Pharmacy Owner — generic inquiry form, no product context yet.
+                Wide/landscape card spanning the full content width: short fields share a row,
+                Message spans full width below, and the submit button sits bottom-right. */}
+            {isProfessionalUserType && (
+              <div className="ca-anim ca-up bg-white rounded-[15px] border border-gray-100 p-6 md:p-10 shadow-sm">
+                <div className="flex items-start justify-between flex-wrap gap-3 mb-6">
+                  <div>
+                    <h2 className="text-xl font-semibold text-gray-900 mb-1">Send an Inquiry</h2>
+                    <p className="text-gray-400 text-[13px]">Submit your details and our team will follow up with a formal response.</p>
+                  </div>
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-blue-50 text-primary border border-blue-100 shrink-0">
+                    <i className="fa-solid fa-user-tag text-[9px]"></i>
+                    {USER_TYPE_LABELS[orderUserType]}
+                  </div>
+                </div>
+
+                <form onSubmit={handleInquirySubmit} className="space-y-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-6">
+                    <div className="space-y-2">
+                      <label className="text-[13px] font-semibold text-gray-700">Full Name</label>
+                      <input type="text" required placeholder="John Doe"
+                        value={inquiryFormData.name}
+                        onChange={e => setInquiryFormData(prev => ({ ...prev, name: e.target.value }))}
+                        className="w-full bg-gray-50 border-none rounded-[12px] px-4 py-3 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition placeholder-gray-300" />
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="text-[13px] font-semibold text-gray-700">Email Address</label>
+                      <input type="email" required placeholder="example@domain.com"
+                        value={inquiryFormData.email}
+                        onChange={e => setInquiryFormData(prev => ({ ...prev, email: e.target.value }))}
+                        className="w-full bg-gray-50 border-none rounded-[12px] px-4 py-3 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition placeholder-gray-300" />
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="text-[13px] font-semibold text-gray-700">Phone Number</label>
+                      <input type="tel" required placeholder="+63 900 000 0000"
+                        inputMode="numeric"
+                        value={inquiryFormData.phone}
+                        onChange={e => setInquiryFormData(prev => ({ ...prev, phone: e.target.value.replace(/[^\d+\s\-()]/g, '') }))}
+                        className="w-full bg-gray-50 border-none rounded-[12px] px-4 py-3 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition placeholder-gray-300" />
+                    </div>
+
+                    <div className="space-y-2" ref={inquiryAgeDropdownRef}>
+                      <label className="text-[13px] font-semibold text-gray-700">Age</label>
+                      <div className="relative">
+                        <button type="button"
+                          onClick={() => setInquiryAgeDropdownOpen(o => !o)}
+                          className="w-full flex items-center justify-between bg-gray-50 rounded-[12px] px-4 py-3 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition cursor-pointer">
+                          <span className={inquiryFormData.age ? 'text-gray-700' : 'text-gray-300'}>{inquiryFormData.age || 'Age'}</span>
+                          <i className="fa-solid fa-chevron-down text-[10px] text-gray-400"></i>
+                        </button>
+                        {inquiryAgeDropdownOpen && (
+                          <div className="absolute top-full left-0 mt-1 w-full bg-white rounded-[12px] shadow-xl border border-gray-100 z-[60] overflow-hidden">
+                            <div className="max-h-48 overflow-y-auto">
+                              {Array.from({ length: 63 }, (_, i) => i + 18).map(age => (
+                                <button key={age} type="button"
+                                  onClick={() => { setInquiryFormData(prev => ({ ...prev, age: String(age) })); setInquiryAgeDropdownOpen(false); }}
+                                  className={`w-full text-left px-4 py-2 text-[13px] hover:bg-gray-50 transition ${inquiryFormData.age === String(age) ? 'bg-green-50 text-[#61A644] font-semibold' : 'text-gray-700'}`}>
+                                  {age}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-[13px] font-semibold text-gray-700">Message</label>
+                    <textarea rows={3} placeholder="Tell us more about your requirements..."
+                      value={inquiryFormData.message}
+                      onChange={e => setInquiryFormData(prev => ({ ...prev, message: e.target.value }))}
+                      className="w-full bg-gray-50 border-none rounded-[12px] px-4 py-3 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition placeholder-gray-300 resize-none" />
+                  </div>
+
+                  <div className="flex justify-end">
+                    <button type="submit" disabled={inquirySubmitState === 'sending'}
+                      className="text-white font-bold py-3 px-10 rounded-[12px] transition-all duration-300 text-[13px] disabled:opacity-50 whitespace-nowrap"
+                      style={{ background: 'linear-gradient(to right, #61A644, #0D99FF)' }}>
+                      {inquirySubmitState === 'sending'
+                        ? 'Sending...'
+                        : inquirySubmitState === 'error'
+                          ? 'Failed to submit. Try again.'
+                          : 'Submit Inquiry Request'}
+                    </button>
+                  </div>
+                </form>
+              </div>
+            )}
 
             {/* ── Support & Trust ── */}
             <div className="ca-anim ca-up">
@@ -1008,6 +1203,55 @@ export default function OrderMedicines() {
 
       </div>
 
+      {/* ── User Type Selection Modal — persistent: reopens on either upload
+          control whenever no type has been chosen (unset or previously skipped) ── */}
+      {userTypeModalOpen && (
+        <>
+          <style>{`
+            @keyframes slideUpUt{from{opacity:0;transform:translateY(24px) scale(0.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+            .ut-modal-slide{animation:slideUpUt 0.32s cubic-bezier(.22,1,.36,1) forwards}
+          `}</style>
+          <div className="fixed inset-0 z-[400] flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
+            <div className="bg-white w-full max-w-[440px] rounded-2xl shadow-2xl relative overflow-hidden ut-modal-slide">
+              <div className="px-8 pt-8 pb-6 text-center">
+                <div
+                  className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4"
+                  style={{ background: 'linear-gradient(135deg,#61A644,#1D9FDA)' }}
+                >
+                  <i className="fa-solid fa-user-tag text-white text-xl"></i>
+                </div>
+                <h2 className="text-[19px] font-semibold text-gray-900 mb-2 leading-snug">Who's placing this order?</h2>
+                <p className="text-[13px] text-gray-500 leading-relaxed mb-6">
+                  Doctors, hospitals, and pharmacy owners get a shorter inquiry form. Patients continue with our standard prescription order form below.
+                </p>
+                <div className="space-y-2 text-left">
+                  {Object.entries(USER_TYPE_LABELS).map(([value, label]) => (
+                    <button
+                      key={value}
+                      type="button"
+                      onClick={() => selectOrderUserType(value)}
+                      className="w-full flex items-center gap-2.5 px-4 py-3 rounded-xl border border-gray-200 text-gray-700 hover:border-primary hover:bg-blue-50 hover:text-primary text-left text-[13px] font-semibold transition"
+                    >
+                      <i className="fa-solid fa-user-tag text-[11px]"></i>
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="border-t border-gray-100 px-8 py-3 text-center">
+                <button
+                  type="button"
+                  onClick={skipUserTypeModal}
+                  className="text-[13px] font-semibold text-gray-400 hover:text-gray-600 transition"
+                >
+                  Skip for now
+                </button>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+
       {/* ── Order Success Modal ── */}
       {successModalOpen && (
         <>
@@ -1032,12 +1276,14 @@ export default function OrderMedicines() {
 
                 {/* Title */}
                 <h2 className="text-[19px] font-semibold text-gray-900 mb-4 leading-snug">
-                  Thank you for your order.
+                  {successKind === 'inquiry' ? 'Thank you for your inquiry.' : 'Thank you for your order.'}
                 </h2>
 
                 {/* Message */}
                 <p className="text-[13px] text-gray-500 leading-relaxed">
-                  We will contact you shortly to confirm your order details. For urgent concerns, please call{' '}
+                  {successKind === 'inquiry'
+                    ? <>Our team will get back to you shortly with a formal response. For urgent concerns, please call{' '}</>
+                    : <>We will contact you shortly to confirm your order details. For urgent concerns, please call{' '}</>}
                   <a href="tel:+639190769105" className="text-[#1D9FDA] font-semibold hover:underline">
                     +63 919 076 9105
                   </a>.
