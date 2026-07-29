@@ -6,6 +6,13 @@ import { setPageMeta } from '../lib/seo';
 import { LinkableImage } from '../lib/LinkableImage';
 import { getApiUrl } from '../lib/api';
 
+function formatTime(seconds: number): string {
+  if (!isFinite(seconds) || seconds < 0) return '0:00';
+  const m = Math.floor(seconds / 60);
+  const s = Math.floor(seconds % 60);
+  return `${m}:${s.toString().padStart(2, '0')}`;
+}
+
 export default function AboutUs() {
   useEffect(() => {
     setPageMeta({
@@ -15,19 +22,24 @@ export default function AboutUs() {
     });
   }, []);
 
-  const { getImage, getImageLink, loading: imagesLoading } = useImageMapper('about-us');
+  const { getImage, getImageLink, getVideo, getVideoThumbnail, loading: imagesLoading } = useImageMapper('about-us');
   const valuesContainerRef = useRef<HTMLDivElement>(null);
   const [activePanel, setActivePanel] = useState(0);
   const [heroImgLoaded, setHeroImgLoaded] = useState(false);
   const warehouseVideoRef = useRef<HTMLVideoElement>(null);
   const ungcVideoRef = useRef<HTMLVideoElement>(null);
+  const [desktopWarehousePlaying, setDesktopWarehousePlaying] = useState(false);
+  const [desktopUngcPlaying, setDesktopUngcPlaying] = useState(false);
+  const [desktopWarehouseMuted, setDesktopWarehouseMuted] = useState(true);
+  const [desktopUngcMuted, setDesktopUngcMuted] = useState(true);
+  const [desktopWarehouseTime, setDesktopWarehouseTime] = useState({ current: 0, duration: 0 });
+  const [desktopUngcTime, setDesktopUngcTime] = useState({ current: 0, duration: 0 });
 
+  // Videos never autoplay — they show their thumbnail until the center play button is
+  // clicked. Switching panels still pauses whichever video was playing.
   useEffect(() => {
-    if (activePanel === 0) warehouseVideoRef.current?.play().catch(() => { });
-    else warehouseVideoRef.current?.pause();
-
-    if (activePanel === 1) ungcVideoRef.current?.play().catch(() => { });
-    else ungcVideoRef.current?.pause();
+    if (activePanel !== 0) warehouseVideoRef.current?.pause();
+    if (activePanel !== 1) ungcVideoRef.current?.pause();
   }, [activePanel]);
 
   const handlePanelFullscreen = (e: React.MouseEvent, ref: React.RefObject<HTMLVideoElement | null>) => {
@@ -268,21 +280,11 @@ export default function AboutUs() {
       {/* Enhanced Hero Section */}
       <section className="w-full mx-auto px-3 sm:px-4 md:px-6 mt-3 md:mt-4 mb-0 max-w-[1600px]">
         <div className={`relative rounded-[10px] md:rounded-[1.5rem] overflow-hidden min-h-[190px] md:min-h-[500px] flex items-end group transition-colors duration-500 ${!heroImgLoaded ? 'bg-gray-200 animate-pulse' : 'bg-gray-100'}`}>
-          {/* Background Image (Sanity) — temporarily disabled in favor of a hardcoded hero video below
-          {!imagesLoading && (
-            <div className="absolute inset-0 z-0">
-              <LinkableImage link={getImageLink('About Us Hero Background')} src={getImage('About Us Hero Background', 'assets/fallback.jpg')} data-json-src="hero.image" data-json-alt="hero.imageAlt"
-                onLoad={() => setHeroImgLoaded(true)}
-                className={`w-full h-full object-cover object-center transform group-hover:scale-105 transition-[opacity,transform] duration-700 ${heroImgLoaded ? 'opacity-100' : 'opacity-0'}`}
-                alt="About Getmeds" />
-            </div>
-          )}
-          */}
-
-          {/* Background Video — hardcoded, temporary (not Sanity-connected) */}
+          {/* Background Video */}
           <div className="absolute inset-0 z-0">
             <video
-              src="/assets/aboutusvideo.mp4"
+              src={getVideo('About Us Hero Background', '') || undefined}
+              poster={getVideoThumbnail('About Us Hero Background', '') || undefined}
               autoPlay
               muted
               loop
@@ -350,19 +352,57 @@ export default function AboutUs() {
               onMouseEnter={() => setActivePanel(0)}>
               <video
                 ref={warehouseVideoRef}
-                src="assets/WAREHOUSE.mp4"
-                muted
+                src={getVideo('About Us Team Image 1', '') || undefined}
+                poster={getVideoThumbnail('About Us Team Image 1', '') || undefined}
+                muted={desktopWarehouseMuted}
                 loop
                 playsInline
+                onPlay={() => setDesktopWarehousePlaying(true)}
+                onPause={() => setDesktopWarehousePlaying(false)}
+                onTimeUpdate={e => setDesktopWarehouseTime({ current: e.currentTarget.currentTime, duration: e.currentTarget.duration || 0 })}
                 className="w-full h-full object-cover"
               />
-              <button
-                onClick={e => handlePanelFullscreen(e, warehouseVideoRef)}
-                className="absolute top-4 right-4 w-10 h-10 rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-sm flex items-center justify-center text-white transition-colors duration-200 z-10"
-                aria-label="View fullscreen"
-              >
-                <i className="fa-solid fa-expand text-sm"></i>
-              </button>
+              {!desktopWarehousePlaying && (
+                <button
+                  onClick={() => warehouseVideoRef.current?.play()}
+                  className="absolute inset-0 flex items-center justify-center bg-black/20"
+                  aria-label="Play video"
+                >
+                  <span className="w-16 h-16 rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-sm flex items-center justify-center text-white transition-colors duration-200 shadow-lg">
+                    <i className="fa-solid fa-play text-xl ml-1"></i>
+                  </span>
+                </button>
+              )}
+              <div className="absolute bottom-0 left-0 right-0 z-10 flex items-center justify-between gap-2 px-4 py-3 bg-gradient-to-t from-black/70 to-transparent">
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => { desktopWarehousePlaying ? warehouseVideoRef.current?.pause() : warehouseVideoRef.current?.play(); }}
+                    className="w-8 h-8 rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-sm flex items-center justify-center text-white transition-colors duration-200"
+                    aria-label={desktopWarehousePlaying ? 'Pause video' : 'Play video'}
+                  >
+                    <i className={`fa-solid ${desktopWarehousePlaying ? 'fa-pause' : 'fa-play'} text-xs`}></i>
+                  </button>
+                  <span className="text-white text-xs font-medium tabular-nums">
+                    {formatTime(desktopWarehouseTime.current)} / {formatTime(desktopWarehouseTime.duration)}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setDesktopWarehouseMuted(m => !m)}
+                    className="w-8 h-8 rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-sm flex items-center justify-center text-white transition-colors duration-200"
+                    aria-label={desktopWarehouseMuted ? 'Unmute video' : 'Mute video'}
+                  >
+                    <i className={`fa-solid ${desktopWarehouseMuted ? 'fa-volume-xmark' : 'fa-volume-high'} text-xs`}></i>
+                  </button>
+                  <button
+                    onClick={e => handlePanelFullscreen(e, warehouseVideoRef)}
+                    className="w-8 h-8 rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-sm flex items-center justify-center text-white transition-colors duration-200"
+                    aria-label="View fullscreen"
+                  >
+                    <i className="fa-solid fa-expand text-xs"></i>
+                  </button>
+                </div>
+              </div>
             </div>
 
             {/* Panel 2 — Center */}
@@ -371,19 +411,57 @@ export default function AboutUs() {
               onMouseEnter={() => setActivePanel(1)}>
               <video
                 ref={ungcVideoRef}
-                src="assets/UNGC.mp4"
-                muted
+                src={getVideo('About Us Team Image 2', '') || undefined}
+                poster={getVideoThumbnail('About Us Team Image 2', '') || undefined}
+                muted={desktopUngcMuted}
                 loop
                 playsInline
+                onPlay={() => setDesktopUngcPlaying(true)}
+                onPause={() => setDesktopUngcPlaying(false)}
+                onTimeUpdate={e => setDesktopUngcTime({ current: e.currentTarget.currentTime, duration: e.currentTarget.duration || 0 })}
                 className="w-full h-full object-cover"
               />
-              <button
-                onClick={e => handlePanelFullscreen(e, ungcVideoRef)}
-                className="absolute top-4 right-4 w-10 h-10 rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-sm flex items-center justify-center text-white transition-colors duration-200 z-10"
-                aria-label="View fullscreen"
-              >
-                <i className="fa-solid fa-expand text-sm"></i>
-              </button>
+              {!desktopUngcPlaying && (
+                <button
+                  onClick={() => ungcVideoRef.current?.play()}
+                  className="absolute inset-0 flex items-center justify-center bg-black/20"
+                  aria-label="Play video"
+                >
+                  <span className="w-16 h-16 rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-sm flex items-center justify-center text-white transition-colors duration-200 shadow-lg">
+                    <i className="fa-solid fa-play text-xl ml-1"></i>
+                  </span>
+                </button>
+              )}
+              <div className="absolute bottom-0 left-0 right-0 z-10 flex items-center justify-between gap-2 px-4 py-3 bg-gradient-to-t from-black/70 to-transparent">
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => { desktopUngcPlaying ? ungcVideoRef.current?.pause() : ungcVideoRef.current?.play(); }}
+                    className="w-8 h-8 rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-sm flex items-center justify-center text-white transition-colors duration-200"
+                    aria-label={desktopUngcPlaying ? 'Pause video' : 'Play video'}
+                  >
+                    <i className={`fa-solid ${desktopUngcPlaying ? 'fa-pause' : 'fa-play'} text-xs`}></i>
+                  </button>
+                  <span className="text-white text-xs font-medium tabular-nums">
+                    {formatTime(desktopUngcTime.current)} / {formatTime(desktopUngcTime.duration)}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setDesktopUngcMuted(m => !m)}
+                    className="w-8 h-8 rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-sm flex items-center justify-center text-white transition-colors duration-200"
+                    aria-label={desktopUngcMuted ? 'Unmute video' : 'Mute video'}
+                  >
+                    <i className={`fa-solid ${desktopUngcMuted ? 'fa-volume-xmark' : 'fa-volume-high'} text-xs`}></i>
+                  </button>
+                  <button
+                    onClick={e => handlePanelFullscreen(e, ungcVideoRef)}
+                    className="w-8 h-8 rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-sm flex items-center justify-center text-white transition-colors duration-200"
+                    aria-label="View fullscreen"
+                  >
+                    <i className="fa-solid fa-expand text-xs"></i>
+                  </button>
+                </div>
+              </div>
             </div>
 
             {/* Panel 3 — Right */}
@@ -413,7 +491,8 @@ export default function AboutUs() {
             <div className={`absolute inset-0 transition-opacity duration-500 ${aboutSlide === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'}`}>
               <video
                 ref={mobileWarehouseRef}
-                src="assets/WAREHOUSE.mp4"
+                src={getVideo('About Us Team Image 1', '') || undefined}
+                poster={getVideoThumbnail('About Us Team Image 1', '') || undefined}
                 muted={mobileWarehouseMuted}
                 loop
                 playsInline
@@ -445,7 +524,8 @@ export default function AboutUs() {
             <div className={`absolute inset-0 transition-opacity duration-500 ${aboutSlide === 1 ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'}`}>
               <video
                 ref={mobileUngcRef}
-                src="assets/UNGC.mp4"
+                src={getVideo('About Us Team Image 2', '') || undefined}
+                poster={getVideoThumbnail('About Us Team Image 2', '') || undefined}
                 muted={mobileUngcMuted}
                 loop
                 playsInline
