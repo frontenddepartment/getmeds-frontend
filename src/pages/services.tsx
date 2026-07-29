@@ -84,13 +84,24 @@ export default function Services() {
 
   return (
     <div style={{ fontFamily: "'Poppins', sans-serif" }} className="bg-white text-gray-800 antialiased">
+      {/* Plain CSS (not a Tailwind before: utility) — Tailwind's before:/after: utilities always
+          set content: var(--tw-content) on the pseudo-element, which resets Font Awesome's own
+          icon glyph (also set via ::before) back to empty, making the icon disappear. */}
+      <style>{`
+        .icon-gradient::before {
+          background: linear-gradient(90deg, #61A644, #1D9FDA);
+          -webkit-background-clip: text;
+          background-clip: text;
+          color: transparent;
+        }
+      `}</style>
 
       {/* Navbar */}
       <div id="navbar-container" className="sticky top-0 z-[50]" />
 
-      <section className="w-full mx-auto px-3 sm:px-4 md:px-6 mt-3 md:mt-4 mb-6 max-w-[1600px]">
-        <div className="relative rounded-[10px] md:rounded-[1.5rem] border border-gray-100/20 overflow-hidden min-h-[190px] sm:min-h-[360px] md:min-h-[450px] lg:min-h-[500px] flex items-end group">
-          {/* Background Image */}
+      {/* Desktop Hero Section */}
+      <section className="hidden sm:block w-full mx-auto px-3 sm:px-4 md:px-6 mt-3 md:mt-4 mb-6 max-w-[1600px]">
+        <div className="relative rounded-[10px] md:rounded-[1.5rem] border border-gray-100/20 overflow-hidden min-h-[360px] md:min-h-[450px] lg:min-h-[500px] flex items-end group shadow-sm bg-gray-100">
           <div className="absolute inset-0 z-0">
             {(() => {
               const heroFullSrc = getImage('Services Hero Background', 'assets/services_hero_new.png');
@@ -109,27 +120,57 @@ export default function Services() {
             })()}
           </div>
 
-          {/* Content */}
-          <div className="relative z-10 w-full px-3 sm:px-8 md:px-14 pb-2 sm:pb-5 md:pb-16 pt-10 sm:pt-20 max-w-4xl reveal">
-            <h1 className="text-[11px] sm:text-[28px] md:text-[38px] leading-tight font-bold mb-1 sm:mb-3 tracking-tight">
+          <div className="relative z-10 w-full px-8 md:px-14 pb-5 md:pb-16 pt-20 max-w-4xl reveal">
+            <h1 className="text-[28px] md:text-[38px] leading-tight font-bold mb-3 tracking-tight">
               <span data-json="hero.headingAccent"
                 className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent leading-tight tracking-tight">Our Services</span>
             </h1>
-            <p data-json="hero.description" className="text-[#000b5d] text-[9px] sm:text-[13px] md:text-[14px] max-w-[90%] sm:max-w-[600px] mb-2 sm:mb-5 leading-normal font-normal">
+            <p data-json="hero.description" className="text-[#000b5d] text-[13px] md:text-[14px] max-w-[600px] mb-5 leading-normal font-normal">
               Getmeds connects globally certified pharmaceutical manufacturers with Filipino patients, doctors, and
               hospitals — bridging the gap between world-class treatment and local access.
             </p>
-            <div className="flex flex-wrap gap-1.5 sm:gap-4 pb-1 sm:pb-0">
+            <div className="flex flex-wrap gap-4">
               <a href="#services-grid"
-                className="btn-gradient text-white font-semibold py-1 px-3 sm:py-2 sm:px-6 rounded-full text-[8.5px] sm:text-[13px] inline-flex items-center gap-1 sm:gap-2 shadow-md">
-                Explore Services <i className="fa-solid fa-arrow-down text-[7px] sm:text-xs"></i>
+                className="btn-gradient text-white font-semibold py-2 px-6 rounded-full text-[13px] inline-flex items-center gap-2 shadow-md">
+                Explore Services <i className="fa-solid fa-arrow-down text-xs"></i>
               </a>
               <a href="contact-us.html"
-                className="bg-white/10 backdrop-blur-md border border-white/25 text-white font-semibold py-1 px-3 sm:py-2 sm:px-6 rounded-full text-[8.5px] sm:text-[13px] hover:bg-white/20 transition inline-flex items-center gap-1 sm:gap-2">
-                Contact Us <i className="fa-solid fa-arrow-right text-[7px] sm:text-xs"></i>
+                className="bg-white/10 backdrop-blur-md border border-white/25 text-white font-semibold py-2 px-6 rounded-full text-[13px] hover:bg-white/20 transition inline-flex items-center gap-2">
+                Contact Us <i className="fa-solid fa-arrow-right text-xs"></i>
               </a>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Mobile Hero Section */}
+      <section className="block sm:hidden w-full px-3 mt-3 mb-6">
+        <div className="relative aspect-[16/10] w-full rounded-[10px] border border-gray-100/20 overflow-hidden mb-3 bg-gray-100 shadow-sm">
+          {(() => {
+            const heroFullSrc = getImage('Services Hero Background', 'assets/services_hero_new.png');
+            return (
+              <ProgressiveHeroImage
+                link={getImageLink('Services Hero Background')}
+                fullSrc={heroFullSrc}
+                lowSrc={getLowResImage('Services Hero Background', heroFullSrc)}
+                dataJsonSrc="hero.image"
+                dataJsonAlt="hero.imageAlt"
+                className="absolute inset-0 w-full h-full object-cover object-center"
+                transitionClassName="transition-[opacity_0.7s,transform_4s]"
+                alt="Healthcare Services"
+              />
+            );
+          })()}
+        </div>
+        <div className="px-1 reveal">
+          <h1 className="text-xl font-bold leading-tight mb-2 tracking-tight">
+            <span data-json="hero.headingAccent"
+              className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent leading-tight tracking-tight">Our Services</span>
+          </h1>
+          <p data-json="hero.description" className="text-gray-600 text-xs mb-3 leading-relaxed font-normal text-justify">
+            Getmeds connects globally certified pharmaceutical manufacturers with Filipino patients, doctors, and
+            hospitals — bridging the gap between world-class treatment and local access.
+          </p>
         </div>
       </section>
 
@@ -166,8 +207,7 @@ export default function Services() {
           {/* Section Header */}
           <div className="text-center max-w-2xl mx-auto mb-16 reveal">
             <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent font-bold text-sm uppercase tracking-widest mb-4 block">Corporate Services</span>
-            <h2 className="text-3xl md:text-4xl font-semibold text-dark mb-4">Our Core{' '}
-              <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent inline-block">Competencies</span></h2>
+            <h2 className="text-3xl md:text-4xl font-semibold text-dark mb-4">Our Core Competencies</h2>
             <p data-json="sectionDescription" className="text-gray-500 text-[15px]">Ten capabilities.
               Four focus areas. One complete pharmaceutical partner for Filipino patients, doctors, hospitals,
               pharmacies, and manufacturers.</p>
@@ -199,7 +239,7 @@ export default function Services() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="bg-white p-7 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-                <i className="fa-solid fa-earth-asia text-2xl text-gray-800 mb-5 block"></i>
+                <i className="fa-solid fa-earth-asia text-2xl mb-5 block icon-gradient"></i>
                 <h4 className="text-[13px] font-bold text-gray-900 mb-3 uppercase tracking-wider">Global Network of
                   Pharma Manufacturers</h4>
                 <p className="text-sm text-gray-500 leading-relaxed">Strategic sourcing partnerships with 50+
@@ -210,7 +250,7 @@ export default function Services() {
               </div>
 
               <div className="bg-white p-7 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-                <i className="fa-solid fa-file-shield text-2xl text-gray-800 mb-5 block"></i>
+                <i className="fa-solid fa-file-shield text-2xl mb-5 block icon-gradient"></i>
                 <h4 className="text-[13px] font-bold text-gray-900 mb-3 uppercase tracking-wider">Regulatory &amp;
                   Compliance</h4>
                 <p className="text-sm text-gray-500 leading-relaxed">FDA Philippines, DOH, PDEA (S-4 and S-5),
@@ -252,7 +292,7 @@ export default function Services() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="bg-white p-7 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-                <i className="fa-solid fa-truck-ramp-box text-2xl text-gray-800 mb-5 block"></i>
+                <i className="fa-solid fa-truck-ramp-box text-2xl mb-5 block icon-gradient"></i>
                 <h4 className="text-[13px] font-bold text-gray-900 mb-3 uppercase tracking-wider">Precision Supply
                   Chain &amp; Nationwide Distribution</h4>
                 <p className="text-sm text-gray-500 leading-relaxed">WHO GSDP-compliant cold-chain logistics
@@ -262,7 +302,7 @@ export default function Services() {
               </div>
 
               <div className="bg-white p-7 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-                <i className="fa-solid fa-handshake text-2xl text-gray-800 mb-5 block"></i>
+                <i className="fa-solid fa-handshake text-2xl mb-5 block icon-gradient"></i>
                 <h4 className="text-[13px] font-bold text-gray-900 mb-3 uppercase tracking-wider">Sales and
                   Distribution</h4>
                 <p className="text-sm text-gray-500 leading-relaxed">10,000+ pharmacy accounts served through
@@ -271,7 +311,7 @@ export default function Services() {
               </div>
 
               <div className="bg-white p-7 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-                <i className="fa-solid fa-building-columns text-2xl text-gray-800 mb-5 block"></i>
+                <i className="fa-solid fa-building-columns text-2xl mb-5 block icon-gradient"></i>
                 <h4 className="text-[13px] font-bold text-gray-900 mb-3 uppercase tracking-wider">Government
                   Bidding &amp; Public Sector Access</h4>
                 <p className="text-sm text-gray-500 leading-relaxed">Proven tender experience supplying
@@ -309,7 +349,7 @@ export default function Services() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="bg-white p-7 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-                <i className="fa-solid fa-hospital text-2xl text-gray-800 mb-5 block"></i>
+                <i className="fa-solid fa-hospital text-2xl mb-5 block icon-gradient"></i>
                 <h4 className="text-[13px] font-bold text-gray-900 mb-3 uppercase tracking-wider">Hospital
                   Partnerships &amp; Institutional Supply</h4>
                 <p className="text-sm text-gray-500 leading-relaxed">Trusted by 500+ Filipino hospitals across
@@ -319,7 +359,7 @@ export default function Services() {
               </div>
 
               <div className="bg-white p-7 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-                <i className="fa-solid fa-user-doctor text-2xl text-gray-800 mb-5 block"></i>
+                <i className="fa-solid fa-user-doctor text-2xl mb-5 block icon-gradient"></i>
                 <h4 className="text-[13px] font-bold text-gray-900 mb-3 uppercase tracking-wider">Doctor &amp;
                   Healthcare Professional Support</h4>
                 <p className="text-sm text-gray-500 leading-relaxed">Partnership with Filipino oncologists,
@@ -329,7 +369,7 @@ export default function Services() {
               </div>
 
               <div className="bg-white p-7 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-                <i className="fa-solid fa-hand-holding-medical text-2xl text-gray-800 mb-5 block"></i>
+                <i className="fa-solid fa-hand-holding-medical text-2xl mb-5 block icon-gradient"></i>
                 <h4 className="text-[13px] font-bold text-gray-900 mb-3 uppercase tracking-wider">Direct-to-Patient
                   Care &amp; Access Programs</h4>
                 <p className="text-sm text-gray-500 leading-relaxed">Prescription order fulfillment, refill
@@ -376,7 +416,7 @@ export default function Services() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="bg-white p-7 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-                <i className="fa-solid fa-landmark text-2xl text-gray-800 mb-5 block"></i>
+                <i className="fa-solid fa-landmark text-2xl mb-5 block icon-gradient"></i>
                 <h4 className="text-[13px] font-bold text-gray-900 mb-3 uppercase tracking-wider">Government
                   Medical Assistance &amp; Program Accreditation</h4>
                 <p className="text-sm text-gray-500 leading-relaxed">Accredited chemotherapy and cancer
@@ -387,7 +427,7 @@ export default function Services() {
               </div>
 
               <div className="bg-white p-7 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-                <i className="fa-solid fa-box-open text-2xl text-gray-800 mb-5 block"></i>
+                <i className="fa-solid fa-box-open text-2xl mb-5 block icon-gradient"></i>
                 <h4 className="text-[13px] font-bold text-gray-900 mb-3 uppercase tracking-wider">Certificate of
                   Listing of Identical Drug Product (CLIDP) Services</h4>
                 <p className="text-sm text-gray-500 leading-relaxed">End-to-end CLIDP application,
@@ -409,9 +449,7 @@ export default function Services() {
               <div
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-full badge-pill text-[11px] font-bold uppercase tracking-widest mb-6">
                 <i className="fa-solid fa-medal"></i> The Getmeds Difference</div>
-              <h2 className="text-[28px] md:text-[38px] font-bold text-dark leading-tight mb-6 tracking-tight">Why patients, doctors, and partners trust{' '}
-                <span
-                  className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">Getmeds</span>.</h2>
+              <h2 className="text-[28px] md:text-[38px] font-bold text-dark leading-tight mb-6 tracking-tight">Why patients, doctors, and partners trust Getmeds.</h2>
               <p className="text-gray-500 text-[15px] leading-relaxed mb-10 max-w-lg">Pharmaceutical care built on
                 global standards, patient-first values, and Filipino heart. Every medicine is sourced, verified,
                 and delivered with the care your health deserves.</p>

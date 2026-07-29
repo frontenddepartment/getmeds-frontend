@@ -857,7 +857,7 @@ export default function GetMedsHomepage() {
             <h2 className="text-3xl md:text-4xl lg:text-[42px] font-semibold text-gray-900 leading-tight tracking-tight ca-anim ca-left">
               Patient First. <br />
               Raising the standard <br />
-              <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">for Filipino care.</span>
+              for Filipino care.
             </h2>
           </div>
 
@@ -1247,10 +1247,7 @@ export default function GetMedsHomepage() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center max-w-3xl mx-auto mb-12">
             <h2 className="text-3xl md:text-4xl font-semibold mb-4 leading-tight ca-anim ca-up">
-              Capabilities that move{' '}
-              <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">
-                medicines, partnerships, and patients forward.
-              </span>
+              Capabilities that move medicines, partnerships, and patients forward.
             </h2>
             <p className="text-gray-500 text-base leading-relaxed">
               Getmeds operates a full-stack pharmaceutical platform — from global sourcing and regulatory compliance to last-mile distribution, government access, and digital health.
@@ -1497,8 +1494,7 @@ export default function GetMedsHomepage() {
 
               {/* Heading — same size as other sections */}
               <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 leading-tight mb-14 max-w-xl ca-anim ca-up">
-                Why hospitals and pharmacies choose{' '}
-                <span className="bg-gradient-to-r from-[#1D9FDA] to-[#61A644] bg-clip-text text-transparent">Getmeds.</span>
+                Why hospitals and pharmacies choose Getmeds.
               </h2>
 
               {/* 4 feature columns */}
@@ -1630,7 +1626,7 @@ export default function GetMedsHomepage() {
                   </div>
                   <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 leading-tight mb-4 ca-anim ca-left">
                     Frequently asked<br />
-                    <span className="bg-gradient-to-r from-[#1D9FDA] to-[#61A644] bg-clip-text text-transparent">questions.</span>
+                    questions.
                   </h2>
                   <p className="text-gray-400 text-sm leading-relaxed">
                     Everything you need to know about Getmeds and our services.

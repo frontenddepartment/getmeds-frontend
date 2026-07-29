@@ -280,8 +280,7 @@ export default function PatientAssistanceProgram() {
           {/* Heading */}
           <div ref={sectionRef} className="text-center mb-7">
             <h2 className="text-2xl md:text-3xl font-semibold text-gray-900">
-              Mga Hakbang Para Makakuha ng{' '}
-              <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">Cancer Assistance</span>
+              Mga Hakbang Para Makakuha ng Cancer Assistance
             </h2>
           </div>
 

@@ -383,7 +383,7 @@ function fetchAndPopulateDropdown() {
                 let mobileHtml = '';
                 Object.values(sections).forEach(sec => {
                     if (sec.subcategories.length > 0) {
-                        mobileHtml += `<p class="px-3 pt-3 pb-1 text-[10px] font-black uppercase text-gray-400 tracking-wider">${sec.title}</p>`;
+                        mobileHtml += `<p class="px-3 pt-3 pb-1 text-[12px] font-semibold uppercase text-black tracking-wider">${sec.title}</p>`;
                         sec.subcategories.forEach(sub => {
                             const subSlug = getSubcategorySlug(sub);
                             const href = resolveHubPath(sub, subSlug) || `${categoryPrefix(subSlug)}${subSlug}`;
@@ -392,6 +392,14 @@ function fetchAndPopulateDropdown() {
                     }
                 });
                 mobileAccordion.innerHTML = mobileHtml;
+
+                // Re-check which of these freshly-built links matches the current page, now
+                // that the real hrefs exist — see navbar.html's getmedsHighlightActiveProductLink
+                // for why its earlier pass (against the placeholder markup this just replaced)
+                // can't have found anything.
+                if (typeof window.getmedsHighlightActiveProductLink === 'function') {
+                    window.getmedsHighlightActiveProductLink();
+                }
             }
         })
         .catch(err => console.warn('[Getmeds] Failed to populate dropdown with dynamic categories:', err));

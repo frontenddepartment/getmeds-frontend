@@ -54,9 +54,9 @@ const Ungc: React.FC = () => {
       <div id="navbar-container" className="fixed top-0 left-0 right-0 z-[50]" />
       <div className="h-20" />
 
-      {/* UNGC Hero Section */}
-      <section className="w-full mx-auto px-3 sm:px-4 md:px-6 mt-3 md:mt-4 mb-16 max-w-[1600px]">
-        <div className="relative rounded-[10px] md:rounded-[1.5rem] border border-white/10 overflow-hidden min-h-[190px] md:min-h-[450px] flex items-center justify-center">
+      {/* Desktop UNGC Hero Section */}
+      <section className="hidden sm:block w-full mx-auto px-3 sm:px-4 md:px-6 mt-3 md:mt-4 mb-16 max-w-[1600px]">
+        <div className="relative rounded-[10px] md:rounded-[1.5rem] border border-white/10 overflow-hidden flex items-center justify-center min-h-[360px] md:min-h-[450px] bg-[#0F2642]">
           {(() => {
             const heroFullSrc = getImage('UNGC Hero Background', 'assets/ungcimage.jpg');
             return (
@@ -70,22 +70,51 @@ const Ungc: React.FC = () => {
             );
           })()}
           <div className="absolute inset-0 bg-[#0F2642]/75 backdrop-blur-[1px] pointer-events-none"></div>
-          <div className="relative z-10 flex flex-col md:flex-row items-center gap-3 md:gap-14 px-3 md:px-8 py-4 md:py-16 max-w-6xl">
+          <div className="relative z-10 flex flex-col md:flex-row items-center gap-3 md:gap-14 px-4 py-5 md:px-8 md:py-16 max-w-6xl">
             <div className="flex-shrink-0">
-              <LinkableImage link={getImageLink('UNGC Logo White')} src={getImage('UNGC Logo White', 'assets/ungclogowhite.png')} alt="UNGC Logo" className="w-20 md:w-60 h-auto opacity-100" />
+              <LinkableImage link={getImageLink('UNGC Logo White')} src={getImage('UNGC Logo White', 'assets/ungclogowhite.png')} alt="UNGC Logo" className="w-28 md:w-60 h-auto opacity-100" />
             </div>
             <div className="hidden md:block w-[1.5px] h-56 bg-white/40"></div>
             <div className="text-white text-center md:text-left max-w-xl">
-              <h1 className="text-[11px] md:text-[52px] leading-[1.2] font-semibold mb-1 md:mb-5 tracking-tight">
+              <h1 className="text-[32px] md:text-[52px] leading-[1.2] font-semibold mb-5 tracking-tight">
                 <span>United Nations</span><br />
                 <span>Global Compact</span>
               </h1>
-              <p className="text-white/90 text-[9px] md:text-[15.5px] mb-0 md:mb-8 leading-relaxed font-normal max-w-[480px]">
+              <p className="text-white/90 text-[14px] md:text-[15.5px] mb-8 leading-relaxed font-normal max-w-[480px]">
                 At Getmeds Philippines, we do more than provide medicines—we drive meaningful impact through
                 responsible healthcare, compassion, and sustainable action.
               </p>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Mobile UNGC Hero Section */}
+      <section className="block sm:hidden w-full px-3 mt-3 mb-6">
+        <div className="relative aspect-[16/10] w-full rounded-[10px] border border-white/10 overflow-hidden mb-3 bg-[#0F2642] shadow-sm">
+          {(() => {
+            const heroFullSrc = getImage('UNGC Hero Background', 'assets/ungcimage.jpg');
+            return (
+              <ProgressiveHeroImage
+                link={getImageLink('UNGC Hero Background')}
+                fullSrc={heroFullSrc}
+                lowSrc={getLowResImage('UNGC Hero Background', heroFullSrc)}
+                alt="UN Global Compact"
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+            );
+          })()}
+          <div className="absolute inset-0 bg-[#0F2642]/50 pointer-events-none"></div>
+        </div>
+        <div className="px-1 flex flex-col items-start gap-2">
+          <LinkableImage link={getImageLink('UNGC Logo White')} src={getImage('UNGC Logo White', 'assets/ungclogowhite.png')} alt="UNGC Logo" className="w-20 h-auto opacity-90" />
+          <h1 className="text-xl font-semibold leading-tight tracking-tight text-gray-900">
+            United Nations <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">Global Compact</span>
+          </h1>
+          <p className="text-gray-600 text-xs leading-relaxed font-normal text-justify">
+            At Getmeds Philippines, we do more than provide medicines—we drive meaningful impact through
+            responsible healthcare, compassion, and sustainable action.
+          </p>
         </div>
       </section>
 

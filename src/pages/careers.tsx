@@ -319,10 +319,9 @@ const Careers: React.FC = () => {
       {/* Navbar */}
       <div id="navbar-container" className="sticky top-0 z-[50]" />
 
-      {/* HERO SECTION */}
-      <section className="w-full mx-auto px-3 sm:px-4 md:px-6 mt-3 md:mt-4 mb-0 max-w-[1600px]">
-        <div className={`relative rounded-[10px] md:rounded-[1.5rem] overflow-hidden min-h-[190px] md:min-h-[500px] flex items-end transition-colors duration-500 ${!heroImgLoaded ? 'bg-gray-200 animate-pulse' : 'bg-gray-100'}`}>
-          {/* Background Image — only mount after Sanity resolves so the src never changes */}
+      {/* Desktop HERO SECTION */}
+      <section className="hidden sm:block w-full mx-auto px-3 sm:px-4 md:px-6 mt-3 md:mt-4 mb-0 max-w-[1600px]">
+        <div className={`relative rounded-[10px] md:rounded-[1.5rem] overflow-hidden min-h-[360px] md:min-h-[500px] flex items-end transition-colors duration-500 ${!heroImgLoaded ? 'bg-gray-200 animate-pulse' : 'bg-gray-100'}`}>
           {!imagesLoading && (() => {
             const heroFullSrc = getImage('Careers Hero Background', 'assets/careershero.png');
             return (
@@ -336,24 +335,52 @@ const Careers: React.FC = () => {
               />
             );
           })()}
-          <div className="relative z-10 w-full px-3 md:px-14 pb-3 md:pb-8 pt-0">
+          <div className="relative z-10 w-full px-8 md:px-14 pb-5 md:pb-8 pt-0">
             <div className="inline-block max-w-[70%] md:max-w-[60%]">
-              <h1 className="text-[11px] md:text-5xl lg:text-6xl leading-[1.2] font-bold mb-1 md:mb-4 tracking-tight">
+              <h1 className="text-3xl md:text-5xl lg:text-6xl leading-[1.2] font-bold mb-4 tracking-tight">
                 <span className="hero-l1 block bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">Join the Minds</span>
                 <span className="hero-l2 block bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent whitespace-nowrap">
                   Behind the Medicine
                 </span>
               </h1>
-              <p className="hero-p text-[#000b5d] text-[9px] md:text-[15px] max-w-[420px] mb-2 md:mb-6 leading-relaxed font-medium">
+              <p className="hero-p text-[#000b5d] text-[13px] md:text-[15px] max-w-[420px] mb-6 leading-relaxed font-medium">
                 Join our mission to make healthcare accessible worldwide. We're looking
                 for passionate individuals to innovate and grow with us.
               </p>
               <a href="#join-form"
-                className="hero-btn bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:from-[#1D9FDA] hover:to-[#61A644] text-white font-semibold py-1 px-3.5 md:py-2.5 md:px-8 rounded-full text-[9px] md:text-[13px] inline-block transition shadow-lg">
+                className="hero-btn bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:from-[#1D9FDA] hover:to-[#61A644] text-white font-semibold py-2.5 px-8 rounded-full text-[13px] inline-block transition shadow-lg">
                 Read More
               </a>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Mobile HERO SECTION */}
+      <section className="block sm:hidden w-full px-3 mt-3 mb-4">
+        <div className={`relative aspect-[16/10] w-full rounded-[10px] overflow-hidden mb-3 shadow-sm transition-colors duration-500 ${!heroImgLoaded ? 'bg-gray-200 animate-pulse' : 'bg-gray-100'}`}>
+          {!imagesLoading && (() => {
+            const heroFullSrc = getImage('Careers Hero Background', 'assets/careershero.png');
+            return (
+              <ProgressiveHeroImage
+                link={getImageLink('Careers Hero Background')}
+                fullSrc={heroFullSrc}
+                lowSrc={getLowResImage('Careers Hero Background', heroFullSrc)}
+                alt="Getmeds Team"
+                onLoaded={() => setHeroImgLoaded(true)}
+                className="absolute inset-0 w-full h-full object-cover object-right-top"
+              />
+            );
+          })()}
+        </div>
+        <div className="px-1">
+          <h1 className="text-xl font-bold leading-tight mb-2 tracking-tight">
+            <span className="hero-l1 block bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">Join the Minds Behind the Medicine</span>
+          </h1>
+          <p className="hero-p text-gray-600 text-xs mb-3 leading-relaxed font-normal text-justify">
+            Join our mission to make healthcare accessible worldwide. We're looking
+            for passionate individuals to innovate and grow with us.
+          </p>
         </div>
       </section>
 
@@ -403,8 +430,7 @@ const Careers: React.FC = () => {
           <div className="ca-anim ca-up text-center max-w-3xl mx-auto mb-16">
             <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent font-bold uppercase tracking-widest text-lg block mb-4">Career Advantages</span>
             <h2 className="text-3xl md:text-4xl font-semibold text-dark mb-4">
-              Why professionals choose{' '}
-              <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent inline-block">Getmeds</span>?
+              Why professionals choose Getmeds?
             </h2>
             <p className="text-gray-500 text-[15px]">We provide more than just a job; we offer a path to excellence,
               innovation, and global impact in the healthcare industry.</p>
@@ -513,11 +539,7 @@ const Careers: React.FC = () => {
                 Our Benefits
               </span>
               <h2 className="ca-anim ca-left ca-d1 text-3xl md:text-4xl font-semibold text-dark leading-snug">
-                Getmeds Has Been Present<br />
-                For Over A Decade In<br />
-                <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">
-                  Healthcare
-                </span>
+                Getmeds Has Been Present For Over A Decade In Healthcare
               </h2>
             </div>
             <div className="flex-1 flex items-center">
@@ -539,7 +561,7 @@ const Careers: React.FC = () => {
           {/* Employee Recognition Header */}
           <div className="flex flex-col lg:flex-row gap-4 lg:gap-8 items-start mt-16 mb-6">
             <div className="shrink-0 lg:w-[42%]">
-              <h3 className="ca-anim ca-left text-3xl md:text-4xl font-semibold bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent leading-snug">
+              <h3 className="ca-anim ca-left text-3xl md:text-4xl font-semibold text-dark leading-snug">
                 Employee Recognition
               </h3>
             </div>
@@ -665,8 +687,7 @@ const Careers: React.FC = () => {
           <div className="ca-anim ca-up text-center max-w-3xl mx-auto mb-14">
             <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent font-bold uppercase tracking-widest text-lg block mb-4">Industry Engagement</span>
             <h2 className="text-3xl md:text-4xl font-semibold text-dark mb-4">
-              Conventions We've Been{' '}
-              <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent inline-block">Part Of</span>
+              Conventions We've Been Part Of
             </h2>
             <p className="text-gray-500 text-[15px]">Our team regularly represents Getmeds at leading local and
               international medical conventions, building partnerships that expand access to care.</p>
@@ -909,7 +930,7 @@ const Careers: React.FC = () => {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="ca-anim ca-up text-center mb-14">
               <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent font-bold uppercase tracking-widest text-lg block mb-4">Open Positions</span>
-              <h2 className="text-3xl md:text-4xl font-semibold text-dark mb-3">Join Our{' '}<span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">Team</span></h2>
+              <h2 className="text-3xl md:text-4xl font-semibold text-dark mb-3">Join Our Team</h2>
               <p className="text-gray-400 text-[14px] max-w-xl mx-auto leading-relaxed">
                 Discover exciting opportunities to grow your career with us. We are looking for passionate
                 individuals to join our mission-driven team.
