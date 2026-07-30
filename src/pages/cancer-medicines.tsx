@@ -11,6 +11,53 @@ interface ProductWithCategory extends Omit<SanityProduct, 'category'> {
   category?: Category;
 }
 
+// ── Typo-tolerant search matching (Google-style: forgives small misspellings) ──
+function levenshteinDistance(a: string, b: string): number {
+  if (a === b) return 0;
+  const al = a.length, bl = b.length;
+  if (al === 0) return bl;
+  if (bl === 0) return al;
+  let prev = Array.from({ length: bl + 1 }, (_, j) => j);
+  const curr = new Array(bl + 1).fill(0);
+  for (let i = 1; i <= al; i++) {
+    curr[0] = i;
+    for (let j = 1; j <= bl; j++) {
+      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+      curr[j] = Math.min(curr[j - 1] + 1, prev[j] + 1, prev[j - 1] + cost);
+    }
+    prev = [...curr];
+  }
+  return prev[bl];
+}
+
+function isCloseMatch(term: string, word: string): boolean {
+  if (term.length < 4 || word.length < 4) return false;
+  const distance = levenshteinDistance(term, word);
+  const maxLen = Math.max(term.length, word.length);
+  return 1 - distance / maxLen >= 0.75;
+}
+
+// Matches one query word against one field: exact substring first (cheap,
+// also catches partial/prefix typing like "pacli"), falling back to a
+// typo-tolerant word-level comparison for near-misses — e.g. "paklitaxel"
+// or "paclitaxol" still finds "Paclitaxel", the way Google forgives typos.
+function termMatchesText(term: string, text: string): boolean {
+  if (!text) return false;
+  if (text.includes(term)) return true;
+  if (term.length < 4) return false;
+  return text.split(/\s+/).some(word => isCloseMatch(term, word));
+}
+
+// Google-style multi-word search: every word in the query must match
+// *somewhere* across the given fields (exact or close-typo) — not
+// necessarily the same field or in the same order.
+function fieldsMatchSearch(fields: (string | undefined | null)[], search: string): boolean {
+  const terms = search.toLowerCase().trim().split(/\s+/).filter(Boolean);
+  if (terms.length === 0) return true;
+  const lowerFields = fields.filter((f): f is string => !!f).map(f => f.toLowerCase());
+  return terms.every(term => lowerFields.some(field => termMatchesText(term, field)));
+}
+
 
 const ITEMS_PER_PAGE = 12;
 
@@ -463,18 +510,11 @@ export default function CancerMedicines() {
 
     const searchFiltered = searchTerm
       ? categoryFiltered.filter(p => {
-          const search = searchTerm.toLowerCase();
-          const categoryText = (p.excelCategory || (typeof p.category === 'string' ? p.category : p.category?.category) || '').toLowerCase();
-          const categoryFolderText = (p.categoryFolder || '').toLowerCase();
+          const categoryText = p.excelCategory || (typeof p.category === 'string' ? p.category : p.category?.category);
           const conditions = getProductConditions(p);
-          return (
-            p.name?.toLowerCase().includes(search) ||
-            (p.brandName && p.brandName.toLowerCase().includes(search)) ||
-            (p.genericName && p.genericName.toLowerCase().includes(search)) ||
-            (p.subCategory && p.subCategory.toLowerCase().includes(search)) ||
-            categoryText.includes(search) ||
-            categoryFolderText.includes(search) ||
-            conditions.some(c => c.toLowerCase().includes(search))
+          return fieldsMatchSearch(
+            [p.name, p.brandName, p.genericName, p.subCategory, categoryText, p.categoryFolder, ...conditions],
+            searchTerm
           );
         })
       : categoryFiltered;
@@ -509,11 +549,8 @@ export default function CancerMedicines() {
     });
 
     // 2. Find matching products and increment their category counts
-    const lowerQuery = trimmed.toLowerCase();
     const matchedProducts = productsData.filter(p =>
-      p.name?.toLowerCase().includes(lowerQuery) ||
-      (p.brandName && p.brandName.toLowerCase().includes(lowerQuery)) ||
-      (p.genericName && p.genericName.toLowerCase().includes(lowerQuery))
+      fieldsMatchSearch([p.name, p.brandName, p.genericName], trimmed)
     );
 
     if (matchedProducts.length > 0) {
