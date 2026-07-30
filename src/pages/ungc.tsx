@@ -91,7 +91,7 @@ const Ungc: React.FC = () => {
 
       {/* Mobile UNGC Hero Section */}
       <section className="block sm:hidden w-full px-3 mt-3 mb-6">
-        <div className="relative aspect-[16/10] w-full rounded-[10px] border border-white/10 overflow-hidden mb-3 bg-[#0F2642] shadow-sm">
+        <div className="relative min-h-[300px] w-full rounded-[10px] border border-white/10 overflow-hidden bg-[#0F2642] shadow-sm">
           {(() => {
             const heroFullSrc = getImage('UNGC Hero Background', 'assets/ungcimage.jpg');
             return (
@@ -104,17 +104,18 @@ const Ungc: React.FC = () => {
               />
             );
           })()}
-          <div className="absolute inset-0 bg-[#0F2642]/50 pointer-events-none"></div>
-        </div>
-        <div className="px-1 flex flex-col items-start gap-2">
-          <LinkableImage link={getImageLink('UNGC Logo White')} src={getImage('UNGC Logo White', 'assets/ungclogowhite.png')} alt="UNGC Logo" className="w-20 h-auto opacity-90" />
-          <h1 className="text-xl font-semibold leading-tight tracking-tight text-gray-900">
-            United Nations <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">Global Compact</span>
-          </h1>
-          <p className="text-gray-600 text-xs leading-relaxed font-normal text-justify">
-            At Getmeds Philippines, we do more than provide medicines—we drive meaningful impact through
-            responsible healthcare, compassion, and sustainable action.
-          </p>
+          <div className="absolute inset-0 bg-[#0F2642]/70 backdrop-blur-[1px] pointer-events-none"></div>
+          <div className="relative z-10 h-full flex flex-col items-center justify-center text-center gap-2 px-5 py-8">
+            <LinkableImage link={getImageLink('UNGC Logo White')} src={getImage('UNGC Logo White', 'assets/ungclogowhite.png')} alt="UNGC Logo" className="w-20 h-auto opacity-90 mb-1" />
+            <h1 className="text-xl font-semibold leading-tight tracking-tight text-white">
+              <span>United Nations</span><br />
+              <span>Global Compact</span>
+            </h1>
+            <p className="text-white/90 text-xs leading-relaxed font-normal max-w-xs">
+              At Getmeds Philippines, we do more than provide medicines—we drive meaningful impact through
+              responsible healthcare, compassion, and sustainable action.
+            </p>
+          </div>
         </div>
       </section>
 
@@ -154,7 +155,7 @@ const Ungc: React.FC = () => {
             <div className="relative group w-full md:w-1/3 h-[500px] cursor-pointer overflow-hidden"
               onClick={() => setLightboxSrc(getImage('UNGC Event Left Image', 'assets/left.jpg'))}>
               <LinkableImage link={getImageLink('UNGC Event Left Image')} src={getImage('UNGC Event Left Image', 'assets/left.jpg')}
-                className="w-full h-full object-cover group-hover:scale-110 transition duration-700" alt="" />
+                className="block w-full h-full object-cover group-hover:scale-110 transition duration-700" alt="" />
               <div className="absolute inset-0 bg-[#1D9FDA]/0 group-hover:bg-[#1D9FDA]/40 transition-all duration-500 z-10 pointer-events-none"></div>
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30 p-8 flex flex-col justify-between z-20 pointer-events-none">
                 <div className="flex justify-between items-start">
@@ -168,10 +169,10 @@ const Ungc: React.FC = () => {
 
             {/* Middle: Sustainable & Networking */}
             <div className="flex flex-col w-full md:w-1/3">
-              <div className="relative group h-[250px] border-l border-b border-gray-100/10 cursor-pointer overflow-hidden"
+              <div className="relative group h-[250px] cursor-pointer overflow-hidden"
                 onClick={() => setLightboxSrc(getImage('UNGC Event Top Mid Image', 'assets/topmid.jpg'))}>
                 <LinkableImage link={getImageLink('UNGC Event Top Mid Image')} src={getImage('UNGC Event Top Mid Image', 'assets/topmid.jpg')}
-                  className="w-full h-full object-cover group-hover:scale-110 transition duration-700" alt="" />
+                  className="block w-full h-full object-cover group-hover:scale-110 transition duration-700" alt="" />
                 <div className="absolute inset-0 bg-[#1D9FDA]/0 group-hover:bg-[#1D9FDA]/40 transition-all duration-500 z-10 pointer-events-none"></div>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30 p-8 flex flex-col justify-between z-20 pointer-events-none">
                   <div className="flex justify-between items-start">
@@ -182,10 +183,10 @@ const Ungc: React.FC = () => {
                     in Healthcare Innovation</h4>
                 </div>
               </div>
-              <div className="relative group h-[250px] border-l border-gray-100/10 cursor-pointer overflow-hidden"
+              <div className="relative group h-[250px] cursor-pointer overflow-hidden"
                 onClick={() => setLightboxSrc(getImage('UNGC Event Bottom Mid Image', 'assets/bottommid.jpg'))}>
                 <LinkableImage link={getImageLink('UNGC Event Bottom Mid Image')} src={getImage('UNGC Event Bottom Mid Image', 'assets/bottommid.jpg')}
-                  className="w-full h-full object-cover group-hover:scale-110 transition duration-700" alt="" />
+                  className="block w-full h-full object-cover group-hover:scale-110 transition duration-700" alt="" />
                 <div className="absolute inset-0 bg-[#1D9FDA]/0 group-hover:bg-[#1D9FDA]/40 transition-all duration-500 z-10 pointer-events-none"></div>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30 p-8 flex flex-col justify-between z-20 pointer-events-none">
                   <div className="flex justify-between items-start">
@@ -200,10 +201,10 @@ const Ungc: React.FC = () => {
 
             {/* Right: Ethical & General Assembly */}
             <div className="flex flex-col w-full md:w-1/3">
-              <div className="relative group h-[250px] border-l border-b border-gray-100/10 cursor-pointer overflow-hidden"
+              <div className="relative group h-[250px] cursor-pointer overflow-hidden"
                 onClick={() => setLightboxSrc(getImage('UNGC Event Top Right Image', 'assets/topright.jpeg'))}>
                 <LinkableImage link={getImageLink('UNGC Event Top Right Image')} src={getImage('UNGC Event Top Right Image', 'assets/topright.jpeg')}
-                  className="w-full h-full object-cover group-hover:scale-110 transition duration-700" alt="" />
+                  className="block w-full h-full object-cover group-hover:scale-110 transition duration-700" alt="" />
                 <div className="absolute inset-0 bg-[#1D9FDA]/0 group-hover:bg-[#1D9FDA]/40 transition-all duration-500 z-10 pointer-events-none"></div>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30 p-8 flex flex-col justify-between z-20 pointer-events-none">
                   <div className="flex justify-between items-start">
@@ -214,10 +215,10 @@ const Ungc: React.FC = () => {
                     Business Practices</h4>
                 </div>
               </div>
-              <div className="relative group h-[250px] border-l border-gray-100/10 cursor-pointer overflow-hidden"
+              <div className="relative group h-[250px] cursor-pointer overflow-hidden"
                 onClick={() => setLightboxSrc(getImage('UNGC Event Bottom Right Image', 'assets/bottomright.jpeg'))}>
                 <LinkableImage link={getImageLink('UNGC Event Bottom Right Image')} src={getImage('UNGC Event Bottom Right Image', 'assets/bottomright.jpeg')}
-                  className="w-full h-full object-cover group-hover:scale-110 transition duration-700" alt="" />
+                  className="block w-full h-full object-cover group-hover:scale-110 transition duration-700" alt="" />
                 <div className="absolute inset-0 bg-[#1D9FDA]/0 group-hover:bg-[#1D9FDA]/40 transition-all duration-500 z-10 pointer-events-none"></div>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30 p-8 flex flex-col justify-between z-20 pointer-events-none">
                   <div className="flex justify-between items-start">
@@ -235,7 +236,7 @@ const Ungc: React.FC = () => {
       </section>
 
       {/* The Ten Principles */}
-      <section className="py-24 bg-white border-t border-gray-50">
+      <section className="pt-0 pb-24 sm:py-24 bg-white border-t border-gray-50">
         <div className="max-w-7xl mx-auto px-4 text-center mb-16">
           <h2 className="text-4xl font-bold text-dark">The Ten Principles</h2>
         </div>
@@ -343,7 +344,7 @@ const Ungc: React.FC = () => {
       </section>
 
       {/* How UNGC Supports the 17 SDG */}
-      <section className="py-24 bg-white">
+      <section className="pt-0 pb-24 sm:py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 text-center mb-6">
           <h2 className="text-3xl font-bold text-dark mb-4">How UNGC Supports the 17 Sustainable Development Goals (SDGs)</h2>
           <p className="text-gray-500 text-[18px] max-w-3xl mx-auto leading-relaxed px-4">The UNGC principles also

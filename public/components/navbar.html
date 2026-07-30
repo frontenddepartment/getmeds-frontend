@@ -62,6 +62,14 @@
         box-shadow: none !important;
     }
 
+    /* Mobile-only: keep a hairline separator under the home navbar since there's
+       no scroll-triggered background/shadow to visually separate it from the page. */
+    @media (max-width: 767px) {
+        body[data-page="home"] #global-nav {
+            border-bottom: 1px solid #f1f5f9 !important;
+        }
+    }
+
     body[data-page="home"] #global-nav-wrapper.scrolled #global-nav {
         background: #ffffff !important;
         border-bottom: 1px solid #f1f5f9 !important;

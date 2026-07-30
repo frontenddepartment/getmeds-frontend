@@ -101,7 +101,7 @@ export default function Services() {
 
       {/* Desktop Hero Section */}
       <section className="hidden sm:block w-full mx-auto px-3 sm:px-4 md:px-6 mt-3 md:mt-4 mb-6 max-w-[1600px]">
-        <div className="relative rounded-[10px] md:rounded-[1.5rem] border border-gray-100/20 overflow-hidden min-h-[360px] md:min-h-[450px] lg:min-h-[500px] flex items-end group shadow-sm bg-gray-100">
+        <div className="relative rounded-[10px] md:rounded-[1.5rem] border border-gray-100/20 overflow-hidden min-h-[360px] md:min-h-[450px] lg:min-h-[500px] flex items-center group shadow-sm bg-gray-100">
           <div className="absolute inset-0 z-0">
             {(() => {
               const heroFullSrc = getImage('Services Hero Background', 'assets/services_hero_new.png');
@@ -120,12 +120,12 @@ export default function Services() {
             })()}
           </div>
 
-          <div className="relative z-10 w-full px-8 md:px-14 pb-5 md:pb-16 pt-20 max-w-4xl reveal">
-            <h1 className="text-[28px] md:text-[38px] leading-tight font-bold mb-3 tracking-tight">
+          <div className="relative z-10 w-full px-8 md:px-14 py-8 md:py-10 max-w-4xl reveal">
+            <h1 className="text-[34px] md:text-[46px] leading-tight font-bold mb-3 tracking-tight">
               <span data-json="hero.headingAccent"
                 className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent leading-tight tracking-tight">Our Services</span>
             </h1>
-            <p data-json="hero.description" className="text-[#000b5d] text-[13px] md:text-[14px] max-w-[600px] mb-5 leading-normal font-normal">
+            <p data-json="hero.description" className="text-[#000b5d] text-[13px] md:text-[15px] max-w-[420px] md:max-w-[480px] mb-5 leading-normal font-normal">
               Getmeds connects globally certified pharmaceutical manufacturers with Filipino patients, doctors, and
               hospitals — bridging the gap between world-class treatment and local access.
             </p>
@@ -441,7 +441,7 @@ export default function Services() {
       </section>
 
       {/* Why Choose Us */}
-      <section className="py-24 bg-white overflow-hidden">
+      <section className="pt-8 pb-24 sm:py-24 bg-white overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-12">
             {/* Left Content */}
@@ -552,10 +552,10 @@ export default function Services() {
       {/* CTA Banner */}
       <section className="py-20 bg-gradient-to-r from-[#1a2744] to-[#0f3460]">
         <div className="max-w-7xl mx-auto px-4 text-center reveal">
-          <h2 className="text-[28px] md:text-[38px] font-bold text-white mb-4 tracking-tight">Ready to Experience <span
+          <h2 className="text-[28px] md:text-[38px] font-bold text-white mb-4 tracking-tight">Ready to Experience<br className="sm:hidden" /> <span
             className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">Better
             Healthcare?</span></h2>
-          <p className="text-white/60 text-[15px] mb-10 max-w-xl mx-auto">Join thousands of patients who trust Getmeds for
+          <p className="text-white/60 text-[13px] sm:text-[15px] mb-10 max-w-[270px] sm:max-w-xl mx-auto">Join thousands of patients who trust Getmeds for
             fast, reliable, and expert medical services every day.</p>
           <div className="flex flex-wrap justify-center gap-4">
             <a href="order-medicines.html"

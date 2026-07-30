@@ -158,8 +158,8 @@ export default function GlobalPresence() {
 
             {/* Featured card — INDUSTRY FIRST */}
             <div className="ca-anim ca-zoom ca-d2 bg-gradient-to-br from-white to-green-100/60 rounded-2xl p-6 pb-14 mb-4 relative overflow-hidden flex flex-col justify-between hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer">
-              <span className="absolute top-4 right-4 text-[11px] font-semibold px-3 py-1.5 rounded-full border bg-green-100 text-green-700 border-green-200 z-10">Industry First</span>
-              <div className="relative z-10 max-w-[65%]">
+              <span className="block w-fit mb-3 sm:absolute sm:top-4 sm:right-4 sm:mb-0 text-[11px] font-semibold px-3 py-1.5 rounded-full border bg-green-100 text-green-700 border-green-200 z-10">Industry First</span>
+              <div className="relative z-10 w-full sm:max-w-[65%]">
                 <div className="flex items-center gap-3 mb-3">
                   <div className="w-9 h-9 rounded-full overflow-hidden border-2 border-green-100 shadow-sm flex-shrink-0">
                     <img src="https://flagcdn.com/w80/ph.png" alt="Philippines" className="w-full h-full object-cover" />
@@ -247,7 +247,7 @@ export default function GlobalPresence() {
             </div>
 
             {/* 4 smaller SE Asia cards */}
-            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {[
                 { flag: 'https://flagcdn.com/w80/vn.png', name: 'Vietnam', desc: 'Building market presence and expanding access to quality medicines across the country.' },
                 { flag: 'https://flagcdn.com/w80/kh.png', name: 'Cambodia', desc: 'Driving strategic initiatives to advance healthcare services and strengthen regional collaboration.' },
@@ -300,8 +300,8 @@ export default function GlobalPresence() {
 
             {/* Featured bottom card — A HEALTHCARE FIRST */}
             <div className="ca-anim ca-zoom ca-d3 bg-gradient-to-br from-white to-red-100/60 rounded-2xl p-6 pb-14 relative overflow-hidden flex flex-col justify-between hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer">
-              <span className="absolute top-4 right-4 text-[11px] font-semibold px-3 py-1.5 rounded-full border bg-red-100 text-red-700 border-red-200 z-10">A Healthcare First</span>
-              <div className="relative z-10 max-w-[65%]">
+              <span className="block w-fit mb-3 sm:absolute sm:top-4 sm:right-4 sm:mb-0 text-[11px] font-semibold px-3 py-1.5 rounded-full border bg-red-100 text-red-700 border-red-200 z-10">A Healthcare First</span>
+              <div className="relative z-10 w-full sm:max-w-[65%]">
                 <h4 className="font-semibold text-gray-900 text-base leading-tight mb-2">First specialty cancer pharmacy in the Pacific</h4>
                 <p className="text-gray-500 text-sm leading-relaxed">Opened the Pacific's first specialty pharmacy dedicated to cancer medicines — providing localized access to life-saving treatments for patients in Vanuatu, Fiji, and across the Pacific region.</p>
               </div>

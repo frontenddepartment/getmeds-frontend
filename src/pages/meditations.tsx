@@ -467,7 +467,7 @@ export default function Meditations() {
       </section>
 
       {/* BENEFITS SECTION */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 relative overflow-hidden">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-24 sm:py-24 relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none z-0">
           <svg className="absolute top-1/2 -translate-y-1/2 right-[5%] w-[600px] h-[600px] text-slate-300 transform scale-x-[-1]" viewBox="0 0 800 800" fill="none" xmlns="http://www.w3.org/2000/svg">
             <circle cx="400" cy="400" r="350" fill="currentColor" opacity="0.05" />
@@ -524,8 +524,8 @@ export default function Meditations() {
 
       {/* FEATURES SECTION */}
       <section
-        className="w-full pt-24 pb-16 px-4 sm:px-6 lg:px-8 mt-10"
-        style={{ background: 'linear-gradient(to bottom, #1D9FDA 75%, #ffffff 75%)' }}
+        className="w-full pt-8 sm:pt-24 pb-16 px-4 sm:px-6 lg:px-8 mt-2 sm:mt-10"
+        style={{ background: '#1D9FDA' }}
       >
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start">

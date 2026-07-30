@@ -944,7 +944,7 @@ export default function CancerMedicines() {
                     {/* Filter Panel — pick a therapeutic area/category to filter the
                         table, the same selection the sidebar drives */}
                     {filterPanelOpen && (
-                      <div className="absolute right-0 top-full mt-2 w-72 bg-white rounded-2xl shadow-xl border border-gray-100 p-4 z-50 max-h-80 overflow-y-auto">
+                      <div className="absolute right-0 top-full mt-2 w-80 bg-white rounded-2xl shadow-xl border border-gray-100 p-4 z-50 max-h-80 overflow-y-auto sidebar-scroll">
                         <div className="flex items-center justify-between mb-4">
                           <h4 className="text-[13px] font-semibold text-gray-800">Therapeutic Areas</h4>
                           {activeFilterCount > 0 && (
@@ -957,10 +957,10 @@ export default function CancerMedicines() {
                           )}
                         </div>
 
-                        <div className="flex flex-wrap gap-2">
+                        <div className="grid grid-cols-2 gap-2">
                           <button
                             onClick={() => { selectCategory('All', 'All'); setFilterPanelOpen(false); }}
-                            className={`px-3 py-1.5 rounded-full text-[11px] font-semibold border transition-all ${
+                            className={`w-full px-3 py-1.5 rounded-full text-[11px] font-semibold border transition-all text-center leading-tight ${
                               selectedCategory.category === 'All'
                                 ? 'bg-primary text-white border-primary'
                                 : 'bg-white text-gray-600 border-gray-200 hover:border-primary hover:text-primary'
@@ -972,13 +972,13 @@ export default function CancerMedicines() {
                             <button
                               key={cat.slug}
                               onClick={() => { selectCategory(cat.category, 'All'); setFilterPanelOpen(false); }}
-                              className={`px-3 py-1.5 rounded-full text-[11px] font-semibold border transition-all ${
+                              className={`w-full px-3 py-1.5 rounded-full text-[11px] font-semibold border transition-all text-center leading-tight ${
                                 selectedCategory.category === cat.category
                                   ? 'bg-primary text-white border-primary'
                                   : 'bg-white text-gray-600 border-gray-200 hover:border-primary hover:text-primary'
                               }`}
                             >
-                              {cat.category}
+                              {cat.category.replace(/(\w)-(\w)/g, '$1‑$2')}
                             </button>
                           ))}
                         </div>
