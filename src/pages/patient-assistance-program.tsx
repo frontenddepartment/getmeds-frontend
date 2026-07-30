@@ -11,10 +11,10 @@ const GRADIENT = 'linear-gradient(135deg, #61A644, #1D9FDA)';
 function StepNumber({ n, done }: { n: number; done?: boolean }) {
   return (
     <div
-      className="w-9 h-9 rounded-full flex items-center justify-center shadow-md text-white font-bold text-sm shrink-0"
+      className="w-7 h-7 sm:w-9 sm:h-9 rounded-full flex items-center justify-center shadow-md text-white font-bold text-xs sm:text-sm shrink-0"
       style={{ background: GRADIENT }}
     >
-      {done ? <i className="fa-solid fa-check text-sm" /> : n}
+      {done ? <i className="fa-solid fa-check text-xs sm:text-sm" /> : n}
     </div>
   );
 }
@@ -321,11 +321,11 @@ export default function PatientAssistanceProgram() {
 
           {/* ── Mga Hakbang ── */}
           {activeSection === 'steps' && (
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 sm:p-8">
+            <div className="sm:bg-white sm:rounded-2xl sm:border sm:border-gray-100 sm:shadow-sm p-0 sm:p-8">
               <div className="space-y-0">
 
                 {/* Step 1 */}
-                <div className="flex gap-4 sm:gap-5">
+                <div className="flex gap-2.5 sm:gap-5">
                   <div className="flex flex-col items-center shrink-0">
                     <StepNumber n={1} />
                     {connectorLine}
@@ -341,7 +341,7 @@ export default function PatientAssistanceProgram() {
                 </div>
 
                 {/* Step 2 */}
-                <div className="flex gap-4 sm:gap-5">
+                <div className="flex gap-2.5 sm:gap-5">
                   <div className="flex flex-col items-center shrink-0">
                     <StepNumber n={2} />
                     {connectorLine}
@@ -362,7 +362,7 @@ export default function PatientAssistanceProgram() {
                 </div>
 
                 {/* Step 3 */}
-                <div className="flex gap-4 sm:gap-5">
+                <div className="flex gap-2.5 sm:gap-5">
                   <div className="flex flex-col items-center shrink-0">
                     <StepNumber n={3} />
                     {connectorLine}
@@ -424,7 +424,7 @@ export default function PatientAssistanceProgram() {
                 </div>
 
                 {/* Step 4 */}
-                <div className="flex gap-4 sm:gap-5">
+                <div className="flex gap-2.5 sm:gap-5">
                   <div className="flex flex-col items-center shrink-0">
                     <StepNumber n={4} />
                     {connectorLine}
@@ -440,7 +440,7 @@ export default function PatientAssistanceProgram() {
                 </div>
 
                 {/* Step 5 */}
-                <div className="flex gap-4 sm:gap-5">
+                <div className="flex gap-2.5 sm:gap-5">
                   <div className="flex flex-col items-center shrink-0">
                     <StepNumber n={5} />
                     {connectorLine}
@@ -467,7 +467,7 @@ export default function PatientAssistanceProgram() {
                 </div>
 
                 {/* Step 6 */}
-                <div className="flex gap-4 sm:gap-5">
+                <div className="flex gap-2.5 sm:gap-5">
                   <div className="flex flex-col items-center shrink-0">
                     <StepNumber n={6} done />
                   </div>
