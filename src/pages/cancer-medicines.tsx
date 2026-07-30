@@ -4,6 +4,7 @@ import { useProducts, useCategories, useImageMapper } from '../lib/useSanity';
 import { urlFor } from '../lib/sanity';
 import type { Product as SanityProduct, Category } from '../types/sanity';
 import { injectHTML } from '../lib/injectHTML';
+import { sortByFeaturedOrder } from '../lib/categoryImageKey';
 
 
 interface ProductWithCategory extends Omit<SanityProduct, 'category'> {
@@ -73,7 +74,7 @@ const getProductConditions = (p: { conditions?: string[]; subCategory?: string }
   p.conditions && p.conditions.length ? p.conditions : (p.subCategory ? [p.subCategory] : []);
 
 export default function CancerMedicines() {
-  const { getImage } = useImageMapper('product-range');
+  const { getImage, categoryImages } = useImageMapper('product-range');
   const { data: productsDataRaw, loading: productsLoading } = useProducts();
   const productsData = productsDataRaw as ProductWithCategory[] | null;
   const { data: categoriesData, loading: categoriesLoading } = useCategories();
@@ -225,7 +226,7 @@ export default function CancerMedicines() {
   const processedCats = useMemo(() => {
     if (!categoriesData) return [];
 
-    return categoriesData
+    const mapped = categoriesData
       .filter((cat) => cat.category && cat.slug?.current && cat.subcategory && Array.isArray(cat.subcategory) && cat.subcategory.length > 0)
       .map((cat) => ({
         category: cat.category,
@@ -233,7 +234,12 @@ export default function CancerMedicines() {
         slug: cat.slug.current,
         subcategory: (cat.subcategory || []).filter(Boolean)
       }));
-  }, [categoriesData]);
+
+    // Featured categories (Studio's "Category Featured" tab, drag-ordered) show first, in that
+    // order; everything else keeps its existing (alphabetical) relative order, after them. Drives
+    // both the sidebar list and the Therapeutic Areas filter, which both consume this array.
+    return sortByFeaturedOrder(mapped, (cat) => cat.category, categoryImages);
+  }, [categoriesData, categoryImages]);
 
   // Helper to resolve condition by slug or display name
   const resolveConditionName = (target: string, cats: typeof processedCats) => {
@@ -645,6 +651,7 @@ export default function CancerMedicines() {
   const selectCategory = (category: string, subCategory: string = 'All') => {
     setSelectedCategory({ category, subCategory });
     setCurrentPage(1);
+    scrollToTable();
 
     if (typeof window !== 'undefined') {
       const matched = processedCats.find(c => c.category.toLowerCase() === category.toLowerCase());
@@ -693,7 +700,18 @@ export default function CancerMedicines() {
   // shifts and scrollIntoView's target ends up miscalculated. Setting
   // scrollTop directly on the container is unambiguous regardless of layout.
   const scrollToTable = () => {
-    if (scrollContainerRef.current) scrollContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+    setTimeout(() => {
+      if (scrollContainerRef.current) {
+        scrollContainerRef.current.scrollTop = 0;
+      }
+      if (typeof window !== 'undefined') {
+        window.scrollTo(0, 0);
+        document.body.scrollTop = 0;
+        if (document.documentElement) {
+          document.documentElement.scrollTop = 0;
+        }
+      }
+    }, 50);
   };
 
   const isCatParentActive = (cat: any) =>
@@ -904,6 +922,7 @@ export default function CancerMedicines() {
                         if (e.key === 'Enter') {
                           onEnterSearch(searchTerm);
                           setShowSuggestions(false);
+                          scrollToTable();
                         }
                       }}
                       className="w-full bg-transparent border-none pl-2.5 pr-2 py-1.5 text-[13px] text-gray-700 outline-none placeholder-gray-400"
@@ -993,6 +1012,7 @@ export default function CancerMedicines() {
                               setSearchTerm(term);
                               setCurrentPage(1);
                               setShowSuggestions(false);
+                              scrollToTable();
                             }}
                           >
                             <div className="flex items-center gap-2">
@@ -1027,6 +1047,7 @@ export default function CancerMedicines() {
                             setSearchTerm(sp.brandName || sp.name || '');
                             setCurrentPage(1);
                             setShowSuggestions(false);
+                            scrollToTable();
                           }}
                         >
                           <div className="w-10 h-10 bg-white border border-gray-100 p-1.5 rounded-lg flex items-center justify-center overflow-hidden">
@@ -1053,7 +1074,7 @@ export default function CancerMedicines() {
                 <div className="relative">
                   <select
                     value={sortBy}
-                    onChange={e => { setSortBy(e.target.value); setCurrentPage(1); }}
+                    onChange={e => { setSortBy(e.target.value); setCurrentPage(1); scrollToTable(); }}
                     className="appearance-none bg-white border border-blue-200 hover:border-primary rounded-full pl-4 pr-8 py-1.5 text-[13px] font-semibold text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition-all cursor-pointer shadow-sm"
                   >
                     <option>Default</option>

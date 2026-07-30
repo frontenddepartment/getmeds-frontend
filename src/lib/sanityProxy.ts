@@ -166,7 +166,7 @@ const SANITY_QUERIES: Record<string, string> = {
         link
       },
       videos[] {
-        video { asset-> },
+        video { ..., asset-> },
         thumbnail { asset-> },
         altText,
         enableLink,

@@ -426,16 +426,15 @@ export function useImageMapper(_page?: string) {
     return doc.images.map((slide: any) => (slide?.enableLink && slide.link ? slide.link : null))
   }
 
-  /**
-   * getVideo(name, fallback) — returns the URL of the first video in the named slot.
-   * Falls back to the local `fallback` path if Sanity has no video yet. Unlike images,
-   * Sanity file assets resolve to a plain CDN URL already, so no urlFor() is needed.
-   */
   const getVideo = (name: string, fallback: string): string => {
     if (!allAssets) return fallback
     const doc = allAssets.find((asset) => asset.name === name)
-    const url = doc?.videos?.[0]?.video?.asset?.url
-    return url || fallback
+    const video = doc?.videos?.[0]?.video
+    if (!video) return fallback
+    if (typeof video === 'string') return video
+    if (video.url) return video.url
+    if (video.asset?.url) return video.asset.url
+    return fallback
   }
 
   /**

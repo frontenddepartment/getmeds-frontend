@@ -543,6 +543,10 @@ export default function GetMedsHomepage() {
         .animate-slide-down { animation: slideDown 0.4s ease-out forwards; }
         @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
         .marquee-track { display: flex; white-space: nowrap; animation: marquee 14s linear infinite; }
+        /* Guarantees each of the two copies fills at least the full visible width, so a short
+           text (e.g. a handful of subcategory names) still scrolls continuously instead of
+           leaving a blank gap once the real content runs out before the copy takes over. */
+        .marquee-track-fill > span { min-width: 100%; flex-shrink: 0; }
         @keyframes slideUpIn { from { transform: translateY(70px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         @keyframes slideRightIn { from { transform: translateX(60px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
         @keyframes progressFill { from { width: 0%; } to { width: 100%; } }
@@ -1200,9 +1204,8 @@ export default function GetMedsHomepage() {
                             <div className="absolute bottom-0 left-0 right-0 p-4 therap-card-text">
                               <h3 className="text-white text-xl font-bold mb-1">{card.name}</h3>
                               <div className="overflow-hidden mb-1">
-                                <div className="marquee-track">
+                                <div className="marquee-track marquee-track-fill">
                                   <span className="text-white/75 text-xs pr-6">{card.subcategories?.join(' • ')}</span>
-                                  <span className="text-white/75 text-xs pr-6">{'•'}</span>
                                   <span className="text-white/75 text-xs pr-6">{card.subcategories?.join(' • ')}</span>
                                 </div>
                               </div>
