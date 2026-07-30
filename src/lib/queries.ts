@@ -599,13 +599,68 @@ export async function getNewsBySlug(slug: string, preview: boolean = false) {
   }
 }
 
+function parseWpPost(item: any): News {
+  const categories = item._embedded?.['wp:term']?.[0] || [];
+  const tag = categories[0]?.name || 'News';
+  
+  const featuredMedia = item._embedded?.['wp:featuredmedia']?.[0] || {};
+  const image = featuredMedia.source_url || '';
+  
+  const rawExcerpt = item.excerpt?.rendered || '';
+  let description = rawExcerpt.replace(/<[^>]*>/g, '');
+  description = description.replace(/&amp;nbsp;/g, ' ').replace(/&nbsp;/g, ' ');
+  description = description.replace(/&#\d+;/g, '').trim();
+  
+  const rawContent = item.content?.rendered || '';
+  const cleanContent = rawContent.replace(/<div id="ez-toc-container"[\s\S]*?<\/nav>\s*<\/div>/g, '');
+  
+  const textOnly = cleanContent.replace(/<[^>]*>/g, '');
+  const wordCount = textOnly.trim().split(/\s+/).filter(Boolean).length;
+  const minutes = Math.max(1, Math.round(wordCount / 200));
+  const readTime = `${minutes} min read`;
+  
+  return {
+    _id: String(item.id || ''),
+    _type: 'news',
+    tag,
+    title: item.title?.rendered || '',
+    slug: item.slug || '',
+    date: item.date || '',
+    description,
+    readTime,
+    image: cleanWordPressUrl(image),
+    contentHtml: cleanContent,
+    source_link: item.link || ''
+  };
+}
+
 export async function getFeaturedNews() {
   try {
-    const res = await fetch('/api/blog/featured');
-    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-    return await res.json();
+    const wp_root = "https://cms.getmeds.ph";
+    const idsRes = await fetch(`${wp_root}/wp-json/getmeds/v1/featured-blogs`);
+    if (!idsRes.ok) throw new Error(`HTTP error! status: ${idsRes.status}`);
+    const featured_ids = await idsRes.json();
+    if (!featured_ids || !Array.isArray(featured_ids)) return [];
+    
+    const ids = featured_ids.map(Number).filter(id => !isNaN(id) && id > 0);
+    if (ids.length === 0) return [];
+    
+    const postPromises = ids.map(async (id) => {
+      try {
+        const postRes = await fetch(`${wp_root}/wp-json/wp/v2/posts/${id}?_embed=true`);
+        if (!postRes.ok) return null;
+        const postData = await postRes.json();
+        return parseWpPost(postData);
+      } catch (err) {
+        console.error(`Error fetching post ${id} from WordPress:`, err);
+        return null;
+      }
+    });
+    
+    const results = await Promise.all(postPromises);
+    return results.filter((item): item is News => item !== null);
   } catch (err) {
-    console.error('Error fetching featured news from backend API:', err);
+    console.error('Error fetching featured news from WordPress:', err);
     return [];
   }
 }
