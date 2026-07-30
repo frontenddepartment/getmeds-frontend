@@ -155,7 +155,7 @@ export default function Services() {
                 lowSrc={getLowResImage('Services Hero Background', heroFullSrc)}
                 dataJsonSrc="hero.image"
                 dataJsonAlt="hero.imageAlt"
-                className="absolute inset-0 w-full h-full object-cover object-center"
+                className="absolute inset-0 w-full h-full object-cover object-right"
                 transitionClassName="transition-[opacity_0.7s,transform_4s]"
                 alt="Healthcare Services"
               />
