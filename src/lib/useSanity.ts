@@ -51,6 +51,7 @@ import {
   getNewsById,
   getNewsBySlug,
   getNewsPage,
+  getFeaturedNews,
 } from './queries'
 
 import { urlFor, getLowResUrl } from './sanity'
@@ -590,4 +591,9 @@ export function useNewsPaginated(perPage: number = 20) {
 
   return { articles, loading, loadingMore, hasMore, loadMore, error, loadMoreError }
 }
+
+export function useFeaturedNews() {
+  return useFetch<News[]>(getFeaturedNews)
+}
+
 

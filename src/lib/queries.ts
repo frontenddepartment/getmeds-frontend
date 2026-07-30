@@ -599,6 +599,17 @@ export async function getNewsBySlug(slug: string, preview: boolean = false) {
   }
 }
 
+export async function getFeaturedNews() {
+  try {
+    const res = await fetch('/api/blog/featured');
+    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+    return await res.json();
+  } catch (err) {
+    console.error('Error fetching featured news from backend API:', err);
+    return [];
+  }
+}
+
 export async function getCareers() {
   return sanityQuery<any[]>('career.all')
 }
