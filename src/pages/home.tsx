@@ -594,16 +594,10 @@ export default function GetMedsHomepage() {
               backgroundImage: `url('${getImage(slide.bg, slide.bg)}')`,
               // Slide 2 is a self-contained banner graphic (its own logo/text baked
               // in — see the `heroIndex !== 1` check below that hides the overlay
-              // heading for it) with a much more panoramic aspect ratio than the
-              // photographic slides, so `cover` crops too much off its edges;
-              // `contain` keeps the whole banner intact. Anchored left (instead of
-              // centered) so the empty margin `contain` leaves lands entirely on
-              // the right instead of splitting into a visible seam on both sides,
-              // and the container is forced white so that margin matches the page
-              // instead of showing the image's own slightly off-white edge tone.
-              backgroundSize: i === 1 ? 'contain' : 'cover',
-              backgroundPosition: i === 1 ? 'left center' : 'center',
-              backgroundColor: i === 1 ? '#ffffff' : undefined,
+              // heading for it), but it shares the same 2048x1162 canvas as the
+              // photographic slides, so it's treated identically with `cover`.
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
               backgroundRepeat: 'no-repeat',
               opacity: i === heroIndex ? 1 : 0,
               zIndex: 0,
@@ -739,13 +733,12 @@ export default function GetMedsHomepage() {
                 onClick={() => { if (slide.link) window.open(slide.link, '_blank', 'noopener,noreferrer'); }}
                 style={{
                   backgroundImage: `url('${getImage(slide.bg, slide.bg)}')`,
-                  // See matching comment on the desktop hero slide backgrounds above.
-                  // Forcing white here also covers the parent's `bg-gray-100`, which
-                  // otherwise shows through as gray bars above/below this slide's
-                  // `contain`-fit image (it's narrower/taller relative to this
-                  // card than the photographic slides, so it doesn't fill the height).
+                  // Slides share the same 2048x1162 canvas so they use `cover` like on
+                  // desktop — except slide 2 on this short mobile card: its banner text
+                  // and icon row sit close to the image edges, so `cover`'s crop was
+                  // cutting them off. `contain` keeps the whole banner visible here.
                   backgroundSize: i === 1 ? 'contain' : 'cover',
-                  backgroundPosition: i === 1 ? 'left center' : 'center',
+                  backgroundPosition: 'center',
                   backgroundColor: i === 1 ? '#ffffff' : undefined,
                   backgroundRepeat: 'no-repeat',
                   opacity: i === heroIndex ? 1 : 0,
@@ -765,7 +758,7 @@ export default function GetMedsHomepage() {
             {/* Overlaid Title on Mobile Slider */}
             {heroIndex !== 1 && (
               <div
-                className="absolute top-4 left-4 right-4 z-10 transition-opacity duration-400 pointer-events-none"
+                className="absolute top-8 left-4 right-4 z-10 transition-opacity duration-400 pointer-events-none"
                 style={{ opacity: heroFading ? 0 : 1 }}
               >
                 <h1 className="text-[24px] font-black leading-[1.2] tracking-tight max-w-[90%]">
@@ -820,7 +813,7 @@ export default function GetMedsHomepage() {
               className="px-1 mb-4 transition-opacity duration-400"
               style={{ opacity: heroFading ? 0 : 1 }}
             >
-              <p className="text-gray-400 text-[12px] font-normal leading-relaxed text-left">
+              <p className="text-gray-500 text-[13px] font-normal leading-relaxed text-left">
                 {heroSlides[heroIndex].sub}
               </p>
             </div>
