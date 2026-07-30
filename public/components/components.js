@@ -783,8 +783,7 @@
                     },
                     body: JSON.stringify({
                         message: query,
-                        session_id: getChatSessionId(),
-                        page_context: extractPageText()
+                        session_id: getChatSessionId()
                     })
                 });
 

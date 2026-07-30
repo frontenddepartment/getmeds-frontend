@@ -1,5 +1,5 @@
-﻿import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { useHeroSlides, useImageMapper, useNews, useSiteSettings, useCategories } from '../lib/useSanity';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { useHeroSlides, useImageMapper, useNews, useSiteSettings, useCategories, useFeaturedNews } from '../lib/useSanity';
 import { setPageMeta } from '../lib/seo';
 import { getApiUrl } from '../lib/api';
 import { injectHTML } from '../lib/injectHTML';
@@ -89,7 +89,25 @@ export default function GetMedsHomepage() {
 
   const { getImage, getImageLink, getCategoryImage, categoryImages, categoryImagesLoading } = useImageMapper('home');
   const { data: newsItems } = useNews();
+  const { data: featuredNews } = useFeaturedNews();
   const { data: settings } = useSiteSettings();
+
+  const homeNewsItems = useMemo(() => {
+    const featured = featuredNews || [];
+    const latest = newsItems || [];
+
+    const merged = [...featured];
+    const featuredIds = new Set(featured.map(item => item._id));
+
+    for (const item of latest) {
+      if (merged.length >= 3) break;
+      if (!featuredIds.has(item._id)) {
+        merged.push(item);
+      }
+    }
+    return merged;
+  }, [featuredNews, newsItems]);
+
   const { data: heroSlidesData } = useHeroSlides();
   // Same subcategory data already used for the sidebar flyout on the product-range/cancer-medicines
   // pages (getCategories() aggregates each Excel product's condition/subCategory names under its
@@ -1674,7 +1692,7 @@ export default function GetMedsHomepage() {
       })()}
 
       {/* News & Insights Section */}
-      {newsItems && newsItems.length > 0 && (
+      {homeNewsItems && homeNewsItems.length > 0 && (
         <section className="py-10 px-0 md:px-6 bg-white">
           <div className="max-w-7xl mx-auto">
             <div className="rounded-none md:rounded-2xl p-7" style={{
@@ -1700,7 +1718,7 @@ export default function GetMedsHomepage() {
                 className="flex md:grid md:grid-cols-3 overflow-x-auto md:overflow-visible gap-3 md:gap-4 snap-x md:snap-none snap-mandatory -mx-7 px-7 md:mx-0 md:px-0 pb-1 md:pb-0"
                 style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' } as React.CSSProperties}
               >
-                {newsItems.slice(0, 3).map((article) => {
+                {homeNewsItems.map((article) => {
                   const imgUrl = article.image
                     ? urlFor(article.image).width(800).url()
                     : 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&q=80&w=800';
@@ -1753,7 +1771,7 @@ export default function GetMedsHomepage() {
 
               {/* Mobile dot indicators */}
               <div className="flex md:hidden justify-center gap-2 mt-4">
-                {newsItems.slice(0, 3).map((_, i) => (
+                {homeNewsItems.map((_, i) => (
                   <button
                     key={i}
                     onClick={() => scrollToNewsSlide(i)}
