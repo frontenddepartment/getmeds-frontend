@@ -1652,9 +1652,14 @@ export default function GetMedsHomepage() {
                           <i className={`fa-solid ${i === openFaq ? 'fa-chevron-up' : 'fa-chevron-down'} text-white`} style={{ fontSize: '9px' }}></i>
                         </div>
                       </div>
-                      {i === openFaq && (
-                        <p className="text-gray-500 text-sm leading-relaxed mt-3">{faq.a}</p>
-                      )}
+                      <div
+                        className="grid transition-[grid-template-rows] duration-300 ease-in-out"
+                        style={{ gridTemplateRows: i === openFaq ? '1fr' : '0fr' }}
+                      >
+                        <div className="overflow-hidden">
+                          <p className="text-gray-500 text-sm leading-relaxed mt-3">{faq.a}</p>
+                        </div>
+                      </div>
                     </div>
                   ))}
                 </div>
