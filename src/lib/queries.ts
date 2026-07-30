@@ -637,7 +637,8 @@ function parseWpPost(item: any): News {
 export async function getFeaturedNews() {
   try {
     const wp_root = "https://cms.getmeds.ph";
-    const idsRes = await fetch(`${wp_root}/wp-json/getmeds/v1/featured-blogs`);
+    const cacheBuster = `t=${Date.now()}`;
+    const idsRes = await fetch(`${wp_root}/wp-json/getmeds/v1/featured-blogs?${cacheBuster}`, { cache: 'no-store' });
     if (!idsRes.ok) throw new Error(`HTTP error! status: ${idsRes.status}`);
     const featured_ids = await idsRes.json();
     if (!featured_ids || !Array.isArray(featured_ids)) return [];
@@ -647,7 +648,7 @@ export async function getFeaturedNews() {
     
     const postPromises = ids.map(async (id) => {
       try {
-        const postRes = await fetch(`${wp_root}/wp-json/wp/v2/posts/${id}?_embed=true`);
+        const postRes = await fetch(`${wp_root}/wp-json/wp/v2/posts/${id}?_embed=true&${cacheBuster}`, { cache: 'no-store' });
         if (!postRes.ok) return null;
         const postData = await postRes.json();
         return parseWpPost(postData);
