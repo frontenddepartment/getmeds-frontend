@@ -284,6 +284,53 @@
 
                 #zap-welcome-orb { display: none !important; }
 
+                #zap-scroll-bottom {
+                    position: absolute !important;
+                    right: 16px !important;
+                    width: 36px !important;
+                    height: 36px !important;
+                    border-radius: 50% !important;
+                    background: #ffffff !important;
+                    border: 1px solid rgba(0,0,0,0.08) !important;
+                    box-shadow: 0 4px 14px rgba(0,0,0,0.18) !important;
+                    color: #1D9FDA !important;
+                    display: flex !important;
+                    align-items: center !important;
+                    justify-content: center !important;
+                    cursor: pointer !important;
+                    opacity: 0 !important;
+                    visibility: hidden !important;
+                    transform: translateY(8px) !important;
+                    transition: opacity 0.25s ease, visibility 0.25s ease, transform 0.25s ease !important;
+                    z-index: 5 !important;
+                    padding: 0 !important;
+                    margin: 0 !important;
+                    font-size: 13px !important;
+                }
+                #zap-scroll-bottom.show {
+                    opacity: 1 !important;
+                    visibility: visible !important;
+                    transform: translateY(0) !important;
+                }
+                #zap-scroll-bottom:hover {
+                    transform: translateY(-2px) !important;
+                    box-shadow: 0 6px 18px rgba(0,0,0,0.22) !important;
+                }
+                #zap-scroll-bottom .zap-unread-dot {
+                    position: absolute !important;
+                    top: -2px !important;
+                    right: -2px !important;
+                    width: 10px !important;
+                    height: 10px !important;
+                    border-radius: 50% !important;
+                    background: linear-gradient(135deg, #61A644 0%, #1D9FDA 100%) !important;
+                    border: 2px solid #ffffff !important;
+                    display: none !important;
+                }
+                #zap-scroll-bottom.has-unread .zap-unread-dot {
+                    display: block !important;
+                }
+
                 @keyframes zap-mic-pulse {
                     0%   { box-shadow: 0 0 0 0 rgba(239,68,68,0.5); }
                     70%  { box-shadow: 0 0 0 10px rgba(239,68,68,0); }
@@ -326,6 +373,18 @@
                     #zap-ai-trigger.zap-modal-open {
                         display: none !important;
                     }
+                    #zap-scroll-bottom {
+                        width: 40px !important;
+                        height: 40px !important;
+                    }
+                    /* The page-level "back to top" FAB conflicts with (and hides
+                       behind) the fullscreen mobile chat sheet — hide it while
+                       the chat is open so only the in-chat scroll button (below)
+                       shows, the same way Messenger's own chat scroll button
+                       replaces any page-level scroll control while chat is open. */
+                    body.zap-chat-open #scroll-to-top {
+                        display: none !important;
+                    }
                 }
             `;
             document.head.appendChild(style);
@@ -365,7 +424,12 @@
                 </div>
             </div>
 
-            <div style="padding:10px 12px 14px;flex-shrink:0;">
+            <button id="zap-scroll-bottom" title="Scroll to latest">
+                <i class="fa-solid fa-chevron-down"></i>
+                <span class="zap-unread-dot"></span>
+            </button>
+
+            <div id="zap-composer" style="padding:10px 12px 14px;flex-shrink:0;">
                 <div style="background:#ffffff;border-radius:18px;padding:14px 16px;box-shadow:0 4px 24px rgba(0,0,0,0.12);">
                     <input type="text" id="zap-input" placeholder="Ask me anything..." style="width:100%;background:transparent;border:none;outline:none;font-size:13.5px;color:#1a1a1a;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;box-sizing:border-box;">
                     <div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px;">
@@ -396,22 +460,60 @@
         const zapInput = chatWindow.querySelector('#zap-input');
         const zapMessages = chatWindow.querySelector('#zap-messages');
         const zapSend = chatWindow.querySelector('#zap-send-btn');
+        const zapComposer = chatWindow.querySelector('#zap-composer');
+        const zapScrollBottomBtn = chatWindow.querySelector('#zap-scroll-bottom');
 
         const isMobile = () => window.innerWidth <= 640;
+
+        // Messenger-style "jump to latest" button: floats just above the
+        // composer, only appears once the user has scrolled away from the
+        // bottom of the conversation, and stays anchored to the composer's
+        // actual height (rather than a hardcoded offset) so it doesn't drift
+        // if the composer wraps to a second line on narrow screens.
+        function positionScrollBottomBtn() {
+            zapScrollBottomBtn.style.bottom = (zapComposer.offsetHeight + 10) + 'px';
+        }
+
+        function isNearMessagesBottom() {
+            return zapMessages.scrollHeight - zapMessages.scrollTop - zapMessages.clientHeight < 80;
+        }
+
+        function scrollMessagesToBottom(smooth) {
+            zapMessages.scrollTo({ top: zapMessages.scrollHeight, behavior: smooth ? 'smooth' : 'auto' });
+        }
+
+        function updateScrollBottomVisibility() {
+            if (isNearMessagesBottom()) {
+                zapScrollBottomBtn.classList.remove('show');
+                zapScrollBottomBtn.classList.remove('has-unread');
+            } else {
+                zapScrollBottomBtn.classList.add('show');
+            }
+        }
+
+        zapMessages.addEventListener('scroll', updateScrollBottomVisibility);
+        window.addEventListener('resize', positionScrollBottomBtn);
+        zapScrollBottomBtn.addEventListener('click', () => {
+            scrollMessagesToBottom(true);
+        });
+        positionScrollBottomBtn();
 
         btn.addEventListener('click', () => {
             chatWindow.classList.toggle('active');
             if (chatWindow.classList.contains('active')) {
                 zapInput.focus();
                 if (isMobile()) btn.classList.add('zap-modal-open');
+                document.body.classList.add('zap-chat-open');
             } else {
                 btn.classList.remove('zap-modal-open');
+                document.body.classList.remove('zap-chat-open');
             }
         });
 
         chatWindow.querySelector('#zap-close-win').addEventListener('click', () => {
             chatWindow.classList.remove('active');
             btn.classList.remove('zap-modal-open');
+            document.body.classList.remove('zap-chat-open');
         });
 
         function loadChatHistory() {
@@ -610,8 +712,18 @@
                 msg.textContent = text;
             }
 
+            // Don't yank the view away if the user has scrolled up to read
+            // history — only auto-scroll for their own outgoing messages, or
+            // when they're already near the bottom. Otherwise just flag the
+            // "jump to latest" button so they can catch up on their own terms.
+            const wasNearBottom = isNearMessagesBottom();
             zapMessages.appendChild(msg);
-            zapMessages.scrollTop = zapMessages.scrollHeight;
+            if (type === 'user' || wasNearBottom) {
+                scrollMessagesToBottom(false);
+            } else {
+                zapScrollBottomBtn.classList.add('has-unread');
+            }
+            updateScrollBottomVisibility();
             return msg;
         }
 
@@ -631,8 +743,12 @@
             typing.className = 'zap-msg ai typing';
             const randomMsg = anticipationMessages[Math.floor(Math.random() * anticipationMessages.length)];
             typing.innerHTML = `<span style="color:#888;font-style:italic;font-size:12.5px;">${randomMsg}</span>`;
+            const wasNearBottom = isNearMessagesBottom();
             zapMessages.appendChild(typing);
-            zapMessages.scrollTop = zapMessages.scrollHeight;
+            if (wasNearBottom) {
+                scrollMessagesToBottom(false);
+            }
+            updateScrollBottomVisibility();
 
             // Cycle through messages every 3 seconds to keep it feeling alive
             let msgIndex = anticipationMessages.indexOf(randomMsg);
@@ -813,6 +929,7 @@
 
                 if (payload && typeof payload === 'object' && Array.isArray(payload.resources) && payload.resources.length > 0) {
                     answerHtml += buildResourcesHtml(payload.resources);
+                    console.log(answerHtml)
                 }
 
                 // Chatbot API content may include simple HTML links generated by the backend.
@@ -822,7 +939,7 @@
                 console.error('[Getmeds] Chatbot API error:', err);
                 typing.remove();
                 addMessage(
-                    "Sorry, I couldn't connect to GetAssist right now. Please make sure the chatbot API is running and the frontend is using the correct /ask endpoint.",
+                    "Sorry, I couldn't connect to GetAssist right now. But you can still browse our products and services.",
                     'ai'
                 );
             } finally {
