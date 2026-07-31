@@ -1,8 +1,8 @@
-﻿import React, { useEffect, useState, useRef, useCallback } from 'react';
+﻿import React, { useEffect, useState, useRef, useCallback, useMemo } from 'react';
 import { injectHTML } from '../lib/injectHTML';
-import { useNewsPaginated } from '../lib/useSanity';
+import { useNewsPaginated, useNewsCategories } from '../lib/useSanity';
 import { setPageMeta } from '../lib/seo';
-import { urlFor } from '../lib/sanity';
+import { getBlogListingImageUrl } from '../lib/sanity';
 
 const formatDate = (dateStr: string | undefined | null) => {
   if (!dateStr) return '';
@@ -28,90 +28,6 @@ const slugify = (text: string | undefined | null) => {
     .replace(/-+$/, '');
 };
 
-const mapArticleToCategory = (article: any): string => {
-  const rawTag = (article.tag || '').trim();
-  const rawTagLower = rawTag.toLowerCase();
-
-  const categories = [
-    'Disease Awareness',
-    'Patient Resources',
-    'Product Updates',
-    'Industry Insights',
-    'Company News',
-    'CSR & Sustainability'
-  ];
-
-  // Exact match
-  const exactMatch = categories.find(c => c.toLowerCase() === rawTagLower);
-  if (exactMatch) return exactMatch;
-
-  const title = (article.title || '').toLowerCase();
-  const desc = (article.description || '').toLowerCase();
-
-  // 1. CSR & Sustainability
-  if (
-    rawTagLower.includes('csr') || rawTagLower.includes('sustain') || rawTagLower.includes('sustainability') ||
-    title.includes('csr') || title.includes('sustain') || title.includes('community') || title.includes('donation') || title.includes('environment') ||
-    desc.includes('csr') || desc.includes('sustain') || desc.includes('community') || desc.includes('donation') || desc.includes('environment')
-  ) {
-    return 'CSR & Sustainability';
-  }
-
-  // 2. Company News
-  if (
-    rawTagLower === 'press release' || rawTagLower === 'award' || rawTagLower === 'news' || rawTagLower === 'sponsorship' || rawTagLower === 'partnership' ||
-    title.includes('getmeds') || title.includes('award') || title.includes('announces') || title.includes('press release') ||
-    desc.includes('getmeds') || desc.includes('award') || desc.includes('announces') || desc.includes('press release')
-  ) {
-    return 'Company News';
-  }
-
-  // 3. Product Updates
-  if (
-    rawTagLower === 'product launch' || rawTagLower.includes('product') ||
-    title.includes('launch') || title.includes('new product') || title.includes('introducing') || title.includes('available at') ||
-    desc.includes('launch') || desc.includes('new product') || desc.includes('introducing') || desc.includes('available at')
-  ) {
-    return 'Product Updates';
-  }
-
-  // 4. Industry Insights
-  if (
-    rawTagLower === 'online pharmacy' || rawTagLower.includes('industry') ||
-    title.includes('industry') || title.includes('market') || title.includes('trends') || title.includes('future of') ||
-    desc.includes('industry') || desc.includes('market') || desc.includes('trends') || desc.includes('future of')
-  ) {
-    return 'Industry Insights';
-  }
-
-  // 5. Disease Awareness
-  if (
-    rawTagLower === 'cancer' || rawTagLower === 'multiple sclerosis' || rawTagLower === 'covid-19' || rawTagLower === 'diabetes' ||
-    rawTagLower === 'blood pressure' || rawTagLower === 'hypertension' || rawTagLower === 'kids health' || rawTagLower === 'mental health' ||
-    rawTagLower === 'pregnancy' || rawTagLower === 'health care' || rawTagLower === 'health' || rawTagLower === 'immune system' ||
-    title.includes('disease') || title.includes('symptom') || title.includes('treatment') || title.includes('awareness') || title.includes('prevent') || title.includes('understand') ||
-    desc.includes('disease') || desc.includes('symptom') || desc.includes('treatment') || desc.includes('awareness') || desc.includes('prevent') || desc.includes('understand')
-  ) {
-    return 'Disease Awareness';
-  }
-
-  // 6. Patient Resources
-  if (
-    rawTagLower === 'fitness' || rawTagLower === 'skin care' || rawTagLower === 'muscle gain' || rawTagLower === 'weight loss' ||
-    rawTagLower === 'workout' || rawTagLower === 'blood' || rawTagLower === 'vitamin' ||
-    title.includes('guide') || title.includes('tips') || title.includes('how to') || title.includes('diet') || title.includes('healthy') ||
-    desc.includes('guide') || desc.includes('tips') || desc.includes('how to') || desc.includes('diet') || desc.includes('healthy')
-  ) {
-    return 'Patient Resources';
-  }
-
-  // Fallbacks:
-  if (rawTagLower === 'fitness' || rawTagLower === 'skin care' || rawTagLower === 'vitamin' || rawTagLower === 'workout') {
-    return 'Patient Resources';
-  }
-
-  return 'Disease Awareness';
-};
 
 export default function Blog() {
   useEffect(() => {
@@ -123,6 +39,10 @@ export default function Blog() {
   }, []);
 
   const { articles, loading, loadingMore, hasMore, loadMore, loadMoreError } = useNewsPaginated(9);
+  // Dedicated lightweight endpoint (WordPress tags, not full post bodies) so the
+  // category pills don't need every article loaded first just to know which
+  // categories actually have posts.
+  const { data: fetchedCategories, loading: categoriesLoading } = useNewsCategories();
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -181,16 +101,33 @@ export default function Blog() {
     }
   }, []);
 
+  // Only show category pills that actually have posts — otherwise picking a
+  // category with zero matches was a dead-end ("No articles found"). These are
+  // WordPress's real "category" taxonomy terms (Cancer, Blood Pressure,
+  // Covid-19, etc. — the same list on the WP admin Categories screen), not a
+  // synthetic bucketing. Prefer the dedicated categories endpoint (doesn't
+  // require loading every article first); fall back to whatever's already
+  // loaded (article.tag is populated from that same taxonomy) if that call fails.
+  const availableCategories = useMemo(() => {
+    if (fetchedCategories && fetchedCategories.length > 0) return fetchedCategories;
+    if (!articles || articles.length === 0) return [];
+    const counts = new Map<string, number>();
+    articles.forEach(a => {
+      if (!a.tag) return;
+      counts.set(a.tag, (counts.get(a.tag) || 0) + 1);
+    });
+    return Array.from(counts.entries())
+      .sort((a, b) => b[1] - a[1])
+      .map(([tag]) => tag);
+  }, [fetchedCategories, articles]);
+
   const featured = articles && articles.length > 0 ? articles[0] : null;
   const latestPosts = articles && articles.length > 1 ? articles.slice(1, 5) : [];
   const cardArticles = articles && articles.length > 1 ? articles.slice(1) : [];
 
   const filteredCardArticles = cardArticles.filter(article => {
-    // 1. Category Filter
-    if (selectedCategory !== 'All') {
-      const categoryOfArticle = mapArticleToCategory(article);
-      if (categoryOfArticle !== selectedCategory) return false;
-    }
+    // 1. Category Filter — matches the actual WordPress category name directly
+    if (selectedCategory !== 'All' && article.tag !== selectedCategory) return false;
     // 2. Search Filter
     if (searchTerm.trim() !== '') {
       const query = searchTerm.toLowerCase().trim();
@@ -274,7 +211,7 @@ export default function Blog() {
                   style={{ minHeight: '420px' }}
                 >
                   <img
-                    src={featured.image ? urlFor(featured.image).width(800).url() : 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&q=80&w=800'}
+                    src={featured.image ? getBlogListingImageUrl(featured.image, 800) : 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&q=80&w=800'}
                     alt={featured.title}
                     fetchPriority="high"
                     decoding="async"
@@ -306,7 +243,7 @@ export default function Blog() {
                       className="flex gap-3 group no-underline"
                     >
                       <img
-                        src={article.image ? urlFor(article.image).width(140).height(140).url() : 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&q=80&w=800'}
+                        src={article.image ? getBlogListingImageUrl(article.image, 140, 140) : 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&q=80&w=800'}
                         alt={article.title}
                         width={70}
                         height={70}
@@ -366,22 +303,31 @@ export default function Blog() {
                   </div>
                 </div>
 
-                {/* Category Pills — horizontal scroll */}
-                <div className="flex gap-2 overflow-x-auto scrollbar-none pb-1">
-                  {['All', 'Disease Awareness', 'Patient Resources', 'Product Updates', 'Industry Insights', 'Company News', 'CSR & Sustainability'].map(cat => (
-                    <button
-                      key={cat}
-                      id={`blog-cat-${cat.toLowerCase().replace(/[^a-z0-9]/g, '-')}`}
-                      onClick={() => setSelectedCategory(cat)}
-                      className="whitespace-nowrap px-4 py-1.5 rounded-full text-[12px] font-semibold border transition-all duration-200 shrink-0"
-                      style={selectedCategory === cat
-                        ? { background: 'linear-gradient(135deg, #61A644, #1D9FDA)', color: '#fff', borderColor: 'transparent' }
-                        : { background: '#fff', color: '#6B7280', borderColor: '#E5E7EB' }}
-                    >
-                      {cat}
-                    </button>
-                  ))}
-                </div>
+                {/* Category Pills — single-line, horizontally scrollable nav so it
+                    never wraps even with WordPress's full category list */}
+                {categoriesLoading && availableCategories.length === 0 ? (
+                  <div className="flex gap-2 overflow-x-auto scrollbar-none pb-1">
+                    {[1, 2, 3, 4, 5].map(n => (
+                      <div key={n} className="h-[30px] w-24 rounded-full bg-gray-100 animate-pulse shrink-0" />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="flex flex-nowrap gap-2 overflow-x-auto scrollbar-none pb-1">
+                    {['All', ...availableCategories].map(cat => (
+                      <button
+                        key={cat}
+                        id={`blog-cat-${cat.toLowerCase().replace(/[^a-z0-9]/g, '-')}`}
+                        onClick={() => setSelectedCategory(cat)}
+                        className="whitespace-nowrap px-4 py-1.5 rounded-full text-[12px] font-semibold border transition-all duration-200 shrink-0"
+                        style={selectedCategory === cat
+                          ? { background: 'linear-gradient(135deg, #61A644, #1D9FDA)', color: '#fff', borderColor: 'transparent' }
+                          : { background: '#fff', color: '#6B7280', borderColor: '#E5E7EB' }}
+                      >
+                        {cat}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
 
               {/* Cards Grid */}
@@ -407,7 +353,7 @@ export default function Blog() {
                 ) : (
                   filteredCardArticles.map(article => {
                     const imgUrl = article.image
-                      ? urlFor(article.image).width(480).height(400).url()
+                      ? getBlogListingImageUrl(article.image, 480, 400)
                       : 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&q=80&w=800';
                     return (
                       <a

@@ -51,6 +51,7 @@ import {
   getNewsById,
   getNewsBySlug,
   getNewsPage,
+  getNewsCategories,
   getFeaturedNews,
 } from './queries'
 
@@ -594,6 +595,10 @@ export function useNewsPaginated(perPage: number = 20) {
 
 export function useFeaturedNews() {
   return useFetch<News[]>(getFeaturedNews)
+}
+
+export function useNewsCategories() {
+  return useFetch<string[]>(getNewsCategories)
 }
 
 

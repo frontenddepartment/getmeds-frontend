@@ -748,6 +748,8 @@ export default function BlogDetail() {
                         <img
                           src={centerImgUrl}
                           alt=""
+                          loading="lazy"
+                          decoding="async"
                           style={{ width: '100%', display: 'block', maxHeight: '420px', objectFit: 'cover' }}
                         />
                       </div>
