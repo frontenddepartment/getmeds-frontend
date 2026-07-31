@@ -239,10 +239,10 @@ export default function ContactUs() {
           })()}
         </div>
         <div className="px-1">
-          <h1 className="ct-anim ct-up text-xl font-bold leading-snug mb-2 tracking-tight">
+          <h1 className="ct-anim ct-up text-[clamp(14px,4.4vw,20px)] whitespace-nowrap font-bold leading-snug mb-2 tracking-tight">
             <span className="inline-block bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">For patients, partners, and providers.</span>
           </h1>
-          <p className="ct-anim ct-up ct-d2 text-gray-600 text-xs leading-relaxed font-normal text-justify">
+          <p className="ct-anim ct-up ct-d2 text-gray-600 text-xs leading-relaxed font-normal text-left">
             For inquiries about our pharmaceutical portfolio, partnership opportunities, careers, or patient access programs — our team is ready to help.
           </p>
         </div>

@@ -713,6 +713,56 @@ export default function GetMedsHomepage() {
           </div>
         )}
 
+        {/* Hero Content Area — Patient Assistance Program slide (index 1) */}
+        {heroIndex === 1 && (
+          <div
+            className="absolute inset-0 z-10 overflow-hidden flex flex-col items-start justify-end pt-2 pb-16 text-left transition-opacity duration-400"
+            style={{ opacity: heroFading ? 0 : 1 }}
+          >
+            <div className="max-w-7xl mx-auto px-6 w-full flex flex-col items-start">
+              <img
+                src="assets/logoandtextpap.png"
+                alt="Patient Assistance Program — Chemotherapy & Cancer Medicines"
+                className="w-[500px] lg:w-[600px] -mb-8 select-none pointer-events-none"
+                draggable={false}
+              />
+
+              <div className="flex flex-col sm:flex-row gap-5 lg:gap-9 mt-2">
+                <div className="flex items-start gap-2.5">
+                  <img src="assets/pap-icon-quotation.png" alt="" className="w-11 h-11 rounded-full flex-shrink-0" draggable={false} />
+                  <div>
+                    <p className="text-[#000b5d] font-bold text-[12px] uppercase tracking-wide leading-tight">Hassle-Free Quotation</p>
+                    <p className="text-[#000b5d] text-[11.5px] leading-snug">We process via Viber<br />We offer quotation delivery</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-2.5">
+                  <img src="assets/pap-icon-gl.png" alt="" className="w-11 h-11 rounded-full flex-shrink-0" draggable={false} />
+                  <div>
+                    <p className="text-[#000b5d] font-bold text-[12px] uppercase tracking-wide leading-tight">Fast GL Processing</p>
+                    <p className="text-[#000b5d] text-[11.5px] leading-snug">We assist and guide each patient<br />Mabilis, Maaasahan</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-2.5">
+                  <img src="assets/pap-icon-permit.png" alt="" className="w-11 h-11 rounded-full flex-shrink-0" draggable={false} />
+                  <div>
+                    <p className="text-[#000b5d] font-bold text-[12px] uppercase tracking-wide leading-tight">Compassionate Special Permit</p>
+                    <p className="text-[#000b5d] text-[11.5px] leading-snug">We accept GL for high cost medicines<br />for advanced cancer stages</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-6">
+                <p className="text-[#000b5d] font-bold text-[14px] lg:text-[16px] tracking-wide">
+                  DSWD &bull; PCSO &bull; Office of the President &bull; Office of the Vice President
+                </p>
+                <p className="text-[#000b5d] italic font-medium text-[13px] lg:text-[14px] mt-0.5">
+                  Government-accredited pharmaceutical distributor
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Slider Controls — dots + arrows */}
         <div className="absolute bottom-5 left-0 right-0 z-20 flex items-center justify-center gap-6">
           {/* Prev */}
@@ -754,7 +804,7 @@ export default function GetMedsHomepage() {
 
         {/* Horizontal scrollable buttons row */}
         <div
-          className="flex gap-2.5 overflow-x-auto pb-4 px-4 scrollbar-none animate-fadeIn"
+          className="flex gap-2.5 overflow-x-auto pt-4 pb-4 px-4 scrollbar-none animate-fadeIn"
           style={{
             scrollbarWidth: 'none',
             msOverflowStyle: 'none',
@@ -810,13 +860,8 @@ export default function GetMedsHomepage() {
                 onClick={() => { if (slide.link) window.open(slide.link, '_blank', 'noopener,noreferrer'); }}
                 style={{
                   backgroundImage: `url('${getImage(slide.bg, slide.bg)}')`,
-                  // Slides share the same 2048x1162 canvas so they use `cover` like on
-                  // desktop — except slide 2 on this short mobile card: its banner text
-                  // and icon row sit close to the image edges, so `cover`'s crop was
-                  // cutting them off. `contain` keeps the whole banner visible here.
-                  backgroundSize: i === 1 ? 'contain' : 'cover',
+                  backgroundSize: 'cover',
                   backgroundPosition: 'center',
-                  backgroundColor: i === 1 ? '#ffffff' : undefined,
                   backgroundRepeat: 'no-repeat',
                   opacity: i === heroIndex ? 1 : 0,
                   zIndex: 0,
@@ -848,6 +893,18 @@ export default function GetMedsHomepage() {
                     </React.Fragment>
                   ))}
                 </h1>
+              </div>
+            )}
+
+            {/* Patient Assistance Program logo overlay — mobile slide 2 */}
+            {heroIndex === 1 && (
+              <div className="absolute inset-0 z-10 flex items-center justify-start pl-3 transition-opacity duration-400 pointer-events-none" style={{ opacity: heroFading ? 0 : 1 }}>
+                <img
+                  src="assets/logoandtextpap.png"
+                  alt="Patient Assistance Program — Chemotherapy & Cancer Medicines"
+                  className="w-[220px] select-none"
+                  draggable={false}
+                />
               </div>
             )}
 
@@ -893,6 +950,45 @@ export default function GetMedsHomepage() {
               <p className="text-gray-500 text-[13px] font-normal leading-relaxed text-left">
                 {heroSlides[heroIndex].sub}
               </p>
+            </div>
+          )}
+
+          {/* Feature row below the slider — Patient Assistance Program slide (index 1) */}
+          {heroIndex === 1 && (
+            <div
+              className="px-1 mb-4 flex flex-col gap-3 transition-opacity duration-400"
+              style={{ opacity: heroFading ? 0 : 1 }}
+            >
+              <div className="flex items-start gap-2.5">
+                <img src="assets/pap-icon-quotation.png" alt="" className="w-9 h-9 rounded-full flex-shrink-0" draggable={false} />
+                <div>
+                  <p className="text-gray-500 font-bold text-[11px] uppercase tracking-wide leading-tight">Hassle-Free Quotation</p>
+                  <p className="text-gray-500 text-[11px] leading-snug">We process via Viber, we offer quotation delivery</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-2.5">
+                <img src="assets/pap-icon-gl.png" alt="" className="w-9 h-9 rounded-full flex-shrink-0" draggable={false} />
+                <div>
+                  <p className="text-gray-500 font-bold text-[11px] uppercase tracking-wide leading-tight">Fast GL Processing</p>
+                  <p className="text-gray-500 text-[11px] leading-snug">We assist and guide each patient. Mabilis, Maaasahan</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-2.5">
+                <img src="assets/pap-icon-permit.png" alt="" className="w-9 h-9 rounded-full flex-shrink-0" draggable={false} />
+                <div>
+                  <p className="text-gray-500 font-bold text-[11px] uppercase tracking-wide leading-tight">Compassionate Special Permit</p>
+                  <p className="text-gray-500 text-[11px] leading-snug">We accept GL for high cost medicines for advanced cancer stages</p>
+                </div>
+              </div>
+
+              <div className="mt-2">
+                <p className="text-gray-500 font-bold text-[9px] whitespace-nowrap leading-tight">
+                  DSWD &bull; PCSO &bull; Office of the President &bull; Office of the Vice President
+                </p>
+                <p className="text-gray-500 italic font-medium text-[11px] mt-0.5">
+                  Government-accredited pharmaceutical distributor
+                </p>
+              </div>
             </div>
           )}
 

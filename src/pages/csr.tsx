@@ -259,7 +259,7 @@ const Csr: React.FC = () => {
                 Responsibility
               </span>
             </h1>
-            <p className="text-gray-600 text-xs mb-3 leading-relaxed font-normal text-justify">
+            <p className="text-gray-600 text-xs mb-3 leading-relaxed font-normal text-left">
               We don't just distribute medicine; we facilitate healing. Through NGO partnerships and digital
               health advocacy, we ensure no patient navigates their journey alone.
             </p>

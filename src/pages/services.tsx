@@ -125,9 +125,9 @@ export default function Services() {
               <span data-json="hero.headingAccent"
                 className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent leading-tight tracking-tight">Our Services</span>
             </h1>
-            <p data-json="hero.description" className="text-[#000b5d] text-[13px] md:text-[15px] max-w-[420px] md:max-w-[480px] mb-5 leading-normal font-normal">
-              Getmeds connects globally certified pharmaceutical manufacturers with Filipino patients, doctors, and
-              hospitals — bridging the gap between world-class treatment and local access.
+            <p data-json="hero.description" className="text-[#000b5d] text-[13px] md:text-[15px] max-w-[420px] md:max-w-[520px] mb-5 leading-normal font-normal">
+              Getmeds connects globally certified pharmaceutical&nbsp;manufacturers with Filipino patients, doctors, and
+              hospitals — bridging the gap between world-class treatment and local&nbsp;access.
             </p>
             <div className="flex flex-wrap gap-4">
               <a href="#services-grid"
@@ -167,9 +167,9 @@ export default function Services() {
             <span data-json="hero.headingAccent"
               className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent leading-tight tracking-tight">Our Services</span>
           </h1>
-          <p data-json="hero.description" className="text-gray-600 text-xs mb-3 leading-relaxed font-normal text-justify">
-            Getmeds connects globally certified pharmaceutical manufacturers with Filipino patients, doctors, and
-            hospitals — bridging the gap between world-class treatment and local access.
+          <p data-json="hero.description" className="text-gray-600 text-xs mb-3 leading-relaxed font-normal text-left">
+            Getmeds connects globally certified pharmaceutical&nbsp;manufacturers with Filipino patients, doctors, and
+            hospitals — bridging the gap between world-class treatment and local&nbsp;access.
           </p>
         </div>
       </section>
