@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+﻿import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useHeroSlides, useImageMapper, useNews, useSiteSettings, useCategories, useFeaturedNews } from '../lib/useSanity';
 import { setPageMeta } from '../lib/seo';
 import { getApiUrl } from '../lib/api';
@@ -140,25 +140,29 @@ export default function GetMedsHomepage() {
     }
   };
 
-  // Reference data (marquee condition text + routing link) for the therapeutic areas this
-  // site knows how to describe — keyed by category name. There's no Sanity field for this text
-  // yet, so it's still hardcoded here; which of these actually show on the home page, and in
-  // what order, is driven entirely by the Products document's "Category Featured" Studio tab
-  // (see therapCards below) — a category dragged/added there that isn't in this list still
-  // shows (with its own label/image), just without marquee text or a dedicated link.
+  // Reference data (marquee condition text only) for the therapeutic areas this site knows
+  // how to describe — keyed by category name. There's no Sanity field for this text yet, so
+  // it's still hardcoded here; which of these actually show on the home page, and in what
+  // order, is driven entirely by the Products document's "Category Featured" Studio tab (see
+  // therapCards below) — a category dragged/added there that isn't in this list still shows
+  // (with its own label/image), just without marquee text.
+  // NOTE: no `link` field here anymore — it used to hardcode every card to
+  // "/cancer-medicines/<slug>" regardless of which category it actually was (so "See All" on
+  // e.g. Cardiology or Anti-Infectives pointed at the wrong, nonexistent path). See
+  // goToCategoryListing() below for how "See All" now routes instead.
   const therapCardsBase = useMemo(() => [
-    { name: "Oncology", fallback: "assets/therapeuticareaoncology.png", marquee: "Breast Cancer • Ovarian Cancer • Non-Small Cell Lung Cancer • Prostate Cancer • Colorectal Cancer • Pancreatic Cancer • ", link: "/cancer-medicines/oncology" },
-    { name: "Hematology", fallback: "assets/therapeuticareahematology.png", marquee: "Acute Myeloid Leukemia • Chronic Myeloid Leukemia • Hodgkin/Non-Hodgkin's Lymphoma • Sickle Cell Anemia • ", link: "/cancer-medicines/hematology" },
-    { name: "Anti-Infectives", fallback: "assets/therapeuticareaantiinfectives.jpg", marquee: "Respiratory Infections • Urinary Tract Infections • Skin and Soft Tissue Infections • Bone and Joint Infections • ", link: "/cancer-medicines/anti-infectives" },
-    { name: "Endocrinology", fallback: "assets/therapeuticareaendocrinology.jpg", marquee: "Endometriosis • Fibrocystic Breast Disease • Diabetes Management • Thyroid Disorders • Metabolic Syndrome • ", link: "/cancer-medicines/endocrinology" },
-    { name: "Orthopedic", fallback: "assets/orthopedic.jpg", marquee: "Multiple Myeloma • Osteoporosis • Joint Replacement Support • Fracture Recovery • Bone Metastases • ", link: "/cancer-medicines/orthopedic" },
-    { name: "Cardiology", fallback: "assets/therapeuticareacardiology.png", marquee: "Arrhythmia Management • Hypertension/Angina • Heart Failure • Atrial Fibrillation • Coronary Artery Disease • ", link: "/cancer-medicines/cardiology" },
-    { name: "Radiology", fallback: "assets/radiology.jpg", marquee: "Contrast Media • Diagnostic Imaging • CT & MRI Contrast Agents • Nuclear Medicine • Radiopharmaceuticals • ", link: "/cancer-medicines/radiology" },
-    { name: "Rheumatology", fallback: "assets/rheumatology.jpg", marquee: "Rheumatoid Arthritis • Osteoarthritis • Lupus • Gout • Ankylosing Spondylitis • ", link: "/cancer-medicines/rheumatology" },
-    { name: "Pain Management", fallback: "assets/pain-management.jpg", marquee: "Chronic Pain • Post-Surgical Pain • Neuropathic Pain • Analgesics • Anesthesia Support • ", link: "/cancer-medicines/pain-management" },
-    { name: "Nephrology / Renal", fallback: "assets/nephrology-renal.jpg", marquee: "Chronic Kidney Disease • Dialysis Support • Renal Anemia • Electrolyte Management • Nephrotic Syndrome • ", link: "/cancer-medicines/nephrology-renal" },
-    { name: "Respiratory", fallback: "assets/respiratory.jpg", marquee: "Seasonal Allergic Rhinitis • Asthma • COPD • Bronchitis • Pulmonary Hypertension • Chronic Kidney Disease • ", link: "/cancer-medicines/respiratory" },
-    { name: "Neurology", fallback: "assets/therapeuticareaneurology.png", marquee: "Glioblastoma Multiforme • Chronic Pain • Inflammatory Disorders • Osteoporosis • Multiple Myeloma • Neuro-Oncology • ", link: "/cancer-medicines/neuro-oncology" },
+    { name: "Oncology", fallback: "assets/therapeuticareaoncology.png", marquee: "Breast Cancer • Ovarian Cancer • Non-Small Cell Lung Cancer • Prostate Cancer • Colorectal Cancer • Pancreatic Cancer • " },
+    { name: "Hematology", fallback: "assets/therapeuticareahematology.png", marquee: "Acute Myeloid Leukemia • Chronic Myeloid Leukemia • Hodgkin/Non-Hodgkin's Lymphoma • Sickle Cell Anemia • " },
+    { name: "Anti-Infectives", fallback: "assets/therapeuticareaantiinfectives.jpg", marquee: "Respiratory Infections • Urinary Tract Infections • Skin and Soft Tissue Infections • Bone and Joint Infections • " },
+    { name: "Endocrinology", fallback: "assets/therapeuticareaendocrinology.jpg", marquee: "Endometriosis • Fibrocystic Breast Disease • Diabetes Management • Thyroid Disorders • Metabolic Syndrome • " },
+    { name: "Orthopedic", fallback: "assets/orthopedic.jpg", marquee: "Multiple Myeloma • Osteoporosis • Joint Replacement Support • Fracture Recovery • Bone Metastases • " },
+    { name: "Cardiology", fallback: "assets/therapeuticareacardiology.png", marquee: "Arrhythmia Management • Hypertension/Angina • Heart Failure • Atrial Fibrillation • Coronary Artery Disease • " },
+    { name: "Radiology", fallback: "assets/radiology.jpg", marquee: "Contrast Media • Diagnostic Imaging • CT & MRI Contrast Agents • Nuclear Medicine • Radiopharmaceuticals • " },
+    { name: "Rheumatology", fallback: "assets/rheumatology.jpg", marquee: "Rheumatoid Arthritis • Osteoarthritis • Lupus • Gout • Ankylosing Spondylitis • " },
+    { name: "Pain Management", fallback: "assets/pain-management.jpg", marquee: "Chronic Pain • Post-Surgical Pain • Neuropathic Pain • Analgesics • Anesthesia Support • " },
+    { name: "Nephrology / Renal", fallback: "assets/nephrology-renal.jpg", marquee: "Chronic Kidney Disease • Dialysis Support • Renal Anemia • Electrolyte Management • Nephrotic Syndrome • " },
+    { name: "Respiratory", fallback: "assets/respiratory.jpg", marquee: "Seasonal Allergic Rhinitis • Asthma • COPD • Bronchitis • Pulmonary Hypertension • Chronic Kidney Disease • " },
+    { name: "Neurology", fallback: "assets/therapeuticareaneurology.png", marquee: "Glioblastoma Multiforme • Chronic Pain • Inflammatory Disorders • Osteoporosis • Multiple Myeloma • Neuro-Oncology • " },
   ], []);
 
   const therapBaseByKey = useMemo(() => {
@@ -192,6 +196,74 @@ export default function GetMedsHomepage() {
   const subcategoriesForKeys = (keys: string[]): string[] =>
     Array.from(new Set(keys.flatMap((k) => Array.from(subcategoriesByKey.get(k) || []))));
 
+  // The product listing page's sidebar (cancer-medicines.tsx) resolves a category the same way
+  // every time — selectCategory() there does:
+  //   processedCats.find(c => c.category.toLowerCase() === category.toLowerCase())
+  //   -> navigate to `/${matched.slug}` (the real Category Folder, e.g. "heart-medicines")
+  //   -> also persists { category, subCategory: 'All' } to localStorage as a side effect
+  // "See All" here mirrors that exact lookup against the same category data (excelCategories is
+  // the identical useCategories() query processedCats is built from) instead of re-deriving its
+  // own routing scheme — that's what caused two rounds of bugs: a static "/cancer-medicines/
+  // <slug>" href that ignored the real folder, and a localStorage-only value keyed on a
+  // split-apart category name that never matched processedCats' unsplit comparison.
+  //
+  // Each map is keyed by every individual split-out part of a (possibly combined, e.g.
+  // "Oncology/Neuro-Oncology") category cell, but always valued with the FULL, unsplit
+  // `cat.category` string / its real `slug.current` — matching how processedCats itself
+  // compares and links, never a partial/split name.
+  const categoryNameByKey = useMemo(() => {
+    const map = new Map<string, string>();
+    (excelCategories || []).forEach((cat) => {
+      const fullName = String(cat.category || '').trim();
+      if (!fullName) return;
+      fullName
+        .split(/[\/,]/)
+        .map((s) => s.trim())
+        .filter(Boolean)
+        .forEach((part) => {
+          const key = computeCategoryKey(part);
+          if (key && !map.has(key)) map.set(key, fullName);
+        });
+    });
+    return map;
+  }, [excelCategories]);
+
+  const categoryFolderByKey = useMemo(() => {
+    const map = new Map<string, string>();
+    (excelCategories || []).forEach((cat) => {
+      const folder = cat.slug?.current;
+      if (!folder) return;
+      String(cat.category || '')
+        .split(/[\/,]/)
+        .map((s) => s.trim())
+        .filter(Boolean)
+        .forEach((part) => {
+          const key = computeCategoryKey(part);
+          if (key && !map.has(key)) map.set(key, folder);
+        });
+    });
+    return map;
+  }, [excelCategories]);
+
+  // Real per-category listing path — "/product-range" only as a last resort for a category that
+  // genuinely isn't resolvable yet (e.g. brand-new, not synced into excelCategories at all).
+  const linkForCategoryKey = (key: string): string => {
+    const folder = categoryFolderByKey.get(key);
+    return folder ? `/${folder}` : '/product-range';
+  };
+
+  // Pre-sets the same localStorage entry selectCategory()'s save-effect would persist on the
+  // destination page — belt-and-suspenders alongside the real resolved URL above, in case that
+  // page's own path-matching ever misses (e.g. a folder shared by more than one category).
+  const goToCategoryListing = (categoryName: string) => {
+    try {
+      localStorage.setItem('selectedCategory', JSON.stringify({ category: categoryName, subCategory: 'All' }));
+    } catch {
+      // localStorage unavailable (private browsing, etc.) — navigation still proceeds via the
+      // real resolved href, so the category still comes through correctly regardless.
+    }
+  };
+
   const therapCards = useMemo(() => {
     // Still waiting on the Studio's "Category Featured" list — render nothing rather than the
     // hardcoded default set: showing the static images first and then swapping to the real
@@ -211,6 +283,8 @@ export default function GetMedsHomepage() {
         // image, causing the card to intermittently show the no-image placeholder on reload.
         img: getCategoryImage(card.name, card.fallback),
         subcategories: subcategoriesForKeys([computeCategoryKey(card.name)]),
+        link: linkForCategoryKey(computeCategoryKey(card.name)),
+        categoryName: categoryNameByKey.get(computeCategoryKey(card.name)) || card.name,
       }));
     }
 
@@ -229,13 +303,16 @@ export default function GetMedsHomepage() {
       return {
         name: entry.categoryLabel || base?.name || primaryKey,
         marquee: base?.marquee || "",
-        link: base?.link || `/cancer-medicines/${primaryKey}`,
+        link: linkForCategoryKey(primaryKey),
         fallback,
         img: getCategoryImage(primaryKey, fallback),
         subcategories: subcategoriesForKeys(keys),
+        // Real Sanity category name to filter by — NOT `name` above, which can be a custom
+        // Studio label or (for a merged/unrecognized entry) the raw normalized key itself.
+        categoryName: categoryNameByKey.get(primaryKey) || base?.name || entry.categoryLabel || primaryKey,
       };
     });
-  }, [categoryImages, categoryImagesLoading, therapCardsBase, therapBaseByKey, getCategoryImage, subcategoriesByKey]);
+  }, [categoryImages, categoryImagesLoading, therapCardsBase, therapBaseByKey, getCategoryImage, subcategoriesByKey, categoryNameByKey, categoryFolderByKey]);
 
 
   // --- Hero Slider ---
@@ -1219,6 +1296,7 @@ export default function GetMedsHomepage() {
                     </div>
                     <a
                       href={therapCards[therapMobileActive]?.link}
+                      onClick={() => { const n = therapCards[therapMobileActive]?.categoryName; if (n) goToCategoryListing(n); }}
                       className="text-[11px] font-semibold text-white bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full px-3.5 py-1.5 transition-colors shrink-0 therap-card-pill"
                     >
                       See All
@@ -1316,7 +1394,7 @@ export default function GetMedsHomepage() {
                                   <span className="text-white/75 text-xs pr-6">{card.subcategories?.join(' • ')}</span>
                                 </div>
                               </div>
-                              <a href={card.link} className="text-xs font-semibold text-white bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full px-3 py-1 transition-colors therap-card-pill">See All</a>
+                              <a href={card.link} onClick={() => { if (card.categoryName) goToCategoryListing(card.categoryName); }} className="text-xs font-semibold text-white bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full px-3 py-1 transition-colors therap-card-pill">See All</a>
                             </div>
                           </div>
                         ))}
