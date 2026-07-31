@@ -585,6 +585,31 @@ export async function getNewsById(id: string, preview: boolean = false) {
   }
 }
 
+// Category pills on the blog page used to need every loaded article fetched
+// first just to know which categories have posts. WordPress's own "category"
+// taxonomy (the same one shown on the WP admin Categories screen — Cancer,
+// Blood Pressure, Covid-19, etc.) already carries a post `count` per term
+// without touching any post body, so read the pill list straight off that —
+// this is also the taxonomy `article.tag` is populated from (wp:term[0]).
+export async function getNewsCategories(): Promise<string[]> {
+  try {
+    // Cache-busted + no-store, same as getFeaturedNews below — without this the
+    // browser/CDN kept serving a stale category list (new/renamed WP categories
+    // wouldn't show up in the pills until a hard refresh).
+    const cacheBuster = `t=${Date.now()}`;
+    const res = await fetch(`/wp-json/wp/v2/categories?per_page=100&_fields=id,name,count&${cacheBuster}`, { cache: 'no-store' });
+    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+    const categories: { name: string; count: number }[] = await res.json();
+    return categories
+      .filter((c) => c.count > 0 && c.name.toLowerCase() !== 'uncategorized')
+      .sort((a, b) => b.count - a.count)
+      .map((c) => c.name)
+  } catch (err) {
+    console.error('Error fetching blog categories from WordPress:', err);
+    return [];
+  }
+}
+
 export async function getNewsBySlug(slug: string, preview: boolean = false) {
   try {
     const url = preview ? `/api/blog/posts?slug=${slug}&preview=true` : `/api/blog/posts?slug=${slug}`;

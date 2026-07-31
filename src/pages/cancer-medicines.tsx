@@ -756,6 +756,17 @@ export default function CancerMedicines() {
 
   const displayCategory = selectedCategory.subCategory !== 'All' ? selectedCategory.subCategory : selectedCategory.category;
 
+  // Drives the breadcrumb slide direction: drilling into a category/condition (depth
+  // increasing) slides the new crumb in from the right; stepping back out (depth
+  // decreasing) slides the remaining crumbs in from the left.
+  const breadcrumbDepthRef = useRef(0);
+  const [breadcrumbDirection, setBreadcrumbDirection] = useState<'forward' | 'backward'>('forward');
+  useEffect(() => {
+    const depth = (selectedCategory.category !== 'All' ? 1 : 0) + (selectedCategory.subCategory !== 'All' ? 1 : 0);
+    setBreadcrumbDirection(depth >= breadcrumbDepthRef.current ? 'forward' : 'backward');
+    breadcrumbDepthRef.current = depth;
+  }, [selectedCategory]);
+
   return (
     <div style={{ fontFamily: "'Poppins', sans-serif" }} className="bg-white text-gray-800 antialiased flex flex-col h-screen overflow-hidden">
       <style>{`
@@ -770,6 +781,11 @@ export default function CancerMedicines() {
         .sidebar-scroll::-webkit-scrollbar-button { display: none; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        @keyframes breadcrumbSlideRight { from { transform: translateX(18px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes breadcrumbSlideLeft { from { transform: translateX(-18px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        .breadcrumb-forward { animation: breadcrumbSlideRight 0.28s cubic-bezier(.22,1,.36,1) forwards; }
+        .breadcrumb-backward { animation: breadcrumbSlideLeft 0.28s cubic-bezier(.22,1,.36,1) forwards; }
       `}</style>
 
       {/* NAVBAR */}
@@ -904,7 +920,8 @@ export default function CancerMedicines() {
             </div>
           </section>
 
-          {/* Breadcrumb */}
+          {/* Breadcrumb — All Products > Category > Condition, each level linking
+              to its own step so stepping back doesn't skip the parent category */}
           <nav className="px-4 sm:px-6 lg:px-8 pb-2 pt-1" aria-label="Breadcrumb">
             <ol className="flex items-center gap-1.5 text-[12px] text-gray-400 flex-wrap">
               <li>
@@ -915,11 +932,30 @@ export default function CancerMedicines() {
                   All Products
                 </button>
               </li>
-              {displayCategory !== 'All' && (
-                <>
+              {selectedCategory.category !== 'All' && (
+                <React.Fragment key={`cat-${selectedCategory.category}`}>
                   <li className="text-gray-300"><i className="fa-solid fa-chevron-right text-[9px]" /></li>
-                  <li className="font-semibold text-gray-700">{displayCategory}</li>
-                </>
+                  <li className={breadcrumbDirection === 'forward' ? 'breadcrumb-forward' : 'breadcrumb-backward'}>
+                    {selectedCategory.subCategory !== 'All' ? (
+                      <button
+                        onClick={() => selectCategory(selectedCategory.category, 'All')}
+                        className="hover:text-primary transition-colors font-medium"
+                      >
+                        {selectedCategory.category}
+                      </button>
+                    ) : (
+                      <span className="font-semibold text-gray-700">{selectedCategory.category}</span>
+                    )}
+                  </li>
+                </React.Fragment>
+              )}
+              {selectedCategory.subCategory !== 'All' && (
+                <React.Fragment key={`sub-${selectedCategory.subCategory}`}>
+                  <li className="text-gray-300"><i className="fa-solid fa-chevron-right text-[9px]" /></li>
+                  <li className={`font-semibold text-gray-700 ${breadcrumbDirection === 'forward' ? 'breadcrumb-forward' : 'breadcrumb-backward'}`}>
+                    {selectedCategory.subCategory}
+                  </li>
+                </React.Fragment>
               )}
             </ol>
           </nav>

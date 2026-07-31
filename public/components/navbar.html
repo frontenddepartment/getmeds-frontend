@@ -1257,23 +1257,26 @@
             return '';
         }
 
+        // Only pages actually linked in this dropdown's two columns belong here.
+        // "About Us" used to be the default/most-prominent preview even though
+        // it isn't one of the links listed in this menu at all (it's a separate
+        // top-level nav item) — showing its content by default was misleading.
         const defaultSlides = {
-            'about': { title: 'About Us', href: '/about-us.html', img: '/assets/aboutusone.jpg', desc: 'Learn more about our mission and vision.' },
-            'services': { title: 'Our Services', href: '/services.html', img: '/assets/services_hero_new.png', desc: 'Discover our specialized pharmaceutical offerings.' },
-            'globalPresence': { title: 'Global Presence', href: '/global-presence.html', img: '/assets/globalpresencehero.jpg', desc: 'We are expanding healthcare solutions worldwide.' },
-            'meditations': { title: 'Meditations', href: '/meditations.html', img: '/assets/categories.png', desc: 'Explore our mental wellness resources.' },
-            'csr': { title: 'CSR', href: '/csr.html', img: '/assets/patienthand.jpg', desc: 'Explore our corporate social responsibility initiatives.' },
-            'careers': { title: 'Careers', href: '/careers.html', img: '/assets/careershero.png', desc: 'Join our team and make a difference.' },
-            'ungc': { title: 'United Nations Global Compact', href: '/ungc.html', img: '/assets/ungcimage.jpg', desc: 'Read about our commitment to sustainable development goals.' },
+            'services': { title: 'Our Services', href: '/services.html', img: '/assets/services_hero_new.png', desc: 'Getmeds connects globally certified pharmaceutical manufacturers with Filipino patients, doctors, and hospitals — bridging the gap between world-class treatment and local access.' },
+            'globalPresence': { title: 'Global Presence', href: '/global-presence.html', img: '/assets/globalpresencehero.jpg', desc: 'Discover seamless healthcare solutions. Access a world-class medical network worldwide, efficiently linking you with top care continuously.' },
+            'meditations': { title: 'Meditations', href: '/meditations.html', img: '/assets/categories.png', desc: 'Nurture your mind, body, and soul. Discover clinical mindfulness, guided breathing exercises, and soothing ambient soundscapes designed to support your holistic wellness journey.' },
+            'csr': { title: 'CSR', href: '/csr.html', img: '/assets/patienthand.jpg', desc: 'We don\'t just distribute medicine; we facilitate healing. Through NGO partnerships and digital health advocacy, we ensure no patient navigates their journey alone.' },
+            'careers': { title: 'Careers', href: '/careers.html', img: '/assets/careershero.png', desc: 'Join our mission to make healthcare accessible worldwide. We\'re looking for passionate individuals to innovate and grow with us.' },
+            'ungc': { title: 'United Nations Global Compact', href: '/ungc.html', img: '/assets/ungcimage.jpg', desc: 'At Getmeds Philippines, we do more than provide medicines—we drive meaningful impact through responsible healthcare, compassion, and sustainable action.' },
             'blog': { title: 'Blog', href: '/blog', img: '/assets/fallback.jpg', desc: 'Stay updated with our latest news and medical articles.' },
             'join-us': { title: 'Join Us', href: '/careers.html#join-form', img: '/assets/careershero.png', desc: 'Apply for our open positions and start your journey with us.' }
         };
 
-        const rotationKeys = ['about', 'csr', 'careers', 'ungc', 'blog', 'join-us'];
+        const rotationKeys = ['services', 'globalPresence', 'meditations', 'csr', 'careers', 'ungc', 'blog', 'join-us'];
 
         let activeInterval = null;
         let rotationIndex = 0;
-        let currentActiveKey = 'about';
+        let currentActiveKey = 'services';
 
         function showSlide(key) {
             const slider = document.getElementById('company-mega-menu-slider');
@@ -1338,60 +1341,56 @@
         }
 
         async function initCompanySlider() {
-            // Map slide keys to their known hero assetPath in Sanity pageAsset
-            // (must match the assetPath each page actually queries via useImageMapper's getImage())
-            const heroAssetPaths = {
-                'about': 'assets/aboutusone.jpg',
-                'services': 'assets/services_hero_new.png',
-                'globalPresence': 'assets/globalpresencehero.jpg',
-                'csr': 'assets/patienthand.jpg',
-                'careers': 'assets/careershero.png',
-                'ungc': 'assets/ungcimage.jpg',
-                'join-us': 'assets/careershero.png',
-                'meditations': 'assets/categories.png',
+            // Map slide keys to the pageAsset "Image Name" each page actually
+            // queries via useImageMapper's getImage()/getVideoThumbnail() — assets
+            // are matched by `name` site-wide (see usePageAssets/getPageAssets:
+            // "All page assets are fetched globally and matched by name"). The old
+            // `assetPath` field this used to query no longer exists on pageAsset
+            // documents at all, so that fetch always silently returned nothing and
+            // every slide permanently fell back to the hardcoded local image below
+            // — hence the dropdown's preview image never matched a page's real,
+            // currently-set hero (image or, for About Us, video thumbnail).
+            const heroImageNames = {
+                'services': 'Services Hero Background',
+                'globalPresence': 'Global Presence Hero Background',
+                'csr': 'CSR Hero Background',
+                'careers': 'Careers Hero Background',
+                'ungc': 'UNGC Hero Background',
+                'join-us': 'Careers Hero Background',
+                'meditations': 'Meditations Categories Image',
             };
 
-            // Step 1: Fetch all pageAsset records matching hero assetPaths from Sanity
-            const assetPaths = [...new Set(Object.values(heroAssetPaths))];
-            const assetQuery = `*[_type == "pageAsset" && assetPath in $paths] { assetPath, image, page, name }`;
+            // Step 1: Fetch all pageAsset records matching hero names from Sanity
+            // (both `images[]` and `videos[].thumbnail`, since About Us's hero is a
+            // video with only a thumbnail image, no `images[]` entry).
+            const heroNames = [...new Set(Object.values(heroImageNames))];
+            const assetQuery = `*[_type == "pageAsset" && name in $names] { name, images[]{ image }, videos[]{ thumbnail } }`;
             const assetUrl = `https://${projectId}.api.sanity.io/v${apiVersion}/data/query/${dataset}?query=` +
-                encodeURIComponent(assetQuery) + '&$paths=' + encodeURIComponent(JSON.stringify(assetPaths));
+                encodeURIComponent(assetQuery) + '&$names=' + encodeURIComponent(JSON.stringify(heroNames));
 
-            const byPath = {};
+            const byName = {};
             try {
                 const res = await fetch(assetUrl);
                 if (res.ok) {
                     const json = await res.json();
                     (json.result || []).forEach(a => {
-                        if (a.assetPath && a.image) byPath[a.assetPath] = a;
+                        if (a.name) byName[a.name] = a;
                     });
                 }
             } catch (e) {
                 console.warn('[Getmeds] Failed to fetch Sanity pageAsset hero images:', e);
             }
 
-            // Step 2: Fetch page hero text (title/description) from Sanity page documents
-            const textQuery = `{
-                "about":         *[_type == "aboutPage"         && _id == "about-page"][0]          { hero },
-                "services":      *[_type == "servicesPage"      && _id == "services-page"][0]       { hero },
-                "globalPresence":*[_type == "globalPresencePage"&& _id == "global-presence-page"][0]{ hero },
-                "csr":           *[_type == "csrPage"           && _id == "csr-page"][0]            { hero },
-                "careers":       *[_type == "careersPage"       && _id == "careers-page"][0]        { hero },
-                "ungc":          *[_type == "ungcPage"          && _id == "ungc-page"][0]           { hero },
-                "meditations":   *[_type == "meditationsPage"   && _id == "meditations-page"][0]    { hero }
-            }`;
-            const textUrl = `https://${projectId}.api.sanity.io/v${apiVersion}/data/query/${dataset}?query=` + encodeURIComponent(textQuery);
-
-            let pageTextData = {};
-            try {
-                const res = await fetch(textUrl);
-                if (res.ok) {
-                    const json = await res.json();
-                    pageTextData = json.result || {};
-                }
-            } catch (e) {
-                console.warn('[Getmeds] Failed to fetch Sanity page hero text:', e);
-            }
+            // Step 2 used to fetch each page's hero heading/description from its Sanity
+            // page document (e.g. servicesPage.hero). That was removed: `data-json`
+            // attributes in the page .tsx files (e.g. data-json="hero.headingAccent")
+            // are NOT a live data binding — they're static metadata for an external
+            // editing overlay. The actual rendered heading is always the literal text
+            // hardcoded in JSX, so the Sanity hero fields can silently drift from what
+            // the real page shows (exactly how this dropdown ended up showing "Our
+            // Premium Services" while the live page has only ever said "Our
+            // Services"). The hardcoded titles/descriptions in `defaultSlides` above
+            // are what actually matches each page, so those are used directly instead.
 
             // Step 3: Fetch latest WordPress blog post
             let wpPost = null;
@@ -1414,28 +1413,14 @@
                 let title = def.title;
                 let desc = def.desc;
 
-                // --- Image from Sanity pageAsset (CDN URL) ---
-                const heroPath = heroAssetPaths[key];
-                const sanityAsset = byPath[heroPath];
-                if (sanityAsset && sanityAsset.image) {
-                    const resolved = getSanityImageUrl(sanityAsset.image);
+                // --- Image from Sanity pageAsset (CDN URL) — prefer the image slot,
+                // fall back to a video's thumbnail (About Us has no images[] entry) ---
+                const heroName = heroImageNames[key];
+                const sanityAsset = byName[heroName];
+                const imgRef = sanityAsset?.images?.[0]?.image || sanityAsset?.videos?.[0]?.thumbnail;
+                if (imgRef) {
+                    const resolved = getSanityImageUrl(imgRef);
                     if (resolved) img = resolved;
-                }
-
-                // --- Text from Sanity page hero document ---
-                const pageKey = key === 'join-us' ? 'careers' : key;
-                const pageDoc = pageTextData[pageKey];
-                if (pageDoc && pageDoc.hero) {
-                    const headingBase = pageDoc.hero.headingLine1 || pageDoc.hero.heading;
-                    const headingText = [headingBase, pageDoc.hero.headingAccent].filter(Boolean).join(' ') || headingBase || pageDoc.hero.headingAccent;
-                    if (headingText) {
-                        title = headingText.replace(/<[^>]*>/g, '');
-                        if (title.length > 40) title = title.substring(0, 37) + '...';
-                    }
-                    if (pageDoc.hero.description) {
-                        desc = pageDoc.hero.description;
-                        if (desc.length > 80) desc = desc.substring(0, 77) + '...';
-                    }
                 }
 
                 // --- Blog: latest WordPress post (featured image, with size-variant fallback) ---
@@ -1484,7 +1469,7 @@
             }
 
             // Step 6: Start display and rotation
-            showSlide('about');
+            showSlide('services');
             startRotation();
             setupLinkHovers();
         }
