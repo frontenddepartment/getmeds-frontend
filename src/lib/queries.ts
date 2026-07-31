@@ -434,7 +434,10 @@ export async function getServices() {
 }
 
 export async function getTeamMembers() {
-  return sanityQuery<TeamMember[]>('teams.all')
+  // { fresh: true } — bypasses Sanity's CDN cache so drag-reordering or
+  // adding/removing a team member in Studio shows up on the About Us page
+  // immediately instead of waiting out the CDN's cache TTL.
+  return sanityQuery<TeamMember[]>('teams.all', undefined, { fresh: true })
 }
 
 export async function getTestimonials() {

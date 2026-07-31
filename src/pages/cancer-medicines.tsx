@@ -306,6 +306,18 @@ export default function CancerMedicines() {
 
   // Restore the selected category/subcategory from URL or localStorage
   useEffect(() => {
+    // Must run at most once. processedCats gets recomputed (new array reference) more than
+    // once as categoriesData/categoryImages settle asynchronously, each of which re-triggers
+    // this effect — without this guard, every recompute re-ran the *entire* priority cascade
+    // below from scratch. That's harmless for a category reachable via its own URL segment
+    // (step 2 resolves it identically every time), but for a category whose Category Folder is
+    // literally "cancer-medicines" (Oncology) — a folder step 2 deliberately treats as the
+    // generic/ambiguous "all products" route, not a specific-category signal — resolution can
+    // ONLY come from the localStorage fallback (step 4). A second run of this effect landing
+    // between the first run's `setSelectedCategory` and its knock-on save-to-localStorage effect
+    // could read back a not-yet-updated localStorage value and silently reset the selection to
+    // "All" right after correctly resolving it — this guard makes that impossible.
+    if (hasRestoredCategoryRef.current) return;
     if (processedCats.length > 0) {
       let resolved = false;
 
@@ -321,10 +333,23 @@ export default function CancerMedicines() {
         }
       }
 
-      // 2. Check if URL path has 1 segment matching a category folder slug or category name (e.g. /bone-health-medicines, /antibiotics, /heart-medicines)
+      // 2. Check if URL path has 1 segment matching a category folder slug or category name (e.g.
+      // /bone-health-medicines, /antibiotics, /heart-medicines, /cancer-medicines). "cancer-medicines"
+      // used to be excluded here and treated purely as the generic "all products" route, but it's
+      // also Oncology's real Category Folder — that made Oncology the only category unable to
+      // resolve directly from its own URL, forced to depend on the (racier) localStorage fallback
+      // below instead. "product-range" stays the true generic/no-specific-category route (that's
+      // what the nav's "Product Range" link and the "All Products" reset both target), and
+      // "conditions" stays excluded since it's the separate condition-hub namespace, not a category.
       if (!resolved && pathParts.length >= 1) {
         const firstSeg = decodeURIComponent(pathParts[0]).trim().toLowerCase();
-        if (firstSeg !== 'cancer-medicines' && firstSeg !== 'product-range' && firstSeg !== 'conditions') {
+        // The navbar's global search box redirects to "/cancer-medicines?search=..." expecting an
+        // all-products search, not one scoped to Oncology — so a `search` param on that specific
+        // path still takes the generic/no-category treatment, exactly like before this change.
+        const hasSearchParam = typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('search');
+        const isGenericRoute = firstSeg === 'product-range' || firstSeg === 'conditions'
+          || (firstSeg === 'cancer-medicines' && hasSearchParam);
+        if (!isGenericRoute) {
           const matchedCat = processedCats.find(c => {
             const catSlug = (c.slug || '').toLowerCase();
             const catNameSlug = c.category.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
@@ -701,8 +726,11 @@ export default function CancerMedicines() {
           window.history.pushState(null, '', targetPath);
         }
       } else if (category === 'All' && subCategory === 'All') {
-        if (window.location.pathname !== '/cancer-medicines' && window.location.pathname !== '/product-range') {
-          window.history.pushState(null, '', '/cancer-medicines');
+        // Pushes to "/product-range" specifically, not "/cancer-medicines" — that's now Oncology's
+        // own resolvable category route (see the restore effect above), so reloading it must show
+        // Oncology, not silently reset back to "All".
+        if (window.location.pathname !== '/product-range' && window.location.pathname !== '/cancer-medicines') {
+          window.history.pushState(null, '', '/product-range');
         }
       }
     }
@@ -1000,6 +1028,15 @@ export default function CancerMedicines() {
                       }}
                       className="w-full bg-transparent border-none pl-2.5 pr-2 py-1.5 text-[13px] text-gray-700 outline-none placeholder-gray-400"
                     />
+                    {searchTerm && (
+                      <button
+                        onClick={() => { setSearchTerm(''); setCurrentPage(1); }}
+                        className="mr-2 text-gray-300 hover:text-gray-500 transition flex-shrink-0"
+                        aria-label="Clear search"
+                      >
+                        <i className="fa-solid fa-xmark text-[11px]" />
+                      </button>
+                    )}
                   </div>
                   <div className="relative flex-shrink-0" ref={filterPanelRef}>
                     <button
@@ -1176,7 +1213,15 @@ export default function CancerMedicines() {
                   />
                   <h3 className="text-lg font-bold text-gray-900 mb-1.5">No Products Found</h3>
                   <p className="text-sm text-gray-500 max-w-sm">
-                    We couldn't find any products matching your search or filters.
+                    {searchTerm.trim() && displayCategory !== 'All' ? (
+                      <>No products found for <span className="font-semibold text-gray-700">"{searchTerm.trim()}"</span> in <span className="font-semibold text-gray-700">{displayCategory}</span>.</>
+                    ) : searchTerm.trim() ? (
+                      <>No products found for <span className="font-semibold text-gray-700">"{searchTerm.trim()}"</span>.</>
+                    ) : displayCategory !== 'All' ? (
+                      <>No products found in <span className="font-semibold text-gray-700">{displayCategory}</span>.</>
+                    ) : (
+                      "We couldn't find any products matching your search or filters."
+                    )}
                   </p>
                 </div>
               ) : (

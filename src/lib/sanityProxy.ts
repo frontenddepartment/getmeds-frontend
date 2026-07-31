@@ -221,11 +221,17 @@ const SANITY_QUERIES: Record<string, string> = {
 
 export async function sanityQuery<T>(
   name: string,
-  params?: Record<string, any>
+  params?: Record<string, any>,
+  options?: { fresh?: boolean }
 ): Promise<T> {
   const query = SANITY_QUERIES[name]
   if (!query) {
     throw new Error(`Sanity query name "${name}" is not registered on the client.`)
   }
-  return client.fetch<T>(query, params || {})
+  // The default client reads from Sanity's CDN (useCdn: true, see sanity.ts), which is
+  // eventually-consistent — edits in Studio (reordering, adding/removing a team member)
+  // can take a while to show up. Pass { fresh: true } to read straight from the live API
+  // instead, for content that needs to reflect Studio edits immediately.
+  const activeClient = options?.fresh ? client.withConfig({ useCdn: false }) : client
+  return activeClient.fetch<T>(query, params || {})
 }
