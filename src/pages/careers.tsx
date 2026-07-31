@@ -377,7 +377,7 @@ const Careers: React.FC = () => {
           <h1 className="text-xl font-bold leading-tight mb-2 tracking-tight">
             <span className="hero-l1 block bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">Join the Minds Behind the Medicine</span>
           </h1>
-          <p className="hero-p text-gray-600 text-xs mb-3 leading-relaxed font-normal text-justify">
+          <p className="hero-p text-gray-600 text-xs mb-3 leading-relaxed font-normal text-left">
             Join our mission to make healthcare accessible worldwide. We're looking
             for passionate individuals to innovate and grow with us.
           </p>
@@ -893,7 +893,7 @@ const Careers: React.FC = () => {
               </blockquote>
               <div>
                 <p className="text-dark font-bold text-[14px]">Naresh Bishnoi</p>
-                <p className="text-gray-400 text-[12px]">Founder, Getmeds Inc.</p>
+                <p className="text-gray-400 text-[12px]">Founder, Getmeds Philippines Inc - 2MG Inc.</p>
               </div>
             </div>
             <div className="ca-anim ca-right ca-d2 w-52 h-52 md:w-64 md:h-64 flex-shrink-0">

@@ -9,7 +9,7 @@ export default function GlobalPresence() {
   useEffect(() => {
     setPageMeta({
       title: 'Global Presence',
-      description: 'Discover seamless healthcare solutions. Access a world-class medical network worldwide, efficiently linking you with top care continuously.',
+      description: 'Getmeds global network spans continents to close the healthcare gap — sourcing internationally recognized medicines and expanding access for the patients and partners who depend on us.',
       path: '/global-presence.html',
     });
   }, []);
@@ -98,8 +98,7 @@ export default function GlobalPresence() {
               </span>
             </h1>
             <p data-json="hero.description" className="ca-anim ca-up ca-d2 text-white/90 text-[13px] md:text-[14px] max-w-[650px] mb-5 leading-normal font-normal">
-              Discover seamless healthcare solutions. Access a world-class medical network worldwide, efficiently
-              linking you with top care continuously.
+              Getmeds global network spans continents to close the healthcare gap — sourcing internationally recognized medicines and expanding access for the patients and partners who depend on us.
             </p>
             <button
               onClick={() => document.getElementById('gp-content-start')?.scrollIntoView({ behavior: 'smooth' })}
@@ -136,9 +135,8 @@ export default function GlobalPresence() {
               Without Borders
             </span>
           </h1>
-          <p data-json="hero.description" className="ca-anim ca-up ca-d2 text-gray-600 text-xs mb-3 leading-relaxed font-normal text-justify">
-            Discover seamless healthcare solutions. Access a world-class medical network worldwide, efficiently
-            linking you with top care continuously.
+          <p data-json="hero.description" className="ca-anim ca-up ca-d2 text-gray-600 text-xs mb-3 leading-relaxed font-normal text-left">
+            Getmeds global network spans continents to close the healthcare gap — sourcing internationally recognized medicines and expanding access for the patients and partners who depend on us.
           </p>
         </div>
       </section>

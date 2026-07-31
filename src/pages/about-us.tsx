@@ -312,7 +312,7 @@ export default function AboutUs() {
                 Ally</span>
             </h1>
             <p data-json="hero.description" className="text-white/90 text-[13px] md:text-[14px] max-w-[600px] mb-5 leading-normal font-normal">
-              A new standard of care for a new generation of patients.
+              A new standard of care for a new generation of patients.<br />
               Advanced science. Trusted medicine. Closer access. Better outcomes. Greater hope.
             </p>
             <div className="flex flex-wrap gap-2 md:gap-4">
@@ -351,9 +351,9 @@ export default function AboutUs() {
             <span data-json="hero.headingAccent"
               className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">Health Ally</span>
           </h1>
-          <p data-json="hero.description" className="text-gray-600 text-xs mb-3 leading-relaxed font-normal text-justify">
+          <p data-json="hero.description" className="text-gray-600 text-xs mb-3 leading-relaxed font-normal text-left">
             A new standard of care for a new generation of patients.
-            Advanced science. Trusted medicine. Closer access. Better outcomes. Greater hope.
+            Advanced science. Trusted medicine. Closer access.<br />Better outcomes. Greater hope.
           </p>
         </div>
       </section>
