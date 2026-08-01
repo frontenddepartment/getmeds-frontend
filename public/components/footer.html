@@ -240,6 +240,33 @@
     </div>
 </div>
 
+<!-- Product Range Disclaimer Modal (auto-shown once per session on /product-range and /cancer-medicines) -->
+<div id="product-disclaimer-modal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[85vh] flex flex-col overflow-hidden">
+        <!-- Header -->
+        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 flex-shrink-0">
+            <h2 class="text-[15px] font-semibold text-gray-900 uppercase tracking-wide">Medical and Regulatory Disclaimer</h2>
+            <button onclick="closeProductDisclaimer()"
+                class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 transition">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+        </div>
+        <!-- Content -->
+        <div class="overflow-y-auto px-6 py-5 space-y-5 text-[13px] text-gray-600 leading-relaxed" style="scrollbar-width:thin;scrollbar-color:#e5e7eb transparent;">
+            <p>Product information on this page is intended for educational purposes only. It does not constitute medical advice, a prescription, or an endorsement of any product for a specific condition. Prescription medicines require a valid prescription from a licensed physician. Self-medication is discouraged. Always seek guidance from a qualified healthcare professional before starting, changing, or stopping any treatment.</p>
+            <p>All products listed are registered with the Philippine Food and Drug Administration (FDA). This content adheres to the PHAP Code of Practice and RA 9711 (FDA Act of 2009).</p>
+        </div>
+        <!-- Footer -->
+        <div class="px-6 py-4 border-t border-gray-100 flex-shrink-0">
+            <button onclick="closeProductDisclaimer()"
+                class="w-full py-2.5 rounded-xl text-sm font-semibold text-white transition"
+                style="background: linear-gradient(135deg, #61A644, #1D9FDA);">
+                I Understand
+            </button>
+        </div>
+    </div>
+</div>
+
 <!-- Privacy Policy Modal -->
 <div id="privacy-policy-modal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[85vh] flex flex-col overflow-hidden">
@@ -662,17 +689,22 @@
         if (el) el.textContent = new Date().getFullYear();
     })();
 
-    // Close disclaimer and mark as seen for this session
+    // Close footer medical disclaimer
     window.closeDisclaimer = function () {
         document.getElementById('medical-disclaimer-modal').classList.add('hidden');
-        sessionStorage.setItem('gmeds_disclaimer_seen', '1');
+    };
+
+    // Close product-range/cancer-medicines disclaimer and mark as seen for this session
+    window.closeProductDisclaimer = function () {
+        document.getElementById('product-disclaimer-modal').classList.add('hidden');
+        sessionStorage.setItem('gmeds_product_disclaimer_seen', '1');
     };
 
     // Auto-show disclaimer once per session on the product-range / cancer-medicines listing pages
     (function () {
         var path = window.location.pathname.replace(/^\//, '').replace(/\.html$/, '').replace(/\/$/, '');
-        if ((path === 'product-range' || path === 'cancer-medicines') && !sessionStorage.getItem('gmeds_disclaimer_seen')) {
-            document.getElementById('medical-disclaimer-modal').classList.remove('hidden');
+        if ((path === 'product-range' || path === 'cancer-medicines') && !sessionStorage.getItem('gmeds_product_disclaimer_seen')) {
+            document.getElementById('product-disclaimer-modal').classList.remove('hidden');
         }
     })();
 
@@ -715,6 +747,9 @@
     // Close modal on backdrop click
     document.getElementById('medical-disclaimer-modal').addEventListener('click', function (e) {
         if (e.target === this) closeDisclaimer();
+    });
+    document.getElementById('product-disclaimer-modal').addEventListener('click', function (e) {
+        if (e.target === this) closeProductDisclaimer();
     });
 
     // Privacy Policy modal

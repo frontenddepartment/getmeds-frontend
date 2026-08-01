@@ -982,10 +982,10 @@ export default function GetMedsHomepage() {
               </div>
 
               <div className="mt-2">
-                <p className="text-gray-500 font-bold text-[9px] whitespace-nowrap leading-tight">
+                <p className="text-gray-500 font-bold text-[10px] leading-tight">
                   DSWD &bull; PCSO &bull; Office of the President &bull; Office of the Vice President
                 </p>
-                <p className="text-gray-500 italic font-medium text-[11px] mt-0.5">
+                <p className="text-gray-500 italic font-medium text-[12px] mt-0.5">
                   Government-accredited pharmaceutical distributor
                 </p>
               </div>

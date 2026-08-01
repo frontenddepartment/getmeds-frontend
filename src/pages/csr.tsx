@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { injectHTML } from '../lib/injectHTML';
 import { useImageMapper } from '../lib/useSanity';
 import { setPageMeta } from '../lib/seo';
@@ -22,8 +22,15 @@ const Csr: React.FC = () => {
     'assets/pinkrunthree-web.jpg',
     'assets/pinkrunfour-web.jpg',
   ];
+  const epcalmSliderImages = [
+    'assets/epcalmone.jpg',
+    'assets/epcalmtwo.jpg',
+    'assets/epcalmthree.jpg',
+  ];
   const galleryRef = useRef<HTMLDivElement>(null);
   const assistViewportRef = useRef<HTMLDivElement>(null);
+  const pinkGridRef = useRef<HTMLDivElement>(null);
+  const epcalmGridRef = useRef<HTMLDivElement>(null);
 
   // Navbar / Footer injection
   useEffect(() => {
@@ -106,6 +113,44 @@ const Csr: React.FC = () => {
       { root: null, threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
     );
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
+
+  // Pink Run image grid — cards compile at center from below, then scatter into their grid positions
+  useEffect(() => {
+    const el = pinkGridRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('in-view');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.3 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  // EPCALM image grid — same compile/scatter animation as the Pink Run grid
+  useEffect(() => {
+    const el = epcalmGridRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('in-view');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.3 }
+    );
+    observer.observe(el);
     return () => observer.disconnect();
   }, []);
 
@@ -279,7 +324,7 @@ const Csr: React.FC = () => {
         </section>
 
         {/* OUR COMMITMENT */}
-        <section className="pb-16 bg-white">
+        <section className="pb-4 md:pb-16 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-5xl mx-auto mb-12 reveal">
               <h2 className="text-3xl md:text-4xl lg:text-[42px] font-semibold text-gray-900 leading-tight tracking-tight uppercase mb-6">
@@ -331,17 +376,17 @@ const Csr: React.FC = () => {
         </section>
 
         {/* PINK RUN HERO SLIDER */}
-        <section className="py-12 px-0 md:px-6">
-          <div className="max-w-7xl mx-auto bg-gray-100 rounded-none md:rounded-3xl overflow-hidden">
+        <section className="pt-4 md:pt-12 pb-0 px-0 md:px-6">
+          <div className="max-w-7xl mx-auto overflow-hidden">
 
             {/* Header row — title left, description right */}
-            <div className="flex flex-col md:flex-row md:items-start justify-between px-8 pt-8 pb-6 gap-6">
+            <div className="flex flex-col md:flex-row md:items-start justify-between px-8 pt-2 md:pt-8 pb-6 gap-6">
               <div>
                 <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent font-bold uppercase tracking-widest text-xs mb-2 block">
                   Health Promotion Events
                 </span>
-                <h2 className="text-2xl md:text-3xl font-semibold text-gray-900 leading-tight max-w-xs">
-                  Pink Run Breast<br />Cancer <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">Awareness</span>
+                <h2 className="text-2xl md:text-3xl font-semibold text-gray-900 leading-tight whitespace-nowrap">
+                  Pink Run <br /> Breast Cancer <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">Awareness</span>
                 </h2>
               </div>
               <p className="text-gray-500 text-[14px] leading-relaxed max-w-sm md:pt-1">
@@ -349,10 +394,92 @@ const Csr: React.FC = () => {
               </p>
             </div>
 
-            {/* Static 4-image grid — no auto-rotating effect */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 px-4 md:px-8 pb-8">
+            {/* 4-image grid — cards fan out like a card deck at center from below, then unfan/scatter into position on scroll */}
+            <style>{`
+              .pink-gather-grid .pink-card {
+                opacity: 0;
+                translate: 0 110px;
+                transform-origin: 50% 100%;
+                transition: opacity 0.7s ease, translate 1s cubic-bezier(0.22,1,0.36,1), transform 1s cubic-bezier(0.22,1,0.36,1) 0.7s;
+              }
+              .pink-gather-grid .pink-card:nth-child(1) { transform: translateX(55%) translateY(10px) rotate(-9deg); transition-delay: 0s, 0s, 0.7s; }
+              .pink-gather-grid .pink-card:nth-child(2) { transform: translateX(-55%) translateY(10px) rotate(9deg); transition-delay: 0.09s, 0.09s, 0.79s; }
+              .pink-gather-grid .pink-card:nth-child(3) { transform: translateX(55%) translateY(10px) rotate(-9deg); transition-delay: 0.18s, 0.18s, 0.88s; }
+              .pink-gather-grid .pink-card:nth-child(4) { transform: translateX(-55%) translateY(10px) rotate(9deg); transition-delay: 0.27s, 0.27s, 0.97s; }
+              @media (min-width: 1024px) {
+                .pink-gather-grid .pink-card:nth-child(1) { transform: translateX(160%) translateY(16px) rotate(-14deg); }
+                .pink-gather-grid .pink-card:nth-child(2) { transform: translateX(55%) translateY(4px) rotate(-5deg); }
+                .pink-gather-grid .pink-card:nth-child(3) { transform: translateX(-55%) translateY(4px) rotate(5deg); }
+                .pink-gather-grid .pink-card:nth-child(4) { transform: translateX(-160%) translateY(16px) rotate(14deg); }
+              }
+              .pink-gather-grid.in-view .pink-card {
+                opacity: 1;
+                translate: 0 0;
+                transform: translateX(0) translateY(0) rotate(0deg);
+              }
+            `}</style>
+            <div ref={pinkGridRef} className="pink-gather-grid grid grid-cols-2 lg:grid-cols-4 gap-4 px-4 md:px-8 pb-0">
               {pinkSliderImages.map((src, idx) => (
-                <div key={idx} className="relative rounded-2xl overflow-hidden aspect-[3/4]">
+                <div key={idx} className="pink-card relative rounded-[15px] overflow-hidden aspect-square">
+                  <img src={src} alt="" className="absolute inset-0 w-full h-full object-cover" />
+                </div>
+              ))}
+            </div>
+
+          </div>
+        </section>
+
+        {/* EPCALM ADULT LEUKEMIA FOUNDATION */}
+        <section className="pt-0 pb-12 px-0 md:px-6">
+          <div className="max-w-7xl mx-auto overflow-hidden">
+
+            {/* Header row — title left, description right */}
+            <div className="flex flex-col md:flex-row md:items-start justify-between px-8 pt-4 pb-6 gap-6">
+              <div>
+                <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent font-bold uppercase tracking-widest text-xs mb-2 block">
+                  Foundation Partnership
+                </span>
+                <h2 className="text-2xl md:text-3xl font-semibold text-gray-900 leading-tight whitespace-nowrap">
+                  EPCALM Adult Leukemia <br /> <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">Foundation</span>
+                </h2>
+              </div>
+              <p className="text-gray-500 text-[14px] leading-relaxed max-w-sm md:pt-1">
+                Getmeds partners with EPCALM Adult Leukemia Foundation to provide free treatment access and continuous support for adult leukemia patients and their families.
+              </p>
+            </div>
+
+            {/* Card grid — same compile/scatter animation as the Pink Run grid above */}
+            <style>{`
+              .epcalm-gather-grid .epcalm-card {
+                opacity: 0;
+                translate: 0 110px;
+                transform-origin: 50% 100%;
+                transition: opacity 0.7s ease, translate 1s cubic-bezier(0.22,1,0.36,1), transform 1s cubic-bezier(0.22,1,0.36,1) 0.7s;
+              }
+              .epcalm-gather-grid .epcalm-card:nth-child(1) { transform: translateX(55%) translateY(10px) rotate(-9deg); transition-delay: 0s, 0s, 0.7s; }
+              .epcalm-gather-grid .epcalm-card:nth-child(2) { transform: translateX(-55%) translateY(10px) rotate(9deg); transition-delay: 0.09s, 0.09s, 0.79s; }
+              .epcalm-gather-grid .epcalm-card:nth-child(3) { transform: translateX(55%) translateY(10px) rotate(-9deg); transition-delay: 0.18s, 0.18s, 0.88s; }
+              .epcalm-gather-grid .epcalm-card:nth-child(4) { transform: translateX(-55%) translateY(10px) rotate(9deg); transition-delay: 0.27s, 0.27s, 0.97s; }
+              @media (min-width: 1024px) {
+                .epcalm-gather-grid .epcalm-card:nth-child(1) { transform: translateX(160%) translateY(16px) rotate(-14deg); }
+                .epcalm-gather-grid .epcalm-card:nth-child(2) { transform: translateX(55%) translateY(4px) rotate(-5deg); }
+                .epcalm-gather-grid .epcalm-card:nth-child(3) { transform: translateX(-55%) translateY(4px) rotate(5deg); }
+                .epcalm-gather-grid .epcalm-card:nth-child(4) { transform: translateX(-160%) translateY(16px) rotate(14deg); }
+              }
+              .epcalm-gather-grid.in-view .epcalm-card {
+                opacity: 1;
+                translate: 0 0;
+                transform: translateX(0) translateY(0) rotate(0deg);
+              }
+            `}</style>
+            <div ref={epcalmGridRef} className="epcalm-gather-grid grid grid-cols-2 lg:grid-cols-4 gap-4 px-4 md:px-8 pb-8">
+              <div className="epcalm-card relative rounded-[15px] overflow-hidden aspect-square bg-gradient-to-br from-[#61A644] to-[#1D9FDA] p-2.5 md:p-5 flex flex-col justify-center text-white">
+                <p className="text-[7px] md:text-[10px] font-bold uppercase tracking-widest opacity-80 mb-0.5 md:mb-1">EPCALM</p>
+                <h3 className="text-[10px] md:text-lg font-bold uppercase leading-tight md:leading-snug mb-1 md:mb-2">Adult Leukemia Foundation</h3>
+                <p className="text-[8px] md:text-[11px] leading-snug md:leading-relaxed opacity-90 line-clamp-3 md:line-clamp-none">Getmeds partners with EPCALM to provide free treatment access and support for adult leukemia patients.</p>
+              </div>
+              {epcalmSliderImages.map((src, idx) => (
+                <div key={idx} className="epcalm-card relative rounded-[15px] overflow-hidden aspect-square">
                   <img src={src} alt="" className="absolute inset-0 w-full h-full object-cover" />
                 </div>
               ))}
