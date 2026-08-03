@@ -230,6 +230,28 @@ export default function ProductDetail() {
         return false;
       });
       if (found) {
+        // productPageUrl from the sheet has no protocol (e.g. "getmeds.ph/cancer-medicines/..."),
+        // so the leading domain segment has to be stripped even without an "https://" to match.
+        const prettyPath = found.productPageUrl
+          ? '/' + found.productPageUrl.replace(/^https?:\/\//, '').replace(/^[^/]+\/?/, '')
+          : `/${found.categoryFolder || 'product-range'}/${found.slug?.current || ''}`;
+
+        // Canonicalize any other URL this product is reachable from — the legacy singular
+        // "/cancer-medicine/<slug>" alias, the "/product-detail?product=<slug>" fallback, etc. —
+        // to its one real Category-Folder URL. This is a live, data-driven redirect off the
+        // product's own resolved productPageUrl, not a guessed/hardcoded slug mapping, so it
+        // self-corrects for every legacy URL automatically without needing to know it in advance.
+        if (prettyPath && window.location.pathname !== prettyPath) {
+          // Drop the "product" query param specifically — it's just the lookup fallback's own
+          // input mechanism, redundant once the real slug is already in the path — but keep any
+          // other real param (e.g. "?userType=doctor") intact on the canonical URL.
+          const carryOverParams = new URLSearchParams(window.location.search);
+          carryOverParams.delete('product');
+          const query = carryOverParams.toString();
+          window.location.replace(prettyPath + (query ? `?${query}` : ''));
+          return;
+        }
+
         setProduct(found);
         const displayName = found.brandName && found.genericName && found.brandName !== found.genericName
           ? `${found.brandName} (${found.genericName})`
@@ -238,11 +260,6 @@ export default function ProductDetail() {
           || found.indications
           || found.description
           || `${displayName} — available through Getmeds Philippines. Quality pharmaceutical product for healthcare needs.`;
-        // productPageUrl from the sheet has no protocol (e.g. "getmeds.ph/cancer-medicines/..."),
-        // so the leading domain segment has to be stripped even without an "https://" to match.
-        const prettyPath = found.productPageUrl
-          ? '/' + found.productPageUrl.replace(/^https?:\/\//, '').replace(/^[^/]+\/?/, '')
-          : `/${found.categoryFolder || 'product-range'}/${found.slug?.current || ''}`;
         const imgUrl = found.image ? urlFor(found.image).width(1200).url() : undefined;
         setPageMeta({
           title: found.metaTitle || displayName,
