@@ -181,42 +181,14 @@ const Csr: React.FC = () => {
                 />
               );
             })()}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent pointer-events-none"></div>
-
-            {/* Decorative dot grid + arc overlay */}
-            <div className="absolute inset-0 z-[2] pointer-events-none overflow-hidden">
-              <svg className="w-full h-full" viewBox="0 0 1200 360" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                  <pattern id="csrDotGrid" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
-                    <rect x="0" y="0" width="4" height="4" rx="1" fill="white" />
-                  </pattern>
-                  <radialGradient id="csrDotFade" cx="0%" cy="0%" r="75%">
-                    <stop offset="0%" stopColor="white" stopOpacity="0.35" />
-                    <stop offset="60%" stopColor="white" stopOpacity="0.12" />
-                    <stop offset="100%" stopColor="white" stopOpacity="0" />
-                  </radialGradient>
-                  <mask id="csrDotMask">
-                    <rect width="700" height="360" fill="url(#csrDotFade)" />
-                  </mask>
-                </defs>
-                <rect width="700" height="360" fill="url(#csrDotGrid)" mask="url(#csrDotMask)" />
-                <circle cx="1180" cy="380" r="180" fill="none" stroke="white" strokeWidth="1.2" opacity="0.18" />
-                <circle cx="1180" cy="380" r="250" fill="none" stroke="white" strokeWidth="1.2" opacity="0.14" />
-                <circle cx="1180" cy="380" r="320" fill="none" stroke="white" strokeWidth="1.2" opacity="0.11" />
-                <circle cx="1180" cy="380" r="395" fill="none" stroke="white" strokeWidth="1.2" opacity="0.08" />
-                <circle cx="1180" cy="380" r="470" fill="none" stroke="white" strokeWidth="1" opacity="0.06" />
-                <circle cx="1180" cy="380" r="550" fill="none" stroke="white" strokeWidth="1" opacity="0.05" />
-              </svg>
-            </div>
-
             <div className="relative z-10 w-full px-8 md:px-14 pb-5 md:pb-16 pt-20 max-w-4xl reveal z-[3]">
               <h1 className="text-[28px] md:text-[38px] leading-[1.2] font-bold mb-3 tracking-tight">
-                <span className="text-white">Corporate Social</span><br />
-                <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent leading-tight tracking-tight">
+                <span className="inline-block bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">Corporate Social</span><br />
+                <span className="inline-block bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent leading-tight tracking-tight">
                   Responsibility
                 </span>
               </h1>
-              <p className="text-white/90 text-[13px] md:text-[14px] max-w-[650px] mb-5 leading-normal font-normal">
+              <p className="text-[#000b5d] text-[13px] md:text-[14px] max-w-[650px] mb-5 leading-normal font-normal">
                 We don't just distribute medicine; we facilitate healing. Through NGO partnerships and digital
                 health advocacy, we ensure no patient navigates their journey alone.
               </p>
@@ -245,11 +217,10 @@ const Csr: React.FC = () => {
                 />
               );
             })()}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none"></div>
           </div>
           <div className="px-1 reveal">
             <h1 className="text-xl font-bold leading-tight mb-2 tracking-tight">
-              <span className="text-gray-900">Corporate Social </span>
+              <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">Corporate Social </span>
               <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">
                 Responsibility
               </span>
