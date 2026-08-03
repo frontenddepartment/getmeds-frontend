@@ -157,9 +157,7 @@ const Csr: React.FC = () => {
   return (
     <div style={{ fontFamily: "'Poppins', sans-serif" }} className="bg-white text-gray-800 antialiased">
       <style>{`
-        @media (max-width: 767px) {
-          html { scroll-behavior: smooth; }
-        }
+        html { scroll-behavior: smooth; }
       `}</style>
 
       {/* Navbar — outside overflow wrapper so sticky works */}
@@ -386,7 +384,7 @@ const Csr: React.FC = () => {
                   Health Promotion Events
                 </span>
                 <h2 className="text-2xl md:text-3xl font-semibold text-gray-900 leading-tight whitespace-nowrap">
-                  Pink Run <br /> Breast Cancer <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">Awareness</span>
+                  Pink Run <br /> Breast Cancer Awareness
                 </h2>
               </div>
               <p className="text-gray-500 text-[14px] leading-relaxed max-w-sm md:pt-1">
@@ -440,7 +438,7 @@ const Csr: React.FC = () => {
                   Foundation Partnership
                 </span>
                 <h2 className="text-2xl md:text-3xl font-semibold text-gray-900 leading-tight whitespace-nowrap">
-                  EPCALM Adult Leukemia <br /> <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">Foundation</span>
+                  EPCALM <br /> Adult Leukemia Foundation
                 </h2>
               </div>
               <p className="text-gray-500 text-[14px] leading-relaxed max-w-sm md:pt-1">
@@ -485,6 +483,24 @@ const Csr: React.FC = () => {
               ))}
             </div>
 
+          </div>
+        </section>
+
+        {/* IMELDA PAPIN FOUNDATION */}
+        <section className="pt-0 pb-12 px-4 md:px-14">
+          <div className="max-w-7xl mx-auto">
+            <div className="relative rounded-[15px] md:rounded-[20px] overflow-hidden aspect-[16/9] md:aspect-[21/9]">
+              <img src="assets/imeldapapin.jpg" alt="Imelda Papin Foundation" className="absolute inset-0 w-full h-full object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#61A644] from-0% via-[#1D9FDA] via-15% to-transparent to-45%"></div>
+              <div className="relative z-10 h-full flex flex-col justify-end p-5 md:p-10">
+                <span className="text-white/90 font-bold uppercase tracking-widest text-[10px] md:text-xs mb-1 md:mb-2 block">
+                  Partner Foundation
+                </span>
+                <h3 className="text-white text-lg md:text-3xl font-semibold leading-tight">
+                  Imelda Papin Foundation
+                </h3>
+              </div>
+            </div>
           </div>
         </section>
 

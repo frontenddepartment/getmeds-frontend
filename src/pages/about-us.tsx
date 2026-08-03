@@ -1138,7 +1138,7 @@ export default function AboutUs() {
         </div>
       </section>
 
-      {/* Our Partners */}
+      {/* Our Partners — temporarily disabled, do not show for now
       <section className="py-24 bg-white relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16 ca-anim ca-zoom">
@@ -1186,6 +1186,7 @@ export default function AboutUs() {
           </div>
         </div>
       </section>
+      */}
 
       {/* Call to Action */}
       <section className="py-16 mb-8">
