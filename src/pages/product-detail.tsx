@@ -257,13 +257,10 @@ export default function ProductDetail() {
           ? `${found.brandName} (${found.genericName})`
           : found.name || found.brandName || 'Product Details';
         // The Meta Description column in the product sheet is the source of truth for what
-        // Google shows — content authors own making it query-relevant (clinical terms, not just
-        // promotional copy) directly in that column. Only fall back to indications/description/a
-        // generic line when a product genuinely has no Meta Description set yet.
+        // Google shows. Do not fall back to indications or description body text, so search
+        // engines strictly index metaDescription for SEO snippet text.
         const description = (
           found.metaDescription
-          || found.indications
-          || found.description
           || `${displayName} — available through Getmeds Philippines. Quality pharmaceutical product for healthcare needs.`
         ).replace(/\s+/g, ' ').trim();
         const imgUrl = found.image ? urlFor(found.image).width(1200).url() : undefined;
@@ -679,7 +676,7 @@ export default function ProductDetail() {
                     )}
                   </div>
                   {descriptionTab === 'description' ? (
-                    <div className="text-[14px] text-gray-600 leading-relaxed max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+                    <div data-nosnippet className="text-[14px] text-gray-600 leading-relaxed max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
                       <div className="space-y-4">
                         {product.description && (
                           <div className="text-[14px] text-gray-600 leading-relaxed">

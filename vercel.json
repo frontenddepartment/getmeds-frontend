@@ -70,6 +70,16 @@
       "source": "/pap.html",
       "destination": "/patient-assistance-program",
       "permanent": true
+    },
+    {
+      "source": "/cancer-medicine/:product",
+      "destination": "/cancer-medicines/:product",
+      "permanent": true
+    },
+    {
+      "source": "/cancer-medicine",
+      "destination": "/cancer-medicines",
+      "permanent": true
     }
   ],
   "rewrites": [
@@ -339,14 +349,6 @@
     },
     {
       "source": "/conditions",
-      "destination": "/cancer-medicines"
-    },
-    {
-      "source": "/cancer-medicine/:product",
-      "destination": "/product-detail"
-    },
-    {
-      "source": "/cancer-medicine",
       "destination": "/cancer-medicines"
     },
     {
