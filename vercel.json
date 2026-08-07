@@ -72,6 +72,36 @@
       "permanent": true
     },
     {
+      "source": "/return-and-refund-policy.html",
+      "destination": "/return-and-refund-policy",
+      "permanent": true
+    },
+    {
+      "source": "/privacy-policy.html",
+      "destination": "/privacy-policy",
+      "permanent": true
+    },
+    {
+      "source": "/terms-of-service.html",
+      "destination": "/terms-of-service",
+      "permanent": true
+    },
+    {
+      "source": "/medical-disclaimer.html",
+      "destination": "/medical-disclaimer",
+      "permanent": true
+    },
+    {
+      "source": "/prescription-policy.html",
+      "destination": "/prescription-policy",
+      "permanent": true
+    },
+    {
+      "source": "/shipping-and-delivery-policy.html",
+      "destination": "/shipping-and-delivery-policy",
+      "permanent": true
+    },
+    {
       "source": "/cancer-medicine/:product",
       "destination": "/cancer-medicines/:product",
       "permanent": true

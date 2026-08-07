@@ -199,7 +199,8 @@ export default function BlogDetail() {
         'employee-verification', 'global-presence', 'edit-profile', 'profile', 'under-development', 'home-preview',
         'index.html', 'antibiotics', 'blood-disorder-medicines', 'anemia-medicines', 'hormonal-therapy',
         'diabetes-medicines', 'bone-health-medicines', 'heart-medicines', 'contrast-media',
-        'anti-inflammatory-medicines', 'pain-management', 'kidney-medicines', 'allergy-medicines'
+        'anti-inflammatory-medicines', 'pain-management', 'kidney-medicines', 'allergy-medicines', 'return-and-refund-policy',
+        'privacy-policy', 'terms-of-service', 'medical-disclaimer', 'prescription-policy', 'shipping-and-delivery-policy'
       ]);
 
       const urlParts = cleanPath.split('#');

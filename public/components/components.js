@@ -1385,31 +1385,58 @@
                             footerLegal.appendChild(a);
                         }
                     });
-                    // Always append Medical Disclaimer regardless of Sanity config
-                    const disclaimerBtn = document.createElement('button');
-                    disclaimerBtn.className = 'footer-link text-gray-500 hover:text-white bg-transparent border-none cursor-pointer text-xs p-0';
-                    disclaimerBtn.textContent = 'Medical Disclaimer';
-                    disclaimerBtn.addEventListener('click', function () {
-                        var modal = document.getElementById('medical-disclaimer-modal');
-                        if (modal) modal.classList.remove('hidden');
-                    });
-                    footerLegal.appendChild(disclaimerBtn);
+                    // Dynamic Policy Link Algorithm: Check Sanity displayMode ('dedicatedPage' vs 'modal')
+                    const defaultPolicies = [
+                        { label: 'Privacy Policy', slug: 'privacy-policy' },
+                        { label: 'Terms of Service', slug: 'terms-of-service' },
+                        { label: 'Medical Disclaimer', slug: 'medical-disclaimer' },
+                        { label: 'Prescription Policy', slug: 'prescription-policy' },
+                        { label: 'Shipping & Delivery Policy', slug: 'shipping-and-delivery-policy' },
+                        { label: 'Return & Refund Policy', slug: 'return-and-refund-policy' }
+                    ];
 
-                    // Always append these policy links regardless of Sanity config (same treatment as Medical Disclaimer)
-                    [
-                        { label: 'Prescription Policy', modalId: 'prescription-policy-modal' },
-                        { label: 'Shipping & Delivery Policy', modalId: 'shipping-delivery-policy-modal' },
-                        { label: 'Return & Refund Policy', modalId: 'return-refund-policy-modal' },
-                    ].forEach(({ label, modalId }) => {
-                        const btn = document.createElement('button');
-                        btn.type = 'button';
-                        btn.className = 'footer-link text-gray-500 hover:text-white bg-transparent border-none cursor-pointer text-xs p-0';
-                        btn.textContent = label;
-                        btn.addEventListener('click', function () {
-                            const modal = document.getElementById(modalId);
-                            if (modal) modal.classList.remove('hidden');
+                    const policyQuery = `*[_type == "policiesDisclaimers"]{ title, "slug": slug.current, displayMode, contentHtml }`;
+                    fetchSanityData(policyQuery).then(policies => {
+                        const policyMap = {};
+                        if (Array.isArray(policies)) {
+                            policies.forEach(p => {
+                                if (p && p.slug) policyMap[p.slug] = p;
+                            });
+                        }
+
+                        defaultPolicies.forEach(({ label, slug }) => {
+                            const item = policyMap[slug];
+                            const displayMode = (item && item.displayMode) ? item.displayMode : 'dedicatedPage';
+                            const pageHref = `/${slug}`;
+
+                            if (displayMode === 'modal') {
+                                const btn = document.createElement('button');
+                                btn.type = 'button';
+                                btn.className = 'footer-link text-gray-500 hover:text-white bg-transparent border-none cursor-pointer text-xs p-0';
+                                btn.textContent = item?.title || label;
+                                btn.addEventListener('click', function(e) {
+                                    e.preventDefault();
+                                    if (window.openDynamicPolicyModal) {
+                                        window.openDynamicPolicyModal(item?.title || label, item?.contentHtml || '<p>No content available.</p>');
+                                    }
+                                });
+                                footerLegal.appendChild(btn);
+                            } else {
+                                const a = document.createElement('a');
+                                a.href = pageHref;
+                                a.className = 'footer-link text-gray-500 hover:text-white text-xs p-0';
+                                a.textContent = item?.title || label;
+                                footerLegal.appendChild(a);
+                            }
                         });
-                        footerLegal.appendChild(btn);
+                    }).catch(() => {
+                        defaultPolicies.forEach(({ label, slug }) => {
+                            const a = document.createElement('a');
+                            a.href = `/${slug}`;
+                            a.className = 'footer-link text-gray-500 hover:text-white text-xs p-0';
+                            a.textContent = label;
+                            footerLegal.appendChild(a);
+                        });
                     });
 
                     footerLegal.dataset.populated = 'true';

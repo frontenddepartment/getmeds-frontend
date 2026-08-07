@@ -474,6 +474,32 @@ export default defineConfig(async ({ mode }) => {
                 return;
               }
             }
+            const policyRoutes = [
+              'return-and-refund-policy',
+              'privacy-policy',
+              'terms-of-service',
+              'medical-disclaimer',
+              'prescription-policy',
+              'shipping-and-delivery-policy',
+            ];
+
+            for (const route of policyRoutes) {
+              if (cleanPath === `/${route}.html`) {
+                res.statusCode = 302;
+                res.setHeader('Location', `/${route}` + qs);
+                res.end();
+                return;
+              }
+              if (cleanPath === `/${route}` || cleanPath === `/${route}/`) {
+                const htmlPath = path.join(process.cwd(), `${route}.html`);
+                if (fs.existsSync(htmlPath)) {
+                  const htmlContent = fs.readFileSync(htmlPath, 'utf-8');
+                  res.setHeader('Content-Type', 'text/html');
+                  res.end(htmlContent);
+                  return;
+                }
+              }
+            }
             // /cancer-medicine/* (singular) — legacy oncology product-detail alias,
             // always a product slug, never a condition hub.
             if (cleanPath === '/cancer-medicine.html') {

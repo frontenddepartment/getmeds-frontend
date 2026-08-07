@@ -26,6 +26,7 @@ import type {
   UngcPage,
   PageAsset,
   News,
+  PoliciesDisclaimers,
 } from '../types/sanity'
 
 function toTitleCase(str: string): string {
@@ -54,6 +55,18 @@ export async function getSiteSettings() {
 
 export async function getNavigation() {
   return sanityQuery<Navigation>('navigation.main')
+}
+
+export async function getPoliciesDisclaimers() {
+  return sanityQuery<PoliciesDisclaimers>('policiesDisclaimers.main', undefined, { fresh: true })
+}
+
+export async function getPolicyBySlug(slug: string) {
+  return sanityQuery<PoliciesDisclaimers>('policiesDisclaimers.bySlug', { slug }, { fresh: true })
+}
+
+export async function getAllPolicies() {
+  return sanityQuery<PoliciesDisclaimers[]>('policiesDisclaimers.all', undefined, { fresh: true })
 }
 
 // ─────────────────────────────────────────────

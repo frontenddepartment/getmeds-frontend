@@ -216,6 +216,15 @@ const SANITY_QUERIES: Record<string, string> = {
       "requirements": qualificationRequirements,
       image
     }
+  `,
+  "policiesDisclaimers.main": `
+    *[_type == "policiesDisclaimers" && _id == "policies-and-disclaimers"][0]
+  `,
+  "policiesDisclaimers.bySlug": `
+    *[_type == "policiesDisclaimers" && slug.current == $slug][0]
+  `,
+  "policiesDisclaimers.all": `
+    *[_type == "policiesDisclaimers"] | order(title asc)
   `
 }
 

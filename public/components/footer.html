@@ -71,30 +71,30 @@
         <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-gray-500">
             <p id="footer-copyright">&copy; <span id="footer-year"></span> Getmeds Philippines, Inc. All rights reserved.</p>
             <div id="footer-legal-links" class="flex flex-wrap justify-center gap-x-6 gap-y-2 mt-4 md:mt-0">
-                <button type="button" id="open-privacy-policy-btn"
-                    class="footer-link text-gray-500 hover:!text-white bg-transparent border-none cursor-pointer text-xs p-0">
+                <a href="/privacy-policy" id="open-privacy-policy-btn"
+                    class="footer-link text-gray-500 hover:!text-white text-xs p-0">
                     Privacy Policy
-                </button>
-                <button type="button" id="open-terms-of-service-btn"
-                    class="footer-link text-gray-500 hover:!text-white bg-transparent border-none cursor-pointer text-xs p-0">
+                </a>
+                <a href="/terms-of-service" id="open-terms-of-service-btn"
+                    class="footer-link text-gray-500 hover:!text-white text-xs p-0">
                     Terms of Service
-                </button>
-                <button type="button" id="open-medical-disclaimer-btn"
-                    class="footer-link text-gray-500 hover:!text-white bg-transparent border-none cursor-pointer text-xs p-0">
+                </a>
+                <a href="/medical-disclaimer" id="open-medical-disclaimer-btn"
+                    class="footer-link text-gray-500 hover:!text-white text-xs p-0">
                     Medical Disclaimer
-                </button>
-                <button type="button" id="open-prescription-policy-btn"
-                    class="footer-link text-gray-500 hover:!text-white bg-transparent border-none cursor-pointer text-xs p-0">
+                </a>
+                <a href="/prescription-policy" id="open-prescription-policy-btn"
+                    class="footer-link text-gray-500 hover:!text-white text-xs p-0">
                     Prescription Policy
-                </button>
-                <button type="button" id="open-shipping-delivery-policy-btn"
-                    class="footer-link text-gray-500 hover:!text-white bg-transparent border-none cursor-pointer text-xs p-0">
+                </a>
+                <a href="/shipping-and-delivery-policy" id="open-shipping-delivery-policy-btn"
+                    class="footer-link text-gray-500 hover:!text-white text-xs p-0">
                     Shipping &amp; Delivery Policy
-                </button>
-                <button type="button" id="open-return-refund-policy-btn"
-                    class="footer-link text-gray-500 hover:!text-white bg-transparent border-none cursor-pointer text-xs p-0">
+                </a>
+                <a href="/return-and-refund-policy" id="open-return-refund-policy-btn"
+                    class="footer-link text-gray-500 hover:!text-white text-xs p-0">
                     Return &amp; Refund Policy
-                </button>
+                </a>
             </div>
         </div>
     </div>
@@ -232,6 +232,31 @@
         <!-- Footer -->
         <div class="px-6 py-4 border-t border-gray-100 flex-shrink-0">
             <button onclick="closeDisclaimer()"
+                class="w-full py-2.5 rounded-xl text-sm font-semibold text-white transition"
+                style="background: linear-gradient(135deg, #61A644, #1D9FDA);">
+                I Understand
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Generic Dynamic Policy Modal (used when displayMode in Sanity is set to 'modal') -->
+<div id="policy-dynamic-modal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[85vh] flex flex-col overflow-hidden">
+        <!-- Header -->
+        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 flex-shrink-0">
+            <h2 id="policy-dynamic-modal-title" class="text-[15px] font-semibold text-gray-900 uppercase tracking-wide">Policy</h2>
+            <button onclick="closeDynamicPolicyModal()"
+                class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 transition flex-shrink-0">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+        </div>
+        <!-- Content -->
+        <div id="policy-dynamic-modal-content" class="overflow-y-auto px-6 py-5 space-y-4 text-[13px] text-gray-600 leading-relaxed" style="scrollbar-width:thin;scrollbar-color:#e5e7eb transparent;">
+        </div>
+        <!-- Footer -->
+        <div class="px-6 py-4 border-t border-gray-100 flex-shrink-0">
+            <button onclick="closeDynamicPolicyModal()"
                 class="w-full py-2.5 rounded-xl text-sm font-semibold text-white transition"
                 style="background: linear-gradient(135deg, #61A644, #1D9FDA);">
                 I Understand
@@ -694,6 +719,22 @@
         document.getElementById('medical-disclaimer-modal').classList.add('hidden');
     };
 
+    window.closeDynamicPolicyModal = function () {
+        var modal = document.getElementById('policy-dynamic-modal');
+        if (modal) modal.classList.add('hidden');
+    };
+
+    window.openDynamicPolicyModal = function (title, contentHtml) {
+        var modal = document.getElementById('policy-dynamic-modal');
+        var titleEl = document.getElementById('policy-dynamic-modal-title');
+        var contentEl = document.getElementById('policy-dynamic-modal-content');
+        if (modal && titleEl && contentEl) {
+            titleEl.textContent = title || 'Policy';
+            contentEl.innerHTML = contentHtml || '<p>No content available.</p>';
+            modal.classList.remove('hidden');
+        }
+    };
+
     // Close product-range/cancer-medicines disclaimer and mark as seen for this session
     window.closeProductDisclaimer = function () {
         document.getElementById('product-disclaimer-modal').classList.add('hidden');
@@ -718,30 +759,24 @@
         });
     })();
 
-    // Open buttons
-    document.getElementById('open-privacy-policy-btn').addEventListener('click', function (e) {
-        e.preventDefault();
-        document.getElementById('privacy-policy-modal').classList.remove('hidden');
-    });
-    document.getElementById('open-terms-of-service-btn').addEventListener('click', function (e) {
-        e.preventDefault();
-        document.getElementById('terms-of-service-modal').classList.remove('hidden');
-    });
-    document.getElementById('open-medical-disclaimer-btn').addEventListener('click', function (e) {
-        e.preventDefault();
-        document.getElementById('medical-disclaimer-modal').classList.remove('hidden');
-    });
-    document.getElementById('open-prescription-policy-btn').addEventListener('click', function (e) {
-        e.preventDefault();
-        document.getElementById('prescription-policy-modal').classList.remove('hidden');
-    });
-    document.getElementById('open-shipping-delivery-policy-btn').addEventListener('click', function (e) {
-        e.preventDefault();
-        document.getElementById('shipping-delivery-policy-modal').classList.remove('hidden');
-    });
-    document.getElementById('open-return-refund-policy-btn').addEventListener('click', function (e) {
-        e.preventDefault();
-        document.getElementById('return-refund-policy-modal').classList.remove('hidden');
+    // Open buttons — navigate to dedicated pages
+    const policyPageLinks = {
+        'open-privacy-policy-btn': '/privacy-policy',
+        'open-terms-of-service-btn': '/terms-of-service',
+        'open-medical-disclaimer-btn': '/medical-disclaimer',
+        'open-prescription-policy-btn': '/prescription-policy',
+        'open-shipping-delivery-policy-btn': '/shipping-and-delivery-policy',
+        'open-return-refund-policy-btn': '/return-and-refund-policy'
+    };
+
+    Object.keys(policyPageLinks).forEach(function(btnId) {
+        var el = document.getElementById(btnId);
+        if (el) {
+            el.addEventListener('click', function(e) {
+                e.preventDefault();
+                window.location.href = policyPageLinks[btnId];
+            });
+        }
     });
 
     // Close modal on backdrop click
