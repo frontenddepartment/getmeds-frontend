@@ -1148,6 +1148,29 @@
         observer.observe(document.body, { childList: true, subtree: true });
     }
 
+    const sanityQueryCache = new Map();
+    function fetchSanityData(query) {
+        if (sanityQueryCache.has(query)) {
+            return Promise.resolve(sanityQueryCache.get(query));
+        }
+        const projectId = document.querySelector('meta[name="getmeds-sanity-project-id"]')?.content || 's7ocz8zp';
+        const dataset = document.querySelector('meta[name="getmeds-sanity-dataset"]')?.content || 'production';
+        const apiVersion = document.querySelector('meta[name="getmeds-sanity-api-version"]')?.content || '2021-10-21';
+        const url = `https://${projectId}.api.sanity.io/v${apiVersion}/data/query/${dataset}?query=` + encodeURIComponent(query);
+
+        return fetch(url)
+            .then(res => res.json())
+            .then(data => {
+                const result = data?.result;
+                sanityQueryCache.set(query, result);
+                return result;
+            })
+            .catch(err => {
+                console.warn('[Getmeds] Sanity query failed:', err);
+                return null;
+            });
+    }
+
     function fetchAndApplyFooterSettings() {
         const projectId = document.querySelector('meta[name="getmeds-sanity-project-id"]')?.content || 's7ocz8zp';
         const dataset = document.querySelector('meta[name="getmeds-sanity-dataset"]')?.content || 'production';
@@ -1347,45 +1370,13 @@
                 }
             }
 
-            // 7. Legal Links — always include Medical Disclaimer
+            // 7. Legal Links & Policies & Disclaimers
             const footerLegal = document.getElementById('footer-legal-links');
-            if (footerLegal && settings.legalLinks && Array.isArray(settings.legalLinks)) {
+            if (footerLegal) {
                 if (!footerLegal.dataset.populated) {
+                    footerLegal.dataset.populated = 'true';
                     footerLegal.innerHTML = '';
-                    settings.legalLinks.forEach(link => {
-                        if (!link || !link.label) return;
-                        const href = link.href || '#';
-                        if (href === '#') {
-                            // Map label to modal ID
-                            const modalMap = {
-                                'Privacy Policy': 'privacy-policy-modal',
-                                'Terms of Service': 'terms-of-service-modal',
-                                'Terms & Conditions': 'terms-of-service-modal',
-                            };
-                            const modalId = modalMap[link.label];
-                            const btn = document.createElement('button');
-                            btn.type = 'button';
-                            btn.className = 'footer-link text-gray-500 hover:text-white bg-transparent border-none cursor-pointer text-xs p-0';
-                            btn.textContent = link.label;
-                            btn.addEventListener('click', function (e) {
-                                e.preventDefault();
-                                var modal = modalId && document.getElementById(modalId);
-                                if (modal) modal.classList.remove('hidden');
-                            });
-                            footerLegal.appendChild(btn);
-                        } else {
-                            const a = document.createElement('a');
-                            a.href = href;
-                            a.className = 'hover:text-white transition';
-                            a.textContent = link.label;
-                            if (link.openInNewTab) {
-                                a.target = '_blank';
-                                a.rel = 'noopener noreferrer';
-                            }
-                            footerLegal.appendChild(a);
-                        }
-                    });
-                    // Dynamic Policy Link Algorithm: Check Sanity displayMode ('dedicatedPage' vs 'modal')
+
                     const defaultPolicies = [
                         { label: 'Privacy Policy', slug: 'privacy-policy' },
                         { label: 'Terms of Service', slug: 'terms-of-service' },
@@ -1404,6 +1395,7 @@
                             });
                         }
 
+                        footerLegal.innerHTML = '';
                         defaultPolicies.forEach(({ label, slug }) => {
                             const item = policyMap[slug];
                             const displayMode = (item && item.displayMode) ? item.displayMode : 'dedicatedPage';
@@ -1430,6 +1422,7 @@
                             }
                         });
                     }).catch(() => {
+                        footerLegal.innerHTML = '';
                         defaultPolicies.forEach(({ label, slug }) => {
                             const a = document.createElement('a');
                             a.href = `/${slug}`;
@@ -1438,8 +1431,6 @@
                             footerLegal.appendChild(a);
                         });
                     });
-
-                    footerLegal.dataset.populated = 'true';
                 }
             }
         };

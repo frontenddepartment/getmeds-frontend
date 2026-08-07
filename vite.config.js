@@ -475,6 +475,8 @@ export default defineConfig(async ({ mode }) => {
               }
             }
             const policyRoutes = [
+              'policy',
+              'policies',
               'return-and-refund-policy',
               'privacy-policy',
               'terms-of-service',
@@ -491,7 +493,7 @@ export default defineConfig(async ({ mode }) => {
                 return;
               }
               if (cleanPath === `/${route}` || cleanPath === `/${route}/`) {
-                const htmlPath = path.join(process.cwd(), `${route}.html`);
+                const htmlPath = path.join(process.cwd(), 'policy.html');
                 if (fs.existsSync(htmlPath)) {
                   const htmlContent = fs.readFileSync(htmlPath, 'utf-8');
                   res.setHeader('Content-Type', 'text/html');

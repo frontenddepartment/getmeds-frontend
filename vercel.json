@@ -182,6 +182,38 @@
       "destination": "https://admin.getmeds.ph/adminadlorock/:path*"
     },
     {
+      "source": "/policy",
+      "destination": "/policy"
+    },
+    {
+      "source": "/policies",
+      "destination": "/policy"
+    },
+    {
+      "source": "/return-and-refund-policy",
+      "destination": "/policy"
+    },
+    {
+      "source": "/privacy-policy",
+      "destination": "/policy"
+    },
+    {
+      "source": "/terms-of-service",
+      "destination": "/policy"
+    },
+    {
+      "source": "/medical-disclaimer",
+      "destination": "/policy"
+    },
+    {
+      "source": "/prescription-policy",
+      "destination": "/policy"
+    },
+    {
+      "source": "/shipping-and-delivery-policy",
+      "destination": "/policy"
+    },
+    {
       "source": "/blog/:slug*",
       "destination": "/blog-detail"
     },

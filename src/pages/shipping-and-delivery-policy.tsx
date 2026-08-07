@@ -78,7 +78,10 @@ export default function ShippingAndDeliveryPolicy() {
       <div className="max-w-4xl mx-auto px-4 pb-20 mt-4 relative z-10">
         <article className="min-w-0">
           {dynamicHtml ? (
-            <div dangerouslySetInnerHTML={{ __html: dynamicHtml }} />
+            <div
+              className="policy-html-content bg-white p-6 md:p-8 rounded-2xl border border-gray-200/80 shadow-sm"
+              dangerouslySetInnerHTML={{ __html: dynamicHtml }}
+            />
           ) : (
             <div className="p-6 bg-white rounded-xl shadow-sm border border-gray-100">
               <h2 className="text-xl font-bold mb-3 text-gray-900">Shipping &amp; Delivery Policy</h2>

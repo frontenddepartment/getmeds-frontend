@@ -209,7 +209,7 @@ export default function ReturnAndRefundPolicy() {
           {/* Right Main Content Area: Pure HTML Elements (Dynamic from Sanity database) */}
           <article className="flex-1 min-w-0">
             {dynamicHtml ? (
-              <div dangerouslySetInnerHTML={{ __html: dynamicHtml }} />
+              <div className="policy-html-content" dangerouslySetInnerHTML={{ __html: dynamicHtml }} />
             ) : (
               <>
                 {/* Section 1 */}
