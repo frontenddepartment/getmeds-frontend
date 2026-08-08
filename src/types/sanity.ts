@@ -423,6 +423,23 @@ export interface SiteSettings {
   appDownloadLinks?: Array<AppDownloadLink & { _key: string }>
 }
 
+export interface PoliciesDisclaimers {
+  _id: string
+  _type: 'policiesDisclaimers'
+  title?: string
+  slug?: { current: string } | string
+  effectiveDate?: string
+  lastUpdated?: string
+  displayMode?: 'dedicatedPage' | 'modal'
+  contentHtml?: string
+  privacyPolicy?: string
+  termsOfService?: string
+  medicalDisclaimer?: string
+  prescriptionPolicy?: string
+  shippingDeliveryPolicy?: string
+  returnRefundPolicy?: string
+}
+
 // ─────────────────────────────────────────────
 // Pages
 // ─────────────────────────────────────────────

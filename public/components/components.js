@@ -1148,6 +1148,29 @@
         observer.observe(document.body, { childList: true, subtree: true });
     }
 
+    const sanityQueryCache = new Map();
+    function fetchSanityData(query) {
+        if (sanityQueryCache.has(query)) {
+            return Promise.resolve(sanityQueryCache.get(query));
+        }
+        const projectId = document.querySelector('meta[name="getmeds-sanity-project-id"]')?.content || 's7ocz8zp';
+        const dataset = document.querySelector('meta[name="getmeds-sanity-dataset"]')?.content || 'production';
+        const apiVersion = document.querySelector('meta[name="getmeds-sanity-api-version"]')?.content || '2021-10-21';
+        const url = `https://${projectId}.api.sanity.io/v${apiVersion}/data/query/${dataset}?query=` + encodeURIComponent(query);
+
+        return fetch(url)
+            .then(res => res.json())
+            .then(data => {
+                const result = data?.result;
+                sanityQueryCache.set(query, result);
+                return result;
+            })
+            .catch(err => {
+                console.warn('[Getmeds] Sanity query failed:', err);
+                return null;
+            });
+    }
+
     function fetchAndApplyFooterSettings() {
         const projectId = document.querySelector('meta[name="getmeds-sanity-project-id"]')?.content || 's7ocz8zp';
         const dataset = document.querySelector('meta[name="getmeds-sanity-dataset"]')?.content || 'production';
@@ -1347,72 +1370,67 @@
                 }
             }
 
-            // 7. Legal Links — always include Medical Disclaimer
+            // 7. Legal Links & Policies & Disclaimers
             const footerLegal = document.getElementById('footer-legal-links');
-            if (footerLegal && settings.legalLinks && Array.isArray(settings.legalLinks)) {
+            if (footerLegal) {
                 if (!footerLegal.dataset.populated) {
-                    footerLegal.innerHTML = '';
-                    settings.legalLinks.forEach(link => {
-                        if (!link || !link.label) return;
-                        const href = link.href || '#';
-                        if (href === '#') {
-                            // Map label to modal ID
-                            const modalMap = {
-                                'Privacy Policy': 'privacy-policy-modal',
-                                'Terms of Service': 'terms-of-service-modal',
-                                'Terms & Conditions': 'terms-of-service-modal',
-                            };
-                            const modalId = modalMap[link.label];
-                            const btn = document.createElement('button');
-                            btn.type = 'button';
-                            btn.className = 'footer-link text-gray-500 hover:text-white bg-transparent border-none cursor-pointer text-xs p-0';
-                            btn.textContent = link.label;
-                            btn.addEventListener('click', function (e) {
-                                e.preventDefault();
-                                var modal = modalId && document.getElementById(modalId);
-                                if (modal) modal.classList.remove('hidden');
-                            });
-                            footerLegal.appendChild(btn);
-                        } else {
-                            const a = document.createElement('a');
-                            a.href = href;
-                            a.className = 'hover:text-white transition';
-                            a.textContent = link.label;
-                            if (link.openInNewTab) {
-                                a.target = '_blank';
-                                a.rel = 'noopener noreferrer';
-                            }
-                            footerLegal.appendChild(a);
-                        }
-                    });
-                    // Always append Medical Disclaimer regardless of Sanity config
-                    const disclaimerBtn = document.createElement('button');
-                    disclaimerBtn.className = 'footer-link text-gray-500 hover:text-white bg-transparent border-none cursor-pointer text-xs p-0';
-                    disclaimerBtn.textContent = 'Medical Disclaimer';
-                    disclaimerBtn.addEventListener('click', function () {
-                        var modal = document.getElementById('medical-disclaimer-modal');
-                        if (modal) modal.classList.remove('hidden');
-                    });
-                    footerLegal.appendChild(disclaimerBtn);
-
-                    // Always append these policy links regardless of Sanity config (same treatment as Medical Disclaimer)
-                    [
-                        { label: 'Prescription Policy', modalId: 'prescription-policy-modal' },
-                        { label: 'Shipping & Delivery Policy', modalId: 'shipping-delivery-policy-modal' },
-                        { label: 'Return & Refund Policy', modalId: 'return-refund-policy-modal' },
-                    ].forEach(({ label, modalId }) => {
-                        const btn = document.createElement('button');
-                        btn.type = 'button';
-                        btn.className = 'footer-link text-gray-500 hover:text-white bg-transparent border-none cursor-pointer text-xs p-0';
-                        btn.textContent = label;
-                        btn.addEventListener('click', function () {
-                            const modal = document.getElementById(modalId);
-                            if (modal) modal.classList.remove('hidden');
-                        });
-                        footerLegal.appendChild(btn);
-                    });
-
                     footerLegal.dataset.populated = 'true';
+                    footerLegal.innerHTML = '';
+
+                    const defaultPolicies = [
+                        { label: 'Privacy Policy', slug: 'privacy-policy' },
+                        { label: 'Terms of Service', slug: 'terms-of-service' },
+                        { label: 'Medical Disclaimer', slug: 'medical-disclaimer' },
+                        { label: 'Prescription Policy', slug: 'prescription-policy' },
+                        { label: 'Shipping & Delivery Policy', slug: 'shipping-and-delivery-policy' },
+                        { label: 'Return & Refund Policy', slug: 'return-and-refund-policy' }
+                    ];
+
+                    const policyQuery = `*[_type == "policiesDisclaimers"]{ title, "slug": slug.current, displayMode, contentHtml }`;
+                    fetchSanityData(policyQuery).then(policies => {
+                        const policyMap = {};
+                        if (Array.isArray(policies)) {
+                            policies.forEach(p => {
+                                if (p && p.slug) policyMap[p.slug] = p;
+                            });
+                        }
+
+                        footerLegal.innerHTML = '';
+                        defaultPolicies.forEach(({ label, slug }) => {
+                            const item = policyMap[slug];
+                            const displayMode = (item && item.displayMode) ? item.displayMode : 'dedicatedPage';
+                            const pageHref = `/${slug}`;
+
+                            if (displayMode === 'modal') {
+                                const btn = document.createElement('button');
+                                btn.type = 'button';
+                                btn.className = 'footer-link text-gray-500 hover:text-white bg-transparent border-none cursor-pointer text-xs p-0';
+                                btn.textContent = item?.title || label;
+                                btn.addEventListener('click', function(e) {
+                                    e.preventDefault();
+                                    if (window.openDynamicPolicyModal) {
+                                        window.openDynamicPolicyModal(item?.title || label, item?.contentHtml || '<p>No content available.</p>');
+                                    }
+                                });
+                                footerLegal.appendChild(btn);
+                            } else {
+                                const a = document.createElement('a');
+                                a.href = pageHref;
+                                a.className = 'footer-link text-gray-500 hover:text-white text-xs p-0';
+                                a.textContent = item?.title || label;
+                                footerLegal.appendChild(a);
+                            }
+                        });
+                    }).catch(() => {
+                        footerLegal.innerHTML = '';
+                        defaultPolicies.forEach(({ label, slug }) => {
+                            const a = document.createElement('a');
+                            a.href = `/${slug}`;
+                            a.className = 'footer-link text-gray-500 hover:text-white text-xs p-0';
+                            a.textContent = label;
+                            footerLegal.appendChild(a);
+                        });
+                    });
                 }
             }
         };

@@ -202,9 +202,21 @@ async function run() {
     { source: `/conditions/:subcategory(${conditionPattern})`, destination: '/cancer-medicines' },
     { source: '/conditions', destination: '/cancer-medicines' },
   ];
-  const cancerMedicineSingularRewrites = [
-    { source: '/cancer-medicine/:product', destination: '/product-detail' },
-    { source: '/cancer-medicine', destination: '/cancer-medicines' },
+  const cancerMedicineSingularRedirects = [
+    { source: '/cancer-medicine/:product', destination: '/cancer-medicines/:product', permanent: true },
+    { source: '/cancer-medicine', destination: '/cancer-medicines', permanent: true },
+  ];
+
+  // Rebuild redirects to ensure /cancer-medicine/* 301-redirects to /cancer-medicines/*
+  const existingRedirects = vercelConfig.redirects || [];
+  const cleanRedirects = existingRedirects.filter((r) => {
+    if (!r.source) return true;
+    if (r.source === '/cancer-medicine' || r.source.startsWith('/cancer-medicine/')) return false;
+    return true;
+  });
+  vercelConfig.redirects = [
+    ...cleanRedirects,
+    ...cancerMedicineSingularRedirects,
   ];
 
   if (vercelConfig.rewrites) {
@@ -233,7 +245,6 @@ async function run() {
       ...rest,
       ...folderRewrites,
       ...conditionRewrites,
-      ...cancerMedicineSingularRewrites,
       { source: catchAllSource, destination: 'https://getmeds-admin.vercel.app/api/resolve-slug/:slug' },
       ...fallback,
     ];

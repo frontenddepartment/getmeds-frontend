@@ -70,6 +70,46 @@
       "source": "/pap.html",
       "destination": "/patient-assistance-program",
       "permanent": true
+    },
+    {
+      "source": "/return-and-refund-policy.html",
+      "destination": "/return-and-refund-policy",
+      "permanent": true
+    },
+    {
+      "source": "/privacy-policy.html",
+      "destination": "/privacy-policy",
+      "permanent": true
+    },
+    {
+      "source": "/terms-of-service.html",
+      "destination": "/terms-of-service",
+      "permanent": true
+    },
+    {
+      "source": "/medical-disclaimer.html",
+      "destination": "/medical-disclaimer",
+      "permanent": true
+    },
+    {
+      "source": "/prescription-policy.html",
+      "destination": "/prescription-policy",
+      "permanent": true
+    },
+    {
+      "source": "/shipping-and-delivery-policy.html",
+      "destination": "/shipping-and-delivery-policy",
+      "permanent": true
+    },
+    {
+      "source": "/cancer-medicine/:product",
+      "destination": "/cancer-medicines/:product",
+      "permanent": true
+    },
+    {
+      "source": "/cancer-medicine",
+      "destination": "/cancer-medicines",
+      "permanent": true
     }
   ],
   "rewrites": [
@@ -140,6 +180,38 @@
     {
       "source": "/adminadlorock/:path*",
       "destination": "https://admin.getmeds.ph/adminadlorock/:path*"
+    },
+    {
+      "source": "/policy",
+      "destination": "/policy"
+    },
+    {
+      "source": "/policies",
+      "destination": "/policy"
+    },
+    {
+      "source": "/return-and-refund-policy",
+      "destination": "/policy"
+    },
+    {
+      "source": "/privacy-policy",
+      "destination": "/policy"
+    },
+    {
+      "source": "/terms-of-service",
+      "destination": "/policy"
+    },
+    {
+      "source": "/medical-disclaimer",
+      "destination": "/policy"
+    },
+    {
+      "source": "/prescription-policy",
+      "destination": "/policy"
+    },
+    {
+      "source": "/shipping-and-delivery-policy",
+      "destination": "/policy"
     },
     {
       "source": "/blog/:slug*",
@@ -339,14 +411,6 @@
     },
     {
       "source": "/conditions",
-      "destination": "/cancer-medicines"
-    },
-    {
-      "source": "/cancer-medicine/:product",
-      "destination": "/product-detail"
-    },
-    {
-      "source": "/cancer-medicine",
       "destination": "/cancer-medicines"
     },
     {

@@ -230,19 +230,39 @@ export default function ProductDetail() {
         return false;
       });
       if (found) {
-        setProduct(found);
-        const displayName = found.brandName && found.genericName && found.brandName !== found.genericName
-          ? `${found.brandName} (${found.genericName})`
-          : found.name || found.brandName || 'Product Details';
-        const description = found.metaDescription
-          || found.indications
-          || found.description
-          || `${displayName} — available through Getmeds Philippines. Quality pharmaceutical product for healthcare needs.`;
         // productPageUrl from the sheet has no protocol (e.g. "getmeds.ph/cancer-medicines/..."),
         // so the leading domain segment has to be stripped even without an "https://" to match.
         const prettyPath = found.productPageUrl
           ? '/' + found.productPageUrl.replace(/^https?:\/\//, '').replace(/^[^/]+\/?/, '')
           : `/${found.categoryFolder || 'product-range'}/${found.slug?.current || ''}`;
+
+        // Canonicalize any other URL this product is reachable from — the legacy singular
+        // "/cancer-medicine/<slug>" alias, the "/product-detail?product=<slug>" fallback, etc. —
+        // to its one real Category-Folder URL. This is a live, data-driven redirect off the
+        // product's own resolved productPageUrl, not a guessed/hardcoded slug mapping, so it
+        // self-corrects for every legacy URL automatically without needing to know it in advance.
+        if (prettyPath && window.location.pathname !== prettyPath) {
+          // Drop the "product" query param specifically — it's just the lookup fallback's own
+          // input mechanism, redundant once the real slug is already in the path — but keep any
+          // other real param (e.g. "?userType=doctor") intact on the canonical URL.
+          const carryOverParams = new URLSearchParams(window.location.search);
+          carryOverParams.delete('product');
+          const query = carryOverParams.toString();
+          window.location.replace(prettyPath + (query ? `?${query}` : ''));
+          return;
+        }
+
+        setProduct(found);
+        const displayName = found.brandName && found.genericName && found.brandName !== found.genericName
+          ? `${found.brandName} (${found.genericName})`
+          : found.name || found.brandName || 'Product Details';
+        // The Meta Description column in the product sheet is the source of truth for what
+        // Google shows. Do not fall back to indications or description body text, so search
+        // engines strictly index metaDescription for SEO snippet text.
+        const description = (
+          found.metaDescription
+          || `${displayName} — available through Getmeds Philippines. Quality pharmaceutical product for healthcare needs.`
+        ).replace(/\s+/g, ' ').trim();
         const imgUrl = found.image ? urlFor(found.image).width(1200).url() : undefined;
         setPageMeta({
           title: found.metaTitle || displayName,
@@ -656,7 +676,7 @@ export default function ProductDetail() {
                     )}
                   </div>
                   {descriptionTab === 'description' ? (
-                    <div className="text-[14px] text-gray-600 leading-relaxed max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+                    <div data-nosnippet className="text-[14px] text-gray-600 leading-relaxed max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
                       <div className="space-y-4">
                         {product.description && (
                           <div className="text-[14px] text-gray-600 leading-relaxed">
