@@ -27,10 +27,17 @@ const Csr: React.FC = () => {
     'assets/epcalmtwo.jpg',
     'assets/epcalmthree.jpg',
   ];
+  const imeldaSliderImages = [
+    'assets/imeldapapin.jpg',
+    'assets/imeldapapintwo.png',
+    'assets/imeldapapinthree.png',
+    'assets/imeldapapinfour.png',
+  ];
   const galleryRef = useRef<HTMLDivElement>(null);
   const assistViewportRef = useRef<HTMLDivElement>(null);
   const pinkGridRef = useRef<HTMLDivElement>(null);
   const epcalmGridRef = useRef<HTMLDivElement>(null);
+  const imeldaGridRef = useRef<HTMLDivElement>(null);
 
   // Navbar / Footer injection
   useEffect(() => {
@@ -138,6 +145,25 @@ const Csr: React.FC = () => {
   // EPCALM image grid — same compile/scatter animation as the Pink Run grid
   useEffect(() => {
     const el = epcalmGridRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('in-view');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.3 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  // Imelda Papin Foundation image grid — same compile/scatter animation as the Pink Run grid
+  useEffect(() => {
+    const el = imeldaGridRef.current;
     if (!el) return;
     const observer = new IntersectionObserver(
       (entries) => {
@@ -458,20 +484,56 @@ const Csr: React.FC = () => {
         </section>
 
         {/* IMELDA PAPIN FOUNDATION */}
-        <section className="pt-0 pb-12 px-4 md:px-14">
-          <div className="max-w-7xl mx-auto">
-            <div className="relative rounded-[15px] md:rounded-[20px] overflow-hidden aspect-[16/9] md:aspect-[21/9]">
-              <img src="assets/imeldapapin.jpg" alt="Imelda Papin Foundation" className="absolute inset-0 w-full h-full object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#61A644] from-0% via-[#1D9FDA] via-15% to-transparent to-45%"></div>
-              <div className="relative z-10 h-full flex flex-col justify-end p-5 md:p-10">
-                <span className="text-white/90 font-bold uppercase tracking-widest text-[10px] md:text-xs mb-1 md:mb-2 block">
-                  Partner Foundation
+        <section className="pt-0 pb-12 px-0 md:px-6">
+          <div className="max-w-7xl mx-auto overflow-hidden">
+
+            {/* Header row — title left, description right */}
+            <div className="flex flex-col md:flex-row md:items-start justify-between px-8 pt-4 pb-6 gap-6">
+              <div>
+                <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent font-bold uppercase tracking-widest text-xs mb-2 block">
+                  Foundation Partnership
                 </span>
-                <h3 className="text-white text-lg md:text-3xl font-semibold leading-tight">
-                  Imelda Papin Foundation
-                </h3>
+                <h2 className="text-2xl md:text-3xl font-semibold text-gray-900 leading-tight whitespace-nowrap">
+                  Imelda Papin <br /> Foundation
+                </h2>
               </div>
+              <p className="text-gray-500 text-[14px] leading-relaxed max-w-sm md:pt-1">
+                Getmeds partners with the Imelda Papin Foundation to provide cancer patients with access to essential medicines and continued support throughout their treatment journey.
+              </p>
             </div>
+
+            {/* 4-image grid — same compile/scatter animation as the Pink Run and EPCALM grids above */}
+            <style>{`
+              .imelda-gather-grid .imelda-card {
+                opacity: 0;
+                translate: 0 110px;
+                transform-origin: 50% 100%;
+                transition: opacity 0.7s ease, translate 1s cubic-bezier(0.22,1,0.36,1), transform 1s cubic-bezier(0.22,1,0.36,1) 0.7s;
+              }
+              .imelda-gather-grid .imelda-card:nth-child(1) { transform: translateX(55%) translateY(10px) rotate(-9deg); transition-delay: 0s, 0s, 0.7s; }
+              .imelda-gather-grid .imelda-card:nth-child(2) { transform: translateX(-55%) translateY(10px) rotate(9deg); transition-delay: 0.09s, 0.09s, 0.79s; }
+              .imelda-gather-grid .imelda-card:nth-child(3) { transform: translateX(55%) translateY(10px) rotate(-9deg); transition-delay: 0.18s, 0.18s, 0.88s; }
+              .imelda-gather-grid .imelda-card:nth-child(4) { transform: translateX(-55%) translateY(10px) rotate(9deg); transition-delay: 0.27s, 0.27s, 0.97s; }
+              @media (min-width: 1024px) {
+                .imelda-gather-grid .imelda-card:nth-child(1) { transform: translateX(160%) translateY(16px) rotate(-14deg); }
+                .imelda-gather-grid .imelda-card:nth-child(2) { transform: translateX(55%) translateY(4px) rotate(-5deg); }
+                .imelda-gather-grid .imelda-card:nth-child(3) { transform: translateX(-55%) translateY(4px) rotate(5deg); }
+                .imelda-gather-grid .imelda-card:nth-child(4) { transform: translateX(-160%) translateY(16px) rotate(14deg); }
+              }
+              .imelda-gather-grid.in-view .imelda-card {
+                opacity: 1;
+                translate: 0 0;
+                transform: translateX(0) translateY(0) rotate(0deg);
+              }
+            `}</style>
+            <div ref={imeldaGridRef} className="imelda-gather-grid grid grid-cols-2 gap-4 px-4 md:px-8 pb-0">
+              {imeldaSliderImages.map((src, idx) => (
+                <div key={idx} className="imelda-card relative rounded-[15px] overflow-hidden aspect-[4/3]">
+                  <img src={src} alt="" className="absolute inset-0 w-full h-full object-cover" />
+                </div>
+              ))}
+            </div>
+
           </div>
         </section>
 

@@ -1071,7 +1071,7 @@ export default function GetMedsHomepage() {
 
           {/* Image Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 ca-anim ca-right ca-d2">
-            <div className="h-[220px] md:h-[280px] lg:h-[340px]">
+            <div className="aspect-[1200/680] w-full">
               <LinkableImage
                 link={getImageLink('Patient First Section Image')}
                 src={getImage('Patient First Section Image', 'assets/genericslider.jpg')}
@@ -1079,7 +1079,7 @@ export default function GetMedsHomepage() {
                 className="w-full h-full object-cover object-center rounded-[15px] sm:rounded-[24px] shadow-lg"
               />
             </div>
-            <div className="h-[220px] md:h-[280px] lg:h-[340px]">
+            <div className="aspect-[1200/680] w-full">
               <LinkableImage
                 link={getImageLink('Patient Second Section Image')}
                 src={getImage('Patient Second Section Image', 'assets/test.jpg')}
