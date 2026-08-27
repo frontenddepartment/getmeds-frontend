@@ -40,6 +40,10 @@ out/
 tmp/
 temp/
 
+# Static generated data
+data/
+public/data/static/
+
 # My custom serve script
 serve.js
 

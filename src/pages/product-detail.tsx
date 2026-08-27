@@ -518,10 +518,11 @@ export default function ProductDetail() {
           <button
             className="hidden sm:flex items-center text-gray-500 hover:text-primary transition text-sm space-x-1.5"
             onClick={() => {
-              const chatWindow = document.getElementById('zap-chat-window');
-              if (chatWindow) chatWindow.classList.add('active');
-              const trigger = document.getElementById('zap-ai-trigger');
-              if (trigger) trigger.classList.remove('zap-modal-open');
+              if (typeof (window as any).openGetmedsChat === 'function') {
+                (window as any).openGetmedsChat();
+              } else if ((window as any).Tawk_API && typeof (window as any).Tawk_API.maximize === 'function') {
+                (window as any).Tawk_API.maximize();
+              }
             }}
           >
             <i className="fa-regular fa-circle-question" />

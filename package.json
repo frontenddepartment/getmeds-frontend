@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "prebuild": "node scripts/generate-sitemap.cjs && node scripts/update-vercel-headers.cjs",
+    "sync:sanity": "node scripts/sync-static-to-sanity.mjs",
+    "prebuild": "node scripts/sync-static-to-sanity.mjs && node scripts/generate-sitemap.cjs && node scripts/update-vercel-headers.cjs",
     "build": "vite build",
     "preview": "vite preview",
     "clean": "rimraf dist"

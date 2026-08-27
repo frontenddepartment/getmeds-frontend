@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useHeroSlides, useImageMapper, useNews, useSiteSettings, useCategories, useFeaturedNews } from '../lib/useSanity';
 import { setPageMeta } from '../lib/seo';
 import { getApiUrl } from '../lib/api';
@@ -7,6 +7,7 @@ import { urlFor } from '../lib/sanity';
 import { sanityQuery } from '../lib/sanityProxy';
 import { LinkableImage } from '../lib/LinkableImage';
 import { computeCategoryKey, linkCategoryKeys } from '../lib/categoryImageKey';
+import { TawkChatWidget } from '../lib/TawkChatWidget';
 
 
 // Declare global tailwind interface
@@ -76,6 +77,9 @@ export default function GetMedsHomepage() {
       description: 'Pharmaceutical company in the Philippines specializing in oncology, hematology, anesthesia, rare diseases, and essential medicines. FDA Philippines licensed. UN Global Compact member.',
       path: '/',
     });
+    if (typeof (window as any).injectAIAssistant === 'function') {
+      (window as any).injectAIAssistant();
+    }
   }, []);
 
   // Redirect preview requests to the blog detail page
@@ -2093,6 +2097,7 @@ export default function GetMedsHomepage() {
           </div>
         </>
       )}
+      <TawkChatWidget />
     </div>
   );
 }
