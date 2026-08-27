@@ -3,8 +3,7 @@
 This is the customer-facing frontend web application for **Getmeds**, built with Vite, React, and TypeScript.
 
 ---
-   
-   
+
 ## 🛠️ Developer Scripts
 
 Manage the frontend workspace using the following commands:
