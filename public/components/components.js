@@ -113,562 +113,79 @@
 
     function injectAIAssistant() {
         if (!document.body) return;
-        if (document.getElementById('zap-ai-trigger')) return;
 
-        // Styles for AI Assistant
-        const styleId = 'getmeds-ai-styles';
-        if (!document.getElementById(styleId)) {
-            const style = document.createElement('style');
-            style.id = styleId;
-            style.textContent = `
-                @keyframes zap-orb-float {
-                    0%, 100% { transform: translateY(0px) scale(1); }
-                    33%       { transform: translateY(-6px) scale(1.05); }
-                    66%       { transform: translateY(3px) scale(0.96); }
-                }
-                @keyframes zap-orb-ring {
-                    0%   { transform: scale(0.75); opacity: 0.7; }
-                    100% { transform: scale(1.7);  opacity: 0; }
-                }
-                @keyframes zap-typing {
-                    0%, 100% { transform: translateY(0); }
-                    50%      { transform: translateY(-4px); }
-                }
-                @keyframes zap-welcome-bounce {
-                    0%, 100% { transform: translateY(0px); }
-                    40%      { transform: translateY(-14px); }
-                    60%      { transform: translateY(-7px); }
-                }
+        // Remove any legacy custom chatbot button
+        const legacyBtn = document.getElementById('zap-ai-trigger');
+        if (legacyBtn) legacyBtn.remove();
 
-                #zap-ai-trigger {
-                    position: fixed !important;
-                    bottom: 95px !important;
-                    right: 30px !important;
-                    width: 56px !important;
-                    height: 56px !important;
-                    background: linear-gradient(135deg, #61A644 0%, #1D9FDA 100%) !important;
-                    border: none !important;
-                    border-radius: 50% !important;
-                    cursor: pointer !important;
-                    display: flex !important;
-                    align-items: center !important;
-                    justify-content: center !important;
-                    z-index: 9999998 !important;
-                    overflow: visible !important;
-                    animation: zap-orb-float 3.5s ease-in-out infinite !important;
-                    box-shadow: 0 6px 24px rgba(97,166,68,0.4), 0 10px 40px rgba(29,159,218,0.3) !important;
-                }
-                #zap-ai-trigger::before {
-                    content: '' !important;
-                    position: absolute !important;
-                    inset: 0 !important;
-                    border-radius: 50% !important;
-                    background: linear-gradient(135deg, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0.0) 55%) !important;
-                    pointer-events: none !important;
-                }
-                #zap-ai-trigger::after {
-                    content: '' !important;
-                    position: absolute !important;
-                    inset: -7px !important;
-                    border-radius: 50% !important;
-                    border: 2px solid rgba(29,159,218,0.4) !important;
-                    animation: zap-orb-ring 2.6s ease-out infinite !important;
-                    pointer-events: none !important;
-                }
-                #zap-ai-trigger i { display: none !important; }
+        // Retrieve Tawk Property ID & Widget ID from meta tags, global window vars, or default settings
+        const propertyId = window.TAWK_PROPERTY_ID ||
+                           document.querySelector('meta[name="tawk-property-id"]')?.content ||
+                           '6a8f969fb56df5344af1f3a0';
+        const widgetId = window.TAWK_WIDGET_ID ||
+                         document.querySelector('meta[name="tawk-widget-id"]')?.content ||
+                         '1k10e8o0v';
 
-                #zap-chat-window {
-                    position: fixed !important;
-                    bottom: 30px !important;
-                    right: 95px !important;
-                    width: 500px !important;
-                    height: 410px !important;
-                    max-height: calc(100vh - 120px) !important;
-                    max-width: calc(100vw - 100px) !important;
-                    background:
-                        radial-gradient(ellipse 75% 65% at 10% 10%, rgba(97,166,68,0.35) 0%, transparent 100%),
-                        radial-gradient(ellipse 70% 60% at 92% 92%, rgba(29,159,218,0.38) 0%, transparent 100%),
-                        #ffffff !important;
-                    z-index: 9999997 !important;
-                    border-radius: 22px !important;
-                    overflow: hidden !important;
-                    box-shadow: 0 20px 50px rgba(0,0,0,0.12), 0 4px 16px rgba(0,0,0,0.07) !important;
-                    display: flex !important;
-                    flex-direction: column !important;
-                    opacity: 0 !important;
-                    transform: translateY(18px) scale(0.95) !important;
-                    visibility: hidden !important;
-                    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
-                    border: 1px solid rgba(0,0,0,0.06) !important;
-                }
-                #zap-chat-window.active {
-                    opacity: 1 !important;
-                    visibility: visible !important;
-                    transform: translateY(0) scale(1) !important;
-                }
+        // Initialize standard Tawk_API global object
+        window.Tawk_API = window.Tawk_API || {};
+        window.Tawk_LoadStart = new Date();
 
-                #zap-messages {
-                    flex: 1 !important;
-                    overflow-y: auto !important;
-                    padding: 8px 18px 14px !important;
-                    display: flex !important;
-                    flex-direction: column !important;
-                    gap: 10px !important;
-                    scrollbar-width: none !important;
-                    background: transparent !important;
-                }
-                #zap-messages::-webkit-scrollbar { display: none; }
-
-                .zap-msg {
-                    padding: 10px 14px !important;
-                    border-radius: 16px !important;
-                    font-size: 13.5px !important;
-                    line-height: 1.55 !important;
-                    max-width: 82% !important;
-                    word-wrap: break-word !important;
-                }
-                .zap-msg.ai {
-                    background: rgba(255,255,255,0.75) !important;
-                    color: #1a1a1a !important;
-                    align-self: flex-start !important;
-                    border-bottom-left-radius: 4px !important;
-                    backdrop-filter: blur(8px) !important;
-                    box-shadow: 0 1px 6px rgba(0,0,0,0.08) !important;
-                }
-                .zap-msg.user {
-                    background: linear-gradient(135deg, #61A644 0%, #1D9FDA 100%) !important;
-                    color: #ffffff !important;
-                    align-self: flex-end !important;
-                    border-bottom-right-radius: 4px !important;
-                }
-
-                 .zap-resource-link {
-                    text-decoration: none !important;
-                    display: inline-flex !important;
-                    align-items: center !important;
-                    gap: 6px !important;
-                    padding: 6px 12px !important;
-                    border-radius: 10px !important;
-                    background: #f1f5f9 !important;
-                    border: 1px solid #cbd5e1 !important;
-                    color: #1D9FDA !important;
-                    font-size: 11.5px !important;
-                    font-weight: 600 !important;
-                    transition: all 0.2s ease !important;
-                    max-width: 100% !important;
-                    margin-top: 6px !important;
-                    margin-right: 6px !important;
-                }
-                .zap-resource-link:hover {
-                    background: #e2e8f0 !important;
-                    color: #0f76a8 !important;
-                    transform: translateY(-1px) !important;
-                    box-shadow: 0 2px 8px rgba(0,0,0,0.05) !important;
-                }
-
-                .zap-dot {
-                    display: inline-block;
-                    width: 5px;
-                    height: 5px;
-                    background: #999;
-                    border-radius: 50%;
-                    margin: 0 2px;
-                    animation: zap-typing 1s infinite ease-in-out;
-                }
-                .zap-dot:nth-child(2) { animation-delay: 0.2s; }
-                .zap-dot:nth-child(3) { animation-delay: 0.4s; }
-
-                .zap-msg.typing span {
-                    transition: opacity 0.3s ease;
-                }
-
-                #zap-welcome-orb { display: none !important; }
-
-                #zap-scroll-bottom {
-                    position: absolute !important;
-                    right: 16px !important;
-                    width: 36px !important;
-                    height: 36px !important;
-                    border-radius: 50% !important;
-                    background: #ffffff !important;
-                    border: 1px solid rgba(0,0,0,0.08) !important;
-                    box-shadow: 0 4px 14px rgba(0,0,0,0.18) !important;
-                    color: #1D9FDA !important;
-                    display: flex !important;
-                    align-items: center !important;
-                    justify-content: center !important;
-                    cursor: pointer !important;
-                    opacity: 0 !important;
-                    visibility: hidden !important;
-                    transform: translateY(8px) !important;
-                    transition: opacity 0.25s ease, visibility 0.25s ease, transform 0.25s ease !important;
-                    z-index: 5 !important;
-                    padding: 0 !important;
-                    margin: 0 !important;
-                    font-size: 13px !important;
-                }
-                #zap-scroll-bottom.show {
-                    opacity: 1 !important;
-                    visibility: visible !important;
-                    transform: translateY(0) !important;
-                }
-                #zap-scroll-bottom:hover {
-                    transform: translateY(-2px) !important;
-                    box-shadow: 0 6px 18px rgba(0,0,0,0.22) !important;
-                }
-                #zap-scroll-bottom .zap-unread-dot {
-                    position: absolute !important;
-                    top: -2px !important;
-                    right: -2px !important;
-                    width: 10px !important;
-                    height: 10px !important;
-                    border-radius: 50% !important;
-                    background: linear-gradient(135deg, #61A644 0%, #1D9FDA 100%) !important;
-                    border: 2px solid #ffffff !important;
-                    display: none !important;
-                }
-                #zap-scroll-bottom.has-unread .zap-unread-dot {
-                    display: block !important;
-                }
-
-                @keyframes zap-mic-pulse {
-                    0%   { box-shadow: 0 0 0 0 rgba(239,68,68,0.5); }
-                    70%  { box-shadow: 0 0 0 10px rgba(239,68,68,0); }
-                    100% { box-shadow: 0 0 0 0 rgba(239,68,68,0); }
-                }
-                #zap-mic-btn.zap-listening {
-                    background: #ef4444 !important;
-                    color: #ffffff !important;
-                    border-color: #ef4444 !important;
-                    animation: zap-mic-pulse 1.2s ease-out infinite !important;
-                }
-
-                @media (max-width: 640px) {
-                    #zap-ai-trigger {
-                        bottom: 20px !important;
-                        right: 20px !important;
-                    }
-                    #zap-chat-window {
-                        bottom: 0 !important;
-                        right: 0 !important;
-                        left: 0 !important;
-                        width: 100% !important;
-                        max-width: 100vw !important;
-                        height: 88vh !important;
-                        max-height: 88vh !important;
-                        border-radius: 22px 22px 0 0 !important;
-                        transform: translateY(100%) !important;
-                        opacity: 1 !important;
-                        transition: transform 0.45s cubic-bezier(0.32, 0.72, 0, 1), visibility 0s 0.45s !important;
-                    }
-                    #zap-chat-window.active {
-                        transform: translateY(0) !important;
-                        visibility: visible !important;
-                        transition: transform 0.45s cubic-bezier(0.32, 0.72, 0, 1) !important;
-                    }
-                    #zap-welcome-orb {
-                        display: flex !important;
-                        animation: zap-welcome-bounce 1.5s ease-in-out infinite !important;
-                    }
-                    #zap-ai-trigger.zap-modal-open {
-                        display: none !important;
-                    }
-                    #zap-scroll-bottom {
-                        width: 40px !important;
-                        height: 40px !important;
-                    }
-                    /* The page-level "back to top" FAB conflicts with (and hides
-                       behind) the fullscreen mobile chat sheet — hide it while
-                       the chat is open so only the in-chat scroll button (below)
-                       shows, the same way Messenger's own chat scroll button
-                       replaces any page-level scroll control while chat is open. */
-                    body.zap-chat-open #scroll-to-top {
-                        display: none !important;
-                    }
-                }
-            `;
-            document.head.appendChild(style);
-        }
-
-        // Trigger Button
-        const btn = document.createElement('button');
-        btn.id = 'zap-ai-trigger';
-        btn.innerHTML = '<img src="/assets/chatbotimage.png" style="width:100%;height:100%;object-fit:cover;border-radius:50%;display:block;position:relative;z-index:2;clip-path:circle(31% at 50% 50%);" />';
-        btn.title = 'Ask GetAssist';
-        document.body.appendChild(btn);
-
-        // Chat Window HTML
-        const chatWindow = document.createElement('div');
-        chatWindow.id = 'zap-chat-window';
-        chatWindow.innerHTML = `
-            <div style="display:flex;align-items:center;justify-content:space-between;padding:13px 16px;flex-shrink:0;">
-                <div style="display:flex;align-items:center;gap:10px;">
-                    <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#61A644,#1D9FDA);display:flex;align-items:center;justify-content:center;position:relative;flex-shrink:0;box-shadow:0 4px 14px rgba(29,159,218,0.3);overflow:hidden;">
-                        <img src="/assets/chatbotimage.png" style="width:100%;height:100%;object-fit:cover;display:block;clip-path:circle(31% at 50% 50%);" />
-                        <span style="position:absolute;inset:0;border-radius:50%;background:linear-gradient(135deg,rgba(255,255,255,0.4) 0%,transparent 55%);pointer-events:none;"></span>
-                    </div>
-                    <span style="font-size:15px;font-weight:600;color:#1a1a1a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;letter-spacing:0.1px;">GetAssist</span>
-                </div>
-                <button id="zap-close-win" style="background:rgba(0,0,0,0.07);border:1px solid rgba(0,0,0,0.1);border-radius:50%;width:30px;height:30px;cursor:pointer;color:#555;display:flex;align-items:center;justify-content:center;font-size:13px;line-height:1;transition:background 0.2s;" onmouseover="this.style.background='rgba(0,0,0,0.13)'" onmouseout="this.style.background='rgba(0,0,0,0.07)'">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-
-            <div id="zap-messages">
-                <div id="zap-welcome" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px;gap:22px;">
-                    <div id="zap-welcome-orb" style="width:68px;height:68px;border-radius:50%;background:linear-gradient(135deg,#61A644,#1D9FDA);display:flex;align-items:center;justify-content:center;position:relative;box-shadow:0 10px 30px rgba(29,159,218,0.35);overflow:hidden;">
-                        <img src="/assets/chatbotimage.png" style="width:100%;height:100%;object-fit:cover;display:block;clip-path:circle(31% at 50% 50%);" />
-                        <span style="position:absolute;inset:0;border-radius:50%;background:linear-gradient(135deg,rgba(255,255,255,0.42) 0%,transparent 55%);pointer-events:none;"></span>
-                    </div>
-                    <p style="margin:0;font-size:18px;font-weight:600;color:#1a1a1a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;text-align:center;line-height:1.5;letter-spacing:-0.2px;">Hi! How can I help<br>you today?</p>
-                </div>
-            </div>
-
-            <button id="zap-scroll-bottom" title="Scroll to latest">
-                <i class="fa-solid fa-chevron-down"></i>
-                <span class="zap-unread-dot"></span>
-            </button>
-
-            <div id="zap-composer" style="padding:10px 12px 14px;flex-shrink:0;">
-                <div style="background:#ffffff;border-radius:18px;padding:14px 16px;box-shadow:0 4px 24px rgba(0,0,0,0.12);">
-                    <input type="text" id="zap-input" placeholder="Ask me anything..." style="width:100%;background:transparent;border:none;outline:none;font-size:13.5px;color:#1a1a1a;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;box-sizing:border-box;">
-                    <div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px;">
-                        <div style="display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;flex:1;margin-right:10px;">
-                            <button style="white-space:nowrap;padding:5px 13px;border-radius:20px;background:#f3f4f6;border:1px solid #e5e7eb;color:#555;font-size:11px;font-weight:500;cursor:pointer;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;transition:background 0.15s;flex-shrink:0;" onclick="window.location.href='/product-range'" onmouseover="this.style.background='#e9eaec'" onmouseout="this.style.background='#f3f4f6'">Search Products</button>
-                            <button style="white-space:nowrap;padding:5px 13px;border-radius:20px;background:#f3f4f6;border:1px solid #e5e7eb;color:#555;font-size:11px;font-weight:500;cursor:pointer;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;transition:background 0.15s;flex-shrink:0;" onclick="window.location.href='/order-medicines'" onmouseover="this.style.background='#e9eaec'" onmouseout="this.style.background='#f3f4f6'">Order Medicines</button>
-                            <button style="white-space:nowrap;padding:5px 13px;border-radius:20px;background:#f3f4f6;border:1px solid #e5e7eb;color:#555;font-size:11px;font-weight:500;cursor:pointer;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;transition:background 0.15s;flex-shrink:0;" onclick="window.location.href='/contact-us'" onmouseover="this.style.background='#e9eaec'" onmouseout="this.style.background='#f3f4f6'">Contact Us</button>
-                        </div>
-                        <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
-                            <button id="zap-auto-toggle" title="Toggle Auto-Send" style="height:34px;padding:0 8px;background:#e5f7ed;border:1.5px solid #b7ebd0;color:#15803d;border-radius:17px;cursor:pointer;display:flex;align-items:center;gap:4px;font-size:10px;font-weight:600;transition:all 0.2s;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;outline:none;">
-                                <i id="zap-auto-icon" class="fa-solid fa-bolt" style="font-size:10px;"></i>
-                                <span id="zap-auto-text">Auto</span>
-                            </button>
-                            <button id="zap-mic-btn" title="Speak your message" style="height:34px;width:34px;background:#f3f4f6;border:1.5px solid #e5e7eb;color:#666;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;">
-                                <i class="fa-solid fa-microphone" style="font-size:12px;"></i>
-                            </button>
-                            <button id="zap-send-btn" style="height:34px;width:34px;background:linear-gradient(135deg,#61A644,#1D9FDA);color:#fff;border:none;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 12px rgba(29,159,218,0.4);transition:transform 0.15s,opacity 0.15s;" onmouseover="this.style.opacity='0.88'" onmouseout="this.style.opacity='1'" onmousedown="this.style.transform='scale(0.9)'" onmouseup="this.style.transform='scale(1)'">
-                                <i class="fa-solid fa-arrow-up" style="font-size:13px;"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
-        document.body.appendChild(chatWindow);
-
-        // Logic
-        const zapInput = chatWindow.querySelector('#zap-input');
-        const zapMessages = chatWindow.querySelector('#zap-messages');
-        const zapSend = chatWindow.querySelector('#zap-send-btn');
-        const zapComposer = chatWindow.querySelector('#zap-composer');
-        const zapScrollBottomBtn = chatWindow.querySelector('#zap-scroll-bottom');
-
-        const isMobile = () => window.innerWidth <= 640;
-
-        // Messenger-style "jump to latest" button: floats just above the
-        // composer, only appears once the user has scrolled away from the
-        // bottom of the conversation, and stays anchored to the composer's
-        // actual height (rather than a hardcoded offset) so it doesn't drift
-        // if the composer wraps to a second line on narrow screens.
-        function positionScrollBottomBtn() {
-            zapScrollBottomBtn.style.bottom = (zapComposer.offsetHeight + 10) + 'px';
-        }
-
-        function isNearMessagesBottom() {
-            return zapMessages.scrollHeight - zapMessages.scrollTop - zapMessages.clientHeight < 80;
-        }
-
-        function scrollMessagesToBottom(smooth) {
-            zapMessages.scrollTo({ top: zapMessages.scrollHeight, behavior: smooth ? 'smooth' : 'auto' });
-        }
-
-        function updateScrollBottomVisibility() {
-            if (isNearMessagesBottom()) {
-                zapScrollBottomBtn.classList.remove('show');
-                zapScrollBottomBtn.classList.remove('has-unread');
-            } else {
-                zapScrollBottomBtn.classList.add('show');
+        // Global helper for opening Tawk chat from any page element or click handler
+        window.openGetmedsChat = function () {
+            if (window.Tawk_API && typeof window.Tawk_API.maximize === 'function') {
+                window.Tawk_API.maximize();
+            } else if (window.Tawk_API && typeof window.Tawk_API.toggle === 'function') {
+                window.Tawk_API.toggle();
+            } else if (window.Tawk_API && typeof window.Tawk_API.popup === 'function') {
+                window.Tawk_API.popup();
             }
-        }
+        };
 
-        zapMessages.addEventListener('scroll', updateScrollBottomVisibility);
-        window.addEventListener('resize', positionScrollBottomBtn);
-        zapScrollBottomBtn.addEventListener('click', () => {
-            scrollMessagesToBottom(true);
-        });
-        positionScrollBottomBtn();
-
-        btn.addEventListener('click', () => {
-            chatWindow.classList.toggle('active');
-            if (chatWindow.classList.contains('active')) {
-                zapInput.focus();
-                if (isMobile()) btn.classList.add('zap-modal-open');
-                document.body.classList.add('zap-chat-open');
-            } else {
-                btn.classList.remove('zap-modal-open');
-                document.body.classList.remove('zap-chat-open');
-            }
-        });
-
-        chatWindow.querySelector('#zap-close-win').addEventListener('click', () => {
-            chatWindow.classList.remove('active');
-            btn.classList.remove('zap-modal-open');
-            document.body.classList.remove('zap-chat-open');
-        });
-
-        function loadChatHistory() {
-            const sid = getChatSessionId();
-            const query = `*[_type == "chatSession" && sessionId == "${sid}"][0]{ messages }`;
-            const projectId = document.querySelector('meta[name="getmeds-sanity-project-id"]')?.content || 's7ocz8zp';
-            const dataset = document.querySelector('meta[name="getmeds-sanity-dataset"]')?.content || 'production';
-            const apiVersion = document.querySelector('meta[name="getmeds-sanity-api-version"]')?.content || '2021-10-21';
-            const url = `https://${projectId}.api.sanity.io/v${apiVersion}/data/query/${dataset}?query=` + encodeURIComponent(query);
-
-            fetch(url)
-                .then(res => res.json())
-                .then(data => {
-                    const messages = data?.result?.messages;
-                    if (messages && Array.isArray(messages) && messages.length > 0) {
-                        const welcome = chatWindow.querySelector('#zap-welcome');
-                        if (welcome) welcome.remove();
-
-                        messages.forEach(msg => {
-                            if (msg.user) {
-                                addMessage(msg.user, 'user');
-                            }
-                            if (msg.ai) {
-                                let html = basicMarkdownToHtml(msg.ai);
-                                if (msg.resources) {
-                                    html += buildResourcesHtml(msg.resources);
-                                }
-                                addMessage(html, 'ai', { allowHtml: true });
-                            }
-                        });
-                    }
-                })
-                .catch(err => console.warn('[Getmeds] Failed to load chat history:', err));
-        }
-
-        loadChatHistory();
-
-        function getChatbotApiUrl() {
-            const explicitUrl =
-                window.GETMEDS_CHATBOT_API_URL ||
-                document.body?.dataset?.chatbotApiUrl ||
-                document.querySelector('meta[name="getmeds-chatbot-api"]')?.content;
-
-            if (explicitUrl) return explicitUrl;
-
-            // chatbot.py exposes router.post("/ask").
-            // If your FastAPI app includes this router with a prefix,
-            // set window.GETMEDS_CHATBOT_API_URL before loading components.js.
-            //
-            // Example:
-            // window.GETMEDS_CHATBOT_API_URL = "http://localhost:8000/api/chatbot/ask";
-            return `http://localhost:8000/api/chatbot/ask`;
-        }
-
-        function getChatSessionId() {
-            const storageKey = 'getmeds_chat_session_id';
-            let sessionId = localStorage.getItem(storageKey);
-
-            if (!sessionId) {
-                if (window.crypto && typeof window.crypto.randomUUID === 'function') {
-                    sessionId = window.crypto.randomUUID();
+        // Inject Tawk.to Script SDK
+        if (!document.getElementById('tawk-script-sdk')) {
+            (function () {
+                const s1 = document.createElement("script");
+                s1.id = 'tawk-script-sdk';
+                const s0 = document.getElementsByTagName("script")[0];
+                s1.async = true;
+                s1.src = `https://embed.tawk.to/${propertyId}/${widgetId}`;
+                s1.charset = 'UTF-8';
+                s1.setAttribute('crossorigin', '*');
+                if (s0 && s0.parentNode) {
+                    s0.parentNode.insertBefore(s1, s0);
                 } else {
-                    sessionId = `web-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+                    document.head.appendChild(s1);
                 }
+            })();
+        }
+    }
+    window.injectAIAssistant = injectAIAssistant;
 
-                localStorage.setItem(storageKey, sessionId);
+    function buildResourcesHtml(resources) {
+        if (!resources || !Array.isArray(resources) || resources.length === 0) return '';
+        let html = '<div class="zap-resources mt-3 flex flex-wrap gap-2">';
+        resources.forEach(res => {
+            let iconClass = 'fa-link';
+            if (res.type === 'product') iconClass = 'fa-pills';
+            else if (res.type === 'service') iconClass = 'fa-stethoscope';
+            else if (res.type === 'team') iconClass = 'fa-user-md';
+            else if (res.type === 'category') iconClass = 'fa-folder-open';
+
+            let url = res.url || '#';
+            if (!url.startsWith('/') && !url.startsWith('http') && url !== '#') {
+                url = '/' + url;
             }
 
-            return sessionId;
-        }
-
-        function escapeHtml(value) {
-            return String(value ?? '')
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/"/g, '&quot;')
-                .replace(/'/g, '&#039;');
-        }
-
-        function buildResourcesHtml(resources) {
-            if (!resources || !Array.isArray(resources) || resources.length === 0) return '';
-            let html = '<div class="zap-resources mt-3 flex flex-wrap gap-2">';
-            resources.forEach(res => {
-                let iconClass = 'fa-link';
-                if (res.type === 'product') iconClass = 'fa-pills';
-                else if (res.type === 'service') iconClass = 'fa-stethoscope';
-                else if (res.type === 'team') iconClass = 'fa-user-md';
-                else if (res.type === 'category') iconClass = 'fa-folder-open';
-
-                let url = res.url || '#';
-                // Normalize legacy relative links
-                if (!url.startsWith('/') && !url.startsWith('http') && url !== '#') {
-                    if (url.startsWith('product-range.html')) {
-                        // Subcategory slugs whose topic is cancer/oncology route through /cancer-medicines,
-                        // everything else keeps the /product-range prefix.
-                        const cancerSlugs = new Set([
-                            'oncology', 'breast-cancer', 'ovarian-cancer', 'non-small-cell-lung-cancer', 'lung-cancer',
-                            'prostate-cancer', 'gastric-cancer-gastric-adenocarcinoma', 'gastric-cancer', 'pancreatic-cancer', 'colorectal-cancer',
-                            'hodgkin-non-hodgkins-lymphoma', 'hodgkin-non-hodgkin-s-lymphoma', 'lymphoma',
-                            'acute-lymphoblastic-leukemia', 'malignant-pleural-mesothelioma', 'head-and-neck-cancer',
-                            'chronic-myeloid-leukemia', 'cml', 'sickle-cell-anemia', 'sickle-cell',
-                            'malignant-pleural-effusion', 'gastrointestinal-stromal-tumors',
-                            'acute-myeloid-leukemia', 'aml', 'acute-lymphocytic-leukemia', 'chronic-myelocytic-leukemia',
-                            'meningeal-leukemia', 'acute-promyelocytic-leukemia', 'chronic-lymphocytic-leukemia',
-                            'mantle-cell-lymphoma', 'multiple-myeloma', 'neuro-oncology', 'glioblastoma-multiforme', 'glioblastoma'
-                        ]);
-                        const rest = url.substring('product-range.html'.length);
-                        const categoryMatch = rest.match(/[?&]category=([^&]+)/);
-                        const categorySlug = categoryMatch ? decodeURIComponent(categoryMatch[1]) : null;
-                        const prefix = categorySlug && cancerSlugs.has(categorySlug) ? '/cancer-medicines' : '/product-range';
-                        url = prefix + rest;
-                    } else if (url.startsWith('order-medicines.html')) {
-                        url = '/order-medicines' + url.substring('order-medicines.html'.length);
-                    } else if (url.startsWith('contact-us.html')) {
-                        url = '/contact-us' + url.substring('contact-us.html'.length);
-                    } else {
-                        url = '/' + url;
-                    }
-                }
-
-                // Map backend routes to actual clean URLs
-                if (url.startsWith('/products/')) {
-                    const slug = url.substring('/products/'.length);
-                    url = '/product-range?product=' + slug;
-                } else if (url.startsWith('/services')) {
-                    url = '/services';
-                } else if (url.startsWith('/team')) {
-                    // Convert team member title to a slug: Mr. Naresh Bishnoi -> naresh-bishnoi
-                    const slug = res.title
-                        .toLowerCase()
-                        .replace(/^(mr\.|ms\.|dr\.|prof\.)\s+/g, '')
-                        .trim()
-                        .replace(/[^a-z0-9]+/g, '-');
-                    url = '/about-us#' + slug;
-                } else if (url.startsWith('/article-detail') || url.startsWith('/blog-detail')) {
-                    url = '/' + url.substring(1); // e.g. /article-detail?id=0
-                } else if (url.startsWith('/articles') || url.startsWith('/blog')) {
-                    url = '/blog';
-                } else if (url === '/faq') {
-                    url = '/';
-                } else if (url.startsWith('/')) {
-                    url = '/' + url.substring(1);
-                }
-
-                html += `
-                    <a href="${escapeHtml(url)}" class="zap-resource-link">
-                        <i class="fa-solid ${iconClass}"></i>
-                        <span class="truncate">${escapeHtml(res.title)}</span>
-                    </a>
-                `;
-            });
-            html += '</div>';
-            return html;
-        }
+            html += `
+                <a href="${escapeHtml(url)}" class="zap-resource-link">
+                    <i class="fa-solid ${iconClass}"></i>
+                    <span class="truncate">${escapeHtml(res.title || 'Resource')}</span>
+                </a>
+            `;
+        });
+        html += '</div>';
+        return html;
+    }
 
         function basicMarkdownToHtml(value) {
             return escapeHtml(value)

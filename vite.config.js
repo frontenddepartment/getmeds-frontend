@@ -289,8 +289,7 @@ export default defineConfig(async ({ mode }) => {
             .replace('<head>', '<head>' + suppressor)
             .replace(
               '</head>',
-              `  <meta name="getmeds-chatbot-api" content="${chatbotUrl}" />
-  <meta name="getmeds-sanity-project-id" content="${sanityProjectId}" />
+              `  <meta name="getmeds-sanity-project-id" content="${sanityProjectId}" />
   <meta name="getmeds-sanity-dataset" content="${sanityDataset}" />
   <meta name="getmeds-sanity-api-version" content="${sanityApiVersion}" />\n</head>`
             );

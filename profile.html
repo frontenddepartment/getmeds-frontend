@@ -54,6 +54,18 @@
             to { opacity: 1; transform: translateY(0); }
         }
     </style>
+    <!-- Tawk.to Live Chat Mother Layout Integration -->
+    <script type="text/javascript">
+    var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+    (function(){
+    var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+    s1.async=true;
+    s1.src='https://embed.tawk.to/6a8f969fb56df5344af1f3a0/1k10e8o0v';
+    s1.charset='UTF-8';
+    s1.setAttribute('crossorigin','*');
+    s0.parentNode.insertBefore(s1,s0);
+    })();
+    </script>
 </head>
 <body class="text-gray-800 antialiased">
     <div id="navbar-placeholder"></div>
@@ -215,7 +227,7 @@
                 </div>
                 <div class="flex items-center space-x-4">
                     <button class="hidden sm:flex items-center text-gray-500 hover:text-primary transition text-sm space-x-1.5"
-                        onclick="(function(){ var c=document.getElementById('zap-chat-window'); if(c) c.classList.add('active'); })()">
+                        onclick="window.openGetmedsChat ? window.openGetmedsChat() : (window.Tawk_API && typeof window.Tawk_API.maximize === 'function' && window.Tawk_API.maximize())">
                         <i class="fa-regular fa-circle-question"></i>
                         <span>Do you need help?</span>
                     </button>
