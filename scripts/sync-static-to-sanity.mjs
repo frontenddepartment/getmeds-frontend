@@ -44,8 +44,8 @@ const staticDir = path.resolve(__dirname, '../data/static');
 
 async function syncStaticToSanity() {
   if (!fs.existsSync(staticDir)) {
-    console.error(`[Sanity Sync] Error: static data directory not found at ${staticDir}`);
-    process.exit(1);
+    console.warn(`[Sanity Sync] Warning: static data directory not found at ${staticDir}. Skipping static sync.`);
+    process.exit(0);
   }
 
   const files = fs.readdirSync(staticDir).filter(f => f.endsWith('.json'));
