@@ -7,7 +7,6 @@ import { urlFor } from '../lib/sanity';
 import { sanityQuery } from '../lib/sanityProxy';
 import { LinkableImage } from '../lib/LinkableImage';
 import { computeCategoryKey, linkCategoryKeys } from '../lib/categoryImageKey';
-import { TawkChatWidget } from '../lib/TawkChatWidget';
 
 
 // Declare global tailwind interface
@@ -2097,7 +2096,6 @@ export default function GetMedsHomepage() {
           </div>
         </>
       )}
-      <TawkChatWidget />
     </div>
   );
 }
