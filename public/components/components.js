@@ -536,7 +536,7 @@
             style.textContent = `
                 #scroll-to-top {
                     position: fixed !important;
-                    bottom: 30px !important;
+                    bottom: 100px !important;
                     right: 30px !important;
                     width: 50px !important;
                     height: 50px !important;
@@ -572,7 +572,7 @@
                 }
                 @media (max-width: 640px) {
                     #scroll-to-top {
-                        bottom: 90px !important;
+                        bottom: 110px !important;
                         right: 20px !important;
                         width: 44px !important;
                         height: 44px !important;
