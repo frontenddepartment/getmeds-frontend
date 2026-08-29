@@ -7,6 +7,16 @@
   "cleanUrls": true,
   "redirects": [
     {
+      "source": "/blog/how-to-get-medical-assistance-from-dswd",
+      "destination": "/blog/how-to-get-medical-assistance-from-dswd-your-2025-ultimate-guide",
+      "permanent": true
+    },
+    {
+      "source": "/blog/14-essential-cancer-screening-tests-for-women-early-detection-in-the-philippines",
+      "destination": "/blog/14-essential-cancer-screening-tests-for-women-early-cancer-detection-in-the-philippines",
+      "permanent": true
+    },
+    {
       "source": "/articles",
       "destination": "/blog",
       "permanent": true
@@ -182,10 +192,6 @@
       "destination": "https://admin.getmeds.ph/adminadlorock/:path*"
     },
     {
-      "source": "/policy",
-      "destination": "/policy"
-    },
-    {
       "source": "/policies",
       "destination": "/policy"
     },
@@ -214,15 +220,1995 @@
       "destination": "/policy"
     },
     {
-      "source": "/blog/:slug*",
-      "destination": "/blog-detail"
-    },
-    {
-      "source": "/blog-detail",
-      "destination": "/blog-detail"
-    },
-    {
       "source": "/blog-detail.html",
+      "destination": "/blog-detail"
+    },
+    {
+      "source": "/cancer-medicines/pacliget-paclitaxel-100mg-16.7ml-injection",
+      "destination": "/cancer-medicines/pacliget-paclitaxel-100mg-16.7ml-injection"
+    },
+    {
+      "source": "/cancer-medicines/pacliget-paclitaxel-300mg-50ml-injection",
+      "destination": "/cancer-medicines/pacliget-paclitaxel-300mg-50ml-injection"
+    },
+    {
+      "source": "/cancer-medicines/doseget-20-docetaxel-20mg-0.5ml-infusion",
+      "destination": "/cancer-medicines/doseget-20-docetaxel-20mg-0.5ml-infusion"
+    },
+    {
+      "source": "/cancer-medicines/doseget-80-docetaxel-80mg-2ml-infusion",
+      "destination": "/cancer-medicines/doseget-80-docetaxel-80mg-2ml-infusion"
+    },
+    {
+      "source": "/cancer-medicines/doseget-120-docetaxel-120mg-3ml-infusion",
+      "destination": "/cancer-medicines/doseget-120-docetaxel-120mg-3ml-infusion"
+    },
+    {
+      "source": "/cancer-medicines/gemget-200-gemcitabine-200mg-injection",
+      "destination": "/cancer-medicines/gemget-200-gemcitabine-200mg-injection"
+    },
+    {
+      "source": "/cancer-medicines/gemget-gemcitabine-1g-injection",
+      "destination": "/cancer-medicines/gemget-gemcitabine-1g-injection"
+    },
+    {
+      "source": "/cancer-medicines/capeget-capecitabine-500mg-tablet",
+      "destination": "/cancer-medicines/capeget-capecitabine-500mg-tablet"
+    },
+    {
+      "source": "/cancer-medicines/letroget-letrozole-2.5mg-tablet",
+      "destination": "/cancer-medicines/letroget-letrozole-2.5mg-tablet"
+    },
+    {
+      "source": "/cancer-medicines/anagaling-anastrozole-1mg-tablet",
+      "destination": "/cancer-medicines/anagaling-anastrozole-1mg-tablet"
+    },
+    {
+      "source": "/cancer-medicines/sykloget-500-cyclophosphamide-500mg-injection",
+      "destination": "/cancer-medicines/sykloget-500-cyclophosphamide-500mg-injection"
+    },
+    {
+      "source": "/cancer-medicines/sykloget-1000-cyclophosphamide-1g-injection",
+      "destination": "/cancer-medicines/sykloget-1000-cyclophosphamide-1g-injection"
+    },
+    {
+      "source": "/cancer-medicines/doseget-docetaxel-rtu-20mg-injection",
+      "destination": "/cancer-medicines/doseget-docetaxel-rtu-20mg-injection"
+    },
+    {
+      "source": "/cancer-medicines/doseget-docetaxel-rtu-80mg-injection",
+      "destination": "/cancer-medicines/doseget-docetaxel-rtu-80mg-injection"
+    },
+    {
+      "source": "/cancer-medicines/methoget-500-methotrexate-500mg-5ml-injection",
+      "destination": "/cancer-medicines/methoget-500-methotrexate-500mg-5ml-injection"
+    },
+    {
+      "source": "/cancer-medicines/lapanib-lapatinib-250mg-tablet",
+      "destination": "/cancer-medicines/lapanib-lapatinib-250mg-tablet"
+    },
+    {
+      "source": "/cancer-medicines/carboget-carboplatin-150mg-injection",
+      "destination": "/cancer-medicines/carboget-carboplatin-150mg-injection"
+    },
+    {
+      "source": "/cancer-medicines/carboget-carboplatin-450mg-injection",
+      "destination": "/cancer-medicines/carboget-carboplatin-450mg-injection"
+    },
+    {
+      "source": "/cancer-medicines/pemiget-pemetrexed-500mg-infusion",
+      "destination": "/cancer-medicines/pemiget-pemetrexed-500mg-infusion"
+    },
+    {
+      "source": "/cancer-medicines/abiraget-abiraterone-acetate-250mg-tablet",
+      "destination": "/cancer-medicines/abiraget-abiraterone-acetate-250mg-tablet"
+    },
+    {
+      "source": "/cancer-medicines/oxaliget-50-oxaliplatin-50mg-25ml-infusion",
+      "destination": "/cancer-medicines/oxaliget-50-oxaliplatin-50mg-25ml-infusion"
+    },
+    {
+      "source": "/cancer-medicines/oxaliget-oxaliplatin-100mg-50ml-infusion",
+      "destination": "/cancer-medicines/oxaliget-oxaliplatin-100mg-50ml-infusion"
+    },
+    {
+      "source": "/cancer-medicines/fluoroget-500-fluorouracil-500mg-10ml-injection",
+      "destination": "/cancer-medicines/fluoroget-500-fluorouracil-500mg-10ml-injection"
+    },
+    {
+      "source": "/cancer-medicines/hydroxyget-hydroxyurea-500mg-capsule",
+      "destination": "/cancer-medicines/hydroxyget-hydroxyurea-500mg-capsule"
+    },
+    {
+      "source": "/cancer-medicines/bleoget-bleomycin-15units-injection",
+      "destination": "/cancer-medicines/bleoget-bleomycin-15units-injection"
+    },
+    {
+      "source": "/cancer-medicines/cisplaget-cisplatin-50mg-50ml-infusion",
+      "destination": "/cancer-medicines/cisplaget-cisplatin-50mg-50ml-infusion"
+    },
+    {
+      "source": "/cancer-medicines/topoget-topotecan-hydrochloride-2.5mg-injection",
+      "destination": "/cancer-medicines/topoget-topotecan-hydrochloride-2.5mg-injection"
+    },
+    {
+      "source": "/cancer-medicines/pazoget-200-pazopanib-200mg-tablet",
+      "destination": "/cancer-medicines/pazoget-200-pazopanib-200mg-tablet"
+    },
+    {
+      "source": "/cancer-medicines/pazoget-400-pazopanib-400mg-tablet",
+      "destination": "/cancer-medicines/pazoget-400-pazopanib-400mg-tablet"
+    },
+    {
+      "source": "/cancer-medicines/soraget-sorafenib-200mg-tablet",
+      "destination": "/cancer-medicines/soraget-sorafenib-200mg-tablet"
+    },
+    {
+      "source": "/blood-disorder-medicines/cytaget-cytarabine-100mg-ml-injection",
+      "destination": "/blood-disorder-medicines/cytaget-cytarabine-100mg-ml-injection"
+    },
+    {
+      "source": "/blood-disorder-medicines/cytaget-cytarabine-500mg-injection",
+      "destination": "/blood-disorder-medicines/cytaget-cytarabine-500mg-injection"
+    },
+    {
+      "source": "/blood-disorder-medicines/idaget-5-idarubicin-hydrochloride-5mg-injection",
+      "destination": "/blood-disorder-medicines/idaget-5-idarubicin-hydrochloride-5mg-injection"
+    },
+    {
+      "source": "/blood-disorder-medicines/imonib-100-imatinib-100mg-tablet",
+      "destination": "/blood-disorder-medicines/imonib-100-imatinib-100mg-tablet"
+    },
+    {
+      "source": "/blood-disorder-medicines/hydroxyget-hydroxyurea-500mg-capsule",
+      "destination": "/blood-disorder-medicines/hydroxyget-hydroxyurea-500mg-capsule"
+    },
+    {
+      "source": "/blood-disorder-medicines/vincriget-vincristine-1mg-ml-injection",
+      "destination": "/blood-disorder-medicines/vincriget-vincristine-1mg-ml-injection"
+    },
+    {
+      "source": "/blood-disorder-medicines/bendaget-bendamustine-100mg-infusion",
+      "destination": "/blood-disorder-medicines/bendaget-bendamustine-100mg-infusion"
+    },
+    {
+      "source": "/blood-disorder-medicines/methoget-500-methotrexate-500mg-5ml-injection",
+      "destination": "/blood-disorder-medicines/methoget-500-methotrexate-500mg-5ml-injection"
+    },
+    {
+      "source": "/blood-disorder-medicines/sykloget-500-cyclophosphamide-500mg-injection",
+      "destination": "/blood-disorder-medicines/sykloget-500-cyclophosphamide-500mg-injection"
+    },
+    {
+      "source": "/blood-disorder-medicines/sykloget-1000-cyclophosphamide-1g-injection",
+      "destination": "/blood-disorder-medicines/sykloget-1000-cyclophosphamide-1g-injection"
+    },
+    {
+      "source": "/blood-disorder-medicines/bortemed-bortezomib-3.5mg-injection",
+      "destination": "/blood-disorder-medicines/bortemed-bortezomib-3.5mg-injection"
+    },
+    {
+      "source": "/anemia-medicines/foliget-folic-acid-5mg-tablet",
+      "destination": "/anemia-medicines/foliget-folic-acid-5mg-tablet"
+    },
+    {
+      "source": "/anemia-medicines/irose-ferrous-sulfate-200mg-tablet",
+      "destination": "/anemia-medicines/irose-ferrous-sulfate-200mg-tablet"
+    },
+    {
+      "source": "/antibiotics/amiget-amikacin-sulfate-500mg-2ml-injection",
+      "destination": "/antibiotics/amiget-amikacin-sulfate-500mg-2ml-injection"
+    },
+    {
+      "source": "/antibiotics/cefoxiget-cefoxitin-sodium-1g-injection",
+      "destination": "/antibiotics/cefoxiget-cefoxitin-sodium-1g-injection"
+    },
+    {
+      "source": "/antibiotics/cefazoget-cefazolin-sodium-1g-injection",
+      "destination": "/antibiotics/cefazoget-cefazolin-sodium-1g-injection"
+    },
+    {
+      "source": "/antibiotics/vancoget-500-vancomycin-hydrochloride-500mg-injection",
+      "destination": "/antibiotics/vancoget-500-vancomycin-hydrochloride-500mg-injection"
+    },
+    {
+      "source": "/antibiotics/vancoget-1000-vancomycin-hydrochloride-1g-injection",
+      "destination": "/antibiotics/vancoget-1000-vancomycin-hydrochloride-1g-injection"
+    },
+    {
+      "source": "/antibiotics/myxiget-polymyxin-b-500000-units-injection",
+      "destination": "/antibiotics/myxiget-polymyxin-b-500000-units-injection"
+    },
+    {
+      "source": "/hormonal-therapy/danaget-danazol-200mg-capsule",
+      "destination": "/hormonal-therapy/danaget-danazol-200mg-capsule"
+    },
+    {
+      "source": "/hormonal-therapy/finaget-5-finasteride-5mg-tablet",
+      "destination": "/hormonal-therapy/finaget-5-finasteride-5mg-tablet"
+    },
+    {
+      "source": "/diabetes-medicines/akuglip50-sitagliptin-phosphate-50mg-tablet",
+      "destination": "/diabetes-medicines/akuglip50-sitagliptin-phosphate-50mg-tablet"
+    },
+    {
+      "source": "/diabetes-medicines/akuvilda-m-1000-vildagliptin-metformin-50mg-1000mg-tablet",
+      "destination": "/diabetes-medicines/akuvilda-m-1000-vildagliptin-metformin-50mg-1000mg-tablet"
+    },
+    {
+      "source": "/bone-health-medicines/bortemed-bortezomib-3.5mg-injection",
+      "destination": "/bone-health-medicines/bortemed-bortezomib-3.5mg-injection"
+    },
+    {
+      "source": "/bone-health-medicines/zologet-zoledronic-acid-monohydrate-4mg-infusion",
+      "destination": "/bone-health-medicines/zologet-zoledronic-acid-monohydrate-4mg-infusion"
+    },
+    {
+      "source": "/heart-medicines/amioget-amiodarone-hydrochloride-50mg-ml-infusion",
+      "destination": "/heart-medicines/amioget-amiodarone-hydrochloride-50mg-ml-infusion"
+    },
+    {
+      "source": "/heart-medicines/amloget-5-amlodipine-besilate-5mg-tablet",
+      "destination": "/heart-medicines/amloget-5-amlodipine-besilate-5mg-tablet"
+    },
+    {
+      "source": "/heart-medicines/amloget-10-amlodipine-besilate-10mg-tablet",
+      "destination": "/heart-medicines/amloget-10-amlodipine-besilate-10mg-tablet"
+    },
+    {
+      "source": "/heart-medicines/losaget-losartan-potassium-50mg-tablet",
+      "destination": "/heart-medicines/losaget-losartan-potassium-50mg-tablet"
+    },
+    {
+      "source": "/contrast-media/iohexiget-iohexol-contrast-350mg-ml-injection",
+      "destination": "/contrast-media/iohexiget-iohexol-contrast-350mg-ml-injection"
+    },
+    {
+      "source": "/anti-inflammatory-medicines/dexget-dexamethasone-8mg-2ml-injection",
+      "destination": "/anti-inflammatory-medicines/dexget-dexamethasone-8mg-2ml-injection"
+    },
+    {
+      "source": "/pain-management/tradmin-tramadol-50mg-injection-iv",
+      "destination": "/pain-management/tradmin-tramadol-50mg-injection-iv"
+    },
+    {
+      "source": "/kidney-medicines/sevelamed-sevelamer-carbonate-800mg-tablet",
+      "destination": "/kidney-medicines/sevelamed-sevelamer-carbonate-800mg-tablet"
+    },
+    {
+      "source": "/allergy-medicines/alislergy-loratadine-10mg-tablet",
+      "destination": "/allergy-medicines/alislergy-loratadine-10mg-tablet"
+    },
+    {
+      "source": "/allergy-medicines/cetriget-cetirizine-hydrochloride-10mg-tablet",
+      "destination": "/allergy-medicines/cetriget-cetirizine-hydrochloride-10mg-tablet"
+    },
+    {
+      "source": "/brain-cancer-medicines/temoget-temozolomide-100mg-capsule",
+      "destination": "/brain-cancer-medicines/temoget-temozolomide-100mg-capsule"
+    },
+    {
+      "source": "/conditions/breast-cancer",
+      "destination": "/conditions/breast-cancer"
+    },
+    {
+      "source": "/conditions/ovarian-cancer",
+      "destination": "/conditions/ovarian-cancer"
+    },
+    {
+      "source": "/conditions/non-small-cell-lung-cancer",
+      "destination": "/conditions/non-small-cell-lung-cancer"
+    },
+    {
+      "source": "/conditions/prostate-cancer",
+      "destination": "/conditions/prostate-cancer"
+    },
+    {
+      "source": "/conditions/colorectal-cancer",
+      "destination": "/conditions/colorectal-cancer"
+    },
+    {
+      "source": "/conditions/pancreatic-cancer",
+      "destination": "/conditions/pancreatic-cancer"
+    },
+    {
+      "source": "/conditions/gastric-cancer-gastric-adenocarcinoma",
+      "destination": "/conditions/gastric-cancer-gastric-adenocarcinoma"
+    },
+    {
+      "source": "/conditions/head-and-neck-cancer",
+      "destination": "/conditions/head-and-neck-cancer"
+    },
+    {
+      "source": "/conditions/malignant-pleural-mesothelioma",
+      "destination": "/conditions/malignant-pleural-mesothelioma"
+    },
+    {
+      "source": "/conditions/malignant-pleural-effusion",
+      "destination": "/conditions/malignant-pleural-effusion"
+    },
+    {
+      "source": "/conditions/renal-cell-carcinoma",
+      "destination": "/conditions/renal-cell-carcinoma"
+    },
+    {
+      "source": "/conditions/bladder-cancer",
+      "destination": "/conditions/bladder-cancer"
+    },
+    {
+      "source": "/conditions/cervical-cancer",
+      "destination": "/conditions/cervical-cancer"
+    },
+    {
+      "source": "/conditions/hepatocellular-carcinoma",
+      "destination": "/conditions/hepatocellular-carcinoma"
+    },
+    {
+      "source": "/conditions/small-cell-lung-cancer",
+      "destination": "/conditions/small-cell-lung-cancer"
+    },
+    {
+      "source": "/conditions/thyroid-cancer",
+      "destination": "/conditions/thyroid-cancer"
+    },
+    {
+      "source": "/conditions/testicular-cancer",
+      "destination": "/conditions/testicular-cancer"
+    },
+    {
+      "source": "/conditions/soft-tissue-sarcoma",
+      "destination": "/conditions/soft-tissue-sarcoma"
+    },
+    {
+      "source": "/conditions/acute-myeloid-leukemia",
+      "destination": "/conditions/acute-myeloid-leukemia"
+    },
+    {
+      "source": "/conditions/chronic-myeloid-leukemia",
+      "destination": "/conditions/chronic-myeloid-leukemia"
+    },
+    {
+      "source": "/conditions/acute-lymphocytic-leukemia",
+      "destination": "/conditions/acute-lymphocytic-leukemia"
+    },
+    {
+      "source": "/conditions/chronic-lymphocytic-leukemia",
+      "destination": "/conditions/chronic-lymphocytic-leukemia"
+    },
+    {
+      "source": "/conditions/hodgkin-non-hodgkins-lymphoma",
+      "destination": "/conditions/hodgkin-non-hodgkins-lymphoma"
+    },
+    {
+      "source": "/conditions/mantle-cell-lymphoma",
+      "destination": "/conditions/mantle-cell-lymphoma"
+    },
+    {
+      "source": "/conditions/chronic-myelocytic-leukemia",
+      "destination": "/conditions/chronic-myelocytic-leukemia"
+    },
+    {
+      "source": "/conditions/meningeal-leukemia",
+      "destination": "/conditions/meningeal-leukemia"
+    },
+    {
+      "source": "/conditions/acute-lymphoblastic-leukemia",
+      "destination": "/conditions/acute-lymphoblastic-leukemia"
+    },
+    {
+      "source": "/conditions/acute-promyelocytic-leukemia",
+      "destination": "/conditions/acute-promyelocytic-leukemia"
+    },
+    {
+      "source": "/conditions/sickle-cell-anemia",
+      "destination": "/conditions/sickle-cell-anemia"
+    },
+    {
+      "source": "/conditions/folate-deficiency-anemia",
+      "destination": "/conditions/folate-deficiency-anemia"
+    },
+    {
+      "source": "/conditions/iron-deficiency-anemia",
+      "destination": "/conditions/iron-deficiency-anemia"
+    },
+    {
+      "source": "/conditions/respiratory-infections",
+      "destination": "/conditions/respiratory-infections"
+    },
+    {
+      "source": "/conditions/urinary-tract-infections",
+      "destination": "/conditions/urinary-tract-infections"
+    },
+    {
+      "source": "/conditions/skin-and-soft-tissue-infections",
+      "destination": "/conditions/skin-and-soft-tissue-infections"
+    },
+    {
+      "source": "/conditions/bone-and-joint-infections",
+      "destination": "/conditions/bone-and-joint-infections"
+    },
+    {
+      "source": "/conditions/gynecological-infections",
+      "destination": "/conditions/gynecological-infections"
+    },
+    {
+      "source": "/conditions/intra-abdominal-infections",
+      "destination": "/conditions/intra-abdominal-infections"
+    },
+    {
+      "source": "/conditions/bloodstream-infections",
+      "destination": "/conditions/bloodstream-infections"
+    },
+    {
+      "source": "/conditions/ocular-or-topical-infections",
+      "destination": "/conditions/ocular-or-topical-infections"
+    },
+    {
+      "source": "/conditions/endometriosis",
+      "destination": "/conditions/endometriosis"
+    },
+    {
+      "source": "/conditions/fibrocystic-breast-disease",
+      "destination": "/conditions/fibrocystic-breast-disease"
+    },
+    {
+      "source": "/conditions/benign-prostatic-hyperplasia",
+      "destination": "/conditions/benign-prostatic-hyperplasia"
+    },
+    {
+      "source": "/conditions/type-2-diabetes-mellitus",
+      "destination": "/conditions/type-2-diabetes-mellitus"
+    },
+    {
+      "source": "/conditions/multiple-myeloma",
+      "destination": "/conditions/multiple-myeloma"
+    },
+    {
+      "source": "/conditions/glucocorticoid-induced-osteoporosis",
+      "destination": "/conditions/glucocorticoid-induced-osteoporosis"
+    },
+    {
+      "source": "/conditions/arrhythmia-management",
+      "destination": "/conditions/arrhythmia-management"
+    },
+    {
+      "source": "/conditions/hypertension-angina",
+      "destination": "/conditions/hypertension-angina"
+    },
+    {
+      "source": "/conditions/radiology",
+      "destination": "/conditions/radiology"
+    },
+    {
+      "source": "/conditions/inflammatory-and-rheumatic-disorders",
+      "destination": "/conditions/inflammatory-and-rheumatic-disorders"
+    },
+    {
+      "source": "/conditions/chronic-pain-management",
+      "destination": "/conditions/chronic-pain-management"
+    },
+    {
+      "source": "/conditions/chronic-kidney-disease",
+      "destination": "/conditions/chronic-kidney-disease"
+    },
+    {
+      "source": "/conditions/seasonal-allergies-allergic-rhinitis",
+      "destination": "/conditions/seasonal-allergies-allergic-rhinitis"
+    },
+    {
+      "source": "/conditions/glioblastoma-multiforme",
+      "destination": "/conditions/glioblastoma-multiforme"
+    },
+    {
+      "source": "/blog/getmeds-naga-city-cancer-care",
+      "destination": "/blog/getmeds-naga-city-cancer-care"
+    },
+    {
+      "source": "/blog/getmeds-un-global-compact-sdg-ambition",
+      "destination": "/blog/getmeds-un-global-compact-sdg-ambition"
+    },
+    {
+      "source": "/blog/how-to-get-medical-assistance-from-dswd-your-2025-ultimate-guide",
+      "destination": "/blog/how-to-get-medical-assistance-from-dswd-your-2025-ultimate-guide"
+    },
+    {
+      "source": "/blog/14-essential-cancer-screening-tests-for-women-early-cancer-detection-in-the-philippines",
+      "destination": "/blog/14-essential-cancer-screening-tests-for-women-early-cancer-detection-in-the-philippines"
+    },
+    {
+      "source": "/blog/generic-pazopanib-philippines",
+      "destination": "/blog/generic-pazopanib-philippines"
+    },
+    {
+      "source": "/blog/affordable-teriparatide-injection-biosimilar-philippines",
+      "destination": "/blog/affordable-teriparatide-injection-biosimilar-philippines"
+    },
+    {
+      "source": "/blog/how-to-get-medical-assistance-from-dswd",
+      "destination": "/blog/how-to-get-medical-assistance-from-dswd"
+    },
+    {
+      "source": "/blog/9-affordable-and-healthy-filipino-foods-that-help-reduce-cancer-risk-budget-friendly-alternatives",
+      "destination": "/blog/9-affordable-and-healthy-filipino-foods-that-help-reduce-cancer-risk-budget-friendly-alternatives"
+    },
+    {
+      "source": "/blog/how-to-manage-chemotherapy-side-effects",
+      "destination": "/blog/how-to-manage-chemotherapy-side-effects"
+    },
+    {
+      "source": "/blog/cancer-myths-and-misconceptions-2025",
+      "destination": "/blog/cancer-myths-and-misconceptions-2025"
+    },
+    {
+      "source": "/blog/how-to-lower-cancer-risk-in-women-12-easy-ways-to-stay-healthy",
+      "destination": "/blog/how-to-lower-cancer-risk-in-women-12-easy-ways-to-stay-healthy"
+    },
+    {
+      "source": "/blog/14-essential-cancer-screening-tests-for-women-early-detection-in-the-philippines",
+      "destination": "/blog/14-essential-cancer-screening-tests-for-women-early-detection-in-the-philippines"
+    },
+    {
+      "source": "/blog/how-to-apply-for-pcso-medical-assistance-program",
+      "destination": "/blog/how-to-apply-for-pcso-medical-assistance-program"
+    },
+    {
+      "source": "/blog/lung-cancer-cases-linked-to-air-pollution",
+      "destination": "/blog/lung-cancer-cases-linked-to-air-pollution"
+    },
+    {
+      "source": "/blog/ai-predicts-breast-cancer-risk-years-6-years-ahead",
+      "destination": "/blog/ai-predicts-breast-cancer-risk-years-6-years-ahead"
+    },
+    {
+      "source": "/blog/best-kegel-exercises-for-men-experiencing-erectile-dysfunction",
+      "destination": "/blog/best-kegel-exercises-for-men-experiencing-erectile-dysfunction"
+    },
+    {
+      "source": "/blog/deworming-twice-better-health-in-the-philippines",
+      "destination": "/blog/deworming-twice-better-health-in-the-philippines"
+    },
+    {
+      "source": "/blog/how-to-reduce-cancer-treatment-costs-in-the-philippines",
+      "destination": "/blog/how-to-reduce-cancer-treatment-costs-in-the-philippines"
+    },
+    {
+      "source": "/blog/tips-for-cancer-patients-going-on-a-holiday",
+      "destination": "/blog/tips-for-cancer-patients-going-on-a-holiday"
+    },
+    {
+      "source": "/blog/hiv-in-the-philippines-its-current-state-and-steadfast-emergence",
+      "destination": "/blog/hiv-in-the-philippines-its-current-state-and-steadfast-emergence"
+    },
+    {
+      "source": "/blog/a-baristas-journey-into-medical-sales-at-getmeds",
+      "destination": "/blog/a-baristas-journey-into-medical-sales-at-getmeds"
+    },
+    {
+      "source": "/blog/getmeds-improves-patient-support-transfusion-and-infusion-sets-now-available",
+      "destination": "/blog/getmeds-improves-patient-support-transfusion-and-infusion-sets-now-available"
+    },
+    {
+      "source": "/blog/availability-of-fingolimod-in-philippines",
+      "destination": "/blog/availability-of-fingolimod-in-philippines"
+    },
+    {
+      "source": "/blog/getmeds-gets-recognition-as-uphsdlp-partner",
+      "destination": "/blog/getmeds-gets-recognition-as-uphsdlp-partner"
+    },
+    {
+      "source": "/blog/best-enhancement-pill-for-men-in-philippines",
+      "destination": "/blog/best-enhancement-pill-for-men-in-philippines"
+    },
+    {
+      "source": "/blog/affordable-tadalafil-medicine-in-philippines",
+      "destination": "/blog/affordable-tadalafil-medicine-in-philippines"
+    },
+    {
+      "source": "/blog/stages-of-breast-cancer-and-survival-rate-of-each-stage",
+      "destination": "/blog/stages-of-breast-cancer-and-survival-rate-of-each-stage"
+    },
+    {
+      "source": "/blog/online-period-calculator",
+      "destination": "/blog/online-period-calculator"
+    },
+    {
+      "source": "/blog/how-to-calculate-bmi",
+      "destination": "/blog/how-to-calculate-bmi"
+    },
+    {
+      "source": "/blog/drugs-for-cancer-treatment-in-the-philippines",
+      "destination": "/blog/drugs-for-cancer-treatment-in-the-philippines"
+    },
+    {
+      "source": "/blog/common-nutrient-deficiencies-and-how-to-prevent-them",
+      "destination": "/blog/common-nutrient-deficiencies-and-how-to-prevent-them"
+    },
+    {
+      "source": "/blog/ear-wax-removal",
+      "destination": "/blog/ear-wax-removal"
+    },
+    {
+      "source": "/blog/10-health-benefits-of-riding-a-cycle",
+      "destination": "/blog/10-health-benefits-of-riding-a-cycle"
+    },
+    {
+      "source": "/blog/hydrafacial-treatment",
+      "destination": "/blog/hydrafacial-treatment"
+    },
+    {
+      "source": "/blog/the-most-prevalent-illnesses-among-senior-citizens",
+      "destination": "/blog/the-most-prevalent-illnesses-among-senior-citizens"
+    },
+    {
+      "source": "/blog/ways-to-maintain-healthy-weight",
+      "destination": "/blog/ways-to-maintain-healthy-weight"
+    },
+    {
+      "source": "/blog/meal-plan-for-muscle-gaining-and-weight-loss",
+      "destination": "/blog/meal-plan-for-muscle-gaining-and-weight-loss"
+    },
+    {
+      "source": "/blog/best-treatment-for-hearing-loss",
+      "destination": "/blog/best-treatment-for-hearing-loss"
+    },
+    {
+      "source": "/blog/common-psychological-problem-of-adolescence",
+      "destination": "/blog/common-psychological-problem-of-adolescence"
+    },
+    {
+      "source": "/blog/skin-care-routine-for-college-students",
+      "destination": "/blog/skin-care-routine-for-college-students"
+    },
+    {
+      "source": "/blog/causes-and-symptoms-of-ear-wax",
+      "destination": "/blog/causes-and-symptoms-of-ear-wax"
+    },
+    {
+      "source": "/blog/tips-for-losing-belly-fat",
+      "destination": "/blog/tips-for-losing-belly-fat"
+    },
+    {
+      "source": "/blog/benefits-of-papaya-for-skin-and-hair",
+      "destination": "/blog/benefits-of-papaya-for-skin-and-hair"
+    },
+    {
+      "source": "/blog/brain-tumor-symptoms-in-the-philippines",
+      "destination": "/blog/brain-tumor-symptoms-in-the-philippines"
+    },
+    {
+      "source": "/blog/benefits-of-coffee",
+      "destination": "/blog/benefits-of-coffee"
+    },
+    {
+      "source": "/blog/prevent-covid-19-or-coronavirus-variant",
+      "destination": "/blog/prevent-covid-19-or-coronavirus-variant"
+    },
+    {
+      "source": "/blog/perfect-sunblock-for-your-skin-type",
+      "destination": "/blog/perfect-sunblock-for-your-skin-type"
+    },
+    {
+      "source": "/blog/migraine-headache",
+      "destination": "/blog/migraine-headache"
+    },
+    {
+      "source": "/blog/philippines-faces-an-enormous-covid-19-wave",
+      "destination": "/blog/philippines-faces-an-enormous-covid-19-wave"
+    },
+    {
+      "source": "/blog/vitamins-for-skin",
+      "destination": "/blog/vitamins-for-skin"
+    },
+    {
+      "source": "/blog/ischemic-heart-disease",
+      "destination": "/blog/ischemic-heart-disease"
+    },
+    {
+      "source": "/blog/skin-care-products-for-oily-skin",
+      "destination": "/blog/skin-care-products-for-oily-skin"
+    },
+    {
+      "source": "/blog/diseases-caused-by-smoking",
+      "destination": "/blog/diseases-caused-by-smoking"
+    },
+    {
+      "source": "/blog/non-communicable-diseases",
+      "destination": "/blog/non-communicable-diseases"
+    },
+    {
+      "source": "/blog/hiv-signs-and-symptoms",
+      "destination": "/blog/hiv-signs-and-symptoms"
+    },
+    {
+      "source": "/blog/teen-pregnancy",
+      "destination": "/blog/teen-pregnancy"
+    },
+    {
+      "source": "/blog/birth-control-pills-in-philippines",
+      "destination": "/blog/birth-control-pills-in-philippines"
+    },
+    {
+      "source": "/blog/teen-depressions",
+      "destination": "/blog/teen-depressions"
+    },
+    {
+      "source": "/blog/maintain-a-healthy-weight",
+      "destination": "/blog/maintain-a-healthy-weight"
+    },
+    {
+      "source": "/blog/what-is-diabetes-insipidus",
+      "destination": "/blog/what-is-diabetes-insipidus"
+    },
+    {
+      "source": "/blog/methods-to-treat-depression-at-home",
+      "destination": "/blog/methods-to-treat-depression-at-home"
+    },
+    {
+      "source": "/blog/medications-to-treat-diabetes-mellitus",
+      "destination": "/blog/medications-to-treat-diabetes-mellitus"
+    },
+    {
+      "source": "/blog/drugs-to-treat-hypertension",
+      "destination": "/blog/drugs-to-treat-hypertension"
+    },
+    {
+      "source": "/blog/omicron-variant",
+      "destination": "/blog/omicron-variant"
+    },
+    {
+      "source": "/blog/natural-methods-to-lower-blood-pressure",
+      "destination": "/blog/natural-methods-to-lower-blood-pressure"
+    },
+    {
+      "source": "/blog/home-remedies-to-treat-dry-and-damaged-hair",
+      "destination": "/blog/home-remedies-to-treat-dry-and-damaged-hair"
+    },
+    {
+      "source": "/blog/doh-announces-it-has-previously-released-p15-7-billion-for-health-operators-benefits",
+      "destination": "/blog/doh-announces-it-has-previously-released-p15-7-billion-for-health-operators-benefits"
+    },
+    {
+      "source": "/blog/female-condoms",
+      "destination": "/blog/female-condoms"
+    },
+    {
+      "source": "/blog/systolic-and-diastolic",
+      "destination": "/blog/systolic-and-diastolic"
+    },
+    {
+      "source": "/blog/cardiovascular-disease",
+      "destination": "/blog/cardiovascular-disease"
+    },
+    {
+      "source": "/blog/pulse-pressure-calculator-online",
+      "destination": "/blog/pulse-pressure-calculator-online"
+    },
+    {
+      "source": "/blog/diabetes-and-pancreatic-cancer",
+      "destination": "/blog/diabetes-and-pancreatic-cancer"
+    },
+    {
+      "source": "/blog/infections-during-cancer-treatment",
+      "destination": "/blog/infections-during-cancer-treatment"
+    },
+    {
+      "source": "/blog/1m-saliva-rt-pcr-tests-beat-by-ph-red-cross",
+      "destination": "/blog/1m-saliva-rt-pcr-tests-beat-by-ph-red-cross"
+    },
+    {
+      "source": "/blog/smoking-and-diabetes",
+      "destination": "/blog/smoking-and-diabetes"
+    },
+    {
+      "source": "/blog/gestational-diabetes-symptoms-causes-and-treatment",
+      "destination": "/blog/gestational-diabetes-symptoms-causes-and-treatment"
+    },
+    {
+      "source": "/blog/sexual-health-and-intimacy-tips-for-breast-cancer-patients",
+      "destination": "/blog/sexual-health-and-intimacy-tips-for-breast-cancer-patients"
+    },
+    {
+      "source": "/blog/best-ways-to-improve-your-sex-life-with-diabetes",
+      "destination": "/blog/best-ways-to-improve-your-sex-life-with-diabetes"
+    },
+    {
+      "source": "/blog/quality-and-affordable-antigen-test-kits-are-immediately-possible-in-the-health-care-series",
+      "destination": "/blog/quality-and-affordable-antigen-test-kits-are-immediately-possible-in-the-health-care-series"
+    },
+    {
+      "source": "/blog/function-of-the-female-reproductive-system",
+      "destination": "/blog/function-of-the-female-reproductive-system"
+    },
+    {
+      "source": "/blog/what-are-the-diabetes-skin-symptoms",
+      "destination": "/blog/what-are-the-diabetes-skin-symptoms"
+    },
+    {
+      "source": "/blog/ph-uk-sign-agreement-on-recruitment-device-for-health-operators",
+      "destination": "/blog/ph-uk-sign-agreement-on-recruitment-device-for-health-operators"
+    },
+    {
+      "source": "/blog/malignant-hypertension-symptoms-and-treatment",
+      "destination": "/blog/malignant-hypertension-symptoms-and-treatment"
+    },
+    {
+      "source": "/blog/blood-pressure-online-calculator",
+      "destination": "/blog/blood-pressure-online-calculator"
+    },
+    {
+      "source": "/blog/best-traditional-filipino-medicines",
+      "destination": "/blog/best-traditional-filipino-medicines"
+    },
+    {
+      "source": "/blog/health-concerns-triggered-by-high-blood-pressure",
+      "destination": "/blog/health-concerns-triggered-by-high-blood-pressure"
+    },
+    {
+      "source": "/blog/alzheimer-and-coronavirus-experience-the-genetic-risk-part",
+      "destination": "/blog/alzheimer-and-coronavirus-experience-the-genetic-risk-part"
+    },
+    {
+      "source": "/blog/types-and-different-staging-of-leukemia",
+      "destination": "/blog/types-and-different-staging-of-leukemia"
+    },
+    {
+      "source": "/blog/what-are-the-stages-of-endometrial-cancer",
+      "destination": "/blog/what-are-the-stages-of-endometrial-cancer"
+    },
+    {
+      "source": "/blog/best-face-moisturizers-for-all-types-of-skin-in-philippines",
+      "destination": "/blog/best-face-moisturizers-for-all-types-of-skin-in-philippines"
+    },
+    {
+      "source": "/blog/top-ways-to-be-physically-fit",
+      "destination": "/blog/top-ways-to-be-physically-fit"
+    },
+    {
+      "source": "/blog/children-height-percentile-calculator",
+      "destination": "/blog/children-height-percentile-calculator"
+    },
+    {
+      "source": "/blog/healthy-eating-foods-for-older-adults",
+      "destination": "/blog/healthy-eating-foods-for-older-adults"
+    },
+    {
+      "source": "/blog/manila-and-other-top-cities-with-the-highest-new-covid-19-cases",
+      "destination": "/blog/manila-and-other-top-cities-with-the-highest-new-covid-19-cases"
+    },
+    {
+      "source": "/blog/what-is-post-traumatic-stress-disorder",
+      "destination": "/blog/what-is-post-traumatic-stress-disorder"
+    },
+    {
+      "source": "/blog/what-is-low-ldl",
+      "destination": "/blog/what-is-low-ldl"
+    },
+    {
+      "source": "/blog/what-is-hyperthyroidism",
+      "destination": "/blog/what-is-hyperthyroidism"
+    },
+    {
+      "source": "/blog/what-is-normal-blood-pressure-for-teenagers",
+      "destination": "/blog/what-is-normal-blood-pressure-for-teenagers"
+    },
+    {
+      "source": "/blog/philippine-nurses-did-resignations-over-unpaid-compensation",
+      "destination": "/blog/philippine-nurses-did-resignations-over-unpaid-compensation"
+    },
+    {
+      "source": "/blog/symptoms-and-causes-of-the-major-depressive-disorder",
+      "destination": "/blog/symptoms-and-causes-of-the-major-depressive-disorder"
+    },
+    {
+      "source": "/blog/best-vitamin-supplements-for-kids",
+      "destination": "/blog/best-vitamin-supplements-for-kids"
+    },
+    {
+      "source": "/blog/how-to-calculate-body-fat-with-a-calculator",
+      "destination": "/blog/how-to-calculate-body-fat-with-a-calculator"
+    },
+    {
+      "source": "/blog/what-is-chlamydia-infection",
+      "destination": "/blog/what-is-chlamydia-infection"
+    },
+    {
+      "source": "/blog/best-supplements-and-vitamins-for-kids",
+      "destination": "/blog/best-supplements-and-vitamins-for-kids"
+    },
+    {
+      "source": "/blog/ways-to-get-rid-of-a-tan-at-home",
+      "destination": "/blog/ways-to-get-rid-of-a-tan-at-home"
+    },
+    {
+      "source": "/blog/best-cough-and-cold-otc-medicines",
+      "destination": "/blog/best-cough-and-cold-otc-medicines"
+    },
+    {
+      "source": "/blog/philippines-lifted-the-covid-19-travel-ban-restrictions-on-10-countries",
+      "destination": "/blog/philippines-lifted-the-covid-19-travel-ban-restrictions-on-10-countries"
+    },
+    {
+      "source": "/blog/breathing-exercise-for-covid",
+      "destination": "/blog/breathing-exercise-for-covid"
+    },
+    {
+      "source": "/blog/ways-to-clear-clogged-nose-at-home",
+      "destination": "/blog/ways-to-clear-clogged-nose-at-home"
+    },
+    {
+      "source": "/blog/philippines-records-the-second-highest-number-of-covid-19-cases",
+      "destination": "/blog/philippines-records-the-second-highest-number-of-covid-19-cases"
+    },
+    {
+      "source": "/blog/best-home-workout-to-over-40",
+      "destination": "/blog/best-home-workout-to-over-40"
+    },
+    {
+      "source": "/blog/tips-for-maintaining-mental-health",
+      "destination": "/blog/tips-for-maintaining-mental-health"
+    },
+    {
+      "source": "/blog/what-is-endometrial-cancer",
+      "destination": "/blog/what-is-endometrial-cancer"
+    },
+    {
+      "source": "/blog/home-remedies-to-treat-tonsils",
+      "destination": "/blog/home-remedies-to-treat-tonsils"
+    },
+    {
+      "source": "/blog/best-inner-child-healing-exercises-and-meditation-process",
+      "destination": "/blog/best-inner-child-healing-exercises-and-meditation-process"
+    },
+    {
+      "source": "/blog/philippines-records-biggest-single-day-rise-in-coronavirus-cases",
+      "destination": "/blog/philippines-records-biggest-single-day-rise-in-coronavirus-cases"
+    },
+    {
+      "source": "/blog/what-are-the-causes-of-weight-gain-in-females-with-their-age",
+      "destination": "/blog/what-are-the-causes-of-weight-gain-in-females-with-their-age"
+    },
+    {
+      "source": "/blog/what-is-postpartum-depression",
+      "destination": "/blog/what-is-postpartum-depression"
+    },
+    {
+      "source": "/blog/what-is-influenza",
+      "destination": "/blog/what-is-influenza"
+    },
+    {
+      "source": "/blog/common-communicable-diseases",
+      "destination": "/blog/common-communicable-diseases"
+    },
+    {
+      "source": "/blog/healthcare-workers-under-strain-in-the-philippines",
+      "destination": "/blog/healthcare-workers-under-strain-in-the-philippines"
+    },
+    {
+      "source": "/blog/what-is-cervical-cancer",
+      "destination": "/blog/what-is-cervical-cancer"
+    },
+    {
+      "source": "/blog/maria-cristina-breast-and-ovarian-cancer-warrior",
+      "destination": "/blog/maria-cristina-breast-and-ovarian-cancer-warrior"
+    },
+    {
+      "source": "/blog/benefits-of-drinking-water-for-skin",
+      "destination": "/blog/benefits-of-drinking-water-for-skin"
+    },
+    {
+      "source": "/blog/home-remedies-to-reduce-blood-sugar-levels",
+      "destination": "/blog/home-remedies-to-reduce-blood-sugar-levels"
+    },
+    {
+      "source": "/blog/what-is-depression",
+      "destination": "/blog/what-is-depression"
+    },
+    {
+      "source": "/blog/what-are-skin-tags",
+      "destination": "/blog/what-are-skin-tags"
+    },
+    {
+      "source": "/blog/what-is-pulmonary-hypertension",
+      "destination": "/blog/what-is-pulmonary-hypertension"
+    },
+    {
+      "source": "/blog/herbal-teas-for-soothing-anxiety-and-stress-relief",
+      "destination": "/blog/herbal-teas-for-soothing-anxiety-and-stress-relief"
+    },
+    {
+      "source": "/blog/new-delta-variant-cases-are-detected-in-the-philippines",
+      "destination": "/blog/new-delta-variant-cases-are-detected-in-the-philippines"
+    },
+    {
+      "source": "/blog/online-drugstore-in-philippines",
+      "destination": "/blog/online-drugstore-in-philippines"
+    },
+    {
+      "source": "/blog/healthy-fast-food-for-diabetics-patients",
+      "destination": "/blog/healthy-fast-food-for-diabetics-patients"
+    },
+    {
+      "source": "/blog/pinakamahusay-na-over-the-counter-na-gamot-sa-pilipinas",
+      "destination": "/blog/pinakamahusay-na-over-the-counter-na-gamot-sa-pilipinas"
+    },
+    {
+      "source": "/blog/weightlifter-hidilyn-diaz-wins-first-ever-olympic-gold-medal-for-the-philippines",
+      "destination": "/blog/weightlifter-hidilyn-diaz-wins-first-ever-olympic-gold-medal-for-the-philippines"
+    },
+    {
+      "source": "/blog/components-of-physical-fitness",
+      "destination": "/blog/components-of-physical-fitness"
+    },
+    {
+      "source": "/blog/rainy-season-diseases",
+      "destination": "/blog/rainy-season-diseases"
+    },
+    {
+      "source": "/blog/common-skincare-mistakes-you-need-to-avoid",
+      "destination": "/blog/common-skincare-mistakes-you-need-to-avoid"
+    },
+    {
+      "source": "/blog/coronavirus-symptoms-vs-flu-symptoms",
+      "destination": "/blog/coronavirus-symptoms-vs-flu-symptoms"
+    },
+    {
+      "source": "/blog/what-is-dry-cough",
+      "destination": "/blog/what-is-dry-cough"
+    },
+    {
+      "source": "/blog/what-is-asthma-disease",
+      "destination": "/blog/what-is-asthma-disease"
+    },
+    {
+      "source": "/blog/home-remedies-for-cough-and-cold",
+      "destination": "/blog/home-remedies-for-cough-and-cold"
+    },
+    {
+      "source": "/blog/how-to-cure-cough-and-cold",
+      "destination": "/blog/how-to-cure-cough-and-cold"
+    },
+    {
+      "source": "/blog/online-pharmacies-in-quezon-city-philippines",
+      "destination": "/blog/online-pharmacies-in-quezon-city-philippines"
+    },
+    {
+      "source": "/blog/what-is-kennel-cough-in-humans",
+      "destination": "/blog/what-is-kennel-cough-in-humans"
+    },
+    {
+      "source": "/blog/flu-vaccine-benefits-side-effects",
+      "destination": "/blog/flu-vaccine-benefits-side-effects"
+    },
+    {
+      "source": "/blog/cough-and-cold-medicines",
+      "destination": "/blog/cough-and-cold-medicines"
+    },
+    {
+      "source": "/blog/over-the-counter-medicine-list-in-philippines",
+      "destination": "/blog/over-the-counter-medicine-list-in-philippines"
+    },
+    {
+      "source": "/blog/best-vitamin-d-supplements-in-philippines",
+      "destination": "/blog/best-vitamin-d-supplements-in-philippines"
+    },
+    {
+      "source": "/blog/top-10-food-and-nutrition-myths",
+      "destination": "/blog/top-10-food-and-nutrition-myths"
+    },
+    {
+      "source": "/blog/lung-cancer-types-stages-causes",
+      "destination": "/blog/lung-cancer-types-stages-causes"
+    },
+    {
+      "source": "/blog/top-online-pharmacy-apps-in-philippines",
+      "destination": "/blog/top-online-pharmacy-apps-in-philippines"
+    },
+    {
+      "source": "/blog/how-alcohol-may-affect-during-covid-19-vaccine",
+      "destination": "/blog/how-alcohol-may-affect-during-covid-19-vaccine"
+    },
+    {
+      "source": "/blog/what-is-immune-system",
+      "destination": "/blog/what-is-immune-system"
+    },
+    {
+      "source": "/blog/vaccination-process-in-philippines",
+      "destination": "/blog/vaccination-process-in-philippines"
+    },
+    {
+      "source": "/blog/what-is-herd-immunity",
+      "destination": "/blog/what-is-herd-immunity"
+    },
+    {
+      "source": "/blog/what-is-black-fungus",
+      "destination": "/blog/what-is-black-fungus"
+    },
+    {
+      "source": "/blog/importance-of-exercise-and-mental-health",
+      "destination": "/blog/importance-of-exercise-and-mental-health"
+    },
+    {
+      "source": "/blog/remdesivir-benefits-for-covid-19-treatment",
+      "destination": "/blog/remdesivir-benefits-for-covid-19-treatment"
+    },
+    {
+      "source": "/blog/hypertension-and-covid-19",
+      "destination": "/blog/hypertension-and-covid-19"
+    },
+    {
+      "source": "/blog/covid-vaccine-side-effects-after-vaccination",
+      "destination": "/blog/covid-vaccine-side-effects-after-vaccination"
+    },
+    {
+      "source": "/blog/covid-19-vaccination-for-pregnant-women",
+      "destination": "/blog/covid-19-vaccination-for-pregnant-women"
+    },
+    {
+      "source": "/blog/philippines-detects-covid-19-indian-variant",
+      "destination": "/blog/philippines-detects-covid-19-indian-variant"
+    },
+    {
+      "source": "/blog/travel-restrictions-philippines-2021",
+      "destination": "/blog/travel-restrictions-philippines-2021"
+    },
+    {
+      "source": "/blog/tuberculosis-causes-symptoms-treatment",
+      "destination": "/blog/tuberculosis-causes-symptoms-treatment"
+    },
+    {
+      "source": "/blog/covid-alternative-medicines",
+      "destination": "/blog/covid-alternative-medicines"
+    },
+    {
+      "source": "/blog/fish-oil-benefits-precautions-supplement-dosage",
+      "destination": "/blog/fish-oil-benefits-precautions-supplement-dosage"
+    },
+    {
+      "source": "/blog/home-remedies-for-a-sore-and-dry-throat",
+      "destination": "/blog/home-remedies-for-a-sore-and-dry-throat"
+    },
+    {
+      "source": "/blog/how-long-you-can-take-birth-control-pills",
+      "destination": "/blog/how-long-you-can-take-birth-control-pills"
+    },
+    {
+      "source": "/blog/high-blood-pressure-during-pregnancy",
+      "destination": "/blog/high-blood-pressure-during-pregnancy"
+    },
+    {
+      "source": "/blog/cardiac-arrest-causes-symptoms-treatment",
+      "destination": "/blog/cardiac-arrest-causes-symptoms-treatment"
+    },
+    {
+      "source": "/blog/best-place-to-buy-beauty-products-online-in-philippines",
+      "destination": "/blog/best-place-to-buy-beauty-products-online-in-philippines"
+    },
+    {
+      "source": "/blog/covid-19-cases-and-appealed-for-an-emergency-vaccine",
+      "destination": "/blog/covid-19-cases-and-appealed-for-an-emergency-vaccine"
+    },
+    {
+      "source": "/blog/online-drugstores-in-manila",
+      "destination": "/blog/online-drugstores-in-manila"
+    },
+    {
+      "source": "/blog/what-is-blood-pressure",
+      "destination": "/blog/what-is-blood-pressure"
+    },
+    {
+      "source": "/blog/guide-to-order-repeat-prescription-online",
+      "destination": "/blog/guide-to-order-repeat-prescription-online"
+    },
+    {
+      "source": "/blog/check-out-these-5-beneficial-methods-to-boost-the-immune-system-of-your-child",
+      "destination": "/blog/check-out-these-5-beneficial-methods-to-boost-the-immune-system-of-your-child"
+    },
+    {
+      "source": "/blog/quarantine-anxiety-potential-reasons-types-and-solutions",
+      "destination": "/blog/quarantine-anxiety-potential-reasons-types-and-solutions"
+    },
+    {
+      "source": "/blog/health-benefits-of-adding-bananas-to-your-daily-diet",
+      "destination": "/blog/health-benefits-of-adding-bananas-to-your-daily-diet"
+    },
+    {
+      "source": "/blog/traveling-during-covid-19-in-the-philippines",
+      "destination": "/blog/traveling-during-covid-19-in-the-philippines"
+    },
+    {
+      "source": "/blog/coronavirus-vaccine-what-you-require-to-understand-so-far",
+      "destination": "/blog/coronavirus-vaccine-what-you-require-to-understand-so-far"
+    },
+    {
+      "source": "/blog/causes-treatment-and-symptoms-of-alcoholic-liver-disease",
+      "destination": "/blog/causes-treatment-and-symptoms-of-alcoholic-liver-disease"
+    },
+    {
+      "source": "/blog/know-the-foods-must-to-avoid-by-a-colon-cancer-patient",
+      "destination": "/blog/know-the-foods-must-to-avoid-by-a-colon-cancer-patient"
+    },
+    {
+      "source": "/blog/treatments-for-colon-cancer-and-prospective-costs",
+      "destination": "/blog/treatments-for-colon-cancer-and-prospective-costs"
+    },
+    {
+      "source": "/blog/colon-cancer-a-brief-information-about-the-signs-and-symptoms-2",
+      "destination": "/blog/colon-cancer-a-brief-information-about-the-signs-and-symptoms-2"
+    },
+    {
+      "source": "/blog/know-more-about-bone-marrow-cancer",
+      "destination": "/blog/know-more-about-bone-marrow-cancer"
+    },
+    {
+      "source": "/blog/what-is-the-test-and-treatment-for-bone-marrow-cancer",
+      "destination": "/blog/what-is-the-test-and-treatment-for-bone-marrow-cancer"
+    },
+    {
+      "source": "/blog/what-are-the-symptoms-and-causes-of-sarcoma-cancer",
+      "destination": "/blog/what-are-the-symptoms-and-causes-of-sarcoma-cancer"
+    },
+    {
+      "source": "/blog/risk-factors-and-preventions-for-softtissue-sarcoma",
+      "destination": "/blog/risk-factors-and-preventions-for-softtissue-sarcoma"
+    },
+    {
+      "source": "/blog/nonhodgkins-lymphoma-cancer-take-a-look-at-its-diagnosis-treatment",
+      "destination": "/blog/nonhodgkins-lymphoma-cancer-take-a-look-at-its-diagnosis-treatment"
+    },
+    {
+      "source": "/blog/lymphoma-signs-symptoms",
+      "destination": "/blog/lymphoma-signs-symptoms"
+    },
+    {
+      "source": "/blog/hodgkins-nonhodgkins-lymphoma-know-the-difference",
+      "destination": "/blog/hodgkins-nonhodgkins-lymphoma-know-the-difference"
+    },
+    {
+      "source": "/blog/hodgkins-lymphoma-diagnosis-and-treatment",
+      "destination": "/blog/hodgkins-lymphoma-diagnosis-and-treatment"
+    },
+    {
+      "source": "/blog/lipoma-cancer-know-the-causes-and-symptoms",
+      "destination": "/blog/lipoma-cancer-know-the-causes-and-symptoms"
+    },
+    {
+      "source": "/blog/lipoma-cancer-tests-treatment-complication",
+      "destination": "/blog/lipoma-cancer-tests-treatment-complication"
+    },
+    {
+      "source": "/blog/throat-cancer-a-complete-information-about-the-tests-and-treatments",
+      "destination": "/blog/throat-cancer-a-complete-information-about-the-tests-and-treatments"
+    },
+    {
+      "source": "/blog/different-stages-and-symptoms-of-throat-cancer",
+      "destination": "/blog/different-stages-and-symptoms-of-throat-cancer"
+    },
+    {
+      "source": "/blog/lung-cancer-awareness-are-you-at-risk",
+      "destination": "/blog/lung-cancer-awareness-are-you-at-risk"
+    },
+    {
+      "source": "/blog/regular-screening-for-lung-cancer-why-is-it-important",
+      "destination": "/blog/regular-screening-for-lung-cancer-why-is-it-important"
+    },
+    {
+      "source": "/blog/all-you-need-to-know-about-the-symptoms-diagnosis-of-small-cell-lung-cancer",
+      "destination": "/blog/all-you-need-to-know-about-the-symptoms-diagnosis-of-small-cell-lung-cancer"
+    },
+    {
+      "source": "/blog/what-are-the-causes-treatment-options-for-small-cell-lung-cancer",
+      "destination": "/blog/what-are-the-causes-treatment-options-for-small-cell-lung-cancer"
+    },
+    {
+      "source": "/blog/get-the-best-support-with-medicine-delivery-through-online-drugstore-in-the-philippines",
+      "destination": "/blog/get-the-best-support-with-medicine-delivery-through-online-drugstore-in-the-philippines"
+    },
+    {
+      "source": "/blog/are-online-pharmacies-the-future-of-brick-and-mortar-drugstores",
+      "destination": "/blog/are-online-pharmacies-the-future-of-brick-and-mortar-drugstores"
+    },
+    {
+      "source": "/blog/online-pharmacy-at-your-fingertips",
+      "destination": "/blog/online-pharmacy-at-your-fingertips"
+    },
+    {
+      "source": "/blog/what-are-the-symptoms-causes-treatment-diagnosis-of-pancreatitis",
+      "destination": "/blog/what-are-the-symptoms-causes-treatment-diagnosis-of-pancreatitis"
+    },
+    {
+      "source": "/blog/what-are-the-different-types-of-appendicitis",
+      "destination": "/blog/what-are-the-different-types-of-appendicitis"
+    },
+    {
+      "source": "/blog/what-happens-if-one-consumes-more-salt",
+      "destination": "/blog/what-happens-if-one-consumes-more-salt"
+    },
+    {
+      "source": "/blog/seven-best-vitamin-e-supplements-to-have-in-2020",
+      "destination": "/blog/seven-best-vitamin-e-supplements-to-have-in-2020"
+    },
+    {
+      "source": "/blog/check-out-the-amazing-health-benefits-of-adding-fish-oil-in-your-diet",
+      "destination": "/blog/check-out-the-amazing-health-benefits-of-adding-fish-oil-in-your-diet"
+    },
+    {
+      "source": "/blog/transmission-dose-exposure-and-vaccine-in-hepatitis-a",
+      "destination": "/blog/transmission-dose-exposure-and-vaccine-in-hepatitis-a"
+    },
+    {
+      "source": "/blog/a-fight-against-hepatitis-a-know-the-facts-prevention-and-vaccines-series",
+      "destination": "/blog/a-fight-against-hepatitis-a-know-the-facts-prevention-and-vaccines-series"
+    },
+    {
+      "source": "/blog/hepatitis-b-what-are-the-symptoms-and-signs",
+      "destination": "/blog/hepatitis-b-what-are-the-symptoms-and-signs"
+    },
+    {
+      "source": "/blog/hepatitis-b-what-is-it-and-how-does-one-get-it",
+      "destination": "/blog/hepatitis-b-what-is-it-and-how-does-one-get-it"
+    },
+    {
+      "source": "/blog/a-brief-overview-of-the-vaccination-of-hepatitis-b-for-adults",
+      "destination": "/blog/a-brief-overview-of-the-vaccination-of-hepatitis-b-for-adults"
+    },
+    {
+      "source": "/blog/hepatitis-c-in-women-diagnosis-and-complications",
+      "destination": "/blog/hepatitis-c-in-women-diagnosis-and-complications"
+    },
+    {
+      "source": "/blog/hepatitis-c-how-to-take-preventions-to-avoid-the-disease",
+      "destination": "/blog/hepatitis-c-how-to-take-preventions-to-avoid-the-disease"
+    },
+    {
+      "source": "/blog/causes-symptoms-prevention-and-diagnosis-of-hepatitis-c",
+      "destination": "/blog/causes-symptoms-prevention-and-diagnosis-of-hepatitis-c"
+    },
+    {
+      "source": "/blog/what-are-the-consequences-of-hepatitis-c-on-your-body",
+      "destination": "/blog/what-are-the-consequences-of-hepatitis-c-on-your-body"
+    },
+    {
+      "source": "/blog/effects-of-hepatitis-c-on-your-hair-nails-and-skin",
+      "destination": "/blog/effects-of-hepatitis-c-on-your-hair-nails-and-skin"
+    },
+    {
+      "source": "/blog/cirrhotic-considering-liver-transplant-a-better-option",
+      "destination": "/blog/cirrhotic-considering-liver-transplant-a-better-option"
+    },
+    {
+      "source": "/blog/what-are-the-common-risk-factors-associated-with-liver-cancer",
+      "destination": "/blog/what-are-the-common-risk-factors-associated-with-liver-cancer"
+    },
+    {
+      "source": "/blog/nonalcoholic-fatty-liver-disease-know-the-related-facts-and-treatments",
+      "destination": "/blog/nonalcoholic-fatty-liver-disease-know-the-related-facts-and-treatments"
+    },
+    {
+      "source": "/blog/know-the-real-facts-behind-the-popular-myths-regarding-liver-cirrhosis",
+      "destination": "/blog/know-the-real-facts-behind-the-popular-myths-regarding-liver-cirrhosis"
+    },
+    {
+      "source": "/blog/everything-you-should-know-about-fatty-liver-disease",
+      "destination": "/blog/everything-you-should-know-about-fatty-liver-disease"
+    },
+    {
+      "source": "/blog/reverse-fatty-liver-disease-time-to-follow-these-lifestyle-and-diet-tips",
+      "destination": "/blog/reverse-fatty-liver-disease-time-to-follow-these-lifestyle-and-diet-tips"
+    },
+    {
+      "source": "/blog/dos-and-donts-for-a-healthy-liver",
+      "destination": "/blog/dos-and-donts-for-a-healthy-liver"
+    },
+    {
+      "source": "/blog/everything-you-must-know-about-cholestatic-liver-disease-and-its-treatments",
+      "destination": "/blog/everything-you-must-know-about-cholestatic-liver-disease-and-its-treatments"
+    },
+    {
+      "source": "/blog/check-out-these-initial-signs-of-children-with-an-enlarged-liver",
+      "destination": "/blog/check-out-these-initial-signs-of-children-with-an-enlarged-liver"
+    },
+    {
+      "source": "/blog/what-are-the-symptoms-and-signs-of-breast-cancer",
+      "destination": "/blog/what-are-the-symptoms-and-signs-of-breast-cancer"
+    },
+    {
+      "source": "/blog/look-for-the-best-ways-of-treating-breast-cancer",
+      "destination": "/blog/look-for-the-best-ways-of-treating-breast-cancer"
+    },
+    {
+      "source": "/blog/causes-and-treatment-of-breast-cancer",
+      "destination": "/blog/causes-and-treatment-of-breast-cancer"
+    },
+    {
+      "source": "/blog/what-should-i-do-for-reducing-my-risk-of-breast-cancer",
+      "destination": "/blog/what-should-i-do-for-reducing-my-risk-of-breast-cancer"
+    },
+    {
+      "source": "/blog/opt-for-the-best-15-foods-to-help-you-prevent-from-breast-cancer",
+      "destination": "/blog/opt-for-the-best-15-foods-to-help-you-prevent-from-breast-cancer"
+    },
+    {
+      "source": "/blog/check-out-these-successful-home-remedies-for-cystic-breast-tissue",
+      "destination": "/blog/check-out-these-successful-home-remedies-for-cystic-breast-tissue"
+    },
+    {
+      "source": "/blog/right-diet-for-breast-cancer-patients",
+      "destination": "/blog/right-diet-for-breast-cancer-patients"
+    },
+    {
+      "source": "/blog/do-the-selfbreast-exam-and-increase-your-odds-of-early-treatment",
+      "destination": "/blog/do-the-selfbreast-exam-and-increase-your-odds-of-early-treatment"
+    },
+    {
+      "source": "/blog/6-natural-methods-to-prevent-breast-cancer",
+      "destination": "/blog/6-natural-methods-to-prevent-breast-cancer"
+    },
+    {
+      "source": "/blog/breast-cancer-definition-symptoms-types-stages-risk-factors-and-more",
+      "destination": "/blog/breast-cancer-definition-symptoms-types-stages-risk-factors-and-more"
+    },
+    {
+      "source": "/blog/maintain-high-blood-pressure-with-exercise",
+      "destination": "/blog/maintain-high-blood-pressure-with-exercise"
+    },
+    {
+      "source": "/blog/what-are-the-symptoms-of-hypertensive-emergencies",
+      "destination": "/blog/what-are-the-symptoms-of-hypertensive-emergencies"
+    },
+    {
+      "source": "/blog/hypertensionhigh-blood-pressure-dangerous-effects-on-the-body",
+      "destination": "/blog/hypertensionhigh-blood-pressure-dangerous-effects-on-the-body"
+    },
+    {
+      "source": "/blog/effective-home-remedies-to-manage-hypertensionhigh-blood-pressure",
+      "destination": "/blog/effective-home-remedies-to-manage-hypertensionhigh-blood-pressure"
+    },
+    {
+      "source": "/blog/hypertensionhigh-blood-pressure-symptoms-causes-and-treatment",
+      "destination": "/blog/hypertensionhigh-blood-pressure-symptoms-causes-and-treatment"
+    },
+    {
+      "source": "/blog/check-out-some-effective-techniques-of-stress-management",
+      "destination": "/blog/check-out-some-effective-techniques-of-stress-management"
+    },
+    {
+      "source": "/blog/basic-meditation-for-stress-management-maintain-a-happy-and-healthy-lifestyle",
+      "destination": "/blog/basic-meditation-for-stress-management-maintain-a-happy-and-healthy-lifestyle"
+    },
+    {
+      "source": "/blog/get-rid-of-the-stress-and-anxiety-with-the-right-posture-shifts",
+      "destination": "/blog/get-rid-of-the-stress-and-anxiety-with-the-right-posture-shifts"
+    },
+    {
+      "source": "/blog/how-to-reduce-stress-in-covid19-check-out-these-10-effective-ways",
+      "destination": "/blog/how-to-reduce-stress-in-covid19-check-out-these-10-effective-ways"
+    },
+    {
+      "source": "/blog/what-are-the-types-and-symptoms-of-blood-cancer",
+      "destination": "/blog/what-are-the-types-and-symptoms-of-blood-cancer"
+    },
+    {
+      "source": "/blog/type-2-diabetes-nine-early-symptoms-and-ways-to-fight-it-during-the-pregnancy",
+      "destination": "/blog/type-2-diabetes-nine-early-symptoms-and-ways-to-fight-it-during-the-pregnancy"
+    },
+    {
+      "source": "/blog/general-signs-of-undiagnosed-diabetes-and-health-tips-to-control-it",
+      "destination": "/blog/general-signs-of-undiagnosed-diabetes-and-health-tips-to-control-it"
+    },
+    {
+      "source": "/blog/type-2-diabetes-symptoms-causes-and-treatment-all-you-need-to-know",
+      "destination": "/blog/type-2-diabetes-symptoms-causes-and-treatment-all-you-need-to-know"
+    },
+    {
+      "source": "/blog/how-low-blood-sugar-affects-your-body",
+      "destination": "/blog/how-low-blood-sugar-affects-your-body"
+    },
+    {
+      "source": "/blog/what-are-the-symptoms-causes-and-treatment-for-diabetes-type-1",
+      "destination": "/blog/what-are-the-symptoms-causes-and-treatment-for-diabetes-type-1"
+    },
+    {
+      "source": "/blog/stabilize-your-blood-sugar-7-delectable-snacks-that-help-in-hunger",
+      "destination": "/blog/stabilize-your-blood-sugar-7-delectable-snacks-that-help-in-hunger"
+    },
+    {
+      "source": "/blog/does-diabetes-lead-to-tendon-damage",
+      "destination": "/blog/does-diabetes-lead-to-tendon-damage"
+    },
+    {
+      "source": "/blog/benefits-of-drinking-golden-milk-at-night",
+      "destination": "/blog/benefits-of-drinking-golden-milk-at-night"
+    },
+    {
+      "source": "/blog/travel-beauty-tips-that-every-girl-should-know",
+      "destination": "/blog/travel-beauty-tips-that-every-girl-should-know"
+    },
+    {
+      "source": "/blog/useful-tips-for-a-better-digestion",
+      "destination": "/blog/useful-tips-for-a-better-digestion"
+    },
+    {
+      "source": "/blog/know-more-about-the-symptoms-and-signs-of-indigestion",
+      "destination": "/blog/know-more-about-the-symptoms-and-signs-of-indigestion"
+    },
+    {
+      "source": "/blog/warning-signs-of-kidney-disease-heart-attack-stroke",
+      "destination": "/blog/warning-signs-of-kidney-disease-heart-attack-stroke"
+    },
+    {
+      "source": "/blog/how-does-oral-health-determine-your-heart-health",
+      "destination": "/blog/how-does-oral-health-determine-your-heart-health"
+    },
+    {
+      "source": "/blog/lifestyle-changes-you-should-make-to-prevent-heart-failure",
+      "destination": "/blog/lifestyle-changes-you-should-make-to-prevent-heart-failure"
+    },
+    {
+      "source": "/blog/heartburn-all-you-need-to-know-about-its-causes-and-symptoms",
+      "destination": "/blog/heartburn-all-you-need-to-know-about-its-causes-and-symptoms"
+    },
+    {
+      "source": "/blog/how-frequently-drinking-water-benefits-your-overall-wellbeing",
+      "destination": "/blog/how-frequently-drinking-water-benefits-your-overall-wellbeing"
+    },
+    {
+      "source": "/blog/discover-different-varieties-of-rice-that-helps-in-preventing-obesity",
+      "destination": "/blog/discover-different-varieties-of-rice-that-helps-in-preventing-obesity"
+    },
+    {
+      "source": "/blog/how-brown-rice-aids-in-weight-loss",
+      "destination": "/blog/how-brown-rice-aids-in-weight-loss"
+    },
+    {
+      "source": "/blog/check-out-these-5-valuable-house-remedies-and-soothe-colicky-kids",
+      "destination": "/blog/check-out-these-5-valuable-house-remedies-and-soothe-colicky-kids"
+    },
+    {
+      "source": "/blog/how-to-maintain-good-communication-with-children-about-cancer-prognosis",
+      "destination": "/blog/how-to-maintain-good-communication-with-children-about-cancer-prognosis"
+    },
+    {
+      "source": "/blog/six-simple-skincare-tips-to-take-care-of-mature-skin",
+      "destination": "/blog/six-simple-skincare-tips-to-take-care-of-mature-skin"
+    },
+    {
+      "source": "/blog/washing-hands-often-7-tips-on-how-to-keep-your-skin-healthy",
+      "destination": "/blog/washing-hands-often-7-tips-on-how-to-keep-your-skin-healthy"
+    },
+    {
+      "source": "/blog/ways-to-take-care-of-your-skin-in-the-time-of-coronavirus-pandemic",
+      "destination": "/blog/ways-to-take-care-of-your-skin-in-the-time-of-coronavirus-pandemic"
+    },
+    {
+      "source": "/blog/follow-these-tips-and-shield-your-skin-from-sunburn-and-tan",
+      "destination": "/blog/follow-these-tips-and-shield-your-skin-from-sunburn-and-tan"
+    },
+    {
+      "source": "/blog/useful-skin-care-tips-for-men",
+      "destination": "/blog/useful-skin-care-tips-for-men"
+    },
+    {
+      "source": "/blog/cetaphil-soothing-skincare-products-must-have",
+      "destination": "/blog/cetaphil-soothing-skincare-products-must-have"
+    },
+    {
+      "source": "/blog/what-is-skin-allergy",
+      "destination": "/blog/what-is-skin-allergy"
+    },
+    {
+      "source": "/blog/natural-ways-to-fight-against-hair-loss",
+      "destination": "/blog/natural-ways-to-fight-against-hair-loss"
+    },
+    {
+      "source": "/blog/top-nutritious-food-items-for-kids",
+      "destination": "/blog/top-nutritious-food-items-for-kids"
+    },
+    {
+      "source": "/blog/how-to-stay-healthy-in-quarantine",
+      "destination": "/blog/how-to-stay-healthy-in-quarantine"
+    },
+    {
+      "source": "/blog/what-is-the-link-between-air-pollution-and-covid19-death-risk",
+      "destination": "/blog/what-is-the-link-between-air-pollution-and-covid19-death-risk"
+    },
+    {
+      "source": "/blog/coronavirus-updates-try-living-life-in-a-new-way-as-a-warning-from-who",
+      "destination": "/blog/coronavirus-updates-try-living-life-in-a-new-way-as-a-warning-from-who"
+    },
+    {
+      "source": "/blog/maintain-healthy-habits-in-the-times-of-covid19-crisis-and-stay-active",
+      "destination": "/blog/maintain-healthy-habits-in-the-times-of-covid19-crisis-and-stay-active"
+    },
+    {
+      "source": "/blog/lose-facial-fat-naturally-and-improve-your-aqppearance",
+      "destination": "/blog/lose-facial-fat-naturally-and-improve-your-aqppearance"
+    },
+    {
+      "source": "/blog/topnotch-beneficial-tips-to-reduce-the-belly-fat-naturally",
+      "destination": "/blog/topnotch-beneficial-tips-to-reduce-the-belly-fat-naturally"
+    },
+    {
+      "source": "/blog/follow-these-hair-care-tips-and-sustain-the-shine-in-your-locks",
+      "destination": "/blog/follow-these-hair-care-tips-and-sustain-the-shine-in-your-locks"
+    },
+    {
+      "source": "/blog/diy-hair-color-tips-time-to-ace-that-new-hair-color-trend",
+      "destination": "/blog/diy-hair-color-tips-time-to-ace-that-new-hair-color-trend"
+    },
+    {
+      "source": "/blog/5-latest-hair-color-ideas-people-are-trying-in-2020",
+      "destination": "/blog/5-latest-hair-color-ideas-people-are-trying-in-2020"
+    },
+    {
+      "source": "/blog/children-and-covid19-what-the-parents-need-to-know",
+      "destination": "/blog/children-and-covid19-what-the-parents-need-to-know"
+    },
+    {
+      "source": "/blog/facing-a-health-crisis-heres-how-you-can-keep-yourself-healthy",
+      "destination": "/blog/facing-a-health-crisis-heres-how-you-can-keep-yourself-healthy"
+    },
+    {
+      "source": "/blog/home-care-for-children-with-mild-covid19-symptoms",
+      "destination": "/blog/home-care-for-children-with-mild-covid19-symptoms"
+    },
+    {
+      "source": "/blog/measures-taken-by-philippine-fitness-industry-to-flourish-during-the-pandemic",
+      "destination": "/blog/measures-taken-by-philippine-fitness-industry-to-flourish-during-the-pandemic"
+    },
+    {
+      "source": "/blog/how-coronavirus-has-affected-health-and-economy",
+      "destination": "/blog/how-coronavirus-has-affected-health-and-economy"
+    },
+    {
+      "source": "/blog/top-5-bad-habits-that-need-to-be-avoided-from-the-risk-of-covid19",
+      "destination": "/blog/top-5-bad-habits-that-need-to-be-avoided-from-the-risk-of-covid19"
+    },
+    {
+      "source": "/blog/diabetes-and-covid19-how-to-handle-the-situation",
+      "destination": "/blog/diabetes-and-covid19-how-to-handle-the-situation"
+    },
+    {
+      "source": "/blog/the-right-way-to-put-on-and-put-off-a-face-mask",
+      "destination": "/blog/the-right-way-to-put-on-and-put-off-a-face-mask"
+    },
+    {
+      "source": "/blog/why-is-wearing-the-face-mask-during-exercise-at-risk",
+      "destination": "/blog/why-is-wearing-the-face-mask-during-exercise-at-risk"
+    },
+    {
+      "source": "/blog/covid19-solo-commuting-and-daily-office-work-how-to-decrease-the-infection-risk",
+      "destination": "/blog/covid19-solo-commuting-and-daily-office-work-how-to-decrease-the-infection-risk"
+    },
+    {
+      "source": "/blog/did-you-get-a-common-allergy-or-coronavirus-take-a-look-at-their-symptoms",
+      "destination": "/blog/did-you-get-a-common-allergy-or-coronavirus-take-a-look-at-their-symptoms"
+    },
+    {
+      "source": "/blog/what-are-the-10-best-coronavirus-health-insurance-plans-in-the-philippines-2020",
+      "destination": "/blog/what-are-the-10-best-coronavirus-health-insurance-plans-in-the-philippines-2020"
+    },
+    {
+      "source": "/blog/new-coronavirus-variant-how-concerned-should-we-be",
+      "destination": "/blog/new-coronavirus-variant-how-concerned-should-we-be"
+    },
+    {
+      "source": "/blog/educate-your-kid-about-healthy-eating-habits",
+      "destination": "/blog/educate-your-kid-about-healthy-eating-habits"
+    },
+    {
+      "source": "/blog/consume-the-right-food-items-and-bid-adieu-to-dry-skin-and-hair",
+      "destination": "/blog/consume-the-right-food-items-and-bid-adieu-to-dry-skin-and-hair"
+    },
+    {
+      "source": "/blog/egg-banana-and-oatmeal-major-ingredients-to-shed-those-extra-kilos",
+      "destination": "/blog/egg-banana-and-oatmeal-major-ingredients-to-shed-those-extra-kilos"
+    },
+    {
+      "source": "/blog/healthy-food-items-that-your-kids-would-love-eating",
+      "destination": "/blog/healthy-food-items-that-your-kids-would-love-eating"
+    },
+    {
+      "source": "/blog/how-to-choose-the-right-variety-of-oats",
+      "destination": "/blog/how-to-choose-the-right-variety-of-oats"
+    },
+    {
+      "source": "/blog/top-5-easy-to-make-healthy-breakfast-dishes",
+      "destination": "/blog/top-5-easy-to-make-healthy-breakfast-dishes"
+    },
+    {
+      "source": "/blog/include-these-healthy-diet-options-in-your-daily-routine-to-prevent-cancer",
+      "destination": "/blog/include-these-healthy-diet-options-in-your-daily-routine-to-prevent-cancer"
+    },
+    {
+      "source": "/blog/simple-low-carb-diet-meal-plan-for-beginners",
+      "destination": "/blog/simple-low-carb-diet-meal-plan-for-beginners"
+    },
+    {
+      "source": "/blog/ultimate-beginners-guide-to-plantbased-eating",
+      "destination": "/blog/ultimate-beginners-guide-to-plantbased-eating"
+    },
+    {
+      "source": "/blog/how-to-add-a-sufficient-amount-of-vitamin-d-in-your-diet",
+      "destination": "/blog/how-to-add-a-sufficient-amount-of-vitamin-d-in-your-diet"
+    },
+    {
+      "source": "/blog/8-reasons-to-choose-watermelon-as-your-summer-fruit",
+      "destination": "/blog/8-reasons-to-choose-watermelon-as-your-summer-fruit"
+    },
+    {
+      "source": "/blog/include-these-healthy-foods-to-eat-while-you-work-from-home",
+      "destination": "/blog/include-these-healthy-foods-to-eat-while-you-work-from-home"
+    },
+    {
+      "source": "/blog/high-protein-and-low-carb-diet-all-you-need-to-know-about-it",
+      "destination": "/blog/high-protein-and-low-carb-diet-all-you-need-to-know-about-it"
+    },
+    {
+      "source": "/blog/can-you-eat-quinoa-on-your-low-carb-diet-here-is-the-answer",
+      "destination": "/blog/can-you-eat-quinoa-on-your-low-carb-diet-here-is-the-answer"
+    },
+    {
+      "source": "/blog/add-on-the-9-foods-for-a-better-and-safe-monsoon",
+      "destination": "/blog/add-on-the-9-foods-for-a-better-and-safe-monsoon"
+    },
+    {
+      "source": "/blog/add-kiwi-in-your-regular-diet-to-enjoy-these-healthful-benefits",
+      "destination": "/blog/add-kiwi-in-your-regular-diet-to-enjoy-these-healthful-benefits"
+    },
+    {
+      "source": "/blog/check-out-these-top-10-high-carbohydrate-foods-to-steer-clear-of",
+      "destination": "/blog/check-out-these-top-10-high-carbohydrate-foods-to-steer-clear-of"
+    },
+    {
+      "source": "/blog/amazing-10-benefits-of-giloy",
+      "destination": "/blog/amazing-10-benefits-of-giloy"
+    },
+    {
+      "source": "/blog/check-out-these-4-easy-and-effective-home-workouts-to-get-in-shape",
+      "destination": "/blog/check-out-these-4-easy-and-effective-home-workouts-to-get-in-shape"
+    },
+    {
+      "source": "/blog/no-equipment-home-leg-exercises-for-everyone",
+      "destination": "/blog/no-equipment-home-leg-exercises-for-everyone"
+    },
+    {
+      "source": "/blog/simple-chest-workout-exercises-you-can-do-at-home-without-any-equipment",
+      "destination": "/blog/simple-chest-workout-exercises-you-can-do-at-home-without-any-equipment"
+    },
+    {
+      "source": "/blog/10-workouts-for-women-to-stay-healthy-and-fit",
+      "destination": "/blog/10-workouts-for-women-to-stay-healthy-and-fit"
+    },
+    {
+      "source": "/blog/gain-strength-and-muscle-on-an-efficient-vegan-diet",
+      "destination": "/blog/gain-strength-and-muscle-on-an-efficient-vegan-diet"
+    },
+    {
+      "source": "/blog/how-do-todays-fit-muscles-determine-your-tomorrows-heart-health",
+      "destination": "/blog/how-do-todays-fit-muscles-determine-your-tomorrows-heart-health"
+    },
+    {
+      "source": "/blog/five-weight-loss-foods",
+      "destination": "/blog/five-weight-loss-foods"
+    },
+    {
+      "source": "/blog/formula-to-relish-lip-smacking-junk-food-snacks-without-putting-up-excess-weight",
+      "destination": "/blog/formula-to-relish-lip-smacking-junk-food-snacks-without-putting-up-excess-weight"
+    },
+    {
+      "source": "/blog/top-5-weight-loss-tips-your-ultimate-chance-to-stay-fit-and-active",
+      "destination": "/blog/top-5-weight-loss-tips-your-ultimate-chance-to-stay-fit-and-active"
+    },
+    {
+      "source": "/blog/burn-the-belly-fat-with-a-better-diet-and-stay-healthy",
+      "destination": "/blog/burn-the-belly-fat-with-a-better-diet-and-stay-healthy"
+    },
+    {
+      "source": "/blog/what-are-the-ways-to-lose-weight-post-delivering-a-baby",
+      "destination": "/blog/what-are-the-ways-to-lose-weight-post-delivering-a-baby"
+    },
+    {
+      "source": "/blog/tips-to-reduce-side-fat-to-look-fit",
+      "destination": "/blog/tips-to-reduce-side-fat-to-look-fit"
+    },
+    {
+      "source": "/blog/reduce-weight-faster-with-the-kettlebell-workouts",
+      "destination": "/blog/reduce-weight-faster-with-the-kettlebell-workouts"
+    },
+    {
+      "source": "/blog/30minute-calorie-burn-power-workout-for-fat-loss",
+      "destination": "/blog/30minute-calorie-burn-power-workout-for-fat-loss"
+    },
+    {
+      "source": "/blog/try-out-these-exercises-and-get-rid-of-the-side-fat",
+      "destination": "/blog/try-out-these-exercises-and-get-rid-of-the-side-fat"
+    },
+    {
+      "source": "/blog/benefits-of-green-tea-in-weight-loss",
+      "destination": "/blog/benefits-of-green-tea-in-weight-loss"
+    },
+    {
+      "source": "/blog/how-a-glass-of-water-can-help-you-in-reducing-excess-fats",
+      "destination": "/blog/how-a-glass-of-water-can-help-you-in-reducing-excess-fats"
+    },
+    {
+      "source": "/blog/different-ways-of-reducing-weight-in-the-cheapest-way-without-exercise",
+      "destination": "/blog/different-ways-of-reducing-weight-in-the-cheapest-way-without-exercise"
+    },
+    {
+      "source": "/blog/list-of-best-diet-plans-for-weight-loss-advised-by-scientific-btudies",
+      "destination": "/blog/list-of-best-diet-plans-for-weight-loss-advised-by-scientific-btudies"
+    },
+    {
+      "source": "/blog/what-is-the-best-time-to-start-exercise-for-losing-weight",
+      "destination": "/blog/what-is-the-best-time-to-start-exercise-for-losing-weight"
+    },
+    {
+      "source": "/blog/list-of-bodyweight-strenght-exercises-that-you-can-try-out-at-your-home",
+      "destination": "/blog/list-of-bodyweight-strenght-exercises-that-you-can-try-out-at-your-home"
+    },
+    {
+      "source": "/blog/best-drinks-for-maintaining-a-healthy-weight-loss-diet",
+      "destination": "/blog/best-drinks-for-maintaining-a-healthy-weight-loss-diet"
+    },
+    {
+      "source": "/blog/6-ways-of-losing-weight-with-the-help-of-water",
+      "destination": "/blog/6-ways-of-losing-weight-with-the-help-of-water"
+    },
+    {
+      "source": "/blog/8-simple-tips-to-lose-weight-and-stay-healthy-without-dieting",
+      "destination": "/blog/8-simple-tips-to-lose-weight-and-stay-healthy-without-dieting"
+    },
+    {
+      "source": "/blog/how-to-ensure-your-mental-wellness-in-a-crisis",
+      "destination": "/blog/how-to-ensure-your-mental-wellness-in-a-crisis"
+    },
+    {
+      "source": "/blog/top-3-habits-of-individuals-with-excellent-brain-health",
+      "destination": "/blog/top-3-habits-of-individuals-with-excellent-brain-health"
+    },
+    {
+      "source": "/blog/how-exercise-can-help-in-the-mental-health-of-children",
+      "destination": "/blog/how-exercise-can-help-in-the-mental-health-of-children"
+    },
+    {
+      "source": "/blog/8-fruits-that-you-must-have-for-enhanced-immunity-to-fight-against-covid-19",
+      "destination": "/blog/8-fruits-that-you-must-have-for-enhanced-immunity-to-fight-against-covid-19"
+    },
+    {
+      "source": "/blog/five-vitamin-boosting-immunity-against-illness",
+      "destination": "/blog/five-vitamin-boosting-immunity-against-illness"
+    },
+    {
+      "source": "/blog/curcumin-a-fine-ingredient-to-fight-inflammation",
+      "destination": "/blog/curcumin-a-fine-ingredient-to-fight-inflammation"
+    },
+    {
+      "source": "/blog/nutrition-tips-for-a-healthy-immune-system",
+      "destination": "/blog/nutrition-tips-for-a-healthy-immune-system"
+    },
+    {
+      "source": "/blog/role-of-vitamin-d-in-the-fight-against-covid19",
+      "destination": "/blog/role-of-vitamin-d-in-the-fight-against-covid19"
+    },
+    {
+      "source": "/blog/boost-your-immunity-in-isolation-through-regular-exercise",
+      "destination": "/blog/boost-your-immunity-in-isolation-through-regular-exercise"
+    },
+    {
+      "source": "/blog/top-10-immunity-booster-food-items-for-kids",
+      "destination": "/blog/top-10-immunity-booster-food-items-for-kids"
+    },
+    {
+      "source": "/blog/top-5-superfoods-to-boost-the-immune-health",
+      "destination": "/blog/top-5-superfoods-to-boost-the-immune-health"
+    },
+    {
+      "source": "/blog/nutrition-tips-to-boost-your-immune-system",
+      "destination": "/blog/nutrition-tips-to-boost-your-immune-system"
+    },
+    {
+      "source": "/blog/opt-for-5-best-fruits-that-can-help-in-boosting-the-immunity-properly",
+      "destination": "/blog/opt-for-5-best-fruits-that-can-help-in-boosting-the-immunity-properly"
+    },
+    {
+      "source": "/blog/look-healthy-soup-recipes-to-boost-your-immunity",
+      "destination": "/blog/look-healthy-soup-recipes-to-boost-your-immunity"
+    },
+    {
+      "source": "/blog/five-types-of-milk-supplement-weight-gain",
+      "destination": "/blog/five-types-of-milk-supplement-weight-gain"
+    },
+    {
+      "source": "/blog/why-do-we-crave-for-junk-food-on-a-sleepless-night",
+      "destination": "/blog/why-do-we-crave-for-junk-food-on-a-sleepless-night"
+    },
+    {
+      "source": "/blog/best-weight-gainer-supplements-in-the-philippines",
+      "destination": "/blog/best-weight-gainer-supplements-in-the-philippines"
+    },
+    {
+      "source": "/blog/how-does-vitamin-b6-help-in-boosting-the-immune-system-of-the-human-body",
+      "destination": "/blog/how-does-vitamin-b6-help-in-boosting-the-immune-system-of-the-human-body"
+    },
+    {
+      "source": "/blog/4-simple-yet-beneficial-ways-to-maintain-a-healthy-lifestyle",
+      "destination": "/blog/4-simple-yet-beneficial-ways-to-maintain-a-healthy-lifestyle"
+    },
+    {
+      "source": "/blog/how-oxygen-can-guarantee-you-radiant-skin-and-healthy-tresses",
+      "destination": "/blog/how-oxygen-can-guarantee-you-radiant-skin-and-healthy-tresses"
+    },
+    {
+      "source": "/blog/how-to-determine-your-exercise-intensity-by-calculating-the-heart-rate",
+      "destination": "/blog/how-to-determine-your-exercise-intensity-by-calculating-the-heart-rate"
+    },
+    {
+      "source": "/blog/top-5-health-and-wellness-tips-to-consider-during-quarantine-days-in-philippines",
+      "destination": "/blog/top-5-health-and-wellness-tips-to-consider-during-quarantine-days-in-philippines"
+    },
+    {
+      "source": "/blog/benefits-of-avocados-for-your-health",
+      "destination": "/blog/benefits-of-avocados-for-your-health"
+    },
+    {
+      "source": "/blog/best-antiaging-foods-to-eat-at-the-40s-or-beyond",
+      "destination": "/blog/best-antiaging-foods-to-eat-at-the-40s-or-beyond"
+    },
+    {
+      "source": "/blog/follow-the-best-health-tips-to-be-more-productive-in-the-morning",
+      "destination": "/blog/follow-the-best-health-tips-to-be-more-productive-in-the-morning"
+    },
+    {
+      "source": "/blog/how-to-live-a-healthy-life-by-taking-good-care-of-your-liver",
+      "destination": "/blog/how-to-live-a-healthy-life-by-taking-good-care-of-your-liver"
+    },
+    {
+      "source": "/blog/health-benefits-of-miraculous-golden-turmeric-milk",
+      "destination": "/blog/health-benefits-of-miraculous-golden-turmeric-milk"
+    },
+    {
+      "source": "/blog/what-are-the-health-benefits-of-taking-vitamin-c-supplements",
+      "destination": "/blog/what-are-the-health-benefits-of-taking-vitamin-c-supplements"
+    },
+    {
+      "source": "/blog/buy-medicine-online-from-getmeds-and-ensure-your-well-being",
+      "destination": "/blog/buy-medicine-online-from-getmeds-and-ensure-your-well-being"
+    },
+    {
+      "source": "/blog/getmeds-reliable-and-quickest-pharmacy-online-delivery-at-your-doorstep",
+      "destination": "/blog/getmeds-reliable-and-quickest-pharmacy-online-delivery-at-your-doorstep"
+    },
+    {
+      "source": "/blog/have-a-look-at-these-key-points-to-choose-the-best-multivitamin-for-yourself",
+      "destination": "/blog/have-a-look-at-these-key-points-to-choose-the-best-multivitamin-for-yourself"
+    },
+    {
+      "source": "/blog/how-are-avocado-beneficial-for-health",
+      "destination": "/blog/how-are-avocado-beneficial-for-health"
+    },
+    {
+      "source": "/blog/how-is-garlic-beneficial-to-health",
+      "destination": "/blog/how-is-garlic-beneficial-to-health"
+    },
+    {
+      "source": "/blog/what-are-the-side-effects-along-with-the-health-benefits-of-avocado",
+      "destination": "/blog/what-are-the-side-effects-along-with-the-health-benefits-of-avocado"
+    },
+    {
+      "source": "/blog/cherimoya-custard-apple-what-are-its-health-benefits-you-should-know-about",
+      "destination": "/blog/cherimoya-custard-apple-what-are-its-health-benefits-you-should-know-about"
+    },
+    {
+      "source": "/blog/chicory-know-the-benefits-and-potential-side-effects",
+      "destination": "/blog/chicory-know-the-benefits-and-potential-side-effects"
+    },
+    {
+      "source": "/blog/15-ways-to-improve-your-health-in-2021",
+      "destination": "/blog/15-ways-to-improve-your-health-in-2021"
+    },
+    {
+      "source": "/blog/:slug*",
       "destination": "/blog-detail"
     },
     {

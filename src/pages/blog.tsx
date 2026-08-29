@@ -34,7 +34,7 @@ export default function Blog() {
     setPageMeta({
       title: 'Blog',
       description: 'Stay informed with the latest news, health guides, and updates from Getmeds — your trusted source for pharmaceutical insights and patient care resources in the Philippines.',
-      path: '/blog.html',
+      path: '/blog',
     });
   }, []);
 

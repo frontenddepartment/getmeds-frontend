@@ -15,7 +15,7 @@ export default function Meditations() {
     setPageMeta({
       title: 'Meditations',
       description: 'Nurture your mind, body, and soul. Discover clinical mindfulness, guided breathing exercises, and soothing ambient soundscapes designed to support your holistic wellness journey.',
-      path: '/meditations.html',
+      path: '/meditations',
     });
   }, []);
 

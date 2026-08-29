@@ -5,6 +5,7 @@ import { urlFor } from '../lib/sanity';
 import type { Product as SanityProduct, Category } from '../types/sanity';
 import { injectHTML } from '../lib/injectHTML';
 import { sortByFeaturedOrder } from '../lib/categoryImageKey';
+import { setPageMeta, injectJsonLd, removeJsonLd } from '../lib/seo';
 
 
 interface ProductWithCategory extends Omit<SanityProduct, 'category'> {
@@ -433,17 +434,6 @@ export default function CancerMedicines() {
     localStorage.setItem('selectedCategory', JSON.stringify(selectedCategory));
   }, [selectedCategory]);
 
-  // Synchronize Title to active category
-  useEffect(() => {
-    const sectionLabel = selectedCategory.category !== 'All' ? selectedCategory.category : 'Products';
-    const displayLabel = selectedCategory.subCategory !== 'All' ? selectedCategory.subCategory : selectedCategory.category;
-    if (displayLabel === 'All') {
-      document.title = 'Products - Getmeds';
-    } else {
-      document.title = `${displayLabel} - ${sectionLabel} | Getmeds`;
-    }
-  }, [selectedCategory]);
-
   const getProductImage = (p: ProductWithCategory, size?: number) => {
     if (p.image && p.image.asset) {
       try {
@@ -700,6 +690,60 @@ export default function CancerMedicines() {
     });
     return map;
   }, [productsData]);
+
+  // Synchronize title, meta description, canonical, OG, and structured data to the
+  // active category/condition. Previously this only patched document.title, so search
+  // engines and social previews saw the Cancer Medicines default on every one of the
+  // 14 category pages and 79 condition pages regardless of what was actually selected.
+  // Placed after conditionHubPaths/getFiltered/processedCats above (not before) — this
+  // effect's dependency array is evaluated during render, so referencing a const that's
+  // declared later in the component throws "Cannot access before initialization".
+  useEffect(() => {
+    const sectionLabel = selectedCategory.category !== 'All' ? selectedCategory.category : 'Products';
+    const displayLabel = selectedCategory.subCategory !== 'All' ? selectedCategory.subCategory : selectedCategory.category;
+    const isCondition = displayLabel !== 'All' && selectedCategory.subCategory !== 'All';
+
+    const matchedCat = processedCats.find(c => c.category.toLowerCase() === selectedCategory.category.toLowerCase());
+    const path = isCondition
+      ? conditionHubPaths.get(selectedCategory.subCategory.toLowerCase())
+        ?? (matchedCat?.slug ? `/${matchedCat.slug}/${selectedCategory.subCategory.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}` : undefined)
+      : matchedCat?.slug ? `/${matchedCat.slug}` : undefined;
+
+    if (displayLabel === 'All') {
+      setPageMeta({
+        title: 'Products',
+        description: "Browse Getmeds' full range of specialty pharmaceutical products across oncology, hematology, cardiology, and other therapeutic areas in the Philippines.",
+        path: path || '/product-range',
+      });
+      removeJsonLd('jsonld-medical-webpage');
+      return;
+    }
+
+    // Real per-condition/category description, built from the products actually filed
+    // under it — there is no dedicated Sanity description field for conditions/categories,
+    // so this is generated from live product data rather than invented copy.
+    const sampleNames = getFiltered(selectedCategory).slice(0, 3).map(getProductDisplayName).filter(Boolean);
+    const description = sampleNames.length
+      ? `Browse Getmeds' ${displayLabel} medicines available in the Philippines, including ${sampleNames.join(', ')}. FDA Philippines-licensed distributor, prescription-based ordering, nationwide delivery.`
+      : `Browse Getmeds' ${displayLabel} medicines available in the Philippines. FDA Philippines-licensed distributor, prescription-based ordering, nationwide delivery.`;
+
+    setPageMeta({
+      title: `${displayLabel} - ${sectionLabel}`,
+      description,
+      path,
+    });
+
+    if (isCondition) {
+      injectJsonLd('jsonld-medical-webpage', {
+        '@type': 'MedicalWebPage',
+        name: `${displayLabel} Medicines in the Philippines`,
+        about: { '@type': 'MedicalCondition', name: displayLabel },
+        ...(path ? { url: `${window.location.origin}${path}` } : {}),
+      });
+    } else {
+      removeJsonLd('jsonld-medical-webpage');
+    }
+  }, [selectedCategory, productsData, processedCats, conditionHubPaths]);
 
   const getProductDetailUrl = (p: ProductWithCategory) => {
     // productPageUrl from the sheet has no protocol (e.g. "getmeds.ph/cancer-medicines/..."),

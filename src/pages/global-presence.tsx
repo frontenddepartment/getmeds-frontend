@@ -10,7 +10,7 @@ export default function GlobalPresence() {
     setPageMeta({
       title: 'Global Presence',
       description: 'Getmeds global network spans continents to close the healthcare gap — sourcing internationally recognized medicines and expanding access for the patients and partners who depend on us.',
-      path: '/global-presence.html',
+      path: '/global-presence',
     });
   }, []);
 

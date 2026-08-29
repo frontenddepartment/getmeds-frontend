@@ -31,6 +31,21 @@ function updateCanonical(path: string) {
   el.setAttribute('href', `${BASE_URL}${path}`);
 }
 
+export function injectJsonLd(id: string, data: Record<string, unknown>) {
+  let el = document.getElementById(id) as HTMLScriptElement | null;
+  if (!el) {
+    el = document.createElement('script');
+    el.id = id;
+    el.setAttribute('type', 'application/ld+json');
+    document.head.appendChild(el);
+  }
+  el.textContent = JSON.stringify({ '@context': 'https://schema.org', ...data });
+}
+
+export function removeJsonLd(id: string) {
+  document.getElementById(id)?.remove();
+}
+
 export function setPageMeta({ title, description, path, image, type = 'website' }: PageMetaOptions) {
   const fullTitle = title === SITE_NAME ? SITE_NAME : `${title} - ${SITE_NAME}`;
   document.title = fullTitle;

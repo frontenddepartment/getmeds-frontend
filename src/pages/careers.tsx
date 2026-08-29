@@ -21,7 +21,7 @@ const Careers: React.FC = () => {
     setPageMeta({
       title: 'Careers',
       description: "Join our mission to make healthcare accessible worldwide. We're looking for passionate individuals to innovate and grow with us.",
-      path: '/careers.html',
+      path: '/careers',
     });
   }, []);
 

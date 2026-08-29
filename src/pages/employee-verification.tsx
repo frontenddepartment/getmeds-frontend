@@ -9,7 +9,7 @@ export default function EmployeeVerification() {
     setPageMeta({
       title: 'Employee Verification Portal',
       description: "Verify whether someone contacting you is a genuine Getmeds Philippines employee before sharing personal information or making any payment.",
-      path: '/employee-verification.html',
+      path: '/employee-verification',
     });
   }, []);
 

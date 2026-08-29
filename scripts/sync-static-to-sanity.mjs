@@ -6,7 +6,9 @@ import { createClient } from '@sanity/client';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Load .env file manually if process.env values are missing
+const isInvalid = (val) => !val || val.includes('[SENSITIVE]') || val.includes('[') || val.includes(']');
+
+// Load .env file manually if process.env values are missing or contain Vercel placeholders
 const envPath = path.resolve(__dirname, '../.env');
 if (fs.existsSync(envPath)) {
   const envContent = fs.readFileSync(envPath, 'utf8');
@@ -15,17 +17,24 @@ if (fs.existsSync(envPath)) {
     if (trimmed && !trimmed.startsWith('#') && trimmed.includes('=')) {
       const [key, ...valueParts] = trimmed.split('=');
       const val = valueParts.join('=').trim();
-      if (key && !process.env[key]) {
+      if (key && (isInvalid(process.env[key]) || !process.env[key])) {
         process.env[key] = val;
       }
     }
   });
 }
 
-const projectId = process.env.VITE_SANITY_PROJECT_ID || process.env.SANITY_PROJECT_ID || 's7ocz8zp';
-const dataset = process.env.VITE_SANITY_DATASET || process.env.SANITY_DATASET || 'production';
-const apiVersion = process.env.VITE_SANITY_API_VERSION || '2024-01-01';
-const token = process.env.SANITY_AUTH_TOKEN || process.env.SANITY_WRITE_TOKEN || process.env.SANITY_API_TOKEN;
+let projectId = process.env.VITE_SANITY_PROJECT_ID || process.env.SANITY_PROJECT_ID;
+if (isInvalid(projectId)) projectId = 's7ocz8zp';
+
+let dataset = process.env.VITE_SANITY_DATASET || process.env.SANITY_DATASET;
+if (isInvalid(dataset)) dataset = 'production';
+
+let apiVersion = process.env.VITE_SANITY_API_VERSION;
+if (isInvalid(apiVersion)) apiVersion = '2024-01-01';
+
+let token = process.env.SANITY_AUTH_TOKEN || process.env.SANITY_WRITE_TOKEN || process.env.SANITY_API_TOKEN;
+if (isInvalid(token)) token = null;
 
 if (!token) {
   console.warn('[Sanity Sync] Warning: SANITY_WRITE_TOKEN or SANITY_AUTH_TOKEN not set. Skipping Sanity database upload.');

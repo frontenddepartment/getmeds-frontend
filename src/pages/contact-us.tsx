@@ -35,7 +35,7 @@ export default function ContactUs() {
     setPageMeta({
       title: 'Contact Us',
       description: 'For inquiries about our pharmaceutical portfolio, partnership opportunities, careers, or patient access programs — our team is ready to help.',
-      path: '/contact-us.html',
+      path: '/contact-us',
     });
   }, []);
 

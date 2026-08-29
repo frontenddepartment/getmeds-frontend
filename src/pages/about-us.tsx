@@ -18,7 +18,7 @@ export default function AboutUs() {
     setPageMeta({
       title: 'About Us',
       description: 'A new standard of care for a new generation of patients. Advanced science. Trusted medicine. Closer access. Better outcomes. Greater hope.',
-      path: '/about-us.html',
+      path: '/about-us',
     });
   }, []);
 

@@ -11,7 +11,7 @@ export default function OrderMedicines() {
     setPageMeta({
       title: 'Order Medicines',
       description: 'A simple 3-step process designed for your convenience.',
-      path: '/order-medicines.html',
+      path: '/order-medicines',
     });
   }, []);
 

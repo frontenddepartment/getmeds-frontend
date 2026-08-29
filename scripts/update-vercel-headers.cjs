@@ -31,8 +31,11 @@ function loadEnv() {
 // same fetch used in vite.config.js, since that file is ESM and this one is
 // CJS (this script runs standalone via `node`, before Vite loads).
 async function fetchProductRouting(env) {
-  const projectId = env.VITE_SANITY_PROJECT_ID || 's7ocz8zp';
-  const dataset = env.VITE_SANITY_DATASET || 'production';
+  const isInvalid = (val) => !val || val.includes('[SENSITIVE]') || val.includes('[') || val.includes(']');
+  const rawProjectId = env.VITE_SANITY_PROJECT_ID || process.env.VITE_SANITY_PROJECT_ID;
+  const projectId = isInvalid(rawProjectId) ? 's7ocz8zp' : rawProjectId;
+  const rawDataset = env.VITE_SANITY_DATASET || process.env.VITE_SANITY_DATASET;
+  const dataset = isInvalid(rawDataset) ? 'production' : rawDataset;
   // NOTE: deliberately not filtering on defined(json_data) here — GROQ silently
   // fails to match that against this field once it's large (200KB+ of parsed
   // Excel data), even though the field is genuinely present. Presence is
@@ -53,16 +56,30 @@ async function fetchProductRouting(env) {
 
     const folders = new Set();
     const conditionSlugs = new Set();
+    // Individual product paths (folder + slug), used to generate a literal, non-wildcard
+    // rewrite per prerendered product page (see scripts/prerender-slugs.cjs) so a real
+    // product URL isn't intercepted by the generic `:product` wildcard rule below.
+    const productPaths = [];
+    const seenProductPaths = new Set();
     rows.forEach((row) => {
       if (row.categoryFolder) folders.add(String(row.categoryFolder).trim())
       if (row.conditionSlug) conditionSlugs.add(String(row.conditionSlug).trim())
+      const folder = row.categoryFolder ? String(row.categoryFolder).trim() : '';
+      const slug = row.slug ? String(row.slug).trim() : '';
+      if (folder && slug) {
+        const key = `${folder}/${slug}`;
+        if (!seenProductPaths.has(key)) {
+          seenProductPaths.add(key);
+          productPaths.push({ folder, slug });
+        }
+      }
     });
 
     if (folders.size > 0) {
       const folderList = Array.from(folders).filter(Boolean);
       const conditionList = Array.from(conditionSlugs).filter(Boolean);
       console.log(`[Sanity Fetch] Loaded ${folderList.length} category folders and ${conditionList.length} condition slugs from the active product sheet.`);
-      return { folders: folderList, conditionSlugs: conditionList };
+      return { folders: folderList, conditionSlugs: conditionList, productPaths };
     }
   } catch (error) {
     console.warn('[Sanity Fetch] Warn: Failed to fetch from Sanity, using robust offline fallback. Error:', error.message);
@@ -71,6 +88,7 @@ async function fetchProductRouting(env) {
   // Robust offline fallback if Sanity is unreachable or the sheet is empty
   return {
     folders: ['cancer-medicines'],
+    productPaths: [],
     conditionSlugs: [
       'breast-cancer', 'ovarian-cancer', 'lung-cancer', 'prostate-cancer', 'colorectal-cancer',
       'pancreatic-cancer', 'aml', 'cml', 'lymphoma', 'sickle-cell', 'respiratory', 'uti',
@@ -92,6 +110,32 @@ async function fetchProductRouting(env) {
       'nephrology'
     ]
   };
+}
+
+// Lightweight fetch of every blog post slug (no _embed, no full content — just enough to
+// generate a literal per-slug rewrite for each prerendered blog page, see
+// scripts/prerender-blog.cjs). Failure here is non-fatal: the existing `/blog/:slug*`
+// wildcard rewrite still serves the generic shell for any slug this misses.
+async function fetchBlogSlugs(env) {
+  const wordpressApiRoot = env.VITE_WORDPRESS_API_ROOT || 'https://cms.getmeds.ph';
+  const slugs = [];
+  let page = 1;
+  let totalPages = 1;
+  try {
+    do {
+      const url = `${wordpressApiRoot}/wp-json/wp/v2/posts?per_page=100&page=${page}&_fields=slug`;
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const posts = await res.json();
+      posts.forEach((p) => { if (p.slug) slugs.push(String(p.slug)); });
+      totalPages = parseInt(res.headers.get('x-wp-totalpages') || '1', 10);
+      page++;
+    } while (page <= totalPages);
+    console.log(`[Sanity Fetch] Loaded ${slugs.length} blog post slugs from WordPress.`);
+  } catch (error) {
+    console.warn('[Sanity Fetch] Warn: Failed to fetch blog slugs from WordPress, blog posts will keep using the generic shell. Error:', error.message);
+  }
+  return slugs;
 }
 
 async function run() {
@@ -202,6 +246,26 @@ async function run() {
     { source: `/conditions/:subcategory(${conditionPattern})`, destination: '/cancer-medicines' },
     { source: '/conditions', destination: '/cancer-medicines' },
   ];
+
+  // Literal, self-mapping rewrites for every product/condition that has its own prerendered
+  // static file (scripts/prerender-slugs.cjs, run as `postbuild`). Placed ahead of the
+  // wildcard rules above so a known real slug matches its own exact path first instead of
+  // being caught by the generic `:product`/`:subcategory` pattern and served the shared
+  // generic shell. A self-mapping rewrite (source === destination) is otherwise never
+  // produced anywhere else in this file, which is what the `keep` filter below uses to
+  // find and replace only these entries on every run.
+  const literalProductRewrites = (routing.productPaths || [])
+    .filter(({ folder }) => allFolders.includes(folder))
+    .map(({ folder, slug }) => ({ source: `/${folder}/${slug}`, destination: `/${folder}/${slug}` }));
+  const literalConditionRewrites = routing.conditionSlugs.map((slug) => ({
+    source: `/conditions/${slug}`,
+    destination: `/conditions/${slug}`,
+  }));
+  const blogSlugs = await fetchBlogSlugs(env);
+  const literalBlogRewrites = blogSlugs.map((slug) => ({
+    source: `/blog/${slug}`,
+    destination: `/blog/${slug}`,
+  }));
   const cancerMedicineSingularRedirects = [
     { source: '/cancer-medicine/:product', destination: '/cancer-medicines/:product', permanent: true },
     { source: '/cancer-medicine', destination: '/cancer-medicines', permanent: true },
@@ -236,19 +300,30 @@ async function run() {
       if (r.source.startsWith('/conditions')) return false;
       if (r.destination && r.destination.startsWith('https://getmeds-admin.vercel.app/api/resolve-slug/')) return false;
       if (r.source.startsWith('/:slug(')) return false;
+      // Previously-generated literal per-slug rewrite (see literalProductRewrites/
+      // literalConditionRewrites above) — always self-mapping, never produced any other way.
+      if (r.source === r.destination) return false;
       return true;
     });
     const fallback = keep.filter((r) => r.source === '/:path*');
-    const rest = keep.filter((r) => r.source !== '/:path*');
+    // Pulled out and re-inserted after literalBlogRewrites below, regardless of where it
+    // happened to sit in the existing file — a literal per-slug match must always be
+    // evaluated before this wildcard, or the prerendered blog pages are never reached.
+    const blogWildcard = keep.filter((r) => r.source === '/blog/:slug*');
+    const rest = keep.filter((r) => r.source !== '/:path*' && r.source !== '/blog/:slug*');
 
     vercelConfig.rewrites = [
       ...rest,
+      ...literalProductRewrites,
+      ...literalConditionRewrites,
+      ...literalBlogRewrites,
+      ...blogWildcard,
       ...folderRewrites,
       ...conditionRewrites,
       { source: catchAllSource, destination: 'https://getmeds-admin.vercel.app/api/resolve-slug/:slug' },
       ...fallback,
     ];
-    console.log(`[Sanity Fetch] Rebuilt rewrites for ${allFolders.length} category folder(s) + /conditions namespace (${conditionPattern.split('|').length} condition slugs).`);
+    console.log(`[Sanity Fetch] Rebuilt rewrites for ${allFolders.length} category folder(s) + /conditions namespace (${conditionPattern.split('|').length} condition slugs), plus ${literalProductRewrites.length} prerendered product page(s), ${literalConditionRewrites.length} prerendered condition page(s), and ${literalBlogRewrites.length} prerendered blog post(s).`);
   }
 
   if (Array.isArray(vercelConfig.headers)) {

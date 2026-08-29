@@ -9,7 +9,7 @@ export default function Services() {
     setPageMeta({
       title: 'Our Services',
       description: 'Getmeds delivers precision pharmaceutical solutions and nationwide distribution — from regulatory compliance and government bidding to pioneering digital oncology care.',
-      path: '/services.html',
+      path: '/services',
     });
   }, []);
 

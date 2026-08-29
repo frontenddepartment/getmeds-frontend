@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { injectHTML } from '../lib/injectHTML';
 import { getAllPolicies } from '../lib/queries';
 import { PoliciesDisclaimers } from '../types/sanity';
+import { setPageMeta } from '../lib/seo';
 
 const DEFAULT_POLICIES = [
   {
@@ -122,6 +123,23 @@ export default function CentralizedPolicyPage() {
   const displayHtml = currentSanityItem?.contentHtml || '';
   const effectiveDate = currentSanityItem?.effectiveDate || currentDefault.effectiveDate;
   const lastUpdated = currentSanityItem?.lastUpdated || currentDefault.lastUpdated;
+
+  // This page previously had no title/meta handling at all — every one of its 7 URLs
+  // (/privacy-policy, /terms-of-service, etc.) showed whatever the static shell's
+  // generic fallback was. Description is a real excerpt of the policy's own content,
+  // not invented copy.
+  useEffect(() => {
+    const excerpt = displayHtml
+      .replace(/<[^>]+>/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim()
+      .slice(0, 155);
+    setPageMeta({
+      title: displayTitle,
+      description: excerpt || `Read Getmeds' ${displayTitle} — effective ${effectiveDate}.`,
+      path: `/${activeSlug}`,
+    });
+  }, [activeSlug, displayTitle, displayHtml, effectiveDate]);
 
   const handleSelectPolicy = (slug: string) => {
     setActiveSlug(slug);

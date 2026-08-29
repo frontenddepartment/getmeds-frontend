@@ -56,8 +56,11 @@ function stripDomain(url) {
 
 async function fetchSanityData(query) {
   const env = loadEnv();
-  const projectId = env.VITE_SANITY_PROJECT_ID || 's7ocz8zp';
-  const dataset = env.VITE_SANITY_DATASET || 'production';
+  const isInvalid = (val) => !val || val.includes('[SENSITIVE]') || val.includes('[') || val.includes(']');
+  const rawProjectId = env.VITE_SANITY_PROJECT_ID || process.env.VITE_SANITY_PROJECT_ID;
+  const projectId = isInvalid(rawProjectId) ? 's7ocz8zp' : rawProjectId;
+  const rawDataset = env.VITE_SANITY_DATASET || process.env.VITE_SANITY_DATASET;
+  const dataset = isInvalid(rawDataset) ? 'production' : rawDataset;
   const url = `https://${projectId}.api.sanity.io/v2024-01-01/data/query/${dataset}?query=${encodeURIComponent(query)}`;
   
   const res = await request(url, { headers: { 'User-Agent': 'SitemapGenerator/1.0' } });

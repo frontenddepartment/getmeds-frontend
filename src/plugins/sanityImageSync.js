@@ -79,10 +79,19 @@ export function sanityImageSyncPlugin() {
     name: 'sanity-image-sync',
 
     async buildStart() {
-      const projectId = process.env.VITE_SANITY_PROJECT_ID || 's7ocz8zp'
-      const dataset   = process.env.VITE_SANITY_DATASET    || 'production'
-      const apiVersion = process.env.VITE_SANITY_API_VERSION || '2024-01-01'
-      const writeToken = process.env.SANITY_WRITE_TOKEN
+      const isInvalid = (val) => !val || val.includes('[SENSITIVE]') || val.includes('[') || val.includes(']')
+
+      let projectId = process.env.VITE_SANITY_PROJECT_ID
+      if (isInvalid(projectId)) projectId = 's7ocz8zp'
+
+      let dataset = process.env.VITE_SANITY_DATASET
+      if (isInvalid(dataset)) dataset = 'production'
+
+      let apiVersion = process.env.VITE_SANITY_API_VERSION
+      if (isInvalid(apiVersion)) apiVersion = '2024-01-01'
+
+      let writeToken = process.env.SANITY_WRITE_TOKEN
+      if (isInvalid(writeToken)) writeToken = null
 
       if (!writeToken) {
         console.warn(

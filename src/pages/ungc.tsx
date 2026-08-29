@@ -10,7 +10,7 @@ const Ungc: React.FC = () => {
     setPageMeta({
       title: 'UN Global Compact',
       description: 'At Getmeds Philippines, we do more than provide medicines—we drive meaningful impact through responsible healthcare, compassion, and sustainable action.',
-      path: '/ungc.html',
+      path: '/ungc',
     });
   }, []);
 

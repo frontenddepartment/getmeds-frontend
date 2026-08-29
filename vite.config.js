@@ -30,8 +30,11 @@ const getHtmlInputs = () => {
 // So there's no more ambiguity to resolve inside a folder path: a folder with
 // a second path segment is always a product.
 async function fetchProductRouting(env) {
-  const projectId = env.VITE_SANITY_PROJECT_ID || 's7ocz8zp';
-  const dataset = env.VITE_SANITY_DATASET || 'production';
+  const isInvalid = (val) => !val || val.includes('[SENSITIVE]') || val.includes('[') || val.includes(']');
+  const rawProjectId = env.VITE_SANITY_PROJECT_ID || process.env.VITE_SANITY_PROJECT_ID;
+  const projectId = isInvalid(rawProjectId) ? 's7ocz8zp' : rawProjectId;
+  const rawDataset = env.VITE_SANITY_DATASET || process.env.VITE_SANITY_DATASET;
+  const dataset = isInvalid(rawDataset) ? 'production' : rawDataset;
   // NOTE: deliberately not filtering on defined(json_data) here — GROQ silently
   // fails to match that against this field once it's large (200KB+ of parsed
   // Excel data), even though the field is genuinely present. Presence is
@@ -124,27 +127,30 @@ export default defineConfig(async ({ mode }) => {
   // here — so it doesn't go stale until the server is restarted.
 
   // Expose Sanity env vars to Node plugin context (plugins run before Vite sets process.env)
-  process.env.VITE_SANITY_PROJECT_ID  = env.VITE_SANITY_PROJECT_ID  || 's7ocz8zp'
-  process.env.VITE_SANITY_DATASET     = env.VITE_SANITY_DATASET     || 'production'
-  process.env.VITE_SANITY_API_VERSION = env.VITE_SANITY_API_VERSION || '2024-01-01'
-  process.env.SANITY_WRITE_TOKEN      = env.SANITY_WRITE_TOKEN || ''
+  const isInvalid = (val) => !val || val.includes('[SENSITIVE]') || val.includes('[') || val.includes(']');
+
+  const sanityProjectId = isInvalid(env.VITE_SANITY_PROJECT_ID || process.env.VITE_SANITY_PROJECT_ID) ? 's7ocz8zp' : (env.VITE_SANITY_PROJECT_ID || process.env.VITE_SANITY_PROJECT_ID);
+  const sanityDataset = isInvalid(env.VITE_SANITY_DATASET || process.env.VITE_SANITY_DATASET) ? 'production' : (env.VITE_SANITY_DATASET || process.env.VITE_SANITY_DATASET);
+  const sanityApiVersion = isInvalid(env.VITE_SANITY_API_VERSION || process.env.VITE_SANITY_API_VERSION) ? '2024-01-01' : (env.VITE_SANITY_API_VERSION || process.env.VITE_SANITY_API_VERSION);
+
+  process.env.VITE_SANITY_PROJECT_ID  = sanityProjectId;
+  process.env.VITE_SANITY_DATASET     = sanityDataset;
+  process.env.VITE_SANITY_API_VERSION = sanityApiVersion;
+  process.env.SANITY_WRITE_TOKEN      = isInvalid(env.SANITY_WRITE_TOKEN) ? '' : env.SANITY_WRITE_TOKEN;
 
   const deploymentMode = env.VITE_DEPLOYMENT || env.DEPLOYMENT || 'development';
   const isProduction = deploymentMode === 'production';
 
   const chatbotUrl = isProduction
-    ? (env.VITE_CHATBOT_API_URL && !env.VITE_CHATBOT_API_URL.includes('localhost') ? env.VITE_CHATBOT_API_URL : '/api/chatbot/ask')
+    ? (env.VITE_CHATBOT_API_URL && !env.VITE_CHATBOT_API_URL.includes('localhost') && !isInvalid(env.VITE_CHATBOT_API_URL) ? env.VITE_CHATBOT_API_URL : '/api/chatbot/ask')
     : (env.VITE_CHATBOT_API_URL || 'http://localhost:8000/api/chatbot/ask');
 
   const spreadsheetUrl = isProduction
-    ? (env.VITE_SPREADSHEET_API_URL && !env.VITE_SPREADSHEET_API_URL.includes('localhost') ? env.VITE_SPREADSHEET_API_URL : '/api/append-to-spreadsheet')
+    ? (env.VITE_SPREADSHEET_API_URL && !env.VITE_SPREADSHEET_API_URL.includes('localhost') && !isInvalid(env.VITE_SPREADSHEET_API_URL) ? env.VITE_SPREADSHEET_API_URL : '/api/append-to-spreadsheet')
     : (env.VITE_SPREADSHEET_API_URL || 'http://localhost:3333/api/append-to-spreadsheet');
 
-  const sanityProjectId = env.VITE_SANITY_PROJECT_ID || 's7ocz8zp';
-  const sanityDataset = env.VITE_SANITY_DATASET || 'production';
-  const sanityApiVersion = env.VITE_SANITY_API_VERSION || '2024-01-01';
-  const wordpressApiBase = env.VITE_WORDPRESS_API_BASE || '/wp-json/wp/v2';
-  const wordpressApiRoot = env.VITE_WORDPRESS_API_ROOT || 'https://cms.getmeds.ph';
+  const wordpressApiBase = isInvalid(env.VITE_WORDPRESS_API_BASE) ? '/wp-json/wp/v2' : env.VITE_WORDPRESS_API_BASE;
+  const wordpressApiRoot = isInvalid(env.VITE_WORDPRESS_API_ROOT) ? 'https://cms.getmeds.ph' : env.VITE_WORDPRESS_API_ROOT;
 
   const backendApiUrl = isProduction
     ? (env.VITE_BACKEND_API_URL || 'https://getmeds-admin.vercel.app')
