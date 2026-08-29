@@ -289,9 +289,14 @@ async function generate() {
   console.log('[Sitemap] Generated product-sitemap.xml successfully.');
 
   // 3. Generate blog-sitemap.xml
+  const redirectedSlugs = new Set([
+    'how-to-get-medical-assistance-from-dswd',
+    '14-essential-cancer-screening-tests-for-women-early-detection-in-the-philippines'
+  ]);
+
   const blogUrls = [];
   posts.forEach(post => {
-    if (!post.slug) return;
+    if (!post.slug || redirectedSlugs.has(post.slug)) return;
     const dateStr = post.date ? new Date(post.date).toISOString().split('T')[0] : currentDate;
     blogUrls.push({
       loc: `${DOMAIN}/blog/${post.slug}`,
