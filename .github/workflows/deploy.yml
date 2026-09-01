@@ -1,0 +1,61 @@
+name: Deploy Site
+
+# Fired by WordPress ("Deploy to getmeds.ph" in the post editor) through the
+# admin backend, which sends a repository_dispatch. This exists because blog
+# content and blog SEO update by different routes: the article body, listing
+# and images are fetched at runtime and go live seconds after a sync, but
+# <title>, meta description, OG tags, canonical and JSON-LD are baked into
+# static HTML by scripts/prerender-blog.cjs at build time — and a brand-new
+# post has no prerendered page at all until a build runs.
+on:
+  repository_dispatch:
+    types: [blog-publish]
+  workflow_dispatch:
+
+# Collapses a burst of publishes into a single deploy: a dispatch arriving
+# while this run is still in its debounce window cancels it and starts over,
+# so ten rapid edits cost one build instead of ten.
+concurrency:
+  group: site-deploy
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Log Trigger
+        # Passed through env rather than interpolated straight into the script:
+        # these values originate in WordPress, and `${{ }}` inside a run block
+        # is substituted as raw shell text, so a crafted post title would
+        # otherwise execute on the runner.
+        env:
+          EVENT: ${{ github.event_name }}
+          POST_TITLE: ${{ github.event.client_payload.title }}
+          POST_SLUG: ${{ github.event.client_payload.slug }}
+          TRIGGERED_BY: ${{ github.event.client_payload.triggered_by }}
+        run: |
+          echo "Trigger:      $EVENT"
+          echo "Post:         ${POST_TITLE:-(none)}"
+          echo "Slug:         ${POST_SLUG:-(none)}"
+          echo "Requested by: ${TRIGGERED_BY:-(none)}"
+
+      - name: Debounce
+        # Held open deliberately so that cancel-in-progress above has a window
+        # in which to collapse follow-up publishes. Nothing has been deployed
+        # yet at this point, so a cancellation here costs nothing.
+        run: sleep 60
+
+      - name: Trigger Vercel Build
+        # Vercel does the building, exactly as it does for a push to main, so
+        # there is still only one deployment path and its build cache and
+        # environment variables are reused. The full pipeline runs there:
+        # prebuild (sitemap + headers) -> vite build -> postbuild (prerender).
+        env:
+          HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}
+        run: |
+          if [ -z "$HOOK" ]; then
+            echo "::error::VERCEL_DEPLOY_HOOK secret is not set on this repository."
+            exit 1
+          fi
+          curl -fsS -X POST "$HOOK" > /dev/null
+          echo "Vercel build requested — the site updates in about 1-3 minutes."
