@@ -700,6 +700,10 @@
       "destination": "/conditions/glioblastoma-multiforme"
     },
     {
+      "source": "/blog/blog-generic-medicines-vs-branded",
+      "destination": "/blog/blog-generic-medicines-vs-branded"
+    },
+    {
       "source": "/blog/getmeds-naga-city-cancer-care",
       "destination": "/blog/getmeds-naga-city-cancer-care"
     },
