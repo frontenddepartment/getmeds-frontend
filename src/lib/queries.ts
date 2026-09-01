@@ -562,9 +562,38 @@ export async function getGoogleSpreadsheetBySlug(slug: string) {
 // News & Articles
 // ─────────────────────────────────────────────
 
+// The blog is authored in WordPress and read through /api/blog/*, whose
+// responses Vercel caches at the edge for an hour. Vercel offers no per-URL
+// purge for that Python function, so invalidation works by changing the URL
+// rather than clearing the cache: the "Sync Blog" tool in the Sanity Studio
+// writes a new timestamp to siteSettings.blogVersion, and appending it here as
+// `v` gives every blog URL a cache key no edge region has seen, which misses
+// and refetches from WordPress immediately.
+//
+// Resolved once per page load and reused. The token only changes when someone
+// clicks Sync, so re-reading it would put a second round trip in front of every
+// blog request for nothing. If the lookup fails the token is simply omitted,
+// leaving the ordinary hour-long cache in place rather than breaking the page.
+let blogVersionPromise: Promise<string> | null = null
+
+function getBlogVersion(): Promise<string> {
+  if (!blogVersionPromise) {
+    blogVersionPromise = sanityQuery<string | null>('siteSettings.blogVersion')
+      .then((token) => (token ? String(token) : ''))
+      .catch(() => '')
+  }
+  return blogVersionPromise
+}
+
+async function withBlogVersion(url: string): Promise<string> {
+  const token = await getBlogVersion()
+  if (!token) return url
+  return `${url}${url.includes('?') ? '&' : '?'}v=${encodeURIComponent(token)}`
+}
+
 export async function getNews() {
   try {
-    const res = await fetch('/api/blog/posts?per_page=20');
+    const res = await fetch(await withBlogVersion('/api/blog/posts?per_page=20'));
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
     const data = await res.json();
     return data.items || [];
@@ -576,7 +605,7 @@ export async function getNews() {
 
 export async function getNewsPage(page: number, perPage: number = 20): Promise<{ items: News[]; totalPages: number }> {
   try {
-    const res = await fetch(`/api/blog/posts?per_page=${perPage}&page=${page}`);
+    const res = await fetch(await withBlogVersion(`/api/blog/posts?per_page=${perPage}&page=${page}`));
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
     const data = await res.json();
     return {
@@ -591,7 +620,7 @@ export async function getNewsPage(page: number, perPage: number = 20): Promise<{
 
 export async function getNewsById(id: string, preview: boolean = false) {
   try {
-    const url = preview ? `/api/blog/posts/${id}?preview=true` : `/api/blog/posts/${id}`;
+    const url = preview ? `/api/blog/posts/${id}?preview=true` : await withBlogVersion(`/api/blog/posts/${id}`);
     const res = await fetch(url, preview ? { cache: 'no-store' } : undefined);
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
     return await res.json();
@@ -628,7 +657,7 @@ export async function getNewsCategories(): Promise<string[]> {
 
 export async function getNewsBySlug(slug: string, preview: boolean = false) {
   try {
-    const url = preview ? `/api/blog/posts?slug=${slug}&preview=true` : `/api/blog/posts?slug=${slug}`;
+    const url = preview ? `/api/blog/posts?slug=${slug}&preview=true` : await withBlogVersion(`/api/blog/posts?slug=${slug}`);
     const res = await fetch(url, preview ? { cache: 'no-store' } : undefined);
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
     const data = await res.json();

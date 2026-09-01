@@ -10,6 +10,13 @@ const SANITY_QUERIES: Record<string, string> = {
   "navigation.main": `
     *[_type == "navigation" && _id == "main-navigation"][0]
   `,
+  // Cache-busting token for the WordPress blog, written by the Studio's
+  // "Sync Blog" tool. Deliberately its own query rather than a read off
+  // siteSettings.global: the blog pages don't need the rest of that document,
+  // and this one resolves to a single string.
+  "siteSettings.blogVersion": `
+    *[_type == "siteSettings" && _id == "global-site-settings"][0].blogVersion
+  `,
   "product.excelJson": `
     *[_type == "product" && (remarks == "present" || remarks == "active") && defined(title)] | order(_updatedAt desc)[0] {
       json_data,
