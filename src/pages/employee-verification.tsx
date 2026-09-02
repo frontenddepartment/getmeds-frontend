@@ -420,7 +420,7 @@ export default function EmployeeVerification() {
                   {/* Disclaimer bottom text (no gray container) */}
                   <div className="pt-4 border-t border-gray-100">
                     <p className="text-[12px] text-gray-700 leading-relaxed">
-                      This verification portal is intended solely to confirm the identity and employment status of authorized representatives of GetMeds Philippines Inc. and 2MG Incorporated. The information displayed is limited to what is necessary for verification purposes and must not be copied, reproduced, or used for any purpose other than verifying the representative's identity.
+                      This verification portal is intended solely to confirm the identity and employment status of authorized representatives of Getmeds Philippines Inc. and 2MG Incorporated. The information displayed is limited to what is necessary for verification purposes and must not be copied, reproduced, or used for any purpose other than verifying the representative's identity.
                     </p>
                   </div>
                 </div>
