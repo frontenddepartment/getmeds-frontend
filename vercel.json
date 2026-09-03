@@ -112,6 +112,16 @@
       "permanent": true
     },
     {
+      "source": "/policy",
+      "destination": "/return-and-refund-policy",
+      "permanent": true
+    },
+    {
+      "source": "/policies",
+      "destination": "/return-and-refund-policy",
+      "permanent": true
+    },
+    {
       "source": "/cancer-medicine/:product",
       "destination": "/cancer-medicines/:product",
       "permanent": true
@@ -2427,6 +2437,33 @@
         {
           "key": "Referrer-Policy",
           "value": "strict-origin-when-cross-origin"
+        }
+      ]
+    },
+    {
+      "source": "/blog-detail",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex"
+        }
+      ]
+    },
+    {
+      "source": "/product-detail",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex"
+        }
+      ]
+    },
+    {
+      "source": "/components/:path*",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex"
         }
       ]
     },

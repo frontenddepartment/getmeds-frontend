@@ -8,7 +8,7 @@
     "sync:sanity": "node scripts/sync-static-to-sanity.mjs",
     "prebuild": "node scripts/sync-static-to-sanity.mjs && node scripts/generate-sitemap.cjs && node scripts/update-vercel-headers.cjs",
     "build": "vite build",
-    "postbuild": "node scripts/prerender-slugs.cjs && node scripts/prerender-blog.cjs",
+    "postbuild": "node scripts/prerender-slugs.cjs && node scripts/prerender-blog.cjs && node scripts/prerender-policies.cjs",
     "preview": "vite preview",
     "clean": "rimraf dist",
     "deploy:refresh": "node scripts/deploy-refresh.cjs"

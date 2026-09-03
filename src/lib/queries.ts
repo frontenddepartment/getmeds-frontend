@@ -381,7 +381,7 @@ export async function searchProducts(query: string) {
 // (e.g. Endocrinology → both "hormonal-therapy" and "diabetes-medicines"),
 // so the folder is the real routing unit. Everything here comes straight
 // from the sheet; there's no fuzzy string-matching or reclassification.
-function folderDisplayName(folder: string): string {
+export function folderDisplayName(folder: string): string {
   return folder
     .split('-')
     .filter(Boolean)
@@ -408,10 +408,16 @@ export async function getCategories() {
         category: catName,
         slug: { _type: 'slug', current: folder },
         subcategory: [],
+        folders: [],
       } as Category)
     }
 
     const catObj = catMap.get(key)!
+    // A category can be filed under more than one Category Folder, and each folder is its
+    // own URL. Collecting all of them (rather than keeping only the first product's, which
+    // is what `slug` still holds) is what lets /diabetes-medicines resolve to Endocrinology
+    // instead of falling through to the unfiltered "all products" view.
+    if (folder && !catObj.folders!.includes(folder)) catObj.folders!.push(folder)
     const conditions = p.conditions && p.conditions.length ? p.conditions : (p.subCategory ? [p.subCategory] : [])
     conditions.forEach((sub: string) => {
       if (sub && !catObj.subcategory!.includes(sub)) catObj.subcategory!.push(sub)

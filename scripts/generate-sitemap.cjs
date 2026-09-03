@@ -212,6 +212,10 @@ async function generate() {
     { path: '', priority: '1.0', changefreq: 'daily' },
     { path: 'about-us', priority: '0.8', changefreq: 'monthly' },
     { path: 'services', priority: '0.8', changefreq: 'monthly' },
+    // The all-products landing page, and what the navbar's "Product Range" links to.
+    // Prerendered and self-canonical (scripts/prerender-slugs.cjs); /conditions renders
+    // the same view but canonicalises here, so it is deliberately not listed.
+    { path: 'product-range', priority: '0.8', changefreq: 'weekly' },
     // Category folders (cancer-medicines, antibiotics, ...) come from
     // getAllProductRoutes() below now, straight from the sheet.
     { path: 'order-medicines', priority: '0.8', changefreq: 'monthly' },
@@ -222,7 +226,15 @@ async function generate() {
     { path: 'meditations', priority: '0.7', changefreq: 'monthly' },
     { path: 'patient-assistance-program', priority: '0.7', changefreq: 'monthly' },
     { path: 'ungc', priority: '0.7', changefreq: 'monthly' },
-    { path: 'blog', priority: '0.8', changefreq: 'daily' }
+    { path: 'blog', priority: '0.8', changefreq: 'daily' },
+    // Prerendered by scripts/prerender-policies.cjs — each is a real page with its own
+    // canonical, not an alias of /policy (which now 301s to return-and-refund-policy).
+    { path: 'return-and-refund-policy', priority: '0.3', changefreq: 'yearly' },
+    { path: 'privacy-policy', priority: '0.3', changefreq: 'yearly' },
+    { path: 'terms-of-service', priority: '0.3', changefreq: 'yearly' },
+    { path: 'medical-disclaimer', priority: '0.3', changefreq: 'yearly' },
+    { path: 'prescription-policy', priority: '0.3', changefreq: 'yearly' },
+    { path: 'shipping-and-delivery-policy', priority: '0.3', changefreq: 'yearly' }
   ];
 
   const posts = await getAllPosts();
@@ -258,7 +270,8 @@ async function generate() {
   const categoryUrls = [];
   staticPages.forEach(p => {
     categoryUrls.push({
-      loc: p.path ? `${DOMAIN}/${p.path}` : DOMAIN,
+      // Trailing slash on the root so this matches the canonical index.html declares.
+      loc: p.path ? `${DOMAIN}/${p.path}` : `${DOMAIN}/`,
       changefreq: p.changefreq,
       priority: p.priority,
       lastmod: currentDate

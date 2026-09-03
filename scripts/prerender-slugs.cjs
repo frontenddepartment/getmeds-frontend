@@ -61,6 +61,16 @@ async function fetchProductRows() {
   return rows.filter(r => r && (r.brandName || r.genericName || r.name || r.slug));
 }
 
+// Mirrors folderDisplayName() in src/lib/queries.ts — "diabetes-medicines" -> "Diabetes
+// Medicines". Duplicated rather than imported because this is a standalone CJS build script.
+function folderDisplayName(folder) {
+  return String(folder)
+    .split('-')
+    .filter(Boolean)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+}
+
 function getDisplayName(row) {
   if (row.brandName && row.genericName && row.brandName !== row.genericName) {
     return `${row.brandName} (${row.genericName})`;
@@ -70,10 +80,25 @@ function getDisplayName(row) {
 
 // Swaps <title>/description meta for a fresh value and appends canonical + OG + JSON-LD
 // right before </head>. Existing Organization JSON-LD in the template is left untouched.
-function injectHead(template, { title, description, canonicalPath, ogType, jsonLd }) {
+function injectHead(template, { title, description, canonicalPath, ogType, jsonLd, jsonLdId }) {
   let html = template;
   const fullTitle = `${title} - Getmeds`;
   const canonicalUrl = `${DOMAIN}${canonicalPath}`;
+  // The static shells now ship their own canonical/og:url so that un-prerendered URLs
+  // are self-canonical. Strip those before appending this page's own, otherwise the
+  // prerendered page would carry two conflicting canonicals.
+  html = html.replace(/[ \t]*<link\s+rel=["']canonical["'][^>]*>\r?\n?/gi, '');
+  html = html.replace(/[ \t]*<meta\s+property=["']og:url["'][^>]*>\r?\n?/gi, '');
+  // Drop a block this script injected on an earlier run before adding the new one. Only
+  // ever matches by our own id, so the template's un-id'd Organization JSON-LD survives.
+  // Matters because the category pass below writes over cancer-medicines.html, which is
+  // itself a template here — without this, re-running without a rebuild stacks blocks.
+  if (jsonLdId) {
+    html = html.replace(
+      new RegExp('[ \\t]*<script type="application/ld\\+json" id="' + jsonLdId + '">[\\s\\S]*?<\\/script>\\r?\\n?', 'gi'),
+      ''
+    );
+  }
 
   html = html.replace(/<title>[\s\S]*?<\/title>/i, `<title>${escapeHtml(fullTitle)}</title>`);
   html = html.replace(/<meta\s+name=["']description["'][\s\S]*?>/i, `<meta name="description" content="${escapeHtml(description)}">`);
@@ -86,7 +111,9 @@ function injectHead(template, { title, description, canonicalPath, ogType, jsonL
     `<meta property="og:description" content="${escapeHtml(description)}">`,
     `<meta property="og:image" content="${DOMAIN}/assets/getmedslogo.png">`,
     `<meta property="og:url" content="${canonicalUrl}">`,
-    `<script type="application/ld+json">${JSON.stringify({ '@context': 'https://schema.org', ...jsonLd })}</script>`,
+    // Carries the same id the page uses at runtime (src/lib/seo.ts injectJsonLd), so
+    // hydration updates this block in place instead of appending a rival second one.
+    `<script type="application/ld+json"${jsonLdId ? ` id="${jsonLdId}"` : ''}>${JSON.stringify({ '@context': 'https://schema.org', ...jsonLd })}</script>`,
   ].join('\n    ');
 
   html = html.replace(/<\/head>/i, `    ${extraTags}\n</head>`);
@@ -149,6 +176,7 @@ async function main() {
       description,
       canonicalPath,
       ogType: 'product',
+      jsonLdId: 'jsonld-drug',
       jsonLd: {
         '@type': 'Drug',
         name: displayName,
@@ -205,6 +233,7 @@ async function main() {
       description,
       canonicalPath,
       ogType: 'website',
+      jsonLdId: 'jsonld-medical-webpage',
       jsonLd: {
         '@type': 'MedicalWebPage',
         name: `${group.name} Medicines in the Philippines`,
@@ -217,7 +246,89 @@ async function main() {
     conditionCount++;
   });
 
-  console.log(`[Prerender] Wrote ${productCount} product page(s) and ${conditionCount} condition page(s) into dist/.`);
+  // ---- Category folders (the listing pages) ----
+  // Every Category Folder in the sheet is its own URL, but they were all rewritten onto the
+  // single cancer-medicines.html shell in vercel.json, so all 14 sent Google a byte-identical
+  // file whose title said "Cancer Medicines" no matter which category was requested. Same
+  // treatment as the condition hubs above. Runs last because it writes over
+  // cancer-medicines.html, which is the template the condition pass reads (already in memory
+  // by now, so the pages produced above are unaffected).
+  const categoryGroups = new Map(); // folder -> { name, products: Set<string> }
+  rows.forEach((row) => {
+    const folder = row.categoryFolder ? String(row.categoryFolder).trim() : '';
+    if (!folder) return;
+    if (!categoryGroups.has(folder)) {
+      categoryGroups.set(folder, { name: String(row.category || '').trim() || folder, products: new Set() });
+    }
+    categoryGroups.get(folder).products.add(getDisplayName(row));
+  });
+
+  // How many folders each category name is filed under. A category spanning more than one
+  // (Endocrinology, under hormonal-therapy and diabetes-medicines) needs its folder in the
+  // title, or its two URLs — genuinely different product lists — ship an identical title.
+  const foldersPerCategory = new Map();
+  categoryGroups.forEach((group, folder) => {
+    if (!foldersPerCategory.has(group.name)) foldersPerCategory.set(group.name, []);
+    foldersPerCategory.get(group.name).push(folder);
+  });
+
+  let categoryCount = 0;
+  categoryGroups.forEach((group, folder) => {
+    const canonicalPath = `/${folder}`;
+    // Kept identical to the runtime title in src/pages/cancer-medicines.tsx so the tag
+    // doesn't change when the page hydrates.
+    const qualifier = (foldersPerCategory.get(group.name) || []).length > 1
+      ? ` — ${folderDisplayName(folder)}`
+      : '';
+    const sampleNames = Array.from(group.products).slice(0, 3);
+    const description = sampleNames.length
+      ? `Browse Getmeds' ${group.name} medicines available in the Philippines, including ${sampleNames.join(', ')}. FDA Philippines-licensed distributor, prescription-based ordering, nationwide delivery.`
+      : `Browse Getmeds' ${group.name} medicines available in the Philippines. FDA Philippines-licensed distributor, prescription-based ordering, nationwide delivery.`;
+
+    const html = injectHead(conditionTemplate, {
+      title: `${group.name}${qualifier}`,
+      description,
+      canonicalPath,
+      ogType: 'website',
+      jsonLdId: 'jsonld-medical-webpage',
+      jsonLd: {
+        '@type': 'CollectionPage',
+        name: `${group.name}${qualifier} Medicines in the Philippines`,
+        url: `${DOMAIN}${canonicalPath}`,
+      },
+    });
+
+    writeFile(path.join(DIST_DIR, `${folder}.html`), html);
+    categoryCount++;
+  });
+
+  // The two generic listing routes, which are also rewritten onto the same shell.
+  // /product-range is the real "all products" page — title and description match what
+  // src/pages/cancer-medicines.tsx sets at runtime so the tag doesn't change on hydration.
+  // /conditions renders that same all-products view, so it canonicalises to /product-range
+  // rather than to itself.
+  const allProductsDescription = "Browse Getmeds' full range of specialty pharmaceutical products across oncology, hematology, cardiology, and other therapeutic areas in the Philippines.";
+  [
+    { file: 'product-range', canonicalPath: '/product-range' },
+    { file: 'conditions', canonicalPath: '/product-range' },
+  ].forEach(({ file, canonicalPath }) => {
+    const html = injectHead(conditionTemplate, {
+      title: 'Products',
+      description: allProductsDescription,
+      canonicalPath,
+      ogType: 'website',
+      jsonLdId: 'jsonld-medical-webpage',
+      jsonLd: {
+        '@type': 'CollectionPage',
+        name: 'Product Range — Getmeds Philippines',
+        url: `${DOMAIN}${canonicalPath}`,
+      },
+    });
+    writeFile(path.join(DIST_DIR, `${file}.html`), html);
+    categoryCount++;
+  });
+
+  console.log(`[Prerender] Wrote ${productCount} product page(s), ${conditionCount} condition page(s) and ${categoryCount} category/listing page(s) into dist/.`);
   if (skippedProducts.length) {
     console.log(`[Prerender] Skipped ${skippedProducts.length} product row(s) with no folder/slug: ${skippedProducts.slice(0, 5).join(', ')}${skippedProducts.length > 5 ? '…' : ''}`);
   }

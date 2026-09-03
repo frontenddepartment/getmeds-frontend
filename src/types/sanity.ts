@@ -156,6 +156,11 @@ export interface Category {
   icon?: string
   image?: SanityImage
   subcategory?: string[]
+  // Every Category Folder the sheet files this category under, in first-seen order.
+  // Usually one, but a category can legitimately span several (Endocrinology sits under
+  // both hormonal-therapy and diabetes-medicines), and each folder is its own URL.
+  // `slug` holds folders[0] for callers that only need a single representative route.
+  folders?: string[]
   importFilename?: string
   importFileId?: string
   name?: string

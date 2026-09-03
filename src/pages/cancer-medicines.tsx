@@ -5,7 +5,8 @@ import { urlFor } from '../lib/sanity';
 import type { Product as SanityProduct, Category } from '../types/sanity';
 import { injectHTML } from '../lib/injectHTML';
 import { sortByFeaturedOrder } from '../lib/categoryImageKey';
-import { setPageMeta, injectJsonLd, removeJsonLd } from '../lib/seo';
+import { setPageMeta, injectJsonLd } from '../lib/seo';
+import { folderDisplayName } from '../lib/queries';
 
 
 interface ProductWithCategory extends Omit<SanityProduct, 'category'> {
@@ -132,6 +133,13 @@ export default function CancerMedicines() {
     category: 'All',
     subCategory: 'All'
   });
+  // Narrows the selected category to a single Category Folder, and is only ever set by
+  // resolving a folder URL. A category filed under two folders (Endocrinology, under both
+  // hormonal-therapy and diabetes-medicines) would otherwise show the same full product
+  // list at both URLs; this keeps /diabetes-medicines to the products actually filed there.
+  // Cleared whenever the category is chosen from the UI instead of the URL, so clicking
+  // "Endocrinology" in the sidebar still shows all of it.
+  const [activeFolder, setActiveFolder] = useState<string | null>(null);
   // Guards the localStorage-save effect: stays false until the restore-from-localStorage
   // effect has actually run once categories are loaded. Without this, the save effect fires
   // on first mount with the default {All, All} state and clobbers the real saved selection
@@ -278,7 +286,7 @@ export default function CancerMedicines() {
       .filter((cat) => cat.category && cat.slug?.current && cat.subcategory && Array.isArray(cat.subcategory) && cat.subcategory.length > 0)
       .map((cat) => ({
         category: cat.category,
-        slugs: [cat.slug.current],
+        folders: (cat.folders && cat.folders.length ? cat.folders : [cat.slug.current]),
         slug: cat.slug.current,
         subcategory: (cat.subcategory || []).filter(Boolean)
       }));
@@ -352,13 +360,20 @@ export default function CancerMedicines() {
           || (firstSeg === 'cancer-medicines' && hasSearchParam);
         if (!isGenericRoute) {
           const matchedCat = processedCats.find(c => {
-            const catSlug = (c.slug || '').toLowerCase();
+            // Every folder, not just c.slug (which is only the first one the sheet
+            // happened to list) — otherwise the second folder of a category that spans
+            // two is unreachable and silently falls through to "all products" below.
+            const catFolders = c.folders.map(f => (f || '').toLowerCase());
             const catNameSlug = c.category.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
             const catNameLower = c.category.toLowerCase();
-            return catSlug === firstSeg || catNameSlug === firstSeg || catNameLower === firstSeg;
+            return catFolders.includes(firstSeg) || catNameSlug === firstSeg || catNameLower === firstSeg;
           });
           if (matchedCat) {
             setSelectedCategory({ category: matchedCat.category, subCategory: 'All' });
+            // Only scope to the folder when the URL segment IS one of this category's
+            // folders — it can also have matched on the category's name, which is not a
+            // folder and would filter every product out.
+            setActiveFolder(matchedCat.folders.includes(firstSeg) ? firstSeg : null);
             setCurrentPage(1);
             resolved = true;
           }
@@ -491,6 +506,10 @@ export default function CancerMedicines() {
       const pCat = (p.excelCategory || (typeof p.category === 'string' ? p.category : p.category?.category) || '').trim().toLowerCase();
       const pFolder = (p.categoryFolder || '').trim().toLowerCase();
 
+      // Arrived here via a folder URL for a category spanning several folders — keep the
+      // listing to that folder so each URL shows a distinct set of products.
+      if (activeFolder) return pFolder === activeFolder;
+
       if (matchedProcessed) {
         return pCat === cleanCategory || pFolder === matchedProcessed.slug || pFolder === cleanCategory;
       }
@@ -548,7 +567,7 @@ export default function CancerMedicines() {
       return 0;
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [productsData, categoriesData, processedCats, selectedCategory, searchTerm, sortBy]);
+  }, [productsData, categoriesData, processedCats, selectedCategory, activeFolder, searchTerm, sortBy]);
 
   // ── Search History & Suggestions Logic ──────────────────
   const onEnterSearch = (query: string) => {
@@ -707,6 +726,11 @@ export default function CancerMedicines() {
     const path = isCondition
       ? conditionHubPaths.get(selectedCategory.subCategory.toLowerCase())
         ?? (matchedCat?.slug ? `/${matchedCat.slug}/${selectedCategory.subCategory.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}` : undefined)
+      // activeFolder first: for a category spanning several folders this is the folder the
+      // visitor actually arrived at, and each folder is a distinct page with its own
+      // products, so it must be self-canonical rather than pointing at matchedCat.slug
+      // (which is only ever the category's first folder).
+      : activeFolder ? `/${activeFolder}`
       : matchedCat?.slug ? `/${matchedCat.slug}` : undefined;
 
     if (displayLabel === 'All') {
@@ -715,7 +739,12 @@ export default function CancerMedicines() {
         description: "Browse Getmeds' full range of specialty pharmaceutical products across oncology, hematology, cardiology, and other therapeutic areas in the Philippines.",
         path: path || '/product-range',
       });
-      removeJsonLd('jsonld-medical-webpage');
+      // Mirrors the CollectionPage prerendered for /product-range and /conditions.
+      injectJsonLd('jsonld-medical-webpage', {
+        '@type': 'CollectionPage',
+        name: 'Product Range — Getmeds Philippines',
+        url: `${window.location.origin}${path || '/product-range'}`,
+      });
       return;
     }
 
@@ -727,8 +756,17 @@ export default function CancerMedicines() {
       ? `Browse Getmeds' ${displayLabel} medicines available in the Philippines, including ${sampleNames.join(', ')}. FDA Philippines-licensed distributor, prescription-based ordering, nationwide delivery.`
       : `Browse Getmeds' ${displayLabel} medicines available in the Philippines. FDA Philippines-licensed distributor, prescription-based ordering, nationwide delivery.`;
 
+    // On a category page displayLabel and sectionLabel are both the category name, which
+    // rendered as "Endocrinology - Endocrinology". A category page is titled by its own
+    // label alone; only a condition gets the "<condition> - <category>" pairing.
+    // The folder qualifier disambiguates the one category filed under two folders, whose
+    // two URLs are separate pages and would otherwise share a title.
+    const folderQualifier = !isCondition && activeFolder && matchedCat && matchedCat.folders.length > 1
+      ? ` — ${folderDisplayName(activeFolder)}`
+      : '';
+
     setPageMeta({
-      title: `${displayLabel} - ${sectionLabel}`,
+      title: isCondition ? `${displayLabel} - ${sectionLabel}` : `${displayLabel}${folderQualifier}`,
       description,
       path,
     });
@@ -741,9 +779,15 @@ export default function CancerMedicines() {
         ...(path ? { url: `${window.location.origin}${path}` } : {}),
       });
     } else {
-      removeJsonLd('jsonld-medical-webpage');
+      // Matches the CollectionPage baked in by scripts/prerender-slugs.cjs under this same
+      // id — removing it here would strip the prerendered block on hydration.
+      injectJsonLd('jsonld-medical-webpage', {
+        '@type': 'CollectionPage',
+        name: `${displayLabel}${folderQualifier} Medicines in the Philippines`,
+        ...(path ? { url: `${window.location.origin}${path}` } : {}),
+      });
     }
-  }, [selectedCategory, productsData, processedCats, conditionHubPaths]);
+  }, [selectedCategory, activeFolder, productsData, processedCats, conditionHubPaths]);
 
   const getProductDetailUrl = (p: ProductWithCategory) => {
     // productPageUrl from the sheet has no protocol (e.g. "getmeds.ph/cancer-medicines/..."),
@@ -756,6 +800,8 @@ export default function CancerMedicines() {
 
   const selectCategory = (category: string, subCategory: string = 'All') => {
     setSelectedCategory({ category, subCategory });
+    // Chosen from the UI rather than a folder URL, so show the whole category.
+    setActiveFolder(null);
     setCurrentPage(1);
     scrollToTable();
 

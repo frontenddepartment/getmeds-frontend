@@ -137,6 +137,11 @@ function injectHead(template, { title, description, canonicalPath, image, jsonLd
   const fullTitle = `${title} — Getmeds`;
   const canonicalUrl = `${DOMAIN}${canonicalPath}`;
   const ogImage = image || `${DOMAIN}/assets/getmedslogo.png`;
+  // The static shells now ship their own canonical/og:url so that un-prerendered URLs
+  // are self-canonical. Strip those before appending this page's own, otherwise the
+  // prerendered page would carry two conflicting canonicals.
+  html = html.replace(/[ \t]*<link\s+rel=["']canonical["'][^>]*>\r?\n?/gi, '');
+  html = html.replace(/[ \t]*<meta\s+property=["']og:url["'][^>]*>\r?\n?/gi, '');
 
   html = html.replace(/<title>[\s\S]*?<\/title>/i, `<title>${escapeHtml(fullTitle)}</title>`);
   html = html.replace(/<meta\s+name=["']description["'][\s\S]*?>/i, `<meta name="description" content="${escapeHtml(description)}">`);
