@@ -78,7 +78,11 @@ export default function BlogDetail() {
   useEffect(() => {
     if (article) {
       const targetSlug = article.slug || slugify(article.title);
-      document.title = `${article.title} — Getmeds`;
+      // Several posts already open with the brand ("Getmeds Completes UN Global Compact…"),
+      // so only add the suffix when it isn't already in the title.
+      document.title = /getmeds/i.test(article.title || '')
+        ? article.title
+        : `${article.title} — Getmeds`;
 
       // Helper to update or create meta tags dynamically
       const updateMeta = (name: string, content: string, isProperty = false) => {

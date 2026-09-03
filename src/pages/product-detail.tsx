@@ -4,7 +4,7 @@ import { urlFor } from '../lib/sanity';
 import type { Product as SanityProduct, Category } from '../types/sanity';
 import { injectHTML } from '../lib/injectHTML';
 import { getApiUrl } from '../lib/api';
-import { setPageMeta, injectJsonLd } from '../lib/seo';
+import { setPageMeta, injectJsonLd, truncateAtWord } from '../lib/seo';
 import { validateFiles, ALLOWED_FILE_TYPES_ACCEPT } from '../lib/fileUpload';
 import AlertModal from '../lib/AlertModal';
 import { PortableText } from '@portabletext/react';
@@ -266,7 +266,7 @@ export default function ProductDetail() {
         const imgUrl = found.image ? urlFor(found.image).width(1200).url() : undefined;
         setPageMeta({
           title: found.metaTitle || displayName,
-          description: description.slice(0, 160),
+          description: truncateAtWord(description, 160),
           path: prettyPath,
           image: imgUrl,
           type: 'product',
@@ -276,7 +276,7 @@ export default function ProductDetail() {
           name: displayName,
           ...(found.genericName ? { nonProprietaryName: found.genericName } : {}),
           ...(found.strength && found.form ? { dosageForm: `${found.form}, ${found.strength}` } : { dosageForm: found.form || found.strength }),
-          description: description.slice(0, 160),
+          description: truncateAtWord(description, 160),
           url: `${window.location.origin}${prettyPath}`,
           ...(imgUrl ? { image: imgUrl } : {}),
           prescriptionStatus: 'PrescriptionOnly',

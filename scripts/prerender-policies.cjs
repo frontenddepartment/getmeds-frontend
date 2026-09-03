@@ -84,13 +84,33 @@ function excerptFrom(contentHtml) {
     .slice(0, 155);
 }
 
+// Appends the site name only when the title doesn't already contain it. Product
+// titles come from the sheet's Meta Title column and already end
+// "| Getmeds Philippines", and several blog posts open with the brand, so appending
+// unconditionally printed it twice ("... | Getmeds Philippines - Getmeds").
+function withSiteName(title) {
+  const t = String(title || '').trim();
+  if (!t) return 'Getmeds';
+  return /getmeds/i.test(t) ? t : t + ' - Getmeds';
+}
+
+// Cuts to `max` characters on a word boundary. The previous hard slice(0, 160) left
+// 28 of 61 product descriptions ending mid-word (e.g. "...and pharm").
+function truncateAtWord(text, max) {
+  const t = String(text || '').replace(/\s+/g, ' ').trim();
+  if (t.length <= max) return t;
+  const cut = t.slice(0, max);
+  const lastSpace = cut.lastIndexOf(' ');
+  return (lastSpace > 0 ? cut.slice(0, lastSpace) : cut).replace(/[,;:\-–—]+$/, '').trim();
+}
+
 function escapeHtml(str) {
   return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
 function injectHead(template, { title, description, canonicalPath }) {
   let html = template;
-  const fullTitle = `${title} - Getmeds`;
+  const fullTitle = withSiteName(title);
   const canonicalUrl = `${DOMAIN}${canonicalPath}`;
 
   // policy.html ships its own canonical/og:url so that /policy is self-canonical when

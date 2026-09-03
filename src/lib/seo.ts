@@ -46,8 +46,29 @@ export function removeJsonLd(id: string) {
   document.getElementById(id)?.remove();
 }
 
+/**
+ * Appends " - Getmeds" only when the title doesn't already say it. Product titles come
+ * from the sheet's Meta Title column and already end "| Getmeds Philippines", and several
+ * blog posts open with the brand ("Getmeds Completes UN Global Compact…"), so appending
+ * unconditionally printed the brand twice — e.g. "… | Getmeds Philippines - Getmeds".
+ */
+export function withSiteName(title: string): string {
+  const t = (title || '').trim();
+  if (!t) return SITE_NAME;
+  return new RegExp(SITE_NAME, 'i').test(t) ? t : `${t} - ${SITE_NAME}`;
+}
+
+/** Cuts to `max` characters on a word boundary rather than mid-word. */
+export function truncateAtWord(text: string, max: number): string {
+  const t = (text || '').replace(/\s+/g, ' ').trim();
+  if (t.length <= max) return t;
+  const cut = t.slice(0, max);
+  const lastSpace = cut.lastIndexOf(' ');
+  return (lastSpace > 0 ? cut.slice(0, lastSpace) : cut).replace(/[,;:\-–—]+$/, '').trim();
+}
+
 export function setPageMeta({ title, description, path, image, type = 'website' }: PageMetaOptions) {
-  const fullTitle = title === SITE_NAME ? SITE_NAME : `${title} - ${SITE_NAME}`;
+  const fullTitle = withSiteName(title);
   document.title = fullTitle;
 
   updateMeta('description', description);

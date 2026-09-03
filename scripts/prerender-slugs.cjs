@@ -82,7 +82,7 @@ function getDisplayName(row) {
 // right before </head>. Existing Organization JSON-LD in the template is left untouched.
 function injectHead(template, { title, description, canonicalPath, ogType, jsonLd, jsonLdId }) {
   let html = template;
-  const fullTitle = `${title} - Getmeds`;
+  const fullTitle = withSiteName(title);
   const canonicalUrl = `${DOMAIN}${canonicalPath}`;
   // The static shells now ship their own canonical/og:url so that un-prerendered URLs
   // are self-canonical. Strip those before appending this page's own, otherwise the
@@ -118,6 +118,26 @@ function injectHead(template, { title, description, canonicalPath, ogType, jsonL
 
   html = html.replace(/<\/head>/i, `    ${extraTags}\n</head>`);
   return html;
+}
+
+// Appends the site name only when the title doesn't already contain it. Product
+// titles come from the sheet's Meta Title column and already end
+// "| Getmeds Philippines", and several blog posts open with the brand, so appending
+// unconditionally printed it twice ("... | Getmeds Philippines - Getmeds").
+function withSiteName(title) {
+  const t = String(title || '').trim();
+  if (!t) return 'Getmeds';
+  return /getmeds/i.test(t) ? t : t + ' - Getmeds';
+}
+
+// Cuts to `max` characters on a word boundary. The previous hard slice(0, 160) left
+// 28 of 61 product descriptions ending mid-word (e.g. "...and pharm").
+function truncateAtWord(text, max) {
+  const t = String(text || '').replace(/\s+/g, ' ').trim();
+  if (t.length <= max) return t;
+  const cut = t.slice(0, max);
+  const lastSpace = cut.lastIndexOf(' ');
+  return (lastSpace > 0 ? cut.slice(0, lastSpace) : cut).replace(/[,;:\-–—]+$/, '').trim();
 }
 
 function escapeHtml(str) {
@@ -166,9 +186,10 @@ async function main() {
     seenProductSlugs.add(key);
 
     const displayName = getDisplayName(row);
-    const description = (
-      row.metaDescription || `${displayName} — available through Getmeds Philippines. Quality pharmaceutical product for healthcare needs.`
-    ).replace(/\s+/g, ' ').trim().slice(0, 160);
+    const description = truncateAtWord(
+      row.metaDescription || `${displayName} — available through Getmeds Philippines. Quality pharmaceutical product for healthcare needs.`,
+      160
+    );
     const canonicalPath = row.productPageUrl ? stripDomain(row.productPageUrl) : `/${folder}/${slug}`;
 
     const html = injectHead(productTemplate, {
