@@ -18,14 +18,31 @@
         var cleanPath = pathname.replace(/^\/|\/$/g, '');
         if (cleanPath) {
           var ourPages = new Set([
-            '404', 'blog', 'blog-detail', 'blog-preview', 'about-us', 'contact-us', 'product-range', 'cancer-medicines', 'cancer-medicine',
+            '404', 'blog', 'blog-detail', 'blog-preview', 'articles', 'article-detail', 'about-us', 'contact-us', 'product-range',
+            'cancer-medicines', 'cancer-medicine', 'conditions',
             'product-detail', 'meditations', 'patient-assistance-program', 'patient-assistance-program-preview', 'careers', 'services', 'csr',
             'ungc', 'index.html', 'edit-profile', 'profile', 'employee-verification',
             'under-development', 'order-medicines', 'global-presence', 'home-preview', 'assets', 'components',
-            'data', 'src', 'node_modules', 'dist'
+            'data', 'src', 'node_modules', 'dist',
+            // Category Folders from the product sheet. Kept in sync with the same list in
+            // src/pages/blog-detail.tsx — every one of these is a real listing page.
+            'antibiotics', 'blood-disorder-medicines', 'anemia-medicines', 'hormonal-therapy', 'diabetes-medicines',
+            'bone-health-medicines', 'heart-medicines', 'contrast-media', 'anti-inflammatory-medicines',
+            'pain-management', 'kidney-medicines', 'allergy-medicines', 'brain-cancer-medicines',
+            // Short alias redirecting to /patient-assistance-program; linked from blog copy.
+            'pap',
+            'policy', 'policies', 'return-and-refund-policy', 'privacy-policy', 'terms-of-service',
+            'medical-disclaimer', 'prescription-policy', 'shipping-and-delivery-policy'
           ]);
-          var firstSegment = cleanPath.split('/')[0];
+          var segments = cleanPath.split('/').filter(Boolean);
+          var firstSegment = segments[0] || '';
+          // Only a bare slug ("/some-post-slug") or an old dated permalink ("/2024/05/slug")
+          // is a legacy WordPress URL. Any other multi-segment path is a real page — a
+          // product, a condition hub, a post — so it must never be rewritten to /blog/...,
+          // even if its first segment is missing from the list above.
+          var looksLegacy = segments.length === 1 || (segments.length > 1 && /^\d{4}$/.test(firstSegment));
           var willRedirect = (
+            looksLegacy &&
             !ourPages.has(firstSegment) &&
             !cleanPath.includes('.') &&
             !pathname.startsWith('/api/') &&

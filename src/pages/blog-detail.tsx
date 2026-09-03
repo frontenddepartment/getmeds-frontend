@@ -199,7 +199,13 @@ export default function BlogDetail() {
         'employee-verification', 'global-presence', 'edit-profile', 'profile', 'under-development', 'home-preview',
         'index.html', 'antibiotics', 'blood-disorder-medicines', 'anemia-medicines', 'hormonal-therapy',
         'diabetes-medicines', 'bone-health-medicines', 'heart-medicines', 'contrast-media',
-        'anti-inflammatory-medicines', 'pain-management', 'kidney-medicines', 'allergy-medicines', 'policy', 'policies', 'return-and-refund-policy',
+        'anti-inflammatory-medicines', 'pain-management', 'kidney-medicines', 'allergy-medicines', 'brain-cancer-medicines',
+        // Short alias that redirects to /patient-assistance-program. It is linked from live
+        // blog content, and without it those links were being rewritten to "/blog/pap".
+        // The masteradmin/* proxy routes are deliberately NOT listed — nothing links to them
+        // from article copy, and this list ships in a public bundle.
+        'pap',
+        'policy', 'policies', 'return-and-refund-policy',
         'privacy-policy', 'terms-of-service', 'medical-disclaimer', 'prescription-policy', 'shipping-and-delivery-policy'
       ]);
 
@@ -208,8 +214,24 @@ export default function BlogDetail() {
       const hash = urlParts[1] ? `#${urlParts[1]}` : '';
 
       // Check if it looks like a WordPress post slug path (e.g. not one of our pages)
-      const firstSegment = pathOnly.split('/')[0];
-      const willIntercept = Boolean(pathOnly) && !ourPages.has(firstSegment) && !pathOnly.includes('.');
+      const segments = pathOnly.split('/').filter(Boolean);
+      const firstSegment = segments[0] || '';
+
+      // Legacy WordPress posts are a bare single-segment slug ("/some-post-slug"), or an
+      // old dated permalink ("/2024/05/some-post-slug"). Every OTHER multi-segment path is
+      // a real page — a product ("/<category-folder>/<product-slug>"), a condition hub
+      // ("/conditions/<slug>") or a post ("/blog/<slug>") — so it must keep its own href.
+      //
+      // This used to intercept any path whose first segment wasn't in the hardcoded list
+      // below, which meant every new Category Folder had to be added there by hand or its
+      // product links were silently rewritten to "/blog/<last-segment>". brain-cancer-
+      // medicines was missing, so links to those products were being hijacked. Keying off
+      // the shape of the path instead removes that maintenance burden entirely: a real
+      // product link can no longer be caught by an out-of-date list.
+      const isDatedPermalink = segments.length > 1 && /^\d{4}$/.test(firstSegment);
+      const looksLegacy = segments.length === 1 || isDatedPermalink;
+
+      const willIntercept = Boolean(pathOnly) && looksLegacy && !ourPages.has(firstSegment) && !pathOnly.includes('.');
 
       if (willIntercept) {
         const postSlug = pathOnly.split('/').pop() || '';
