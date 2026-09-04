@@ -223,6 +223,248 @@
         display: inline-flex;
         align-items: center;
     }
+
+    /* ===================== Global Network dropdown ===================== */
+    .gn-dropdown {
+        display: none;
+        position: relative;
+    }
+
+    /* Desktop nav switches at lg (1024px) on this site — below that the links
+       live in the mobile burger menu instead. */
+    @media (min-width: 1024px) {
+        .gn-dropdown {
+            display: inline-flex;
+            align-items: center;
+        }
+    }
+
+    .gn-trigger {
+        position: relative;
+        display: inline-flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0 0 0.4rem;
+        border: 0;
+        background: transparent;
+        font: inherit;
+        color: inherit;
+        white-space: nowrap;
+        cursor: pointer;
+    }
+
+    .gn-logo {
+        height: 2.25rem;
+        width: auto;
+        flex-shrink: 0;
+        display: block;
+    }
+
+    .gn-chevron {
+        flex-shrink: 0;
+        opacity: 0.75;
+        transition: transform 0.3s ease;
+    }
+
+    /* Underline that sweeps in while the panel is open */
+    .gn-trigger::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 2px;
+        border-radius: 9999px;
+        background-image: linear-gradient(90deg, #61A644 0%, #1D9FDA 100%);
+        transform: scaleX(0);
+        transform-origin: bottom left;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .gn-trigger[aria-expanded="true"]::after {
+        transform: scaleX(1);
+    }
+
+    /* Panel — absolutely positioned against #global-nav (sticky, so it is a
+       containing block), which keeps it flush under the navbar on both the home
+       page (where a top bar sits above the nav) and every inner page. */
+    .gn-panel {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 100%;
+        z-index: 100;
+        width: 100%;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-0.5rem);
+        pointer-events: none;
+        transition: opacity 0.3s ease-out, transform 0.3s ease-out, visibility 0.3s;
+    }
+
+    .gn-panel.is-open {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+        pointer-events: auto;
+    }
+
+    .gn-panel-inner {
+        width: 100%;
+        background: #fff;
+        border-bottom: 1px solid #f3f4f6;
+        border-radius: 0 0 30px 30px;
+        box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        overflow: hidden;
+    }
+
+    .gn-panel-grid {
+        max-width: 80rem;
+        margin: 0 auto;
+        padding: 2.5rem 2rem;
+        display: flex;
+        align-items: center;
+        gap: 3rem;
+    }
+
+    .gn-col-intro {
+        width: 260px;
+        flex-shrink: 0;
+    }
+
+    .gn-title {
+        margin: 0;
+        font-size: 1.85rem;
+        font-weight: 600;
+        line-height: 1.3;
+        color: #0f172a;
+    }
+
+    .gn-desc {
+        margin: 0.75rem 0 0;
+        font-size: 0.95rem;
+        line-height: 1.65;
+        color: #64748b;
+    }
+
+    .gn-col-links {
+        flex: 1;
+        min-width: 0;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        column-gap: 2rem;
+        row-gap: 0.25rem;
+    }
+
+    .gn-col-map {
+        width: 340px;
+        flex-shrink: 0;
+    }
+
+    .gn-col-map img {
+        width: 100%;
+        height: auto;
+        display: block;
+    }
+
+    /* Staggered fade-in — the JS below adds .gn-in to one element at a time */
+    .gn-link {
+        opacity: 0;
+        transform: translateY(10px);
+        transition: opacity 0.35s ease, transform 0.35s ease;
+    }
+
+    .gn-link.gn-in {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .gn-item {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        padding: 0.625rem 0.75rem;
+        font-size: 0.88rem;
+        font-weight: 500;
+        color: #334155;
+        text-decoration: none;
+        cursor: pointer;
+        transition: color 0.3s ease;
+    }
+
+    .gn-item::after {
+        content: "";
+        position: absolute;
+        bottom: 2px;
+        left: 12px;
+        /* matches the 0.75rem side padding */
+        width: calc(100% - 24px);
+        height: 2px;
+        background-image: linear-gradient(90deg, #ffffff 0%, #1D9FDA 100%);
+        border-radius: 9999px;
+        transform: scaleX(0);
+        transform-origin: bottom left;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .gn-item:hover {
+        color: #1D9FDA;
+    }
+
+    .gn-item:hover::after {
+        transform: scaleX(1);
+    }
+
+    @media (max-width: 1200px) {
+        .gn-col-map {
+            display: none;
+        }
+    }
+
+    /* Home page: the navbar is transparent over the hero, so give the trigger the
+       same navy-on-hero / gray-on-scrolled treatment as the other nav links, and
+       turn the header solid white while the panel is open. */
+    body[data-page="home"] .gn-trigger {
+        color: #000b5d;
+    }
+
+    body[data-page="home"] #global-nav-wrapper.scrolled .gn-trigger,
+    body[data-page="home"] #global-nav-wrapper.gn-open .gn-trigger {
+        color: #4b5563;
+    }
+
+    body[data-page="home"] #global-nav-wrapper.gn-open #global-nav {
+        background: #ffffff !important;
+        border-bottom: 1px solid #f1f5f9 !important;
+    }
+
+    body[data-page="home"] #global-nav-wrapper.gn-open #global-nav-links>a,
+    body[data-page="home"] #global-nav-wrapper.gn-open #company-nav-btn,
+    body[data-page="home"] #global-nav-wrapper.gn-open #order-medicines-nav-link,
+    body[data-page="home"] #global-nav-wrapper.gn-open #global-nav-links .group>a {
+        color: #4b5563 !important;
+    }
+
+    body[data-page="home"] #global-nav-wrapper.gn-open #global-nav-links>a[href="/"] {
+        color: #1D9FDA !important;
+    }
+
+    /* The home page paints every a[href="/"] as the active nav link. The Global
+       Network list points "Getmeds Philippines" at "/" (this site), which would
+       otherwise light up blue on the home page only — inconsistent with every
+       other page — so opt those links out of that rule. */
+    body[data-page="home"] .gn-panel a[href="/"] {
+        color: #334155 !important;
+    }
+
+    body[data-page="home"] .gn-panel a[href="/"]:hover {
+        color: #1D9FDA !important;
+    }
+
+    body[data-page="home"] #mobile-global-network a[href="/"] {
+        color: #4b5563 !important;
+    }
 </style>
 
 <div id="global-nav-wrapper">
@@ -262,7 +504,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-20 relative">
                 <!-- Logo (Left) -->
-                <div class="w-[140px] lg:w-[200px] flex-shrink-0 flex items-center">
+                <div class="w-[140px] lg:w-[170px] flex-shrink-0 flex items-center">
                     <a href="/" class="flex items-center">
                         <img src="/assets/getmedslogo.png" alt="Getmeds Logo" class="h-10 w-auto object-contain">
                     </a>
@@ -270,7 +512,7 @@
 
                 <!-- Desktop Nav Links (Center) -->
                 <div id="global-nav-links"
-                    class="hidden lg:flex flex-1 justify-center items-center space-x-8 text-sm font-semibold text-gray-500">
+                    class="hidden lg:flex flex-1 justify-center items-center space-x-6 text-sm font-semibold text-gray-500">
                     <a href="/" class="hover:text-primary transition">Home</a>
                     <!-- Order Medicines Dropdown — lets a visitor pick Patient/Doctor/Hospital/Pharmacy
                          Owner before landing on the page, so order-medicines.tsx shows the right form
@@ -686,9 +928,21 @@
                     <a href="/contact-us.html" class="hover:text-primary transition whitespace-nowrap">Contact Us</a>
                 </div>
 
-                <!-- Right side (Empty now) -->
+                <!-- Right side — Global Network dropdown + (logged-in) profile -->
                 <div
-                    class="w-[140px] lg:w-[200px] flex-shrink-0 flex items-center justify-end space-x-4 lg:space-x-6 text-gray-500">
+                    class="w-[140px] lg:w-auto lg:min-w-[170px] flex-shrink-0 flex items-center justify-end space-x-3 lg:space-x-4 text-gray-500">
+                    <!-- Global Network dropdown trigger — panel markup lives at the
+                         end of <nav> so it can span the full navbar width. -->
+                    <div class="gn-dropdown" id="gn-dropdown">
+                        <button type="button" id="gn-trigger" class="gn-trigger" aria-haspopup="true"
+                            aria-expanded="false" aria-controls="gn-panel">
+                            <img src="/assets/globalnetworklogo.png" alt="Global Network" class="gn-logo">
+                            <svg class="gn-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+                    </div>
                     <a href="/profile.html" id="user-profile"
                         class="hidden relative items-center space-x-2 border-l border-gray-200 pl-6 h-8 ml-2 group cursor-pointer hover:opacity-80 transition">
                         <span id="user-name-display"
@@ -972,6 +1226,51 @@
                     Contact Us
                 </a>
 
+                <!-- Global Network accordion — the desktop .gn-dropdown trigger is
+                     hidden below lg, so the same links surface here instead. -->
+                <div class="border-b border-gray-100">
+                    <button onclick="toggleAccordion('mobile-global-network')"
+                        class="w-full flex items-center justify-between px-3 py-3.5 text-[15px] font-semibold text-gray-700 hover:text-primary transition">
+                        <span>Global Network</span>
+                        <i id="mobile-global-network-icon"
+                            class="fa-solid fa-chevron-down text-[11px] text-gray-400 transition-transform duration-300"></i>
+                    </button>
+                    <div id="mobile-global-network" class="hidden px-2 pb-3 space-y-0.5">
+                        <a href="/"
+                            class="block pl-5 py-2.5 text-[14px] font-medium text-gray-600 hover:text-primary transition">Getmeds
+                            Philippines</a>
+                        <a href="#" data-gn-placeholder
+                            class="block pl-5 py-2.5 text-[14px] font-medium text-gray-600 hover:text-primary transition">Getmeds
+                            Healthcare</a>
+                        <a href="#" data-gn-placeholder
+                            class="block pl-5 py-2.5 text-[14px] font-medium text-gray-600 hover:text-primary transition">Getmeds
+                            Vanuatu</a>
+                        <a href="#" data-gn-placeholder
+                            class="block pl-5 py-2.5 text-[14px] font-medium text-gray-600 hover:text-primary transition">Getmeds
+                            South East Asia</a>
+                        <a href="#" data-gn-placeholder
+                            class="block pl-5 py-2.5 text-[14px] font-medium text-gray-600 hover:text-primary transition">Getmeds
+                            Latin</a>
+                        <a href="#" data-gn-placeholder
+                            class="block pl-5 py-2.5 text-[14px] font-medium text-gray-600 hover:text-primary transition">Bishnoi
+                            Omniverse India</a>
+                        <a href="#" data-gn-placeholder
+                            class="block pl-5 py-2.5 text-[14px] font-medium text-gray-600 hover:text-primary transition">Bishnoi
+                            Omniverse Philippines</a>
+                        <a href="#" data-gn-placeholder
+                            class="block pl-5 py-2.5 text-[14px] font-medium text-gray-600 hover:text-primary transition">Naresh
+                            Bishnoi Foundation</a>
+                        <a href="#" data-gn-placeholder
+                            class="block pl-5 py-2.5 text-[14px] font-medium text-gray-600 hover:text-primary transition">Naresh
+                            Bishnoi</a>
+                        <a href="/ungc.html"
+                            class="block pl-5 py-2.5 text-[14px] font-medium text-gray-600 hover:text-primary transition">UNGC</a>
+                        <a href="https://2mginc.com/" target="_blank" rel="noopener"
+                            class="block pl-5 py-2.5 text-[14px] font-medium text-gray-600 hover:text-primary transition">2MG
+                            Incorporated</a>
+                    </div>
+                </div>
+
                 <div id="mobile-user-profile"
                     class="hidden flex-col space-y-2 pt-4 px-2 pb-4 border-t border-gray-100 mt-2">
                     <a href="/profile.html"
@@ -986,6 +1285,42 @@
                         </div>
                         <i class="fa-solid fa-chevron-right ml-auto text-gray-400 text-sm"></i>
                     </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Global Network mega panel -->
+        <div id="gn-panel" class="gn-panel">
+            <div class="gn-panel-inner">
+                <div class="gn-panel-grid">
+
+                    <div class="gn-col-intro gn-link">
+                        <h3 class="gn-title">Global Network</h3>
+                        <p class="gn-desc">Getmeds Philippines&rsquo; growing footprint across the world &mdash; connect
+                            with any of our regional sites and trusted partners.</p>
+                    </div>
+
+                    <!-- data-gn-placeholder = site not live yet, so the click is swallowed
+                         instead of jumping to "#" and scrolling the page to the top. -->
+                    <div class="gn-col-links">
+                        <a class="gn-link gn-item" href="/">Getmeds Philippines</a>
+                        <a class="gn-link gn-item" href="#" data-gn-placeholder>Getmeds Healthcare</a>
+                        <a class="gn-link gn-item" href="#" data-gn-placeholder>Getmeds Vanuatu</a>
+                        <a class="gn-link gn-item" href="#" data-gn-placeholder>Getmeds South East Asia</a>
+                        <a class="gn-link gn-item" href="#" data-gn-placeholder>Getmeds Latin</a>
+                        <a class="gn-link gn-item" href="#" data-gn-placeholder>Bishnoi Omniverse India</a>
+                        <a class="gn-link gn-item" href="#" data-gn-placeholder>Bishnoi Omniverse Philippines</a>
+                        <a class="gn-link gn-item" href="#" data-gn-placeholder>Naresh Bishnoi Foundation</a>
+                        <a class="gn-link gn-item" href="#" data-gn-placeholder>Naresh Bishnoi</a>
+                        <a class="gn-link gn-item" href="/ungc.html">UNGC</a>
+                        <a class="gn-link gn-item" href="https://2mginc.com/" target="_blank"
+                            rel="noopener">2MG Incorporated</a>
+                    </div>
+
+                    <div class="gn-col-map gn-link" aria-hidden="true">
+                        <img src="/assets/countries.png" alt="">
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -1586,5 +1921,102 @@
             window.addEventListener('scroll', handleNavbarScroll);
             handleNavbarScroll(); // Run once on initialization
         }
+    })();
+</script>
+
+<!-- Global Network dropdown behaviour. This file is injected by components.js, which
+     re-creates every script tag here and appends it to the body, so the markup above is
+     already in the DOM by the time this runs. -->
+<script>
+    (function () {
+        var trigger = document.getElementById('gn-trigger');
+        var panel = document.getElementById('gn-panel');
+        var wrap = document.getElementById('gn-dropdown');
+        var chevron = trigger && trigger.querySelector('.gn-chevron');
+
+        // Placeholder links exist in the mobile accordion too, so neutralise those
+        // regardless of whether the desktop trigger/panel are present.
+        var deadLinks = document.querySelectorAll('#gn-panel [data-gn-placeholder], #mobile-global-network [data-gn-placeholder]');
+        for (var d = 0; d < deadLinks.length; d++) {
+            deadLinks[d].addEventListener('click', function (e) { e.preventDefault(); });
+        }
+
+        if (!trigger || !panel) return;
+
+        var links = panel.querySelectorAll('.gn-link');
+        var staggerTimers = [];
+
+        function isOpen() {
+            return trigger.getAttribute('aria-expanded') === 'true';
+        }
+
+        function setOpen(open) {
+            if (isOpen() === open) return;
+
+            trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+            panel.classList.toggle('is-open', open);
+            if (chevron) chevron.style.transform = open ? 'rotate(180deg)' : '';
+
+            // Turns the transparent-over-hero home navbar solid while the panel is open.
+            var wrapper = document.getElementById('global-nav-wrapper');
+            if (wrapper) wrapper.classList.toggle('gn-open', open);
+
+            // Clear any in-flight stagger so a fast close/open can't leave a link
+            // stuck mid-fade with the panel already hidden.
+            for (var t = 0; t < staggerTimers.length; t++) clearTimeout(staggerTimers[t]);
+            staggerTimers = [];
+
+            for (var i = 0; i < links.length; i++) {
+                if (open) {
+                    staggerTimers.push(setTimeout(function (el) {
+                        return function () { el.classList.add('gn-in'); };
+                    }(links[i]), 60 * i));
+                } else {
+                    links[i].classList.remove('gn-in');
+                }
+            }
+        }
+
+        trigger.addEventListener('click', function (e) {
+            e.stopPropagation();
+            setOpen(!isOpen());
+        });
+
+        // Hover on desktop, with a short close delay so the pointer can travel from
+        // the trigger down into the panel without it snapping shut. 1024px matches
+        // the lg breakpoint the rest of the desktop nav uses.
+        var hoverTimer;
+
+        function onEnter() {
+            if (window.innerWidth >= 1024) {
+                clearTimeout(hoverTimer);
+                setOpen(true);
+            }
+        }
+
+        function onLeave() {
+            if (window.innerWidth >= 1024) {
+                clearTimeout(hoverTimer);
+                hoverTimer = setTimeout(function () { setOpen(false); }, 150);
+            }
+        }
+
+        if (wrap) {
+            wrap.addEventListener('mouseenter', onEnter);
+            wrap.addEventListener('mouseleave', onLeave);
+        }
+        panel.addEventListener('mouseenter', onEnter);
+        panel.addEventListener('mouseleave', onLeave);
+
+        document.addEventListener('click', function (e) {
+            if (isOpen() && !panel.contains(e.target) && !trigger.contains(e.target)) setOpen(false);
+        });
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && isOpen()) {
+                setOpen(false);
+                trigger.focus();
+            }
+        });
     })();
 </script>

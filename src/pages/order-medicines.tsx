@@ -243,6 +243,30 @@ export default function OrderMedicines() {
   });
   const [userTypeModalOpen, setUserTypeModalOpen] = useState(false);
   const isProfessionalUserType = orderUserType === 'doctor' || orderUserType === 'hospital' || orderUserType === 'pharmacy';
+  const isHospitalUserType = orderUserType === 'hospital';
+
+  // Hero copy depends on who is ordering. Hospitals and institutions buy through a
+  // procurement process rather than a general "inquiry", so they get their own
+  // wording plus an eyebrow label; doctors and pharmacy owners keep the shared
+  // professional copy, and everyone else sees the patient prescription flow.
+  const heroCopy = isHospitalUserType
+    ? {
+        eyebrow: 'For Hospitals & Healthcare Institutions',
+        title: 'Hospital Procurement, Handled with Care',
+        subtitle:
+          'Product quotations, hospital procurement, emergency purchase requirements, pharmaceutical product availability, institutional orders, and dedicated account support — for hospitals and healthcare institutions across the Philippines.',
+      }
+    : isProfessionalUserType
+      ? {
+          eyebrow: '',
+          title: 'Professional & Partner Inquiries',
+          subtitle: 'Send us your requirements and our team will follow up with a formal response.',
+        }
+      : {
+          eyebrow: '',
+          title: 'How to order with prescription',
+          subtitle: 'A simple 3-step process designed for your convenience.',
+        };
 
   const selectOrderUserType = (type: string) => {
     setOrderUserTypeState(type);
@@ -572,13 +596,16 @@ export default function OrderMedicines() {
             <div className="absolute pointer-events-none hidden md:block" style={{ width: 85, height: 85, borderRadius: '50%', top: '-15px', right: '38%', background: 'radial-gradient(circle at 38% 32%, rgba(80,220,210,0.55), rgba(30,170,200,0.30))', backdropFilter: 'blur(2px)', border: '1px solid rgba(255,255,255,0.22)' }} />
 
             <div className="relative z-10">
+              {heroCopy.eyebrow && (
+                <p className="ca-anim ca-up text-white/80 text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.16em] mb-2">
+                  {heroCopy.eyebrow}
+                </p>
+              )}
               <h1 className="ca-anim ca-up text-xl sm:text-2xl md:text-3xl font-semibold text-white tracking-tight leading-tight mb-1">
-                {isProfessionalUserType ? 'Professional & Partner Inquiries' : 'How to order with prescription'}
+                {heroCopy.title}
               </h1>
-              <p className="ca-anim ca-up ca-d2 text-white/75 text-[12px] sm:text-[13px] mt-1 font-medium mb-10">
-                {isProfessionalUserType
-                  ? 'Send us your requirements and our team will follow up with a formal response.'
-                  : 'A simple 3-step process designed for your convenience.'}
+              <p className="ca-anim ca-up ca-d2 text-white/75 text-[12px] sm:text-[13px] mt-1 font-medium mb-10 max-w-3xl leading-relaxed">
+                {heroCopy.subtitle}
               </p>
 
               {/* Step Cards — patient prescription flow only */}
