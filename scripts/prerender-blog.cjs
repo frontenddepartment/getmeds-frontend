@@ -169,7 +169,7 @@ function injectHead(template, { title, description, canonicalPath, image, jsonLd
   const extraTags = [
     `<link rel="canonical" href="${canonicalUrl}">`,
     `<meta property="og:type" content="article">`,
-    `<meta property="og:site_name" content="Getmeds">`,
+    `<meta property="og:site_name" content="Getmeds Philippines">`,
     `<meta property="og:title" content="${escapeHtml(fullTitle)}">`,
     `<meta property="og:description" content="${escapeHtml(description)}">`,
     `<meta property="og:image" content="${escapeHtml(ogImage)}">`,

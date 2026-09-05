@@ -82,3 +82,40 @@ To prevent search engines from indexation of the backend WordPress domain (`cms.
 3. **Excluded Endpoints:** Critical paths (e.g., `wp-admin`, `wp-json` API endpoints, `wp-content/wp-includes` assets, and `robots.txt`) remain fully accessible to facilitate headless API queries.
 
 ##
+
+## 🧾 Structured Data (JSON-LD)
+
+Every page carries an `Organization` block plus, where applicable, a page-type block and a
+`BreadcrumbList`. **Each block exists in two places and both must be edited together:**
+
+| Block | Static (what a crawler gets in the HTTP response) | Runtime (what it gets after JS runs) |
+| --- | --- | --- |
+| `jsonld-organization` | `scripts/inject-organization-jsonld.cjs` → all 24 root shells, at `prebuild` | — (never re-injected) |
+| `jsonld-drug` | `scripts/prerender-slugs.cjs`, product pass | `src/pages/product-detail.tsx` |
+| `jsonld-medical-webpage` | `scripts/prerender-slugs.cjs`, condition/category passes | `src/pages/cancer-medicines.tsx` |
+| `jsonld-breadcrumb` | `scripts/prerender-slugs.cjs`, all three passes | `product-detail.tsx`, `cancer-medicines.tsx` |
+
+The runtime copy **overwrites** the static one on hydration (they share an `id` — see
+`injectJsonLd` in `src/lib/seo.ts`), so a field added to only the prerender script silently
+disappears from the rendered page.
+
+### Spreadsheet columns that feed it
+
+Add these to the "Products Range" workbook; blank cells simply omit the property. Header
+names are mapped in `getmeds_database/studio/lib/excelImport.ts`.
+
+| Column | Feeds | Notes |
+| --- | --- | --- |
+| `Manufacturer` | `Drug.manufacturer` | The actual maker. **Not** Supplier/Importer/Distributor — Getmeds is the importer and distributor, and a wrong manufacturer claim on a prescription medicine is a regulatory problem, not an SEO one. Leave blank if unknown. |
+| `Condition Filipino Name` | `MedicalCondition.alternateName` | e.g. "kanser sa suso". |
+| `Condition Specialty` | `MedicalWebPage.specialty` | Free text mapped onto schema.org's closed `MedicalSpecialty` enumeration; an unrecognised value is dropped rather than guessed. |
+| `Condition Last Reviewed` | `MedicalWebPage.lastReviewed` | `YYYY-MM-DD`, the date the pharmacist actually finished reading that page — not the deploy date. |
+| `Condition Reviewed By` | `MedicalWebPage.reviewedBy` | Defaults to the named staff pharmacist when blank. |
+
+`lastReviewed`/`reviewedBy` are all-or-nothing: with no date, both are omitted and the rest
+of the block still ships. They are a public statement that a named licensed pharmacist read
+that page, so only fill the date in once that is true.
+
+Conditions have no document type of their own — they are a grouping derived from product
+rows — so the four `Condition …` values are repeated on every row filed under a condition,
+first non-empty wins, exactly like `Condition Slug (auto)` already works.

@@ -1,6 +1,16 @@
 const SITE_NAME = 'Getmeds';
+// og:site_name is the brand label social platforms print above the card, and it is the
+// one the Organization JSON-LD carries as alternateName. SITE_NAME stays the short form
+// because withSiteName() appends it to page titles.
+const OG_SITE_NAME = 'Getmeds Philippines';
 const BASE_URL = 'https://getmeds.ph';
 const DEFAULT_IMAGE = `${BASE_URL}/assets/getmedslogo.png`;
+/**
+ * @id of the Organization node stamped into every static shell by
+ * scripts/inject-organization-jsonld.cjs. Page-level blocks reference it instead of
+ * repeating the company details, so it must stay byte-identical to the value there.
+ */
+export const ORGANIZATION_ID = `${BASE_URL}/#organization`;
 
 export interface PageMetaOptions {
   title: string;
@@ -73,7 +83,7 @@ export function setPageMeta({ title, description, path, image, type = 'website' 
 
   updateMeta('description', description);
   updateMeta('og:type', type, true);
-  updateMeta('og:site_name', SITE_NAME, true);
+  updateMeta('og:site_name', OG_SITE_NAME, true);
   updateMeta('og:title', fullTitle, true);
   updateMeta('og:description', description, true);
   updateMeta('og:image', image || DEFAULT_IMAGE, true);
@@ -87,4 +97,66 @@ export function setPageMeta({ title, description, path, image, type = 'website' 
   updateMeta('twitter:title', fullTitle);
   updateMeta('twitter:description', description);
   updateMeta('twitter:image', image || DEFAULT_IMAGE);
+}
+
+// ---- Condition structured-data helpers ---------------------------------------------
+// Duplicated, deliberately, in scripts/prerender-slugs.cjs: that is a standalone CJS build
+// script and cannot import from here. The two copies must produce identical output, since
+// the runtime block overwrites the prerendered one on hydration.
+
+/**
+ * schema.org's MedicalSpecialty is a closed enumeration, so the sheet's free-text specialty
+ * is mapped onto a real enum value. Anything unrecognised returns null and the property is
+ * left off that page — a wrong enum value is worse than a missing one.
+ */
+const MEDICAL_SPECIALTIES: Record<string, string> = {
+  oncology: 'Oncologic', oncologic: 'Oncologic',
+  hematology: 'Hematologic', haematology: 'Hematologic', hematologic: 'Hematologic',
+  cardiology: 'Cardiovascular', cardiovascular: 'Cardiovascular',
+  endocrinology: 'Endocrine', endocrine: 'Endocrine',
+  nephrology: 'Renal', renal: 'Renal',
+  neurology: 'Neurologic', neurologic: 'Neurologic',
+  rheumatology: 'Rheumatologic', rheumatologic: 'Rheumatologic',
+  'infectious disease': 'Infectious', 'infectious diseases': 'Infectious', infectious: 'Infectious',
+  musculoskeletal: 'Musculoskeletal',
+  gastroenterology: 'Gastroenterologic', gastroenterologic: 'Gastroenterologic',
+  pulmonology: 'Pulmonary', pulmonary: 'Pulmonary', respiratory: 'Pulmonary',
+  urology: 'Urologic', urologic: 'Urologic',
+  gynecology: 'Gynecologic', gynecologic: 'Gynecologic',
+  dermatology: 'Dermatologic', dermatologic: 'Dermatologic',
+  radiology: 'Radiography', radiography: 'Radiography',
+  anesthesia: 'Anesthesia', anaesthesia: 'Anesthesia',
+  pathology: 'Pathology',
+  pediatrics: 'Pediatric', pediatric: 'Pediatric',
+  psychiatry: 'Psychiatric', psychiatric: 'Psychiatric',
+  surgery: 'Surgical', surgical: 'Surgical',
+  toxicology: 'Toxicologic',
+  genetics: 'Genetic', genetic: 'Genetic',
+};
+
+export function specialtyUrl(value?: string): string | null {
+  const enumValue = MEDICAL_SPECIALTIES[String(value || '').trim().toLowerCase()];
+  return enumValue ? `https://schema.org/${enumValue}` : null;
+}
+
+/** Used only when a condition has a review date but no explicit reviewer of its own. */
+export const DEFAULT_CONDITION_REVIEWER = 'Ivy Marcel F. Varias, RPh';
+
+/**
+ * `lastReviewed` is a public claim that a named pharmacist read the page on that date, so
+ * only a real, well-formed calendar date counts. The pair is all-or-nothing: with no date
+ * there is no claim to make, and the rest of the MedicalWebPage block stands on its own.
+ */
+export function conditionReviewFields(lastReviewed?: string, reviewedBy?: string) {
+  const date = String(lastReviewed || '').trim().match(/^(\d{4}-\d{2}-\d{2})/);
+  if (!date) return {};
+  return {
+    lastReviewed: date[1],
+    reviewedBy: {
+      '@type': 'Person',
+      name: String(reviewedBy || '').trim() || DEFAULT_CONDITION_REVIEWER,
+      jobTitle: 'Registered Pharmacist',
+      affiliation: { '@id': ORGANIZATION_ID },
+    },
+  };
 }

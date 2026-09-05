@@ -5,7 +5,7 @@ import { urlFor } from '../lib/sanity';
 import type { Product as SanityProduct, Category } from '../types/sanity';
 import { injectHTML } from '../lib/injectHTML';
 import { sortByFeaturedOrder } from '../lib/categoryImageKey';
-import { setPageMeta, injectJsonLd } from '../lib/seo';
+import { setPageMeta, injectJsonLd, removeJsonLd, specialtyUrl, conditionReviewFields, ORGANIZATION_ID } from '../lib/seo';
 import { folderDisplayName } from '../lib/queries';
 
 
@@ -710,6 +710,25 @@ export default function CancerMedicines() {
     return map;
   }, [productsData]);
 
+  // Per-condition metadata (Filipino term, specialty, pharmacist review) keyed by condition
+  // name. Conditions have no document type of their own, so the sheet repeats these values
+  // on every product row filed under the condition — first non-empty wins, same shape as
+  // conditionHubPaths above. Mirrors mergeConditionMeta() in scripts/prerender-slugs.cjs.
+  const conditionMeta = useMemo(() => {
+    const map = new Map<string, { filipinoName?: string; specialty?: string; lastReviewed?: string; reviewedBy?: string }>();
+    productsData?.forEach((p: any) => {
+      const key = (p.subCategory || '').trim().toLowerCase();
+      if (!key) return;
+      const entry = map.get(key) || {};
+      if (!entry.filipinoName && p.conditionFilipinoName) entry.filipinoName = String(p.conditionFilipinoName).trim();
+      if (!entry.specialty && p.conditionSpecialty) entry.specialty = String(p.conditionSpecialty).trim();
+      if (!entry.lastReviewed && p.conditionLastReviewed) entry.lastReviewed = String(p.conditionLastReviewed).trim();
+      if (!entry.reviewedBy && p.conditionReviewedBy) entry.reviewedBy = String(p.conditionReviewedBy).trim();
+      map.set(key, entry);
+    });
+    return map;
+  }, [productsData]);
+
   // Synchronize title, meta description, canonical, OG, and structured data to the
   // active category/condition. Previously this only patched document.title, so search
   // engines and social previews saw the Cancer Medicines default on every one of the
@@ -745,6 +764,9 @@ export default function CancerMedicines() {
         name: 'Product Range — Getmeds Philippines',
         url: `${window.location.origin}${path || '/product-range'}`,
       });
+      // "All Products" is the only crumb this view shows, and a one-item BreadcrumbList
+      // tells a crawler nothing — drop any block left over from a previous selection.
+      removeJsonLd('jsonld-breadcrumb');
       return;
     }
 
@@ -771,12 +793,46 @@ export default function CancerMedicines() {
       path,
     });
 
+    // Mirrors the BreadcrumbList baked in by scripts/prerender-slugs.cjs under this same
+    // id, and matches the visible trail rendered below ("All Products > Category >
+    // Condition"). The final crumb carries no "item" — it is the current page.
+    const categoryPath = activeFolder ? `/${activeFolder}` : matchedCat?.slug ? `/${matchedCat.slug}` : undefined;
+    const crumbs: Array<{ name: string; url?: string }> = [
+      { name: 'All Products', url: '/product-range' },
+      ...(isCondition && selectedCategory.category !== 'All'
+        ? [{ name: selectedCategory.category, ...(categoryPath ? { url: categoryPath } : {}) }]
+        : []),
+      { name: isCondition ? displayLabel : `${displayLabel}${folderQualifier}` },
+    ];
+    injectJsonLd('jsonld-breadcrumb', {
+      '@type': 'BreadcrumbList',
+      itemListElement: crumbs.map((crumb, i) => ({
+        '@type': 'ListItem',
+        position: i + 1,
+        name: crumb.name,
+        ...(crumb.url && i < crumbs.length - 1 ? { item: `${window.location.origin}${crumb.url}` } : {}),
+      })),
+    });
+
     if (isCondition) {
+      // Kept field-for-field in step with the block scripts/prerender-slugs.cjs bakes in
+      // under this same id — this overwrites that one on hydration.
+      const meta = conditionMeta.get(displayLabel.toLowerCase()) || {};
+      const specialty = specialtyUrl(meta.specialty);
       injectJsonLd('jsonld-medical-webpage', {
         '@type': 'MedicalWebPage',
         name: `${displayLabel} Medicines in the Philippines`,
-        about: { '@type': 'MedicalCondition', name: displayLabel },
+        description,
+        inLanguage: 'en-PH',
+        about: {
+          '@type': 'MedicalCondition',
+          name: displayLabel,
+          ...(meta.filipinoName ? { alternateName: meta.filipinoName } : {}),
+        },
+        ...(specialty ? { specialty } : {}),
         ...(path ? { url: `${window.location.origin}${path}` } : {}),
+        ...conditionReviewFields(meta.lastReviewed, meta.reviewedBy),
+        publisher: { '@id': ORGANIZATION_ID },
       });
     } else {
       // Matches the CollectionPage baked in by scripts/prerender-slugs.cjs under this same
@@ -787,7 +843,7 @@ export default function CancerMedicines() {
         ...(path ? { url: `${window.location.origin}${path}` } : {}),
       });
     }
-  }, [selectedCategory, activeFolder, productsData, processedCats, conditionHubPaths]);
+  }, [selectedCategory, activeFolder, productsData, processedCats, conditionHubPaths, conditionMeta]);
 
   const getProductDetailUrl = (p: ProductWithCategory) => {
     // productPageUrl from the sheet has no protocol (e.g. "getmeds.ph/cancer-medicines/..."),

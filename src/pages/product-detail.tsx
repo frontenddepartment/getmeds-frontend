@@ -4,7 +4,7 @@ import { urlFor } from '../lib/sanity';
 import type { Product as SanityProduct, Category } from '../types/sanity';
 import { injectHTML } from '../lib/injectHTML';
 import { getApiUrl } from '../lib/api';
-import { setPageMeta, injectJsonLd, truncateAtWord } from '../lib/seo';
+import { setPageMeta, injectJsonLd, truncateAtWord, ORGANIZATION_ID } from '../lib/seo';
 import { validateFiles, ALLOWED_FILE_TYPES_ACCEPT } from '../lib/fileUpload';
 import AlertModal from '../lib/AlertModal';
 import { PortableText } from '@portabletext/react';
@@ -191,6 +191,36 @@ export default function ProductDetail() {
     return parts;
   };
 
+  // The same trail as { name, url } crumbs. Single source for both the visible breadcrumb
+  // below and the BreadcrumbList JSON-LD, so the two cannot drift — Google requires the
+  // marked-up trail to match the one the visitor can actually see.
+  const getBreadcrumbTrail = (p: ProductWithCategory): Array<{ name: string; url: string | null }> => {
+    const parts = getBreadcrumbParts(p).filter(part => part.toLowerCase() !== 'home');
+    const rest = parts.length
+      ? parts
+      : [getCategorizationDisplay(p), p.brandName || p.name || 'Product Details'];
+
+    return rest.map((name, idx) => {
+      const isLast = idx === rest.length - 1;
+      let url: string | null = null;
+      // Condition Hub URL (auto) is a separate "/conditions/:slug" namespace used only for
+      // the sitemap/crawling, not an in-app destination — every link here uses the category
+      // folder instead, same as the rest of the app's internal navigation.
+      if (!isLast && p.categoryFolder) {
+        if (idx === 0) {
+          url = `/${p.categoryFolder}`;
+        } else if (idx === rest.length - 2) {
+          const conditionSlug =
+            p.conditionSlugsByName?.[name]?.conditionSlug ||
+            p.conditionSlug ||
+            name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+          url = `/${p.categoryFolder}/${conditionSlug}`;
+        }
+      }
+      return { name, url };
+    });
+  };
+
   useEffect(() => {
     if (!productsLoading && productsData) {
       let productSlug = '';
@@ -271,16 +301,49 @@ export default function ProductDetail() {
           image: imgUrl,
           type: 'product',
         });
+        // Kept field-for-field in step with the block scripts/prerender-slugs.cjs bakes in
+        // under this same id — this overwrites that one on hydration, so anything missing
+        // here is silently dropped from the rendered page's structured data.
+        const isBranded = Boolean(found.brandName && found.genericName && found.brandName !== found.genericName);
         injectJsonLd('jsonld-drug', {
           '@type': 'Drug',
           name: displayName,
-          ...(found.genericName ? { nonProprietaryName: found.genericName } : {}),
+          ...(isBranded ? { alternateName: String(found.brandName).trim() } : {}),
+          ...(found.genericName ? { nonProprietaryName: found.genericName, activeIngredient: found.genericName } : {}),
+          // Only true for a row carrying a brand distinct from its generic name — a plain
+          // generic has no proprietary name to claim.
+          isProprietary: isBranded,
           ...(found.strength && found.form ? { dosageForm: `${found.form}, ${found.strength}` } : { dosageForm: found.form || found.strength }),
           description: truncateAtWord(description, 160),
           url: `${window.location.origin}${prettyPath}`,
           ...(imgUrl ? { image: imgUrl } : {}),
+          legalStatus: 'Prescription only medicine (Rx), Philippines',
           prescriptionStatus: 'PrescriptionOnly',
+          // Getmeds is the importer and distributor, never assumed to be the maker: omitted
+          // unless the sheet's Manufacturer column is filled in for this SKU.
+          ...(found.manufacturer ? { manufacturer: { '@type': 'Organization', name: String(found.manufacturer).trim() } } : {}),
+          mainEntityOfPage: {
+            '@type': 'WebPage',
+            '@id': `${window.location.origin}${prettyPath}`,
+            publisher: { '@id': ORGANIZATION_ID },
+          },
         });
+        // Mirrors the BreadcrumbList baked in by scripts/prerender-slugs.cjs under this
+        // same id, built from the trail the page actually renders. The final crumb carries
+        // no "item" — it is the page the visitor is already on.
+        const trail = getBreadcrumbTrail(found);
+        const crumbs = [{ name: 'Home', url: '/' }, ...trail];
+        if (crumbs.length > 1) {
+          injectJsonLd('jsonld-breadcrumb', {
+            '@type': 'BreadcrumbList',
+            itemListElement: crumbs.map((crumb, i) => ({
+              '@type': 'ListItem',
+              position: i + 1,
+              name: crumb.name,
+              ...(crumb.url && i < crumbs.length - 1 ? { item: `${window.location.origin}${crumb.url}` } : {}),
+            })),
+          });
+        }
       } else {
         setNotFound(true);
       }
@@ -479,38 +542,22 @@ export default function ProductDetail() {
               {product && (() => {
                 // "Home > Category > Condition > Product" — precomputed in the
                 // sheet (Breadcrumb (auto)); only "Home" is replaced above since
-                // it should link to "/" instead of being plain text.
-                const parts = getBreadcrumbParts(product).filter(p => p.toLowerCase() !== 'home');
-                const fallbackParts = parts.length ? parts : [getCategorizationDisplay(product), product.brandName || product.name || 'Product Details'];
-                return fallbackParts.map((part, idx) => {
-                  const isLast = idx === fallbackParts.length - 1;
-                  const isCondition = idx === fallbackParts.length - 2;
-                  // Condition Hub URL (auto) is a separate "/conditions/:slug" namespace
-                  // used only for the sitemap/crawling, not an in-app destination — every
-                  // breadcrumb link here uses the category folder from Product Page URL
-                  // (auto) instead, same as the rest of the app's internal navigation.
-                  let href: string | null = null;
-                  if (!isLast && product.categoryFolder) {
-                    if (idx === 0) {
-                      href = `/${product.categoryFolder}`;
-                    } else if (isCondition) {
-                      const conditionSlug =
-                        product.conditionSlugsByName?.[part]?.conditionSlug ||
-                        product.conditionSlug ||
-                        part.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
-                      href = `/${product.categoryFolder}/${conditionSlug}`;
-                    }
-                  }
+                // it should link to "/" instead of being plain text. The trail is
+                // built by getBreadcrumbTrail so this and the BreadcrumbList JSON-LD
+                // always render the same crumbs.
+                const trail = getBreadcrumbTrail(product);
+                return trail.map(({ name, url }, idx) => {
+                  const isLast = idx === trail.length - 1;
                   return (
                     <React.Fragment key={idx}>
                       <li className="text-gray-300"><i className="fa-solid fa-chevron-right text-[9px]" /></li>
                       <li className={isLast ? 'font-semibold text-gray-700' : ''}>
-                        {href ? (
-                          <a href={href} className="text-gray-400 hover:text-primary transition-colors font-medium">
-                            {part}
+                        {url ? (
+                          <a href={url} className="text-gray-400 hover:text-primary transition-colors font-medium">
+                            {name}
                           </a>
                         ) : (
-                          part
+                          name
                         )}
                       </li>
                     </React.Fragment>

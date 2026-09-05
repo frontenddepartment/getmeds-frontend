@@ -288,6 +288,12 @@ async function fetchProductsFromExcel(): Promise<Product[]> {
         status: p.status || orig.status,
         notes: p.notes || orig.notes,
         prescription: p.prescription || (p as any).Prescription || orig.prescription,
+        // ── Structured-data columns ──
+        manufacturer: p.manufacturer || orig.manufacturer,
+        conditionFilipinoName: p.conditionFilipinoName || orig.conditionFilipinoName,
+        conditionSpecialty: p.conditionSpecialty || orig.conditionSpecialty,
+        conditionLastReviewed: p.conditionLastReviewed || orig.conditionLastReviewed,
+        conditionReviewedBy: p.conditionReviewedBy || orig.conditionReviewedBy,
       } as Product;
 
       // Every condition this product belongs under gets its own hub slug/url,
