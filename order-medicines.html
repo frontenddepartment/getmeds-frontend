@@ -28,6 +28,36 @@
     </script>
 
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@24/build/css/intlTelInput.css" />
+    <style>
+        /* Tailwind preflight resets border/padding/outline on every <input>, which
+           strips intl-tel-input's dropdown styling (search box + country list).
+           These put it back. Scoped to .gcb-phone-wrap so nothing else is affected. */
+        .gcb-phone-wrap .iti { width: 100%; }
+        .gcb-phone-wrap .iti__tel-input { width: 100%; }
+
+        .gcb-phone-wrap .iti__dropdown-content {
+            z-index: 50; border-radius: .75rem; border: 1px solid #e5e7eb;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,.1), 0 4px 6px -2px rgba(0,0,0,.05);
+            overflow: hidden;
+        }
+        .gcb-phone-wrap .iti__search-input {
+            width: 100%; box-sizing: border-box;
+            border: none !important; border-bottom: 1px solid #e5e7eb !important;
+            border-radius: 0 !important; padding: .65rem .9rem !important;
+            font-size: .875rem; font-family: inherit; outline: none !important;
+        }
+        .gcb-phone-wrap .iti__search-input:focus { border-bottom-color: #1D9FDA !important; }
+        .gcb-phone-wrap .iti__country-list { margin: 0; padding: .35rem; list-style: none; max-height: 220px; }
+        .gcb-phone-wrap .iti__country {
+            display: flex; align-items: center; gap: .6rem; padding: .55rem .6rem;
+            border-radius: .5rem; font-size: .85rem; color: #374151; cursor: pointer;
+        }
+        .gcb-phone-wrap .iti__country:hover,
+        .gcb-phone-wrap .iti__country.iti__highlight { background-color: #f0f9ff; }
+        .gcb-phone-wrap .iti__country-name { flex: 1; }
+        .gcb-phone-wrap .iti__dial-code { color: #9ca3af; }
+    </style>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet" />
     <script type="application/ld+json">
@@ -44,6 +74,115 @@
 
 <body data-page="order-medicines" class="bg-white text-gray-800 antialiased">
     <div id="root"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@24/build/js/intlTelInputWithUtils.min.js"></script>
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+    <script>
+        (function () {
+            var api = (window.gcbPhone = window.gcbPhone || {});
+
+            var OPTIONS = {
+                initialCountry: 'ph',
+                preferredCountries: ['ph', 'in'],
+                separateDialCode: true,
+                nationalMode: false,
+                strictMode: true   // caps typing at the country's real max length
+            };
+            var DEFAULT_DIAL_CODE = '63';   // match initialCountry
+
+            var instances = [];
+            function entry(input) {
+                for (var i = 0; i < instances.length; i++) if (instances[i].input === input) return instances[i];
+                return null;
+            }
+
+            // Digits only, trimmed to what the selected country can hold. Covers typing,
+            // paste, drag-drop, and switching to a country with a shorter format.
+            function enforceDigits(input, iti) {
+                var digits = input.value.replace(/[^0-9]/g, '');
+                var utils = window.intlTelInput && window.intlTelInput.utils;
+                if (iti && utils) {
+                    var iso2 = iti.getSelectedCountryData().iso2;
+                    while (digits.length > 0 && utils.getValidationError(digits, iso2) === utils.validationError.TOO_LONG) {
+                        digits = digits.slice(0, -1);
+                    }
+                }
+                if (digits !== input.value) input.value = digits;
+            }
+
+            // E.164 without the library — the CDN can be blocked or slow, and a lead is
+            // not something to drop over a missing script tag.
+            function fallbackNumber(raw) {
+                var text = String(raw == null ? '' : raw).trim();
+                var digits = text.replace(/\D/g, '');
+                if (!digits) return '';
+                if (text.charAt(0) === '+') return '+' + digits;                 // visitor named a country
+                if (digits.slice(0, 2) === '00') return '+' + digits.slice(2);   // IDD prefix
+                if (digits.charAt(0) === '0') return '+' + DEFAULT_DIAL_CODE + digits.slice(1); // trunk prefix
+                if (digits.slice(0, DEFAULT_DIAL_CODE.length) === DEFAULT_DIAL_CODE && digits.length > 10) return '+' + digits;
+                return '+' + DEFAULT_DIAL_CODE + digits;
+            }
+
+            // Idempotent — calling twice returns the existing instance rather than
+            // stacking a second widget. React StrictMode double-invokes effects, so
+            // this matters here.
+            function init(input) {
+                if (!input) return null;
+                var found = entry(input);
+                if (found) return found.iti;
+
+                if (!window.intlTelInput) {
+                    instances.push({ input: input, iti: null });
+                    input.addEventListener('input', function () { enforceDigits(input, null); });
+                    return null;
+                }
+                var iti = window.intlTelInput(input, OPTIONS);
+                instances.push({ input: input, iti: iti });
+                var handler = function () { enforceDigits(input, iti); };
+                input.addEventListener('input', handler);
+                input.addEventListener('countrychange', handler);
+                return iti;
+            }
+
+            function initAll(selector) {
+                var nodes = document.querySelectorAll(selector);
+                for (var i = 0; i < nodes.length; i++) init(nodes[i]);
+            }
+
+            // Drops the instance when React unmounts the input, so a remount
+            // re-initialises instead of reusing a widget attached to a dead node.
+            function destroy(input) {
+                for (var i = 0; i < instances.length; i++) {
+                    if (instances[i].input === input) {
+                        try { if (instances[i].iti) instances[i].iti.destroy(); } catch (e) { /* already gone */ }
+                        instances.splice(i, 1);
+                        return;
+                    }
+                }
+            }
+
+            function number(input) {                    // the value to SUBMIT
+                if (!input || input.value.trim() === '') return '';
+                var found = entry(input);
+                if (found && found.iti) return found.iti.getNumber() || fallbackNumber(input.value);
+                return fallbackNumber(input.value);
+            }
+
+            function isValid(input) {
+                if (!input) return false;
+                var found = entry(input);
+                if (found && found.iti) return found.iti.isValidNumber();
+                var digits = fallbackNumber(input.value).replace(/\D/g, '');
+                return digits.length >= 8 && digits.length <= 15;
+            }
+
+            function isEmpty(input) { return !input || input.value.trim() === ''; }
+
+            api.init = init; api.initAll = initAll; api.destroy = destroy;
+            api.number = number; api.isValid = isValid; api.isEmpty = isEmpty;
+        })();
+    </script>
+
     <script type="module" src="/src/entries/order-medicines-entry.tsx"></script>
     <script src="/components/components.js"></script>
 </body>
