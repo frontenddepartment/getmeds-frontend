@@ -243,6 +243,30 @@ export default function OrderMedicines() {
   });
   const [userTypeModalOpen, setUserTypeModalOpen] = useState(false);
   const isProfessionalUserType = orderUserType === 'doctor' || orderUserType === 'hospital' || orderUserType === 'pharmacy';
+  const isHospitalUserType = orderUserType === 'hospital';
+
+  // Hero copy depends on who is ordering. Hospitals and institutions buy through a
+  // procurement process rather than a general "inquiry", so they lead with who the
+  // page is for and carry an extra tagline line; doctors and pharmacy owners keep
+  // the shared professional copy, and everyone else sees the patient flow.
+  const heroCopy = isHospitalUserType
+    ? {
+        title: 'For Hospitals & Healthcare Institutions',
+        tagline: 'Hospital Procurement, Handled with Care',
+        subtitle:
+          'Product quotations, hospital procurement, emergency purchase requirements, pharmaceutical product availability, institutional orders, and dedicated account support — for hospitals and healthcare institutions across the Philippines.',
+      }
+    : isProfessionalUserType
+      ? {
+          title: 'Professional & Partner Inquiries',
+          tagline: '',
+          subtitle: 'Send us your requirements and our team will follow up with a formal response.',
+        }
+      : {
+          title: 'How to order with prescription',
+          tagline: '',
+          subtitle: 'A simple 3-step process designed for your convenience.',
+        };
 
   const selectOrderUserType = (type: string) => {
     setOrderUserTypeState(type);
@@ -310,6 +334,64 @@ export default function OrderMedicines() {
       console.error('Inquiry submission error:', error);
       setInquirySubmitState('error');
       setTimeout(() => setInquirySubmitState('idle'), 2000);
+    }
+  };
+
+  // ── Hospital / institution procurement inquiry ──
+  // Routed under its own inquiryType so it lands in its own Google Sheet: the backend
+  // resolves the destination spreadsheet by inquiryType (see inquiry.py), so this
+  // string must match the "Inquiry Type" set on the googleSpreadsheet / inquiryRouting
+  // document in Sanity Studio. Changing it here without changing it there silently
+  // drops submissions from the sheet.
+  const HOSPITAL_INQUIRY_TYPE = 'Hospital Inquiry';
+
+  const emptyHospitalForm = {
+    name: '', position: '', institution: '', location: '',
+    email: '', phone: '', message: '', consent: false,
+  };
+  const [hospitalFormData, setHospitalFormData] = useState(emptyHospitalForm);
+  const [hospitalSubmitState, setHospitalSubmitState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
+
+  const handleHospitalSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setHospitalSubmitState('sending');
+    try {
+      const payload = {
+        inquiryType: HOSPITAL_INQUIRY_TYPE,
+        fullName: hospitalFormData.name,
+        email: hospitalFormData.email,
+        phone: hospitalFormData.phone,
+        message: hospitalFormData.message,
+        // Mirrored into subject so a sheet column or email template that only knows
+        // the generic "Company/Organization" wording still resolves the institution.
+        subject: hospitalFormData.institution,
+        additionalData: {
+          position: hospitalFormData.position,
+          institution: hospitalFormData.institution,
+          location: hospitalFormData.location,
+          consent: hospitalFormData.consent ? 'Confirmed' : '',
+          customerType: USER_TYPE_LABELS.hospital,
+        },
+        files: []
+      };
+
+      const response = await fetch(getApiUrl(), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (!response.ok) throw new Error('Hospital inquiry submission failed.');
+
+      setHospitalSubmitState('sent');
+      setHospitalFormData(emptyHospitalForm);
+      setSuccessKind('inquiry');
+      setSuccessModalOpen(true);
+      setTimeout(() => setHospitalSubmitState('idle'), 300);
+    } catch (error) {
+      console.error('Hospital inquiry submission error:', error);
+      setHospitalSubmitState('error');
+      setTimeout(() => setHospitalSubmitState('idle'), 2000);
     }
   };
 
@@ -573,12 +655,15 @@ export default function OrderMedicines() {
 
             <div className="relative z-10">
               <h1 className="ca-anim ca-up text-xl sm:text-2xl md:text-3xl font-semibold text-white tracking-tight leading-tight mb-1">
-                {isProfessionalUserType ? 'Professional & Partner Inquiries' : 'How to order with prescription'}
+                {heroCopy.title}
               </h1>
-              <p className="ca-anim ca-up ca-d2 text-white/75 text-[12px] sm:text-[13px] mt-1 font-medium mb-10">
-                {isProfessionalUserType
-                  ? 'Send us your requirements and our team will follow up with a formal response.'
-                  : 'A simple 3-step process designed for your convenience.'}
+              {heroCopy.tagline && (
+                <p className="ca-anim ca-up ca-d1 text-white text-[14px] sm:text-[15px] font-semibold leading-snug mt-1">
+                  {heroCopy.tagline}
+                </p>
+              )}
+              <p className={`ca-anim ca-up ca-d2 text-[12px] sm:text-[13px] mt-1 font-medium mb-10 max-w-3xl leading-relaxed ${isHospitalUserType ? 'text-white' : 'text-white/75'}`}>
+                {heroCopy.subtitle}
               </p>
 
               {/* Step Cards — patient prescription flow only */}
@@ -985,10 +1070,11 @@ export default function OrderMedicines() {
             </>
             )}
 
-            {/* Doctor / Hospital / Pharmacy Owner — generic inquiry form, no product context yet.
+            {/* Doctor / Pharmacy Owner — generic inquiry form, no product context yet.
                 Wide/landscape card spanning the full content width: short fields share a row,
-                Message spans full width below, and the submit button sits bottom-right. */}
-            {isProfessionalUserType && (
+                Message spans full width below, and the submit button sits bottom-right.
+                Hospitals get their own procurement form below instead. */}
+            {isProfessionalUserType && !isHospitalUserType && (
               <div className="ca-anim ca-up bg-white rounded-[15px] border border-gray-100 p-6 md:p-10 shadow-sm">
                 <div className="flex items-start justify-between flex-wrap gap-3 mb-6">
                   <div>
@@ -1075,6 +1161,144 @@ export default function OrderMedicines() {
                   </div>
                 </form>
               </div>
+            )}
+
+            {/* Hospital / Institution — procurement inquiry. Separate from the generic
+                professional form because these submissions carry institution, role and
+                location, and route to their own spreadsheet (see HOSPITAL_INQUIRY_TYPE). */}
+            {isHospitalUserType && (
+              <>
+              <div className="ca-anim ca-up bg-white rounded-[15px] border border-gray-100 p-6 md:p-10 shadow-sm">
+                <div className="flex items-start justify-between flex-wrap gap-3 mb-6">
+                  <div>
+                    <h2 className="text-xl font-semibold text-gray-900 mb-1">Send an Inquiry</h2>
+                    <p className="text-gray-400 text-[13px] max-w-2xl">Submit your hospital&rsquo;s requirements and our team will follow up with formal documentation, quotations, and coordination.</p>
+                  </div>
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-blue-50 text-primary border border-blue-100 shrink-0">
+                    <i className="fa-solid fa-hospital text-[9px]"></i>
+                    {USER_TYPE_LABELS.hospital}
+                  </div>
+                </div>
+
+                <form onSubmit={handleHospitalSubmit} className="space-y-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-6">
+                    <div className="space-y-2">
+                      <label className="text-[13px] font-semibold text-gray-700">Full Name</label>
+                      <input type="text" required placeholder="e.g., Dr. Juan Dela Cruz"
+                        value={hospitalFormData.name}
+                        onChange={e => setHospitalFormData(prev => ({ ...prev, name: e.target.value }))}
+                        className="w-full bg-gray-50 border-none rounded-[12px] px-4 py-3 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition placeholder-gray-300" />
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="text-[13px] font-semibold text-gray-700">Position / Role</label>
+                      <input type="text" required placeholder="e.g., Chief of Pharmacy, Procurement Officer"
+                        value={hospitalFormData.position}
+                        onChange={e => setHospitalFormData(prev => ({ ...prev, position: e.target.value }))}
+                        className="w-full bg-gray-50 border-none rounded-[12px] px-4 py-3 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition placeholder-gray-300" />
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="text-[13px] font-semibold text-gray-700">Hospital / Institution Name</label>
+                      <input type="text" required placeholder="e.g., Philippine General Hospital"
+                        value={hospitalFormData.institution}
+                        onChange={e => setHospitalFormData(prev => ({ ...prev, institution: e.target.value }))}
+                        className="w-full bg-gray-50 border-none rounded-[12px] px-4 py-3 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition placeholder-gray-300" />
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="text-[13px] font-semibold text-gray-700">Location / City</label>
+                      <input type="text" required placeholder="e.g., Quezon City, Metro Manila"
+                        value={hospitalFormData.location}
+                        onChange={e => setHospitalFormData(prev => ({ ...prev, location: e.target.value }))}
+                        className="w-full bg-gray-50 border-none rounded-[12px] px-4 py-3 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition placeholder-gray-300" />
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="text-[13px] font-semibold text-gray-700">Business Email</label>
+                      <input type="email" required placeholder="e.g., procurement@hospital.gov.ph"
+                        value={hospitalFormData.email}
+                        onChange={e => setHospitalFormData(prev => ({ ...prev, email: e.target.value }))}
+                        className="w-full bg-gray-50 border-none rounded-[12px] px-4 py-3 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition placeholder-gray-300" />
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="text-[13px] font-semibold text-gray-700">Phone / Mobile Number</label>
+                      <input type="tel" required placeholder="+63 9XX XXX XXXX"
+                        inputMode="numeric"
+                        value={hospitalFormData.phone}
+                        onChange={e => setHospitalFormData(prev => ({ ...prev, phone: e.target.value.replace(/[^\d+\s\-()]/g, '') }))}
+                        className="w-full bg-gray-50 border-none rounded-[12px] px-4 py-3 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition placeholder-gray-300" />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-[13px] font-semibold text-gray-700">Message</label>
+                    <textarea rows={3} placeholder="Tell us more about your requirements..."
+                      value={hospitalFormData.message}
+                      onChange={e => setHospitalFormData(prev => ({ ...prev, message: e.target.value }))}
+                      className="w-full bg-gray-50 border-none rounded-[12px] px-4 py-3 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition placeholder-gray-300 resize-none" />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-[13px] font-semibold text-gray-700">Consent</label>
+                    <label className="flex items-start gap-3 cursor-pointer bg-gray-50 rounded-[12px] px-4 py-3">
+                      <input type="checkbox" required
+                        checked={hospitalFormData.consent}
+                        onChange={e => setHospitalFormData(prev => ({ ...prev, consent: e.target.checked }))}
+                        className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer accent-[#1D9FDA]" />
+                      <span className="text-[12px] leading-relaxed text-gray-500">
+                        I confirm that I am authorized to submit this inquiry on behalf of the hospital or healthcare institution named above, and I consent to Getmeds collecting, using, and storing the information provided in this form to respond to my inquiry.
+                      </span>
+                    </label>
+                  </div>
+
+                  <div className="flex justify-end">
+                    <button type="submit" disabled={hospitalSubmitState === 'sending'}
+                      className="text-white font-bold py-3 px-10 rounded-[12px] transition-all duration-300 text-[13px] disabled:opacity-50 whitespace-nowrap"
+                      style={{ background: 'linear-gradient(to right, #61A644, #0D99FF)' }}>
+                      {hospitalSubmitState === 'sending'
+                        ? 'Sending...'
+                        : hospitalSubmitState === 'error'
+                          ? 'Failed to submit. Try again.'
+                          : 'Submit Inquiry Request'}
+                    </button>
+                  </div>
+                </form>
+              </div>
+
+              {/* Direct line for emergency/critical-care procurement, which can't wait on
+                  the normal inquiry turnaround. */}
+              <div className="ca-anim ca-up bg-white rounded-[15px] border border-gray-100 p-6 md:p-8 shadow-sm">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 items-start">
+                  <div>
+                    <h3 className="text-[17px] font-semibold text-gray-900 mb-1.5">Need Urgent Hospital Assistance?</h3>
+                    <p className="text-gray-400 text-[13px] leading-relaxed">
+                      For emergency purchases and critical-care orders, contact our Hospital Sales Team directly for immediate coordination.
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-[11px] font-semibold uppercase tracking-widest text-gray-400 mb-3">Contact Details</p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2.5">
+                      {[
+                        { icon: 'fa-phone', label: '+63 999 889 0592', href: 'tel:+639998890592' },
+                        { icon: 'fa-phone', label: '+63 917 155 7029', href: 'tel:+639171557029' },
+                        { icon: 'fa-envelope', label: 'sales3@getmeds.ph', href: 'mailto:sales3@getmeds.ph' },
+                        { icon: 'fa-envelope', label: 'sales24@getmeds.ph', href: 'mailto:sales24@getmeds.ph' },
+                      ].map(item => (
+                        <a key={item.label} href={item.href}
+                          className="group flex items-center gap-2.5 text-[13px] font-semibold text-gray-700 hover:text-primary transition">
+                          <span className="w-7 h-7 rounded-full bg-blue-50 flex items-center justify-center shrink-0">
+                            <i className={`fa-solid ${item.icon} text-[10px] text-primary`}></i>
+                          </span>
+                          <span className="truncate">{item.label}</span>
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              </>
             )}
 
             {/* ── Support & Trust ── */}
