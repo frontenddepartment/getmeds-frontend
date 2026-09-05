@@ -11,6 +11,8 @@ const path = require('path');
 
 const DOMAIN = 'https://getmeds.ph';
 const DIST_DIR = path.join(__dirname, '..', 'dist');
+// Matches the @id in scripts/inject-organization-jsonld.cjs — the node these blocks point at.
+const ORGANIZATION_ID = `${DOMAIN}/#organization`;
 
 function loadEnv() {
   const envPath = path.join(__dirname, '..', '.env');
@@ -71,6 +73,151 @@ function folderDisplayName(folder) {
     .join(' ');
 }
 
+// ---- Condition metadata -----------------------------------------------------------
+// schema.org's MedicalSpecialty is a closed enumeration, so the sheet's free-text
+// specialty is mapped onto a real enum URL. Anything unrecognised yields nothing and the
+// property is left off that page — a wrong enum value is worse than a missing one.
+const MEDICAL_SPECIALTIES = {
+  oncology: 'Oncologic',
+  oncologic: 'Oncologic',
+  hematology: 'Hematologic',
+  haematology: 'Hematologic',
+  hematologic: 'Hematologic',
+  cardiology: 'Cardiovascular',
+  cardiovascular: 'Cardiovascular',
+  endocrinology: 'Endocrine',
+  endocrine: 'Endocrine',
+  nephrology: 'Renal',
+  renal: 'Renal',
+  neurology: 'Neurologic',
+  neurologic: 'Neurologic',
+  rheumatology: 'Rheumatologic',
+  rheumatologic: 'Rheumatologic',
+  'infectious disease': 'Infectious',
+  'infectious diseases': 'Infectious',
+  infectious: 'Infectious',
+  musculoskeletal: 'Musculoskeletal',
+  gastroenterology: 'Gastroenterologic',
+  gastroenterologic: 'Gastroenterologic',
+  pulmonology: 'Pulmonary',
+  pulmonary: 'Pulmonary',
+  respiratory: 'Pulmonary',
+  urology: 'Urologic',
+  urologic: 'Urologic',
+  gynecology: 'Gynecologic',
+  gynecologic: 'Gynecologic',
+  dermatology: 'Dermatologic',
+  dermatologic: 'Dermatologic',
+  radiology: 'Radiography',
+  radiography: 'Radiography',
+  anesthesia: 'Anesthesia',
+  anaesthesia: 'Anesthesia',
+  pathology: 'Pathology',
+  pediatrics: 'Pediatric',
+  pediatric: 'Pediatric',
+  psychiatry: 'Psychiatric',
+  psychiatric: 'Psychiatric',
+  surgery: 'Surgical',
+  surgical: 'Surgical',
+  toxicology: 'Toxicologic',
+  genetics: 'Genetic',
+  genetic: 'Genetic',
+};
+
+function specialtyUrl(value) {
+  const key = String(value || '').trim().toLowerCase();
+  const enumValue = MEDICAL_SPECIALTIES[key];
+  return enumValue ? `https://schema.org/${enumValue}` : null;
+}
+
+// "lastReviewed" is a public claim that a named pharmacist read the page on that date, so
+// only a real, well-formed calendar date counts. Excel dates arrive as full ISO strings
+// once the workbook has been through JSON, hence the leading-date match.
+function reviewDate(value) {
+  const match = String(value || '').trim().match(/^(\d{4}-\d{2}-\d{2})/);
+  return match ? match[1] : null;
+}
+
+// Used only when a condition has a review date but no explicit reviewer in its own column.
+const DEFAULT_REVIEWER = 'Ivy Marcel F. Varias, RPh';
+
+// The review pair is all-or-nothing: without a date there is no claim to make, so both
+// properties are dropped and the rest of the MedicalWebPage block still stands on its own.
+function reviewFields(group) {
+  const date = reviewDate(group.lastReviewed);
+  if (!date) return {};
+  return {
+    lastReviewed: date,
+    reviewedBy: {
+      '@type': 'Person',
+      name: String(group.reviewedBy || '').trim() || DEFAULT_REVIEWER,
+      jobTitle: 'Registered Pharmacist',
+      affiliation: { '@id': ORGANIZATION_ID },
+    },
+  };
+}
+
+// Conditions are a grouping derived from product rows, not their own documents, so each
+// condition's metadata is repeated on every row filed under it. First non-empty value wins.
+function mergeConditionMeta(group, row) {
+  if (!group.filipinoName && row.conditionFilipinoName) group.filipinoName = String(row.conditionFilipinoName).trim();
+  if (!group.specialty && row.conditionSpecialty) group.specialty = String(row.conditionSpecialty).trim();
+  if (!group.lastReviewed && row.conditionLastReviewed) group.lastReviewed = String(row.conditionLastReviewed).trim();
+  if (!group.reviewedBy && row.conditionReviewedBy) group.reviewedBy = String(row.conditionReviewedBy).trim();
+  if (!group.category && row.category) group.category = String(row.category).trim();
+  if (!group.folder && row.categoryFolder) group.folder = String(row.categoryFolder).trim();
+}
+
+// ---- BreadcrumbList helpers -------------------------------------------------------
+// Google requires the marked-up trail to match the one the visitor can see, so each
+// builder below mirrors a specific piece of UI:
+//   products            -> src/pages/product-detail.tsx  ("Home > Category > Condition > Product")
+//   conditions/category -> src/pages/cancer-medicines.tsx ("All Products > Category > Condition")
+// The final crumb deliberately carries no "item" URL — it is the page already being viewed.
+function breadcrumbList(trail) {
+  const crumbs = (trail || []).filter((c) => c && c.name);
+  if (crumbs.length < 2) return null; // a one-item trail tells a crawler nothing
+  return {
+    '@type': 'BreadcrumbList',
+    itemListElement: crumbs.map((crumb, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: crumb.name,
+      ...(crumb.url && i < crumbs.length - 1 ? { item: `${DOMAIN}${crumb.url}` } : {}),
+    })),
+  };
+}
+
+function slugifyCrumb(value) {
+  return String(value || '').toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+}
+
+// The "Breadcrumb (auto)" sheet column is the source of truth here, same as the visible
+// trail. Falls back to condition + product name when a row has no breadcrumb, which is what
+// product-detail.tsx renders in that case too.
+function productBreadcrumbTrail(row, displayName, folder) {
+  const parts = String(row.breadcrumb || '')
+    .split('>')
+    .map((part) => part.trim())
+    .filter(Boolean)
+    .filter((part) => part.toLowerCase() !== 'home');
+  const rest = parts.length ? parts : [row.subCategory || row.category, displayName].filter(Boolean);
+  if (!rest.length) return null;
+
+  return [
+    { name: 'Home', url: '/' },
+    ...rest.map((name, idx) => {
+      const isLast = idx === rest.length - 1;
+      if (isLast || !folder) return { name };
+      if (idx === 0) return { name, url: `/${folder}` };
+      if (idx === rest.length - 2) {
+        return { name, url: `/${folder}/${row.conditionSlug ? String(row.conditionSlug).trim() : slugifyCrumb(name)}` };
+      }
+      return { name };
+    }),
+  ];
+}
+
 function getDisplayName(row) {
   if (row.brandName && row.genericName && row.brandName !== row.genericName) {
     return `${row.brandName} (${row.genericName})`;
@@ -80,7 +227,10 @@ function getDisplayName(row) {
 
 // Swaps <title>/description meta for a fresh value and appends canonical + OG + JSON-LD
 // right before </head>. Existing Organization JSON-LD in the template is left untouched.
-function injectHead(template, { title, description, canonicalPath, ogType, jsonLd, jsonLdId }) {
+// `jsonLdBlocks` is a list of { id, data } — a page carries several (its own Drug or
+// MedicalWebPage block plus a BreadcrumbList), and each id has to match the id used by
+// src/lib/seo.ts at runtime so hydration updates the block in place.
+function injectHead(template, { title, description, canonicalPath, ogType, jsonLdBlocks = [] }) {
   let html = template;
   const fullTitle = withSiteName(title);
   const canonicalUrl = `${DOMAIN}${canonicalPath}`;
@@ -89,16 +239,18 @@ function injectHead(template, { title, description, canonicalPath, ogType, jsonL
   // prerendered page would carry two conflicting canonicals.
   html = html.replace(/[ \t]*<link\s+rel=["']canonical["'][^>]*>\r?\n?/gi, '');
   html = html.replace(/[ \t]*<meta\s+property=["']og:url["'][^>]*>\r?\n?/gi, '');
-  // Drop a block this script injected on an earlier run before adding the new one. Only
-  // ever matches by our own id, so the template's un-id'd Organization JSON-LD survives.
+  // Drop blocks this script injected on an earlier run before adding the new ones. Only
+  // ever matches by our own ids, so the shell's Organization JSON-LD (a different id,
+  // written by scripts/inject-organization-jsonld.cjs) survives.
   // Matters because the category pass below writes over cancer-medicines.html, which is
   // itself a template here — without this, re-running without a rebuild stacks blocks.
-  if (jsonLdId) {
+  jsonLdBlocks.forEach(({ id }) => {
+    if (!id) return;
     html = html.replace(
-      new RegExp('[ \\t]*<script type="application/ld\\+json" id="' + jsonLdId + '">[\\s\\S]*?<\\/script>\\r?\\n?', 'gi'),
+      new RegExp('[ \\t]*<script type="application/ld\\+json" id="' + id + '">[\\s\\S]*?<\\/script>\\r?\\n?', 'gi'),
       ''
     );
-  }
+  });
 
   html = html.replace(/<title>[\s\S]*?<\/title>/i, `<title>${escapeHtml(fullTitle)}</title>`);
   html = html.replace(/<meta\s+name=["']description["'][\s\S]*?>/i, `<meta name="description" content="${escapeHtml(description)}">`);
@@ -106,14 +258,16 @@ function injectHead(template, { title, description, canonicalPath, ogType, jsonL
   const extraTags = [
     `<link rel="canonical" href="${canonicalUrl}">`,
     `<meta property="og:type" content="${ogType}">`,
-    `<meta property="og:site_name" content="Getmeds">`,
+    `<meta property="og:site_name" content="Getmeds Philippines">`,
     `<meta property="og:title" content="${escapeHtml(fullTitle)}">`,
     `<meta property="og:description" content="${escapeHtml(description)}">`,
     `<meta property="og:image" content="${DOMAIN}/assets/getmedslogo.png">`,
     `<meta property="og:url" content="${canonicalUrl}">`,
-    // Carries the same id the page uses at runtime (src/lib/seo.ts injectJsonLd), so
-    // hydration updates this block in place instead of appending a rival second one.
-    `<script type="application/ld+json"${jsonLdId ? ` id="${jsonLdId}"` : ''}>${JSON.stringify({ '@context': 'https://schema.org', ...jsonLd })}</script>`,
+    // Each carries the same id the page uses at runtime (src/lib/seo.ts injectJsonLd), so
+    // hydration updates the block in place instead of appending a rival second one.
+    ...jsonLdBlocks
+      .filter((block) => block && block.data)
+      .map(({ id, data }) => `<script type="application/ld+json"${id ? ` id="${id}"` : ''}>${JSON.stringify({ '@context': 'https://schema.org', ...data })}</script>`),
   ].join('\n    ');
 
   html = html.replace(/<\/head>/i, `    ${extraTags}\n</head>`);
@@ -186,6 +340,7 @@ async function main() {
     seenProductSlugs.add(key);
 
     const displayName = getDisplayName(row);
+    const isBranded = Boolean(row.brandName && row.genericName && row.brandName !== row.genericName);
     const description = truncateAtWord(
       row.metaDescription || `${displayName} — available through Getmeds Philippines. Quality pharmaceutical product for healthcare needs.`,
       160
@@ -197,16 +352,37 @@ async function main() {
       description,
       canonicalPath,
       ogType: 'product',
-      jsonLdId: 'jsonld-drug',
-      jsonLd: {
-        '@type': 'Drug',
-        name: displayName,
-        ...(row.genericName ? { nonProprietaryName: row.genericName } : {}),
-        ...(row.strength || row.form ? { dosageForm: [row.form, row.strength].filter(Boolean).join(', ') } : {}),
-        description,
-        url: `${DOMAIN}${canonicalPath}`,
-        prescriptionStatus: 'PrescriptionOnly',
-      },
+      jsonLdBlocks: [
+        {
+          id: 'jsonld-drug',
+          data: {
+            '@type': 'Drug',
+            name: displayName,
+            ...(isBranded ? { alternateName: String(row.brandName).trim() } : {}),
+            ...(row.genericName ? { nonProprietaryName: row.genericName, activeIngredient: row.genericName } : {}),
+            // Only true for a row that actually carries a brand distinct from its generic
+            // name — getDisplayName() falls back to the generic name, so a blanket `true`
+            // would claim a proprietary name for plain generics that have none.
+            isProprietary: isBranded,
+            ...(row.strength || row.form ? { dosageForm: [row.form, row.strength].filter(Boolean).join(', ') } : {}),
+            description,
+            url: `${DOMAIN}${canonicalPath}`,
+            legalStatus: 'Prescription only medicine (Rx), Philippines',
+            prescriptionStatus: 'PrescriptionOnly',
+            // Getmeds is the importer and distributor, never assumed to be the maker: the
+            // property is omitted unless the sheet's Manufacturer column is filled in.
+            ...(row.manufacturer ? { manufacturer: { '@type': 'Organization', name: String(row.manufacturer).trim() } } : {}),
+            // mainEntityOfPage is the page this drug is the main entity OF, so it points at
+            // the URL — the link to the company is carried by that page's publisher.
+            mainEntityOfPage: {
+              '@type': 'WebPage',
+              '@id': `${DOMAIN}${canonicalPath}`,
+              publisher: { '@id': ORGANIZATION_ID },
+            },
+          },
+        },
+        { id: 'jsonld-breadcrumb', data: breadcrumbList(productBreadcrumbTrail(row, displayName, folder)) },
+      ],
     });
 
     writeFile(path.join(DIST_DIR, folder, `${slug}.html`), html);
@@ -221,17 +397,37 @@ async function main() {
     if (row.conditionSlug && row.subCategory) {
       const slug = String(row.conditionSlug).trim();
       if (!conditionGroups.has(slug)) {
-        conditionGroups.set(slug, { name: row.subCategory, hubUrl: row.conditionHubUrl, products: new Set() });
+        // category/categoryFolder are carried so the condition page's BreadcrumbList can
+        // name and link its parent category, matching the visible trail.
+        conditionGroups.set(slug, {
+          name: row.subCategory,
+          hubUrl: row.conditionHubUrl,
+          category: String(row.category || '').trim(),
+          folder: row.categoryFolder ? String(row.categoryFolder).trim() : '',
+          products: new Set(),
+        });
       }
       conditionGroups.get(slug).products.add(displayName);
+      mergeConditionMeta(conditionGroups.get(slug), row);
     }
     Object.entries(row.conditionSlugsByName || {}).forEach(([name, info]) => {
       if (!info?.conditionSlug) return;
       const slug = String(info.conditionSlug).trim();
       if (!conditionGroups.has(slug)) {
-        conditionGroups.set(slug, { name, hubUrl: info.conditionHubUrl, products: new Set() });
+        conditionGroups.set(slug, {
+          name,
+          hubUrl: info.conditionHubUrl,
+          category: String(row.category || '').trim(),
+          folder: row.categoryFolder ? String(row.categoryFolder).trim() : '',
+          products: new Set(),
+        });
       }
       conditionGroups.get(slug).products.add(displayName);
+      // Only the category/folder are inherited from an "also linked from" row — the
+      // Filipino name, specialty and review date belong to the condition's own rows.
+      const group = conditionGroups.get(slug);
+      if (!group.category && row.category) group.category = String(row.category).trim();
+      if (!group.folder && row.categoryFolder) group.folder = String(row.categoryFolder).trim();
     });
   });
 
@@ -254,13 +450,35 @@ async function main() {
       description,
       canonicalPath,
       ogType: 'website',
-      jsonLdId: 'jsonld-medical-webpage',
-      jsonLd: {
-        '@type': 'MedicalWebPage',
-        name: `${group.name} Medicines in the Philippines`,
-        about: { '@type': 'MedicalCondition', name: group.name },
-        url: `${DOMAIN}${canonicalPath}`,
-      },
+      jsonLdBlocks: [
+        {
+          id: 'jsonld-medical-webpage',
+          data: {
+            '@type': 'MedicalWebPage',
+            name: `${group.name} Medicines in the Philippines`,
+            description,
+            inLanguage: 'en-PH',
+            about: {
+              '@type': 'MedicalCondition',
+              name: group.name,
+              // The Filipino term for the condition, when the sheet carries one.
+              ...(group.filipinoName ? { alternateName: group.filipinoName } : {}),
+            },
+            ...(specialtyUrl(group.specialty) ? { specialty: specialtyUrl(group.specialty) } : {}),
+            url: `${DOMAIN}${canonicalPath}`,
+            ...reviewFields(group),
+            publisher: { '@id': ORGANIZATION_ID },
+          },
+        },
+        {
+          id: 'jsonld-breadcrumb',
+          data: breadcrumbList([
+            { name: 'All Products', url: '/product-range' },
+            ...(group.category && group.folder ? [{ name: group.category, url: `/${group.folder}` }] : []),
+            { name: group.name },
+          ]),
+        },
+      ],
     });
 
     writeFile(path.join(DIST_DIR, 'conditions', `${slug}.html`), html);
@@ -311,12 +529,23 @@ async function main() {
       description,
       canonicalPath,
       ogType: 'website',
-      jsonLdId: 'jsonld-medical-webpage',
-      jsonLd: {
-        '@type': 'CollectionPage',
-        name: `${group.name}${qualifier} Medicines in the Philippines`,
-        url: `${DOMAIN}${canonicalPath}`,
-      },
+      jsonLdBlocks: [
+        {
+          id: 'jsonld-medical-webpage',
+          data: {
+            '@type': 'CollectionPage',
+            name: `${group.name}${qualifier} Medicines in the Philippines`,
+            url: `${DOMAIN}${canonicalPath}`,
+          },
+        },
+        {
+          id: 'jsonld-breadcrumb',
+          data: breadcrumbList([
+            { name: 'All Products', url: '/product-range' },
+            { name: `${group.name}${qualifier}` },
+          ]),
+        },
+      ],
     });
 
     writeFile(path.join(DIST_DIR, `${folder}.html`), html);
@@ -338,12 +567,17 @@ async function main() {
       description: allProductsDescription,
       canonicalPath,
       ogType: 'website',
-      jsonLdId: 'jsonld-medical-webpage',
-      jsonLd: {
-        '@type': 'CollectionPage',
-        name: 'Product Range — Getmeds Philippines',
-        url: `${DOMAIN}${canonicalPath}`,
-      },
+      // No BreadcrumbList here: "All Products" is the only crumb these two pages show.
+      jsonLdBlocks: [
+        {
+          id: 'jsonld-medical-webpage',
+          data: {
+            '@type': 'CollectionPage',
+            name: 'Product Range — Getmeds Philippines',
+            url: `${DOMAIN}${canonicalPath}`,
+          },
+        },
+      ],
     });
     writeFile(path.join(DIST_DIR, `${file}.html`), html);
     categoryCount++;

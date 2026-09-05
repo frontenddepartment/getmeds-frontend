@@ -321,9 +321,9 @@ export default function ContactUs() {
                   <a href="https://www.facebook.com/getmedsphilippines/" target="_blank" rel="noopener noreferrer" title="Facebook" className="text-[#1877F2] hover:scale-110 transition-transform duration-300 text-[22px] drop-shadow-sm"><i className="fa-brands fa-facebook"></i></a>
                   <a href="https://twitter.com/getmeds_ph" target="_blank" rel="noopener noreferrer" title="Twitter" className="text-[#1DA1F2] hover:scale-110 transition-transform duration-300 text-[22px] drop-shadow-sm"><i className="fa-brands fa-twitter"></i></a>
                   <a href="https://www.linkedin.com/company/getmeds" target="_blank" rel="noopener noreferrer" title="LinkedIn" className="text-[#0A66C2] hover:scale-110 transition-transform duration-300 text-[22px] drop-shadow-sm"><i className="fa-brands fa-linkedin"></i></a>
-                  <a href="https://www.tiktok.com/@getmedsph?_t=8lQqwFgifZJ&_r=1" target="_blank" rel="noopener noreferrer" title="TikTok" className="text-[#010101] hover:scale-110 transition-transform duration-300 text-[22px] drop-shadow-sm"><i className="fa-brands fa-tiktok"></i></a>
+                  <a href="https://www.tiktok.com/@getmedsph" target="_blank" rel="noopener noreferrer" title="TikTok" className="text-[#010101] hover:scale-110 transition-transform duration-300 text-[22px] drop-shadow-sm"><i className="fa-brands fa-tiktok"></i></a>
                   <a href="https://www.instagram.com/getmeds_ph/" target="_blank" rel="noopener noreferrer" title="Instagram" className="text-[#E1306C] hover:scale-110 transition-transform duration-300 text-[22px] drop-shadow-sm"><i className="fa-brands fa-instagram"></i></a>
-                  <a href="https://www.youtube.com/channel/UC9cpdBilPaA8xQHBzs_ezvA" target="_blank" rel="noopener noreferrer" title="YouTube" className="text-[#FF0000] hover:scale-110 transition-transform duration-300 text-[22px] drop-shadow-sm"><i className="fa-brands fa-youtube"></i></a>
+                  <a href="https://www.youtube.com/@getmedsph" target="_blank" rel="noopener noreferrer" title="YouTube" className="text-[#FF0000] hover:scale-110 transition-transform duration-300 text-[22px] drop-shadow-sm"><i className="fa-brands fa-youtube"></i></a>
                 </div>
               </div>
             </div>

@@ -259,6 +259,17 @@ export interface Product {
   status?: string
   notes?: string
   prescription?: string
+  // ── Structured-data columns ────────────────────────────────────────────
+  // Feeds "manufacturer" in the Drug JSON-LD. Never defaulted to Getmeds, which is the
+  // importer/distributor — the property is omitted entirely when the cell is blank.
+  manufacturer?: string
+  // Per-condition metadata, repeated on every row filed under the condition (conditions
+  // have no document type of their own). Feeds the MedicalWebPage JSON-LD on condition
+  // hub pages: Filipino term, medical specialty, and the pharmacist review sign-off.
+  conditionFilipinoName?: string
+  conditionSpecialty?: string
+  conditionLastReviewed?: string
+  conditionReviewedBy?: string
 }
 
 // ─────────────────────────────────────────────

@@ -71,9 +71,12 @@ const slugify = (text: string | undefined | null) => {
 
 export default function GetMedsHomepage() {
   useEffect(() => {
+    // Kept byte-identical to the <title>/description baked into index.html. These
+    // overwrite the static tags on hydration, so any drift here silently reverts the
+    // homepage's real meta for anything that renders JS before reading them.
     setPageMeta({
-      title: 'Getmeds',
-      description: 'Pharmaceutical company in the Philippines specializing in oncology, hematology, anesthesia, rare diseases, and essential medicines. FDA Philippines licensed. UN Global Compact member.',
+      title: 'Getmeds | Trusted Pharmaceutical Company & Healthcare Provider',
+      description: 'Global pharmaceutical company in the Philippines: FDA-licensed wholesaler, importer, distributor and retail pharmacy.',
       path: '/',
     });
     if (typeof (window as any).injectAIAssistant === 'function') {
