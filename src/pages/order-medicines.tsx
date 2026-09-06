@@ -1,6 +1,30 @@
 ﻿import React, { useState, useEffect, useRef } from 'react';
 import { injectHTML } from '../lib/injectHTML';
 import { getApiUrl } from '../lib/api';
+import {
+  BadgeCheck, Factory, FileCheck, Truck, Headset, Gavel, Siren,
+  Boxes, Tags, CreditCard, PackageCheck, ClipboardCheck, UserRoundCheck, ListChecks,
+  Stethoscope, HeartPulse, TriangleAlert,
+} from 'lucide-react';
+
+// Both are loaded from a CDN in order-medicines.html rather than bundled, so they
+// are only present at runtime. Declared here so this file stays type-checkable.
+declare global {
+  interface Window {
+    gcbPhone?: {
+      init: (input: HTMLInputElement | null) => unknown;
+      destroy: (input: HTMLInputElement | null) => void;
+      number: (input: HTMLInputElement | null) => string;
+      isValid: (input: HTMLInputElement | null) => boolean;
+      isEmpty: (input: HTMLInputElement | null) => boolean;
+    };
+    turnstile?: {
+      render: (el: HTMLElement, opts: Record<string, unknown>) => string;
+      reset: (id?: string) => void;
+      remove: (id?: string) => void;
+    };
+  }
+}
 import { setPageMeta } from '../lib/seo';
 import { validateFiles, ALLOWED_FILE_TYPES_ACCEPT } from '../lib/fileUpload';
 import AlertModal from '../lib/AlertModal';
@@ -244,12 +268,32 @@ export default function OrderMedicines() {
   const [userTypeModalOpen, setUserTypeModalOpen] = useState(false);
   const isProfessionalUserType = orderUserType === 'doctor' || orderUserType === 'hospital' || orderUserType === 'pharmacy';
   const isHospitalUserType = orderUserType === 'hospital';
+  const isPharmacyUserType = orderUserType === 'pharmacy';
+  const isDoctorUserType = orderUserType === 'doctor';
+  // Hospitals and pharmacy owners both go through the B2B partner flow: same eight
+  // form fields, same phone/challenge handling, their own spreadsheet each. Doctors
+  // stay on the shorter generic professional form.
+  const isPartnerUserType = isHospitalUserType || isPharmacyUserType || isDoctorUserType;
 
   // Hero copy depends on who is ordering. Hospitals and institutions buy through a
   // procurement process rather than a general "inquiry", so they lead with who the
   // page is for and carry an extra tagline line; doctors and pharmacy owners keep
   // the shared professional copy, and everyone else sees the patient flow.
-  const heroCopy = isHospitalUserType
+  const heroCopy = isDoctorUserType
+    ? {
+        title: 'For Doctors & Healthcare Professionals',
+        tagline: 'Product Access & Support for Your Practice',
+        subtitle:
+          'Product orders, medical and product information, sample requests, Compassionate Special Permit (CSP) coordination, and clinical documentation \u2014 for physicians, specialists, and healthcare professionals across the Philippines.',
+      }
+    : isPharmacyUserType
+    ? {
+        title: 'For Pharmacy Owners & Retail Pharmacies',
+        tagline: 'Your Reliable Pharmaceutical Distributor Partner',
+        subtitle:
+          'Wholesale pricing, distributor account setup, bulk order fulfillment, and ongoing supply support \u2014 for independent pharmacies, drugstores, and pharmacy chains across the Philippines. As an FDA Philippines-licensed wholesaler, importer, and distributor, Getmeds serves as a dedicated B2B supply partner for pharmacies.',
+      }
+    : isHospitalUserType
     ? {
         title: 'For Hospitals & Healthcare Institutions',
         tagline: 'Hospital Procurement, Handled with Care',
@@ -344,33 +388,217 @@ export default function OrderMedicines() {
   // document in Sanity Studio. Changing it here without changing it there silently
   // drops submissions from the sheet.
   const HOSPITAL_INQUIRY_TYPE = 'Hospital Inquiry';
+  const PHARMACY_INQUIRY_TYPE = 'Pharmacy Inquiry';
+  const DOCTOR_INQUIRY_TYPE = 'Doctor Inquiry';
+  const PARTNER_INQUIRY_TYPE = isDoctorUserType
+    ? DOCTOR_INQUIRY_TYPE
+    : isPharmacyUserType ? PHARMACY_INQUIRY_TYPE : HOSPITAL_INQUIRY_TYPE;
 
-  const emptyHospitalForm = {
+  // Everything that differs between the two partner forms. The markup below is shared.
+  const PARTNER_FORM = isDoctorUserType
+    ? {
+        badgeIcon: 'fa-user-doctor',
+        badgeLabel: USER_TYPE_LABELS.doctor,
+        heading: 'Send an Inquiry',
+        subtitle: 'Submit your request and our team will follow up with product availability, pricing, documentation, or order coordination.',
+        namePlaceholder: 'e.g., Dr. Maria Santos',
+        positionLabel: 'Specialty / Field of Practice',
+        positionPlaceholder: 'e.g., Oncology, Internal Medicine, Anesthesiology',
+        showPrcLicense: true,
+        prcPlaceholder: 'e.g., 0000000',
+        orgLabel: 'Hospital / Clinic Affiliation',
+        orgPlaceholder: 'e.g., Makati Medical Center',
+        locationPlaceholder: 'e.g., Makati City, Metro Manila',
+        emailLabel: 'Professional Email',
+        emailPlaceholder: 'e.g., dr.santos@hospital.com',
+        messagePlaceholder: "Tell us the product, molecule, or patient/institutional requirement you're inquiring about.",
+        consent: 'I confirm that I am a licensed healthcare professional submitting this inquiry in a professional capacity, and I consent to Getmeds collecting, using, and storing the information provided in this form to respond to my inquiry.',
+        helpHeading: 'Contact Our Team',
+        helpBlurb: 'For urgent orders or medical inquiries, reach out directly.',
+        contacts: [
+          { icon: 'fa-phone', label: '+63 917 166 5029', href: 'tel:+639171665029' },
+          { icon: 'fa-phone', label: '+63 917 581 4029', href: 'tel:+639175814029' },
+          { icon: 'fa-envelope', label: 'sales9@getmeds.ph', href: 'mailto:sales9@getmeds.ph' },
+          { icon: 'fa-envelope', label: 'care20@getmeds.ph', href: 'mailto:care20@getmeds.ph' },
+        ],
+      }
+    : isPharmacyUserType
+    ? {
+        badgeIcon: 'fa-store',
+        badgeLabel: USER_TYPE_LABELS.pharmacy,
+        heading: 'Become a Getmeds Partner Distributor',
+        subtitle: "Submit your pharmacy's details and our distributor team will follow up with product catalogs, pricing, and account setup.",
+        namePlaceholder: 'e.g., Juan Dela Cruz',
+        positionLabel: 'Position / Role',
+        positionPlaceholder: 'e.g., Pharmacy Owner, Pharmacist-in-Charge, Purchasing Manager',
+        showPrcLicense: false,
+        prcPlaceholder: '',
+        emailLabel: 'Business Email',
+        orgLabel: 'Pharmacy / Business Name',
+        orgPlaceholder: 'e.g., Dela Cruz Drugstore',
+        locationPlaceholder: 'e.g., Cebu City, Cebu',
+        emailPlaceholder: 'e.g., owner@drugstore.com',
+        messagePlaceholder: "Tell us what products, brands, or categories you're looking to source.",
+        consent: 'I confirm that I am authorized to submit this inquiry on behalf of the pharmacy or business named above, and I consent to Getmeds collecting, using, and storing the information provided in this form to respond to my inquiry.',
+        helpHeading: 'Need Help Setting Up Your Distributor Account?',
+        helpBlurb: 'For onboarding assistance, credit terms, or product catalog requests, contact our Pharmacy Partnerships Team directly.',
+        contacts: [
+          { icon: 'fa-phone', label: '+63 908 866 7139', href: 'tel:+639088667139' },
+          { icon: 'fa-phone', label: '+63 993 373 9842', href: 'tel:+639933739842' },
+          { icon: 'fa-envelope', label: 'sales5@2mginc.com', href: 'mailto:sales5@2mginc.com' },
+          { icon: 'fa-envelope', label: 'sales22@getmeds.ph', href: 'mailto:sales22@getmeds.ph' },
+        ],
+      }
+    : {
+        badgeIcon: 'fa-hospital',
+        badgeLabel: USER_TYPE_LABELS.hospital,
+        heading: 'Send an Inquiry',
+        subtitle: "Submit your hospital's requirements and our team will follow up with formal documentation, quotations, and coordination.",
+        namePlaceholder: 'e.g., Dr. Juan Dela Cruz',
+        positionLabel: 'Position / Role',
+        positionPlaceholder: 'e.g., Chief of Pharmacy, Procurement Officer',
+        showPrcLicense: false,
+        prcPlaceholder: '',
+        emailLabel: 'Business Email',
+        orgLabel: 'Hospital / Institution Name',
+        orgPlaceholder: 'e.g., Philippine General Hospital',
+        locationPlaceholder: 'e.g., Quezon City, Metro Manila',
+        emailPlaceholder: 'e.g., procurement@hospital.gov.ph',
+        messagePlaceholder: 'Tell us more about your requirements...',
+        consent: 'I confirm that I am authorized to submit this inquiry on behalf of the hospital or healthcare institution named above, and I consent to Getmeds collecting, using, and storing the information provided in this form to respond to my inquiry.',
+        helpHeading: 'Need Urgent Hospital Assistance?',
+        helpBlurb: 'For emergency purchases and critical-care orders, contact our Hospital Sales Team directly for immediate coordination.',
+        contacts: [
+          { icon: 'fa-phone', label: '+63 999 889 0592', href: 'tel:+639998890592' },
+          { icon: 'fa-phone', label: '+63 917 155 7029', href: 'tel:+639171557029' },
+          { icon: 'fa-envelope', label: 'sales3@getmeds.ph', href: 'mailto:sales3@getmeds.ph' },
+          { icon: 'fa-envelope', label: 'sales24@getmeds.ph', href: 'mailto:sales24@getmeds.ph' },
+        ],
+      };
+
+  const emptyPartnerForm = {
     name: '', position: '', institution: '', location: '',
-    email: '', phone: '', message: '', consent: false,
+    email: '', message: '', consent: false,
+    prcLicense: '',   // doctors only; ignored by the other partner types
   };
-  const [hospitalFormData, setHospitalFormData] = useState(emptyHospitalForm);
-  const [hospitalSubmitState, setHospitalSubmitState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
+  const [partnerFormData, setPartnerFormData] = useState(emptyPartnerForm);
+  const [partnerSubmitState, setPartnerSubmitState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
+  const [partnerPhoneError, setPartnerPhoneError] = useState('');
 
-  const handleHospitalSubmit = async (e: React.FormEvent) => {
+  // The phone input is deliberately UNCONTROLLED: intl-tel-input rewrites
+  // input.value directly (digit stripping, max-length trimming), which fights a
+  // React-controlled value. The submitted number is read from the widget instead.
+  const partnerPhoneRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (!isPartnerUserType) return;
+    const input = partnerPhoneRef.current;
+    if (!input) return;
+    window.gcbPhone?.init(input);
+    return () => window.gcbPhone?.destroy(input);
+  }, [isPartnerUserType]);
+
+  // ── Cloudflare Turnstile ──
+  // No site key configured => no widget and no gating, so the form still works in
+  // local dev and if the key is ever unset (mirrors the reference implementation).
+  const TURNSTILE_SITE_KEY = (import.meta.env.VITE_TURNSTILE_SITE_KEY as string | undefined) || '';
+  const [turnstileToken, setTurnstileToken] = useState('');
+  const turnstileRef = useRef<HTMLDivElement>(null);
+  const turnstileWidgetId = useRef<string | null>(null);
+  // Set by the effect below so resetTurnstile() can mount a brand-new widget
+  // after a submission rather than reusing the solved one.
+  const mountTurnstile = useRef<(() => void) | null>(null);
+
+  useEffect(() => {
+    if (!isPartnerUserType || !TURNSTILE_SITE_KEY) return;
+    const host = turnstileRef.current;
+    if (!host) return;
+
+    let cancelled = false;
+    // api.js is loaded async/defer, so window.turnstile is usually NOT ready when
+    // this effect first runs. Returning false here (rather than "done") is what
+    // keeps the poll below alive until the script lands — otherwise the interval
+    // clears itself on its first tick and the widget never renders, leaving the
+    // submit button permanently disabled with nothing on screen to solve.
+    const render = () => {
+      if (cancelled || turnstileWidgetId.current) return true;   // done, or nothing to do
+      if (!window.turnstile) return false;                       // script not loaded yet
+      turnstileWidgetId.current = window.turnstile.render(host, {
+        sitekey: TURNSTILE_SITE_KEY,
+        theme: 'light',
+        size: 'flexible',
+        appearance: 'always',   // keep the widget visible rather than interaction-only
+        callback: (token: string) => setTurnstileToken(token),
+        'expired-callback': () => setTurnstileToken(''),
+        'timeout-callback': () => setTurnstileToken(''),
+        'error-callback': () => setTurnstileToken(''),
+      });
+      return true;
+    };
+    const timer = window.setInterval(() => { if (render()) window.clearInterval(timer); }, 150);
+    const giveUp = window.setTimeout(() => window.clearInterval(timer), 15000);
+    render();
+    mountTurnstile.current = render;
+
+    return () => {
+      cancelled = true;
+      mountTurnstile.current = null;
+      window.clearInterval(timer);
+      window.clearTimeout(giveUp);
+      if (turnstileWidgetId.current) {
+        try { window.turnstile?.remove(turnstileWidgetId.current); } catch { /* already gone */ }
+        turnstileWidgetId.current = null;
+      }
+    };
+  }, [isPartnerUserType, TURNSTILE_SITE_KEY]);
+
+  // Tear the widget down and mount a fresh one, rather than calling reset() on the
+  // existing instance. Turnstile tokens are single-use, so every submission needs a
+  // genuinely new challenge — a reused token is rejected server-side as
+  // "timeout-or-duplicate". Removing and re-rendering also guarantees the widget
+  // returns to its unsolved state instead of staying visually ticked.
+  const resetTurnstile = () => {
+    setTurnstileToken('');
+    if (turnstileWidgetId.current) {
+      try { window.turnstile?.remove(turnstileWidgetId.current); } catch { /* already gone */ }
+      turnstileWidgetId.current = null;
+    }
+    mountTurnstile.current?.();
+  };
+
+  const handlePartnerSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setHospitalSubmitState('sending');
+
+    // Submit the E.164 form ("+639171234567"), never the raw national digits the
+    // visitor sees in the box.
+    const phoneInput = partnerPhoneRef.current;
+    if (!window.gcbPhone?.isEmpty(phoneInput) && !window.gcbPhone?.isValid(phoneInput)) {
+      setPartnerPhoneError('Please enter a valid phone number for the selected country.');
+      phoneInput?.focus();
+      return;
+    }
+    setPartnerPhoneError('');
+    const phoneE164 = window.gcbPhone?.number(phoneInput) ?? (phoneInput?.value || '');
+
+    setPartnerSubmitState('sending');
     try {
       const payload = {
-        inquiryType: HOSPITAL_INQUIRY_TYPE,
-        fullName: hospitalFormData.name,
-        email: hospitalFormData.email,
-        phone: hospitalFormData.phone,
-        message: hospitalFormData.message,
+        inquiryType: PARTNER_INQUIRY_TYPE,
+        fullName: partnerFormData.name,
+        email: partnerFormData.email,
+        phone: phoneE164,
+        turnstileToken,
+        message: partnerFormData.message,
         // Mirrored into subject so a sheet column or email template that only knows
         // the generic "Company/Organization" wording still resolves the institution.
-        subject: hospitalFormData.institution,
+        subject: partnerFormData.institution,
         additionalData: {
-          position: hospitalFormData.position,
-          institution: hospitalFormData.institution,
-          location: hospitalFormData.location,
-          consent: hospitalFormData.consent ? 'Confirmed' : '',
-          customerType: USER_TYPE_LABELS.hospital,
+          position: partnerFormData.position,
+          prcLicense: partnerFormData.prcLicense,
+          institution: partnerFormData.institution,
+          location: partnerFormData.location,
+          consent: partnerFormData.consent ? 'Confirmed' : '',
+          customerType: USER_TYPE_LABELS[orderUserType] || orderUserType,
         },
         files: []
       };
@@ -381,17 +609,20 @@ export default function OrderMedicines() {
         body: JSON.stringify(payload)
       });
 
-      if (!response.ok) throw new Error('Hospital inquiry submission failed.');
+      if (!response.ok) throw new Error('Partner inquiry submission failed.');
 
-      setHospitalSubmitState('sent');
-      setHospitalFormData(emptyHospitalForm);
+      setPartnerSubmitState('sent');
+      setPartnerFormData(emptyPartnerForm);
+      if (partnerPhoneRef.current) partnerPhoneRef.current.value = '';
+      resetTurnstile();
       setSuccessKind('inquiry');
       setSuccessModalOpen(true);
-      setTimeout(() => setHospitalSubmitState('idle'), 300);
+      setTimeout(() => setPartnerSubmitState('idle'), 300);
     } catch (error) {
-      console.error('Hospital inquiry submission error:', error);
-      setHospitalSubmitState('error');
-      setTimeout(() => setHospitalSubmitState('idle'), 2000);
+      console.error('Partner inquiry submission error:', error);
+      resetTurnstile();
+      setPartnerSubmitState('error');
+      setTimeout(() => setPartnerSubmitState('idle'), 2000);
     }
   };
 
@@ -602,6 +833,216 @@ export default function OrderMedicines() {
   void goToSlide;
   void currentSlide;
 
+  // Hospital-only trust content. Replaces the patient-facing "Support & Trust"
+  // cards, which talk about prescription uploads and dispensing — neither of
+  // which applies to an institutional procurement inquiry.
+  const HOSPITAL_CREDENTIALS = [
+    {
+      Icon: BadgeCheck,
+      title: 'Fully Licensed Pharmaceutical Company',
+      desc: 'FDA Philippines-licensed wholesaler, importer, distributor, and retail pharmacy. PDEA-licensed across LTO categories S1 to S5 for controlled substance supply.',
+    },
+    {
+      Icon: Factory,
+      title: 'International Manufacturing Standards',
+      desc: 'Our medicines are manufactured and sourced internationally in compliance with global quality standards \u2014 ensuring consistent safety, efficacy, and reliability for your patients.',
+    },
+    {
+      Icon: FileCheck,
+      title: 'Complete Regulatory Documentation',
+      desc: 'Every hospital order comes with Certificate of Analysis, batch records, cold-chain temperature logs, Certificate of Product Registration, and country-of-origin certification.',
+    },
+    {
+      Icon: Truck,
+      title: 'Nationwide Hospital Delivery',
+      desc: 'GDP-compliant delivery to hospitals across Luzon, Visayas, and Mindanao, with cold-chain handling for biologics, vaccines, and specialty medicines.',
+    },
+    {
+      Icon: Headset,
+      title: 'Dedicated Hospital Account Support',
+      desc: 'A dedicated account manager, formulary-ready documentation, and standing supply agreements \u2014 for hospitals that need a serious pharmaceutical partner.',
+    },
+    {
+      Icon: Gavel,
+      title: 'Government Bidding & Formulary Support',
+      desc: 'Complete documentation for DOH, LGU, and government tenders, including Product Inserts and safety data for formulary requirements.',
+    },
+    {
+      Icon: Siren,
+      title: 'Emergency Order Coordination',
+      desc: 'Urgent-order coordination for critical care and time-sensitive hospital requirements.',
+    },
+  ];
+
+  const PHARMACY_CREDENTIALS = [
+    {
+      Icon: BadgeCheck,
+      title: 'FDA-Licensed Pharmaceutical Distributor',
+      desc: 'FDA Philippines-licensed wholesaler, importer, distributor, and retail pharmacy. PDEA-licensed across LTO categories S1 to S5 for controlled substance supply \u2014 fully compliant sourcing for your pharmacy.',
+    },
+    {
+      Icon: Boxes,
+      title: 'Wide Product Portfolio',
+      desc: 'A broad catalog of generic and specialty pharmaceutical products under our own in-house brands \u2014 sourced and manufactured internationally in compliance with global quality standards.',
+    },
+    {
+      Icon: Tags,
+      title: 'Competitive Wholesale Pricing',
+      desc: 'Volume-based pricing tiers and flexible credit terms designed for independent pharmacies, drugstore chains, and multi-branch operations.',
+    },
+    {
+      Icon: CreditCard,
+      title: 'Flexible Order & Payment Terms',
+      desc: 'Minimum order flexibility and credit terms for qualified accounts \u2014 built to reduce risk for independent pharmacy owners.',
+    },
+    {
+      Icon: PackageCheck,
+      title: 'Reliable Replenishment & Logistics',
+      desc: 'Consistent stock availability, fast dispatch, and GDP-compliant distribution \u2014 including cold-chain handling for temperature-sensitive products \u2014 to keep your shelves stocked.',
+    },
+    {
+      Icon: ClipboardCheck,
+      title: 'Complete Product Documentation',
+      desc: 'We are dedicated to providing all documents needed for compliant sourcing \u2014 Certificate of Analysis, cGMP certification, local assay certificates, Certificate of Product Registration, anti-counterfeit batch notifications, and ISO certification.',
+    },
+    {
+      Icon: UserRoundCheck,
+      title: 'Dedicated Distributor Account Support',
+      desc: 'A dedicated account manager to handle reordering, new product requests, and account-specific pricing \u2014 built for long-term partnership, not one-off transactions.',
+    },
+  ];
+
+  const DOCTOR_CREDENTIALS = [
+    {
+      Icon: BadgeCheck,
+      title: 'FDA-Licensed Pharmaceutical Company',
+      desc: 'FDA Philippines-licensed wholesaler, importer, distributor, and retail pharmacy. PDEA-licensed across LTO categories S1 to S5 for controlled substance supply.',
+    },
+    {
+      Icon: Factory,
+      title: 'International Manufacturing Standards',
+      desc: 'Our medicines are manufactured and sourced internationally in compliance with global quality standards \u2014 ensuring consistent safety, efficacy, and reliability for your patients.',
+    },
+    {
+      Icon: Stethoscope,
+      title: 'Direct Product Access',
+      desc: 'Order directly from us \u2014 no resellers, no middlemen. Every order comes with accurate product information, Certificate of Product Registration, and Product Inserts.',
+    },
+    {
+      Icon: Truck,
+      title: 'Fast, Reliable Fulfillment',
+      desc: 'Fast dispatch and GDP-compliant distribution, including cold-chain handling for temperature-sensitive products, delivered to your clinic or practice.',
+    },
+    {
+      Icon: HeartPulse,
+      title: 'Patient-First Medical & Sales Support',
+      desc: "Direct access to our team for product inquiries, order coordination, sample requests, and documentation \u2014 because your patients' needs come first.",
+    },
+  ];
+
+  const CSP_COMMON_USES = [
+    'Rare disease and orphan drug treatments',
+    'Oncology medicines not yet locally registered',
+    'Specialty biologics unavailable through standard channels',
+  ];
+
+  const CSP_HOW_IT_WORKS = [
+    "Submit your patient's or institution's clinical requirement and product details",
+    'Our team coordinates sourcing and FDA/CSP documentation',
+    'Product is imported and delivered under compassionate-use provisions',
+  ];
+
+  const ADVERSE_EVENT_CONTACT = {
+    name: 'Ivy Marcel F. Varias, RPh',
+    role: 'Head, Regulatory Affairs',
+    address: 'Unit 301 & 305, 17 Vatican Bldg., Vatican City Drive, B.F. Resort Village, Talon II, Las Pi\u00f1as City',
+    email: 'dra2@2mginc.com',
+    phones: [
+      { label: '(02) 8709 1617', href: 'tel:+63287091617' },
+      { label: '0994 564 8227', href: 'tel:+639945648227' },
+    ],
+  };
+
+  const PARTNERSHIP_STEPS = [
+    { title: 'Submit your inquiry', desc: 'Tell us about your pharmacy and product needs' },
+    { title: 'Verification & account setup', desc: 'We confirm your business documents and set your account terms' },
+    { title: 'Catalog & pricing', desc: 'Receive your product catalog and wholesale price list' },
+    { title: 'Start ordering', desc: 'Place your first order with ongoing account manager support' },
+  ];
+
+  const THERAPEUTIC_AREAS = [
+    { icon: 'fa-ribbon', name: 'Oncology', desc: 'Anti-cancer medicines and supportive care products' },
+    { icon: 'fa-droplet', name: 'Hematology', desc: 'Blood disorder treatments and related specialty products' },
+    { icon: 'fa-syringe', name: 'Anesthesia', desc: 'Anesthetic and perioperative medicines for surgical and critical care use' },
+    { icon: 'fa-dna', name: 'Rare Diseases', desc: 'Specialty and orphan drug medicines for rare disease treatment' },
+    { icon: 'fa-pills', name: 'Essential Medicines', desc: 'Core hospital formulary drugs for everyday clinical needs' },
+  ];
+
+  const HOSPITAL_REACH_STATS = [
+    { value: '2,000+', label: 'molecules' },
+    { value: '500+', label: 'hospitals' },
+    { value: '10,000+', label: 'pharmacies' },
+  ];
+
+  const CSP_USE_TYPES = [
+    { name: 'Institutional Use', desc: 'for hospitals requiring unregistered medicines for broader patient care needs' },
+    { name: 'Named Patient Use', desc: 'for a specific, individually identified patient requiring an unregistered medicine' },
+  ];
+
+  const PARTNER_TRUST = isDoctorUserType
+    ? {
+        credentialsHeading: 'Why Doctors & Healthcare Professionals Choose Getmeds',
+        credentials: DOCTOR_CREDENTIALS,
+        credentialsTitleSpan: 'lg:col-span-1',
+        therapeuticIntro: 'Getmeds supports doctors and healthcare professionals with a focused portfolio across critical and specialty therapeutic categories, backed by proper documentation and cold-chain handling where required.',
+        areasWeServe: '',
+        showCsp: true,
+        cspIntro: 'For patients who need access to medicines not yet registered in the Philippines, Compassionate Special Permit (CSP) coordination is facilitated through 2MG Inc., our trusted partner company specializing in compassionate-use and unregistered drug importation.',
+        cspUseTypes: [
+          { name: 'Named Patient Use', desc: 'for a specific, individually identified patient requiring an unregistered medicine' },
+          { name: 'Institutional Use', desc: 'for hospitals and healthcare institutions requiring unregistered medicines for broader patient care needs' },
+        ],
+        cspCommonUses: CSP_COMMON_USES,
+        cspHowItWorks: CSP_HOW_IT_WORKS,
+        cspNote: 'This process requires physician or institutional initiation and is subject to FDA approval and applicable regulations.',
+        reachHeading: 'Trusted by Healthcare Professionals Nationwide',
+        reachStats: [
+          { value: '500+', label: 'hospitals' },
+          { value: '10,000+', label: 'pharmacies' },
+          { value: '2,000+', label: 'molecules' },
+        ],
+        reachBlurb: 'From Luzon to Visayas to Mindanao \u2014 Getmeds supports doctors and healthcare professionals with reliable product access and support nationwide.',
+      }
+    : isPharmacyUserType
+    ? {
+        credentialsHeading: 'Your Trusted Pharmaceutical Distributor in the Philippines',
+        credentials: PHARMACY_CREDENTIALS,
+        credentialsTitleSpan: 'lg:col-span-2',
+        therapeuticIntro: 'Getmeds distributes a focused portfolio across key therapeutic categories, giving your pharmacy access to both everyday essentials and specialty products your customers may not find elsewhere.',
+        areasWeServe: 'Getmeds supplies independent pharmacies, drugstore chains, and multi-branch pharmacy partners across the Philippines \u2014 including Metro Manila, Cebu, Davao, and provincial areas nationwide.',
+        showCsp: false,
+        cspIntro: '', cspUseTypes: [], cspCommonUses: [], cspHowItWorks: [], cspNote: '',
+        reachHeading: 'Supplying Distributors Across the Philippines',
+        reachStats: HOSPITAL_REACH_STATS,
+        reachBlurb: 'From Luzon to Visayas to Mindanao \u2014 Getmeds is the distributor of choice for independent pharmacies, drugstore chains, and retail pharmacy partners nationwide.',
+      }
+    : {
+        credentialsHeading: 'Your Trusted Pharmaceutical Supplier for Philippine Hospitals',
+        credentials: HOSPITAL_CREDENTIALS,
+        credentialsTitleSpan: 'lg:col-span-2',
+        therapeuticIntro: 'Getmeds supplies hospitals with a focused portfolio across critical and specialty therapeutic categories, backed by proper documentation and cold-chain handling where required.',
+        areasWeServe: '',
+        showCsp: true,
+        cspIntro: 'For patients or institutional needs requiring medicines not yet registered in the Philippines, Compassionate Special Permit (CSP) coordination is facilitated through 2MG Inc., our trusted partner company specializing in compassionate-use and unregistered drug importation.',
+        cspUseTypes: CSP_USE_TYPES,
+        cspCommonUses: [],
+        cspHowItWorks: [],
+        cspNote: 'This process requires institutional or physician initiation and is subject to FDA approval and applicable regulations.',
+        reachHeading: 'Serving Hospitals Across the Philippines',
+        reachStats: HOSPITAL_REACH_STATS,
+        reachBlurb: 'From Luzon to Visayas to Mindanao \u2014 Getmeds is trusted by leading Filipino hospitals, healthcare institutions, and pharmaceutical partners.',
+      };
+
   const GUIDE_ITEMS = [
     "Patient's full name",
     "Medicine name, dosage, and quantity",
@@ -662,7 +1103,7 @@ export default function OrderMedicines() {
                   {heroCopy.tagline}
                 </p>
               )}
-              <p className={`ca-anim ca-up ca-d2 text-[12px] sm:text-[13px] mt-1 font-medium mb-10 max-w-3xl leading-relaxed ${isHospitalUserType ? 'text-white' : 'text-white/75'}`}>
+              <p className={`ca-anim ca-up ca-d2 text-[12px] sm:text-[13px] mt-1 font-medium mb-10 max-w-3xl leading-relaxed ${isPartnerUserType ? 'text-white' : 'text-white/75'}`}>
                 {heroCopy.subtitle}
               </p>
 
@@ -1074,7 +1515,7 @@ export default function OrderMedicines() {
                 Wide/landscape card spanning the full content width: short fields share a row,
                 Message spans full width below, and the submit button sits bottom-right.
                 Hospitals get their own procurement form below instead. */}
-            {isProfessionalUserType && !isHospitalUserType && (
+            {isProfessionalUserType && !isPartnerUserType && (
               <div className="ca-anim ca-up bg-white rounded-[15px] border border-gray-100 p-6 md:p-10 shadow-sm">
                 <div className="flex items-start justify-between flex-wrap gap-3 mb-6">
                   <div>
@@ -1163,80 +1604,121 @@ export default function OrderMedicines() {
               </div>
             )}
 
-            {/* Hospital / Institution — procurement inquiry. Separate from the generic
-                professional form because these submissions carry institution, role and
-                location, and route to their own spreadsheet (see HOSPITAL_INQUIRY_TYPE). */}
-            {isHospitalUserType && (
+            {/* Hospital and pharmacy partners — same eight fields and submit path,
+                different copy and destination sheet (see PARTNER_FORM /
+                PARTNER_INQUIRY_TYPE). Separate from the generic professional form,
+                which doesn't carry organisation, role or location. */}
+            {isPartnerUserType && (
               <>
-              <div className="ca-anim ca-up bg-white rounded-[15px] border border-gray-100 p-6 md:p-10 shadow-sm">
-                <div className="flex items-start justify-between flex-wrap gap-3 mb-6">
-                  <div>
-                    <h2 className="text-xl font-semibold text-gray-900 mb-1">Send an Inquiry</h2>
-                    <p className="text-gray-400 text-[13px] max-w-2xl">Submit your hospital&rsquo;s requirements and our team will follow up with formal documentation, quotations, and coordination.</p>
-                  </div>
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-blue-50 text-primary border border-blue-100 shrink-0">
-                    <i className="fa-solid fa-hospital text-[9px]"></i>
-                    {USER_TYPE_LABELS.hospital}
+              {/* Onboarding steps — pharmacy partners only */}
+              {isPharmacyUserType && (
+                <div className="ca-anim ca-up bg-white rounded-[15px] border border-gray-100 p-6 md:p-10 shadow-sm">
+                  <h2 className="text-xl font-semibold text-gray-900 mb-1.5">How Partnership Works</h2>
+                  <p className="text-gray-900 text-[15px] leading-relaxed mb-6">
+                    We are dedicated to providing all documents needed, competitive pricing, and fast dispatch and distribution &mdash; from onboarding to your first order.
+                  </p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {PARTNERSHIP_STEPS.map((step, i) => (
+                      <div key={step.title} className="rounded-[14px] bg-gray-50 p-5">
+                        <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-[13px] font-bold mb-3"
+                          style={{ background: 'linear-gradient(to right,#61A644,#1D9FDA)' }}>
+                          {i + 1}
+                        </div>
+                        <h3 className="text-[14px] font-semibold text-dark mb-1">{step.title}</h3>
+                        <p className="text-[12.5px] text-gray-400 leading-relaxed">{step.desc}</p>
+                      </div>
+                    ))}
                   </div>
                 </div>
+              )}
 
-                <form onSubmit={handleHospitalSubmit} className="space-y-6">
+              <div className="ca-anim ca-up bg-white rounded-[15px] border border-gray-100 p-6 md:p-10 shadow-sm">
+                <div className="mb-6">
+                  <div className="flex items-start justify-between flex-wrap gap-3 mb-1">
+                    <h2 className="text-xl font-semibold text-gray-900">{PARTNER_FORM.heading}</h2>
+                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-blue-50 text-primary border border-blue-100 shrink-0">
+                      <i className={`fa-solid ${PARTNER_FORM.badgeIcon} text-[9px]`}></i>
+                      {PARTNER_FORM.badgeLabel}
+                    </div>
+                  </div>
+                  <p className="text-gray-900 text-[15px]">{PARTNER_FORM.subtitle}</p>
+                </div>
+
+                <form onSubmit={handlePartnerSubmit} className="space-y-6">
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-6">
                     <div className="space-y-2">
                       <label className="text-[13px] font-semibold text-gray-700">Full Name</label>
-                      <input type="text" required placeholder="e.g., Dr. Juan Dela Cruz"
-                        value={hospitalFormData.name}
-                        onChange={e => setHospitalFormData(prev => ({ ...prev, name: e.target.value }))}
+                      <input type="text" required placeholder={PARTNER_FORM.namePlaceholder}
+                        value={partnerFormData.name}
+                        onChange={e => setPartnerFormData(prev => ({ ...prev, name: e.target.value }))}
                         className="w-full bg-gray-50 border-none rounded-[12px] px-4 py-3 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition placeholder-gray-300" />
                     </div>
 
                     <div className="space-y-2">
-                      <label className="text-[13px] font-semibold text-gray-700">Position / Role</label>
-                      <input type="text" required placeholder="e.g., Chief of Pharmacy, Procurement Officer"
-                        value={hospitalFormData.position}
-                        onChange={e => setHospitalFormData(prev => ({ ...prev, position: e.target.value }))}
+                      <label className="text-[13px] font-semibold text-gray-700">{PARTNER_FORM.positionLabel}</label>
+                      <input type="text" required placeholder={PARTNER_FORM.positionPlaceholder}
+                        value={partnerFormData.position}
+                        onChange={e => setPartnerFormData(prev => ({ ...prev, position: e.target.value }))}
                         className="w-full bg-gray-50 border-none rounded-[12px] px-4 py-3 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition placeholder-gray-300" />
                     </div>
 
+                    {PARTNER_FORM.showPrcLicense && (
+                      <div className="space-y-2">
+                        <label className="text-[13px] font-semibold text-gray-700">PRC License Number</label>
+                        <input type="text" required placeholder={PARTNER_FORM.prcPlaceholder}
+                          inputMode="numeric"
+                          value={partnerFormData.prcLicense}
+                          onChange={e => setPartnerFormData(prev => ({ ...prev, prcLicense: e.target.value }))}
+                          className="w-full bg-gray-50 border-none rounded-[12px] px-4 py-3 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition placeholder-gray-300" />
+                      </div>
+                    )}
+
                     <div className="space-y-2">
-                      <label className="text-[13px] font-semibold text-gray-700">Hospital / Institution Name</label>
-                      <input type="text" required placeholder="e.g., Philippine General Hospital"
-                        value={hospitalFormData.institution}
-                        onChange={e => setHospitalFormData(prev => ({ ...prev, institution: e.target.value }))}
+                      <label className="text-[13px] font-semibold text-gray-700">{PARTNER_FORM.orgLabel}</label>
+                      <input type="text" required placeholder={PARTNER_FORM.orgPlaceholder}
+                        value={partnerFormData.institution}
+                        onChange={e => setPartnerFormData(prev => ({ ...prev, institution: e.target.value }))}
                         className="w-full bg-gray-50 border-none rounded-[12px] px-4 py-3 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition placeholder-gray-300" />
                     </div>
 
                     <div className="space-y-2">
                       <label className="text-[13px] font-semibold text-gray-700">Location / City</label>
-                      <input type="text" required placeholder="e.g., Quezon City, Metro Manila"
-                        value={hospitalFormData.location}
-                        onChange={e => setHospitalFormData(prev => ({ ...prev, location: e.target.value }))}
+                      <input type="text" required placeholder={PARTNER_FORM.locationPlaceholder}
+                        value={partnerFormData.location}
+                        onChange={e => setPartnerFormData(prev => ({ ...prev, location: e.target.value }))}
                         className="w-full bg-gray-50 border-none rounded-[12px] px-4 py-3 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition placeholder-gray-300" />
                     </div>
 
                     <div className="space-y-2">
-                      <label className="text-[13px] font-semibold text-gray-700">Business Email</label>
-                      <input type="email" required placeholder="e.g., procurement@hospital.gov.ph"
-                        value={hospitalFormData.email}
-                        onChange={e => setHospitalFormData(prev => ({ ...prev, email: e.target.value }))}
+                      <label className="text-[13px] font-semibold text-gray-700">{PARTNER_FORM.emailLabel}</label>
+                      <input type="email" required placeholder={PARTNER_FORM.emailPlaceholder}
+                        value={partnerFormData.email}
+                        onChange={e => setPartnerFormData(prev => ({ ...prev, email: e.target.value }))}
                         className="w-full bg-gray-50 border-none rounded-[12px] px-4 py-3 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition placeholder-gray-300" />
                     </div>
 
                     <div className="space-y-2">
-                      <label className="text-[13px] font-semibold text-gray-700">Phone / Mobile Number</label>
-                      <input type="tel" required placeholder="+63 9XX XXX XXXX"
-                        inputMode="numeric"
-                        value={hospitalFormData.phone}
-                        onChange={e => setHospitalFormData(prev => ({ ...prev, phone: e.target.value.replace(/[^\d+\s\-()]/g, '') }))}
-                        className="w-full bg-gray-50 border-none rounded-[12px] px-4 py-3 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition placeholder-gray-300" />
+                      <label htmlFor="hospital-phone" className="text-[13px] font-semibold text-gray-700">Phone / Mobile Number</label>
+                      <div className="gcb-phone-wrap">
+                        <input type="tel" id="hospital-phone" name="phone" required
+                          ref={partnerPhoneRef}
+                          placeholder="e.g. 912 345 6789"
+                          autoComplete="tel"
+                          inputMode="numeric"
+                          onInput={() => { if (partnerPhoneError) setPartnerPhoneError(''); }}
+                          className="w-full bg-gray-50 border-none rounded-[12px] px-4 py-3 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition placeholder-gray-300" />
+                      </div>
+                      {partnerPhoneError && (
+                        <p className="text-[12px] text-red-500">{partnerPhoneError}</p>
+                      )}
                     </div>
                   </div>
 
                   <div className="space-y-2">
                     <label className="text-[13px] font-semibold text-gray-700">Message</label>
-                    <textarea rows={3} placeholder="Tell us more about your requirements..."
-                      value={hospitalFormData.message}
-                      onChange={e => setHospitalFormData(prev => ({ ...prev, message: e.target.value }))}
+                    <textarea rows={3} placeholder={PARTNER_FORM.messagePlaceholder}
+                      value={partnerFormData.message}
+                      onChange={e => setPartnerFormData(prev => ({ ...prev, message: e.target.value }))}
                       className="w-full bg-gray-50 border-none rounded-[12px] px-4 py-3 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition placeholder-gray-300 resize-none" />
                   </div>
 
@@ -1244,22 +1726,28 @@ export default function OrderMedicines() {
                     <label className="text-[13px] font-semibold text-gray-700">Consent</label>
                     <label className="flex items-start gap-3 cursor-pointer bg-gray-50 rounded-[12px] px-4 py-3">
                       <input type="checkbox" required
-                        checked={hospitalFormData.consent}
-                        onChange={e => setHospitalFormData(prev => ({ ...prev, consent: e.target.checked }))}
+                        checked={partnerFormData.consent}
+                        onChange={e => setPartnerFormData(prev => ({ ...prev, consent: e.target.checked }))}
                         className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer accent-[#1D9FDA]" />
                       <span className="text-[12px] leading-relaxed text-gray-500">
-                        I confirm that I am authorized to submit this inquiry on behalf of the hospital or healthcare institution named above, and I consent to Getmeds collecting, using, and storing the information provided in this form to respond to my inquiry.
+                        {PARTNER_FORM.consent}
                       </span>
                     </label>
                   </div>
 
-                  <div className="flex justify-end">
-                    <button type="submit" disabled={hospitalSubmitState === 'sending'}
-                      className="text-white font-bold py-3 px-10 rounded-[12px] transition-all duration-300 text-[13px] disabled:opacity-50 whitespace-nowrap"
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    {/* Renders only when VITE_TURNSTILE_SITE_KEY is set; without a key
+                        the widget is absent and the button is never gated. */}
+                    {TURNSTILE_SITE_KEY
+                      ? <div ref={turnstileRef} className="min-h-[65px] flex justify-start" />
+                      : <div />}
+                    <button type="submit"
+                      disabled={partnerSubmitState === 'sending' || (!!TURNSTILE_SITE_KEY && !turnstileToken)}
+                      className="text-white font-bold py-3 px-10 rounded-[12px] transition-all duration-300 text-[13px] disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap shrink-0"
                       style={{ background: 'linear-gradient(to right, #61A644, #0D99FF)' }}>
-                      {hospitalSubmitState === 'sending'
+                      {partnerSubmitState === 'sending'
                         ? 'Sending...'
-                        : hospitalSubmitState === 'error'
+                        : partnerSubmitState === 'error'
                           ? 'Failed to submit. Try again.'
                           : 'Submit Inquiry Request'}
                     </button>
@@ -1272,20 +1760,13 @@ export default function OrderMedicines() {
               <div className="ca-anim ca-up bg-white rounded-[15px] border border-gray-100 p-6 md:p-8 shadow-sm">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 items-start">
                   <div>
-                    <h3 className="text-[17px] font-semibold text-gray-900 mb-1.5">Need Urgent Hospital Assistance?</h3>
-                    <p className="text-gray-400 text-[13px] leading-relaxed">
-                      For emergency purchases and critical-care orders, contact our Hospital Sales Team directly for immediate coordination.
-                    </p>
+                    <h3 className="text-[17px] font-semibold text-gray-900 mb-1.5">{PARTNER_FORM.helpHeading}</h3>
+                    <p className="text-gray-900 text-[15px] leading-relaxed">{PARTNER_FORM.helpBlurb}</p>
                   </div>
                   <div>
                     <p className="text-[11px] font-semibold uppercase tracking-widest text-gray-400 mb-3">Contact Details</p>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2.5">
-                      {[
-                        { icon: 'fa-phone', label: '+63 999 889 0592', href: 'tel:+639998890592' },
-                        { icon: 'fa-phone', label: '+63 917 155 7029', href: 'tel:+639171557029' },
-                        { icon: 'fa-envelope', label: 'sales3@getmeds.ph', href: 'mailto:sales3@getmeds.ph' },
-                        { icon: 'fa-envelope', label: 'sales24@getmeds.ph', href: 'mailto:sales24@getmeds.ph' },
-                      ].map(item => (
+                      {PARTNER_FORM.contacts.map(item => (
                         <a key={item.label} href={item.href}
                           className="group flex items-center gap-2.5 text-[13px] font-semibold text-gray-700 hover:text-primary transition">
                           <span className="w-7 h-7 rounded-full bg-blue-50 flex items-center justify-center shrink-0">
@@ -1301,7 +1782,8 @@ export default function OrderMedicines() {
               </>
             )}
 
-            {/* ── Support & Trust ── */}
+            {/* ── Support & Trust (patient / doctor / pharmacy) ── */}
+            {!isPartnerUserType && (
             <div className="ca-anim ca-up">
 
               {/* Top row — shorter details */}
@@ -1386,6 +1868,177 @@ export default function OrderMedicines() {
                 </div>
               </div>
             </div>
+            )}
+
+            {/* ── Hospital: supplier credentials, therapeutic areas, CSP ── */}
+            {isPartnerUserType && (
+              <div className="ca-anim ca-up space-y-4">
+
+                {/* Supplier / distributor credentials */}
+                <div>
+                  {/* The title is the grid's first cell (spanning all but one column),
+                      so the opening credential card sits beside it and the remaining
+                      six flow underneath without leaving a hole in the layout. */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <h2 className={`${PARTNER_TRUST.credentialsTitleSpan} self-center p-6 text-2xl md:text-[26px] font-semibold text-gray-900 leading-snug`} style={{ textWrap: "balance" }}>
+                      {PARTNER_TRUST.credentialsHeading}
+                    </h2>
+                    {PARTNER_TRUST.credentials.map(item => (
+                      <div key={item.title} className="rounded-2xl p-6 flex flex-col">
+                        <item.Icon className="w-9 h-9 text-green-600 mb-4" strokeWidth={1.5} aria-hidden="true" />
+                        <h3 className="text-[15px] font-semibold text-dark mb-1">{item.title}</h3>
+                        <p className="text-[13px] text-gray-400 leading-relaxed">{item.desc}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Therapeutic areas */}
+                <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-gray-100">
+                  <h2 className="text-xl font-semibold text-gray-900 mb-1.5">Our Therapeutic Areas</h2>
+                  <p className="text-[15px] text-gray-900 leading-relaxed mb-6">{PARTNER_TRUST.therapeuticIntro}</p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {THERAPEUTIC_AREAS.map(area => (
+                      <div key={area.name} className="flex items-start gap-3.5 rounded-[14px] bg-gray-50 p-4">
+                        <div className="w-9 h-9 rounded-[10px] bg-white flex items-center justify-center text-green-600 shadow-sm flex-shrink-0">
+                          <i className={`fa-solid ${area.icon} text-[13px]`}></i>
+                        </div>
+                        <div>
+                          <h3 className="text-[14px] font-semibold text-dark mb-0.5">{area.name}</h3>
+                          <p className="text-[12.5px] text-gray-400 leading-relaxed">{area.desc}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="text-[13px] text-gray-500 leading-relaxed mt-6">
+                    Looking for a specific product or molecule? Let us know in your inquiry, and our team will confirm availability and next steps.
+                  </p>
+                </div>
+
+                {/* Areas We Serve — pharmacy partners only */}
+                {isPharmacyUserType && (
+                  <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-gray-100">
+                    <h2 className="text-xl font-semibold text-gray-900 mb-1.5">Areas We Serve</h2>
+                    <p className="text-[15px] text-gray-900 leading-relaxed">{PARTNER_TRUST.areasWeServe}</p>
+                  </div>
+                )}
+
+                {/* Compassionate Special Permit — hospital and doctor partners */}
+                {PARTNER_TRUST.showCsp && (
+                <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-gray-100">
+                  <h2 className="text-xl font-semibold text-gray-900 mb-1.5">Compassionate Special Permit (CSP)</h2>
+                  <p className="text-[15px] text-gray-900 leading-relaxed">{PARTNER_TRUST.cspIntro}</p>
+
+                  <p className="text-[13px] font-semibold text-dark mt-6 mb-3">Getmeds coordinates CSP applications for both:</p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {PARTNER_TRUST.cspUseTypes.map(use => (
+                      <div key={use.name} className="flex items-start gap-3.5 rounded-[14px] bg-gray-50 p-4">
+                        <div className="w-9 h-9 rounded-[10px] bg-white flex items-center justify-center text-green-600 shadow-sm flex-shrink-0">
+                          <i className="fa-solid fa-check text-[13px]"></i>
+                        </div>
+                        <div>
+                          <h3 className="text-[14px] font-semibold text-dark mb-0.5">{use.name}</h3>
+                          <p className="text-[12.5px] text-gray-400 leading-relaxed">{use.desc}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {PARTNER_TRUST.cspCommonUses.length > 0 ? (
+                    <>
+                      <p className="text-[13px] font-semibold text-dark mt-6 mb-3">This pathway is commonly used for:</p>
+                      <ul className="space-y-2">
+                        {PARTNER_TRUST.cspCommonUses.map(use => (
+                          <li key={use} className="flex items-start gap-2.5 text-[14px] text-gray-600 leading-relaxed">
+                            <span className="w-1.5 h-1.5 rounded-full bg-green-600 mt-2 shrink-0" />
+                            {use}
+                          </li>
+                        ))}
+                      </ul>
+
+                      <p className="text-[13px] font-semibold text-dark mt-6 mb-3">How it works:</p>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        {PARTNER_TRUST.cspHowItWorks.map((step, i) => (
+                          <div key={step} className="rounded-[14px] bg-gray-50 p-4">
+                            <div className="w-7 h-7 rounded-full flex items-center justify-center text-white text-[12px] font-bold mb-2.5"
+                              style={{ background: 'linear-gradient(to right,#61A644,#1D9FDA)' }}>
+                              {i + 1}
+                            </div>
+                            <p className="text-[12.5px] text-gray-500 leading-relaxed">{step}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </>
+                  ) : (
+                    <p className="text-[13px] text-gray-400 leading-relaxed max-w-3xl mt-6">
+                      This pathway is commonly used for rare disease treatments, oncology medicines not yet locally registered, and specialty biologics unavailable through standard channels.
+                    </p>
+                  )}
+
+                  <div className="flex items-start gap-3 rounded-[14px] bg-amber-50 border border-amber-100 p-4 mt-6">
+                    <i className="fa-solid fa-circle-info text-amber-500 text-[13px] mt-0.5 flex-shrink-0"></i>
+                    <p className="text-[12.5px] text-amber-900 leading-relaxed">
+                      <span className="font-semibold">Note:</span> {PARTNER_TRUST.cspNote}
+                    </p>
+                  </div>
+                </div>
+                )}
+
+                {/* Adverse event reporting — doctors only */}
+                {isDoctorUserType && (
+                  <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-gray-100">
+                    <div className="flex items-start gap-3 mb-1.5">
+                      <TriangleAlert className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" strokeWidth={1.75} aria-hidden="true" />
+                      <h2 className="text-xl font-semibold text-gray-900">Reporting an Adverse Event?</h2>
+                    </div>
+                    <p className="text-[15px] text-gray-900 leading-relaxed mb-5">
+                      If you need to report a suspected adverse drug reaction or product quality complaint, please contact:
+                    </p>
+                    <div className="rounded-[14px] bg-gray-50 p-5">
+                      <p className="text-[15px] font-semibold text-dark">{ADVERSE_EVENT_CONTACT.name}</p>
+                      <p className="text-[13px] text-gray-500 mb-3">{ADVERSE_EVENT_CONTACT.role}</p>
+                      <p className="text-[13px] text-gray-500 leading-relaxed mb-3">{ADVERSE_EVENT_CONTACT.address}</p>
+                      <div className="flex flex-wrap gap-x-6 gap-y-2">
+                        <a href={`mailto:${ADVERSE_EVENT_CONTACT.email}`}
+                          className="flex items-center gap-2.5 text-[13px] font-semibold text-gray-700 hover:text-primary transition">
+                          <span className="w-7 h-7 rounded-full bg-blue-50 flex items-center justify-center shrink-0">
+                            <i className="fa-solid fa-envelope text-[10px] text-primary"></i>
+                          </span>
+                          {ADVERSE_EVENT_CONTACT.email}
+                        </a>
+                        {ADVERSE_EVENT_CONTACT.phones.map(phone => (
+                          <a key={phone.label} href={phone.href}
+                            className="flex items-center gap-2.5 text-[13px] font-semibold text-gray-700 hover:text-primary transition">
+                            <span className="w-7 h-7 rounded-full bg-blue-50 flex items-center justify-center shrink-0">
+                              <i className="fa-solid fa-phone text-[10px] text-primary"></i>
+                            </span>
+                            {phone.label}
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Nationwide reach */}
+                <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-gray-100 text-center">
+                  <h2 className="text-xl font-semibold text-gray-900 mb-3">{PARTNER_TRUST.reachHeading}</h2>
+                  <div className="flex flex-wrap items-baseline justify-center gap-x-3 gap-y-2 mb-3">
+                    {PARTNER_TRUST.reachStats.map((stat, i) => (
+                      <div key={stat.label} className="flex items-baseline gap-2">
+                        {i > 0 && <span aria-hidden="true" className="text-[20px] text-gray-300 mr-1">&middot;</span>}
+                        <span className="text-[28px] font-semibold"
+                          style={{ background: 'linear-gradient(to right,#61A644,#1D9FDA)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+                          {stat.value}
+                        </span>
+                        <span className="text-[17px] text-gray-900">{stat.label}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="text-[15px] text-gray-900 leading-relaxed">{PARTNER_TRUST.reachBlurb}</p>
+                </div>
+              </div>
+            )}
 
           </div>
         </section>
