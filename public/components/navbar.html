@@ -1,4 +1,29 @@
 <style>
+    /* ===================== Installed-app (PWA) trims ===================== */
+    /* The installed app is scoped to products and inquiries, so the corporate
+       sections — the Company group and the Global Network entities — are hidden
+       there while staying exactly as they are on the website.
+       This is deliberately a runtime branch, not a second copy of this file:
+       the service worker precaches one navbar.html and serves it to both, so
+       the difference has to be decided in the browser.
+       Both selectors are kept on purpose — the media query needs no JavaScript,
+       and .pwa-standalone (set in <head>) covers iOS Safari before 16.4, which
+       predates display-mode. */
+    @media (display-mode: standalone) {
+
+        .pwa-hide,
+        #gn-dropdown,
+        #gn-panel {
+            display: none !important;
+        }
+    }
+
+    html.pwa-standalone .pwa-hide,
+    html.pwa-standalone #gn-dropdown,
+    html.pwa-standalone #gn-panel {
+        display: none !important;
+    }
+
     @keyframes slideDown {
         from {
             transform: translateY(-100%);
@@ -751,7 +776,7 @@
                     </a>
 
                     <!-- Company Dropdown -->
-                    <div class="group h-20 flex items-center">
+                    <div class="group h-20 flex items-center pwa-hide">
                         <button id="company-nav-btn"
                             class="flex items-center hover:text-primary transition focus:outline-none whitespace-nowrap">
                             Company <i class="fa-solid fa-chevron-down ml-1.5 text-[10px]"></i>
@@ -1182,7 +1207,7 @@
                 </a>
 
                 <!-- Company accordion -->
-                <div class="border-b border-gray-100">
+                <div class="border-b border-gray-100 pwa-hide">
                     <button onclick="toggleAccordion('mobile-company')"
                         class="w-full flex items-center justify-between px-3 py-3.5 text-[15px] font-semibold text-gray-700 hover:text-primary transition">
                         <span id="mobile-company-label">Company</span>
@@ -1228,7 +1253,7 @@
 
                 <!-- Global Network accordion — the desktop .gn-dropdown trigger is
                      hidden below lg, so the same links surface here instead. -->
-                <div class="border-b border-gray-100">
+                <div class="border-b border-gray-100 pwa-hide">
                     <button onclick="toggleAccordion('mobile-global-network')"
                         class="w-full flex items-center justify-between px-3 py-3.5 text-[15px] font-semibold text-gray-700 hover:text-primary transition">
                         <span>Global Network</span>

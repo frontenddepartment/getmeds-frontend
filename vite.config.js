@@ -46,12 +46,30 @@ const SW_REGISTER = `
 })();
 </script>`;
 
-function injectSwRegister() {
+// Flags the installed app on <html> so CSS can branch on it. Injected into
+// <head> and kept tiny and synchronous on purpose: it has to run before first
+// paint, or the sections meant to be hidden in the app flash on screen and then
+// disappear. navigator.standalone is the iOS-only predecessor to display-mode,
+// still needed for Safari before 16.4.
+const PWA_MODE = `
+<script>
+(function () {
+  try {
+    if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
+      document.documentElement.classList.add('pwa-standalone');
+    }
+  } catch (e) { /* never let a display-mode probe break the page */ }
+})();
+</script>`;
+
+function injectPwaRuntime() {
   return {
-    name: 'inject-sw-register',
+    name: 'inject-pwa-runtime',
     apply: 'build', // never in dev: a stale SW is a miserable thing to debug
     transformIndexHtml(html) {
-      return html.replace('</body>', SW_REGISTER + '\n</body>');
+      return html
+        .replace('<head>', '<head>' + PWA_MODE)
+        .replace('</body>', SW_REGISTER + '\n</body>');
     },
   };
 }
@@ -329,7 +347,7 @@ export default defineConfig(async ({ mode }) => {
     },
     plugins: [
       sanityImageSyncPlugin(),
-      injectSwRegister(),
+      injectPwaRuntime(),
       VitePWA({
         // injectManifest, not generateSW: the routing rules in src/sw.js —
         // blog excluded, product URLs falling back to a shared shell — are not
@@ -338,7 +356,7 @@ export default defineConfig(async ({ mode }) => {
         srcDir: 'src',
         filename: 'sw.js',
         registerType: 'prompt',
-        injectRegister: false, // injectSwRegister() above handles this
+        injectRegister: false, // injectPwaRuntime() above handles this
         manifest: false,       // hand-written at public/manifest.webmanifest
         injectManifest: {
           // Images are excluded wholesale. public/assets is ~550 MB and lands in
