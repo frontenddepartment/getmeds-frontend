@@ -131,6 +131,24 @@ function specialtyUrl(value) {
   return enumValue ? `https://schema.org/${enumValue}` : null;
 }
 
+// A condition's specialty, from its own column when the sheet has one, otherwise from the
+// Product Range it sits under.
+//
+// The fallback exists because the answer is usually already in the data. Audit 5 asked for a
+// "Condition Specialty" value on all 53 condition pages, and the column is empty — but the
+// parent category is filled on every row, and for 37 of the 53 it IS the specialty:
+// Oncology, Hematology, Cardiology, Endocrinology, Radiology and Rheumatology all map
+// straight onto the schema.org enum. Reading it turns 53 rows of data entry into 16.
+//
+// The remaining 16 sit under categories with no schema.org equivalent — "Anti-Infectives",
+// "Orthopedic", "Neuro-Oncology", "Pain Management" and the two slash-joined names. Those
+// still need a human to type the mapped term, and until then specialtyUrl returns null and
+// the property is left off. An unrecognised value is always dropped rather than guessed: a
+// wrong specialty on a medical page is worse than a missing one.
+function specialtyFor(group) {
+  return specialtyUrl(group.specialty) || specialtyUrl(group.category);
+}
+
 // "lastReviewed" is a public claim that a named pharmacist read the page on that date, so
 // only a real, well-formed calendar date counts. Excel dates arrive as full ISO strings
 // once the workbook has been through JSON, hence the leading-date match.
@@ -482,7 +500,7 @@ async function main() {
               // The Filipino term for the condition, when the sheet carries one.
               ...(group.filipinoName ? { alternateName: group.filipinoName } : {}),
             },
-            ...(specialtyUrl(group.specialty) ? { specialty: specialtyUrl(group.specialty) } : {}),
+            ...(specialtyFor(group) ? { specialty: specialtyFor(group) } : {}),
             url: `${DOMAIN}${canonicalPath}`,
             ...reviewFields(group),
             publisher: { '@id': ORGANIZATION_ID },
