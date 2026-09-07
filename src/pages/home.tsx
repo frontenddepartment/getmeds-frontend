@@ -16,6 +16,19 @@ declare global {
   }
 }
 
+// The same four options, values, and storage key the navbar's Order Medicines
+// menu writes (public/components/navbar.html) and order-medicines.tsx reads back
+// on load. Picking here means that page opens straight into the right form
+// instead of prompting for the customer type after arrival — so these values
+// must stay in step with both of those files.
+const ORDER_USERTYPE_KEY = 'getmeds-order-usertype';
+const ORDER_USER_TYPES: Array<[string, string]> = [
+  ['patient', 'Patient / Caregiver'],
+  ['doctor', 'Doctor / Healthcare Professional'],
+  ['pharmacy', 'Pharmacy Owner / Retail Pharmacy'],
+  ['hospital', 'Hospital / Institution'],
+];
+
 const AnimatedCounter = ({ end, duration = 2000, suffix = "" }: { end: number, duration?: number, suffix?: string }) => {
   const [count, setCount] = useState(0);
   const [hasAnimated, setHasAnimated] = useState(false);
@@ -378,6 +391,23 @@ export default function GetMedsHomepage() {
 
 
   const [isInquiryOpen, setIsInquiryOpen] = useState(false);
+  // Mobile-only: the hero's "Order Medicines" pill opens the customer-type
+  // chooser rather than navigating straight through, mirroring the navbar link.
+  const [orderTypeOpen, setOrderTypeOpen] = useState(false);
+
+  const goToOrderMedicines = (type: string) => {
+    // A private-mode write can throw; the order page simply asks again in that
+    // case, so a failed hand-off should never block the navigation itself.
+    try { localStorage.setItem(ORDER_USERTYPE_KEY, type); } catch { /* ignore */ }
+    window.location.href = '/order-medicines.html';
+  };
+
+  useEffect(() => {
+    if (!orderTypeOpen) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setOrderTypeOpen(false); };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [orderTypeOpen]);
   const [partnershipData, setPartnershipData] = useState({
     name: '',
     company: '',
@@ -822,12 +852,15 @@ export default function GetMedsHomepage() {
               display: none;
             }
           `}</style>
-          <a
-            href="/order-medicines.html"
+          <button
+            type="button"
+            onClick={() => setOrderTypeOpen(true)}
+            aria-haspopup="dialog"
+            aria-expanded={orderTypeOpen}
             className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:opacity-95 text-white font-bold text-[12.5px] py-2 px-5 rounded-full transition-all shrink-0 flex items-center justify-center"
           >
             Order Medicines
-          </a>
+          </button>
           <a
             href="/product-range"
             className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:opacity-95 text-white font-bold text-[12.5px] py-2 px-5 rounded-full transition-all shrink-0 flex items-center justify-center"
@@ -1966,6 +1999,52 @@ export default function GetMedsHomepage() {
 
       {/* Footer Component Placeholder */}
       <div id="footer-container" />
+
+      {/* Order Medicines customer-type chooser (mobile hero pill).
+          Rendered as a fixed overlay rather than a dropdown anchored to the pill
+          because that pill sits inside a horizontally scrolling, overflow-hidden
+          row that would clip an absolutely positioned panel. */}
+      {orderTypeOpen && (
+        <>
+          <style>{`
+            @keyframes slideUpOt{from{opacity:0;transform:translateY(20px) scale(0.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+            .ot-panel{animation:slideUpOt 0.28s cubic-bezier(.22,1,.36,1) forwards}
+          `}</style>
+          <div
+            className="md:hidden fixed inset-0 z-[300] flex items-center justify-center bg-black/50 backdrop-blur-sm px-6"
+            onClick={() => setOrderTypeOpen(false)}
+          >
+            <div
+              role="dialog"
+              aria-modal="true"
+              aria-label="Who is placing this order?"
+              onClick={(e) => e.stopPropagation()}
+              className="ot-panel w-full max-w-[360px] bg-white rounded-2xl shadow-2xl overflow-hidden pb-2"
+            >
+              <div className="flex justify-end px-3 pt-3">
+                <button
+                  type="button"
+                  onClick={() => setOrderTypeOpen(false)}
+                  aria-label="Close"
+                  className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 text-gray-400 hover:bg-gray-200 hover:text-gray-700 transition-colors"
+                >
+                  <i className="fa-solid fa-xmark text-[15px]"></i>
+                </button>
+              </div>
+              {ORDER_USER_TYPES.map(([value, label]) => (
+                <button
+                  key={value}
+                  type="button"
+                  onClick={() => goToOrderMedicines(value)}
+                  className="w-full text-left px-6 py-4 text-[15px] font-bold text-slate-800 hover:text-primary hover:bg-blue-50/60 active:bg-blue-50 transition-colors"
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
 
       {/* Slide-out Drawer Overlay */}
       <div
