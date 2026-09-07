@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>You're offline | Getmeds</title>
+  <link rel="icon" href="/icons/favicon-32.png" sizes="32x32" type="image/png" />
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+  <meta name="theme-color" content="#1D9FDA" />
+  <!-- Every style is inline on purpose: this page is shown precisely when the
+       network is gone, so the Tailwind CDN the rest of the site uses is not
+       available to it. -->
+  <style>
+    :root {
+      --blue: #1D9FDA;
+      --green: #61A644;
+      --ink: #1f2937;
+      --muted: #6b7280;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: #f7f9fb;
+      color: var(--ink);
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 420px;
+      background: #fff;
+      border-radius: 20px;
+      padding: 36px 28px;
+      text-align: center;
+      box-shadow: 0 2px 24px rgba(0, 0, 0, .07);
+    }
+
+    img { width: 68px; height: 68px; }
+
+    h1 {
+      font-size: 21px;
+      margin: 18px 0 8px;
+      font-weight: 650;
+    }
+
+    p {
+      margin: 0 0 10px;
+      color: var(--muted);
+      font-size: 14.5px;
+    }
+
+    .note {
+      margin-top: 22px;
+      padding: 13px 15px;
+      border-radius: 12px;
+      background: #f0f7ff;
+      border: 1px solid #dbeeff;
+      font-size: 13.5px;
+      color: #24557a;
+      text-align: left;
+    }
+
+    button {
+      margin-top: 22px;
+      width: 100%;
+      padding: 12px 18px;
+      border: 0;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--blue), var(--green));
+      color: #fff;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    button:active { opacity: .85; }
+
+    .links {
+      margin-top: 18px;
+      font-size: 13.5px;
+    }
+
+    .links a {
+      color: var(--blue);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .links a + a { margin-left: 14px; }
+  </style>
+</head>
+
+<body>
+  <main class="card">
+    <img src="/icons/icon-192.png" alt="Getmeds" />
+    <h1>You're offline</h1>
+    <p>This page needs a connection. Pages you've already opened — including the product catalogue — still work.</p>
+
+    <div class="note">
+      Anything you'd already typed into an inquiry form is saved on this device and will be sent once you're back
+      online.
+    </div>
+
+    <button type="button" onclick="location.reload()">Try again</button>
+
+    <div class="links">
+      <a href="/product-range">Products</a>
+      <a href="/contact-us">Contact</a>
+    </div>
+  </main>
+</body>
+
+</html>

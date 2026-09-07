@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useHeroSlides, useImageMapper, useNews, useSiteSettings, useCategories, useFeaturedNews } from '../lib/useSanity';
 import { getApiUrl } from '../lib/api';
+import { submitInquiry } from '../lib/offlineInquiry';
 import { injectHTML } from '../lib/injectHTML';
 import { urlFor } from '../lib/sanity';
 import { sanityQuery } from '../lib/sanityProxy';
@@ -435,15 +436,13 @@ export default function GetMedsHomepage() {
         files: []
       };
 
-      const response = await fetch(getApiUrl(), {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+      const submission = await submitInquiry(payload, {
+        endpoint: getApiUrl(),
+        returnPath: '/',
       });
-
-      if (!response.ok) {
-        throw new Error('Partnership submission failed.');
-      }
+      // A queued inquiry is not a delivered one, so only a real send
+      // opens the success modal; QueuedInquiryNotice reports the rest.
+      if (submission.status === 'failed') throw new Error(submission.error);
 
       setSubmitState('sent');
       setPartnershipData({
@@ -455,7 +454,7 @@ export default function GetMedsHomepage() {
         consent: false
       });
       setIsInquiryOpen(false);
-      setSuccessModalOpen(true);
+      submission.status === 'sent' && setSuccessModalOpen(true);
       setSubmitState('idle');
     } catch (error) {
       console.error('Submission error:', error);

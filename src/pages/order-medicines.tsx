@@ -1,6 +1,7 @@
 ﻿import React, { useState, useEffect, useRef } from 'react';
 import { injectHTML } from '../lib/injectHTML';
 import { getApiUrl } from '../lib/api';
+import { submitInquiry } from '../lib/offlineInquiry';
 import {
   BadgeCheck, Factory, FileCheck, Truck, Headset, Gavel, Siren,
   Boxes, Tags, CreditCard, PackageCheck, ClipboardCheck, UserRoundCheck, ListChecks,
@@ -344,7 +345,7 @@ export default function OrderMedicines() {
   // Google Sheet row never landed (an inquiryType the backend has no spreadsheet
   // mapped for, or a failed append). Emailing still happened, so the visitor is
   // right to see the success modal - but a lead missing from the sheet it is
-  // worked from is an outage for the team, and response.ok alone hides it.
+  // worked from is an outage for the team, and a 200 alone hides it.
   const warnIfRowLost = (result: any, formLabel: string) => {
     if (result && result.success && result.sheets_appended === false) {
       console.error(
@@ -371,19 +372,19 @@ export default function OrderMedicines() {
         files: []
       };
 
-      const response = await fetch(getApiUrl(), {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+      const submission = await submitInquiry(payload, {
+        endpoint: getApiUrl(),
+        returnPath: '/order-medicines',
       });
-
-      if (!response.ok) throw new Error('Inquiry submission failed.');
-      warnIfRowLost(await response.json().catch(() => null), 'Professional inquiry');
+      // A queued inquiry is not a delivered one, so only a real send
+      // opens the success modal; QueuedInquiryNotice reports the rest.
+      if (submission.status === 'failed') throw new Error(submission.error);
+      warnIfRowLost(submission.status === 'sent' ? submission.body : null, 'Professional inquiry');
 
       setInquirySubmitState('sent');
       setInquiryFormData({ name: '', phone: '', email: '', message: '', age: '' });
       setSuccessKind('inquiry');
-      setSuccessModalOpen(true);
+      submission.status === 'sent' && setSuccessModalOpen(true);
       setTimeout(() => setInquirySubmitState('idle'), 300);
     } catch (error) {
       console.error('Inquiry submission error:', error);
@@ -614,21 +615,21 @@ export default function OrderMedicines() {
         files: []
       };
 
-      const response = await fetch(getApiUrl(), {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+      const submission = await submitInquiry(payload, {
+        endpoint: getApiUrl(),
+        returnPath: '/order-medicines',
       });
-
-      if (!response.ok) throw new Error('Partner inquiry submission failed.');
-      warnIfRowLost(await response.json().catch(() => null), PARTNER_INQUIRY_TYPE);
+      // A queued inquiry is not a delivered one, so only a real send
+      // opens the success modal; QueuedInquiryNotice reports the rest.
+      if (submission.status === 'failed') throw new Error(submission.error);
+      warnIfRowLost(submission.status === 'sent' ? submission.body : null, PARTNER_INQUIRY_TYPE);
 
       setPartnerSubmitState('sent');
       setPartnerFormData(emptyPartnerForm);
       if (partnerPhoneRef.current) partnerPhoneRef.current.value = '';
       resetTurnstile();
       setSuccessKind('inquiry');
-      setSuccessModalOpen(true);
+      submission.status === 'sent' && setSuccessModalOpen(true);
       setTimeout(() => setPartnerSubmitState('idle'), 300);
     } catch (error) {
       console.error('Partner inquiry submission error:', error);
@@ -715,18 +716,18 @@ export default function OrderMedicines() {
         files: filesData
       };
 
-      const response = await fetch(getApiUrl(), {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+      const submission = await submitInquiry(payload, {
+        endpoint: getApiUrl(),
+        returnPath: '/order-medicines',
       });
-
-      if (!response.ok) throw new Error('Order submission failed.');
+      // A queued inquiry is not a delivered one, so only a real send
+      // opens the success modal; QueuedInquiryNotice reports the rest.
+      if (submission.status === 'failed') throw new Error(submission.error);
 
       setSubmitState('sent');
       setValidationSubmitted(true);
       setSuccessKind('order');
-      setSuccessModalOpen(true);
+      submission.status === 'sent' && setSuccessModalOpen(true);
     } catch (error) {
       console.error('Submission error:', error);
       setSubmitState('error');

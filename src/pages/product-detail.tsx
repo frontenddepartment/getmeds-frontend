@@ -4,6 +4,7 @@ import { urlFor } from '../lib/sanity';
 import type { Product as SanityProduct, Category } from '../types/sanity';
 import { injectHTML } from '../lib/injectHTML';
 import { getApiUrl } from '../lib/api';
+import { submitInquiry } from '../lib/offlineInquiry';
 import { setPageMeta, injectJsonLd, truncateAtWord, ORGANIZATION_ID } from '../lib/seo';
 import { validateFiles, ALLOWED_FILE_TYPES_ACCEPT } from '../lib/fileUpload';
 import AlertModal from '../lib/AlertModal';
@@ -499,17 +500,14 @@ export default function ProductDetail() {
             files: filesData
           };
 
-      const response = await fetch(getApiUrl(), {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-
-      if (!response.ok) throw new Error('Form submission failed.');
+      // returnPath is left to default to the current URL: this form lives on a
+      // per-product page, so "come back and finish it" must mean this product.
+      const submission = await submitInquiry(payload, { endpoint: getApiUrl() });
+      if (submission.status === 'failed') throw new Error(submission.error);
 
       setSubmitState('sent');
       resetForm();
-      setSuccessModalOpen(true);
+      submission.status === 'sent' && setSuccessModalOpen(true);
       setTimeout(() => setSubmitState('idle'), 300);
     } catch (error) {
       console.error('Submission error:', error);

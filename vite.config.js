@@ -4,6 +4,57 @@ import path from 'path';
 import https from 'https';
 import { execSync } from 'child_process';
 import { sanityImageSyncPlugin } from './src/plugins/sanityImageSync.js';
+import { VitePWA } from 'vite-plugin-pwa';
+
+// Registration is injected rather than imported from the 18 page entries, so a
+// new entry cannot silently ship without it. Deliberately plain DOM APIs and no
+// workbox-window: this runs before the bundle on every page, and the update
+// prompt is the only behaviour it needs.
+const SW_REGISTER = `
+<script>
+(function () {
+  if (!('serviceWorker' in navigator)) return;
+  var reloading = false;
+  navigator.serviceWorker.addEventListener('controllerchange', function () {
+    if (reloading) return;
+    reloading = true;
+    location.reload();
+  });
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('/sw.js').then(function (reg) {
+      reg.addEventListener('updatefound', function () {
+        var next = reg.installing;
+        if (!next) return;
+        next.addEventListener('statechange', function () {
+          // A waiting worker with a controller already present means this is an
+          // update, not a first install — only then is there anything to ask about.
+          if (next.state !== 'installed' || !navigator.serviceWorker.controller) return;
+          var bar = document.createElement('div');
+          bar.setAttribute('role', 'status');
+          bar.style.cssText = 'position:fixed;left:50%;transform:translateX(-50%);bottom:18px;z-index:2147483647;display:flex;gap:12px;align-items:center;background:#1f2937;color:#fff;padding:11px 14px;border-radius:999px;font:500 13.5px system-ui,sans-serif;box-shadow:0 4px 20px rgba(0,0,0,.25)';
+          bar.innerHTML = '<span>A new version is available.</span>';
+          var btn = document.createElement('button');
+          btn.textContent = 'Reload';
+          btn.style.cssText = 'border:0;border-radius:999px;padding:6px 14px;background:linear-gradient(135deg,#1D9FDA,#61A644);color:#fff;font:600 13px system-ui,sans-serif;cursor:pointer';
+          btn.onclick = function () { reg.waiting && reg.waiting.postMessage({ type: 'SKIP_WAITING' }); };
+          bar.appendChild(btn);
+          document.body.appendChild(bar);
+        });
+      });
+    }).catch(function () { /* a failed registration must never break the page */ });
+  });
+})();
+</script>`;
+
+function injectSwRegister() {
+  return {
+    name: 'inject-sw-register',
+    apply: 'build', // never in dev: a stale SW is a miserable thing to debug
+    transformIndexHtml(html) {
+      return html.replace('</body>', SW_REGISTER + '\n</body>');
+    },
+  };
+}
 
 const getHtmlInputs = () => {
   const dir = process.cwd();
@@ -278,6 +329,41 @@ export default defineConfig(async ({ mode }) => {
     },
     plugins: [
       sanityImageSyncPlugin(),
+      injectSwRegister(),
+      VitePWA({
+        // injectManifest, not generateSW: the routing rules in src/sw.js —
+        // blog excluded, product URLs falling back to a shared shell — are not
+        // expressible through generateSW's options.
+        strategies: 'injectManifest',
+        srcDir: 'src',
+        filename: 'sw.js',
+        registerType: 'prompt',
+        injectRegister: false, // injectSwRegister() above handles this
+        manifest: false,       // hand-written at public/manifest.webmanifest
+        injectManifest: {
+          // Images are excluded wholesale. public/assets is ~550 MB and lands in
+          // dist/assets alongside the hashed bundles, so a naive image glob would
+          // try to precache the entire media library onto every visitor's phone.
+          // Product imagery is cached at runtime instead (see sw.js), and the two
+          // images that must exist offline are listed explicitly.
+          globPatterns: ['**/*.{js,css,html}', 'manifest.webmanifest', 'icons/*.png', 'fallback.jpg'],
+          globIgnores: [
+            // The blog is deliberately never cached — see sw.js. Its page
+            // bundles go too, so the precache matches that scope exactly
+            // rather than shipping ~60 KB of blog JS to people who never
+            // open it.
+            'blog.html',
+            'blog-detail.html',
+            'assets/blog-*.js',
+            'assets/blog-detail-*.js',
+            // Preview routes are noindex staff tools; no reason to ship them offline.
+            '**/*-preview.html',
+            '**/*sitemap*',
+          ],
+          maximumFileSizeToCacheInBytes: 3 * 1024 * 1024,
+        },
+        devOptions: { enabled: false },
+      }),
       {
 
         name: 'inject-chatbot-meta',

@@ -4,6 +4,7 @@ import { useImageMapper, useTeamMembers } from '../lib/useSanity';
 import { urlFor } from '../lib/sanity';
 import { LinkableImage } from '../lib/LinkableImage';
 import { getApiUrl } from '../lib/api';
+import { submitInquiry } from '../lib/offlineInquiry';
 
 function formatTime(seconds: number): string {
   if (!isFinite(seconds) || seconds < 0) return '0:00';
@@ -160,15 +161,13 @@ export default function AboutUs() {
         files: []
       };
 
-      const response = await fetch(getApiUrl(), {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+      const submission = await submitInquiry(payload, {
+        endpoint: getApiUrl(),
+        returnPath: '/about-us',
       });
-
-      if (!response.ok) {
-        throw new Error('Partnership submission failed.');
-      }
+      // A queued inquiry is not a delivered one, so only a real send
+      // opens the success modal; QueuedInquiryNotice reports the rest.
+      if (submission.status === 'failed') throw new Error(submission.error);
 
       setSubmitState('sent');
       setPartnershipData({
@@ -180,7 +179,7 @@ export default function AboutUs() {
         consent: false
       });
       setIsInquiryOpen(false);
-      setSuccessModalOpen(true);
+      submission.status === 'sent' && setSuccessModalOpen(true);
       setSubmitState('idle');
     } catch (error) {
       console.error('Submission error:', error);

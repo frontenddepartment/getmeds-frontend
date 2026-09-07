@@ -5,6 +5,7 @@ import { LinkableImage } from '../lib/LinkableImage';
 import { ProgressiveHeroImage } from '../lib/ProgressiveHeroImage';
 import { getCareers } from '../lib/queries';
 import { getApiUrl } from '../lib/api';
+import { submitInquiry } from '../lib/offlineInquiry';
 
 const getPositionType = (title: string, desc: string): string => {
   const text = (title + ' ' + desc).toLowerCase();
@@ -114,15 +115,13 @@ const Careers: React.FC = () => {
         ]
       };
 
-      const response = await fetch(getApiUrl(), {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
+      const submission = await submitInquiry(payload, {
+        endpoint: getApiUrl(),
+        returnPath: '/careers',
       });
-
-      if (!response.ok) {
-        throw new Error('Application submission request failed.');
-      }
+      // A queued inquiry is not a delivered one, so only a real send
+      // opens the success modal; QueuedInquiryNotice reports the rest.
+      if (submission.status === 'failed') throw new Error(submission.error);
 
       setSubmitState('sent');
       setApplyForm({
@@ -137,7 +136,7 @@ const Careers: React.FC = () => {
 
       setApplyModalOpen(false);
       setJobDescOpen(false);
-      setSuccessModalOpen(true);
+      submission.status === 'sent' && setSuccessModalOpen(true);
       setTimeout(() => setSubmitState('idle'), 300);
     } catch (err: any) {
       console.error(err);

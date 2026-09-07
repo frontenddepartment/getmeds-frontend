@@ -3,6 +3,7 @@ import { injectHTML } from '../lib/injectHTML';
 import { useImageMapper, useSiteSettings } from '../lib/useSanity';
 import { ProgressiveHeroImage } from '../lib/ProgressiveHeroImage';
 import { getApiUrl } from '../lib/api';
+import { submitInquiry } from '../lib/offlineInquiry';
 import type { ContactGroup } from '../types/sanity';
 
 
@@ -79,19 +80,17 @@ export default function ContactUs() {
         files: []
       };
 
-      const response = await fetch(getApiUrl(), {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
+      const submission = await submitInquiry(payload, {
+        endpoint: getApiUrl(),
+        returnPath: '/contact-us',
       });
-
-      if (!response.ok) {
-        throw new Error('Submission request failed.');
-      }
+      // A queued inquiry is not a delivered one, so only a real send
+      // opens the success modal; QueuedInquiryNotice reports the rest.
+      if (submission.status === 'failed') throw new Error(submission.error);
 
       setSubmitState('sent');
       setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
-      setSuccessModalOpen(true);
+      submission.status === 'sent' && setSuccessModalOpen(true);
       setTimeout(() => setSubmitState('idle'), 300);
     } catch (err: any) {
       console.error(err);
