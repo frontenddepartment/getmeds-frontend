@@ -5,6 +5,7 @@ import DOMPurify from 'dompurify';
 import { injectHTML } from '../lib/injectHTML';
 import { useNewsById, useNewsBySlug } from '../lib/useSanity';
 import { urlFor } from '../lib/sanity';
+import { withSiteName } from '../lib/seo';
 import type { SanityImage } from '../types/sanity';
 
 const formatDate = (dateStr: string | undefined | null): string => {
@@ -78,11 +79,12 @@ export default function BlogDetail() {
   useEffect(() => {
     if (article) {
       const targetSlug = article.slug || slugify(article.title);
-      // Several posts already open with the brand ("Getmeds Completes UN Global Compact…"),
-      // so only add the suffix when it isn't already in the title.
-      document.title = /getmeds/i.test(article.title || '')
-        ? article.title
-        : `${article.title} — Getmeds`;
+      // withSiteName already skips the suffix when the title carries the brand, which
+      // several posts do ("Getmeds Completes UN Global Compact…"). Using it rather than
+      // repeating the rule here is what keeps this title identical to the one
+      // scripts/prerender-blog.cjs baked into the served HTML — this file's own copy had
+      // drifted to an em dash while the rest of the site used a hyphen (Audit 3).
+      document.title = withSiteName(article.title || '');
 
       // Helper to update or create meta tags dynamically
       const updateMeta = (name: string, content: string, isProperty = false) => {

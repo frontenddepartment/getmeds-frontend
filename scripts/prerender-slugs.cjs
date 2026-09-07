@@ -8,6 +8,7 @@
 // script like those two, and refactoring them into a shared module is out of scope here).
 const fs = require('fs');
 const path = require('path');
+const { withSiteName, truncateAtWord } = require('./lib/site-title.cjs');
 
 const DOMAIN = 'https://getmeds.ph';
 const DIST_DIR = path.join(__dirname, '..', 'dist');
@@ -279,26 +280,6 @@ function injectHead(template, { title, description, canonicalPath, ogType, jsonL
 
   html = html.replace(/<\/head>/i, `    ${extraTags}\n</head>`);
   return html;
-}
-
-// Appends the site name only when the title doesn't already contain it. Product
-// titles come from the sheet's Meta Title column and already end
-// "| Getmeds Philippines", and several blog posts open with the brand, so appending
-// unconditionally printed it twice ("... | Getmeds Philippines - Getmeds").
-function withSiteName(title) {
-  const t = String(title || '').trim();
-  if (!t) return 'Getmeds';
-  return /getmeds/i.test(t) ? t : t + ' - Getmeds';
-}
-
-// Cuts to `max` characters on a word boundary. The previous hard slice(0, 160) left
-// 28 of 61 product descriptions ending mid-word (e.g. "...and pharm").
-function truncateAtWord(text, max) {
-  const t = String(text || '').replace(/\s+/g, ' ').trim();
-  if (t.length <= max) return t;
-  const cut = t.slice(0, max);
-  const lastSpace = cut.lastIndexOf(' ');
-  return (lastSpace > 0 ? cut.slice(0, lastSpace) : cut).replace(/[,;:\-–—]+$/, '').trim();
 }
 
 function escapeHtml(str) {
