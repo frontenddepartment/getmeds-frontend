@@ -1789,8 +1789,8 @@ export default function GetMedsHomepage() {
             a: 'Yes — Getmeds holds a valid License to Operate from FDA Philippines as a pharmaceutical distributor.',
           },
           {
-            q: 'Is Getmeds PH Legit?',
-            a: 'Yes, Getmeds PH is a global pharmaceutical company located in Las Piñas, Metro Manila, Philippines. The company operates as a healthcare and pharmaceutical provider serving patients, pharmacies, hospitals, and healthcare partners through its pharmaceutical distribution and healthcare solutions.',
+            q: 'Is Getmeds Legit?',
+            a: 'Yes, Getmeds is a global pharmaceutical company located in Las Piñas, Metro Manila, Philippines. The company operates as a healthcare and pharmaceutical provider serving patients, pharmacies, hospitals, and healthcare partners through its pharmaceutical distribution and healthcare solutions.',
           },
           {
             q: 'Where is Getmeds located in the Philippines?',
