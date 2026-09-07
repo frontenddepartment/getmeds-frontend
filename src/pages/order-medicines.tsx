@@ -344,6 +344,20 @@ export default function OrderMedicines() {
     return () => document.removeEventListener('mousedown', close);
   }, [inquiryAgeDropdownOpen]);
 
+  // The endpoint answers 200 whenever the inquiry was accepted, even if the
+  // Google Sheet row never landed (an inquiryType the backend has no spreadsheet
+  // mapped for, or a failed append). Emailing still happened, so the visitor is
+  // right to see the success modal - but a lead missing from the sheet it is
+  // worked from is an outage for the team, and response.ok alone hides it.
+  const warnIfRowLost = (result: any, formLabel: string) => {
+    if (result && result.success && result.sheets_appended === false) {
+      console.error(
+        `[getmeds] ${formLabel} was accepted but NOT written to its Google Sheet.`,
+        result.sheets_error || 'No reason reported by the server.'
+      );
+    }
+  };
+
   const handleInquirySubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setInquirySubmitState('sending');
@@ -368,6 +382,7 @@ export default function OrderMedicines() {
       });
 
       if (!response.ok) throw new Error('Inquiry submission failed.');
+      warnIfRowLost(await response.json().catch(() => null), 'Professional inquiry');
 
       setInquirySubmitState('sent');
       setInquiryFormData({ name: '', phone: '', email: '', message: '', age: '' });
@@ -610,6 +625,7 @@ export default function OrderMedicines() {
       });
 
       if (!response.ok) throw new Error('Partner inquiry submission failed.');
+      warnIfRowLost(await response.json().catch(() => null), PARTNER_INQUIRY_TYPE);
 
       setPartnerSubmitState('sent');
       setPartnerFormData(emptyPartnerForm);
