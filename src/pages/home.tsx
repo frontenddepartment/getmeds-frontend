@@ -2015,22 +2015,27 @@ export default function GetMedsHomepage() {
             onClick={() => setOrderTypeOpen(false)}
           >
             <div
-              role="dialog"
-              aria-modal="true"
-              aria-label="Who is placing this order?"
               onClick={(e) => e.stopPropagation()}
-              className="ot-panel w-full max-w-[360px] bg-white rounded-2xl shadow-2xl overflow-hidden pb-2"
+              className="ot-panel relative w-full max-w-[360px]"
             >
-              <div className="flex justify-end px-3 pt-3">
-                <button
-                  type="button"
-                  onClick={() => setOrderTypeOpen(false)}
-                  aria-label="Close"
-                  className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 text-gray-400 hover:bg-gray-200 hover:text-gray-700 transition-colors"
-                >
-                  <i className="fa-solid fa-xmark text-[15px]"></i>
-                </button>
-              </div>
+              {/* Sits above the card rather than within it. The card keeps
+                  overflow-hidden so the option rows' hover fill stays inside its
+                  rounded corners, which would clip a child positioned outside —
+                  hence a sibling in a relative wrapper. */}
+              <button
+                type="button"
+                onClick={() => setOrderTypeOpen(false)}
+                aria-label="Close"
+                className="absolute -top-12 right-0 w-9 h-9 flex items-center justify-center rounded-full bg-white/90 text-gray-700 shadow-lg hover:bg-white transition-colors"
+              >
+                <i className="fa-solid fa-xmark text-[16px]"></i>
+              </button>
+              <div
+                role="dialog"
+                aria-modal="true"
+                aria-label="Who is placing this order?"
+                className="w-full bg-white rounded-2xl shadow-2xl overflow-hidden py-2"
+              >
               {ORDER_USER_TYPES.map(([value, label]) => (
                 <button
                   key={value}
@@ -2041,6 +2046,7 @@ export default function GetMedsHomepage() {
                   {label}
                 </button>
               ))}
+              </div>
             </div>
           </div>
         </>
