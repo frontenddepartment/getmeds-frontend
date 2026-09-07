@@ -83,6 +83,20 @@ To prevent search engines from indexation of the backend WordPress domain (`cms.
 
 ##
 
+## 🏷️ Title Tag Check (`check-duplicate-titles.cjs`)
+
+Runs at the end of `postbuild`, over the built `dist/`. It warns — never fails the build —
+when two indexable pages ship the same `<title>`, when a title carries a doubled brand
+suffix (`… | Getmeds Philippines - Getmeds`), or when a page has no `<title>` at all. Both
+of those bugs have shipped before and were only caught by reading pages by hand.
+
+Pages that share a title on purpose are skipped: a URL whose canonical points elsewhere
+(`/conditions` → `/product-range`), a URL `vercel.json` permanently redirects away, and a
+URL served with a `noindex` header.
+
+Product titles themselves come from the workbook's **Meta Title** column, not from code —
+see the structured-data section below for how a workbook change reaches the site.
+
 ## 🧾 Structured Data (JSON-LD)
 
 Every page carries an `Organization` block plus, where applicable, a page-type block and a
