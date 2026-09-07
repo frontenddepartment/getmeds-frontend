@@ -239,6 +239,13 @@ function injectHead(template, { title, description, canonicalPath, ogType, jsonL
   // prerendered page would carry two conflicting canonicals.
   html = html.replace(/[ \t]*<link\s+rel=["']canonical["'][^>]*>\r?\n?/gi, '');
   html = html.replace(/[ \t]*<meta\s+property=["']og:url["'][^>]*>\r?\n?/gi, '');
+  // Same reasoning for the shell's noindex: product-detail.html must not be indexed at its
+  // own URL, but every page prerendered from it is a real page that must be. Strip the tag
+  // here so the noindex stays on the shell alone. The comment above it goes too, so the
+  // written page doesn't explain a tag it no longer carries. The (?!-->) guard keeps the
+  // match inside one comment instead of swallowing everything back to an earlier one.
+  html = html.replace(/[ \t]*<!--(?:(?!-->)[\s\S])*?SHELL-NOINDEX(?:(?!-->)[\s\S])*?-->\r?\n?/gi, '');
+  html = html.replace(/[ \t]*<meta\s+name=["']robots["'][^>]*>\r?\n?/gi, '');
   // Drop blocks this script injected on an earlier run before adding the new ones. Only
   // ever matches by our own ids, so the shell's Organization JSON-LD (a different id,
   // written by scripts/inject-organization-jsonld.cjs) survives.
@@ -324,8 +331,34 @@ async function main() {
   }
 
   // ---- Products ----
+  // A handful of products are listed under two category folders (cyclophosphamide sits in
+  // both cancer-medicines and blood-disorder-medicines, bortezomib in blood-disorder- and
+  // bone-health-medicines). Both pages have to stay live — a user arriving from either
+  // category hub must land on a working page — but only one of them can be the indexable
+  // original. Two live, byte-identical URLs with no canonical between them is precisely the
+  // Audit 1 finding, reappearing at the product level after the .html duplicates were
+  // fixed, and it shipped as five pairs of same-title pages.
+  //
+  // The first folder a slug appears under in the sheet is its canonical home; the copies
+  // under later folders point their canonical back at it. Sheet order is the rule because
+  // it is already how the data expresses primary categorisation, it is deterministic, and
+  // moving a row is how the content team reassigns a product without touching this script.
+  const canonicalBySlug = new Map();
+  const crossFolderSlugs = new Map(); // slug -> Set<folder>, for the build log
+  rows.forEach((row) => {
+    const folder = row.categoryFolder ? String(row.categoryFolder).trim() : '';
+    const slug = row.slug ? String(row.slug).trim() : '';
+    if (!folder || !slug) return;
+    if (!canonicalBySlug.has(slug)) {
+      canonicalBySlug.set(slug, row.productPageUrl ? stripDomain(row.productPageUrl) : `/${folder}/${slug}`);
+    }
+    if (!crossFolderSlugs.has(slug)) crossFolderSlugs.set(slug, new Set());
+    crossFolderSlugs.get(slug).add(folder);
+  });
+
   const seenProductSlugs = new Set();
   let productCount = 0;
+  let duplicateCanonicalCount = 0;
   const skippedProducts = [];
 
   rows.forEach((row) => {
@@ -345,7 +378,11 @@ async function main() {
       row.metaDescription || `${displayName} — available through Getmeds Philippines. Quality pharmaceutical product for healthcare needs.`,
       160
     );
-    const canonicalPath = row.productPageUrl ? stripDomain(row.productPageUrl) : `/${folder}/${slug}`;
+    // The slug's canonical home, which for a product listed under a second category folder
+    // is the page under the first one rather than this URL.
+    const ownPath = row.productPageUrl ? stripDomain(row.productPageUrl) : `/${folder}/${slug}`;
+    const canonicalPath = canonicalBySlug.get(slug) || ownPath;
+    if (canonicalPath !== ownPath) duplicateCanonicalCount++;
 
     const html = injectHead(productTemplate, {
       title: row.metaTitle || displayName,
@@ -584,6 +621,15 @@ async function main() {
   });
 
   console.log(`[Prerender] Wrote ${productCount} product page(s), ${conditionCount} condition page(s) and ${categoryCount} category/listing page(s) into dist/.`);
+  if (duplicateCanonicalCount) {
+    // Printed rather than left implicit: which category owns a shared product is an
+    // editorial call, and the only way to change it is to move the row in the sheet.
+    const multi = [...crossFolderSlugs.entries()].filter(([, folders]) => folders.size > 1);
+    console.log(`[Prerender] ${duplicateCanonicalCount} page(s) for ${multi.length} product(s) listed under more than one category canonicalise to their first-listed folder:`);
+    multi.forEach(([slug, folders]) => {
+      console.log(`   ${slug} — canonical ${canonicalBySlug.get(slug)} (also under ${[...folders].filter((f) => !canonicalBySlug.get(slug).startsWith(`/${f}/`)).join(', ')})`);
+    });
+  }
   if (skippedProducts.length) {
     console.log(`[Prerender] Skipped ${skippedProducts.length} product row(s) with no folder/slug: ${skippedProducts.slice(0, 5).join(', ')}${skippedProducts.length > 5 ? '…' : ''}`);
   }

@@ -8,56 +8,25 @@
 //
 // Warns, never fails: a duplicate title is a real SEO problem but not a broken deploy, and
 // the prerender scripts already take the same line (see their exitCode = 0 handlers).
-const fs = require('fs');
-const path = require('path');
-
-const DIST_DIR = path.join(__dirname, '..', 'dist');
-// Partials injected into pages at runtime, not pages themselves — they have no <head>.
-const SKIP_DIRS = new Set(['assets', 'components']);
-
+//
 // Four classes of page share a title on purpose and would otherwise drown the real
 // findings: a URL that canonicalises somewhere else (/conditions -> /product-range), a URL
 // vercel.json permanently redirects away (a superseded blog slug whose file still sits in
 // dist), a URL served with a noindex header (/product-detail, the generic shell), and a
 // page carrying its own noindex robots meta (the *-preview shells, which are deliberate
-// copies of the real page).
-function excludedUrls() {
-  const excluded = new Set();
-  let config;
-  try {
-    config = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'vercel.json'), 'utf8'));
-  } catch {
-    return excluded; // no config to read — report everything rather than silently skipping
-  }
-  const literal = (source) => (source && !source.includes(':') && !source.includes('*') ? source : null);
-  (config.redirects || []).forEach((r) => {
-    const s = literal(r.source);
-    if (s) excluded.add(s.replace(/\.html$/, ''));
-  });
-  (config.headers || []).forEach((h) => {
-    if (!JSON.stringify(h.headers || []).toLowerCase().includes('noindex')) return;
-    const s = literal(h.source);
-    if (s) excluded.add(s);
-  });
-  return excluded;
-}
-
-function walk(dir, acc = []) {
-  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-    if (entry.isDirectory()) {
-      if (SKIP_DIRS.has(entry.name)) continue;
-      walk(path.join(dir, entry.name), acc);
-    } else if (entry.name.endsWith('.html')) {
-      acc.push(path.join(dir, entry.name));
-    }
-  }
-  return acc;
-}
-
-// The URL a file is served at, which is what a report needs to be actionable.
-function urlFor(file) {
-  return '/' + path.relative(DIST_DIR, file).replace(/\\/g, '/').replace(/\.html$/, '');
-}
+// copies of the real page). The first two live in scripts/lib/dist-pages.cjs, shared with
+// check-canonicals.cjs so the two guards can't disagree about what is meant to be indexed.
+const fs = require('fs');
+const {
+  DIST_DIR,
+  walk,
+  urlFor,
+  excludedUrls,
+  hasNoindexMeta,
+  canonicalOf,
+  canonicalPath,
+  normalizeUrl,
+} = require('./lib/dist-pages.cjs');
 
 function main() {
   if (!fs.existsSync(DIST_DIR)) {
@@ -68,7 +37,8 @@ function main() {
   const byTitle = new Map();
   const missing = [];
   const doubled = [];
-  const excluded = excludedUrls();
+  // null means vercel.json was unreadable; report everything rather than silently skipping.
+  const excluded = excludedUrls() || new Set();
   let skipped = 0;
 
   walk(DIST_DIR).forEach((file) => {
@@ -80,14 +50,14 @@ function main() {
       return;
     }
     // A page that tells crawlers not to index it cannot duplicate anything in search.
-    if (/<meta[^>]+name=["']robots["'][^>]*content=["'][^"']*noindex/i.test(html)) {
+    if (hasNoindexMeta(html)) {
       skipped++;
       return;
     }
     // A page pointing its canonical at a different URL is declaring itself the copy, so a
     // shared title there is the intended outcome, not a finding.
-    const canonical = (html.match(/<link rel="canonical" href="([^"]+)"/i) || [])[1];
-    if (canonical && canonical.replace(/^https?:\/\/[^/]+/, '').replace(/\/$/, '') !== url.replace(/\/index$/, '')) {
+    const canonical = canonicalOf(html);
+    if (canonical && canonicalPath(canonical) !== normalizeUrl(url)) {
       skipped++;
       return;
     }

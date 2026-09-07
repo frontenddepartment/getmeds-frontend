@@ -9,6 +9,12 @@
     name="description"
     content="Read the latest health insights, product updates, and company news from Getmeds — your trusted pharmaceutical partner in the Philippines."
     />
+    <!-- SHELL-NOINDEX: this shell is the template every /blog/<slug> page is prerendered from; on its own
+    it renders an empty article and must never be indexed at /blog-detail. vercel.json also
+    serves it with X-Robots-Tag: noindex, but that header block is regenerated on every
+    build by scripts/update-vercel-headers.cjs, so the page carries its own tag too.
+    scripts/prerender-blog.cjs strips this line before writing each real post. -->
+    <meta name="robots" content="noindex, follow" />
 
     <link rel="preconnect" href="https://cdn.sanity.io" crossorigin />
     <link rel="dns-prefetch" href="https://cdn.sanity.io" />

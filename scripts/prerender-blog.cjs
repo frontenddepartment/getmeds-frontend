@@ -162,6 +162,13 @@ function injectHead(template, { title, description, canonicalPath, image, jsonLd
   // prerendered page would carry two conflicting canonicals.
   html = html.replace(/[ \t]*<link\s+rel=["']canonical["'][^>]*>\r?\n?/gi, '');
   html = html.replace(/[ \t]*<meta\s+property=["']og:url["'][^>]*>\r?\n?/gi, '');
+  // Same reasoning for the shell's noindex: blog-detail.html must not be indexed at its own
+  // URL, but every post prerendered from it is a real page that must be. Strip the tag here
+  // so the noindex stays on the shell alone. The comment above it goes too, so the written
+  // post doesn't explain a tag it no longer carries. The (?!-->) guard keeps the match
+  // inside one comment instead of swallowing everything back to an earlier one.
+  html = html.replace(/[ \t]*<!--(?:(?!-->)[\s\S])*?SHELL-NOINDEX(?:(?!-->)[\s\S])*?-->\r?\n?/gi, '');
+  html = html.replace(/[ \t]*<meta\s+name=["']robots["'][^>]*>\r?\n?/gi, '');
 
   html = html.replace(/<title>[\s\S]*?<\/title>/i, `<title>${escapeHtml(fullTitle)}</title>`);
   html = html.replace(/<meta\s+name=["']description["'][\s\S]*?>/i, `<meta name="description" content="${escapeHtml(description)}">`);
