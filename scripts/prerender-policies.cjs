@@ -14,6 +14,7 @@
 // stay behind as a fallback if this step is ever skipped.
 const fs = require('fs');
 const path = require('path');
+const { withSiteName, excerptFromHtml } = require('./lib/site-title.cjs');
 
 const DOMAIN = 'https://getmeds.ph';
 const DIST_DIR = path.join(__dirname, '..', 'dist');
@@ -75,33 +76,11 @@ function slugOf(doc) {
 }
 
 // Matches the excerpt policy.tsx builds client-side, so the prerendered description and
-// the hydrated one agree instead of flipping on load.
+// the hydrated one agree instead of flipping on load. Both now call the shared helper: the
+// hand-rolled slice(0, 155) this replaced cut mid-thought ("…committed to protecting the")
+// and left stored entities to be escaped a second time into "&amp;mdash;".
 function excerptFrom(contentHtml) {
-  return String(contentHtml || '')
-    .replace(/<[^>]+>/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim()
-    .slice(0, 155);
-}
-
-// Appends the site name only when the title doesn't already contain it. Product
-// titles come from the sheet's Meta Title column and already end
-// "| Getmeds Philippines", and several blog posts open with the brand, so appending
-// unconditionally printed it twice ("... | Getmeds Philippines - Getmeds").
-function withSiteName(title) {
-  const t = String(title || '').trim();
-  if (!t) return 'Getmeds';
-  return /getmeds/i.test(t) ? t : t + ' - Getmeds';
-}
-
-// Cuts to `max` characters on a word boundary. The previous hard slice(0, 160) left
-// 28 of 61 product descriptions ending mid-word (e.g. "...and pharm").
-function truncateAtWord(text, max) {
-  const t = String(text || '').replace(/\s+/g, ' ').trim();
-  if (t.length <= max) return t;
-  const cut = t.slice(0, max);
-  const lastSpace = cut.lastIndexOf(' ');
-  return (lastSpace > 0 ? cut.slice(0, lastSpace) : cut).replace(/[,;:\-–—]+$/, '').trim();
+  return excerptFromHtml(contentHtml, 155);
 }
 
 function escapeHtml(str) {

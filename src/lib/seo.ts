@@ -61,6 +61,12 @@ export function removeJsonLd(id: string) {
  * from the sheet's Meta Title column and already end "| Getmeds Philippines", and several
  * blog posts open with the brand ("Getmeds Completes UN Global Compact…"), so appending
  * unconditionally printed the brand twice — e.g. "… | Getmeds Philippines - Getmeds".
+ *
+ * The hyphen is the site-wide separator, and scripts/lib/site-title.cjs is the build-time
+ * twin of this function. The two cannot be one module — that one is CommonJS run by node
+ * during the build, this is bundled into the browser — so a change to the separator has to
+ * be made in both, or a page's title will change the moment it hydrates. That divergence is
+ * exactly what Audit 3 found, and scripts/check-duplicate-titles.cjs is what would catch it.
  */
 export function withSiteName(title: string): string {
   const t = (title || '').trim();
@@ -68,13 +74,98 @@ export function withSiteName(title: string): string {
   return new RegExp(SITE_NAME, 'i').test(t) ? t : `${t} - ${SITE_NAME}`;
 }
 
-/** Cuts to `max` characters on a word boundary rather than mid-word. */
+/**
+ * Words that leave the reader mid-thought if they are the last thing on the line. Ending a
+ * description on any of these reads as a page that broke rather than a sentence that ran on.
+ */
+const DANGLING_WORDS = new Set([
+  'a', 'an', 'the',
+  'and', 'or', 'but', 'nor', 'so', 'yet', 'plus',
+  'of', 'in', 'to', 'from', 'by', 'on', 'at', 'as', 'for', 'with', 'without',
+  'into', 'onto', 'over', 'under', 'per', 'via', 'about', 'after', 'before',
+  'between', 'during', 'through', 'within', 'across', 'against', 'among',
+  'around', 'beyond', 'near', 'since', 'until', 'upon',
+  'that', 'which', 'who', 'whom', 'whose', 'this', 'these', 'those',
+  'is', 'are', 'was', 'were', 'be', 'been', 'being',
+  'has', 'have', 'had', 'will', 'would', 'can', 'could', 'may', 'might',
+  'shall', 'should', 'must', 'do', 'does', 'did',
+  'its', 'their', 'our', 'your', 'his', 'her', 'my',
+  'if', 'when', 'while', 'than', 'then', 'because', 'although', 'though',
+  'unless', 'whether', 'both', 'either', 'neither', 'not', 'no',
+]);
+
+/**
+ * Cuts a meta description to `max` characters without ending it somewhere that reads as
+ * broken: trailing function words are dropped and an ellipsis marks the cut, while text
+ * already ending on sentence punctuation is left alone.
+ *
+ * The build-time twin is truncateAtWord in scripts/lib/site-title.cjs and the two must stay
+ * behaviourally identical — a product page runs this over the same source text the
+ * prerender already wrote into the served HTML, so any difference would rewrite the
+ * description the moment the page hydrates. scripts/check-descriptions.cjs is what catches
+ * a bad ending; nothing can catch a silent disagreement between these two but a person.
+ */
 export function truncateAtWord(text: string, max: number): string {
   const t = (text || '').replace(/\s+/g, ' ').trim();
   if (t.length <= max) return t;
-  const cut = t.slice(0, max);
+
+  // One character is held back so the ellipsis fits inside `max`.
+  const cut = t.slice(0, max - 1);
   const lastSpace = cut.lastIndexOf(' ');
-  return (lastSpace > 0 ? cut.slice(0, lastSpace) : cut).replace(/[,;:\-–—]+$/, '').trim();
+  let out = lastSpace > 0 ? cut.slice(0, lastSpace) : cut;
+
+  const floor = Math.floor(max * 0.4);
+  for (;;) {
+    const trimmed = out.replace(/[\s,;:\-–—]+$/, '');
+    const lastWord = trimmed.match(/\s([A-Za-z][A-Za-z']*)$/);
+    if (lastWord && trimmed.length > floor && DANGLING_WORDS.has(lastWord[1].toLowerCase())) {
+      out = trimmed.slice(0, trimmed.length - lastWord[0].length);
+      continue;
+    }
+    out = trimmed;
+    break;
+  }
+
+  if (!out) return '';
+  return /[.!?]$/.test(out) ? out : out + '…';
+}
+
+/**
+ * The named entities that actually occur in this content, plus numeric forms. &amp; is
+ * decoded last so "&amp;lt;" ends up as "&lt;" rather than "<".
+ */
+function decodeEntities(str: string): string {
+  return String(str || '')
+    .replace(/&#x([0-9a-fA-F]+);/g, (_, hex) => String.fromCodePoint(parseInt(hex, 16)))
+    .replace(/&#(\d+);/g, (_, dec) => String.fromCodePoint(parseInt(dec, 10)))
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&mdash;/g, '—')
+    .replace(/&ndash;/g, '–')
+    .replace(/&hellip;/g, '…')
+    .replace(/&rsquo;/g, '’')
+    .replace(/&lsquo;/g, '‘')
+    .replace(/&rdquo;/g, '”')
+    .replace(/&ldquo;/g, '“')
+    .replace(/&quot;/g, '"')
+    .replace(/&#0?39;|&apos;/g, "'")
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&amp;/g, '&');
+}
+
+/**
+ * Turns a block of stored HTML into plain text fit for a meta description: tags out,
+ * entities decoded, then truncated on a word a reader can stop on.
+ *
+ * The build-time twin is excerptFromHtml in scripts/lib/site-title.cjs. The policy pages run
+ * this over the same stored content the prerender already wrote into the served HTML, so the
+ * two must agree or the description is rewritten on hydration.
+ */
+export function excerptFromHtml(html: string, max: number): string {
+  const text = decodeEntities(String(html || '').replace(/<[^>]+>/g, ' '))
+    .replace(/\s+/g, ' ')
+    .trim();
+  return truncateAtWord(text, max);
 }
 
 export function setPageMeta({ title, description, path, image, type = 'website' }: PageMetaOptions) {

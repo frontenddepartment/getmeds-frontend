@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { injectHTML } from '../lib/injectHTML';
 import { getAllPolicies } from '../lib/queries';
 import { PoliciesDisclaimers } from '../types/sanity';
-import { setPageMeta } from '../lib/seo';
+import { setPageMeta, excerptFromHtml } from '../lib/seo';
 
 const DEFAULT_POLICIES = [
   {
@@ -129,11 +129,10 @@ export default function CentralizedPolicyPage() {
   // generic fallback was. Description is a real excerpt of the policy's own content,
   // not invented copy.
   useEffect(() => {
-    const excerpt = displayHtml
-      .replace(/<[^>]+>/g, ' ')
-      .replace(/\s+/g, ' ')
-      .trim()
-      .slice(0, 155);
+    // Shared with scripts/prerender-policies.cjs, which bakes this same excerpt into the
+    // served HTML. The hand-rolled slice this replaced ended mid-thought and left stored
+    // entities undecoded, so the description read "…&mdash; patients," in search results.
+    const excerpt = excerptFromHtml(displayHtml, 155);
     setPageMeta({
       title: displayTitle,
       description: excerpt || `Read Getmeds' ${displayTitle} — effective ${effectiveDate}.`,

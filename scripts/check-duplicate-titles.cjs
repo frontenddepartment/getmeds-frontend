@@ -1,5 +1,5 @@
-// Reports pages that ship the same <title> as another page, and titles that lost their
-// brand suffix or doubled it.
+// Reports pages that ship the same <title> as another page, titles that lost their brand
+// suffix or doubled it, and titles that end in the brand behind the wrong separator.
 //
 // Two title bugs have shipped before: every product page inheriting the generic shell's
 // title, and "… | Getmeds Philippines - Getmeds" from appending the site name to a title
@@ -17,6 +17,7 @@
 // copies of the real page). The first two live in scripts/lib/dist-pages.cjs, shared with
 // check-canonicals.cjs so the two guards can't disagree about what is meant to be indexed.
 const fs = require('fs');
+const { SEPARATOR, SITE_NAME } = require('./lib/site-title.cjs');
 const {
   DIST_DIR,
   walk,
@@ -37,6 +38,7 @@ function main() {
   const byTitle = new Map();
   const missing = [];
   const doubled = [];
+  const wrongSeparator = [];
   // null means vercel.json was unreadable; report everything rather than silently skipping.
   const excluded = excludedUrls() || new Set();
   let skipped = 0;
@@ -72,6 +74,18 @@ function main() {
     if (/getmeds[^|]*\|[^|]*getmeds.*- Getmeds$/i.test(title) || / - Getmeds - Getmeds$/i.test(title)) {
       doubled.push([url, title]);
     }
+    // Audit 3's second half: the brand appeared once everywhere, but behind three different
+    // separators, because withSiteName() existed as five copies and two had drifted to an em
+    // dash. Only an appended suffix is judged here, and the test for "appended" is the
+    // casing: every copy of withSiteName writes SITE_NAME exactly, so a title ending in
+    // "GetMEDS" or "GetMeds" came from the source and no code path could have produced it.
+    // That, plus requiring the brand at the very end, leaves the authored titles alone —
+    // "… | Getmeds Philippines" (the sheet's own SEO titles, which end in "Philippines")
+    // and "GetMEDS Announces …" (WordPress copy). Deliberately case-sensitive.
+    const suffix = title.match(new RegExp(`(.)\\s*${SITE_NAME}\\s*$`));
+    if (suffix && suffix[1] !== SEPARATOR.trim()) {
+      wrongSeparator.push([url, title, suffix[1]]);
+    }
     if (!byTitle.has(title)) byTitle.set(title, []);
     byTitle.get(title).push(url);
   });
@@ -95,11 +109,17 @@ function main() {
     console.warn(`[Titles] ⚠ ${doubled.length} page(s) with a doubled brand suffix:`);
     doubled.forEach(([url, title]) => console.warn(`   ${url} — "${title}"`));
   }
+  if (wrongSeparator.length) {
+    console.warn(`[Titles] ⚠ ${wrongSeparator.length} page(s) ending in the brand behind a separator other than "${SEPARATOR.trim()}":`);
+    wrongSeparator.slice(0, 10).forEach(([url, title, sep]) => console.warn(`   ${url} — "${title}" (uses "${sep}")`));
+    if (wrongSeparator.length > 10) console.warn(`   …and ${wrongSeparator.length - 10} more`);
+    console.warn('   Fix: the separator lives in scripts/lib/site-title.cjs and src/lib/seo.ts — they must agree.');
+  }
   if (missing.length) {
     console.warn(`[Titles] ⚠ ${missing.length} page(s) with no <title>: ${missing.slice(0, 5).join(', ')}${missing.length > 5 ? '…' : ''}`);
   }
-  if (!groups.length && !doubled.length && !missing.length) {
-    console.log('[Titles] No duplicate, doubled or missing titles.');
+  if (!groups.length && !doubled.length && !missing.length && !wrongSeparator.length) {
+    console.log(`[Titles] No duplicate, doubled or missing titles, and every brand suffix uses "${SEPARATOR.trim()}".`);
   }
 }
 
