@@ -9,6 +9,13 @@
     name="description"
     content="Specialty pharmaceutical product available through Getmeds Philippines — an FDA-licensed importer and distributor of oncology, hematology, and essential medicines."
     />
+    <!-- SHELL-NOINDEX: this shell is the template every /cancer-medicines/<slug> page is prerendered from;
+    on its own it renders an empty product and must never be indexed at /product-detail.
+    vercel.json also serves it with X-Robots-Tag: noindex, but that header block is
+    regenerated on every build by scripts/update-vercel-headers.cjs, so the page carries its
+    own tag too. scripts/prerender-slugs.cjs strips this line before writing each real
+    product, condition and category page. -->
+    <meta name="robots" content="noindex, follow" />
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
