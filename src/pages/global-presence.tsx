@@ -1,18 +1,14 @@
 import React, { useEffect } from 'react';
 import { injectHTML } from '../lib/injectHTML';
 import { useImageMapper } from '../lib/useSanity';
-import { setPageMeta } from '../lib/seo';
 import { LinkableImage } from '../lib/LinkableImage';
 import { ProgressiveHeroImage } from '../lib/ProgressiveHeroImage';
 
 export default function GlobalPresence() {
-  useEffect(() => {
-    setPageMeta({
-      title: 'Global Presence',
-      description: 'Getmeds global network spans continents to close the healthcare gap — sourcing internationally recognized medicines and expanding access for the patients and partners who depend on us.',
-      path: '/global-presence',
-    });
-  }, []);
+  // No setPageMeta here. This is a multi-page app with no client-side router, so
+  // this URL never changes while the page is open — the title, description and OG
+  // tags served in global-presence.html are already the final ones. Re-setting them on mount
+  // only created a second copy to disagree with, which is what Audit 4 found.
 
   const { getImage, getLowResImage, getImageLink } = useImageMapper('global-presence');
 

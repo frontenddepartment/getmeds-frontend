@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { injectHTML } from '../lib/injectHTML';
 import { useImageMapper } from '../lib/useSanity';
-import { setPageMeta } from '../lib/seo';
 import { LinkableImage } from '../lib/LinkableImage';
 
 const trackTitles: Record<number, string> = {
@@ -11,13 +10,10 @@ const trackTitles: Record<number, string> = {
 };
 
 export default function Meditations() {
-  useEffect(() => {
-    setPageMeta({
-      title: 'Meditations',
-      description: 'Nurture your mind, body, and soul. Discover clinical mindfulness, guided breathing exercises, and soothing ambient soundscapes designed to support your holistic wellness journey.',
-      path: '/meditations',
-    });
-  }, []);
+  // No setPageMeta here. This is a multi-page app with no client-side router, so
+  // this URL never changes while the page is open — the title, description and OG
+  // tags served in meditations.html are already the final ones. Re-setting them on mount
+  // only created a second copy to disagree with, which is what Audit 4 found.
 
   const { getImage, getImageLink } = useImageMapper('meditations');
   // Audio state

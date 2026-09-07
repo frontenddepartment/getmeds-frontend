@@ -25,19 +25,15 @@ declare global {
     };
   }
 }
-import { setPageMeta } from '../lib/seo';
 import { validateFiles, ALLOWED_FILE_TYPES_ACCEPT } from '../lib/fileUpload';
 import AlertModal from '../lib/AlertModal';
 
 
 export default function OrderMedicines() {
-  useEffect(() => {
-    setPageMeta({
-      title: 'Order Medicines',
-      description: 'A simple 3-step process designed for your convenience.',
-      path: '/order-medicines',
-    });
-  }, []);
+  // No setPageMeta here. This is a multi-page app with no client-side router, so
+  // this URL never changes while the page is open — the title, description and OG
+  // tags served in order-medicines.html are already the final ones. Re-setting them on mount
+  // only created a second copy to disagree with, which is what Audit 4 found.
 
   const [currentSlide, setCurrentSlide] = useState(0);
   const [modalOpen, setModalOpen] = useState(false);

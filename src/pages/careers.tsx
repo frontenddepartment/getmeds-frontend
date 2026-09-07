@@ -5,7 +5,6 @@ import { LinkableImage } from '../lib/LinkableImage';
 import { ProgressiveHeroImage } from '../lib/ProgressiveHeroImage';
 import { getCareers } from '../lib/queries';
 import { getApiUrl } from '../lib/api';
-import { setPageMeta } from '../lib/seo';
 
 const getPositionType = (title: string, desc: string): string => {
   const text = (title + ' ' + desc).toLowerCase();
@@ -17,13 +16,10 @@ const getPositionType = (title: string, desc: string): string => {
 };
 
 const Careers: React.FC = () => {
-  useEffect(() => {
-    setPageMeta({
-      title: 'Careers',
-      description: "Join our mission to make healthcare accessible worldwide. We're looking for passionate individuals to innovate and grow with us.",
-      path: '/careers',
-    });
-  }, []);
+  // No setPageMeta here. This is a multi-page app with no client-side router, so
+  // this URL never changes while the page is open — the title, description and OG
+  // tags served in careers.html are already the final ones. Re-setting them on mount
+  // only created a second copy to disagree with, which is what Audit 4 found.
 
   const { getImage, getLowResImage, getImageLink, loading: imagesLoading } = useImageMapper('careers');
   const [activeCareersPanel, setActiveCareersPanel] = useState(0);

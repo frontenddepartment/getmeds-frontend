@@ -3,7 +3,6 @@ import { injectHTML } from '../lib/injectHTML';
 import { useImageMapper, useSiteSettings } from '../lib/useSanity';
 import { ProgressiveHeroImage } from '../lib/ProgressiveHeroImage';
 import { getApiUrl } from '../lib/api';
-import { setPageMeta } from '../lib/seo';
 import type { ContactGroup } from '../types/sanity';
 
 
@@ -31,13 +30,10 @@ function getPurposeIcon(purpose: string): string {
 
 
 export default function ContactUs() {
-  useEffect(() => {
-    setPageMeta({
-      title: 'Contact Us',
-      description: 'For inquiries about our pharmaceutical portfolio, partnership opportunities, careers, or patient access programs — our team is ready to help.',
-      path: '/contact-us',
-    });
-  }, []);
+  // No setPageMeta here. This is a multi-page app with no client-side router, so
+  // this URL never changes while the page is open — the title, description and OG
+  // tags served in contact-us.html are already the final ones. Re-setting them on mount
+  // only created a second copy to disagree with, which is what Audit 4 found.
 
   const { getImage, getLowResImage, getImageLink, loading: imagesLoading } = useImageMapper('contact-us');
   const { data: settings } = useSiteSettings();

@@ -34,6 +34,7 @@ import {
   getCategories,
   getCategoryBySlug,
   getFAQs,
+  getHomepageFAQs,
   searchFAQs,
   getServices,
   getTeamMembers,
@@ -249,6 +250,10 @@ export function useCategoryBySlug(slug: string) {
 
 export function useFAQs() {
   return useFetch<FAQ[]>(getFAQs)
+}
+
+export function useHomepageFAQs() {
+  return useFetch<FAQ[]>(getHomepageFAQs)
 }
 
 export function useFAQSearch(query: string) {

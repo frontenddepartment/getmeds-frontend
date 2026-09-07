@@ -68,12 +68,23 @@ const SANITY_QUERIES: Record<string, string> = {
     *[_type == "category" && slug.current == $slug][0]
   `,
   "faq.all": `
-    *[_type == "faq"] | order(_createdAt asc)
+    *[_type == "faq"] | order(coalesce(orderRank, "zzzz") asc, _createdAt asc)
   `,
+  // The homepage FAQ section. `showOnHomepage != false` rather than `== true`
+  // so a document written before the field existed still shows, matching the
+  // schema's initialValue and avoiding an empty section during the migration.
+  "faq.homepage": `
+    *[_type == "faq" && showOnHomepage != false]
+      | order(coalesce(orderRank, "zzzz") asc, _createdAt asc) {
+        _id, question, answer, orderRank, showOnHomepage
+      }
+  `,
+  // pt::text() flattens the Portable Text answer for matching; the coalesce
+  // keeps this working against documents whose answer is still a plain string.
   "faq.search": `
     *[_type == "faq" && (
       question match $query ||
-      answer match $query ||
+      coalesce(pt::text(answer), answer) match $query ||
       $query in keywords
     )]
   `,

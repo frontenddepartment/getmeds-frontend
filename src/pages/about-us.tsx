@@ -2,7 +2,6 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { injectHTML } from '../lib/injectHTML';
 import { useImageMapper, useTeamMembers } from '../lib/useSanity';
 import { urlFor } from '../lib/sanity';
-import { setPageMeta } from '../lib/seo';
 import { LinkableImage } from '../lib/LinkableImage';
 import { getApiUrl } from '../lib/api';
 
@@ -14,13 +13,10 @@ function formatTime(seconds: number): string {
 }
 
 export default function AboutUs() {
-  useEffect(() => {
-    setPageMeta({
-      title: 'About Us',
-      description: 'A new standard of care for a new generation of patients. Advanced science. Trusted medicine. Closer access. Better outcomes. Greater hope.',
-      path: '/about-us',
-    });
-  }, []);
+  // No setPageMeta here. This is a multi-page app with no client-side router, so
+  // this URL never changes while the page is open — the title, description and OG
+  // tags served in about-us.html are already the final ones. Re-setting them on mount
+  // only created a second copy to disagree with, which is what Audit 4 found.
 
   const { getImage, getImageLink, getVideo, getVideoThumbnail, loading: imagesLoading } = useImageMapper('about-us');
   const valuesContainerRef = useRef<HTMLDivElement>(null);

@@ -1,18 +1,14 @@
 import React, { useEffect, useRef } from 'react';
 import { injectHTML } from '../lib/injectHTML';
 import { useImageMapper } from '../lib/useSanity';
-import { setPageMeta } from '../lib/seo';
 import { LinkableImage } from '../lib/LinkableImage';
 import { ProgressiveHeroImage } from '../lib/ProgressiveHeroImage';
 
 const Csr: React.FC = () => {
-  useEffect(() => {
-    setPageMeta({
-      title: 'Corporate Social Responsibility',
-      description: "We don't just distribute medicine; we facilitate healing. Through NGO partnerships and digital health advocacy, we ensure no patient navigates their journey alone.",
-      path: '/csr',
-    });
-  }, []);
+  // No setPageMeta here. This is a multi-page app with no client-side router, so
+  // this URL never changes while the page is open — the title, description and OG
+  // tags served in csr.html are already the final ones. Re-setting them on mount
+  // only created a second copy to disagree with, which is what Audit 4 found.
 
   const { getImage, getLowResImage, getImageLink } = useImageMapper('csr');
 

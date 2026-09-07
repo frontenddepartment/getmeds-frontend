@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useHeroSlides, useImageMapper, useNews, useSiteSettings, useCategories, useFeaturedNews } from '../lib/useSanity';
-import { setPageMeta } from '../lib/seo';
 import { getApiUrl } from '../lib/api';
 import { injectHTML } from '../lib/injectHTML';
 import { urlFor } from '../lib/sanity';
@@ -84,14 +83,9 @@ const slugify = (text: string | undefined | null) => {
 
 export default function GetMedsHomepage() {
   useEffect(() => {
-    // Kept byte-identical to the <title>/description baked into index.html. These
-    // overwrite the static tags on hydration, so any drift here silently reverts the
-    // homepage's real meta for anything that renders JS before reading them.
-    setPageMeta({
-      title: 'Getmeds | Trusted Pharmaceutical Company & Healthcare Provider',
-      description: 'Global pharmaceutical company in the Philippines: FDA-licensed wholesaler, importer, distributor and retail pharmacy.',
-      path: '/',
-    });
+    // No setPageMeta here. index.html already serves the final title, description and OG
+    // tags — the ones Audit 4 specified — and this URL never changes while the page is open,
+    // so re-setting them would only reintroduce a second copy to drift.
     if (typeof (window as any).injectAIAssistant === 'function') {
       (window as any).injectAIAssistant();
     }

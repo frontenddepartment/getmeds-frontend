@@ -1,7 +1,6 @@
 ﻿import React, { useEffect, useState, useRef, useCallback, useMemo } from 'react';
 import { injectHTML } from '../lib/injectHTML';
 import { useNewsPaginated, useNewsCategories } from '../lib/useSanity';
-import { setPageMeta } from '../lib/seo';
 import { getBlogListingImageUrl } from '../lib/sanity';
 
 const formatDate = (dateStr: string | undefined | null) => {
@@ -30,13 +29,10 @@ const slugify = (text: string | undefined | null) => {
 
 
 export default function Blog() {
-  useEffect(() => {
-    setPageMeta({
-      title: 'Blog',
-      description: 'Stay informed with the latest news, health guides, and updates from Getmeds — your trusted source for pharmaceutical insights and patient care resources in the Philippines.',
-      path: '/blog',
-    });
-  }, []);
+  // No setPageMeta here. This is a multi-page app with no client-side router, so
+  // this URL never changes while the page is open — the title, description and OG
+  // tags served in blog.html are already the final ones. Re-setting them on mount
+  // only created a second copy to disagree with, which is what Audit 4 found.
 
   const { articles, loading, loadingMore, hasMore, loadMore, loadMoreError } = useNewsPaginated(9);
   // Dedicated lightweight endpoint (WordPress tags, not full post bodies) so the

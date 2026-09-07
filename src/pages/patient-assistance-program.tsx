@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { injectHTML } from '../lib/injectHTML';
 import { useImageMapper } from '../lib/useSanity';
-import { setPageMeta } from '../lib/seo';
 import { ProgressiveHeroImage } from '../lib/ProgressiveHeroImage';
 
 type SectionTab = 'steps' | 'requirements' | 'faqs';
@@ -39,13 +38,10 @@ function CheckItem({ text, note, bullets }: { text: string; note?: string; bulle
 }
 
 export default function PatientAssistanceProgram() {
-  useEffect(() => {
-    setPageMeta({
-      title: 'Patient Assistance Program',
-      description: 'Getmeds Patient Assistance Program — access free cancer medicines and chemotherapy support through DSWD and PCSO accreditation in the Philippines.',
-      path: '/patient-assistance-program',
-    });
-  }, []);
+  // No setPageMeta here. This is a multi-page app with no client-side router, so
+  // this URL never changes while the page is open — the title, description and OG
+  // tags served in patient-assistance-program.html are already the final ones. Re-setting them on mount
+  // only created a second copy to disagree with, which is what Audit 4 found.
 
   const { getImage, getLowResImage, getImageLink, loading: imagesLoading } = useImageMapper('pap');
   const [heroImgLoaded, setHeroImgLoaded] = useState(false);

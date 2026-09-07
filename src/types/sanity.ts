@@ -195,7 +195,12 @@ export interface FAQ {
   _id: string
   _type: 'faq'
   question: string
-  answer: string
+  // Portable Text since the FAQ answers began rendering on the website as well
+  // as feeding the chatbot. Documents migrated before that change may still
+  // hold a plain string, so readers must handle both.
+  answer: SanityPortableTextBlock[] | string
+  showOnHomepage?: boolean
+  orderRank?: string
   keywords?: string[]
   relatedLinks?: RelatedLink[]
 }

@@ -446,6 +446,11 @@ export async function getFAQs() {
   return sanityQuery<FAQ[]>('faq.all')
 }
 
+/** FAQs flagged for the homepage section, in the Studio's drag order. */
+export async function getHomepageFAQs() {
+  return sanityQuery<FAQ[]>('faq.homepage')
+}
+
 export async function searchFAQs(query: string) {
   return sanityQuery<FAQ[]>('faq.search', { query: `*${query}*` })
 }

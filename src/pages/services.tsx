@@ -2,16 +2,12 @@ import React, { useEffect } from 'react';
 import { injectHTML } from '../lib/injectHTML';
 import { ProgressiveHeroImage } from '../lib/ProgressiveHeroImage';
 import { useImageMapper } from '../lib/useSanity';
-import { setPageMeta } from '../lib/seo';
 
 export default function Services() {
-  useEffect(() => {
-    setPageMeta({
-      title: 'Our Services',
-      description: 'Getmeds delivers precision pharmaceutical solutions and nationwide distribution — from regulatory compliance and government bidding to pioneering digital oncology care.',
-      path: '/services',
-    });
-  }, []);
+  // No setPageMeta here. This is a multi-page app with no client-side router, so
+  // this URL never changes while the page is open — the title, description and OG
+  // tags served in services.html are already the final ones. Re-setting them on mount
+  // only created a second copy to disagree with, which is what Audit 4 found.
 
   const { getImage, getLowResImage, getImageLink } = useImageMapper('services');
   useEffect(() => {
