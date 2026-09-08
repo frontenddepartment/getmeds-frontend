@@ -7,54 +7,104 @@
  * Not a React component on purpose. It ships inside the initial HTML, so it
  * paints with the shell rather than appearing a beat after hydration — that
  * delay on every tap is most of what makes a web app feel like a web page. It
- * also means all 24 entry points get it without touching a single entry file.
+ * also means all 25 entry points get it without touching a single entry file.
  *
- * Shown ONLY in the installed app (html.pwa-standalone, set in <head> before
- * first paint) and only at phone widths: five icons stretched across a 1400px
- * desktop window looks broken, so an installed desktop window keeps the normal
- * top navigation instead.
+ * Shown ONLY in the installed app and only at phone widths: five icons
+ * stretched across a 1400px desktop window looks broken, so an installed
+ * desktop window keeps the normal top navigation instead.
+ *
+ * ── Why every rule is written twice ──
+ * The app is detected two ways, and both are needed:
+ *
+ *   @media (display-mode: standalone)  — pure CSS, works with no JavaScript.
+ *   html.pwa-standalone                — set in <head> before first paint,
+ *                                        and the only thing that works on iOS
+ *                                        Safari before 16.4, which predates
+ *                                        the display-mode query.
+ *
+ * The class alone was not enough: it depends on a script that a page served
+ * from an older service-worker cache may not have, and the bar then vanishes
+ * on exactly the pages the app had already cached. The media query has no such
+ * dependency, so the two together cover each other's gaps.
+ *
+ * ── The bottom-right column ──
+ * Everything pinned there is spaced so nothing overlaps, measured from the
+ * bottom edge of the viewport:
+ *
+ *   tab bar          0 – 60    full width
+ *   contact FAB     74 – 124
+ *   Tawk chat      134 – 184   aligned to the same right edge as the FAB
+ *   scroll-to-top  194 – 244
  */
+
+/** Declarations shared by both detection methods, so they cannot drift apart. */
+const APP_RULES = `
+  .gm-tabbar { display: flex; }
+  .gm-fab { display: flex; }
+
+  /* Clear the bar so the end of the page is never trapped behind it. */
+  body { padding-bottom: calc(60px + env(safe-area-inset-bottom, 0px)); }
+
+  /* The footer repeats what Contact Us already covers, so the app drops it. */
+  #site-footer { display: none; }
+
+  /* The top bar goes: the tab bar is the app's navigation now.
+     Only the bar ROW is hidden, never <nav> itself — #mobile-menu (the drawer
+     "More" opens) and #gn-panel are siblings of that row inside the same nav,
+     so display:none on the nav silently takes the drawer with it and "More"
+     opens a zero-height element. */
+  #global-top-bar { display: none !important; }
+  #global-nav > div.max-w-7xl { display: none !important; }
+  #global-nav {
+    position: static !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    border: 0 !important;
+  }
+  #navbar-container { position: static !important; }
+  /* The drawer was offset to clear an 80px bar that no longer exists. */
+  #mobile-menu { top: 0 !important; }
+
+  /* components.js declares #scroll-to-top with !important on every line
+     (including bottom: 100px, which sat squarely on the contact FAB), so
+     overriding it needs !important too. */
+  #scroll-to-top {
+    bottom: calc(194px + env(safe-area-inset-bottom, 0px)) !important;
+    right: 16px !important;
+  }
+
+  /* Tawk positions itself bottom-right with inline styles, which lands it on
+     top of both the FAB and the tab bar. It is not hidden — it is moved into
+     the same column, one slot above the FAB. Selectors are deliberately broad
+     because Tawk's markup differs between widget versions. */
+  iframe[title*="chat" i],
+  .widget-visible iframe,
+  #tawkchat-container,
+  .tawk-min-container {
+    bottom: calc(134px + env(safe-area-inset-bottom, 0px)) !important;
+    right: 16px !important;
+  }
+
+  /* The offline-inquiry notice spans the full width and would otherwise cover
+     the tab bar completely — it sits directly above it instead. */
+  .gm-queued-notice { bottom: calc(60px + env(safe-area-inset-bottom, 0px)); }
+`;
+
+const scoped = (prefix) =>
+  APP_RULES.replace(/^\s{2}(?=[.#a-zA-Z])/gm, '  ' + prefix + ' ');
 
 export const PWA_TABBAR_CSS = `
 <style>
-  /* Hidden everywhere by default — the rules below are the only thing that
+  /* Hidden everywhere by default — the blocks below are the only thing that
      reveals it, so nothing changes for the website. */
   .gm-tabbar, .gm-fab { display: none; }
 
   @media (max-width: 1024px) {
-    html.pwa-standalone .gm-tabbar { display: flex; }
-    html.pwa-standalone .gm-fab { display: flex; }
+${scoped('html.pwa-standalone')}
+  }
 
-    /* Clear the bar so the end of the page is never trapped behind it. */
-    html.pwa-standalone body {
-      padding-bottom: calc(60px + env(safe-area-inset-bottom, 0px));
-    }
-
-    /* The footer repeats what Contact Us already covers, so the app drops it. */
-    html.pwa-standalone #site-footer { display: none; }
-
-    /* One button in that corner, not three: the FAB below replaces Tawk's own
-       bubble, which would otherwise sit on top of the bar. */
-    html.pwa-standalone .tawk-min-container,
-    html.pwa-standalone iframe[title*="chat" i] { display: none !important; }
-
-    /* Everything pinned to the bottom-right becomes one column instead of a
-       pile. Measured from the bottom edge: the bar owns 0-60, the contact FAB
-       74-124, and scroll-to-top 134-184 — 50px tall each with a 10px gap, so
-       nothing lands on top of anything else.
-       components.js declares #scroll-to-top with !important on every line
-       (including bottom: 100px, which sat squarely on the FAB), so overriding
-       it needs !important too. */
-    html.pwa-standalone #scroll-to-top {
-      bottom: calc(134px + env(safe-area-inset-bottom, 0px)) !important;
-      right: 16px !important;
-    }
-
-    /* The offline-inquiry notice spans the full width and would otherwise cover
-       the tab bar completely — it sits directly above it instead. */
-    html.pwa-standalone .gm-queued-notice {
-      bottom: calc(60px + env(safe-area-inset-bottom, 0px));
-    }
+  @media (display-mode: standalone) and (max-width: 1024px) {
+${APP_RULES}
   }
 
   .gm-tabbar {
@@ -66,8 +116,8 @@ export const PWA_TABBAR_CSS = `
     background: #fff;
     border-top: 1px solid #eef0f4;
     box-shadow: 0 -2px 14px rgba(0, 0, 0, .06);
-    /* Resolves to a real value only because every page now sets
-       viewport-fit=cover; without it the labels sit under the home indicator. */
+    /* Resolves to a real value only because every page sets viewport-fit=cover;
+       without it the labels sit under the iPhone home indicator. */
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }
 
@@ -127,8 +177,6 @@ export const PWA_TABBAR_CSS = `
   /* Appears only once something is in the list. */
   .gm-cart-badge:not([data-count="0"]) { display: flex; }
 
-  /* Contact stays reachable from every screen, clear of both the bar and the
-     home indicator. */
   .gm-fab {
     position: fixed;
     right: 16px;
