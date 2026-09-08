@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useProducts } from '../lib/useSanity';
 import { injectHTML } from '../lib/injectHTML';
+import { urlFor } from '../lib/sanity';
 
 /**
  * app-home.tsx
@@ -33,7 +34,21 @@ interface Row {
   productPageUrl?: string;
   slug?: { current?: string };
   Prescription?: string;
+  /** Attached in queries.ts by matching the sheet row to a Studio image link. */
+  image?: { asset?: unknown };
 }
+
+/**
+ * The catalogue rows already carry an image — fetchProductsFromExcel() joins
+ * each row to the picture a person attached in the Studio. Rendering only text
+ * was simply not asking for it.
+ */
+const productImage = (p: Row, size = 160) => {
+  try {
+    if (p.image && p.image.asset) return urlFor(p.image).width(size).height(size).url();
+  } catch { /* fall through to the placeholder */ }
+  return '/assets/no-image.png';
+};
 
 const displayName = (p: Row) =>
   p.brandName && p.genericName && p.brandName !== p.genericName
@@ -77,20 +92,32 @@ function ProductCard({ p }: { p: Row }) {
       href={productUrl(p)}
       className="block rounded-2xl border border-gray-100 bg-white p-4 shadow-[0_1px_6px_rgba(0,0,0,0.04)]"
     >
-      <div className="flex items-start justify-between gap-3">
-        <h3 className="text-[14px] font-semibold text-gray-900 leading-snug">{displayName(p)}</h3>
-        {p.availability !== false && (
-          <span className="shrink-0 rounded-full bg-green-50 px-2 py-0.5 text-[10px] font-semibold text-green-700">
-            In stock
-          </span>
-        )}
+      <div className="flex gap-3">
+        <div className="h-[68px] w-[68px] shrink-0 overflow-hidden rounded-xl border border-gray-100 bg-gray-50 p-1.5">
+          <img
+            src={productImage(p)}
+            alt=""
+            loading="lazy"
+            className="h-full w-full object-contain"
+            onError={(e) => { (e.currentTarget as HTMLImageElement).src = '/assets/no-image.png'; }}
+          />
+        </div>
+        <div className="min-w-0 flex-1">
+          <div className="flex items-start justify-between gap-2">
+            <h3 className="text-[14px] font-semibold leading-snug text-gray-900">{displayName(p)}</h3>
+            {p.availability !== false && (
+              <span className="shrink-0 rounded-full bg-green-50 px-2 py-0.5 text-[10px] font-semibold text-green-700">
+                In stock
+              </span>
+            )}
+          </div>
+          {(p.strength || p.form) && (
+            <p className="mt-1.5 text-[12px] text-gray-500">
+              {[p.strength, p.form].filter(Boolean).join(' · ')}
+            </p>
+          )}
+        </div>
       </div>
-
-      {(p.strength || p.form) && (
-        <p className="mt-1.5 text-[12px] text-gray-500">
-          {[p.strength, p.form].filter(Boolean).join(' · ')}
-        </p>
-      )}
 
       <div className="mt-3 flex items-center justify-between gap-3">
         {needsRx ? (
@@ -128,13 +155,20 @@ export default function AppHome() {
     // on every other page.
   }, []);
 
+  // Each tile borrows the first real photo in its folder, so the grid reads as
+  // a catalogue rather than a list of icons. Folders whose products have no
+  // image attached yet fall back to the icon.
   const categories = useMemo(() => {
-    const counts = new Map<string, number>();
+    const acc = new Map<string, { count: number; image?: string }>();
     for (const p of products) {
       const f = (p.categoryFolder || '').trim();
-      if (f) counts.set(f, (counts.get(f) || 0) + 1);
+      if (!f) continue;
+      const cur = acc.get(f) || { count: 0 };
+      cur.count += 1;
+      if (!cur.image && p.image && p.image.asset) cur.image = productImage(p, 120);
+      acc.set(f, cur);
     }
-    return [...counts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 8);
+    return [...acc.entries()].sort((a, b) => b[1].count - a[1].count).slice(0, 8);
   }, [products]);
 
   const featured = useMemo(
@@ -216,13 +250,25 @@ export default function AppHome() {
                 </div>
               ) : (
                 <div className="grid grid-cols-4 gap-3">
-                  {categories.map(([folder, count]) => (
-                    <a key={folder} href={`/${folder}`} className="flex flex-col items-center gap-1.5 rounded-2xl border border-gray-100 bg-white p-2 py-3">
-                      <i className={`fa-solid ${FOLDER_ICON[folder] || 'fa-pills'} text-[15px]`} style={{ color: '#1D9FDA' }}></i>
+                  {categories.map(([folder, info]) => (
+                    <a key={folder} href={`/${folder}`} className="flex flex-col items-center gap-1.5 rounded-2xl border border-gray-100 bg-white p-2 py-2.5">
+                      <span className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-lg bg-gray-50">
+                        {info.image ? (
+                          <img
+                            src={info.image}
+                            alt=""
+                            loading="lazy"
+                            className="h-full w-full object-contain p-0.5"
+                            onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
+                          />
+                        ) : (
+                          <i className={`fa-solid ${FOLDER_ICON[folder] || 'fa-pills'} text-[14px]`} style={{ color: '#1D9FDA' }}></i>
+                        )}
+                      </span>
                       <span className="text-center text-[9.5px] font-semibold leading-tight text-gray-600">
                         {prettyFolder(folder).replace(' Medicines', '')}
                       </span>
-                      <span className="text-[9px] text-gray-400">{count}</span>
+                      <span className="text-[9px] text-gray-400">{info.count}</span>
                     </a>
                   ))}
                 </div>
