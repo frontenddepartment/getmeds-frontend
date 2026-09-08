@@ -395,7 +395,7 @@ export default function GetMedsHomepage() {
     // A private-mode write can throw; the order page simply asks again in that
     // case, so a failed hand-off should never block the navigation itself.
     try { localStorage.setItem(ORDER_USERTYPE_KEY, type); } catch { /* ignore */ }
-    window.location.href = '/order-medicines.html';
+    window.location.href = '/order-medicines';
   };
 
   useEffect(() => {
@@ -867,7 +867,7 @@ export default function GetMedsHomepage() {
             Product Range
           </a>
           <a
-            href="/services.html"
+            href="/services"
             className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:opacity-95 text-white font-bold text-[12.5px] py-2 px-5 rounded-full transition-all shrink-0 flex items-center justify-center"
           >
             Our Services
@@ -879,7 +879,7 @@ export default function GetMedsHomepage() {
             Become Our Partner
           </button>
           <a
-            href="/contact-us.html"
+            href="/contact-us"
             className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:opacity-95 text-white font-bold text-[12.5px] py-2 px-5 rounded-full transition-all shrink-0 flex items-center justify-center"
           >
             Contact Us
@@ -1726,7 +1726,7 @@ export default function GetMedsHomepage() {
                   <div key={i}>
                     <h4 className="font-bold text-gray-900 text-base mb-2">{item.title}</h4>
                     <p className="text-gray-600 md:text-gray-400 text-sm leading-relaxed mb-4">{item.desc}</p>
-                    <a href="services.html" className="inline-flex items-center gap-1.5 text-sm font-semibold transition-opacity hover:opacity-70" style={{ color: item.accent }}>
+                    <a href="/services" className="inline-flex items-center gap-1.5 text-sm font-semibold transition-opacity hover:opacity-70" style={{ color: item.accent }}>
                       Learn More <i className="fa-solid fa-arrow-right text-[11px]"></i>
                     </a>
                   </div>

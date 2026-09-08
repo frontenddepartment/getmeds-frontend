@@ -350,7 +350,7 @@ export default function GlobalPresence() {
                 makes it simple, fast, secure, and reliable.
               </p>
               <a
-                href="about-us.html"
+                href="/about-us"
                 className="inline-block bg-[#1a202c] hover:bg-black text-white font-bold py-2.5 px-6 text-[11px] uppercase rounded-full shadow-md transition duration-300 tracking-[0.05em]">
                 LEARN MORE
               </a>

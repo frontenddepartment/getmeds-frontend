@@ -60,3 +60,17 @@ export function validateFiles(files: File[]): FileValidationResult {
 
   return { valid, errors };
 }
+
+/**
+ * Strips the "data:...;base64," prefix, which is what the inquiry endpoint
+ * expects. Product-detail defined this inline; sharing it keeps the cart's
+ * uploads byte-identical to the ones the website already sends.
+ */
+export function fileToBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.readAsDataURL(file)
+    reader.onload = () => resolve((reader.result as string).split(',')[1])
+    reader.onerror = reject
+  })
+}

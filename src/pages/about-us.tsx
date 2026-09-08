@@ -322,7 +322,7 @@ export default function AboutUs() {
                 className="btn-gradient text-white font-semibold py-2 px-6 rounded-full text-[13px] inline-flex items-center gap-2 shadow-md">
                 Discover Our Story <i className="fa-solid fa-arrow-down text-xs"></i>
               </a>
-              <a href="contact-us.html"
+              <a href="/contact-us"
                 className="bg-white/10 backdrop-blur-md border border-white/25 text-white font-semibold py-2 px-6 rounded-full text-[13px] hover:bg-white/20 transition inline-flex items-center gap-2">
                 Contact Us <i className="fa-solid fa-arrow-right text-xs"></i>
               </a>
@@ -1201,7 +1201,7 @@ export default function AboutUs() {
             <h2 className="text-xl md:text-2xl font-bold mb-3 relative z-10">Every patient. Every doctor. Every pharmacy. Every partner.</h2>
             <p className="text-blue-50 text-sm md:text-base mb-6 max-w-2xl mx-auto relative z-10">Getmeds is built for all of them. Whether you're seeking medicine, sourcing therapies, exploring partnerships, or joining our team — one message reaches the right hands.</p>
             <div className="flex flex-col sm:flex-row justify-center gap-3 relative z-10">
-              <a href="contact-us.html"
+              <a href="/contact-us"
                 className="bg-white text-blue-600 font-bold text-sm px-6 py-2.5 rounded-full hover:bg-gray-50 transition transform hover:-translate-y-1">
                 Contact Us
               </a>

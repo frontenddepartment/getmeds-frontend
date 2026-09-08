@@ -112,20 +112,20 @@
                 </div>
                 <div class="overflow-hidden">
                     <h3 class="font-bold text-gray-900 text-base leading-tight truncate" id="profile-name">User</h3>
-                    <a href="profile.html" class="text-xs text-gray-400 font-medium hover:text-primary transition flex items-center gap-1.5 mt-1"><i class="fa-solid fa-arrow-left text-[10px]"></i> Back to Dashboard</a>
+                    <a href="/profile" class="text-xs text-gray-400 font-medium hover:text-primary transition flex items-center gap-1.5 mt-1"><i class="fa-solid fa-arrow-left text-[10px]"></i> Back to Dashboard</a>
                 </div>
             </div>
 
             <nav class="flex flex-col space-y-1">
-                <a href="edit-profile.html" class="sidebar-link active flex items-center gap-3 px-4 py-3 text-[13px] font-medium text-gray-600 rounded-r-lg hover:bg-gray-50 transition border-l-3 border-transparent" style="border-left-color: #0D99FF">
+                <a href="/edit-profile" class="sidebar-link active flex items-center gap-3 px-4 py-3 text-[13px] font-medium text-gray-600 rounded-r-lg hover:bg-gray-50 transition border-l-3 border-transparent" style="border-left-color: #0D99FF">
                     <i class="fa-solid fa-user-pen text-center text-lg w-5 text-gray-400"></i> Edit Profile
                 </a>
-                <a href="profile.html" class="sidebar-link flex items-center gap-3 px-4 py-3 text-[13px] font-medium text-gray-600 rounded-r-lg hover:bg-gray-50 transition border-l-3 border-transparent">
+                <a href="/profile" class="sidebar-link flex items-center gap-3 px-4 py-3 text-[13px] font-medium text-gray-600 rounded-r-lg hover:bg-gray-50 transition border-l-3 border-transparent">
                     <i class="fa-solid fa-file-invoice text-center text-lg w-5 text-gray-400"></i> My Profile
                 </a>
                 
                 <hr class="border-gray-100 my-3 mx-2">
-                <button onclick="if(window.logoutUser) { window.logoutUser(); window.location.href='index.html'; }" class="flex items-center gap-3 px-4 py-2 mt-1 text-[13px] font-bold text-red-500 hover:bg-red-50 rounded-lg transition text-left w-full">
+                <button onclick="if(window.logoutUser) { window.logoutUser(); window.location.href='/'; }" class="flex items-center gap-3 px-4 py-2 mt-1 text-[13px] font-bold text-red-500 hover:bg-red-50 rounded-lg transition text-left w-full">
                     <i class="fa-solid fa-arrow-right-from-bracket w-5 text-center text-base"></i> Logout
                 </button>
             </nav>

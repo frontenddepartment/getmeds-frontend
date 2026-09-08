@@ -290,7 +290,7 @@ export default function EmployeeVerification() {
 
               <p className="mt-6 text-center text-[12px] text-gray-400">
                 Having trouble?{' '}
-                <a href="/contact-us.html" className="text-primary font-semibold hover:underline">
+                <a href="/contact-us" className="text-primary font-semibold hover:underline">
                   Contact our support team
                 </a>
                 .

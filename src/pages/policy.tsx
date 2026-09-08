@@ -161,7 +161,7 @@ export default function CentralizedPolicyPage() {
       {/* Breadcrumb Header */}
       <div className="max-w-6xl mx-auto px-4 pt-6 pb-2 relative z-10">
         <a
-          href="/index.html"
+          href="/"
           className="inline-flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-900 transition-colors font-medium"
         >
           <i className="fa-solid fa-chevron-left text-[9px]" />

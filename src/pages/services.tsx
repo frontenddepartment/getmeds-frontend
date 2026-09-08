@@ -130,7 +130,7 @@ export default function Services() {
                 className="btn-gradient text-white font-semibold py-2 px-6 rounded-full text-[13px] inline-flex items-center gap-2 shadow-md">
                 Explore Services <i className="fa-solid fa-arrow-down text-xs"></i>
               </a>
-              <a href="contact-us.html"
+              <a href="/contact-us"
                 className="bg-white/10 backdrop-blur-md border border-white/25 text-white font-semibold py-2 px-6 rounded-full text-[13px] hover:bg-white/20 transition inline-flex items-center gap-2">
                 Contact Us <i className="fa-solid fa-arrow-right text-xs"></i>
               </a>
@@ -449,7 +449,7 @@ export default function Services() {
               <p className="text-gray-500 text-[15px] leading-relaxed mb-10 max-w-lg">Pharmaceutical care built on
                 global standards, patient-first values, and Filipino heart. Every medicine is sourced, verified,
                 and delivered with the care your health deserves.</p>
-              <a href="about-us.html"
+              <a href="/about-us"
                 className="btn-gradient text-white font-bold py-4 px-10 rounded-xl text-[14px] inline-flex items-center gap-3 shadow-lg">Learn
                 More <i className="fa-solid fa-arrow-right text-xs"></i></a>
             </div>
@@ -554,10 +554,10 @@ export default function Services() {
           <p className="text-white/60 text-[13px] sm:text-[15px] mb-10 max-w-[270px] sm:max-w-xl mx-auto">Join thousands of patients who trust Getmeds for
             fast, reliable, and expert medical services every day.</p>
           <div className="flex flex-wrap justify-center gap-4">
-            <a href="order-medicines.html"
+            <a href="/order-medicines"
               className="btn-gradient text-white font-bold py-4 px-10 rounded-full text-[14px] inline-flex items-center gap-3 shadow-lg">Order
               Medicines <i className="fa-solid fa-arrow-right text-xs"></i></a>
-            <a href="contact-us.html"
+            <a href="/contact-us"
               className="bg-white/10 backdrop-blur-md border border-white/20 text-white font-bold py-4 px-10 rounded-full text-[14px] hover:bg-white/20 transition inline-flex items-center gap-3">Contact
               Us <i className="fa-solid fa-phone text-xs"></i></a>
           </div>

@@ -3,6 +3,7 @@ import { injectHTML } from '../lib/injectHTML';
 import { getApiUrl } from '../lib/api';
 import { submitInquiry } from '../lib/offlineInquiry';
 import { Turnstile, useTurnstile } from '../lib/turnstile';
+import { ALLOWED_FILE_TYPES_ACCEPT, fileToBase64, validateFiles } from '../lib/fileUpload';
 import {
   CART_CHANGED_EVENT,
   clearAllDeviceData,
@@ -32,23 +33,36 @@ import {
 
 type Step = 'list' | 'type' | 'form' | 'done';
 
+type FieldKey = 'position' | 'prcLicense' | 'institution' | 'location' | 'age' | 'address';
+
 interface TypeDef {
   value: string;
   label: string;
   /** Decides the destination spreadsheet — see INQUIRY_SPREADSHEETS. */
   inquiryType: string;
   icon: string;
+  /** Patients additionally need uploads, a contact person and two consents. */
+  kind?: 'patient' | 'partner';
   /** Extra columns this audience's sheet has beyond name/email/phone/message. */
-  fields: Array<{ key: 'position' | 'prcLicense' | 'institution' | 'location'; label: string; required?: boolean }>;
+  fields: Array<{ key: FieldKey; label: string; required?: boolean }>;
 }
 
 const USER_TYPES: TypeDef[] = [
   {
+    // Deliberately NOT Product Inquiry. On the website a patient's product
+    // inquiry is routed to the Order Medicine sheet, because a patient supplies
+    // the same things an order does — prescription, valid ID, age, delivery
+    // address, contact person — and that sheet has the columns for them. Sending
+    // the app's patients somewhere else would split one funnel across two sheets.
     value: 'patient',
     label: 'Patient / Caregiver',
-    inquiryType: 'Product Inquiry',
+    inquiryType: 'Order Medicine',
     icon: 'fa-user',
-    fields: [],
+    kind: 'patient',
+    fields: [
+      { key: 'age', label: 'Age', required: true },
+      { key: 'address', label: 'Delivery address', required: true },
+    ],
   },
   {
     value: 'doctor',
@@ -86,7 +100,12 @@ const USER_TYPES: TypeDef[] = [
   },
 ];
 
-const BLANK = { name: '', email: '', phone: '', message: '', position: '', prcLicense: '', institution: '', location: '' };
+const BLANK = {
+  name: '', email: '', phone: '', message: '',
+  position: '', prcLicense: '', institution: '', location: '',
+  age: '', address: '',
+  contactName: '', contactRelationship: '',
+};
 
 export default function Cart() {
   const [items, setItems] = useState<CartItem[] | null>(null);
@@ -97,6 +116,13 @@ export default function Cart() {
   const [error, setError] = useState('');
   const [queued, setQueued] = useState(false);
   const [form, setForm] = useState({ ...BLANK });
+  // Patients only. Mirrors what product-detail requires of them on the website:
+  // a prescription, a valid ID, a named contact person and two confirmations.
+  const [rxFiles, setRxFiles] = useState<File[]>([]);
+  const [idFile, setIdFile] = useState<File | null>(null);
+  const [sameAsPatient, setSameAsPatient] = useState(true);
+  const [terms, setTerms] = useState(false);
+  const [privacy, setPrivacy] = useState(false);
 
   const turnstile = useTurnstile(step === 'form');
 
@@ -134,9 +160,32 @@ export default function Cart() {
     e.preventDefault();
     if (!items || items.length === 0 || !type) return;
     setError('');
+
+    // Same gates the website applies before a patient may submit — checked
+    // before the spinner starts, so a refusal is immediate rather than a
+    // pretend send followed by an error.
+    if (type.kind === 'patient') {
+      if (rxFiles.length === 0) return setError('Please upload your prescription.');
+      if (!idFile) return setError("Please upload the patient's valid ID.");
+      if (!sameAsPatient && !form.contactName.trim()) return setError("Please provide the contact person's full name.");
+      if (!terms) return setError('Please confirm the information provided is accurate.');
+      if (!privacy) return setError('Please consent to the Privacy Policy to proceed.');
+    }
+
     setSending(true);
 
     try {
+      // Uploads travel exactly as the website sends them: base64, categorised so
+      // the backend can route each to its own spreadsheet column.
+      const filesData: { name: string; type: string; base64: string; category?: 'id' | 'prescription' }[] = [];
+      if (type.kind === 'patient') {
+        for (const f of rxFiles) {
+          filesData.push({ name: f.name, type: f.type, base64: await fileToBase64(f), category: 'prescription' });
+        }
+        if (idFile) {
+          filesData.push({ name: idFile.name, type: idFile.type, base64: await fileToBase64(idFile), category: 'id' });
+        }
+      }
       const lines = items.map((it) => {
         const detail = [it.strength, it.form].filter(Boolean).join(' · ');
         return `• ${it.name}${detail ? ` (${detail})` : ''}${it.needsRx ? ' — prescription required' : ''}`;
@@ -165,8 +214,16 @@ export default function Cart() {
           institution: form.institution,
           location: form.location,
           consent: 'Confirmed',
-          // Becomes one spreadsheet row per product — but only on a sheet that
-          // has a PRODUCT column, which today is Product Inquiry alone.
+          age: form.age,
+          address: form.address,
+          contactSameAsPatient: sameAsPatient,
+          contactName: sameAsPatient ? form.name : form.contactName,
+          contactRelationship: sameAsPatient ? 'Self' : form.contactRelationship,
+          privacyPolicyConsent: privacy ? 'Yes' : '',
+          // Becomes one spreadsheet row per product on a sheet that has a
+          // product column — Order Medicine (TARGET PRODUCT) and Product
+          // Inquiry (PRODUCT) do; the partner sheets get a single row with the
+          // list in MESSAGE instead.
           items: items.map((it) => ({
             name: it.name,
             strength: it.strength || '',
@@ -175,7 +232,7 @@ export default function Cart() {
             needsRx: Boolean(it.needsRx),
           })),
         },
-        files: [],
+        files: filesData,
       };
 
       const result = await submitInquiry(payload, { endpoint: getApiUrl(), returnPath: '/cart' });
@@ -279,8 +336,78 @@ export default function Cart() {
                 onChange={(e) => setForm({ ...form, email: e.target.value })} />
               <input required className={field} placeholder="Mobile number *" value={form.phone}
                 onChange={(e) => setForm({ ...form, phone: e.target.value })} />
+              {type.kind === 'patient' && (
+                <>
+                  <label className="flex items-start gap-2.5 pt-1">
+                    <input type="checkbox" checked={sameAsPatient} onChange={(e) => setSameAsPatient(e.target.checked)}
+                      className="mt-0.5 h-4 w-4 rounded border-gray-300" />
+                    <span className="text-[12.5px] leading-snug text-gray-600">The contact person is the patient</span>
+                  </label>
+
+                  {!sameAsPatient && (
+                    <>
+                      <input required className={field} placeholder="Contact person's full name *" value={form.contactName}
+                        onChange={(e) => setForm({ ...form, contactName: e.target.value })} />
+                      <input className={field} placeholder="Relationship to patient (optional)" value={form.contactRelationship}
+                        onChange={(e) => setForm({ ...form, contactRelationship: e.target.value })} />
+                    </>
+                  )}
+
+                  <div className="rounded-xl border border-gray-200 p-3">
+                    <p className="text-[12.5px] font-semibold text-gray-700">Upload prescription *</p>
+                    <p className="mt-0.5 text-[11px] text-gray-400">Required for prescription medicines.</p>
+                    <input
+                      type="file" multiple accept={ALLOWED_FILE_TYPES_ACCEPT}
+                      onChange={(e) => {
+                        const { valid, errors } = validateFiles(Array.from(e.target.files || []));
+                        setError(errors[0] || '');
+                        setRxFiles(valid);
+                      }}
+                      className="mt-2 w-full text-[12px] file:mr-3 file:rounded-full file:border-0 file:bg-gray-100 file:px-3 file:py-1.5 file:text-[12px] file:font-semibold"
+                    />
+                    {rxFiles.length > 0 && (
+                      <p className="mt-1.5 text-[11.5px] text-green-700">{rxFiles.length} file{rxFiles.length === 1 ? '' : 's'} attached</p>
+                    )}
+                  </div>
+
+                  <div className="rounded-xl border border-gray-200 p-3">
+                    <p className="text-[12.5px] font-semibold text-gray-700">Upload valid ID of patient *</p>
+                    <input
+                      type="file" accept={ALLOWED_FILE_TYPES_ACCEPT}
+                      onChange={(e) => {
+                        const { valid, errors } = validateFiles(Array.from(e.target.files || []));
+                        setError(errors[0] || '');
+                        setIdFile(valid[0] || null);
+                      }}
+                      className="mt-2 w-full text-[12px] file:mr-3 file:rounded-full file:border-0 file:bg-gray-100 file:px-3 file:py-1.5 file:text-[12px] file:font-semibold"
+                    />
+                    {idFile && <p className="mt-1.5 text-[11.5px] text-green-700">{idFile.name}</p>}
+                  </div>
+                </>
+              )}
+
               <textarea rows={3} className={`${field} resize-none`} placeholder="Anything else we should know? (optional)"
                 value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} />
+
+              {type.kind === 'patient' && (
+                <>
+                  <label className="flex items-start gap-2.5">
+                    <input type="checkbox" checked={terms} onChange={(e) => setTerms(e.target.checked)}
+                      className="mt-0.5 h-4 w-4 rounded border-gray-300" />
+                    <span className="text-[11.5px] leading-snug text-gray-600">
+                      I confirm the information provided is accurate and the prescription submitted is valid. *
+                    </span>
+                  </label>
+                  <label className="flex items-start gap-2.5">
+                    <input type="checkbox" checked={privacy} onChange={(e) => setPrivacy(e.target.checked)}
+                      className="mt-0.5 h-4 w-4 rounded border-gray-300" />
+                    <span className="text-[11.5px] leading-snug text-gray-600">
+                      I have read and consent to the processing of my personal and sensitive personal information
+                      under the <a href="/policy" className="underline">Privacy Policy</a>. *
+                    </span>
+                  </label>
+                </>
+              )}
 
               <Turnstile turnstile={turnstile} />
 
