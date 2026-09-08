@@ -118,7 +118,13 @@ export default function Cart() {
   const [form, setForm] = useState({ ...BLANK });
   // Patients only. Mirrors what product-detail requires of them on the website:
   // a prescription, a valid ID, a named contact person and two confirmations.
-  const [rxFiles, setRxFiles] = useState<File[]>([]);
+  // Which items this request covers. Shopee-style: everything is ticked by
+  // default, and the visitor unticks what they are not asking about yet.
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const knownIds = React.useRef<Set<string>>(new Set());
+  // One prescription per product, keyed by item id — a pharmacist reading a row
+  // has to see the script for THAT medicine, not a pile of every upload.
+  const [rxByItem, setRxByItem] = useState<Record<string, File[]>>({});
   const [idFile, setIdFile] = useState<File | null>(null);
   const [sameAsPatient, setSameAsPatient] = useState(true);
   const [terms, setTerms] = useState(false);
@@ -127,7 +133,18 @@ export default function Cart() {
   const turnstile = useTurnstile(step === 'form');
 
   const refresh = useCallback(async () => {
-    setItems(await listCart());
+    const list = await listCart();
+    setItems(list);
+    setSelected((prev) => {
+      const next = new Set<string>();
+      for (const it of list) {
+        // Anything the visitor has not yet seen starts ticked; anything they
+        // deliberately unticked stays unticked.
+        if (!knownIds.current.has(it.id) || prev.has(it.id)) next.add(it.id);
+      }
+      knownIds.current = new Set(list.map((i) => i.id));
+      return next;
+    });
     setConsented(await hasConsent());
   }, []);
 
@@ -158,14 +175,21 @@ export default function Cart() {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!items || items.length === 0 || !type) return;
+    if (chosen.length === 0 || !type) return;
     setError('');
 
     // Same gates the website applies before a patient may submit — checked
     // before the spinner starts, so a refusal is immediate rather than a
     // pretend send followed by an error.
     if (type.kind === 'patient') {
-      if (rxFiles.length === 0) return setError('Please upload your prescription.');
+      const missing = rxNeeded.filter((it) => !(rxByItem[it.id]?.length));
+      if (missing.length) {
+        return setError(
+          missing.length === 1
+            ? `Please upload the prescription for ${missing[0].name}.`
+            : `Please upload a prescription for each of: ${missing.map((m) => m.name).join(', ')}.`
+        );
+      }
       if (!idFile) return setError("Please upload the patient's valid ID.");
       if (!sameAsPatient && !form.contactName.trim()) return setError("Please provide the contact person's full name.");
       if (!terms) return setError('Please confirm the information provided is accurate.');
@@ -179,14 +203,19 @@ export default function Cart() {
       // the backend can route each to its own spreadsheet column.
       const filesData: { name: string; type: string; base64: string; category?: 'id' | 'prescription' }[] = [];
       if (type.kind === 'patient') {
-        for (const f of rxFiles) {
-          filesData.push({ name: f.name, type: f.type, base64: await fileToBase64(f), category: 'prescription' });
+        // "prescription:<index>" ties each script to its product's position in
+        // the items array below, which is what lets the backend put the right
+        // one on the right spreadsheet row.
+        for (let i = 0; i < chosen.length; i++) {
+          for (const f of rxByItem[chosen[i].id] || []) {
+            filesData.push({ name: f.name, type: f.type, base64: await fileToBase64(f), category: `prescription:${i}` as any });
+          }
         }
         if (idFile) {
           filesData.push({ name: idFile.name, type: idFile.type, base64: await fileToBase64(idFile), category: 'id' });
         }
       }
-      const lines = items.map((it) => {
+      const lines = chosen.map((it) => {
         const detail = [it.strength, it.form].filter(Boolean).join(' · ');
         return `• ${it.name}${detail ? ` (${detail})` : ''}${it.needsRx ? ' — prescription required' : ''}`;
       });
@@ -203,7 +232,7 @@ export default function Cart() {
         // The email body has to read on its own, so the list is spelled out
         // here as well as sent structurally below.
         message:
-          `Request for a quote on ${items.length} product${items.length === 1 ? '' : 's'}:\n\n` +
+          `Request for a quote on ${chosen.length} product${chosen.length === 1 ? '' : 's'}:\n\n` +
           lines.join('\n') +
           (form.message.trim() ? `\n\nNotes:\n${form.message.trim()}` : ''),
         turnstileToken: turnstile.token,
@@ -224,7 +253,7 @@ export default function Cart() {
           // product column — Order Medicine (TARGET PRODUCT) and Product
           // Inquiry (PRODUCT) do; the partner sheets get a single row with the
           // list in MESSAGE instead.
-          items: items.map((it) => ({
+          items: chosen.map((it) => ({
             name: it.name,
             strength: it.strength || '',
             form: it.form || '',
@@ -252,9 +281,12 @@ export default function Cart() {
     }
   };
 
+  // Everything downstream works on the ticked subset, never the whole list.
+  const chosen = (items || []).filter((it) => selected.has(it.id));
+  const rxNeeded = chosen.filter((it) => it.needsRx);
   const empty = items !== null && items.length === 0;
   const field = 'w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-[13.5px] outline-none focus:border-primary';
-  const count = items?.length ?? 0;
+  const count = chosen.length;
 
   return (
     <>
@@ -353,22 +385,37 @@ export default function Cart() {
                     </>
                   )}
 
-                  <div className="rounded-xl border border-gray-200 p-3">
-                    <p className="text-[12.5px] font-semibold text-gray-700">Upload prescription *</p>
-                    <p className="mt-0.5 text-[11px] text-gray-400">Required for prescription medicines.</p>
-                    <input
-                      type="file" multiple accept={ALLOWED_FILE_TYPES_ACCEPT}
-                      onChange={(e) => {
-                        const { valid, errors } = validateFiles(Array.from(e.target.files || []));
-                        setError(errors[0] || '');
-                        setRxFiles(valid);
-                      }}
-                      className="mt-2 w-full text-[12px] file:mr-3 file:rounded-full file:border-0 file:bg-gray-100 file:px-3 file:py-1.5 file:text-[12px] file:font-semibold"
-                    />
-                    {rxFiles.length > 0 && (
-                      <p className="mt-1.5 text-[11.5px] text-green-700">{rxFiles.length} file{rxFiles.length === 1 ? '' : 's'} attached</p>
-                    )}
-                  </div>
+                  {rxNeeded.length > 0 && (
+                    <div className="rounded-xl border border-gray-200 p-3">
+                      <p className="text-[12.5px] font-semibold text-gray-700">
+                        Prescriptions * <span className="font-normal text-gray-400">({rxNeeded.length} needed)</span>
+                      </p>
+                      <p className="mt-0.5 text-[11px] leading-snug text-gray-400">
+                        One per prescription-only medicine, so each can be checked against the right item.
+                      </p>
+                      <div className="mt-3 space-y-3">
+                        {rxNeeded.map((it) => (
+                          <div key={it.id}>
+                            <p className="text-[12px] font-semibold leading-snug text-gray-700">{it.name}</p>
+                            <input
+                              type="file" multiple accept={ALLOWED_FILE_TYPES_ACCEPT}
+                              onChange={(e) => {
+                                const { valid, errors } = validateFiles(Array.from(e.target.files || []));
+                                setError(errors[0] || '');
+                                setRxByItem((prev) => ({ ...prev, [it.id]: valid }));
+                              }}
+                              className="mt-1 w-full text-[12px] file:mr-3 file:rounded-full file:border-0 file:bg-gray-100 file:px-3 file:py-1.5 file:text-[12px] file:font-semibold"
+                            />
+                            {rxByItem[it.id]?.length ? (
+                              <p className="mt-1 text-[11.5px] text-green-700">
+                                {rxByItem[it.id].length} file{rxByItem[it.id].length === 1 ? '' : 's'} attached
+                              </p>
+                            ) : null}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
                   <div className="rounded-xl border border-gray-200 p-3">
                     <p className="text-[12.5px] font-semibold text-gray-700">Upload valid ID of patient *</p>
@@ -467,6 +514,17 @@ export default function Cart() {
                 <ul className="mt-6 space-y-3">
                   {items.map((it) => (
                     <li key={it.id} className="flex items-start gap-3 rounded-2xl border border-gray-100 bg-white p-4">
+                      <input
+                        type="checkbox"
+                        checked={selected.has(it.id)}
+                        aria-label={`Include ${it.name} in this request`}
+                        onChange={(e) => setSelected((prev) => {
+                          const next = new Set(prev);
+                          if (e.target.checked) next.add(it.id); else next.delete(it.id);
+                          return next;
+                        })}
+                        className="mt-1 h-4 w-4 shrink-0 rounded border-gray-300"
+                      />
                       <div className="min-w-0 flex-1">
                         <a href={it.url} className="block text-[14px] font-semibold leading-snug text-gray-900">{it.name}</a>
                         {(it.strength || it.form) && (
@@ -488,11 +546,12 @@ export default function Cart() {
 
                 <button
                   type="button"
+                  disabled={count === 0}
                   onClick={() => setStep('type')}
-                  className="mt-6 w-full rounded-full py-3.5 text-[14px] font-semibold text-white"
+                  className="mt-6 w-full rounded-full py-3.5 text-[14px] font-semibold text-white disabled:opacity-40"
                   style={{ background: 'linear-gradient(135deg,#1D9FDA,#61A644)' }}
                 >
-                  Request a quote for {count} item{count === 1 ? '' : 's'}
+                  {count === 0 ? 'Select items to inquire about' : `Inquire about ${count} selected item${count === 1 ? '' : 's'}`}
                 </button>
               </>
             )}
