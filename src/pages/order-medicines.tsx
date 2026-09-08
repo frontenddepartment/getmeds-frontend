@@ -1453,7 +1453,7 @@ export default function OrderMedicines() {
                         Cancel
                       </button>
                       <Turnstile turnstile={orderTurnstile} className="min-h-[65px] mr-auto" />
-                      <button type="submit" disabled={submitState === 'sending' || (!!TURNSTILE_SITE_KEY && !orderTurnstile.token)}
+                      <button type="submit" disabled={submitState === 'sending'}
                         className="shadow-none hover:opacity-90 text-white font-bold py-2 px-6 rounded-[15px] text-[13px] transition disabled:opacity-50"
                         style={{ background: 'linear-gradient(to right,#61A644,#1D9FDA)' }}>
                         {submitState === 'sending' ? 'Submitting...' : 'Submit'}
@@ -1555,7 +1555,7 @@ export default function OrderMedicines() {
 
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <Turnstile turnstile={inquiryTurnstile} className="min-h-[65px] flex justify-start" />
-                    <button type="submit" disabled={inquirySubmitState === 'sending' || (!!TURNSTILE_SITE_KEY && !inquiryTurnstile.token)}
+                    <button type="submit" disabled={inquirySubmitState === 'sending'}
                       className="text-white font-bold py-3 px-10 rounded-[12px] transition-all duration-300 text-[13px] disabled:opacity-50 whitespace-nowrap"
                       style={{ background: 'linear-gradient(to right, #61A644, #0D99FF)' }}>
                       {inquirySubmitState === 'sending'
@@ -1707,7 +1707,7 @@ export default function OrderMedicines() {
                       ? <Turnstile turnstile={partnerTurnstile} className="min-h-[65px] flex justify-start" />
                       : <div />}
                     <button type="submit"
-                      disabled={partnerSubmitState === 'sending' || (!!TURNSTILE_SITE_KEY && !partnerTurnstile.token)}
+                      disabled={partnerSubmitState === 'sending'}
                       className="text-white font-bold py-3 px-10 rounded-[12px] transition-all duration-300 text-[13px] disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap shrink-0"
                       style={{ background: 'linear-gradient(to right, #61A644, #0D99FF)' }}>
                       {partnerSubmitState === 'sending'

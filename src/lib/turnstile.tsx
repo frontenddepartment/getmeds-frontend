@@ -74,7 +74,10 @@ export function useTurnstile(active: boolean = true): TurnstileHandle {
       widgetId.current = window.turnstile.render(host, {
         sitekey: TURNSTILE_SITE_KEY,
         theme: 'light',
-        size: 'flexible',
+        // 'normal' rather than 'flexible': the flexible size was inherited from
+        // the partner form, the only place this had ever run, and on the live
+        // order form it reserved 300x72px and drew nothing in it.
+        size: 'normal',
         appearance: 'always', // keep the widget visible rather than interaction-only
         callback: (t: string) => setToken(t),
         'expired-callback': () => setToken(''),
