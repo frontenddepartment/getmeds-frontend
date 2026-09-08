@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useHeroSlides, useImageMapper, useNews, useSiteSettings, useCategories, useFeaturedNews } from '../lib/useSanity';
 import { getApiUrl } from '../lib/api';
 import { submitInquiry } from '../lib/offlineInquiry';
+import { Turnstile, useTurnstile } from '../lib/turnstile';
 import { injectHTML } from '../lib/injectHTML';
 import { urlFor } from '../lib/sanity';
 import { sanityQuery } from '../lib/sanityProxy';
@@ -413,6 +414,7 @@ export default function GetMedsHomepage() {
   });
   const [submitState, setSubmitState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
   const [successModalOpen, setSuccessModalOpen] = useState(false);
+  const turnstile = useTurnstile();
 
   const handlePartnershipSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -427,6 +429,7 @@ export default function GetMedsHomepage() {
     setSubmitState('sending');
     try {
       const payload = {
+        turnstileToken: turnstile.token,
         inquiryType: 'Partnership',
         fullName: partnershipData.name,
         email: partnershipData.email,
@@ -440,6 +443,9 @@ export default function GetMedsHomepage() {
         endpoint: getApiUrl(),
         returnPath: '/',
       });
+      // Tokens are single-use, so the solved widget is replaced whatever the
+      // outcome — including a failure, whose token Cloudflare has now burned.
+      turnstile.reset();
       // A queued inquiry is not a delivered one, so only a real send
       // opens the success modal; QueuedInquiryNotice reports the rest.
       if (submission.status === 'failed') throw new Error(submission.error);
@@ -2128,6 +2134,8 @@ export default function GetMedsHomepage() {
                 I consent to Getmeds processing my information in accordance with the Data Privacy Act of 2012. <span className="text-red-500">*</span>
               </label>
             </div>
+
+            <Turnstile turnstile={turnstile} />
 
             <div className="pt-2 pb-8">
               <button

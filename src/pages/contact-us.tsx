@@ -4,6 +4,7 @@ import { useImageMapper, useSiteSettings } from '../lib/useSanity';
 import { ProgressiveHeroImage } from '../lib/ProgressiveHeroImage';
 import { getApiUrl } from '../lib/api';
 import { submitInquiry } from '../lib/offlineInquiry';
+import { Turnstile, useTurnstile } from '../lib/turnstile';
 import type { ContactGroup } from '../types/sanity';
 
 
@@ -48,6 +49,7 @@ export default function ContactUs() {
   const [heroImgLoaded, setHeroImgLoaded] = useState(false);
   const [submitState, setSubmitState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
   const [successModalOpen, setSuccessModalOpen] = useState(false);
+  const turnstile = useTurnstile();
   const [privacyModalOpen, setPrivacyModalOpen] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -71,6 +73,7 @@ export default function ContactUs() {
       const subjectText = subjectMap[formData.subject] || formData.subject;
 
       const payload = {
+        turnstileToken: turnstile.token,
         inquiryType: inquiryType,
         fullName: formData.name,
         email: formData.email,
@@ -84,6 +87,9 @@ export default function ContactUs() {
         endpoint: getApiUrl(),
         returnPath: '/contact-us',
       });
+      // Tokens are single-use, so the solved widget is replaced whatever the
+      // outcome — including a failure, whose token Cloudflare has now burned.
+      turnstile.reset();
       // A queued inquiry is not a delivered one, so only a real send
       // opens the success modal; QueuedInquiryNotice reports the rest.
       if (submission.status === 'failed') throw new Error(submission.error);
@@ -388,6 +394,8 @@ export default function ContactUs() {
                   onChange={e => setFormData(prev => ({ ...prev, message: e.target.value }))}
                   className="w-full bg-[#F4F6F9] rounded-xl px-4 py-4 text-[13px] outline-none border-2 border-transparent focus:border-primary/20 transition-colors placeholder-gray-400 font-medium resize-none"></textarea>
               </div>
+
+              <Turnstile turnstile={turnstile} />
 
               {/* Submit Button */}
               <div className="pt-3">

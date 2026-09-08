@@ -5,6 +5,7 @@ import type { Product as SanityProduct, Category } from '../types/sanity';
 import { injectHTML } from '../lib/injectHTML';
 import { getApiUrl } from '../lib/api';
 import { submitInquiry } from '../lib/offlineInquiry';
+import { Turnstile, useTurnstile } from '../lib/turnstile';
 import { setPageMeta, injectJsonLd, truncateAtWord, ORGANIZATION_ID } from '../lib/seo';
 import { validateFiles, ALLOWED_FILE_TYPES_ACCEPT } from '../lib/fileUpload';
 import AlertModal from '../lib/AlertModal';
@@ -54,6 +55,9 @@ export default function ProductDetail() {
   const userTypeMenuRef = useRef<HTMLDivElement>(null);
   const [submitState, setSubmitState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
   const [successModalOpen, setSuccessModalOpen] = useState(false);
+  // One handle for both form variants: they are the two arms of a ternary, so
+  // only ever one is mounted and the ref attaches to whichever that is.
+  const turnstile = useTurnstile();
   const [userType, setUserType] = useState<string>('');
   const [userTypeConfirmed, setUserTypeConfirmed] = useState(false);
   const [prescriptionRequiredModalOpen, setPrescriptionRequiredModalOpen] = useState(false);
@@ -484,6 +488,7 @@ export default function ProductDetail() {
               contactRelationship: formData.contactRelationship,
               privacyPolicyConsent: formData.privacyConsent
             },
+            turnstileToken: turnstile.token,
             files: filesData
           }
         : {
@@ -497,12 +502,15 @@ export default function ProductDetail() {
               age: formData.age,
               customerType: USER_TYPE_LABELS[userType] || userType
             },
+            turnstileToken: turnstile.token,
             files: filesData
           };
 
       // returnPath is left to default to the current URL: this form lives on a
       // per-product page, so "come back and finish it" must mean this product.
       const submission = await submitInquiry(payload, { endpoint: getApiUrl() });
+      // Tokens are single-use, so the solved widget is replaced whatever the outcome.
+      turnstile.reset();
       if (submission.status === 'failed') throw new Error(submission.error);
 
       setSubmitState('sent');
@@ -1093,6 +1101,8 @@ export default function ProductDetail() {
                     </div>
                   </div>
 
+                  <Turnstile turnstile={turnstile} />
+
                   <button
                     type="submit"
                     disabled={submitState === 'sending' || submitState === 'sent'}
@@ -1207,6 +1217,8 @@ export default function ProductDetail() {
                       className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2.5 text-[13px] text-gray-700 outline-none focus:border-primary transition resize-none"
                     />
                   </div>
+                  <Turnstile turnstile={turnstile} />
+
                   <button
                     type="submit"
                     disabled={submitState === 'sending' || submitState === 'sent'}

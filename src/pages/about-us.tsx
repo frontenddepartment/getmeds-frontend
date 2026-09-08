@@ -5,6 +5,7 @@ import { urlFor } from '../lib/sanity';
 import { LinkableImage } from '../lib/LinkableImage';
 import { getApiUrl } from '../lib/api';
 import { submitInquiry } from '../lib/offlineInquiry';
+import { Turnstile, useTurnstile } from '../lib/turnstile';
 
 function formatTime(seconds: number): string {
   if (!isFinite(seconds) || seconds < 0) return '0:00';
@@ -138,6 +139,7 @@ export default function AboutUs() {
   });
   const [submitState, setSubmitState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
   const [successModalOpen, setSuccessModalOpen] = useState(false);
+  const turnstile = useTurnstile();
 
   const handlePartnershipSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -152,6 +154,7 @@ export default function AboutUs() {
     setSubmitState('sending');
     try {
       const payload = {
+        turnstileToken: turnstile.token,
         inquiryType: 'Partnership',
         fullName: partnershipData.name,
         email: partnershipData.email,
@@ -165,6 +168,9 @@ export default function AboutUs() {
         endpoint: getApiUrl(),
         returnPath: '/about-us',
       });
+      // Tokens are single-use, so the solved widget is replaced whatever the
+      // outcome — including a failure, whose token Cloudflare has now burned.
+      turnstile.reset();
       // A queued inquiry is not a delivered one, so only a real send
       // opens the success modal; QueuedInquiryNotice reports the rest.
       if (submission.status === 'failed') throw new Error(submission.error);
@@ -1294,6 +1300,8 @@ export default function AboutUs() {
                 I consent to Getmeds processing my information in accordance with the Data Privacy Act of 2012. <span className="text-red-500">*</span>
               </label>
             </div>
+
+            <Turnstile turnstile={turnstile} />
 
             <div className="pt-2 pb-8">
               <button

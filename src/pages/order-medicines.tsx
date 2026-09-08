@@ -2,6 +2,7 @@
 import { injectHTML } from '../lib/injectHTML';
 import { getApiUrl } from '../lib/api';
 import { submitInquiry } from '../lib/offlineInquiry';
+import { Turnstile, useTurnstile, TURNSTILE_SITE_KEY } from '../lib/turnstile';
 import {
   BadgeCheck, Factory, FileCheck, Truck, Headset, Gavel, Siren,
   Boxes, Tags, CreditCard, PackageCheck, ClipboardCheck, UserRoundCheck, ListChecks,
@@ -361,6 +362,7 @@ export default function OrderMedicines() {
     try {
       const payload = {
         inquiryType: 'Product Inquiry',
+        turnstileToken: inquiryTurnstile.token,
         fullName: inquiryFormData.name,
         email: inquiryFormData.email,
         phone: inquiryFormData.phone,
@@ -376,6 +378,8 @@ export default function OrderMedicines() {
         endpoint: getApiUrl(),
         returnPath: '/order-medicines',
       });
+      // Tokens are single-use, so the solved widget is replaced whatever the outcome.
+      inquiryTurnstile.reset();
       // A queued inquiry is not a delivered one, so only a real send
       // opens the success modal; QueuedInquiryNotice reports the rest.
       if (submission.status === 'failed') throw new Error(submission.error);
@@ -511,72 +515,15 @@ export default function OrderMedicines() {
   }, [isPartnerUserType]);
 
   // ── Cloudflare Turnstile ──
-  // No site key configured => no widget and no gating, so the form still works in
-  // local dev and if the key is ever unset (mirrors the reference implementation).
-  const TURNSTILE_SITE_KEY = (import.meta.env.VITE_TURNSTILE_SITE_KEY as string | undefined) || '';
-  const [turnstileToken, setTurnstileToken] = useState('');
-  const turnstileRef = useRef<HTMLDivElement>(null);
-  const turnstileWidgetId = useRef<string | null>(null);
-  // Set by the effect below so resetTurnstile() can mount a brand-new widget
-  // after a submission rather than reusing the solved one.
-  const mountTurnstile = useRef<(() => void) | null>(null);
-
-  useEffect(() => {
-    if (!isPartnerUserType || !TURNSTILE_SITE_KEY) return;
-    const host = turnstileRef.current;
-    if (!host) return;
-
-    let cancelled = false;
-    // api.js is loaded async/defer, so window.turnstile is usually NOT ready when
-    // this effect first runs. Returning false here (rather than "done") is what
-    // keeps the poll below alive until the script lands — otherwise the interval
-    // clears itself on its first tick and the widget never renders, leaving the
-    // submit button permanently disabled with nothing on screen to solve.
-    const render = () => {
-      if (cancelled || turnstileWidgetId.current) return true;   // done, or nothing to do
-      if (!window.turnstile) return false;                       // script not loaded yet
-      turnstileWidgetId.current = window.turnstile.render(host, {
-        sitekey: TURNSTILE_SITE_KEY,
-        theme: 'light',
-        size: 'flexible',
-        appearance: 'always',   // keep the widget visible rather than interaction-only
-        callback: (token: string) => setTurnstileToken(token),
-        'expired-callback': () => setTurnstileToken(''),
-        'timeout-callback': () => setTurnstileToken(''),
-        'error-callback': () => setTurnstileToken(''),
-      });
-      return true;
-    };
-    const timer = window.setInterval(() => { if (render()) window.clearInterval(timer); }, 150);
-    const giveUp = window.setTimeout(() => window.clearInterval(timer), 15000);
-    render();
-    mountTurnstile.current = render;
-
-    return () => {
-      cancelled = true;
-      mountTurnstile.current = null;
-      window.clearInterval(timer);
-      window.clearTimeout(giveUp);
-      if (turnstileWidgetId.current) {
-        try { window.turnstile?.remove(turnstileWidgetId.current); } catch { /* already gone */ }
-        turnstileWidgetId.current = null;
-      }
-    };
-  }, [isPartnerUserType, TURNSTILE_SITE_KEY]);
-
-  // Tear the widget down and mount a fresh one, rather than calling reset() on the
-  // existing instance. Turnstile tokens are single-use, so every submission needs a
-  // genuinely new challenge — a reused token is rejected server-side as
-  // "timeout-or-duplicate". Removing and re-rendering also guarantees the widget
-  // returns to its unsolved state instead of staying visually ticked.
-  const resetTurnstile = () => {
-    setTurnstileToken('');
-    if (turnstileWidgetId.current) {
-      try { window.turnstile?.remove(turnstileWidgetId.current); } catch { /* already gone */ }
-      turnstileWidgetId.current = null;
-    }
-    mountTurnstile.current?.();
-  };
+  // One handle per form, each gated on that form's own visibility so a widget is
+  // mounted only for the form actually on screen and remounts when the visitor
+  // switches user type. This page previously held the site's only implementation,
+  // and it covered the partner form alone — which is why every other form on
+  // getmeds.ph submitted an empty token. The shared hook now lives in
+  // lib/turnstile.tsx so a new form cannot quietly ship without one.
+  const orderTurnstile = useTurnstile(!isProfessionalUserType);
+  const inquiryTurnstile = useTurnstile(isProfessionalUserType && !isPartnerUserType);
+  const partnerTurnstile = useTurnstile(isPartnerUserType);
 
   const handlePartnerSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -596,10 +543,10 @@ export default function OrderMedicines() {
     try {
       const payload = {
         inquiryType: PARTNER_INQUIRY_TYPE,
+        turnstileToken: partnerTurnstile.token,
         fullName: partnerFormData.name,
         email: partnerFormData.email,
         phone: phoneE164,
-        turnstileToken,
         message: partnerFormData.message,
         // Mirrored into subject so a sheet column or email template that only knows
         // the generic "Company/Organization" wording still resolves the institution.
@@ -627,13 +574,13 @@ export default function OrderMedicines() {
       setPartnerSubmitState('sent');
       setPartnerFormData(emptyPartnerForm);
       if (partnerPhoneRef.current) partnerPhoneRef.current.value = '';
-      resetTurnstile();
+      partnerTurnstile.reset();
       setSuccessKind('inquiry');
       submission.status === 'sent' && setSuccessModalOpen(true);
       setTimeout(() => setPartnerSubmitState('idle'), 300);
     } catch (error) {
       console.error('Partner inquiry submission error:', error);
-      resetTurnstile();
+      partnerTurnstile.reset();
       setPartnerSubmitState('error');
       setTimeout(() => setPartnerSubmitState('idle'), 2000);
     }
@@ -700,6 +647,7 @@ export default function OrderMedicines() {
     try {
       const payload = {
         inquiryType: 'Order Medicine',
+        turnstileToken: orderTurnstile.token,
         fullName: formData.patientName,
         email: formData.email,
         phone: `${phoneCountry.code} ${formData.phone}`,
@@ -720,6 +668,8 @@ export default function OrderMedicines() {
         endpoint: getApiUrl(),
         returnPath: '/order-medicines',
       });
+      // Tokens are single-use, so the solved widget is replaced whatever the outcome.
+      orderTurnstile.reset();
       // A queued inquiry is not a delivered one, so only a real send
       // opens the success modal; QueuedInquiryNotice reports the rest.
       if (submission.status === 'failed') throw new Error(submission.error);
@@ -1502,7 +1452,8 @@ export default function OrderMedicines() {
                         className="shadow-none px-5 py-2 rounded-[15px] text-[13px] font-semibold text-gray-600 border border-gray-200 hover:bg-gray-50 transition">
                         Cancel
                       </button>
-                      <button type="submit" disabled={submitState === 'sending'}
+                      <Turnstile turnstile={orderTurnstile} className="min-h-[65px] mr-auto" />
+                      <button type="submit" disabled={submitState === 'sending' || (!!TURNSTILE_SITE_KEY && !orderTurnstile.token)}
                         className="shadow-none hover:opacity-90 text-white font-bold py-2 px-6 rounded-[15px] text-[13px] transition disabled:opacity-50"
                         style={{ background: 'linear-gradient(to right,#61A644,#1D9FDA)' }}>
                         {submitState === 'sending' ? 'Submitting...' : 'Submit'}
@@ -1602,8 +1553,9 @@ export default function OrderMedicines() {
                       className="w-full bg-gray-50 border-none rounded-[12px] px-4 py-3 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition placeholder-gray-300 resize-none" />
                   </div>
 
-                  <div className="flex justify-end">
-                    <button type="submit" disabled={inquirySubmitState === 'sending'}
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <Turnstile turnstile={inquiryTurnstile} className="min-h-[65px] flex justify-start" />
+                    <button type="submit" disabled={inquirySubmitState === 'sending' || (!!TURNSTILE_SITE_KEY && !inquiryTurnstile.token)}
                       className="text-white font-bold py-3 px-10 rounded-[12px] transition-all duration-300 text-[13px] disabled:opacity-50 whitespace-nowrap"
                       style={{ background: 'linear-gradient(to right, #61A644, #0D99FF)' }}>
                       {inquirySubmitState === 'sending'
@@ -1752,10 +1704,10 @@ export default function OrderMedicines() {
                     {/* Renders only when VITE_TURNSTILE_SITE_KEY is set; without a key
                         the widget is absent and the button is never gated. */}
                     {TURNSTILE_SITE_KEY
-                      ? <div ref={turnstileRef} className="min-h-[65px] flex justify-start" />
+                      ? <Turnstile turnstile={partnerTurnstile} className="min-h-[65px] flex justify-start" />
                       : <div />}
                     <button type="submit"
-                      disabled={partnerSubmitState === 'sending' || (!!TURNSTILE_SITE_KEY && !turnstileToken)}
+                      disabled={partnerSubmitState === 'sending' || (!!TURNSTILE_SITE_KEY && !partnerTurnstile.token)}
                       className="text-white font-bold py-3 px-10 rounded-[12px] transition-all duration-300 text-[13px] disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap shrink-0"
                       style={{ background: 'linear-gradient(to right, #61A644, #0D99FF)' }}>
                       {partnerSubmitState === 'sending'
