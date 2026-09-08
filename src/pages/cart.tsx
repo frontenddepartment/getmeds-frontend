@@ -18,28 +18,85 @@ import {
  * ─────────────────────────────────────────────
  * The request list, and the inquiry it turns into.
  *
- * "Cart" is the familiar name and the familiar position, but this is a request
- * list: Getmeds publishes no prices and much of the range is prescription-only,
- * so there is no checkout to reach. Finishing here sends the whole list as ONE
- * inquiry, through the same endpoint every other form on the site uses, into
- * the same Product Inquiry spreadsheet — the backend writes one row per
- * product with these contact details repeated on each, so the team can work
- * them the way they work every other lead.
+ * "Cart" is the familiar name and position, but this is a request list:
+ * Getmeds publishes no prices and much of the range is prescription-only, so
+ * there is no checkout to reach. Finishing sends the whole list as ONE inquiry
+ * through the same endpoint every other form uses.
  *
- * That is the real gain over the website, where a visitor can only ask about
- * one product at a time.
+ * Who is asking decides where it lands. The four audiences already have their
+ * own spreadsheets, their own columns and their own people working them, so a
+ * pharmacy's request should not arrive in the sheet meant for patients. Asking
+ * the type first is what makes that routing possible — and it is the same
+ * question, in the same words, the products page already asks.
  */
 
-type Step = 'list' | 'form' | 'done';
+type Step = 'list' | 'type' | 'form' | 'done';
+
+interface TypeDef {
+  value: string;
+  label: string;
+  /** Decides the destination spreadsheet — see INQUIRY_SPREADSHEETS. */
+  inquiryType: string;
+  icon: string;
+  /** Extra columns this audience's sheet has beyond name/email/phone/message. */
+  fields: Array<{ key: 'position' | 'prcLicense' | 'institution' | 'location'; label: string; required?: boolean }>;
+}
+
+const USER_TYPES: TypeDef[] = [
+  {
+    value: 'patient',
+    label: 'Patient / Caregiver',
+    inquiryType: 'Product Inquiry',
+    icon: 'fa-user',
+    fields: [],
+  },
+  {
+    value: 'doctor',
+    label: 'Doctor / Healthcare Professional',
+    inquiryType: 'Doctor Inquiry',
+    icon: 'fa-user-doctor',
+    fields: [
+      { key: 'position', label: 'Specialty / field of practice', required: true },
+      { key: 'prcLicense', label: 'PRC license number', required: true },
+      { key: 'institution', label: 'Hospital / clinic affiliation' },
+      { key: 'location', label: 'City' },
+    ],
+  },
+  {
+    value: 'pharmacy',
+    label: 'Pharmacy Owner / Retail Pharmacy',
+    inquiryType: 'Pharmacy Inquiry',
+    icon: 'fa-mortar-pestle',
+    fields: [
+      { key: 'position', label: 'Position / role', required: true },
+      { key: 'institution', label: 'Pharmacy / business name', required: true },
+      { key: 'location', label: 'City' },
+    ],
+  },
+  {
+    value: 'hospital',
+    label: 'Hospital / Institution',
+    inquiryType: 'Hospital Inquiry',
+    icon: 'fa-hospital',
+    fields: [
+      { key: 'position', label: 'Position / role', required: true },
+      { key: 'institution', label: 'Hospital / institution name', required: true },
+      { key: 'location', label: 'City' },
+    ],
+  },
+];
+
+const BLANK = { name: '', email: '', phone: '', message: '', position: '', prcLicense: '', institution: '', location: '' };
 
 export default function Cart() {
   const [items, setItems] = useState<CartItem[] | null>(null);
   const [consented, setConsented] = useState<boolean | null>(null);
   const [step, setStep] = useState<Step>('list');
+  const [type, setType] = useState<TypeDef | null>(null);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState('');
   const [queued, setQueued] = useState(false);
-  const [form, setForm] = useState({ name: '', company: '', email: '', phone: '', message: '' });
+  const [form, setForm] = useState({ ...BLANK });
 
   const turnstile = useTurnstile(step === 'form');
 
@@ -75,34 +132,41 @@ export default function Cart() {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!items || items.length === 0) return;
+    if (!items || items.length === 0 || !type) return;
     setError('');
     setSending(true);
 
     try {
-      const lines = items.map((it) =>
-        `• ${it.name}${[it.strength, it.form].filter(Boolean).length ? ` (${[it.strength, it.form].filter(Boolean).join(' · ')})` : ''}${it.needsRx ? ' — prescription required' : ''}`
-      );
+      const lines = items.map((it) => {
+        const detail = [it.strength, it.form].filter(Boolean).join(' · ');
+        return `• ${it.name}${detail ? ` (${detail})` : ''}${it.needsRx ? ' — prescription required' : ''}`;
+      });
 
       const payload = {
-        // The existing type, so it lands in the Product Inquiry sheet the team
-        // already works rather than a new one nobody is watching.
-        inquiryType: 'Product Inquiry',
+        // Routed by who is asking, so it lands in the sheet that audience's
+        // team already works rather than all four funnelling into one.
+        inquiryType: type.inquiryType,
         fullName: form.name,
         email: form.email,
         phone: form.phone,
-        subject: form.company,
-        // The email body should be readable on its own, so the list is spelled
-        // out here as well as sent structurally below.
+        // Doubles as the company/organisation column where a sheet has one.
+        subject: form.institution,
+        // The email body has to read on its own, so the list is spelled out
+        // here as well as sent structurally below.
         message:
           `Request for a quote on ${items.length} product${items.length === 1 ? '' : 's'}:\n\n` +
           lines.join('\n') +
           (form.message.trim() ? `\n\nNotes:\n${form.message.trim()}` : ''),
         turnstileToken: turnstile.token,
         additionalData: {
-          company: form.company,
-          customerType: 'App request list',
-          // The backend turns this into one spreadsheet row per product.
+          customerType: type.label,
+          position: form.position,
+          prcLicense: form.prcLicense,
+          institution: form.institution,
+          location: form.location,
+          consent: 'Confirmed',
+          // Becomes one spreadsheet row per product — but only on a sheet that
+          // has a PRODUCT column, which today is Product Inquiry alone.
           items: items.map((it) => ({
             name: it.name,
             strength: it.strength || '',
@@ -120,7 +184,7 @@ export default function Cart() {
       if (result.status === 'failed') { setError(result.error); return; }
 
       // Sent or safely queued — either way the request is recorded, so the list
-      // should not sit there inviting a second submission of the same thing.
+      // should not sit there inviting a duplicate submission.
       setQueued(result.status === 'queued');
       await clearCart();
       setStep('done');
@@ -133,6 +197,7 @@ export default function Cart() {
 
   const empty = items !== null && items.length === 0;
   const field = 'w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-[13.5px] outline-none focus:border-primary';
+  const count = items?.length ?? 0;
 
   return (
     <>
@@ -157,21 +222,59 @@ export default function Cart() {
               Keep browsing
             </a>
           </div>
-        ) : step === 'form' ? (
+        ) : step === 'type' ? (
           <>
             <button type="button" onClick={() => setStep('list')} className="mb-4 self-start text-[13px] font-semibold text-gray-400">
               <i className="fa-solid fa-chevron-left mr-1.5 text-[11px]"></i>Back to list
             </button>
+            <h1 className="text-2xl font-semibold text-gray-900">Who is requesting?</h1>
+            <p className="mt-1.5 text-sm text-gray-500">
+              This tells us which team should handle your {count} item{count === 1 ? '' : 's'}.
+            </p>
+
+            <div className="mt-6 space-y-3">
+              {USER_TYPES.map((t) => (
+                <button
+                  key={t.value}
+                  type="button"
+                  onClick={() => { setType(t); setForm({ ...BLANK }); setStep('form'); }}
+                  className="flex w-full items-center gap-4 rounded-2xl border border-gray-200 bg-white p-4 text-left transition hover:border-primary"
+                >
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full"
+                    style={{ background: 'linear-gradient(135deg,#eaf6fd,#eef7ea)' }}>
+                    <i className={`fa-solid ${t.icon} text-[15px]`} style={{ color: '#1D9FDA' }}></i>
+                  </span>
+                  <span className="flex-1 text-[14px] font-semibold text-gray-800">{t.label}</span>
+                  <i className="fa-solid fa-chevron-right text-[12px] text-gray-300"></i>
+                </button>
+              ))}
+            </div>
+          </>
+        ) : step === 'form' && type ? (
+          <>
+            <button type="button" onClick={() => setStep('type')} className="mb-4 self-start text-[13px] font-semibold text-gray-400">
+              <i className="fa-solid fa-chevron-left mr-1.5 text-[11px]"></i>Change type
+            </button>
             <h1 className="text-2xl font-semibold text-gray-900">Request a quote</h1>
             <p className="mt-1.5 text-sm text-gray-500">
-              For {items?.length} product{items?.length === 1 ? '' : 's'}. We&apos;ll reply with availability and pricing.
+              {type.label} · {count} product{count === 1 ? '' : 's'}
             </p>
 
             <form onSubmit={submit} className="mt-6 space-y-3">
               <input required className={field} placeholder="Your name *" value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })} />
-              <input className={field} placeholder="Company or hospital (optional)" value={form.company}
-                onChange={(e) => setForm({ ...form, company: e.target.value })} />
+
+              {type.fields.map((f) => (
+                <input
+                  key={f.key}
+                  required={f.required}
+                  className={field}
+                  placeholder={f.required ? `${f.label} *` : `${f.label} (optional)`}
+                  value={form[f.key]}
+                  onChange={(e) => setForm({ ...form, [f.key]: e.target.value })}
+                />
+              ))}
+
               <input required type="email" className={field} placeholder="Email *" value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })} />
               <input required className={field} placeholder="Mobile number *" value={form.phone}
@@ -189,7 +292,7 @@ export default function Cart() {
                 className="w-full rounded-full py-3.5 text-[14px] font-semibold text-white disabled:opacity-50"
                 style={{ background: 'linear-gradient(135deg,#1D9FDA,#61A644)' }}
               >
-                {sending ? 'Sending…' : `Send request for ${items?.length} item${items?.length === 1 ? '' : 's'}`}
+                {sending ? 'Sending…' : `Send request for ${count} item${count === 1 ? '' : 's'}`}
               </button>
               <p className="pt-1 text-center text-[11px] text-gray-400">
                 By submitting, you agree to our <a href="/policy" className="underline">Privacy Policy</a>.
@@ -205,7 +308,7 @@ export default function Cart() {
                   Add medicines you want a quote for, then send them to us in one request.
                 </p>
               </div>
-              {items && items.length > 0 && (
+              {count > 0 && (
                 <button type="button" onClick={() => clearCart()} className="shrink-0 text-[12px] font-semibold text-gray-400 hover:text-gray-600">
                   Clear list
                 </button>
@@ -258,11 +361,11 @@ export default function Cart() {
 
                 <button
                   type="button"
-                  onClick={() => setStep('form')}
+                  onClick={() => setStep('type')}
                   className="mt-6 w-full rounded-full py-3.5 text-[14px] font-semibold text-white"
                   style={{ background: 'linear-gradient(135deg,#1D9FDA,#61A644)' }}
                 >
-                  Request a quote for {items.length} item{items.length === 1 ? '' : 's'}
+                  Request a quote for {count} item{count === 1 ? '' : 's'}
                 </button>
               </>
             )}
