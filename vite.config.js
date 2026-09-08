@@ -15,33 +15,12 @@ const SW_REGISTER = `
 <script>
 (function () {
   if (!('serviceWorker' in navigator)) return;
-  var reloading = false;
-  navigator.serviceWorker.addEventListener('controllerchange', function () {
-    if (reloading) return;
-    reloading = true;
-    location.reload();
-  });
   window.addEventListener('load', function () {
     navigator.serviceWorker.register('/sw.js').then(function (reg) {
-      reg.addEventListener('updatefound', function () {
-        var next = reg.installing;
-        if (!next) return;
-        next.addEventListener('statechange', function () {
-          // A waiting worker with a controller already present means this is an
-          // update, not a first install — only then is there anything to ask about.
-          if (next.state !== 'installed' || !navigator.serviceWorker.controller) return;
-          var bar = document.createElement('div');
-          bar.setAttribute('role', 'status');
-          bar.style.cssText = 'position:fixed;left:50%;transform:translateX(-50%);bottom:18px;z-index:2147483647;display:flex;gap:12px;align-items:center;background:#1f2937;color:#fff;padding:11px 14px;border-radius:999px;font:500 13.5px system-ui,sans-serif;box-shadow:0 4px 20px rgba(0,0,0,.25)';
-          bar.innerHTML = '<span>A new version is available.</span>';
-          var btn = document.createElement('button');
-          btn.textContent = 'Reload';
-          btn.style.cssText = 'border:0;border-radius:999px;padding:6px 14px;background:linear-gradient(135deg,#1D9FDA,#61A644);color:#fff;font:600 13px system-ui,sans-serif;cursor:pointer';
-          btn.onclick = function () { reg.waiting && reg.waiting.postMessage({ type: 'SKIP_WAITING' }); };
-          bar.appendChild(btn);
-          document.body.appendChild(bar);
-        });
-      });
+      // Check for a new worker on every page load. Chrome checks on its own
+      // schedule otherwise, which is part of why a deploy could take a long
+      // while to reach an installed app.
+      if (reg && typeof reg.update === 'function') reg.update().catch(function () {});
     }).catch(function () { /* a failed registration must never break the page */ });
   });
 })();

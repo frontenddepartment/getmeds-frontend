@@ -6,6 +6,8 @@ import { injectHTML } from '../lib/injectHTML';
 import { getApiUrl } from '../lib/api';
 import { submitInquiry } from '../lib/offlineInquiry';
 import { Turnstile, useTurnstile } from '../lib/turnstile';
+import { AddToCart } from '../lib/AddToCart';
+import { needsPrescription } from '../lib/cart';
 import { setPageMeta, injectJsonLd, truncateAtWord, ORGANIZATION_ID } from '../lib/seo';
 import { validateFiles, ALLOWED_FILE_TYPES_ACCEPT } from '../lib/fileUpload';
 import AlertModal from '../lib/AlertModal';
@@ -675,6 +677,22 @@ export default function ProductDetail() {
                           <span className="text-gray-800 font-medium text-[13px]">{formatFieldWithLineBreaks(product.form)}</span>
                         </div>
                       )}
+                    </div>
+
+                    <div className="mt-5 max-w-[240px]">
+                      <AddToCart
+                        variant="full"
+                        item={{
+                          id: String(product._id || location.pathname),
+                          name: getProductDisplayName(product),
+                          strength: product.strength,
+                          form: product.form,
+                          // The page's own path: this product is reachable at the
+                          // URL the visitor is already on.
+                          url: location.pathname,
+                          needsRx: needsPrescription((product as any).Prescription),
+                        }}
+                      />
                     </div>
                   </div>
                   <div className="w-full md:w-1/2 flex items-center justify-center">

@@ -17,6 +17,7 @@ import { registerRoute, setCatchHandler } from 'workbox-routing'
 import { NetworkFirst, NetworkOnly, StaleWhileRevalidate, CacheFirst } from 'workbox-strategies'
 import { ExpirationPlugin } from 'workbox-expiration'
 import { CacheableResponsePlugin } from 'workbox-cacheable-response'
+import { clientsClaim } from 'workbox-core'
 
 precacheAndRoute(self.__WB_MANIFEST)
 cleanupOutdatedCaches()
@@ -138,9 +139,18 @@ setCatchHandler(async ({ request, url }) => {
 })
 
 // ── Update handling ──────────────────────────────────────────────────────────
-// No skipWaiting on install: swapping the app out from under someone who is
-// halfway through an inquiry form would lose what they typed. The page asks
-// first, and only then sends this message.
-self.addEventListener('message', (event) => {
-  if (event.data?.type === 'SKIP_WAITING') self.skipWaiting()
-})
+// A new worker takes over as soon as it installs, instead of sitting in
+// "waiting" until someone accepts a prompt.
+//
+// The prompt was the wrong trade here. A waiting worker keeps serving the
+// PREVIOUS precache, so an installed app can go on showing yesterday's pages
+// indefinitely — which is exactly why fixes appeared not to take effect, and
+// why the tab bar was missing on pages the app had already cached.
+//
+// The usual objection to skipWaiting is swapping the app out mid-task. That is
+// avoided by NOT force-reloading the open page: clientsClaim only changes which
+// worker answers the next request, so whatever is on screen keeps its already
+// loaded HTML and scripts. This is a multi-page app, so the next tap is a full
+// navigation and picks up the new build a moment later.
+self.skipWaiting()
+clientsClaim()

@@ -79,10 +79,12 @@ export function useTurnstile(active: boolean = true): TurnstileHandle {
       widgetId.current = window.turnstile.render(host, {
         sitekey: TURNSTILE_SITE_KEY,
         theme: 'light',
-        // 'normal' rather than 'flexible': the flexible size was inherited from
-        // the partner form, the only place this had ever run, and on the live
-        // order form it reserved 300x72px and drew nothing in it.
-        size: 'normal',
+        // 'flexible' sizes the widget to its container instead of a fixed
+        // 300px box. On a 390px phone a fixed box plus card padding is already
+        // tight, and Turnstile's expanded "Troubleshoot" panel is wider still —
+        // which is what pushed it off the screen. The wrapper below scrolls
+        // rather than clips, so that panel stays readable when it appears.
+        size: 'flexible',
         appearance: 'always', // keep the widget visible rather than interaction-only
         callback: (t: string) => setToken(t),
         'expired-callback': () => setToken(''),
@@ -132,7 +134,7 @@ export function useTurnstile(active: boolean = true): TurnstileHandle {
 /** Renders nothing when no site key is configured. */
 export function Turnstile({
   turnstile,
-  className = 'my-4',
+  className = 'my-4 w-full max-w-full overflow-x-auto',
 }: {
   turnstile: TurnstileHandle;
   className?: string;

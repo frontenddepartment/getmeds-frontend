@@ -130,23 +130,22 @@
         window.Tawk_API = window.Tawk_API || {};
         window.Tawk_LoadStart = new Date();
 
-        // In the installed app the bottom-right corner is a fixed column — tab
-        // bar, contact button, chat, scroll-to-top — and Tawk lands on top of it
-        // by default. It positions its launcher with inline styles on an iframe
-        // it owns, which CSS overrides do not reliably win against, so it is told
-        // where to sit through its own API instead. This MUST be set before the
-        // SDK script is injected below; changing it afterwards does nothing.
+        // The installed app does not load Tawk at all. Repositioning it was not
+        // enough: it owns an iframe it styles inline, it re-asserts that styling
+        // as its own state changes, and the app already has a Contact button in
+        // that corner. Not injecting it is the only way it cannot collide.
+        var gmStandalone = false;
         try {
-            var gmStandalone = window.matchMedia('(display-mode: standalone)').matches ||
-                               window.navigator.standalone === true;
-            if (gmStandalone && window.innerWidth <= 1024) {
-                // 134px clears the 60px tab bar and the contact button above it.
-                var gmOffset = { position: 'br', xOffset: 16, yOffset: 134 };
-                window.Tawk_API.customStyle = {
-                    visibility: { desktop: gmOffset, mobile: gmOffset }
-                };
-            }
-        } catch (e) { /* never let widget placement break the page */ }
+            gmStandalone = (window.matchMedia('(display-mode: standalone)').matches ||
+                            window.navigator.standalone === true) && window.innerWidth <= 1024;
+        } catch (e) { /* treat an unreadable display-mode as "website" */ }
+
+        if (gmStandalone) {
+            // Anything that used to open the chat goes to the contact form instead,
+            // so those buttons are never dead.
+            window.openGetmedsChat = function () { window.location.href = '/contact-us'; };
+            return;
+        }
 
         // Global helper for opening Tawk chat from any page element or click handler
         window.openGetmedsChat = function () {

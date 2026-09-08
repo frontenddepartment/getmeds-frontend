@@ -69,20 +69,20 @@ const APP_RULES = `
      (including bottom: 100px, which sat squarely on the contact FAB), so
      overriding it needs !important too. */
   #scroll-to-top {
-    bottom: calc(194px + env(safe-area-inset-bottom, 0px)) !important;
+    bottom: calc(134px + env(safe-area-inset-bottom, 0px)) !important;
     right: 16px !important;
   }
 
-  /* Tawk positions itself bottom-right with inline styles, which lands it on
-     top of both the FAB and the tab bar. It is not hidden — it is moved into
-     the same column, one slot above the FAB. Selectors are deliberately broad
+  /* Tawk is no longer injected in the app at all (see components.js). This is
+     the belt to that braces: a page still served from an older cache would
+     inject it, and it would land straight on the tab bar. Selectors are broad
      because Tawk's markup differs between widget versions. */
   iframe[title*="chat" i],
+  .widget-visible,
   .widget-visible iframe,
   #tawkchat-container,
   .tawk-min-container {
-    bottom: calc(134px + env(safe-area-inset-bottom, 0px)) !important;
-    right: 16px !important;
+    display: none !important;
   }
 
   /* The offline-inquiry notice spans the full width and would otherwise cover
@@ -225,5 +225,44 @@ export const PWA_TABBAR = `
     if (typeof window.toggleMobileMenu === 'function') window.toggleMobileMenu();
     else location.href = '/about-us';
   });
+
+  // Cart badge. Read straight from IndexedDB in plain JS rather than from the
+  // React store, because this bar is on every page — including ones where no
+  // cart code is bundled — and the count must be right on all of them.
+  //
+  // The store names MUST match src/lib/cart.ts exactly: whichever of the two
+  // opens the database first is the one that creates its object stores, and a
+  // second opener at the same version never gets an upgrade event. Creating
+  // nothing here would leave cart.ts with a database it cannot write to.
+  function gmCartCount(cb) {
+    try {
+      var req = indexedDB.open('getmeds-cart', 1);
+      req.onupgradeneeded = function () {
+        var db = req.result;
+        if (!db.objectStoreNames.contains('items')) db.createObjectStore('items', { keyPath: 'id' });
+        if (!db.objectStoreNames.contains('meta')) db.createObjectStore('meta');
+      };
+      req.onsuccess = function () {
+        var db = req.result;
+        if (!db.objectStoreNames.contains('items')) { cb(0); return; }
+        var c = db.transaction('items', 'readonly').objectStore('items').count();
+        c.onsuccess = function () { cb(c.result || 0); };
+        c.onerror = function () { cb(0); };
+      };
+      req.onerror = function () { cb(0); };
+    } catch (e) { cb(0); }
+  }
+
+  function gmPaintBadge() {
+    var badge = document.querySelector('.gm-cart-badge');
+    if (!badge) return;
+    gmCartCount(function (n) {
+      badge.setAttribute('data-count', String(n));
+      badge.textContent = n > 99 ? '99+' : String(n);
+    });
+  }
+
+  gmPaintBadge();
+  window.addEventListener('getmeds:cart-changed', gmPaintBadge);
 })();
 </script>`;
