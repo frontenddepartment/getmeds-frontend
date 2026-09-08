@@ -49,7 +49,7 @@ export function QueuedInquiryNotice() {
   if (dismissed || nothingToSay) return null;
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-[9998] px-4 pb-4 pointer-events-none">
+    <div className="gm-queued-notice fixed inset-x-0 bottom-0 z-[9998] px-4 pb-4 pointer-events-none">
       <div className="max-w-lg mx-auto pointer-events-auto rounded-2xl bg-white shadow-[0_4px_24px_rgba(0,0,0,0.14)] border border-gray-100 p-4">
         {sent > 0 && (
           <p className="text-sm text-gray-700">

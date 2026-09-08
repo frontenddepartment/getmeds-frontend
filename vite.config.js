@@ -5,6 +5,7 @@ import https from 'https';
 import { execSync } from 'child_process';
 import { sanityImageSyncPlugin } from './src/plugins/sanityImageSync.js';
 import { VitePWA } from 'vite-plugin-pwa';
+import { PWA_TABBAR, PWA_TABBAR_CSS } from './src/plugins/pwaTabbar.js';
 
 // Registration is injected rather than imported from the 18 page entries, so a
 // new entry cannot silently ship without it. Deliberately plain DOM APIs and no
@@ -69,7 +70,8 @@ function injectPwaRuntime() {
     transformIndexHtml(html) {
       return html
         .replace('<head>', '<head>' + PWA_MODE)
-        .replace('</body>', SW_REGISTER + '\n</body>');
+        .replace('</head>', PWA_TABBAR_CSS + '</head>')
+        .replace('</body>', PWA_TABBAR + SW_REGISTER + '\n</body>');
     },
   };
 }

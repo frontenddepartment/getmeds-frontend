@@ -59,18 +59,23 @@ export function useTurnstile(active: boolean = true): TurnstileHandle {
 
   useEffect(() => {
     if (!active || !TURNSTILE_SITE_KEY) return;
-    const host = ref.current;
-    if (!host) return;
 
     let cancelled = false;
-    // api.js is loaded async/defer, so window.turnstile is usually NOT ready when
-    // this effect first runs. Returning false here (rather than "done") is what
-    // keeps the poll below alive until the script lands — otherwise the interval
-    // clears itself on its first tick and the widget never renders, leaving the
-    // submit button permanently disabled with nothing on screen to solve.
+    // Two things have to arrive before the widget can be drawn, and NEITHER is
+    // ready when this effect first runs:
+    //
+    //   window.turnstile — api.js is async/defer, so it lands a moment later.
+    //   ref.current      — on a page whose form only renders once data has
+    //                      loaded (product-detail waits for the product), the
+    //                      host div does not exist yet at mount.
+    //
+    // Both are therefore checked inside the poll rather than before it.
+    // Reading ref.current up front and bailing out was a real bug: the effect
+    // never re-ran, so those forms silently shipped with no widget at all.
     const render = () => {
       if (cancelled || widgetId.current) return true; // done, or nothing to do
-      if (!window.turnstile) return false;            // script not loaded yet
+      const host = ref.current;
+      if (!host || !window.turnstile) return false;   // not ready — keep polling
       widgetId.current = window.turnstile.render(host, {
         sitekey: TURNSTILE_SITE_KEY,
         theme: 'light',
@@ -88,7 +93,10 @@ export function useTurnstile(active: boolean = true): TurnstileHandle {
     };
 
     const timer = window.setInterval(() => { if (render()) window.clearInterval(timer); }, 150);
-    const giveUp = window.setTimeout(() => window.clearInterval(timer), 15000);
+    // 30s rather than 15s: the poll now also waits for a form that appears only
+    // after its data loads, which on a slow connection takes longer than the
+    // script alone ever did.
+    const giveUp = window.setTimeout(() => window.clearInterval(timer), 30000);
     render();
     mount.current = render;
 

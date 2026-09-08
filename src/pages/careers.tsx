@@ -1196,7 +1196,7 @@ const Careers: React.FC = () => {
             <div className="pt-2 pb-8">
               <button
                 type="submit"
-                disabled={submitState === 'sending'}
+                disabled={submitState === 'sending' || (turnstile.enabled && !turnstile.token)}
                 className="w-full bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:opacity-90 text-white font-semibold py-3.5 px-6 rounded-lg shadow-lg transition-all flex items-center justify-center space-x-2 group disabled:opacity-50"
               >
                 <span>{submitState === 'sending' ? 'Sending...' : submitState === 'sent' ? '✓ Applied Successfully!' : submitState === 'error' ? 'Failed. Try Again' : 'Send Application'}</span>

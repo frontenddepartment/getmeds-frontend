@@ -1306,7 +1306,7 @@ export default function AboutUs() {
             <div className="pt-2 pb-8">
               <button
                 type="submit"
-                disabled={submitState === 'sending'}
+                disabled={submitState === 'sending' || (turnstile.enabled && !turnstile.token)}
                 className="w-full bg-gradient-to-r from-primary to-[#1D9FDA] hover:opacity-90 text-white font-semibold py-3.5 px-6 rounded-lg shadow-lg shadow-blue-500/30 transition-all flex items-center justify-center space-x-2 group disabled:opacity-50"
               >
                 <span>{submitState === 'sending' ? 'Sending...' : 'Send inquiry'}</span>

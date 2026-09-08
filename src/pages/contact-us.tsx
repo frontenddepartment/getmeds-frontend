@@ -400,7 +400,7 @@ export default function ContactUs() {
               {/* Submit Button */}
               <div className="pt-3">
                 <button type="submit"
-                  disabled={submitState === 'sending'}
+                  disabled={submitState === 'sending' || (turnstile.enabled && !turnstile.token)}
                   className="w-full bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:from-[#1D9FDA] hover:to-[#61A644] text-white font-bold py-3.5 rounded-full text-[14px] transition shadow-md disabled:opacity-50">
                   {submitState === 'sending' ? 'Sending...' : submitState === 'sent' ? '✓ Submitted Successfully!' : submitState === 'error' ? 'Failed. Try Again' : 'Submit'}
                 </button>

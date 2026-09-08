@@ -1105,7 +1105,7 @@ export default function ProductDetail() {
 
                   <button
                     type="submit"
-                    disabled={submitState === 'sending' || submitState === 'sent'}
+                    disabled={submitState === 'sending' || submitState === 'sent' || (turnstile.enabled && !turnstile.token)}
                     className="w-full text-white font-bold py-3 rounded-xl transition-all duration-500 transform active:scale-[0.98] mt-6 mb-4 text-[13px]"
                     style={submitState === 'sent'
                       ? { background: '#61A644' }
@@ -1221,7 +1221,7 @@ export default function ProductDetail() {
 
                   <button
                     type="submit"
-                    disabled={submitState === 'sending' || submitState === 'sent'}
+                    disabled={submitState === 'sending' || submitState === 'sent' || (turnstile.enabled && !turnstile.token)}
                     className="w-full text-white font-bold py-3 rounded-xl transition-all duration-500 transform active:scale-[0.98] mt-6 mb-8 text-[13px]"
                     style={submitState === 'sent'
                       ? { background: '#61A644' }
