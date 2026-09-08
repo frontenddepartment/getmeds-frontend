@@ -130,6 +130,24 @@
         window.Tawk_API = window.Tawk_API || {};
         window.Tawk_LoadStart = new Date();
 
+        // In the installed app the bottom-right corner is a fixed column — tab
+        // bar, contact button, chat, scroll-to-top — and Tawk lands on top of it
+        // by default. It positions its launcher with inline styles on an iframe
+        // it owns, which CSS overrides do not reliably win against, so it is told
+        // where to sit through its own API instead. This MUST be set before the
+        // SDK script is injected below; changing it afterwards does nothing.
+        try {
+            var gmStandalone = window.matchMedia('(display-mode: standalone)').matches ||
+                               window.navigator.standalone === true;
+            if (gmStandalone && window.innerWidth <= 1024) {
+                // 134px clears the 60px tab bar and the contact button above it.
+                var gmOffset = { position: 'br', xOffset: 16, yOffset: 134 };
+                window.Tawk_API.customStyle = {
+                    visibility: { desktop: gmOffset, mobile: gmOffset }
+                };
+            }
+        } catch (e) { /* never let widget placement break the page */ }
+
         // Global helper for opening Tawk chat from any page element or click handler
         window.openGetmedsChat = function () {
             if (window.Tawk_API && typeof window.Tawk_API.maximize === 'function') {

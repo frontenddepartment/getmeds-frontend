@@ -1,9 +1,9 @@
 {
-  "name": "Getmeds — Your Compassionate Health Ally",
+  "name": "Getmeds \u2014 Your Compassionate Health Ally",
   "short_name": "Getmeds",
   "description": "Browse the Getmeds pharmaceutical catalogue and send an inquiry, even on a poor connection.",
   "id": "/",
-  "start_url": "/product-range",
+  "start_url": "/app-home",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait-primary",
@@ -11,7 +11,11 @@
   "theme_color": "#1D9FDA",
   "lang": "en-PH",
   "dir": "ltr",
-  "categories": ["medical", "health", "shopping"],
+  "categories": [
+    "medical",
+    "health",
+    "shopping"
+  ],
   "icons": [
     {
       "src": "/icons/icon-192.png",
@@ -43,13 +47,25 @@
       "name": "Order Medicines",
       "short_name": "Order",
       "url": "/order-medicines",
-      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" }]
+      "icons": [
+        {
+          "src": "/icons/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
     },
     {
       "name": "Contact Us",
       "short_name": "Contact",
       "url": "/contact-us",
-      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" }]
+      "icons": [
+        {
+          "src": "/icons/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
     }
   ]
 }

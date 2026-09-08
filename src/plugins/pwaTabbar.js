@@ -195,7 +195,7 @@ ${APP_RULES}
 
 export const PWA_TABBAR = `
 <nav class="gm-tabbar" aria-label="Primary">
-  <a href="/" data-match="/"><i class="fa-solid fa-house"></i><span>Home</span></a>
+  <a href="/app-home" data-match="/app-home,/"><i class="fa-solid fa-house"></i><span>Home</span></a>
   <a href="/product-range" data-match="/product-range,/cancer-medicines,/conditions"><i class="fa-solid fa-capsules"></i><span>Products</span></a>
   <a href="/cart" class="gm-mid" data-match="/cart">
     <span class="gm-mid-btn"><i class="fa-solid fa-cart-shopping"></i></span>

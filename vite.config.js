@@ -56,8 +56,18 @@ const PWA_MODE = `
 <script>
 (function () {
   try {
-    if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
-      document.documentElement.classList.add('pwa-standalone');
+    if (!(window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true)) return;
+    document.documentElement.classList.add('pwa-standalone');
+
+    // getmeds.ph/ is a marketing page — hero carousel, statistics, CSR — which
+    // is right for someone arriving from a search result and wrong for someone
+    // who installed the app to browse the catalogue. The app has its own home,
+    // and this sends the root there before anything paints, so the marketing
+    // page never flashes up first. Website visitors are untouched: this only
+    // runs in a standalone window.
+    var p = location.pathname;
+    if (p === '/' || p === '/index.html') {
+      location.replace('/app-home' + location.search + location.hash);
     }
   } catch (e) { /* never let a display-mode probe break the page */ }
 })();
