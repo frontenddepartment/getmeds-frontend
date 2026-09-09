@@ -240,7 +240,7 @@ export default function Search() {
 
       <header
         className="sticky top-0 z-40 px-3 pb-3 pt-3"
-        style={{ background: GROUND, boxShadow: '0 6px 12px -10px rgba(23,43,77,.35)' }}
+        style={{ background: '#FFFFFF' }}
       >
         <div className="mx-auto flex max-w-2xl items-center gap-2">
           <button
@@ -278,8 +278,8 @@ export default function Search() {
               autoComplete="off"
               placeholder="Search brand, generic or condition"
               aria-label="Search the catalogue"
-              className="h-[46px] w-full rounded-full border border-transparent bg-white pl-11 pr-11 text-[13.5px] text-gray-800 outline-none placeholder:text-gray-400 focus:border-[#1D9FDA]"
-              style={{ boxShadow: CARD_SHADOW }}
+              className="h-[46px] w-full rounded-full border border-transparent pl-11 pr-11 text-[13.5px] text-gray-800 outline-none placeholder:text-gray-400 focus:border-[#1D9FDA]"
+              style={{ background: GROUND }}
             />
             {query.length > 0 && (
               <button
@@ -302,7 +302,7 @@ export default function Search() {
             {recents.length > 0 && (
               <section className="mb-6 pt-2">
                 <div className="mb-2 flex items-baseline justify-between">
-                  <h2 className="text-[13px] font-bold text-gray-900">Recent searches</h2>
+                  <h2 className="text-[13px] font-semibold text-gray-900">Recent searches</h2>
                   <button type="button" onClick={forgetAll} className="text-[12px] font-semibold" style={{ color: BRAND }}>
                     Clear all
                   </button>
@@ -341,15 +341,15 @@ export default function Search() {
             )}
 
             <section>
-              <h2 className="mb-3 text-[13px] font-bold text-gray-900">Browse by category</h2>
+              <h2 className="mb-3 text-center text-[13px] font-semibold text-gray-900">Browse by category</h2>
               {loading && categories.length === 0 ? (
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap justify-center gap-2">
                   {Array.from({ length: 8 }).map((_, i) => (
                     <div key={i} className="h-9 w-28 animate-pulse rounded-full bg-white" />
                   ))}
                 </div>
               ) : (
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap justify-center gap-2">
                   {categories.map(([folder, info]) => (
                     <a
                       key={folder}
@@ -424,9 +424,17 @@ export default function Search() {
             )}
 
             {suggestions.length === 0 && preview.length === 0 && !loading && (
-              <p className="py-14 text-center text-[13px] text-gray-400">
-                Nothing matches yet. Keep typing, or press search.
-              </p>
+              <div className="py-10 text-center">
+                <img
+                  src="/assets/noproductsfound.png"
+                  alt=""
+                  loading="lazy"
+                  className="mx-auto mb-4 h-auto w-[170px] max-w-full"
+                />
+                <p className="text-[13px] text-gray-400">
+                  Nothing matches yet. Keep typing, or press search.
+                </p>
+              </div>
             )}
           </div>
         )}

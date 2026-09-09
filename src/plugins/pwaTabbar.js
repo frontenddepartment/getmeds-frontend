@@ -201,10 +201,6 @@ ${squircleRules('')}
     justify-content: space-around;
     background: #fff;
     border-radius: 999px;
-    /* Two shadows doing two jobs: a wide soft one to lift the capsule off the
-       page, and a tight one to keep its edge defined where it crosses a white
-       card and the soft one has nothing to darken. */
-    box-shadow: 0 12px 32px rgba(23, 43, 77, .16), 0 2px 6px rgba(23, 43, 77, .06);
     /* The raised centre button and its halo overhang the top edge. */
     overflow: visible;
   }
@@ -344,23 +340,19 @@ ${squircleRules('')}
     gap: 14px;
     padding: 13px 12px;
     border-radius: 14px;
-    color: #1F2937;
-    font: 600 13.5px "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    color: #111111;
+    font: 500 14px "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     text-decoration: none;
     -webkit-tap-highlight-color: transparent;
   }
   .gm-sheet a:active { background: #F3F6FB; }
-  .gm-sheet a > i:first-child {
-    width: 34px; height: 34px;
+  .gm-sheet .gm-sheet-ico {
+    width: 22px; height: 22px;
     flex: none;
-    display: flex; align-items: center; justify-content: center;
-    border-radius: 50%;
-    background: #F1F6FC;
     color: #1D9FDA;
-    font-size: 14px;
   }
   .gm-sheet a > span { flex: 1; }
-  .gm-sheet .gm-sheet-go { color: #D1D5DB; font-size: 12px; }
+  .gm-sheet .gm-sheet-go { width: 16px; height: 16px; flex: none; color: #C7CDD6; }
 </style>`;
 
 export const PWA_TABBAR = `
@@ -381,12 +373,12 @@ export const PWA_TABBAR = `
 <div class="gm-sheet-backdrop" data-open="0"></div>
 <div class="gm-sheet" data-open="0" role="dialog" aria-modal="true" aria-label="More" aria-hidden="true">
   <span class="gm-sheet-grip" aria-hidden="true"></span>
-  <a href="/profile"><i class="fa-solid fa-user"></i><span>My account</span><i class="fa-solid fa-chevron-right gm-sheet-go"></i></a>
-  <a href="/product-range"><i class="fa-solid fa-capsules"></i><span>Browse all products</span><i class="fa-solid fa-chevron-right gm-sheet-go"></i></a>
-  <a href="/patient-assistance-program"><i class="fa-solid fa-hand-holding-heart"></i><span>Patient Assistance</span><i class="fa-solid fa-chevron-right gm-sheet-go"></i></a>
-  <a href="/contact-us"><i class="fa-solid fa-headset"></i><span>Contact us</span><i class="fa-solid fa-chevron-right gm-sheet-go"></i></a>
-  <a href="/about-us"><i class="fa-solid fa-circle-info"></i><span>About Getmeds</span><i class="fa-solid fa-chevron-right gm-sheet-go"></i></a>
-  <a href="/policy"><i class="fa-solid fa-shield-halved"></i><span>Privacy &amp; policies</span><i class="fa-solid fa-chevron-right gm-sheet-go"></i></a>
+  <a href="/profile"><svg class="gm-sheet-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>My account</span><svg class="gm-sheet-go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></a>
+  <a href="/product-range"><svg class="gm-sheet-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.5 20.5 20 11a5 5 0 0 0-7-7l-9.5 9.5a5 5 0 0 0 7 7Z"/><path d="m8.5 8.5 7 7"/></svg><span>Browse all products</span><svg class="gm-sheet-go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></a>
+  <a href="/patient-assistance-program"><svg class="gm-sheet-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/><path d="M3.5 12.5h4l1-2 2.5 5 2-8 1.7 5h5.8"/></svg><span>Patient Assistance</span><svg class="gm-sheet-go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></a>
+  <a href="/contact-us"><svg class="gm-sheet-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3"/></svg><span>Contact us</span><svg class="gm-sheet-go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></a>
+  <a href="/about-us"><svg class="gm-sheet-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4.5"/><path d="M12 8.2h.01"/></svg><span>About Getmeds</span><svg class="gm-sheet-go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></a>
+  <a href="/policy"><svg class="gm-sheet-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12.5c0 5-3.5 7.5-7.68 8.95a1 1 0 0 1-.63 0C7.5 20 4 17.5 4 12.5V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.5 3.8 17 5 19 5a1 1 0 0 1 1 1z"/></svg><span>Privacy &amp; policies</span><svg class="gm-sheet-go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></a>
 </div>
 <script>
 (function () {
