@@ -3,16 +3,29 @@ import { injectHTML } from '../lib/injectHTML';
 import { getApiUrl } from '../lib/api';
 import { submitInquiry } from '../lib/offlineInquiry';
 import { Turnstile, useTurnstile } from '../lib/turnstile';
-import { ALLOWED_FILE_TYPES_ACCEPT, fileToBase64, validateFiles } from '../lib/fileUpload';
+import {
+  ALLOWED_FILE_TYPES_ACCEPT,
+  MAX_UPLOAD_BYTES,
+  compressImage,
+  estimateUploadBytes,
+  fileToBase64,
+  validateFiles,
+} from '../lib/fileUpload';
 import {
   CART_CHANGED_EVENT,
   clearAllDeviceData,
   clearCart,
   hasConsent,
+  isAppMode,
   listCart,
+  patchCartItems,
   removeFromCart,
   type CartItem,
 } from '../lib/cart';
+import { useProducts } from '../lib/useSanity';
+import { type CatalogueRow, productImage } from '../lib/catalogueItem';
+import { USER_TYPES, type TypeDef, typeByValue } from '../lib/audienceTypes';
+import { loadDetails, type SavedDetails } from '../lib/accountStore';
 
 /**
  * cart.tsx
@@ -33,72 +46,8 @@ import {
 
 type Step = 'list' | 'type' | 'form' | 'done';
 
-type FieldKey = 'position' | 'prcLicense' | 'institution' | 'location' | 'age' | 'address';
-
-interface TypeDef {
-  value: string;
-  label: string;
-  /** Decides the destination spreadsheet — see INQUIRY_SPREADSHEETS. */
-  inquiryType: string;
-  icon: string;
-  /** Patients additionally need uploads, a contact person and two consents. */
-  kind?: 'patient' | 'partner';
-  /** Extra columns this audience's sheet has beyond name/email/phone/message. */
-  fields: Array<{ key: FieldKey; label: string; required?: boolean }>;
-}
-
-const USER_TYPES: TypeDef[] = [
-  {
-    // Deliberately NOT Product Inquiry. On the website a patient's product
-    // inquiry is routed to the Order Medicine sheet, because a patient supplies
-    // the same things an order does — prescription, valid ID, age, delivery
-    // address, contact person — and that sheet has the columns for them. Sending
-    // the app's patients somewhere else would split one funnel across two sheets.
-    value: 'patient',
-    label: 'Patient / Caregiver',
-    inquiryType: 'Order Medicine',
-    icon: 'fa-user',
-    kind: 'patient',
-    fields: [
-      { key: 'age', label: 'Age', required: true },
-      { key: 'address', label: 'Delivery address', required: true },
-    ],
-  },
-  {
-    value: 'doctor',
-    label: 'Doctor / Healthcare Professional',
-    inquiryType: 'Doctor Inquiry',
-    icon: 'fa-user-doctor',
-    fields: [
-      { key: 'position', label: 'Specialty / field of practice', required: true },
-      { key: 'prcLicense', label: 'PRC license number', required: true },
-      { key: 'institution', label: 'Hospital / clinic affiliation' },
-      { key: 'location', label: 'City' },
-    ],
-  },
-  {
-    value: 'pharmacy',
-    label: 'Pharmacy Owner / Retail Pharmacy',
-    inquiryType: 'Pharmacy Inquiry',
-    icon: 'fa-mortar-pestle',
-    fields: [
-      { key: 'position', label: 'Position / role', required: true },
-      { key: 'institution', label: 'Pharmacy / business name', required: true },
-      { key: 'location', label: 'City' },
-    ],
-  },
-  {
-    value: 'hospital',
-    label: 'Hospital / Institution',
-    inquiryType: 'Hospital Inquiry',
-    icon: 'fa-hospital',
-    fields: [
-      { key: 'position', label: 'Position / role', required: true },
-      { key: 'institution', label: 'Hospital / institution name', required: true },
-      { key: 'location', label: 'City' },
-    ],
-  },
-];
+// FieldKey, TypeDef and USER_TYPES now live in lib/audienceTypes.ts, because
+// the account screen stores which of these you are and needs the same list.
 
 const BLANK = {
   name: '', email: '', phone: '', message: '',
@@ -120,6 +69,19 @@ export default function Cart() {
   // a prescription, a valid ID, a named contact person and two confirmations.
   // Which items this request covers. Shopee-style: everything is ticked by
   // default, and the visitor unticks what they are not asking about yet.
+  /**
+   * Whether to draw the phone-shaped version. Decided on the first render, not
+   * in an effect, so the app never flashes the website layout before correcting
+   * itself — safe because the entry mounts with createRoot, not hydrateRoot.
+   */
+  const [app] = useState(isAppMode);
+  /**
+   * Only used to repair rows saved before CartItem carried an image. The list
+   * itself never needs the catalogue — every row already holds everything it
+   * draws — so this resolves in the background and the page does not wait on
+   * it. Offline it simply never arrives, and the placeholder stands.
+   */
+  const { data: catalogue } = useProducts();
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const knownIds = React.useRef<Set<string>>(new Set());
   // One prescription per product, keyed by item id — a pharmacist reading a row
@@ -132,24 +94,119 @@ export default function Cart() {
 
   const turnstile = useTurnstile(step === 'form');
 
+  /**
+   * Autofill from the account.
+   *
+   * This is the half that was missing. The profile screen has been saving
+   * these details and saying on screen that they would be used to fill in
+   * inquiry forms, while every form still opened blank — so the feature
+   * existed only as a promise.
+   *
+   * Two rules keep it from being annoying. It fills only fields that are still
+   * empty, so it can never overwrite something half-typed; and it runs exactly
+   * once, so a saved value the visitor has deliberately cleared does not
+   * reappear underneath them a moment later.
+   */
+  const saved = React.useRef<SavedDetails | null>(null);
+
+  /**
+   * The form as it should look for a given audience: blank, plus everything
+   * the account already knows that THIS audience is actually asked for.
+   *
+   * Choosing an audience genuinely does have to clear the previous one's
+   * answers — a PRC licence must not ride along into a patient's request, and
+   * that is what the reset on the picker was for. What it must not also do,
+   * and did, is throw away the name, email and phone number that apply to
+   * everybody, which is why the autofill appeared not to work at all: it ran,
+   * filled the form, and then the very next tap emptied it again.
+   */
+  const formFor = useCallback((t: TypeDef | null) => {
+    const d = saved.current;
+    const next: Record<string, string> = { ...BLANK };
+    if (!d) return next as typeof BLANK;
+
+    // Asked of every audience.
+    next.name = d.name || '';
+    next.email = d.email || '';
+    next.phone = d.phone || '';
+
+    // Asked only of this one — driven by the same definition that decides
+    // which inputs the form renders, so the two cannot disagree.
+    for (const f of t?.fields || []) {
+      const v = d[f.key];
+      if (typeof v === 'string') next[f.key] = v;
+    }
+    if (t?.kind === 'patient') {
+      next.contactName = d.contactName || '';
+      next.contactRelationship = d.contactRelationship || '';
+    }
+    return next as typeof BLANK;
+  }, []);
+
+  const prefilled = React.useRef(false);
+  useEffect(() => {
+    if (prefilled.current) return;
+    prefilled.current = true;
+    loadDetails().then((d) => {
+      if (!d) return;
+      saved.current = d;
+      const known = typeByValue(d.userType) || null;
+      if (known) setType((t) => t || known);
+
+      // Fills only fields still empty, so a half-typed form is never
+      // overwritten.
+      const fill = formFor(known);
+      setForm((f) => {
+        const next = { ...f };
+        for (const key of Object.keys(fill) as Array<keyof typeof BLANK>) {
+          if (!next[key] && fill[key]) next[key] = fill[key];
+        }
+        return next;
+      });
+    });
+  }, [formFor]);
+
   const refresh = useCallback(async () => {
     const list = await listCart();
     setItems(list);
+
+    // Read the ref into a local BEFORE the updater and advance it after.
+    //
+    // This used to be mutated inside the updater, which made the updater
+    // impure — and React deliberately invokes updaters twice in development to
+    // catch exactly that. The second invocation saw the ref it had itself just
+    // written, concluded every item was already known, and returned an empty
+    // set. The visible effect was the whole point of the screen failing: you
+    // arrived at your list with nothing ticked and a dead "Select items to
+    // inquire about" button, and had to tick a box to undo it.
+    const known = knownIds.current;
     setSelected((prev) => {
       const next = new Set<string>();
       for (const it of list) {
         // Anything the visitor has not yet seen starts ticked; anything they
         // deliberately unticked stays unticked.
-        if (!knownIds.current.has(it.id) || prev.has(it.id)) next.add(it.id);
+        if (!known.has(it.id) || prev.has(it.id)) next.add(it.id);
       }
-      knownIds.current = new Set(list.map((i) => i.id));
+      // A single item is not a choice. The row shows no checkbox in that case,
+      // so nothing on screen could tick it back on — leaving it unticked would
+      // strand the visitor on a dead button with no way out.
+      if (list.length === 1) next.add(list[0].id);
       return next;
     });
+    knownIds.current = new Set(list.map((i) => i.id));
+
     setConsented(await hasConsent());
   }, []);
 
   useEffect(() => {
     document.title = 'Your Request List | Getmeds';
+
+    // The app's tinted ground, so the white item cards below have something to
+    // sit on. Set on <body> rather than a wrapper because the list is often
+    // short and a wrapper's background would stop halfway down the screen.
+    // Only in the app: on the website this page keeps the site's white.
+    if (app) document.body.style.background = '#F3F6FB';
+
     refresh();
     window.addEventListener(CART_CHANGED_EVENT, refresh);
 
@@ -166,7 +223,35 @@ export default function Cart() {
         .catch(() => { /* hidden in the installed app anyway */ });
     }
     return () => window.removeEventListener(CART_CHANGED_EVENT, refresh);
-  }, [refresh]);
+  }, [refresh, app]);
+
+  /**
+   * Backfill the picture on rows saved before CartItem carried one.
+   *
+   * Without this the fix only reaches products added from now on, and every
+   * list already sitting on someone's phone keeps its grey placeholder until
+   * they happen to remove and re-add the item — which is not something anyone
+   * would think to try, and not a thing to ask of them either.
+   *
+   * Runs once and settles: the write announces, the list reloads with images,
+   * and `missing` is empty on the next pass. Rows the catalogue no longer
+   * carries produce no patch, so they cannot spin this either.
+   */
+  useEffect(() => {
+    if (!items || !catalogue) return;
+    const missing = items.filter((it) => !it.image);
+    if (missing.length === 0) return;
+
+    const byId = new Map(
+      (catalogue as CatalogueRow[]).map((p) => [String(p._id), p])
+    );
+    const patches: Record<string, { image: string }> = {};
+    for (const it of missing) {
+      const match = byId.get(it.id);
+      if (match?.image?.asset) patches[it.id] = { image: productImage(match, 140) };
+    }
+    if (Object.keys(patches).length > 0) patchCartItems(patches);
+  }, [items, catalogue]);
 
   const wipe = async () => {
     if (!window.confirm('Remove everything Getmeds has saved on this device? This clears your list and any inquiry waiting to be sent.')) return;
@@ -203,16 +288,30 @@ export default function Cart() {
       // the backend can route each to its own spreadsheet column.
       const filesData: { name: string; type: string; base64: string; category?: 'id' | 'prescription' }[] = [];
       if (type.kind === 'patient') {
-        // "prescription:<index>" ties each script to its product's position in
-        // the items array below, which is what lets the backend put the right
-        // one on the right spreadsheet row.
+        // Photos are shrunk before encoding. Vercel rejects a body over ~4.5 MB
+        // with a 413 BEFORE the function runs, so an oversized request produces
+        // no spreadsheet row, no email and no server-side error to explain it —
+        // which is exactly what a multi-product request with two phone photos
+        // was doing.
+        const prepared: Array<{ file: File; category: string }> = [];
         for (let i = 0; i < chosen.length; i++) {
           for (const f of rxByItem[chosen[i].id] || []) {
-            filesData.push({ name: f.name, type: f.type, base64: await fileToBase64(f), category: `prescription:${i}` as any });
+            prepared.push({ file: await compressImage(f), category: `prescription:${i}` });
           }
         }
-        if (idFile) {
-          filesData.push({ name: idFile.name, type: idFile.type, base64: await fileToBase64(idFile), category: 'id' });
+        if (idFile) prepared.push({ file: await compressImage(idFile), category: 'id' });
+
+        const bytes = estimateUploadBytes(prepared.map((x) => x.file));
+        if (bytes > MAX_UPLOAD_BYTES) {
+          setSending(false);
+          return setError(
+            `Your attachments are too large to send together (about ${(bytes / 1024 / 1024).toFixed(1)} MB). ` +
+            'Please send fewer products in one request, or attach smaller files.'
+          );
+        }
+
+        for (const { file, category } of prepared) {
+          filesData.push({ name: file.name, type: file.type, base64: await fileToBase64(file), category: category as any });
         }
       }
       const lines = chosen.map((it) => {
@@ -292,7 +391,10 @@ export default function Cart() {
     <>
       <div id="navbar-container"></div>
 
-      <main className="mx-auto flex min-h-[70vh] max-w-3xl flex-col px-6 pb-16 pt-28">
+      {/* pt-28 clears the website's fixed navbar. The app hides that bar, so
+          on a phone the same padding is just 112px of empty screen above the
+          heading — which is what the first fold was being spent on. */}
+      <main className={`mx-auto flex min-h-[70vh] max-w-3xl flex-col ${app ? 'px-4 pb-8 pt-6' : 'px-6 pb-16 pt-28'}`}>
         {step === 'done' ? (
           <div className="flex flex-1 flex-col items-center justify-center py-16 text-center">
             <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-green-50">
@@ -326,7 +428,9 @@ export default function Cart() {
                 <button
                   key={t.value}
                   type="button"
-                  onClick={() => { setType(t); setForm({ ...BLANK }); setStep('form'); }}
+                  // Resets to what the account knows for THIS audience rather
+                  // than to blank — see formFor().
+                  onClick={() => { setType(t); setForm(formFor(t)); setStep('form'); }}
                   className="flex w-full items-center gap-4 rounded-2xl border border-gray-200 bg-white p-4 text-left transition hover:border-primary"
                 >
                   <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full"
@@ -511,31 +615,62 @@ export default function Cart() {
               </div>
             ) : (
               <>
-                <ul className="mt-6 space-y-3">
+                <ul className="mt-6 space-y-2.5">
                   {items.map((it) => (
-                    <li key={it.id} className="flex items-start gap-3 rounded-2xl border border-gray-100 bg-white p-4">
-                      <input
-                        type="checkbox"
-                        checked={selected.has(it.id)}
-                        aria-label={`Include ${it.name} in this request`}
-                        onChange={(e) => setSelected((prev) => {
-                          const next = new Set(prev);
-                          if (e.target.checked) next.add(it.id); else next.delete(it.id);
-                          return next;
-                        })}
-                        className="mt-1 h-4 w-4 shrink-0 rounded border-gray-300"
-                      />
+                    <li
+                      key={it.id}
+                      className={`flex items-center gap-3 rounded-[16px] bg-white ${app ? 'p-2.5' : 'border border-gray-100 p-3'}`}
+                      style={app ? { boxShadow: '0 2px 10px rgba(23,43,77,.055)' } : undefined}
+                    >
+                      {/* Only asked when there is genuinely something to choose
+                          between. With a single row the answer is already known,
+                          and a tickbox for it is a decision that buys nothing —
+                          it only stands between the visitor and the one button
+                          on the screen. */}
+                      {items.length > 1 && (
+                        <input
+                          type="checkbox"
+                          checked={selected.has(it.id)}
+                          aria-label={`Include ${it.name} in this request`}
+                          onChange={(e) => setSelected((prev) => {
+                            const next = new Set(prev);
+                            if (e.target.checked) next.add(it.id); else next.delete(it.id);
+                            return next;
+                          })}
+                          className="h-[18px] w-[18px] shrink-0 rounded"
+                          style={{ accentColor: '#1D9FDA' }}
+                        />
+                      )}
+
+                      {/* Not a link, though it sits beside one: a second anchor
+                          to the same page is another tab stop and another thing
+                          a screen reader reads out, for no new destination. */}
+                      <div className="flex h-[56px] w-[56px] shrink-0 items-center justify-center overflow-hidden rounded-xl bg-[#F6F8FC] p-1.5">
+                        {it.image ? (
+                          <img
+                            src={it.image}
+                            alt=""
+                            loading="lazy"
+                            className="h-full w-full object-contain mix-blend-multiply"
+                            onError={(e) => { const i = e.currentTarget; i.onerror = null; i.style.display = 'none'; }}
+                          />
+                        ) : (
+                          <i className="fa-solid fa-prescription-bottle-medical text-[18px] text-gray-300"></i>
+                        )}
+                      </div>
+
                       <div className="min-w-0 flex-1">
-                        <a href={it.url} className="block text-[14px] font-semibold leading-snug text-gray-900">{it.name}</a>
+                        <a href={it.url} className="line-clamp-2 block text-[13.5px] font-semibold leading-snug text-gray-900">{it.name}</a>
                         {(it.strength || it.form) && (
-                          <p className="mt-1 text-[12px] text-gray-500">{[it.strength, it.form].filter(Boolean).join(' · ')}</p>
+                          <p className="mt-0.5 line-clamp-1 text-[11.5px] text-gray-400">{[it.strength, it.form].filter(Boolean).join(' · ')}</p>
                         )}
                         {it.needsRx && (
-                          <span className="mt-2 inline-block rounded-full bg-amber-50 px-2 py-1 text-[10px] font-semibold text-amber-700">
+                          <span className="mt-1.5 inline-block rounded-full bg-amber-50 px-2 py-[3px] text-[10px] font-semibold text-amber-700">
                             <i className="fa-solid fa-file-prescription mr-1"></i>Prescription required
                           </span>
                         )}
                       </div>
+
                       <button type="button" onClick={() => removeFromCart(it.id)} aria-label={`Remove ${it.name}`}
                         className="shrink-0 rounded-full p-2 text-gray-300 hover:text-red-500">
                         <i className="fa-solid fa-xmark"></i>
@@ -547,11 +682,25 @@ export default function Cart() {
                 <button
                   type="button"
                   disabled={count === 0}
-                  onClick={() => setStep('type')}
+                  // Straight to the form when the account already knows which
+                  // audience this is. Asking "who is asking?" every single time
+                  // of someone who has answered it before is a step that buys
+                  // nothing — and the form's own back button still leads to
+                  // the picker for anyone who needs to change it.
+                  onClick={() => setStep(type ? 'form' : 'type')}
                   className="mt-6 w-full rounded-full py-3.5 text-[14px] font-semibold text-white disabled:opacity-40"
                   style={{ background: 'linear-gradient(135deg,#1D9FDA,#61A644)' }}
                 >
-                  {count === 0 ? 'Select items to inquire about' : `Inquire about ${count} selected item${count === 1 ? '' : 's'}`}
+                  {/* Says what happens next, not what the screen wants from
+                      you. "Select items to inquire about" was a label for a
+                      button that could not be pressed — it described a chore
+                      rather than an outcome, and with one item it should never
+                      have appeared at all. */}
+                  {count === 0
+                    ? 'Tick an item to continue'
+                    : items.length === 1
+                      ? 'Request a quote'
+                      : `Request a quote for ${count} item${count === 1 ? '' : 's'}`}
                 </button>
               </>
             )}

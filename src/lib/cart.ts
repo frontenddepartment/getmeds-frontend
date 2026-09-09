@@ -39,6 +39,16 @@ export interface CartItem {
   form?: string
   url: string
   needsRx?: boolean
+  /**
+   * The product photo, resolved to a URL when the item was saved rather than
+   * looked up when the list is drawn. The list has to render with no network —
+   * that is most of why it exists — and re-deriving this would mean pulling the
+   * whole catalogue into a page that otherwise needs none of it.
+   *
+   * Optional because rows saved before this field existed will not have it, and
+   * those must keep working rather than render a broken image.
+   */
+  image?: string
   addedAt: number
 }
 
@@ -134,6 +144,35 @@ export async function addToCart(item: Omit<CartItem, 'addedAt'>): Promise<'added
   }
 }
 
+/**
+ * Fills fields in on rows that are already saved, leaving everything else —
+ * addedAt above all — exactly as it was.
+ *
+ * addToCart() cannot do this job: it stamps a fresh timestamp, which would
+ * silently reorder the list every time a row was touched. Announces once at
+ * the end rather than per row, so a backfill does not storm every cart badge
+ * on the page with a repaint each.
+ */
+export async function patchCartItems(patches: Record<string, Partial<CartItem>>): Promise<void> {
+  if (Object.keys(patches).length === 0) return
+  if (!(await hasConsent())) return
+  try {
+    const list = await listCart()
+    let touched = false
+    for (const item of list) {
+      const patch = patches[item.id]
+      if (!patch) continue
+      await tx<void>(ITEMS, 'readwrite', (s) =>
+        s.put({ ...item, ...patch, id: item.id, addedAt: item.addedAt })
+      )
+      touched = true
+    }
+    if (touched) announce()
+  } catch {
+    // Backfilling is cosmetic. It must never take the list down with it.
+  }
+}
+
 export async function removeFromCart(id: string): Promise<void> {
   await safe(tx<void>(ITEMS, 'readwrite', (s) => s.delete(id)), undefined as void)
   announce()
@@ -158,6 +197,17 @@ export async function clearAllDeviceData(): Promise<void> {
   try {
     indexedDB.deleteDatabase('getmeds-offline')
   } catch { /* nothing queued, or storage unavailable */ }
+  try {
+    // Inquiry history, saved details and stored documents. Withdrawing consent
+    // has to take all of it — leaving behind a record of the medicines someone
+    // asked about would be no withdrawal at all.
+    //
+    // Imported dynamically because accountStore reads hasConsent() from this
+    // module: a static import here would close the loop and risk one of the two
+    // seeing the other half-initialised. By the time this line runs, both are.
+    const { clearAccountData } = await import('./accountStore')
+    await clearAccountData()
+  } catch { /* storage unavailable */ }
   announce()
 }
 

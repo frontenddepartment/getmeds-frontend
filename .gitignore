@@ -52,3 +52,6 @@ serve.js
 .env*
 
 AUDIT CHECKLIST
+
+# Assets quarantined pending deletion — restore with: git checkout -- public/assets
+_orphaned-assets/

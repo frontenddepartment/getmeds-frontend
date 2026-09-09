@@ -226,12 +226,42 @@ async function run() {
   const allFolders = Array.from(new Set([...routing.folders, 'product-range']));
   const conditionPattern = routing.conditionSlugs.join('|');
 
-  const STATIC_PAGE_NAMES = [
+  // Every name here is a path the catch-all slug resolver below must NOT
+  // swallow. It is built from two sources, unioned:
+  //
+  //   1. The .html files that actually ship — the repo root (Vite's HTML
+  //      inputs) plus public/, which is copied in verbatim. Read from disk
+  //      rather than listed by hand, because the hand-written list had quietly
+  //      fallen seven pages behind: /app-home and /cart among them, which are
+  //      the installed app's Home and Cart tabs. Unlisted, they matched the
+  //      catch-all, were proxied to the admin slug resolver, and ended up on
+  //      the marketing homepage via the final /:path* fallback — so the app's
+  //      Home button opened the website. Deriving the list is what stops that
+  //      happening again the next page someone adds.
+  //   2. The names below, which have no file of their own: routing-only
+  //      namespaces ("conditions"), a legacy alias ("cancer-medicine") and the
+  //      category folders, all of which are served by rewrites further down.
+  const htmlNamesIn = (dir) => {
+    try {
+      return fs.readdirSync(dir)
+        .filter((f) => f.endsWith('.html'))
+        .map((f) => f.replace(/\.html$/, ''));
+    } catch {
+      return [];
+    }
+  };
+  const shippedPageNames = [
+    ...htmlNamesIn(path.join(__dirname, '..')),
+    ...htmlNamesIn(path.join(__dirname, '..', 'public')),
+  ];
+
+  const STATIC_PAGE_NAMES = Array.from(new Set([
+    ...shippedPageNames,
     '404', 'about-us', 'blog', 'blog-detail', 'careers', 'contact-us', 'conditions', 'csr', 'edit-profile',
     'employee-verification', 'global-presence', 'home-preview', 'meditations', 'order-medicines',
     'patient-assistance-program', 'product-detail', 'profile', 'services', 'under-development', 'ungc',
-    'cancer-medicine', ...allFolders
-  ];
+    'cancer-medicine', ...allFolders,
+  ]));
   const STATIC_EXCLUSIONS = `${STATIC_PAGE_NAMES.join('|')}|api/|wp-json/|wp-content/|assets/|public/|components/|data/|src/|dist/|node_modules/|_vercel/|masteradmin|masteradlorock|masteradlorockpd|masteradlorockpdprocess|masteradlogriyon|adminadlorock|[^/]+\\.[^/]+$`;
   const catchAllSource = `/:slug((?!${STATIC_EXCLUSIONS})[^/]+)`;
 

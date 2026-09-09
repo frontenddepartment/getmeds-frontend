@@ -25,6 +25,8 @@
 
 const DB_NAME = 'getmeds-offline'
 const DB_VERSION = 1
+import { recordInquiry } from './accountStore'
+
 const QUEUE_STORE = 'inquiry-queue'
 const DRAFT_STORE = 'inquiry-drafts'
 
@@ -140,10 +142,51 @@ interface SubmitOptions {
  * backend already refused, possibly duplicating a Google Sheet row. Only a
  * genuine transport failure gets queued.
  */
+/**
+ * What was asked for, pulled out of a payload whose shape differs per form.
+ * Every inquiry in the app routes through submitInquiry(), so this is the one
+ * place that has to know the two shapes in use: a structural item list, which
+ * the request list sends, and a single product name from a product page.
+ */
+function productsIn(payload: Record<string, unknown>): string[] {
+  const extra = (payload.additionalData ?? {}) as Record<string, unknown>
+
+  const items = extra.items
+  if (Array.isArray(items)) {
+    return items
+      .map((i) => (i && typeof i === 'object' ? String((i as { name?: unknown }).name ?? '') : String(i ?? '')))
+      .map((s) => s.trim())
+      .filter(Boolean)
+  }
+
+  const single = extra.productName
+  if (typeof single === 'string' && single.trim()) return [single.trim()]
+
+  return []
+}
+
 export async function submitInquiry(
   payload: Record<string, unknown>,
   { endpoint, returnPath = window.location.pathname, needsVerification }: SubmitOptions
 ): Promise<SubmitResult> {
+  /**
+   * The account screen's history is written here rather than in each form,
+   * because this is the only door every inquiry goes through — a form added
+   * next year gets a history entry without anyone remembering to add one.
+   *
+   * Awaited rather than fired and forgotten: submitting is usually followed by
+   * a success screen or a navigation, and an unawaited write is exactly the
+   * kind that loses the race. recordInquiry() swallows its own failures, so
+   * waiting on it cannot cost the visitor their inquiry.
+   */
+  const remember = (status: 'sent' | 'queued') =>
+    recordInquiry({
+      status,
+      inquiryType: typeof payload.inquiryType === 'string' ? payload.inquiryType : undefined,
+      products: productsIn(payload),
+      message: typeof payload.message === 'string' ? payload.message : undefined,
+    })
+
   const files = payload.files
   const hadAttachments = Array.isArray(files) && files.length > 0
   // Derived from the payload rather than declared per form: a body carrying a
@@ -161,6 +204,7 @@ export async function submitInquiry(
       })
       if (response.ok) {
         const body = await response.json().catch(() => null)
+        await remember('sent')
         return { status: 'sent', body }
       }
 
@@ -192,6 +236,7 @@ export async function submitInquiry(
     // The form that called us is about to stop showing a spinner. It must not
     // claim the inquiry was received, so the notice component is told instead.
     window.dispatchEvent(new CustomEvent(INQUIRY_QUEUED_EVENT))
+    await remember('queued')
     return { status: 'queued', hadAttachments }
   } catch {
     return { status: 'failed', error: 'You appear to be offline, and this device could not save the inquiry.' }

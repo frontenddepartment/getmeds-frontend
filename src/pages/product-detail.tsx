@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useMemo, useState, useRef } from 'react';
 import { useProducts, useCategories, useImageMapper } from '../lib/useSanity';
 import { urlFor } from '../lib/sanity';
 import type { Product as SanityProduct, Category } from '../types/sanity';
@@ -7,7 +7,8 @@ import { getApiUrl } from '../lib/api';
 import { submitInquiry } from '../lib/offlineInquiry';
 import { Turnstile, useTurnstile } from '../lib/turnstile';
 import { AddToCart } from '../lib/AddToCart';
-import { needsPrescription } from '../lib/cart';
+import { isAppMode, needsPrescription } from '../lib/cart';
+import { loadDetails } from '../lib/accountStore';
 import { setPageMeta, injectJsonLd, truncateAtWord, ORGANIZATION_ID } from '../lib/seo';
 import { validateFiles, ALLOWED_FILE_TYPES_ACCEPT } from '../lib/fileUpload';
 import AlertModal from '../lib/AlertModal';
@@ -28,6 +29,20 @@ const formatFieldWithLineBreaks = (text: string | undefined | null) => {
   ));
 };
 
+/**
+ * Same rule the products listing uses: the sheet's own URL wins, and only when
+ * there is none is one assembled from folder + slug. The sheet's URL is the
+ * canonical one — it is what the sitemap and the prerenderer both emit — so
+ * guessing when it exists would quietly produce a second address for the same
+ * page.
+ */
+const productHref = (p: { productPageUrl?: string; categoryFolder?: string; slug?: { current?: string } }) => {
+  if (p.productPageUrl) {
+    return '/' + p.productPageUrl.replace(/^https?:\/\//, '').replace(/^[^/]+\/?/, '');
+  }
+  return `/${p.categoryFolder || 'product-range'}/${p.slug?.current || ''}`;
+};
+
 const renderRichContent = (val: any) => {
   if (!val) return null;
   if (Array.isArray(val)) {
@@ -44,6 +59,23 @@ export default function ProductDetail() {
   const [product, setProduct] = useState<ProductWithCategory | null>(null);
   const [notFound, setNotFound] = useState(false);
   const [descriptionTab, setDescriptionTab] = useState<'description' | 'prescription'>('description');
+  /**
+   * Whether to draw the phone-shaped version of this page.
+   *
+   * This page is shared between the website and the installed app, and the two
+   * want genuinely different things from the top of it: the website wants a
+   * breadcrumb trail and a side-by-side hero, because it is a page someone
+   * landed on from search and needs to orient in. The app wants a back arrow,
+   * one big picture and a thumb-reachable action, because it is a screen
+   * someone tapped into from a list they were already browsing.
+   *
+   * Decided during the first render rather than in an effect, so the app never
+   * shows a frame of the website layout before correcting itself. That is only
+   * safe because the entry mounts with createRoot, not hydrateRoot — nothing
+   * server-rendered has to match. The prerender passes are pure HTML string
+   * templating and never execute this component, so they see none of this.
+   */
+  const [app] = useState(isAppMode);
 
   const [zoomedImageOpen, setZoomedImageOpen] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
@@ -51,6 +83,29 @@ export default function ProductDetail() {
     name: '', phone: '', email: '', message: '', age: '',
     address: '', contactName: '', contactRelationship: '', terms: false, privacyConsent: false
   });
+  /**
+   * Autofill from the account, matching the request list and the order form.
+   * Fills only still-empty fields, and runs once — see the note in cart.tsx.
+   */
+  const prefilled = useRef(false);
+  useEffect(() => {
+    if (prefilled.current) return;
+    prefilled.current = true;
+    loadDetails().then((d) => {
+      if (!d) return;
+      setFormData((f) => ({
+        ...f,
+        name: f.name || d.name || '',
+        email: f.email || d.email || '',
+        phone: f.phone || d.phone || '',
+        age: f.age || d.age || '',
+        address: f.address || d.address || '',
+        contactName: f.contactName || d.contactName || '',
+        contactRelationship: f.contactRelationship || d.contactRelationship || '',
+      }));
+    });
+  }, []);
+
   const [ageDropdownOpen, setAgeDropdownOpen] = useState(false);
   const ageDropdownRef = useRef<HTMLDivElement>(null);
   const [userTypeMenuOpen, setUserTypeMenuOpen] = useState(false);
@@ -359,6 +414,54 @@ export default function ProductDetail() {
 
   const backUrl = product?.categoryFolder ? `/${product.categoryFolder}` : '/cancer-medicines';
 
+  /**
+   * The app header's share button. Uses the OS share sheet where there is one —
+   * in an installed app that is the whole point, since the useful destinations
+   * are Messenger and Viber rather than anything the page could link to — and
+   * falls back to the clipboard elsewhere.
+   */
+  const shareProduct = async () => {
+    const url = window.location.href;
+    const title = product ? getProductDisplayName(product) : 'Getmeds';
+    try {
+      if (navigator.share) {
+        await navigator.share({ title, url });
+        return;
+      }
+      await navigator.clipboard.writeText(url);
+      showAlert('Link copied to your clipboard.', 'Share');
+    } catch {
+      // Dismissing the share sheet rejects the promise. That is a choice, not
+      // a failure, so there is nothing to tell anyone about.
+    }
+  };
+
+  /**
+   * "Similar products", app only.
+   *
+   * Ranked rather than filtered: same condition first, then anything else in
+   * the same category folder. A person looking at one taxane usually wants the
+   * other taxanes before they want a different cancer's medicine, and sorting
+   * by that is the entire difference between a useful row and a random one.
+   */
+  const similar = useMemo(() => {
+    if (!product || !productsData) return [] as ProductWithCategory[];
+    const condition = (product.subCategory || '').trim().toLowerCase();
+    const folder = (product.categoryFolder || '').trim();
+    const scored: Array<{ p: ProductWithCategory; rank: number }> = [];
+
+    for (const p of productsData) {
+      if (p._id === product._id) continue;
+      if (p.availability === false) continue;
+      const sameCondition = condition && (p.subCategory || '').trim().toLowerCase() === condition;
+      const sameFolder = folder && (p.categoryFolder || '').trim() === folder;
+      if (!sameCondition && !sameFolder) continue;
+      scored.push({ p, rank: sameCondition ? 0 : 1 });
+    }
+
+    return scored.sort((a, b) => a.rank - b.rank).slice(0, 6).map((s) => s.p);
+  }, [product, productsData]);
+
 
   const getProductImage = (p: ProductWithCategory, size?: number) => {
     if (p.image && p.image.asset) {
@@ -538,8 +641,31 @@ export default function ProductDetail() {
       <div id="navbar-container" className="shrink-0 z-[50]" />
 
       <main className="flex-1">
+        {/* App header. Replaces the breadcrumb bar inside the installed app,
+            where a four-level trail is more chrome than a phone screen can
+            spare and the back arrow says the same thing in one glyph. */}
+        {app && (
+          <div className="sticky top-0 z-30 flex items-center justify-between bg-white px-4 py-3">
+            <a
+              href={backUrl}
+              aria-label="Back"
+              className="flex h-10 w-10 items-center justify-center rounded-full bg-[#F3F6FB] text-gray-700"
+            >
+              <i className="fa-solid fa-arrow-left text-[14px]" />
+            </a>
+            <button
+              type="button"
+              onClick={shareProduct}
+              aria-label="Share this product"
+              className="flex h-10 w-10 items-center justify-center rounded-full bg-[#F3F6FB] text-gray-700"
+            >
+              <i className="fa-solid fa-share-nodes text-[14px]" />
+            </button>
+          </div>
+        )}
+
         {/* Breadcrumb Header */}
-        <div className="bg-white px-6 py-3 flex items-center justify-between border-b border-gray-100 sticky top-0 z-10">
+        <div className={`bg-white px-6 py-3 items-center justify-between border-b border-gray-100 sticky top-0 z-10 ${app ? 'hidden' : 'flex'}`}>
           <nav aria-label="Breadcrumb">
             <ol className="flex items-center gap-1.5 text-[12px] flex-wrap">
               <li>
@@ -642,6 +768,92 @@ export default function ProductDetail() {
 
               {/* Left Column: Product Info */}
               <div className="lg:w-1/2 p-6 lg:p-8 border-b lg:border-b-0 lg:border-r border-gray-100 flex flex-col">
+                {app ? (
+                  /* ── The app hero ──
+                     One column, picture first, because on a phone the picture
+                     is the fastest way to confirm "yes, this is the box I was
+                     given" — which is the question most people actually arrive
+                     with. The desktop arrangement below puts text first, which
+                     is right there and wrong here. */
+                  <div className="-mx-6 mb-5 px-4">
+                    {(() => {
+                      const resolvedImageUrl = getProductImage(product);
+                      const hasImage = resolvedImageUrl && !resolvedImageUrl.endsWith('no-image.png');
+                      return (
+                        <div
+                          onClick={hasImage ? () => setZoomedImageOpen(true) : undefined}
+                          className={`mb-4 flex aspect-[4/3] w-full flex-col items-center justify-center overflow-hidden rounded-[22px] bg-[#F6F8FC] p-6 ${hasImage ? 'cursor-zoom-in' : ''}`}
+                        >
+                          {hasImage ? (
+                            <img
+                              src={resolvedImageUrl}
+                              alt={product.name}
+                              className="h-full w-full object-contain mix-blend-multiply"
+                              onError={(e) => { const img = e.currentTarget; img.onerror = null; img.src = '/assets/no-image.png'; }}
+                            />
+                          ) : (
+                            <>
+                              <i className="fa-regular fa-image mb-3 text-4xl text-gray-300" />
+                              <span className="text-xs font-medium uppercase tracking-wider text-gray-400">No Image</span>
+                            </>
+                          )}
+                        </div>
+                      );
+                    })()}
+
+                    <h1 className="text-[21px] font-bold leading-tight text-gray-900">
+                      {getProductDisplayName(product)}
+                    </h1>
+
+                    {/* Where a storefront would link to the seller's shop. The
+                        nearest true thing here is the section this product was
+                        filed under, which is also where "back" goes. */}
+                    <a
+                      href={backUrl}
+                      className="mt-2 inline-flex items-center gap-1.5 text-[12.5px] font-semibold capitalize"
+                      style={{ color: '#0D99FF' }}
+                    >
+                      {(product.categoryFolder || 'product range').replace(/-/g, ' ')}
+                      <i className="fa-solid fa-chevron-right text-[9px]" />
+                    </a>
+
+                    <div className="mt-3 flex flex-wrap items-center gap-2">
+                      {product.availability !== false && (
+                        <span className="inline-flex items-center gap-1.5 rounded-full bg-green-50 px-2.5 py-1 text-[11px] font-semibold text-green-700">
+                          <i className="fa-solid fa-check text-[9px]" /> In stock
+                        </span>
+                      )}
+                      {product.prescription?.toUpperCase() === 'RX' && (
+                        <span className="inline-flex items-center gap-1.5 rounded-full bg-red-50 px-2.5 py-1 text-[11px] font-semibold text-red-600">
+                          <i className="fa-solid fa-file-prescription text-[9px]" /> Prescription required
+                        </span>
+                      )}
+                      {product.strength && (
+                        <span className="rounded-full bg-[#F1F6FC] px-2.5 py-1 text-[11px] font-semibold text-gray-600">
+                          {product.strength}
+                        </span>
+                      )}
+                      {product.form && (
+                        <span className="rounded-full bg-[#F1F6FC] px-2.5 py-1 text-[11px] font-semibold capitalize text-gray-600">
+                          {product.form}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* The slot a storefront gives to price. Saying plainly
+                        that there is a quote coming is more useful than an
+                        empty space, and it sets the expectation the inquiry
+                        form below then meets. */}
+                    <div className="mt-4 rounded-[16px] bg-[#F6F8FC] p-4">
+                      <p className="text-[10.5px] font-bold uppercase tracking-wider text-gray-400">Price</p>
+                      <p className="mt-0.5 text-[15px] font-bold text-gray-900">Quoted on request</p>
+                      <p className="mt-1 text-[11.5px] leading-relaxed text-gray-500">
+                        Add this to your list, or send an inquiry below, and our team will come
+                        back to you with availability and a formal quote.
+                      </p>
+                    </div>
+                  </div>
+                ) : (
                 <div className="flex flex-col-reverse md:flex-row gap-8 mb-4">
                   <div className="w-full md:w-1/2 flex flex-col justify-center">
                     <div className="flex flex-wrap items-start gap-x-3 gap-y-1 mb-3 text-sm text-gray-600">
@@ -730,6 +942,7 @@ export default function ProductDetail() {
                     })()}
                   </div>
                 </div>
+                )}
 
                 {/* Description */}
                 <div className="bg-white rounded-[15px] border border-gray-100 p-5">
@@ -845,7 +1058,9 @@ export default function ProductDetail() {
               </div>
 
               {/* Right Column: Inquiry Form */}
-              <div className="lg:w-1/2 bg-white p-6 lg:p-8 pb-10">
+              {/* scroll-mt clears the app's sticky header, which would
+                  otherwise cover the heading this scrolls to. */}
+              <div id="gm-inquiry" className="lg:w-1/2 bg-white p-6 lg:p-8 pb-10 scroll-mt-[68px]">
                 <div className="mb-6">
                   <h4 className="text-lg font-bold text-gray-900">Send Inquiry</h4>
                   <p className="text-xs text-gray-500 mt-1">Submit your details to get a formal quote for this product.</p>
@@ -1258,9 +1473,115 @@ export default function ProductDetail() {
                 )}
               </div>
             </div>
+
+            {/* Similar products — app only. On the website this row would be
+                competing with the category listing that is one click away in
+                the breadcrumb; in the app there is no breadcrumb, so this is
+                the only sideways move on the screen. */}
+            {app && similar.length > 0 && (
+              /* Tinted, unlike everything above it. The white cards need a
+                 ground to sit on, and the colour change doubles as the break
+                 between "this product" and "other products". */
+              <section className="bg-[#F3F6FB] px-4 pb-8 pt-6">
+                <div className="mb-3 flex items-baseline justify-between">
+                  <h2 className="text-[16px] font-bold tracking-tight text-gray-900">Similar products</h2>
+                  <a href={backUrl} className="text-[12px] font-semibold" style={{ color: '#0D99FF' }}>See all</a>
+                </div>
+                <div className="space-y-2.5">
+                  {similar.map((s) => {
+                    const img = getProductImage(s, 140);
+                    const hasImg = img && !img.endsWith('no-image.png');
+                    return (
+                      <a
+                        key={s._id}
+                        href={productHref(s)}
+                        className="flex items-center gap-3 rounded-[16px] bg-white p-2.5"
+                        style={{ boxShadow: '0 2px 10px rgba(23,43,77,.055)' }}
+                      >
+                        <div className="flex h-[56px] w-[56px] shrink-0 items-center justify-center overflow-hidden rounded-xl bg-[#F6F8FC] p-1.5">
+                          {hasImg ? (
+                            <img
+                              src={img}
+                              alt=""
+                              loading="lazy"
+                              className="h-full w-full object-contain mix-blend-multiply"
+                              onError={(e) => { const i = e.currentTarget; i.onerror = null; i.src = '/assets/no-image.png'; }}
+                            />
+                          ) : (
+                            <i className="fa-solid fa-pills text-[16px] text-gray-300" />
+                          )}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <h3 className="line-clamp-1 text-[13.5px] font-semibold text-gray-900">
+                            {getProductDisplayName(s)}
+                          </h3>
+                          <p className="mt-0.5 line-clamp-1 text-[11.5px] text-gray-400">
+                            {[s.strength, s.form].filter(Boolean).join(' · ') || s.subCategory || 'Details on request'}
+                          </p>
+                        </div>
+                        {s.prescription?.toUpperCase() === 'RX' && (
+                          <span className="shrink-0 rounded-full bg-amber-50 px-2 py-[3px] text-[9.5px] font-bold text-amber-700">
+                            Rx
+                          </span>
+                        )}
+                        <i className="fa-solid fa-chevron-right shrink-0 text-[11px] text-gray-300" />
+                      </a>
+                    );
+                  })}
+                </div>
+              </section>
+            )}
           </div>
         )}
       </main>
+
+      {/* Clears the sticky bar below. pwaTabbar.js already pads <body> for the
+          tab bar itself, but it knows nothing about this second bar stacked on
+          top of it, and without this the end of the inquiry form sits under it. */}
+      {app && product && <div aria-hidden="true" className="h-[76px] shrink-0" />}
+
+      {/* The app's sticky action bar.
+          Pinned above the tab bar rather than left in the flow, because the
+          inquiry form is a long way down a long page and the one thing someone
+          decides on this screen — "yes, this one" — should never require
+          scrolling to act on. The offset is measured from the tab bar's own
+          published footprint, not a copy of its height. */}
+      {app && product && (
+        <>
+        <div
+          className="fixed inset-x-0 z-[9995] flex items-center gap-2.5 border-t border-gray-100 bg-white px-4 py-3"
+          /* Measured from the tab bar's own footprint rather than a copy of
+             its height — pwaTabbar.js publishes --gm-tabbar-space precisely so
+             this cannot fall out of step when the bar changes shape. The
+             fallback is what that variable currently resolves to on a phone
+             with no home indicator. */
+          style={{ bottom: 'calc(var(--gm-tabbar-space, 74px) + 8px)' }}
+        >
+          <div className="flex-1">
+            <AddToCart
+              variant="full"
+              item={{
+                id: String(product._id || location.pathname),
+                name: getProductDisplayName(product),
+                strength: product.strength,
+                form: product.form,
+                url: location.pathname,
+                needsRx: needsPrescription((product as any).Prescription),
+                image: product.image?.asset ? getProductImage(product, 140) : undefined,
+              }}
+            />
+          </div>
+          <button
+            type="button"
+            onClick={() => document.getElementById('gm-inquiry')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+            className="flex-1 rounded-full py-3 text-[13px] font-semibold text-white"
+            style={{ background: 'linear-gradient(135deg,#1D9FDA,#61A644)' }}
+          >
+            Send inquiry
+          </button>
+        </div>
+        </>
+      )}
 
       {/* Success Modal */}
       {successModalOpen && (

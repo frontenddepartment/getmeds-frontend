@@ -2,6 +2,7 @@
 import { injectHTML } from '../lib/injectHTML';
 import { getApiUrl } from '../lib/api';
 import { submitInquiry } from '../lib/offlineInquiry';
+import { loadDetails } from '../lib/accountStore';
 import { Turnstile, useTurnstile, TURNSTILE_SITE_KEY } from '../lib/turnstile';
 import {
   BadgeCheck, Factory, FileCheck, Truck, Headset, Gavel, Siren,
@@ -225,6 +226,34 @@ export default function OrderMedicines() {
     terms: false,
     privacyConsent: false
   });
+  /**
+   * Autofill from the account, matching the request list.
+   *
+   * Fills only fields that are still empty and runs exactly once, so it can
+   * never overwrite something half-typed and a value the visitor has
+   * deliberately cleared does not reappear underneath them. The field names
+   * differ from the stored ones here — this form calls it patientName — which
+   * is why the mapping is spelled out rather than spread.
+   */
+  const prefilled = useRef(false);
+  useEffect(() => {
+    if (prefilled.current) return;
+    prefilled.current = true;
+    loadDetails().then((d) => {
+      if (!d) return;
+      setFormData((f) => ({
+        ...f,
+        patientName: f.patientName || d.name || '',
+        email: f.email || d.email || '',
+        phone: f.phone || d.phone || '',
+        age: f.age || d.age || '',
+        address: f.address || d.address || '',
+        contactName: f.contactName || d.contactName || '',
+        contactRelationship: f.contactRelationship || d.contactRelationship || '',
+      }));
+    });
+  }, []);
+
   const [patientIdFile, setPatientIdFile] = useState<File | null>(null);
   const [contactSameAsPatient, setContactSameAsPatient] = useState(false);
   const [alertModal, setAlertModal] = useState<{ title?: string; message: string | string[] } | null>(null);

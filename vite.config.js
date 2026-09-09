@@ -52,15 +52,57 @@ const PWA_MODE = `
 })();
 </script>`;
 
+/**
+ * The three pieces that turn an ordinary page into the installed app's shell:
+ * the standalone probe (which sets html.pwa-standalone and sends "/" to the
+ * app's own home), the app CSS, and the tab bar.
+ *
+ * Pulled out of the build plugin because the dev server needs it too. The dev
+ * middleware below serves most pages by reading the file and calling res.end()
+ * directly, which bypasses Vite's transformIndexHtml pipeline entirely — so
+ * for a long time NO page in dev got any of this. An app installed from the
+ * dev server (the only way to exercise the installed app while working on it)
+ * therefore opened the marketing homepage, with the website's top bar and no
+ * tab bar, and "/" never redirected to /app-home: the app silently degraded
+ * into the website.
+ *
+ * Service-worker registration is deliberately NOT part of this. That is the
+ * piece the original "never in dev" warning was really about — a stale worker
+ * holding on to yesterday's modules is a miserable thing to debug — and
+ * nothing about the app shell needs it.
+ */
+const injectAppShell = (html) =>
+  html
+    .replace('<head>', '<head>' + PWA_MODE)
+    .replace('</head>', PWA_TABBAR_CSS + '</head>')
+    .replace('</body>', PWA_TABBAR + '\n</body>');
+
 function injectPwaRuntime() {
   return {
     name: 'inject-pwa-runtime',
-    apply: 'build', // never in dev: a stale SW is a miserable thing to debug
+    apply: 'build', // the SW half of this must never run in dev
     transformIndexHtml(html) {
-      return html
-        .replace('<head>', '<head>' + PWA_MODE)
-        .replace('</head>', PWA_TABBAR_CSS + '</head>')
-        .replace('</body>', PWA_TABBAR + SW_REGISTER + '\n</body>');
+      return injectAppShell(html).replace('</body>', SW_REGISTER + '\n</body>');
+    },
+  };
+}
+
+/**
+ * The dev counterpart, covering the pages the middleware below does NOT
+ * special-case — /app-home and /cart among them, which it leaves to Vite's own
+ * HTML handling (Vite resolves the extensionless path by appending .html).
+ *
+ * The two never double up: a page the middleware answers is written straight
+ * to the socket and never reaches this hook, and a page that reaches this hook
+ * was never touched by the middleware. Shell only, no service worker, for the
+ * reason given on injectAppShell.
+ */
+function injectAppShellDev() {
+  return {
+    name: 'inject-app-shell-dev',
+    apply: 'serve',
+    transformIndexHtml(html) {
+      return injectAppShell(html);
     },
   };
 }
@@ -339,6 +381,7 @@ export default defineConfig(async ({ mode }) => {
     plugins: [
       sanityImageSyncPlugin(),
       injectPwaRuntime(),
+      injectAppShellDev(),
       VitePWA({
         // injectManifest, not generateSW: the routing rules in src/sw.js —
         // blog excluded, product URLs falling back to a shared shell — are not
@@ -412,7 +455,7 @@ export default defineConfig(async ({ mode }) => {
             if (cleanPath === '/index.html') {
               const htmlPath = path.join(process.cwd(), 'home-preview.html');
               if (fs.existsSync(htmlPath)) {
-                const htmlContent = fs.readFileSync(htmlPath, 'utf-8');
+                const htmlContent = injectAppShell(fs.readFileSync(htmlPath, 'utf-8'));
                 res.setHeader('Content-Type', 'text/html');
                 res.end(htmlContent);
                 return;
@@ -433,7 +476,7 @@ export default defineConfig(async ({ mode }) => {
             if (cleanPath === '/patient-assistance-program' || cleanPath === '/patient-assistance-program/') {
               const htmlPath = path.join(process.cwd(), 'patient-assistance-program-preview.html');
               if (fs.existsSync(htmlPath)) {
-                const htmlContent = fs.readFileSync(htmlPath, 'utf-8');
+                const htmlContent = injectAppShell(fs.readFileSync(htmlPath, 'utf-8'));
                 res.setHeader('Content-Type', 'text/html');
                 res.end(htmlContent);
                 return;
@@ -448,7 +491,7 @@ export default defineConfig(async ({ mode }) => {
             if (cleanPath === '/ungc' || cleanPath === '/ungc/') {
               const htmlPath = path.join(process.cwd(), 'ungc.html');
               if (fs.existsSync(htmlPath)) {
-                const htmlContent = fs.readFileSync(htmlPath, 'utf-8');
+                const htmlContent = injectAppShell(fs.readFileSync(htmlPath, 'utf-8'));
                 res.setHeader('Content-Type', 'text/html');
                 res.end(htmlContent);
                 return;
@@ -463,7 +506,7 @@ export default defineConfig(async ({ mode }) => {
             if (cleanPath === '/careers' || cleanPath === '/careers/') {
               const htmlPath = path.join(process.cwd(), 'careers.html');
               if (fs.existsSync(htmlPath)) {
-                const htmlContent = fs.readFileSync(htmlPath, 'utf-8');
+                const htmlContent = injectAppShell(fs.readFileSync(htmlPath, 'utf-8'));
                 res.setHeader('Content-Type', 'text/html');
                 res.end(htmlContent);
                 return;
@@ -478,7 +521,7 @@ export default defineConfig(async ({ mode }) => {
             if (cleanPath === '/csr' || cleanPath === '/csr/') {
               const htmlPath = path.join(process.cwd(), 'csr.html');
               if (fs.existsSync(htmlPath)) {
-                const htmlContent = fs.readFileSync(htmlPath, 'utf-8');
+                const htmlContent = injectAppShell(fs.readFileSync(htmlPath, 'utf-8'));
                 res.setHeader('Content-Type', 'text/html');
                 res.end(htmlContent);
                 return;
@@ -493,7 +536,7 @@ export default defineConfig(async ({ mode }) => {
             if (cleanPath === '/global-presence' || cleanPath === '/global-presence/') {
               const htmlPath = path.join(process.cwd(), 'global-presence.html');
               if (fs.existsSync(htmlPath)) {
-                const htmlContent = fs.readFileSync(htmlPath, 'utf-8');
+                const htmlContent = injectAppShell(fs.readFileSync(htmlPath, 'utf-8'));
                 res.setHeader('Content-Type', 'text/html');
                 res.end(htmlContent);
                 return;
@@ -508,7 +551,7 @@ export default defineConfig(async ({ mode }) => {
             if (cleanPath === '/services' || cleanPath === '/services/') {
               const htmlPath = path.join(process.cwd(), 'services.html');
               if (fs.existsSync(htmlPath)) {
-                const htmlContent = fs.readFileSync(htmlPath, 'utf-8');
+                const htmlContent = injectAppShell(fs.readFileSync(htmlPath, 'utf-8'));
                 res.setHeader('Content-Type', 'text/html');
                 res.end(htmlContent);
                 return;
@@ -523,7 +566,7 @@ export default defineConfig(async ({ mode }) => {
             if (cleanPath === '/contact-us' || cleanPath === '/contact-us/') {
               const htmlPath = path.join(process.cwd(), 'contact-us.html');
               if (fs.existsSync(htmlPath)) {
-                const htmlContent = fs.readFileSync(htmlPath, 'utf-8');
+                const htmlContent = injectAppShell(fs.readFileSync(htmlPath, 'utf-8'));
                 res.setHeader('Content-Type', 'text/html');
                 res.end(htmlContent);
                 return;
@@ -538,7 +581,7 @@ export default defineConfig(async ({ mode }) => {
             if (cleanPath === '/about-us' || cleanPath === '/about-us/') {
               const htmlPath = path.join(process.cwd(), 'about-us.html');
               if (fs.existsSync(htmlPath)) {
-                const htmlContent = fs.readFileSync(htmlPath, 'utf-8');
+                const htmlContent = injectAppShell(fs.readFileSync(htmlPath, 'utf-8'));
                 res.setHeader('Content-Type', 'text/html');
                 res.end(htmlContent);
                 return;
@@ -553,7 +596,7 @@ export default defineConfig(async ({ mode }) => {
             if (cleanPath === '/meditations' || cleanPath === '/meditations/') {
               const htmlPath = path.join(process.cwd(), 'meditations.html');
               if (fs.existsSync(htmlPath)) {
-                const htmlContent = fs.readFileSync(htmlPath, 'utf-8');
+                const htmlContent = injectAppShell(fs.readFileSync(htmlPath, 'utf-8'));
                 res.setHeader('Content-Type', 'text/html');
                 res.end(htmlContent);
                 return;
@@ -568,7 +611,7 @@ export default defineConfig(async ({ mode }) => {
             if (cleanPath === '/employee-verification' || cleanPath === '/employee-verification/') {
               const htmlPath = path.join(process.cwd(), 'employee-verification.html');
               if (fs.existsSync(htmlPath)) {
-                const htmlContent = fs.readFileSync(htmlPath, 'utf-8');
+                const htmlContent = injectAppShell(fs.readFileSync(htmlPath, 'utf-8'));
                 res.setHeader('Content-Type', 'text/html');
                 res.end(htmlContent);
                 return;
@@ -595,7 +638,7 @@ export default defineConfig(async ({ mode }) => {
               if (cleanPath === `/${route}` || cleanPath === `/${route}/`) {
                 const htmlPath = path.join(process.cwd(), 'policy.html');
                 if (fs.existsSync(htmlPath)) {
-                  const htmlContent = fs.readFileSync(htmlPath, 'utf-8');
+                  const htmlContent = injectAppShell(fs.readFileSync(htmlPath, 'utf-8'));
                   res.setHeader('Content-Type', 'text/html');
                   res.end(htmlContent);
                   return;
@@ -616,7 +659,7 @@ export default defineConfig(async ({ mode }) => {
                 const htmlPath = path.join(process.cwd(), 'product-detail.html');
                 if (fs.existsSync(htmlPath)) {
                   res.setHeader('Content-Type', 'text/html');
-                  res.end(fs.readFileSync(htmlPath, 'utf-8'));
+                  res.end(injectAppShell(fs.readFileSync(htmlPath, 'utf-8')));
                   return;
                 }
               } else {
@@ -642,7 +685,7 @@ export default defineConfig(async ({ mode }) => {
               const htmlPath = path.join(process.cwd(), 'cancer-medicines.html');
               if (fs.existsSync(htmlPath)) {
                 res.setHeader('Content-Type', 'text/html');
-                res.end(fs.readFileSync(htmlPath, 'utf-8'));
+                res.end(injectAppShell(fs.readFileSync(htmlPath, 'utf-8')));
                 return;
               }
             }
@@ -670,7 +713,7 @@ export default defineConfig(async ({ mode }) => {
               const htmlPath = path.join(process.cwd(), isListing ? 'cancer-medicines.html' : 'product-detail.html');
               if (fs.existsSync(htmlPath)) {
                 res.setHeader('Content-Type', 'text/html');
-                res.end(fs.readFileSync(htmlPath, 'utf-8'));
+                res.end(injectAppShell(fs.readFileSync(htmlPath, 'utf-8')));
                 return;
               }
             }
@@ -683,7 +726,7 @@ export default defineConfig(async ({ mode }) => {
             if (cleanPath === '/product-detail' || cleanPath === '/product-detail/') {
               const htmlPath = path.join(process.cwd(), 'product-detail.html');
               if (fs.existsSync(htmlPath)) {
-                const htmlContent = fs.readFileSync(htmlPath, 'utf-8');
+                const htmlContent = injectAppShell(fs.readFileSync(htmlPath, 'utf-8'));
                 res.setHeader('Content-Type', 'text/html');
                 res.end(htmlContent);
                 return;
@@ -698,7 +741,7 @@ export default defineConfig(async ({ mode }) => {
             if (cleanPath === '/order-medicines' || cleanPath === '/order-medicines/') {
               const htmlPath = path.join(process.cwd(), 'order-medicines.html');
               if (fs.existsSync(htmlPath)) {
-                const htmlContent = fs.readFileSync(htmlPath, 'utf-8');
+                const htmlContent = injectAppShell(fs.readFileSync(htmlPath, 'utf-8'));
                 res.setHeader('Content-Type', 'text/html');
                 res.end(htmlContent);
                 return;
@@ -713,7 +756,7 @@ export default defineConfig(async ({ mode }) => {
             if (cleanPath === '/article-detail.html' || cleanPath === '/article-detail' || cleanPath === '/article-detail/') {
               const htmlPath = path.join(process.cwd(), 'blog-detail.html');
               if (fs.existsSync(htmlPath)) {
-                const htmlContent = fs.readFileSync(htmlPath, 'utf-8');
+                const htmlContent = injectAppShell(fs.readFileSync(htmlPath, 'utf-8'));
                 res.setHeader('Content-Type', 'text/html');
                 res.end(htmlContent);
                 return;
@@ -728,7 +771,7 @@ export default defineConfig(async ({ mode }) => {
             if (cleanPath === '/blog' || cleanPath === '/blog/') {
               const htmlPath = path.join(process.cwd(), 'blog.html');
               if (fs.existsSync(htmlPath)) {
-                const htmlContent = fs.readFileSync(htmlPath, 'utf-8');
+                const htmlContent = injectAppShell(fs.readFileSync(htmlPath, 'utf-8'));
                 res.setHeader('Content-Type', 'text/html');
                 res.end(htmlContent);
                 return;
@@ -737,7 +780,7 @@ export default defineConfig(async ({ mode }) => {
             if (cleanPath.startsWith('/blog/') && cleanPath.split('/').filter(Boolean).length >= 2) {
               const htmlPath = path.join(process.cwd(), 'blog-detail.html');
               if (fs.existsSync(htmlPath)) {
-                const htmlContent = fs.readFileSync(htmlPath, 'utf-8');
+                const htmlContent = injectAppShell(fs.readFileSync(htmlPath, 'utf-8'));
                 res.setHeader('Content-Type', 'text/html');
                 res.end(htmlContent);
                 return;
@@ -746,7 +789,7 @@ export default defineConfig(async ({ mode }) => {
             if (cleanPath === '/' || cleanPath === '/home' || cleanPath === '/home/') {
               const htmlPath = path.join(process.cwd(), 'home-preview.html');
               if (fs.existsSync(htmlPath)) {
-                const htmlContent = fs.readFileSync(htmlPath, 'utf-8');
+                const htmlContent = injectAppShell(fs.readFileSync(htmlPath, 'utf-8'));
                 res.setHeader('Content-Type', 'text/html');
                 res.end(htmlContent);
                 return;

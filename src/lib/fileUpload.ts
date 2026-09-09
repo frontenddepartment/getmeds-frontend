@@ -74,3 +74,58 @@ export function fileToBase64(file: File): Promise<string> {
     reader.onerror = reject
   })
 }
+
+/**
+ * Vercel rejects any request body over ~4.5 MB with a 413 before the function
+ * runs, so an oversized upload never reaches the inquiry endpoint at all — no
+ * row, no email, and nothing in the server logs to explain it. A single phone
+ * photo is routinely 2-5 MB, and base64 adds a further third on top, so a
+ * request carrying one prescription per product plus a valid ID exceeds the
+ * limit almost immediately.
+ *
+ * Redrawing through a canvas at a sane resolution brings a typical photo down
+ * to a few hundred KB with no meaningful loss for reading a prescription, and
+ * it also makes the upload far quicker on mobile data.
+ *
+ * Anything that is not an image (a PDF, say) is returned untouched — there is
+ * no safe lossless way to shrink one here — so callers must still check the
+ * total size.
+ */
+export async function compressImage(
+  file: File,
+  { maxEdge = 1600, quality = 0.72 }: { maxEdge?: number; quality?: number } = {}
+): Promise<File> {
+  if (!file.type.startsWith('image/')) return file
+
+  try {
+    const bitmap = await createImageBitmap(file)
+    const scale = Math.min(1, maxEdge / Math.max(bitmap.width, bitmap.height))
+    // Already small enough to be worth leaving alone.
+    if (scale === 1 && file.size < 600 * 1024) return file
+
+    const canvas = document.createElement('canvas')
+    canvas.width = Math.round(bitmap.width * scale)
+    canvas.height = Math.round(bitmap.height * scale)
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return file
+    ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height)
+
+    const blob: Blob | null = await new Promise((resolve) =>
+      canvas.toBlob(resolve, 'image/jpeg', quality)
+    )
+    if (!blob || blob.size >= file.size) return file // never make it bigger
+
+    const renamed = file.name.replace(/[.][^.]+$/, '') + '.jpg'
+    return new File([blob], renamed, { type: 'image/jpeg', lastModified: Date.now() })
+  } catch {
+    return file // an unreadable image is the caller's problem, not this one's
+  }
+}
+
+/** Roughly what a base64 payload of these files will weigh, in bytes. */
+export function estimateUploadBytes(files: File[]): number {
+  return files.reduce((total, f) => total + Math.ceil(f.size * 4 / 3), 0)
+}
+
+/** Comfortably under Vercel's ~4.5 MB body limit, leaving room for the JSON. */
+export const MAX_UPLOAD_BYTES = 3.5 * 1024 * 1024

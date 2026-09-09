@@ -43,7 +43,11 @@
     </style>
 </head>
 
-<body data-page="app-home" class="bg-white text-gray-800 antialiased">
+<!-- The tinted ground is set here rather than from the React tree so it paints
+     with the shell. Applied after hydration it produces a white flash on every
+     cold start, which is exactly the tell that separates an app from a web
+     page — see the note in src/pages/app-home.tsx. -->
+<body data-page="app-home" style="background:#F3F6FB" class="text-gray-800 antialiased">
     <div id="root"></div>
 
     <script type="module" src="/src/entries/app-home-entry.tsx"></script>
