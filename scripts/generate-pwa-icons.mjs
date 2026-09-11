@@ -9,12 +9,11 @@
  * The source is a wide 16:9 lockup — mark, wordmark and the "Your Compassionate
  * Health Ally" tagline — so nothing here is a plain resize. Two crops are used:
  *
- *   MARK  — just the blue/green cross device on the left. Used everywhere the
- *           icon is rendered small (favicon, home screen, maskable), because
- *           the tagline turns to mush below ~180px and the wide lockup letterboxes
- *           into a thin strip.
- *   FULL  — the whole lockup. Only at 512, which is what Android uses for the
- *           splash screen, where there is room to read it.
+ *   MARK  — just the blue/green cross device on the left. Used for the home
+ *           screen and maskable icons, because the tagline turns to mush below
+ *           ~180px and the wide lockup letterboxes into a thin strip.
+ *   FULL  — the whole lockup. Used at 512 (Android splash screen) and, by
+ *           request, for the browser-tab favicons so the tab matches the navbar.
  *
  * Maskable icons get extra padding: Android crops them to a circle of 80%
  * diameter, and for this portrait mark the largest box fitting that circle is
@@ -78,8 +77,9 @@ const TARGETS = [
   [512, 0.62, 'icon-maskable-512.png', true],
   [192, 0.62, 'icon-maskable-192.png', true],
   [180, 0.80, 'apple-touch-icon.png', true],
-  [32, 0.90, 'favicon-32.png', true],
-  [16, 0.90, 'favicon-16.png', true],
+  // Browser-tab favicons use the full navbar lockup (by request), edge to edge.
+  [32, 1.00, 'favicon-32.png', false],
+  [16, 1.00, 'favicon-16.png', false],
 ]
 
 await mkdir(OUT, { recursive: true })
