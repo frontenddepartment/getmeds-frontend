@@ -158,7 +158,7 @@ RewriteRule ^blog-detail/?$ /blog-detail.html [L]
 # unreliable on this host (confirmed: about-us/etc. always fell through to
 # the final index.html fallback despite about-us.html existing). Update this
 # list if a new top-level page is added.
-RewriteRule ^(404|about-us|blog|blog-preview|careers|contact-us|csr|edit-profile|employee-verification|global-presence|home-preview|meditations|order-medicines|patient-assistance-program|patient-assistance-program-preview|product-detail|profile|services|under-development|ungc)/?$ /$1.html [L]
+RewriteRule ^(404|about-us|blog|blog-preview|careers|coming-soon|contact-us|csr|edit-profile|employee-verification|global-presence|home-preview|meditations|order-medicines|patient-assistance-program|patient-assistance-program-preview|product-detail|profile|services|under-development|ungc)/?$ /$1.html [L]
 
 # -----------------------------------------------------------------------------
 # Unknown single-segment slugs -> resolve-slug lookup (vercel.json's
