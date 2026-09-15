@@ -54,6 +54,7 @@ import {
  */
 const GROUND = '#F3F6FB';
 const BRAND = '#1D9FDA';
+const BRAND_GREEN = '#61A644';
 const CARD_SHADOW = '0 2px 10px rgba(23,43,77,.055)';
 
 const FOLDER_ICON: Record<string, string> = {
@@ -94,16 +95,6 @@ function ProductCard({ p }: { p: CatalogueRow }) {
           className="h-full w-full object-contain mix-blend-multiply"
           onError={(e) => { const i = e.currentTarget; i.onerror = null; i.src = '/assets/no-image.png'; }}
         />
-        {needsRx && (
-          <span className="absolute left-2 top-2 rounded-full bg-amber-50 px-2 py-[3px] text-[9.5px] font-bold uppercase tracking-wide text-amber-700">
-            Rx
-          </span>
-        )}
-        {p.availability !== false && (
-          <span className="absolute right-2 top-2 rounded-full bg-white/90 px-2 py-[3px] text-[9.5px] font-bold text-green-700 backdrop-blur">
-            In stock
-          </span>
-        )}
       </div>
 
       <div className="flex flex-1 flex-col p-3 pt-2.5">
@@ -112,11 +103,33 @@ function ProductCard({ p }: { p: CatalogueRow }) {
         </h3>
         <p className="mt-1 line-clamp-1 text-[11px] text-gray-400">{specLine(p)}</p>
 
-        <div className="mt-auto flex items-center justify-between gap-2 pt-2.5">
-          <span className="text-[11.5px] font-semibold" style={{ color: BRAND }}>
-            Inquire
-          </span>
-          <AddToCart item={cartItemFor(p)} />
+        <div className="mt-auto pt-2.5">
+          {(needsRx || p.availability !== false) && (
+            <div className="mb-2 flex flex-wrap items-center gap-1.5">
+              {needsRx && (
+                <span
+                  className="rounded-full px-2 py-[3px] text-[9.5px] font-medium uppercase tracking-wide text-white"
+                  style={{ background: BRAND }}
+                >
+                  Rx
+                </span>
+              )}
+              {p.availability !== false && (
+                <span
+                  className="rounded-full px-2 py-[3px] text-[9.5px] font-medium text-white"
+                  style={{ background: BRAND_GREEN }}
+                >
+                  In stock
+                </span>
+              )}
+            </div>
+          )}
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-[11.5px] font-semibold" style={{ color: BRAND }}>
+              Inquire
+            </span>
+            <AddToCart item={cartItemFor(p)} />
+          </div>
         </div>
       </div>
     </a>
@@ -126,7 +139,7 @@ function ProductCard({ p }: { p: CatalogueRow }) {
 function SectionHeading({ title, href, cta = 'See all' }: { title: string; href: string; cta?: string }) {
   return (
     <div className="mb-3 flex items-baseline justify-between">
-      <h2 className="text-[17px] font-bold tracking-tight text-gray-900">{title}</h2>
+      <h2 className="text-[17px] font-semibold tracking-tight text-gray-900">{title}</h2>
       <a href={href} className="text-[12px] font-semibold" style={{ color: BRAND }}>{cta}</a>
     </div>
   );
@@ -195,7 +208,7 @@ export default function AppHome() {
           look something up. */}
       <header
         className="sticky top-0 z-40 px-4 pb-3 pt-4"
-        style={{ background: GROUND, boxShadow: '0 6px 12px -10px rgba(23,43,77,.35)' }}
+        style={{ background: '#FFFFFF' }}
       >
         <div className="mx-auto flex max-w-2xl items-center gap-2.5">
           {/* The camera is a sibling of the search link rather than a child of
@@ -204,8 +217,8 @@ export default function AppHome() {
           <div className="relative flex-1">
             <a
               href="/search"
-              className="flex h-[46px] w-full items-center rounded-full bg-white pl-11 pr-12 text-[13.5px] text-gray-400"
-              style={{ boxShadow: CARD_SHADOW }}
+              className="flex h-[46px] w-full items-center rounded-full pl-11 pr-12 text-[13.5px] text-gray-400"
+              style={{ background: GROUND }}
             >
               Search medicine
             </a>
@@ -217,7 +230,7 @@ export default function AppHome() {
               href="/order-medicines"
               aria-label="Send a photo of your prescription"
               title="Send a photo of your prescription"
-              className="absolute right-1.5 top-1/2 flex h-[36px] w-[36px] -translate-y-1/2 items-center justify-center rounded-full bg-[#F1F6FC]"
+              className="absolute right-1.5 top-1/2 flex h-[36px] w-[36px] -translate-y-1/2 items-center justify-center rounded-full bg-white"
             >
               <i className="fa-solid fa-camera text-[13px]" style={{ color: BRAND }} />
             </a>
@@ -226,14 +239,14 @@ export default function AppHome() {
           <a
             href="/cart"
             aria-label={`Request list, ${cartCount} item${cartCount === 1 ? '' : 's'}`}
-            className="relative flex h-[46px] w-[46px] shrink-0 items-center justify-center rounded-full bg-white"
-            style={{ boxShadow: CARD_SHADOW }}
+            className="relative flex h-[46px] w-[46px] shrink-0 items-center justify-center rounded-full"
+            style={{ background: GROUND }}
           >
             <i className="fa-solid fa-cart-shopping text-[15px] text-gray-700" />
             {cartCount > 0 && (
               <span
                 className="absolute -right-0.5 -top-0.5 flex h-[19px] min-w-[19px] items-center justify-center rounded-full px-1 text-[10px] font-bold text-white"
-                style={{ background: BRAND, boxShadow: `0 0 0 2px ${GROUND}` }}
+                style={{ background: BRAND, boxShadow: '0 0 0 2px #FFFFFF' }}
               >
                 {cartCount > 99 ? '99+' : cartCount}
               </span>
@@ -248,7 +261,7 @@ export default function AppHome() {
             a prescription into a quote. */}
         <a
           href="/order-medicines"
-          className="relative mb-6 mt-1 block overflow-hidden rounded-[20px] p-5 text-white"
+          className="relative mb-6 mt-4 block overflow-hidden rounded-[20px] p-5 text-white"
           style={{ background: 'linear-gradient(118deg,#1D9FDA 0%,#2F8FD6 52%,#61A644 165%)' }}
         >
           <span
@@ -264,15 +277,15 @@ export default function AppHome() {
             className="fa-solid fa-file-prescription pointer-events-none absolute -right-1 bottom-1 text-[86px] text-white/20"
           />
           <div className="relative max-w-[64%]">
-            <p className="text-[19px] font-extrabold leading-tight">Have a prescription?</p>
+            <p className="text-[19px] font-medium leading-tight">Have a prescription?</p>
             <p className="mt-1.5 text-[12.5px] leading-snug text-white/85">
               Send us a photo and we&rsquo;ll come back to you with availability.
             </p>
             <span
-              className="mt-3.5 inline-flex items-center gap-1.5 rounded-full bg-white px-4 py-2 text-[12px] font-bold"
+              className="mt-3.5 inline-flex items-center rounded-full bg-white px-4 py-2 text-[12px] font-medium"
               style={{ color: BRAND }}
             >
-              Upload now <i className="fa-solid fa-arrow-right text-[10px]" />
+              Upload now
             </span>
           </div>
         </a>

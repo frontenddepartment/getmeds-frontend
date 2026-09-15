@@ -869,7 +869,7 @@ export default function OrderMedicines() {
   const PHARMACY_CREDENTIALS = [
     {
       Icon: BadgeCheck,
-      title: 'FDA-Licensed Pharmaceutical Distributor',
+      title: 'FDA-Licensed Pharmaceutical Distributor and Importer',
       desc: 'FDA Philippines-licensed wholesaler, importer, distributor, and retail pharmacy. PDEA-licensed across LTO categories S1 to S5 for controlled substance supply \u2014 fully compliant sourcing for your pharmacy.',
     },
     {
@@ -1007,7 +1007,7 @@ export default function OrderMedicines() {
       }
     : isPharmacyUserType
     ? {
-        credentialsHeading: 'Your Trusted Pharmaceutical Distributor in the Philippines',
+        credentialsHeading: 'Your Trusted Pharmaceutical Distributor and Importer in the Philippines',
         credentials: PHARMACY_CREDENTIALS,
         credentialsTitleSpan: 'lg:col-span-2',
         therapeuticIntro: 'Getmeds distributes a focused portfolio across key therapeutic categories, giving your pharmacy access to both everyday essentials and specialty products your customers may not find elsewhere.',
