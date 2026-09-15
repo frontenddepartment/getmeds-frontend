@@ -108,6 +108,12 @@ const APP_RULES = `
   /* The offline-inquiry notice spans the full width and would otherwise cover
      the tab bar completely — it sits directly above it instead. */
   .gm-queued-notice { bottom: calc(var(--gm-tabbar-space) + 4px); }
+
+  /* Same for the cookie banner and its privacy-signal notice
+     (public/components/analytics-consent.js). The banner's own bottom padding
+     clears the home indicator on the website; here the bar already does. */
+  .gmc-banner, .gmc-notice { bottom: calc(var(--gm-tabbar-space) + 8px) !important; }
+  .gmc-banner { padding-bottom: 18px !important; }
 `;
 
 const scoped = (prefix) =>
@@ -387,6 +393,7 @@ export const PWA_TABBAR = `
   <a href="/contact-us"><i class="fa-solid fa-headset"></i><span>Contact us</span><i class="fa-solid fa-chevron-right gm-sheet-go"></i></a>
   <a href="/about-us"><i class="fa-solid fa-circle-info"></i><span>About Getmeds</span><i class="fa-solid fa-chevron-right gm-sheet-go"></i></a>
   <a href="/policy"><i class="fa-solid fa-shield-halved"></i><span>Privacy &amp; policies</span><i class="fa-solid fa-chevron-right gm-sheet-go"></i></a>
+  <a href="#cookie-settings" data-gm-cookie-settings><i class="fa-solid fa-cookie-bite"></i><span>Cookie settings</span><i class="fa-solid fa-chevron-right gm-sheet-go"></i></a>
 </div>
 <script>
 (function () {
