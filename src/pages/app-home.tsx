@@ -227,7 +227,7 @@ export default function AppHome() {
                 point it at, but there is something better — photograph the
                 prescription and let a person read it. */}
             <a
-              href="/order-medicines"
+              href="/order-medicines/patients"
               aria-label="Send a photo of your prescription"
               title="Send a photo of your prescription"
               className="absolute right-1.5 top-1/2 flex h-[36px] w-[36px] -translate-y-1/2 items-center justify-center rounded-full bg-white"
@@ -260,7 +260,7 @@ export default function AppHome() {
             people actually arrive with, because the app's whole job is turning
             a prescription into a quote. */}
         <a
-          href="/order-medicines"
+          href="/order-medicines/patients"
           className="relative mb-6 mt-4 block overflow-hidden rounded-[20px] p-5 text-white"
           style={{ background: 'linear-gradient(118deg,#1D9FDA 0%,#2F8FD6 52%,#61A644 165%)' }}
         >

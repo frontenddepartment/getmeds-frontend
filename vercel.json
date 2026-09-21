@@ -230,6 +230,26 @@
       "destination": "/policy"
     },
     {
+      "source": "/order-medicines/patients",
+      "destination": "/order-medicines"
+    },
+    {
+      "source": "/order-medicines/doctors",
+      "destination": "/order-medicines"
+    },
+    {
+      "source": "/order-medicines/distributors",
+      "destination": "/order-medicines"
+    },
+    {
+      "source": "/order-medicines/hospitals",
+      "destination": "/order-medicines"
+    },
+    {
+      "source": "/order-medicines/:slug",
+      "destination": "/order-medicines"
+    },
+    {
       "source": "/blog-detail.html",
       "destination": "/blog-detail"
     },
@@ -708,6 +728,14 @@
     {
       "source": "/conditions/glioblastoma-multiforme",
       "destination": "/conditions/glioblastoma-multiforme"
+    },
+    {
+      "source": "/blog/docetaxel-price-availability-philippines",
+      "destination": "/blog/docetaxel-price-availability-philippines"
+    },
+    {
+      "source": "/blog/draft",
+      "destination": "/blog/draft"
     },
     {
       "source": "/blog/generic-medicines-vs-branded",

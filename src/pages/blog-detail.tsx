@@ -426,6 +426,46 @@ export default function BlogDetail() {
         }
       });
 
+      // Tables — the WordPress editor saves a fixed pixel size on tables (e.g.
+      // style="width: 419px"), wider than a phone's content column, which pushed
+      // the whole page sideways and made mobile browsers zoom out. Drop the fixed
+      // size so the table fills the column, and wrap it so a genuinely wide table
+      // scrolls on its own instead of widening the page.
+      const tableElements = doc.querySelectorAll('table');
+      tableElements.forEach(el => {
+        el.style.removeProperty('width');
+        el.style.removeProperty('height');
+        el.removeAttribute('width');
+        el.classList.add('w-full');
+        const wrapper = doc.createElement('div');
+        wrapper.className = "overflow-x-auto my-6";
+        el.parentNode?.insertBefore(wrapper, el);
+        wrapper.appendChild(el);
+      });
+      doc.querySelectorAll<HTMLElement>('th, td').forEach(el => {
+        el.style.removeProperty('width');
+        el.removeAttribute('width');
+      });
+
+      // Embeds (YouTube etc.) arrive with fixed width/height attributes. Keep
+      // their shape, but let them shrink to the column.
+      doc.querySelectorAll<HTMLElement>('iframe, video, embed, object').forEach(el => {
+        const w = Number(el.getAttribute('width'));
+        const h = Number(el.getAttribute('height'));
+        el.style.maxWidth = '100%';
+        if (w && h) {
+          el.style.width = `${w}px`;
+          el.style.height = 'auto';
+          el.style.aspectRatio = `${w} / ${h}`;
+        }
+      });
+
+      // Anything else the editor sized in pixels (captioned figures, wrappers)
+      // may not grow past the column either.
+      doc.querySelectorAll<HTMLElement>('[style*="width"]').forEach(el => {
+        el.style.maxWidth = '100%';
+      });
+
       // Bold text
       const strongElements = doc.querySelectorAll('strong, b');
       strongElements.forEach(el => {
@@ -759,7 +799,8 @@ export default function BlogDetail() {
               </aside>
 
               {/* Article body */}
-              <article className="flex-1 min-w-0">
+              {/* break-words: long URLs / unbroken words wrap instead of overflowing on phones. */}
+              <article className="flex-1 min-w-0 break-words">
 
                 {/* Intro paragraph */}
                 {article.intro && (

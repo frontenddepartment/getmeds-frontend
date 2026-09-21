@@ -359,7 +359,7 @@ export const PWA_TABBAR = `
 <nav class="gm-tabbar" aria-label="Primary">
   <a href="/app-home" data-match="/app-home,/"><i class="fa-solid fa-house"></i><span>Home</span></a>
   <a href="/search" data-match="/search"><i class="fa-solid fa-magnifying-glass"></i><span>Search</span></a>
-  <a href="/order-medicines" class="gm-mid" data-match="/order-medicines">
+  <a href="/order-medicines/patients" class="gm-mid" data-match="/order-medicines">
     <span class="gm-mid-btn"><i class="fa-solid fa-file-prescription"></i></span>
   </a>
   <a href="/cart" data-match="/cart" aria-label="Your request list">

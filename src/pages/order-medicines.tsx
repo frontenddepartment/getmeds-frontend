@@ -30,6 +30,8 @@ declare global {
 }
 import { validateFiles, ALLOWED_FILE_TYPES_ACCEPT } from '../lib/fileUpload';
 import AlertModal from '../lib/AlertModal';
+import { ORDER_AUDIENCES, ORDER_MEDICINES_BASE, audienceFromPath, audiencePath } from '../lib/orderAudiences';
+import OrderMedicinesHub from '../lib/OrderMedicinesHub';
 
 
 export default function OrderMedicines() {
@@ -273,26 +275,28 @@ export default function OrderMedicines() {
   const [idRequiredModalOpen, setIdRequiredModalOpen] = useState(false);
   const [idModalVisible, setIdModalVisible] = useState(false);
 
-  // ── User type gate — Patient uses the prescription order form below as-is;
-  // Doctor/Hospital/Pharmacy Owner get the shorter generic inquiry form instead
-  // (mirrors the non-patient branch on product-detail.tsx). Persisted so a
-  // returning visitor skips straight to their form. The primary way to pick a
-  // type is now the "Order Medicines" navbar dropdown (writes the same
-  // localStorage key before navigating here), so this modal no longer opens
-  // automatically on visit — it's only a fallback: an unset/skipped type falls
-  // back to the patient view, and clicking either upload control there
-  // re-opens this modal since we still don't know which form they need.
-  const ORDER_USERTYPE_KEY = 'getmeds-order-usertype';
-  const USER_TYPE_LABELS: Record<string, string> = {
-    patient:  'Patient / Caregiver',
-    doctor:   'Doctor / Healthcare Professional',
-    pharmacy: 'Pharmacy Owner / Retail Pharmacy',
-    hospital: 'Hospital / Institution',
-  };
-  const [orderUserType, setOrderUserTypeState] = useState<string>(() => {
-    try { return localStorage.getItem(ORDER_USERTYPE_KEY) || ''; } catch { return ''; }
-  });
-  const [userTypeModalOpen, setUserTypeModalOpen] = useState(false);
+  // ── Audience gate — the URL decides which page this is. /order-medicines is the
+  // hub (four cards, one per audience); /order-medicines/patients renders the
+  // prescription order form, and /doctors, /distributors and /hospitals render the
+  // professional and partner forms (mirrors the non-patient branch on
+  // product-detail.tsx).
+  //
+  // This used to be read from localStorage, written by whichever link the visitor
+  // came through. That meant four different pages shared one URL, one title and one
+  // canonical, and a visitor who arrived without the key — a search result, a shared
+  // link, a cleared browser — was shown the patient form and asked who they were.
+  // The path is read once on mount: this is a multi-page app with no client-side
+  // router, so it cannot change while the page is open.
+  const audience = audienceFromPath(typeof window === 'undefined' ? '' : window.location.pathname);
+  const isHub = !audience;
+  const orderUserType = audience ? audience.type : '';
+  // Labels keyed by internal type, as the forms and stored records still expect.
+  const USER_TYPE_LABELS: Record<string, string> = Object.fromEntries(
+    ORDER_AUDIENCES.map((a) => [a.type, a.label]),
+  );
+  // Where an inquiry queued offline sends the visitor back to finish it by hand.
+  // That has to be the audience page the form is on — the hub carries no form.
+  const formReturnPath = audience ? audiencePath(audience) : ORDER_MEDICINES_BASE;
   const isProfessionalUserType = orderUserType === 'doctor' || orderUserType === 'hospital' || orderUserType === 'pharmacy';
   const isHospitalUserType = orderUserType === 'hospital';
   const isPharmacyUserType = orderUserType === 'pharmacy';
@@ -339,20 +343,10 @@ export default function OrderMedicines() {
           subtitle: 'A simple 3-step process designed for your convenience.',
         };
 
-  const selectOrderUserType = (type: string) => {
-    setOrderUserTypeState(type);
-    try { localStorage.setItem(ORDER_USERTYPE_KEY, type); } catch { /* ignore */ }
-    setUserTypeModalOpen(false);
-  };
-
-  const skipUserTypeModal = () => setUserTypeModalOpen(false);
-
-  const requireUserType = (e: React.MouseEvent<HTMLLabelElement>) => {
-    if (!orderUserType) {
-      e.preventDefault();
-      setUserTypeModalOpen(true);
-    }
-  };
+  // The "Who's placing this order?" modal that used to guard these upload controls
+  // is gone: the prescription form only renders at /order-medicines/patients, so the
+  // audience is already known by the time either control can be clicked. Visitors
+  // who have not chosen yet land on the hub instead and pick from the four cards.
 
   // ── Generic professional inquiry form (Doctor/Hospital/Pharmacy Owner) ──
   const [inquiryFormData, setInquiryFormData] = useState({ name: '', phone: '', email: '', message: '', age: '' });
@@ -405,7 +399,7 @@ export default function OrderMedicines() {
 
       const submission = await submitInquiry(payload, {
         endpoint: getApiUrl(),
-        returnPath: '/order-medicines',
+        returnPath: formReturnPath,
       });
       // Tokens are single-use, so the solved widget is replaced whatever the outcome.
       inquiryTurnstile.reset();
@@ -550,7 +544,9 @@ export default function OrderMedicines() {
   // and it covered the partner form alone — which is why every other form on
   // getmeds.ph submitted an empty token. The shared hook now lives in
   // lib/turnstile.tsx so a new form cannot quietly ship without one.
-  const orderTurnstile = useTurnstile(!isProfessionalUserType);
+  // `!isHub` guards the first one: the hub carries no form, and without it the
+  // patient widget would mount there purely because the audience is not a professional.
+  const orderTurnstile = useTurnstile(!isHub && !isProfessionalUserType);
   const inquiryTurnstile = useTurnstile(isProfessionalUserType && !isPartnerUserType);
   const partnerTurnstile = useTurnstile(isPartnerUserType);
 
@@ -593,7 +589,7 @@ export default function OrderMedicines() {
 
       const submission = await submitInquiry(payload, {
         endpoint: getApiUrl(),
-        returnPath: '/order-medicines',
+        returnPath: formReturnPath,
       });
       // A queued inquiry is not a delivered one, so only a real send
       // opens the success modal; QueuedInquiryNotice reports the rest.
@@ -695,7 +691,7 @@ export default function OrderMedicines() {
 
       const submission = await submitInquiry(payload, {
         endpoint: getApiUrl(),
-        returnPath: '/order-medicines',
+        returnPath: formReturnPath,
       });
       // Tokens are single-use, so the solved widget is replaced whatever the outcome.
       orderTurnstile.reset();
@@ -1072,6 +1068,20 @@ export default function OrderMedicines() {
 
       <div className="overflow-x-hidden">
 
+        {/* The hub carries no forms — it exists to send the visitor to one of the
+            four audience pages below it. Everything after this point is an audience
+            page, and only renders once the URL has named one. */}
+        {isHub ? <OrderMedicinesHub /> : (<>
+        {/* Breadcrumb — an audience page is now a real URL a visitor can land on
+            cold, so it has to say where it sits and offer the way back up. */}
+        <nav aria-label="Breadcrumb" className="w-full px-4 md:px-6 pt-4">
+          <ol className="flex items-center gap-2 text-[12px] text-gray-400">
+            <li><a href={ORDER_MEDICINES_BASE} className="font-semibold hover:text-primary transition">Order medicines</a></li>
+            <li aria-hidden="true"><i className="fa-solid fa-chevron-right text-[8px]"></i></li>
+            <li className="font-semibold text-gray-600" aria-current="page">{audience?.cardTitle}</li>
+          </ol>
+        </nav>
+
         {/* ── Hero + Step Cards ── */}
         <section className="w-full px-4 md:px-6 pt-5 pb-4">
           <div
@@ -1178,7 +1188,7 @@ export default function OrderMedicines() {
                 </div>
 
                 {/* Upload Zone */}
-                <label className="group cursor-pointer block mb-3" onClick={requireUserType}>
+                <label className="group cursor-pointer block mb-3">
                   <input type="file" multiple accept={ALLOWED_FILE_TYPES_ACCEPT} className="hidden" onChange={handleFileChange} />
                   <div className="border-2 border-dashed border-gray-200 rounded-[15px] p-5 flex flex-col items-center justify-center text-center transition-all group-hover:border-primary/40 group-hover:bg-blue-50/20">
                     <div className="text-gray-300 group-hover:text-primary transition-colors duration-200 mb-3">
@@ -1265,8 +1275,7 @@ export default function OrderMedicines() {
                     <div className="flex items-center gap-3 flex-wrap pt-1">
                       {!patientIdFile ? (
                         <label className="cursor-pointer inline-flex items-center gap-2 hover:opacity-90 text-white text-[13px] font-semibold px-5 py-2.5 rounded-[10px] transition"
-                          style={{ background: 'linear-gradient(to right,#61A644,#1D9FDA)' }}
-                          onClick={requireUserType}>
+                          style={{ background: 'linear-gradient(to right,#61A644,#1D9FDA)' }}>
                           <input type="file" accept={ALLOWED_FILE_TYPES_ACCEPT} className="hidden" onChange={handlePatientIdChange} />
                           <i className="fa-solid fa-upload text-[11px]"></i>
                           Upload File
@@ -2037,6 +2046,7 @@ export default function OrderMedicines() {
 
           </div>
         </section>
+        </>)}
 
         {/* ── Upload Modal ── */}
         <div
@@ -2074,56 +2084,6 @@ export default function OrderMedicines() {
         <div id="footer-container" />
 
       </div>
-
-      {/* ── User Type Selection Modal — persistent: reopens on either upload
-          control whenever no type has been chosen (unset or previously skipped) ── */}
-      {userTypeModalOpen && (
-        <>
-          <style>{`
-            @keyframes slideUpUt{from{opacity:0;transform:translateY(24px) scale(0.97)}to{opacity:1;transform:translateY(0) scale(1)}}
-            .ut-modal-slide{animation:slideUpUt 0.32s cubic-bezier(.22,1,.36,1) forwards}
-          `}</style>
-          <div className="fixed inset-0 z-[400] flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
-            <div className="bg-white w-full max-w-[440px] rounded-2xl shadow-2xl relative overflow-hidden ut-modal-slide">
-              <div className="px-8 pt-8 pb-6 text-center">
-                <div
-                  className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4"
-                  style={{ background: 'linear-gradient(135deg,#61A644,#1D9FDA)' }}
-                >
-                  <i className="fa-solid fa-user-tag text-white text-xl"></i>
-                </div>
-                <h2 className="text-[19px] font-semibold text-gray-900 mb-2 leading-snug">Who's placing this order?</h2>
-                <p className="text-[13px] text-gray-500 leading-relaxed mb-6">
-                  Doctors, hospitals, and pharmacy owners get a shorter inquiry form. Patients continue with our standard prescription order form below.
-                </p>
-                <div className="space-y-2 text-left">
-                  {Object.entries(USER_TYPE_LABELS).map(([value, label]) => (
-                    <button
-                      key={value}
-                      type="button"
-                      onClick={() => selectOrderUserType(value)}
-                      className="w-full flex items-center gap-2.5 px-4 py-3 rounded-xl border border-gray-200 text-gray-700 hover:border-primary hover:bg-blue-50 hover:text-primary text-left text-[13px] font-semibold transition"
-                    >
-                      <i className="fa-solid fa-user-tag text-[11px]"></i>
-                      {label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <div className="border-t border-gray-100 px-8 py-3 text-center">
-                <button
-                  type="button"
-                  onClick={skipUserTypeModal}
-                  className="text-[13px] font-semibold text-gray-400 hover:text-gray-600 transition"
-                >
-                  Skip for now
-                </button>
-              </div>
-            </div>
-          </div>
-        </>
-      )}
-
       {/* ── Order Success Modal ── */}
       {successModalOpen && (
         <>

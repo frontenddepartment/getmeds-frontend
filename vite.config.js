@@ -738,7 +738,15 @@ export default defineConfig(async ({ mode }) => {
               res.end();
               return;
             }
-            if (cleanPath === '/order-medicines' || cleanPath === '/order-medicines/') {
+            // /order-medicines is the hub; /order-medicines/{patients,doctors,
+            // distributors,hospitals} are the four audience pages. All five render from
+            // the same shell — order-medicines.tsx reads the audience off the path (see
+            // src/lib/orderAudiences.ts). In production each audience URL is a real
+            // prerendered file with its own title/description/canonical
+            // (scripts/prerender-order-medicines.cjs); here the shared shell is enough.
+            // An unknown slug under /order-medicines falls through to the hub rather
+            // than 404ing, matching the vercel.json rewrite.
+            if (cleanPath === '/order-medicines' || cleanPath.startsWith('/order-medicines/')) {
               const htmlPath = path.join(process.cwd(), 'order-medicines.html');
               if (fs.existsSync(htmlPath)) {
                 const htmlContent = injectAppShell(fs.readFileSync(htmlPath, 'utf-8'));

@@ -8,6 +8,10 @@ import { urlFor } from '../lib/sanity';
 import { sanityQuery } from '../lib/sanityProxy';
 import { LinkableImage } from '../lib/LinkableImage';
 import { computeCategoryKey, linkCategoryKeys } from '../lib/categoryImageKey';
+// The same four audiences the navbar's Order Medicines menu links to
+// (public/components/navbar.html). Each is its own URL now, so this chooser
+// navigates rather than stashing the answer for the next page to read.
+import { ORDER_AUDIENCES, audiencePath } from '../lib/orderAudiences';
 
 
 // Declare global tailwind interface
@@ -17,18 +21,6 @@ declare global {
   }
 }
 
-// The same four options, values, and storage key the navbar's Order Medicines
-// menu writes (public/components/navbar.html) and order-medicines.tsx reads back
-// on load. Picking here means that page opens straight into the right form
-// instead of prompting for the customer type after arrival — so these values
-// must stay in step with both of those files.
-const ORDER_USERTYPE_KEY = 'getmeds-order-usertype';
-const ORDER_USER_TYPES: Array<[string, string]> = [
-  ['patient', 'Patient / Caregiver'],
-  ['doctor', 'Doctor / Healthcare Professional'],
-  ['pharmacy', 'Pharmacy Owner / Retail Pharmacy'],
-  ['hospital', 'Hospital / Institution'],
-];
 
 const AnimatedCounter = ({ end, duration = 2000, suffix = "" }: { end: number, duration?: number, suffix?: string }) => {
   const [count, setCount] = useState(0);
@@ -390,13 +382,6 @@ export default function GetMedsHomepage() {
   // Mobile-only: the hero's "Order Medicines" pill opens the customer-type
   // chooser rather than navigating straight through, mirroring the navbar link.
   const [orderTypeOpen, setOrderTypeOpen] = useState(false);
-
-  const goToOrderMedicines = (type: string) => {
-    // A private-mode write can throw; the order page simply asks again in that
-    // case, so a failed hand-off should never block the navigation itself.
-    try { localStorage.setItem(ORDER_USERTYPE_KEY, type); } catch { /* ignore */ }
-    window.location.href = '/order-medicines';
-  };
 
   useEffect(() => {
     if (!orderTypeOpen) return;
@@ -2035,15 +2020,14 @@ export default function GetMedsHomepage() {
                 aria-label="Who is placing this order?"
                 className="w-full bg-white rounded-2xl shadow-2xl overflow-hidden py-2"
               >
-              {ORDER_USER_TYPES.map(([value, label]) => (
-                <button
-                  key={value}
-                  type="button"
-                  onClick={() => goToOrderMedicines(value)}
-                  className="w-full text-left px-6 py-4 text-[15px] font-bold text-slate-800 hover:text-primary hover:bg-blue-50/60 active:bg-blue-50 transition-colors"
+              {ORDER_AUDIENCES.map((audience) => (
+                <a
+                  key={audience.slug}
+                  href={audiencePath(audience)}
+                  className="block w-full text-left px-6 py-4 text-[15px] font-bold text-slate-800 hover:text-primary hover:bg-blue-50/60 active:bg-blue-50 transition-colors"
                 >
-                  {label}
-                </button>
+                  {audience.label}
+                </a>
               ))}
               </div>
             </div>

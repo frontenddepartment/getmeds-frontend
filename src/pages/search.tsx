@@ -464,7 +464,7 @@ export default function Search() {
                   have a prescription, send us a photo and we will look it up for you.
                 </p>
                 <a
-                  href="/order-medicines"
+                  href="/order-medicines/patients"
                   className="mt-4 inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-[12.5px] font-semibold text-white"
                   style={{ background: 'linear-gradient(135deg,#1D9FDA,#61A644)' }}
                 >

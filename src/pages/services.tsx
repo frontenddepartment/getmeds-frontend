@@ -554,7 +554,7 @@ export default function Services() {
           <p className="text-white/60 text-[13px] sm:text-[15px] mb-10 max-w-[270px] sm:max-w-xl mx-auto">Join thousands of patients who trust Getmeds for
             fast, reliable, and expert medical services every day.</p>
           <div className="flex flex-wrap justify-center gap-4">
-            <a href="/order-medicines"
+            <a href="/order-medicines/patients"
               className="btn-gradient text-white font-bold py-4 px-10 rounded-full text-[14px] inline-flex items-center gap-3 shadow-lg">Order
               Medicines <i className="fa-solid fa-arrow-right text-xs"></i></a>
             <a href="/contact-us"

@@ -218,7 +218,14 @@ async function generate() {
     { path: 'product-range', priority: '0.8', changefreq: 'weekly' },
     // Category folders (cancer-medicines, antibiotics, ...) come from
     // getAllProductRoutes() below now, straight from the sheet.
+    // The hub, plus its four audience pages. Each audience is prerendered with its own
+    // title/description/canonical by scripts/prerender-order-medicines.cjs, so all five
+    // are real, separately indexable pages rather than one URL with four hidden states.
     { path: 'order-medicines', priority: '0.8', changefreq: 'monthly' },
+    { path: 'order-medicines/patients', priority: '0.8', changefreq: 'monthly' },
+    { path: 'order-medicines/doctors', priority: '0.7', changefreq: 'monthly' },
+    { path: 'order-medicines/distributors', priority: '0.7', changefreq: 'monthly' },
+    { path: 'order-medicines/hospitals', priority: '0.7', changefreq: 'monthly' },
     { path: 'careers', priority: '0.7', changefreq: 'monthly' },
     { path: 'contact-us', priority: '0.7', changefreq: 'monthly' },
     { path: 'csr', priority: '0.7', changefreq: 'monthly' },
