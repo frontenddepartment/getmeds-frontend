@@ -395,7 +395,7 @@ export default function BusinessCardPage() {
 
       <div className="mt-6 flex flex-col items-center gap-3">
         <a
-          href="/app-home"
+          href="/product-range"
           className="text-[12px] font-semibold"
           style={{ color: BRAND }}
         >
