@@ -243,6 +243,27 @@ const SANITY_QUERIES: Record<string, string> = {
   `,
   "policiesDisclaimers.all": `
     *[_type == "policiesDisclaimers"] | order(title asc)
+  `,
+  // Behind a scanned business-card QR code. Fields are listed rather than
+  // splatted with `...`: this document holds staff phone numbers, and a
+  // projection that names every field is the thing that stops a column added
+  // later in Studio from reaching a public page nobody rechecked.
+  "businessCard.bySlug": `
+    *[_type == "businessCard" && slug.current == $slug][0] {
+      _id,
+      fullName,
+      "slug": slug.current,
+      jobTitle,
+      company,
+      cardImage,
+      cardImageBack,
+      mobile,
+      whatsapp,
+      viber,
+      officePhone,
+      email,
+      active
+    }
   `
 }
 

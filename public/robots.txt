@@ -1,4 +1,13 @@
 User-agent: *
 Allow: /
 
+# Business cards. Each of these pages carries a named staff member's mobile
+# number, published for whoever is holding the printed card and for nobody
+# running a search. Said three times over — here, in <meta name="robots"> in
+# business-card.html, and as an X-Robots-Tag header in vercel.json — because
+# a Disallow only stops the crawl, not the listing: a page linked from
+# elsewhere can still surface in results on the strength of that link alone,
+# and the meta and header are what actually keep it out of the index.
+Disallow: /card/
+
 Sitemap: https://getmeds.ph/sitemap.xml

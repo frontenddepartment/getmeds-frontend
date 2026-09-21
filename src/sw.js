@@ -24,6 +24,7 @@ cleanupOutdatedCaches()
 
 const OFFLINE_PAGE = '/offline.html'
 const PRODUCT_SHELL = '/product-detail.html'
+const CARD_SHELL = '/business-card.html'
 
 // The 14 real product category folders (from vercel.json's rewrites). Used to
 // tell a product URL apart from a marketing page, since both are two segments.
@@ -126,6 +127,16 @@ setCatchHandler(async ({ request, url }) => {
     // still readable offline.
     if (isProductUrl(url)) {
       const shell = await matchPrecache(PRODUCT_SHELL)
+      if (shell) return shell
+    }
+    // Same trick for a scanned business card. Worth doing because of where
+    // these get scanned: a card is handed over in a meeting room or a hospital
+    // corridor, which is exactly where the signal is worst. The shell plus the
+    // cached Sanity response means a card looked up once is still readable —
+    // and the Save to Contacts button still works, since building a vCard is
+    // pure string work that never touches the network.
+    if (url.pathname.startsWith('/card/')) {
+      const shell = await matchPrecache(CARD_SHELL)
       if (shell) return shell
     }
     const offline = await matchPrecache(OFFLINE_PAGE)
