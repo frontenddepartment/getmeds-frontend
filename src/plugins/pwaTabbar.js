@@ -108,6 +108,12 @@ const APP_RULES = `
   /* The offline-inquiry notice spans the full width and would otherwise cover
      the tab bar completely — it sits directly above it instead. */
   .gm-queued-notice { bottom: calc(var(--gm-tabbar-space) + 4px); }
+
+  /* Same for the cookie banner and its privacy-signal notice
+     (public/components/analytics-consent.js). The banner's own bottom padding
+     clears the home indicator on the website; here the bar already does. */
+  .gmc-banner, .gmc-notice { bottom: calc(var(--gm-tabbar-space) + 8px) !important; }
+  .gmc-banner { padding-bottom: 18px !important; }
 `;
 
 const scoped = (prefix) =>
@@ -379,6 +385,7 @@ export const PWA_TABBAR = `
   <a href="/contact-us"><svg class="gm-sheet-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3"/></svg><span>Contact us</span><svg class="gm-sheet-go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></a>
   <a href="/about-us"><svg class="gm-sheet-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4.5"/><path d="M12 8.2h.01"/></svg><span>About Getmeds</span><svg class="gm-sheet-go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></a>
   <a href="/policy"><svg class="gm-sheet-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12.5c0 5-3.5 7.5-7.68 8.95a1 1 0 0 1-.63 0C7.5 20 4 17.5 4 12.5V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.5 3.8 17 5 19 5a1 1 0 0 1 1 1z"/></svg><span>Privacy &amp; policies</span><svg class="gm-sheet-go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></a>
+  <a href="#cookie-settings" data-gm-cookie-settings><svg class="gm-sheet-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2a10 10 0 1 0 10 10 4 4 0 0 1-5-5 4 4 0 0 1-5-5"/><path d="M8.5 8.5v.01"/><path d="M16 15.5v.01"/><path d="M12 12v.01"/><path d="M11 17v.01"/><path d="M7 14v.01"/></svg><span>Cookie settings</span><svg class="gm-sheet-go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></a>
 </div>
 <script>
 (function () {

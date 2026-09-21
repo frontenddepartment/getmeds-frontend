@@ -75,6 +75,10 @@
         try {
 
 
+            // Cookie consent banner, and analytics that only run after a yes.
+            // First, so the question is on screen as early as possible.
+            loadConsentManager();
+
             // Set Favicon dynamically
             injectFavicon();
             fetchAndApplyLogo();
@@ -109,6 +113,14 @@
         } catch (e) {
             console.error('[Getmeds] Loader Initialization Error:', e);
         }
+    }
+
+    function loadConsentManager() {
+        if (document.getElementById('gm-consent-script')) return;
+        const script = document.createElement('script');
+        script.id = 'gm-consent-script';
+        script.src = '/components/analytics-consent.js';
+        document.head.appendChild(script);
     }
 
     function injectAIAssistant() {
