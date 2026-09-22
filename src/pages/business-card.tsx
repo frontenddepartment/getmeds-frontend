@@ -115,6 +115,32 @@ function ActionButton({
   );
 }
 
+/**
+ * One face of the printed card.
+ *
+ * Pulled out because the desktop layout shows front and back at once while the
+ * phone shows one at a time behind a toggle — same markup, two different
+ * visibility rules, and duplicating the <img> would mean a second copy to keep
+ * in step.
+ */
+function CardFace({ src, alt, className = '' }: { src: string; alt: string; className?: string }) {
+  return (
+    <div
+      className={`overflow-hidden rounded-[18px] bg-white ${className}`}
+      style={{ boxShadow: '0 6px 24px rgba(23,43,77,.12)' }}
+    >
+      <img
+        src={src}
+        alt={alt}
+        className="block w-full"
+        onError={(e) => {
+          (e.currentTarget as HTMLImageElement).style.display = 'none';
+        }}
+      />
+    </div>
+  );
+}
+
 /** A row in the "details" card — tappable where the value is dialable. */
 function DetailRow({ icon, label, value, href }: { icon: string; label: string; value: string; href?: string }) {
   const body = (
@@ -272,7 +298,6 @@ export default function BusinessCardPage() {
 
   const front = card.cardImage ? urlFor(card.cardImage).width(1000).url() : '';
   const back = card.cardImageBack ? urlFor(card.cardImageBack).width(1000).url() : '';
-  const shown = face === 'back' && back ? back : front;
 
   const mobile = toE164(card.mobile);
   const office = toE164(card.officePhone);
@@ -280,49 +305,72 @@ export default function BusinessCardPage() {
   const viber = viberLink(card);
 
   return (
-    <main className="mx-auto max-w-md px-4 pb-10 pt-5">
-      {/* The card artwork, first and large. Whoever is looking at this is
-          holding the paper version — matching it is what makes the page read
-          as "this card" rather than "a Getmeds page". */}
-      {shown && (
-        <div className="mb-4">
-          <div
-            className="overflow-hidden rounded-[18px] bg-white"
-            style={{ boxShadow: '0 6px 24px rgba(23,43,77,.12)' }}
-          >
-            <img
-              src={shown}
+    /*
+      One column on a phone, two from `lg` up: the card on the left, everything
+      you can do with it on the right.
+
+      A phone is the overwhelmingly common case here — somebody scans a QR code
+      with the camera they are already holding — so that layout is the one left
+      untouched, and the desktop rules are all `lg:` additions on top of it. On a
+      wide screen the single column was the problem: the card rendered at
+      tablet-poster size and pushed the Save and messaging buttons, which are the
+      entire point of the page, below the fold.
+    */
+    <main className="mx-auto max-w-md px-4 pb-10 pt-5 lg:max-w-4xl lg:px-8 lg:pt-10">
+      <div className="lg:grid lg:grid-cols-2 lg:items-start lg:gap-10">
+        {/* ── Left: the card artwork ──
+            Whoever is looking at this is holding the paper version, so matching
+            it is what makes the page read as "this card" rather than "a Getmeds
+            page".
+
+            Desktop shows both faces stacked; the phone shows one at a time
+            behind the toggle below. A desktop window has the room, and two
+            images side by side answer "what is on the back?" without asking
+            anyone to find a control and click it. */}
+        {front && (
+          <div className="mb-4 lg:mb-0">
+            <CardFace
+              src={front}
               alt={`Business card for ${card.fullName}`}
-              className="block w-full"
-              onError={(e) => {
-                (e.currentTarget as HTMLImageElement).style.display = 'none';
-              }}
+              className={face === 'front' ? '' : 'hidden lg:block'}
             />
+
+            {back && (
+              <CardFace
+                src={back}
+                alt={`Back of the business card for ${card.fullName}`}
+                /* The top margin is desktop-only: on a phone this sits alone
+                   where the front was, with the same spacing as before. */
+                className={`lg:mt-4 ${face === 'back' ? '' : 'hidden lg:block'}`}
+              />
+            )}
+
+            {/* Nothing to toggle between once both are on screen. */}
+            {back && (
+              <div className="mt-3 flex justify-center gap-1.5 lg:hidden">
+                {(['front', 'back'] as const).map((side) => (
+                  <button
+                    key={side}
+                    type="button"
+                    onClick={() => setFace(side)}
+                    className="rounded-full px-4 py-1.5 text-[11.5px] font-semibold capitalize transition"
+                    style={
+                      face === side
+                        ? { background: BRAND, color: '#fff' }
+                        : { background: '#fff', color: '#6B7280', boxShadow: CARD_SHADOW }
+                    }
+                  >
+                    {side}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
+        )}
 
-          {back && (
-            <div className="mt-3 flex justify-center gap-1.5">
-              {(['front', 'back'] as const).map((side) => (
-                <button
-                  key={side}
-                  type="button"
-                  onClick={() => setFace(side)}
-                  className="rounded-full px-4 py-1.5 text-[11.5px] font-semibold capitalize transition"
-                  style={
-                    face === side
-                      ? { background: BRAND, color: '#fff' }
-                      : { background: '#fff', color: '#6B7280', boxShadow: CARD_SHADOW }
-                  }
-                >
-                  {side}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
-
-      <div className="mb-6 text-center">
+        {/* ── Right: who they are, and what you can do about it ── */}
+        <div>
+      <div className="mb-6 text-center lg:text-left">
         <h1 className="text-[22px] font-semibold leading-tight tracking-tight text-gray-900">
           {card.fullName}
         </h1>
@@ -370,7 +418,7 @@ export default function BusinessCardPage() {
           a phone — this says where it went, because the tap otherwise looks
           like it did nothing at all. */}
       {saved && (
-        <p className="mb-4 px-1 text-center text-[11.5px] leading-relaxed text-gray-500">
+        <p className="mb-4 px-1 text-center text-[11.5px] leading-relaxed text-gray-500 lg:px-0 lg:text-left">
           Saved as a <strong>.vcf</strong> file. On iPhone, open it from Files or the download
           banner to add the contact; on Android, tap the download notification.
         </p>
@@ -393,7 +441,7 @@ export default function BusinessCardPage() {
         )}
       </section>
 
-      <div className="mt-6 flex flex-col items-center gap-3">
+      <div className="mt-6 flex flex-col items-center gap-3 lg:items-start">
         <a
           href="/product-range"
           className="text-[12px] font-semibold"
@@ -401,10 +449,12 @@ export default function BusinessCardPage() {
         >
           Browse the Getmeds catalogue
         </a>
-        <p className="px-2 text-center text-[10.5px] leading-relaxed text-gray-400">
+        <p className="px-2 text-center text-[10.5px] leading-relaxed text-gray-400 lg:px-0 lg:text-left">
           Getmeds does not publish these details for search engines. They are here for whoever was
           handed this card.
         </p>
+      </div>
+        </div>
       </div>
     </main>
   );
