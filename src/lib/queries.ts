@@ -609,43 +609,48 @@ async function withBlogVersion(url: string): Promise<string> {
 }
 
 /**
- * ⚠ TEMPORARY — page sizes chosen to dodge a poisoned cache, not for UX.
+ * ⚠ TEMPORARY — page sizes chosen to dodge a stale cache, not for UX.
  *
- * The admin backend at getmeds-admin.vercel.app caches each blog listing
- * response under a key built from `page`, `per_page` and `slug`. The `v` token
- * added by withBlogVersion() above is supposed to be part of that key — it is
- * in the committed source (app/api/routes/slug_resolver.py, "cache_key =
- * f\"posts_page_{page}_per_{per_page}_slug_{slug}_v_{v}\"") — but the build
- * actually running in production ignores it.
+ * Revert both to round numbers (20 and 9, or whatever suits) as soon as the
+ * backend fix described below is deployed, and delete this comment.
  *
- * Measured 2026-09-22, after a Sync Blog that did bump blogVersion
- * (1788414576176 -> 1790041717153), on responses Vercel reported as cache
- * MISS, so these came from the function itself rather than an edge cache:
+ * ── The actual cause ──
+ * cms.getmeds.ph sits behind an nginx proxy cache that keys on the exact
+ * request URL — it reports x-proxy-cache: HIT/MISS. The admin backend never
+ * forwarded the `v` token from withBlogVersion() upstream: it used it only in
+ * its own cache key, and asked WordPress for a byte-identical URL every time.
+ * So Studio's "Sync Blog" busted our cache and Vercel's edge, then refetched
+ * nginx's stale copy and cached that — which is why syncing looked like it did
+ * nothing at all.
  *
- *     per_page=9   -> still lists a post deleted from WordPress days earlier
- *     per_page=10  -> clean
- *     per_page=12  -> clean
- *     per_page=20  -> still lists the deleted post
- *     per_page=24  -> clean
+ * Measured against live WordPress on 2026-09-22, minutes apart, one post:
  *
- * 9 and 20 were the only two sizes this site ever asked for, so they were the
- * only two entries poisoned before the post was deleted; every neighbouring
- * size fetches from WordPress and comes back correct. WordPress itself is
- * clean — verified directly, and via its own proxy cache, under three
- * different User-Agents.
+ *     ?_embed&page=1&per_page=9        HIT   post modified 00:56:34  (stale)
+ *     ?_embed&page=1&per_page=24       MISS  post modified 02:29:40  (current)
+ *     ?_embed&page=1&per_page=9&gm_v=… MISS  post modified 02:29:40  (current)
+ *
+ * Same post, same moment, two different bodies — the only variable being
+ * whether that URL happened to be sitting in nginx's cache. 9 and 20 were the
+ * only two sizes this site ever requested, so they were the only two URLs with
+ * a stale entry; neighbouring sizes had never been requested, missed the cache,
+ * and came back correct.
+ *
+ * (An earlier version of this comment blamed a stale deployment of the backend
+ * for ignoring `v`. That was wrong: the committed code does put `v` in its own
+ * cache key, it just never sent it to WordPress. The cache that mattered was
+ * one layer further out.)
  *
  * ── What this is and is not ──
- * Moving to an unpoisoned size makes the stale post disappear immediately,
- * because the new key gets populated from WordPress as it is now. It does NOT
- * repair the cache-buster: the next time a post is deleted, whatever size is
- * live here becomes poisoned in turn and the site will show a deleted post
- * again for as long as that entry survives.
+ * Moving to an unrequested page size fetches past nginx's stale entry once, so
+ * the site shows current content immediately. It does NOT repair anything: the
+ * new sizes get cached in their turn, and the next edit goes stale the same way.
  *
  * ── The real fix ──
- * Redeploy getmeds-admin. That restarts the functions, which drops the stale
- * entries, and ships the committed cache key so Sync Blog works as intended.
- * Once that deployment is confirmed, revert these two constants to round
- * numbers and delete this comment.
+ * app/api/routes/slug_resolver.py in getmeds_backend now forwards the token to
+ * WordPress as `gm_v`, which changes the URL and therefore nginx's cache key.
+ * WordPress ignores query parameters it does not recognise, so it is inert to
+ * the API and decisive to the cache in front of it. That needs getmeds-admin
+ * redeployed to take effect.
  */
 const BLOG_LISTING_PER_PAGE = 24
 export const BLOG_PAGE_SIZE = 12
