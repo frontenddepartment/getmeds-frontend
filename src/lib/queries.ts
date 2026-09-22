@@ -608,9 +608,51 @@ async function withBlogVersion(url: string): Promise<string> {
   return `${url}${url.includes('?') ? '&' : '?'}v=${encodeURIComponent(token)}`
 }
 
+/**
+ * ⚠ TEMPORARY — page sizes chosen to dodge a poisoned cache, not for UX.
+ *
+ * The admin backend at getmeds-admin.vercel.app caches each blog listing
+ * response under a key built from `page`, `per_page` and `slug`. The `v` token
+ * added by withBlogVersion() above is supposed to be part of that key — it is
+ * in the committed source (app/api/routes/slug_resolver.py, "cache_key =
+ * f\"posts_page_{page}_per_{per_page}_slug_{slug}_v_{v}\"") — but the build
+ * actually running in production ignores it.
+ *
+ * Measured 2026-09-22, after a Sync Blog that did bump blogVersion
+ * (1788414576176 -> 1790041717153), on responses Vercel reported as cache
+ * MISS, so these came from the function itself rather than an edge cache:
+ *
+ *     per_page=9   -> still lists a post deleted from WordPress days earlier
+ *     per_page=10  -> clean
+ *     per_page=12  -> clean
+ *     per_page=20  -> still lists the deleted post
+ *     per_page=24  -> clean
+ *
+ * 9 and 20 were the only two sizes this site ever asked for, so they were the
+ * only two entries poisoned before the post was deleted; every neighbouring
+ * size fetches from WordPress and comes back correct. WordPress itself is
+ * clean — verified directly, and via its own proxy cache, under three
+ * different User-Agents.
+ *
+ * ── What this is and is not ──
+ * Moving to an unpoisoned size makes the stale post disappear immediately,
+ * because the new key gets populated from WordPress as it is now. It does NOT
+ * repair the cache-buster: the next time a post is deleted, whatever size is
+ * live here becomes poisoned in turn and the site will show a deleted post
+ * again for as long as that entry survives.
+ *
+ * ── The real fix ──
+ * Redeploy getmeds-admin. That restarts the functions, which drops the stale
+ * entries, and ships the committed cache key so Sync Blog works as intended.
+ * Once that deployment is confirmed, revert these two constants to round
+ * numbers and delete this comment.
+ */
+const BLOG_LISTING_PER_PAGE = 24
+export const BLOG_PAGE_SIZE = 12
+
 export async function getNews() {
   try {
-    const res = await fetch(await withBlogVersion('/api/blog/posts?per_page=20'));
+    const res = await fetch(await withBlogVersion(`/api/blog/posts?per_page=${BLOG_LISTING_PER_PAGE}`));
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
     const data = await res.json();
     return data.items || [];

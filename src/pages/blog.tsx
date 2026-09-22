@@ -34,7 +34,7 @@ export default function Blog() {
   // tags served in blog.html are already the final ones. Re-setting them on mount
   // only created a second copy to disagree with, which is what Audit 4 found.
 
-  const { articles, loading, loadingMore, hasMore, loadMore, loadMoreError } = useNewsPaginated(9);
+  const { articles, loading, loadingMore, hasMore, loadMore, loadMoreError } = useNewsPaginated();
   // Dedicated lightweight endpoint (WordPress tags, not full post bodies) so the
   // category pills don't need every article loaded first just to know which
   // categories actually have posts.

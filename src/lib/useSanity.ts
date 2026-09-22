@@ -49,6 +49,7 @@ import {
   getCategoryImages,
   type CategoryImageLink,
   getNews,
+  BLOG_PAGE_SIZE,
   getNewsById,
   getNewsBySlug,
   getNewsPage,
@@ -542,7 +543,7 @@ export function useNewsBySlug(slug: string, preview: boolean = false) {
   return useFetchWithParam<News | null, string>((paramSlug) => getNewsBySlug(paramSlug, preview), slug)
 }
 
-export function useNewsPaginated(perPage: number = 20) {
+export function useNewsPaginated(perPage: number = BLOG_PAGE_SIZE) {
   const [articles, setArticles] = useState<News[]>([])
   const [loading, setLoading] = useState(true)
   const [loadingMore, setLoadingMore] = useState(false)
