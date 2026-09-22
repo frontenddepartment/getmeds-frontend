@@ -429,22 +429,46 @@ export default function BlogDetail() {
       // Tables — the WordPress editor saves a fixed pixel size on tables (e.g.
       // style="width: 419px"), wider than a phone's content column, which pushed
       // the whole page sideways and made mobile browsers zoom out. Drop the fixed
-      // size so the table fills the column, and wrap it so a genuinely wide table
-      // scrolls on its own instead of widening the page.
+      // size, and wrap the table so a genuinely wide one scrolls on its own
+      // instead of widening the page.
+      //
+      // The wrapper used to be paired with `w-full` on the table, which quietly
+      // cancelled it: a table at width:100% ALWAYS fits its container, by
+      // crushing columns and breaking cell text instead of overflowing. So the
+      // scroll bar never appeared and a three-column drug table on a phone came
+      // out as "DoseGet-" / "20" on two lines, and "20 mg / 0.5" / "mL" on two
+      // more. Width is left to the table's own content now (see .gm-article
+      // table in the stylesheet below, which sets min-width:100% so a narrow
+      // table still fills the column) and the wrapper does its job.
       const tableElements = doc.querySelectorAll('table');
       tableElements.forEach(el => {
         el.style.removeProperty('width');
         el.style.removeProperty('height');
+        // The editor also saves a font size on the table (the live Docetaxel
+        // post carries font-size: 15px). Inline styles beat the stylesheet
+        // below, so leaving it would pin every table to a desktop-chosen size
+        // and lock out the responsive step at the bottom of the stylesheet.
+        // Same class of problem as the pixel width, so it goes the same way.
+        el.style.removeProperty('font-size');
         el.removeAttribute('width');
-        el.classList.add('w-full');
+        el.removeAttribute('cellpadding');
+        el.removeAttribute('cellspacing');
+        el.removeAttribute('border');
+        el.classList.remove('w-full');
         const wrapper = doc.createElement('div');
-        wrapper.className = "overflow-x-auto my-6";
+        // tabIndex makes the scroll region reachable by keyboard, which an
+        // overflow container is not by default — WCAG 2.1.1.
+        wrapper.className = 'gm-table-scroll';
+        wrapper.setAttribute('tabindex', '0');
+        wrapper.setAttribute('role', 'region');
+        wrapper.setAttribute('aria-label', 'Table, scrolls horizontally');
         el.parentNode?.insertBefore(wrapper, el);
         wrapper.appendChild(el);
       });
       doc.querySelectorAll<HTMLElement>('th, td').forEach(el => {
         el.style.removeProperty('width');
         el.removeAttribute('width');
+        el.removeAttribute('height');
       });
 
       // Embeds (YouTube etc.) arrive with fixed width/height attributes. Keep
@@ -643,6 +667,131 @@ export default function BlogDetail() {
       style={{ fontFamily: "'Poppins', sans-serif", background: '#ffffff' }}
       className="min-h-screen relative"
     >
+      {/*
+        Styling for the WordPress-authored body.
+
+        Written out longhand rather than leaned on `prose`: the Tailwind Play CDN
+        is loaded from blog-detail.html without `?plugins=typography`, so every
+        `prose` class on the content div resolves to nothing. Those classes are
+        left in place in case the plugin is ever added, but they are not what is
+        holding this together today — which is why the drug tables arrived with
+        no padding and no header at all.
+
+        Tables get the most attention because they carry the part of a post
+        somebody is actually shopping from — strengths, presentations, brands —
+        and a crushed table is the one formatting failure that changes what the
+        page appears to say.
+      */}
+      <style>{`
+        /* ── The horizontal scroll region around every table ── */
+        .gm-article .gm-table-scroll {
+          overflow-x: auto;
+          margin: 1.5rem 0;
+          /* Momentum scrolling on iOS; without it the drag feels broken. */
+          -webkit-overflow-scrolling: touch;
+          border: 1px solid #E8EDF3;
+          border-radius: 12px;
+          /* A right-edge fade that appears only while there is more to see.
+             Two background layers pinned to the scroller's ends: the fade sits
+             at the right and is covered by the solid layer once scrolled to the
+             end. Pure CSS, so it needs no resize or scroll listener. */
+          background:
+            linear-gradient(to right, #fff 30%, rgba(255,255,255,0)) left center,
+            linear-gradient(to left, #fff 30%, rgba(255,255,255,0)) right center,
+            radial-gradient(farthest-side at 0 50%, rgba(23,43,77,.10), transparent) left center,
+            radial-gradient(farthest-side at 100% 50%, rgba(23,43,77,.10), transparent) right center;
+          background-repeat: no-repeat;
+          background-size: 34px 100%, 34px 100%, 12px 100%, 12px 100%;
+          background-attachment: local, local, scroll, scroll;
+        }
+        .gm-article .gm-table-scroll:focus-visible {
+          outline: 2px solid #1D9FDA;
+          outline-offset: 2px;
+        }
+
+        /* ── The table itself ──
+           width:max-content + min-width:100% is the whole fix, and the
+           max-content half is the part that actually matters. A width:auto
+           table inside an overflow container does NOT overflow it — its
+           shrink-to-fit width is capped by the container, so it compresses
+           columns and wraps cell text instead, and the scroll bar never
+           appears. That is what broke "DoseGet-20" after the hyphen and put
+           "mL" on its own line. max-content makes the table take the width its
+           content needs and lets the wrapper scroll; min-width:100% keeps a
+           narrow table filling the column rather than sitting half-width. */
+        .gm-article table {
+          width: max-content;
+          min-width: 100%;
+          border-collapse: collapse;
+          font-size: 13px;
+          line-height: 1.5;
+          background: #fff;
+        }
+        .gm-article th,
+        .gm-article td {
+          padding: 10px 14px;
+          text-align: left;
+          vertical-align: top;
+          border-bottom: 1px solid #EDF1F6;
+          /* Keeps a drug name or a strength on one line. Long prose in a cell
+             still wraps normally — this only forbids breaking INSIDE a word,
+             which is what put "mL" on its own line under "20 mg / 0.5". */
+          overflow-wrap: normal;
+          word-break: normal;
+          hyphens: none;
+        }
+        /* Enough room that three short columns are not squeezed into two
+           characters each. The max-width is the counterweight to max-content
+           above: without it a cell holding a sentence would refuse to wrap at
+           all and drag the table metres wide. At 20rem a spec value stays on
+           one line and a paragraph wraps. */
+        .gm-article th { min-width: 5.5rem; max-width: 20rem; }
+        .gm-article td { min-width: 5rem; max-width: 20rem; }
+        .gm-article thead th,
+        .gm-article tr:first-child th {
+          background: #F3F6FB;
+          color: #101828;
+          font-weight: 600;
+          white-space: nowrap;
+          border-bottom: 1px solid #E1E8F0;
+        }
+        .gm-article tbody tr:last-child td { border-bottom: 0; }
+        .gm-article tbody tr:nth-child(even) td { background: #FAFCFE; }
+        .gm-article table a { color: #1D9FDA; text-decoration: underline; }
+        /* WordPress often wraps tables in <figure class="wp-block-table">, whose
+           own margins would double up with the scroller's. */
+        .gm-article figure.wp-block-table { margin: 0; overflow: visible; }
+
+        /* ── Everything else WordPress emits, since prose is inert ── */
+        .gm-article p { margin: 0 0 1rem; }
+        .gm-article h2 { font-size: 1.25rem; font-weight: 600; color: #101828; margin: 2rem 0 .75rem; line-height: 1.3; }
+        .gm-article h3 { font-size: 1.05rem; font-weight: 600; color: #101828; margin: 1.5rem 0 .5rem; line-height: 1.35; }
+        .gm-article h4 { font-size: .95rem; font-weight: 600; color: #101828; margin: 1.25rem 0 .5rem; }
+        .gm-article ul, .gm-article ol { margin: 0 0 1rem; padding-left: 1.35rem; }
+        .gm-article ul { list-style: disc; }
+        .gm-article ol { list-style: decimal; }
+        .gm-article li { margin: .35rem 0; }
+        .gm-article a { color: #1D9FDA; text-decoration: underline; }
+        .gm-article a:hover { color: #61A644; }
+        .gm-article strong, .gm-article b { font-weight: 600; color: #101828; }
+        .gm-article img { max-width: 100%; height: auto; border-radius: 10px; }
+        .gm-article blockquote {
+          margin: 1.5rem 0;
+          padding: .25rem 0 .25rem 1rem;
+          border-left: 3px solid #1D9FDA;
+          color: #475467;
+          font-style: italic;
+        }
+        .gm-article hr { margin: 2rem 0; border: 0; border-top: 1px solid #EDF1F6; }
+        /* A long URL with no spaces is the one case where breaking mid-"word"
+           is right — otherwise it pushes the whole column sideways. */
+        .gm-article p a, .gm-article li a { overflow-wrap: anywhere; }
+
+        @media (min-width: 768px) {
+          .gm-article table { font-size: 13.5px; }
+          .gm-article th, .gm-article td { padding: 11px 16px; }
+        }
+      `}</style>
 
       {/* Preview Mode Banner */}
       {isPreview && (
@@ -836,7 +985,7 @@ export default function BlogDetail() {
                 ) : processedContentHtml ? (
                   <div
                     dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(processedContentHtml) }}
-                    className="prose prose-blue max-w-none text-gray-700 text-sm leading-relaxed"
+                    className="gm-article prose prose-blue max-w-none text-gray-700 text-sm leading-relaxed"
                   />
                 ) : null}
 
