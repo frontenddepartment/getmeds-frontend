@@ -388,8 +388,11 @@ export default function BusinessCardPage() {
         <ActionButton
           onClick={save}
           icon="fa-solid fa-user-plus"
-          label={saved ? 'Contact file saved' : 'Save to contacts'}
-          sub={saved ? 'Open it to finish adding' : 'Adds name, number and email'}
+          label={saved ? 'Contact saved' : 'Save to contacts'}
+          /* No follow-up instruction once it is done: a phone hands the vCard
+             straight to the contacts app, so telling somebody to go and finish
+             the job describes a step they never had to take. */
+          sub={saved ? undefined : 'Adds name, number and email'}
           background={saved ? BRAND_GREEN : BRAND}
         />
 
@@ -414,13 +417,22 @@ export default function BusinessCardPage() {
         )}
       </div>
 
-      {/* The "saved" state is a download, and a download is nearly invisible on
-          a phone — this says where it went, because the tap otherwise looks
-          like it did nothing at all. */}
+      {/* Desktop only.
+
+          On a phone the vCard is handed to the contacts app and the "Add
+          contact" sheet comes up by itself, so a paragraph explaining how to
+          find a downloaded file described a chore nobody was doing — and put
+          the awkward-sounding word "download" on the one action the page most
+          wants people to take.
+
+          A desktop browser really does just drop a .vcf into the downloads
+          folder and say nothing, so the sentence still earns its place there.
+          Keyed off width rather than a device sniff: this is about which
+          behaviour the browser has, and width is the honest proxy the rest of
+          this page already uses. */}
       {saved && (
-        <p className="mb-4 px-1 text-center text-[11.5px] leading-relaxed text-gray-500 lg:px-0 lg:text-left">
-          Saved as a <strong>.vcf</strong> file. On iPhone, open it from Files or the download
-          banner to add the contact; on Android, tap the download notification.
+        <p className="mb-4 hidden px-1 text-[11.5px] leading-relaxed text-gray-500 lg:block lg:px-0">
+          Saved to your downloads as a <strong>.vcf</strong> file — open it to add the contact.
         </p>
       )}
 
