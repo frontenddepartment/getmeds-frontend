@@ -119,7 +119,22 @@ export default function Blog() {
 
   const featured = articles && articles.length > 0 ? articles[0] : null;
   const latestPosts = articles && articles.length > 1 ? articles.slice(1, 5) : [];
-  const cardArticles = articles && articles.length > 1 ? articles.slice(1) : [];
+
+  // Every post, including the one in the hero above.
+  //
+  // This used to be `articles.slice(1)`, on the reasoning that the newest post
+  // is already the hero and repeating it immediately below is redundant. The
+  // redundancy is real but it was the smaller problem: under "All" the newest
+  // post was simply missing from the list, so the newest article on the site
+  // was the one article you could not find by scrolling — and the list's own
+  // "N posts total" counted it, which made the absence look like a loading bug
+  // rather than a choice.
+  //
+  // It was worse once a filter was on. `featured` is always articles[0]
+  // regardless of the selected category, so picking "Cancer" kept a possibly
+  // non-cancer hero on screen AND still dropped articles[0] from the cancer
+  // results — a post could vanish from its own category for no visible reason.
+  const cardArticles = articles || [];
 
   const filteredCardArticles = cardArticles.filter(article => {
     // 1. Category Filter — matches the actual WordPress category name directly
