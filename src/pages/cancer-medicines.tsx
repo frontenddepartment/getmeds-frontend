@@ -177,10 +177,13 @@ export default function CancerMedicines() {
     width: number;
   } | null>(null);
 
+  // Same wording as the inquiry form on product-detail, because picking one here
+  // is what lands you there — the label must not change under you on the way.
+  // The values are the ?userType= that page reads, so they stay as they are.
   const USER_TYPE_OPTIONS = [
-    { label: 'Patient / Caregiver',                  value: 'patient'  },
+    { label: 'Patient / Family',                      value: 'patient'  },
     { label: 'Doctor / Healthcare Professional',      value: 'doctor'   },
-    { label: 'Pharmacy Owner / Retail Pharmacy',      value: 'pharmacy' },
+    { label: 'Distributor / Pharmacy',                value: 'pharmacy' },
     { label: 'Hospital / Institution',                value: 'hospital' },
   ];
 
