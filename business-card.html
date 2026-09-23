@@ -39,15 +39,32 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
     <style>
+        /* The backdrop goes on <html>, not <body>: body is only as tall as its
+           content, so a background set there stops short of the fold whenever a
+           card has few details on it. The colour underneath is the artwork's own
+           average, so the moment before the image decodes is not a white flash. */
+        html {
+            background: #D9F2FD url('/assets/businesscardbg.jpg') center / cover no-repeat fixed;
+        }
+
+        /* iOS Safari sizes a fixed background against the document instead of the
+           viewport, which blows the artwork up to several times its intended
+           scale. Touch devices get the ordinary scrolling background. */
+        @media (hover: none) {
+            html {
+                background-attachment: scroll;
+            }
+        }
+
         body {
             font-family: 'Poppins', sans-serif;
         }
     </style>
 </head>
 
-<!-- Tinted ground set here rather than from the React tree, so it paints with
-     the shell instead of flashing white first. -->
-<body data-page="business-card" style="background:#F3F6FB" class="text-gray-800 antialiased">
+<!-- Left transparent on purpose: the backdrop is on <html> above, and any colour
+     here would paint straight over it for the height of the content. -->
+<body data-page="business-card" class="text-gray-800 antialiased">
     <div id="root"></div>
 
     <script type="module" src="/src/entries/business-card-entry.tsx"></script>
