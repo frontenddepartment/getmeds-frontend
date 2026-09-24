@@ -128,10 +128,14 @@ export default function ProductDetail() {
   const [idRequiredModalOpen, setIdRequiredModalOpen] = useState(false);
   const [idModalVisible, setIdModalVisible] = useState(false);
 
+  // The order-medicines audience wording, singularised and joined with a slash:
+  // that page names whole groups and reads as a list ("Patients & Families"),
+  // while this one asks one person to pick which of two things they are.
+  // Keys stay as they were — they are what reaches the sheet's userType column.
   const USER_TYPE_LABELS: Record<string, string> = {
-    patient:  'Patient / Caregiver',
+    patient:  'Patient / Family',
     doctor:   'Doctor / Healthcare Professional',
-    pharmacy: 'Pharmacy Owner / Retail Pharmacy',
+    pharmacy: 'Distributor / Pharmacy',
     hospital: 'Hospital / Institution',
   };
 
@@ -1094,7 +1098,7 @@ export default function ProductDetail() {
                 </div>
                 {!userTypeConfirmed ? (
                   <div>
-                    <p className="text-[13px] font-medium text-gray-500 mb-3">I am a:</p>
+                    <p className="text-[13px] font-medium text-gray-500 mb-3">Inquiry Type:</p>
                     <div className="space-y-2 mb-6">
                       {Object.entries(USER_TYPE_LABELS).map(([value, label]) => (
                         <button

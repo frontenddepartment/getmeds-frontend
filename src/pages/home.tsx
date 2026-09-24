@@ -327,7 +327,7 @@ export default function GetMedsHomepage() {
     {
       bg: 'assets/imagebanner.jpg',
       heading: 'Life-Saving Access.\nRedefining Healthcare Possibilities.',
-      sub: 'Getmeds is a global pharmaceutical company advancing healthcare access in the Philippines through high-quality medicines from essential therapies to advanced hospital treatments.',
+      sub: 'Getmeds is a global pharmaceutical company advancing healthcare access in the Philippines, supplying patients, doctors, pharmacies, and hospitals with medicines from essential therapies to advanced hospital treatments.',
       link: null as string | null,
     },
     {
@@ -1094,9 +1094,15 @@ export default function GetMedsHomepage() {
 
           {/* Image Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 ca-anim ca-right ca-d2">
+            {/* Both fall back to a destination in code rather than relying on
+                Sanity: these two say "here is the range" and "here is the
+                assistance programme", so they should land somewhere whether or
+                not anyone has filled in the link field. A link set in the CMS
+                still wins. newTab is off because both go to our own pages. */}
             <div className="aspect-[1200/680] w-full">
               <LinkableImage
-                link={getImageLink('Patient First Section Image')}
+                link={getImageLink('Patient First Section Image') || '/product-range'}
+                newTab={false}
                 src={getImage('Patient First Section Image', 'assets/genericslider.jpg')}
                 alt="Medical Professional"
                 className="w-full h-full object-cover object-center rounded-[15px] sm:rounded-[24px] shadow-lg"
@@ -1104,7 +1110,8 @@ export default function GetMedsHomepage() {
             </div>
             <div className="aspect-[1200/680] w-full">
               <LinkableImage
-                link={getImageLink('Patient Second Section Image')}
+                link={getImageLink('Patient Second Section Image') || '/patient-assistance-program'}
+                newTab={false}
                 src={getImage('Patient Second Section Image', 'assets/test.jpg')}
                 alt="Medical Facility"
                 className="w-full h-full object-cover object-center rounded-[15px] sm:rounded-[24px] shadow-lg"
@@ -1536,7 +1543,7 @@ export default function GetMedsHomepage() {
               <div className="col-span-6 md:col-span-2 bg-gradient-to-br from-white to-orange-100/60 rounded-2xl p-6 relative overflow-hidden flex flex-col justify-between hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer" style={{ minHeight: '220px' }}>
                 <div className="relative z-10">
                   <h3 className="text-base font-bold text-gray-900 mb-2">Sales and Distribution</h3>
-                  <p className="text-gray-500 text-sm leading-relaxed">10,000+ pharmacy and 500+ hospital accounts served through dedicated nationwide sales teams.</p>
+                  <p className="text-gray-500 text-sm leading-relaxed">10,000+ pharmacy and 500+ hospital accounts, and the prescribing physicians behind them, served by dedicated nationwide sales teams.</p>
                 </div>
                 <div className="absolute bottom-0 right-0 w-28 h-28 pointer-events-none opacity-[0.08]">
                   <svg viewBox="0 0 100 100" className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
@@ -1658,6 +1665,33 @@ export default function GetMedsHomepage() {
                 </div>
               </div>
 
+              {/* Row 5 — 1 full-width card */}
+
+              {/* Card 10: Physician-Direct.
+                  Full width rather than the half the other bottom-row cards
+                  take, because a tenth card in a six-column grid has no partner
+                  to share a row with — and this is the capability the section
+                  heading now leads with. */}
+              <div className="col-span-6 bg-gradient-to-br from-white to-blue-100/60 rounded-2xl p-6 relative overflow-hidden flex flex-col justify-between hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer" style={{ minHeight: '200px' }}>
+                <div className="relative z-10">
+                  <h3 className="text-base font-bold text-gray-900 mb-2">Physician-Direct Product Access</h3>
+                  <p className="text-gray-500 text-sm leading-relaxed max-w-full md:max-w-[55%]">Product availability and inquiries, medical documentation, and Compassionate Special Permit (CSP) coordination.</p>
+                </div>
+                <div className="absolute bottom-0 right-0 w-44 h-44 pointer-events-none">
+                  <svg viewBox="0 0 176 176" className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="176" cy="176" r="50" fill="none" stroke="#2563eb" strokeWidth="1" opacity="0.15" />
+                    <circle cx="176" cy="176" r="85" fill="none" stroke="#2563eb" strokeWidth="1" opacity="0.15" />
+                    <circle cx="176" cy="176" r="120" fill="none" stroke="#2563eb" strokeWidth="1" opacity="0.12" />
+                    <circle cx="176" cy="176" r="155" fill="none" stroke="#2563eb" strokeWidth="1" opacity="0.1" />
+                  </svg>
+                  <div className="absolute inset-0 flex items-end justify-end pb-5 pr-5">
+                    <div className="w-9 h-9 md:w-14 md:h-14 rounded-full bg-gradient-to-br from-blue-400 to-indigo-600 flex items-center justify-center shadow-lg">
+                      <i className="fa-solid fa-user-doctor text-white text-xs md:text-lg"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
             </div>
           </div>
         </div>
@@ -1702,7 +1736,7 @@ export default function GetMedsHomepage() {
 
               {/* Heading — same size as other sections */}
               <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 leading-tight mb-14 max-w-xl ca-anim ca-up">
-                Why hospitals and pharmacies choose Getmeds.
+                Why doctors, hospitals and pharmacies choose Getmeds.
               </h2>
 
               {/* 4 feature columns */}
@@ -1776,47 +1810,57 @@ export default function GetMedsHomepage() {
         const faqs: { q: string; a: React.ReactNode }[] = [
           {
             q: 'Is Getmeds registered with FDA Philippines?',
-            a: 'Yes — Getmeds holds a valid License to Operate from FDA Philippines as a pharmaceutical distributor.',
+            a: 'Yes. Getmeds holds a valid License to Operate from FDA Philippines as a wholesaler, importer, distributor and retail pharmacy.',
           },
           {
-            q: 'Is Getmeds Legit?',
-            a: 'Yes, Getmeds is a global pharmaceutical company located in Las Piñas, Metro Manila, Philippines. The company operates as a healthcare and pharmaceutical provider serving patients, pharmacies, hospitals, and healthcare partners through its pharmaceutical distribution and healthcare solutions.',
+            q: 'Is Getmeds legit?',
+            a: 'Yes. Getmeds Philippines, Inc. is licensed by the Food and Drug Administration of the Philippines as a wholesaler, importer, distributor and retail pharmacy, and is PDEA-licensed for controlled substances. Every order is dispensed under PRC-licensed Filipino pharmacists. We serve patients, doctors, pharmacies and hospitals nationwide.',
           },
           {
             q: 'Where is Getmeds located in the Philippines?',
-            a: "Getmeds' head office is located at Unit 301–305, 17 Vatican Building, Vatican Drive, BF Resort Village, Talon Dos, Las Piñas City, Metro Manila, Philippines. This serves as the company's principal office and business address in the Philippines.",
+            a: "Getmeds' head office is at Unit 305, 17 Vatican Bldg. Vatican Drive BF Resort Village, Talon Dos, Las Piñas, Metro Manila. This is our principal office and business address in the Philippines.",
           },
           {
             q: 'Who is the owner of Getmeds?',
-            a: (<span>Getmeds was founded and is owned by <a href="https://www.linkedin.com/in/nareshbishnoi/" target="_blank" rel="noopener noreferrer" className="font-semibold underline" style={{ color: '#1D9FDA' }}>Naresh Bishnoi</a>.</span>),
+            a: (<span>Getmeds was founded and is owned by <a href="https://www.linkedin.com/in/nareshbishnoi/" target="_blank" rel="noopener noreferrer" className="font-semibold underline" style={{ color: '#1D9FDA' }}>Naresh Bishnoi</a>, who also serves as Director and is a United Nations Global Compact SDG Champion.</span>),
           },
           {
             q: 'What products does Getmeds offer?',
             a: (
               <span>
-                Getmeds distributes a comprehensive portfolio of pharmaceutical products and medicines in the Philippines across major therapeutic areas, including:<br /><br />
+                Getmeds distributes pharmaceutical products across the Philippines in these therapeutic areas:<br /><br />
                 <span className="block space-y-1">
-                  <span className="block">• <strong>Oncology</strong> — targeted therapies, chemotherapies, and supportive cancer care for Filipino cancer patients</span>
-                  <span className="block">• <strong>Hematology</strong> — treatments for leukemia, anemia, coagulation disorders, and blood cancers</span>
-                  <span className="block">• <strong>Cardiology</strong> — therapies for heart, vascular, and cardiometabolic conditions</span>
-                  <span className="block">• <strong>Rare Diseases</strong> — Named-Patient Access Programs and Compassionate Special Permit (CSP) imports for hard-to-find medicines in the Philippines</span>
-                  <span className="block">• <strong>Antibacterial</strong> — hospital-grade and community antibiotics</span>
-                  <span className="block">• <strong>Anesthesia & Pain Management</strong> — anesthesia agents, analgesics, and perioperative medicines for surgical care</span>
-                  <span className="block">• <strong>Essential Medicines</strong> — WHO-listed first-line therapies and branded generics</span>
-                  <span className="block">• <strong>Biologicals & Vaccines</strong> — cold-chain-managed biologicals and immunization products</span>
+                  <span className="block">• <strong>Oncology</strong> — targeted therapies, chemotherapy and supportive cancer care</span>
+                  <span className="block">• <strong>Hematology</strong> — treatments for leukemia, anemia, coagulation disorders and blood cancers</span>
+                  <span className="block">• <strong>Anti-Infectives</strong> — antibiotics for hospital and community use</span>
+                  <span className="block">• <strong>Cardiology</strong> — therapies for heart, vascular and cardiometabolic conditions</span>
+                  <span className="block">• <strong>Anesthesia and Pain Management</strong> — anesthetic, analgesic and perioperative medicines</span>
+                  <span className="block">• <strong>Endocrinology, Orthopedic, Rheumatology, Nephrology, Respiratory and Radiology</strong></span>
+                  <span className="block">• <strong>Rare Diseases</strong> — Named-Patient Access Programs and Compassionate Special Permit imports for medicines not registered in the Philippines</span>
                   <span className="block">• <strong>Medical Devices</strong> — clinical devices and consumables for hospital and ambulatory care</span>
-                  <span className="block">• <strong>Radiology</strong> — contrast agents, imaging consumables, and diagnostic products</span>
+                  <span className="block">• <strong>Essential Medicines</strong> — WHO-listed first-line therapies and branded generics</span>
                 </span>
-                <br />Each therapeutic area is supported by Getmeds' dedicated regulatory, supply chain, and patient access teams operating nationwide across Luzon, Visayas, and Mindanao.
               </span>
             ),
           },
           {
             q: 'Does Getmeds accept Senior Citizen and PWD IDs for discounts?',
+            a: 'Yes. Getmeds complies with the Expanded Senior Citizens Act (Republic Act 9994) and the Magna Carta for Persons with Disabilities (Republic Act 10754). Qualified Senior Citizens and Persons with Disabilities receive a 20% discount plus VAT exemption on eligible prescription medicines. Submit a valid Senior Citizen or PWD ID together with your prescription when you place your order.',
+          },
+          {
+            q: 'Can doctors order medicines from Getmeds?',
+            a: 'Yes. Physicians, specialists and healthcare professionals can order products, check stock and pricing, and coordinate Compassionate Special Permit (CSP) applications directly with our team.',
+          },
+          {
+            q: 'How long does delivery take?',
+            a: 'Orders confirmed before 3:00 PM may be delivered the same day within Metro Manila, subject to product availability and order confirmation. Delivery lead times for Luzon, Visayas, and Mindanao may vary depending on the location and courier service.',
+          },
+          {
+            q: 'What payment methods do you accept?',
             a: (
               <span>
-                Yes. Getmeds fully complies with the Expanded Senior Citizens Act (Republic Act 9994) and the Magna Carta for Persons with Disabilities (Republic Act 10754). Qualified Senior Citizens and Persons with Disabilities are entitled to a 20% discount plus VAT exemption on eligible prescription medicines purchased through Getmeds pharmacies and direct-to-consumer channels.<br /><br />
-                To avail of the benefit, simply present a valid Senior Citizen ID or PWD ID together with a valid prescription at the point of purchase.
+                Getmeds accepts Cash on Delivery, GCash, Bank Transfer, Credit or Debit Card.<br /><br />
+                Credit terms may also be available for qualified distributor and hospital accounts, subject to approval and applicable terms.
               </span>
             ),
           },

@@ -56,8 +56,8 @@ export const ORDER_AUDIENCES: OrderAudience[] = [
     cardBody: 'Upload a prescription and we deliver to your door.',
     cardCta: 'Order with a prescription',
     icon: 'fa-house-medical',
-    image: '/assets/order-medicines/patients.jpg',
-    imageAlt: 'An older couple walking arm in arm',
+    image: '/assets/order-medicines/ordermedicinepatient.jpg',
+    imageAlt: 'A mother and her young daughter holding each other on a hospital bed',
     meta: {
       title: 'Order Prescription Medicine Online for Patients',
       description:
@@ -72,8 +72,8 @@ export const ORDER_AUDIENCES: OrderAudience[] = [
     cardBody: 'Product orders, pricing and Compassionate Special Permits.',
     cardCta: 'Send an inquiry',
     icon: 'fa-user-doctor',
-    image: '/assets/order-medicines/doctors.jpg',
-    imageAlt: 'A clinician typing at a laptop beside a stethoscope',
+    image: '/assets/order-medicines/ordermedicinedoctor.jpg',
+    imageAlt: 'A line of doctors and nurses in white coats and scrubs, clipboards in hand',
     meta: {
       title: 'Medicine Orders for Doctors and Healthcare Professionals',
       description:
@@ -88,8 +88,8 @@ export const ORDER_AUDIENCES: OrderAudience[] = [
     cardBody: 'Wholesale supply, credit terms and a distributor account.',
     cardCta: 'Become a distributor partner',
     icon: 'fa-shop',
-    image: '/assets/order-medicines/distributors.jpg',
-    imageAlt: 'A pharmacist taking a medicine box from a dispensary shelf',
+    image: '/assets/order-medicines/ordermedicinedistributor.jpg',
+    imageAlt: 'Two Getmeds staff checking a medicine box against a stock list in a pharmacy office',
     meta: {
       title: 'Pharmaceutical Distributor and Wholesale Pharmacy Supply',
       description:
@@ -104,8 +104,8 @@ export const ORDER_AUDIENCES: OrderAudience[] = [
     cardBody: 'Quotations, emergency purchases and hospital procurement.',
     cardCta: 'Request a quotation',
     icon: 'fa-hospital',
-    image: '/assets/order-medicines/hospitals.jpg',
-    imageAlt: 'An intravenous drip and infusion pump beside a hospital bed',
+    image: '/assets/order-medicines/ordermedicinehospitals.jpg',
+    imageAlt: 'The entrance canopy of a modern multi-storey hospital',
     meta: {
       title: 'Hospital Medicine Procurement and Quotations',
       description:

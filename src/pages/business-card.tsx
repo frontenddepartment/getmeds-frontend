@@ -51,6 +51,193 @@ const BRAND_GREEN = '#61A644';
 const GROUND = '#F3F6FB';
 const CARD_SHADOW = '0 2px 10px rgba(23,43,77,.055)';
 
+/*
+  A downscaled copy of the logo, shared by the mark in the header and the
+  watermark tiles on the card faces.
+
+  Not /assets/getmedslogo.png, which is 7122x4000 — fine as a hero image,
+  wasteful for a 148px header mark and worse for a 110px tile the browser has to
+  hold decoded while it paints two dozen of them on a phone.
+*/
+const LOGO_SRC = '/assets/getmeds-logo-sm.png';
+
+/*
+  WATERMARK_OPACITY is the knob: high enough to survive a screenshot, low enough
+  to read the printed phone number underneath.
+*/
+const WATERMARK_OPACITY = 0.18;
+const WATERMARK_TILES = 28;
+
+/*
+  Hover motion for the icons on the three action buttons.
+
+  Plain CSS rather than Tailwind's `group-hover:`, for the two guards it buys.
+  `hover: hover` means a tap on a phone cannot leave the effect stuck on, which
+  the bare `:hover` behind Tailwind's variant would — and this page is mostly
+  read on a phone, since it opens from a QR code. `prefers-reduced-motion` then
+  drops the movement for anyone who asked their OS for less of it, keeping the
+  tint change so the button still visibly answers the pointer.
+*/
+const ACTION_ICON_CSS = `
+  .gm-action__disc { background-color: rgba(255,255,255,.18); }
+  .gm-action__disc,
+  .gm-action__glyph,
+  .gm-action__chev {
+    transition: transform .22s cubic-bezier(.2,.7,.3,1), background-color .22s ease, opacity .22s ease;
+  }
+
+  /* The halo. Sits outside the disc rather than inside it, so it reads as
+     something leaving the icon instead of a border thickening. */
+  .gm-action__disc::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 9999px;
+    border: 2px solid rgba(255,255,255,.6);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  @media (hover: hover) {
+    .gm-action:hover .gm-action__disc { background-color: rgba(255,255,255,.3); transform: scale(1.07); }
+    .gm-action:hover .gm-action__glyph { transform: scale(1.12); }
+    /* Beats Tailwind's .opacity-60 on specificity, so the arrow brightens as it
+       slides instead of drifting away still dimmed. */
+    .gm-action:hover .gm-action__chev { transform: translateX(3px); opacity: 1; }
+    .gm-action:hover .gm-action__disc::after { animation: gm-action-halo 1.15s ease-out infinite; }
+  }
+
+  @keyframes gm-action-halo {
+    0%   { opacity: .6; transform: scale(1); }
+    70%  { opacity: 0;  transform: scale(1.55); }
+    100% { opacity: 0;  transform: scale(1.55); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .gm-action:hover .gm-action__disc,
+    .gm-action:hover .gm-action__glyph,
+    .gm-action:hover .gm-action__chev { transform: none; }
+    .gm-action:hover .gm-action__disc::after { animation: none; }
+  }
+`;
+
+/*
+  The note that appears beside a detail row on hover, saying what the row will do
+  if you click it.
+
+  It sits outside the white card — `left: 100%` puts it past the row's right
+  edge, out on the page background, which is why the card had to give up its
+  `overflow-hidden`. Nothing in there paints to the rounded corners, so the clip
+  was doing no work anyway.
+
+  Guarded by `hover: hover` like the button icons: on a phone the rows are tapped
+  and a tooltip that latches on after the tap is worse than no tooltip. That also
+  disposes of the one place this could not fit — at phone width there is no page
+  margin to hang it in, and at phone width it never shows.
+*/
+const DETAIL_HINT_CSS = `
+  .gm-hint {
+    position: absolute;
+    top: 50%;
+    left: 100%;
+    margin-left: 10px;
+    padding: 3px 9px;
+    border-radius: 6px;
+    background: #111;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.5;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    /* Starts tucked back towards the card, so it reads as emerging from the row
+       rather than drifting in from somewhere off to the side. */
+    transform: translateY(-50%) translateX(-6px);
+    transition: opacity .18s ease, transform .18s cubic-bezier(.2,.7,.3,1);
+  }
+
+  @media (hover: hover) {
+    .gm-detail:hover .gm-hint { opacity: 1; transform: translateY(-50%) translateX(0); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .gm-hint,
+    .gm-detail:hover .gm-hint { transform: translateY(-50%); }
+  }
+`;
+
+/*
+  The two columns arriving: the card artwork slides in from the left, the name
+  and the things you can do with it from the right, meeting in the middle.
+
+  It runs on the ready state only, which is also the moment the fetched card
+  first paints — so the movement covers the content appearing rather than
+  replaying over something already on screen.
+
+  --gm-enter is the knob for the whole thing, and the 140ms on the right column
+  is what makes it a pair arriving rather than two halves snapping together.
+*/
+const ENTRANCE_CSS = `
+  :root { --gm-enter: 900ms; }
+
+  /* On a phone the card already runs nearly edge to edge, so the opening frame
+     of the slide sits off-screen. Clipping at the viewport keeps that from
+     reading as a sideways scroll for the length of the animation — nothing is
+     lost, since the overhang is past the screen edge either way. */
+  body { overflow-x: hidden; }
+
+  @keyframes gm-enter-from-left {
+    from { opacity: 0; transform: translateX(-32px); }
+    to   { opacity: 1; transform: none; }
+  }
+
+  @keyframes gm-enter-from-right {
+    from { opacity: 0; transform: translateX(32px); }
+    to   { opacity: 1; transform: none; }
+  }
+
+  @keyframes gm-enter-fade {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  /* The "both" fill mode holds the opening frame through the delay, so the
+     right column is not briefly visible in its final place before it sets off. */
+  .gm-enter-left {
+    animation: gm-enter-from-left var(--gm-enter) cubic-bezier(.16,.84,.44,1) both;
+  }
+
+  .gm-enter-right {
+    animation: gm-enter-from-right var(--gm-enter) cubic-bezier(.16,.84,.44,1) 140ms both;
+  }
+
+  /* The header mark leads, and only fades — sliding it as well would give the
+     eye a third thing to follow before the card has arrived. */
+  .gm-enter-fade-in {
+    animation: gm-enter-fade var(--gm-enter) ease both;
+  }
+
+  /* Movement is the part people ask to be spared, not the appearing itself —
+     so this keeps the fade and drops the travel. */
+  @media (prefers-reduced-motion: reduce) {
+    .gm-enter-left,
+    .gm-enter-right { animation: gm-enter-fade var(--gm-enter) ease both; }
+  }
+`;
+
+/**
+ * Turns away the browser's own "save this image" affordances — the right-click
+ * menu and drag-to-desktop.
+ *
+ * Worth being plain about what this is: a speed bump, not protection. Anyone
+ * with a screenshot key or devtools still gets the artwork, which is why the
+ * watermark above is the actual answer and this only stops the effortless copy.
+ */
+function blockSave(e: React.SyntheticEvent) {
+  e.preventDefault();
+}
+
 /** The slug is in the path, because the QR code is a path: /card/juan-dela-cruz */
 function slugFromLocation(): string {
   const path = window.location.pathname.replace(/\.html$/, '');
@@ -83,22 +270,21 @@ function ActionButton({
 }) {
   const inner = (
     <>
-      <span
-        className="flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-full"
-        style={{ background: 'rgba(255,255,255,.18)' }}
-      >
-        <i className={`${icon} text-[17px]`} />
+      {/* The disc tint moved from an inline style to ACTION_ICON_CSS, because a
+          style attribute has no hover to respond to. */}
+      <span className="gm-action__disc relative flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-full">
+        <i className={`${icon} gm-action__glyph text-[17px]`} />
       </span>
       <span className="min-w-0 flex-1 text-left">
         <span className="block text-[14px] font-semibold leading-tight">{label}</span>
         {sub && <span className="mt-0.5 block text-[11.5px] leading-tight opacity-80">{sub}</span>}
       </span>
-      <i className="fa-solid fa-chevron-right shrink-0 text-[12px] opacity-60" />
+      <i className="fa-solid fa-chevron-right gm-action__chev shrink-0 text-[12px] opacity-60" />
     </>
   );
 
   const className =
-    'flex w-full items-center gap-3 rounded-[16px] px-3.5 py-3 transition active:scale-[0.985]';
+    'gm-action flex w-full items-center gap-3 rounded-[16px] px-3.5 py-3 transition active:scale-[0.985]';
   const style = { background, color, boxShadow: CARD_SHADOW };
 
   if (href) {
@@ -126,19 +312,79 @@ function ActionButton({
 function CardFace({ src, alt, className = '' }: { src: string; alt: string; className?: string }) {
   return (
     <div
-      className={`overflow-hidden rounded-[18px] bg-white ${className}`}
+      className={`relative overflow-hidden rounded-[18px] bg-white ${className}`}
       style={{ boxShadow: '0 6px 24px rgba(23,43,77,.12)' }}
+      /* On the wrapper, not the <img>: the watermark sits on top, and a guard
+         here catches the right-click wherever inside the card it lands. */
+      onContextMenu={blockSave}
+      onDragStart={blockSave}
     >
       <img
         src={src}
         alt={alt}
-        className="block w-full"
+        className="block w-full select-none"
+        draggable={false}
+        /* Suppresses the iOS long-press sheet, which is the phone equivalent of
+           "Save image as" and the likelier route on a page opened from a QR. */
+        style={{ WebkitTouchCallout: 'none' }}
         onError={(e) => {
           (e.currentTarget as HTMLImageElement).style.display = 'none';
         }}
       />
+      <CardWatermark />
     </div>
   );
+}
+
+/**
+ * The tiled, slanted logo laid over a card face.
+ *
+ * Same treatment as the employee verification modal, so a card and a
+ * verification result read as one document family.
+ *
+ * Purely decorative: `pointer-events-none` keeps it from swallowing the
+ * right-click guard on the wrapper, and the empty alt keeps two dozen copies of
+ * the logo out of the accessibility tree.
+ *
+ * The grid is deliberately larger than the card (`-inset-24`) and carries more
+ * tiles than fit, because rotating it swings the corners inward — the overflow
+ * is what keeps them covered, and the parent clips the rest. At `-inset-16` the
+ * rotated top edge cuts across the card's top-left corner and leaves it bare.
+ */
+function CardWatermark() {
+  return (
+    <div className="pointer-events-none absolute inset-0 select-none overflow-hidden">
+      <div
+        className="absolute -inset-24 grid grid-cols-4 content-start gap-x-6 gap-y-4"
+        style={{ transform: 'rotate(-20deg)' }}
+      >
+        {Array.from({ length: WATERMARK_TILES }).map((_, i) => (
+          <img
+            key={i}
+            src={LOGO_SRC}
+            alt=""
+            aria-hidden="true"
+            draggable={false}
+            className="w-full max-w-[110px] justify-self-center"
+            style={{ opacity: WATERMARK_OPACITY }}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * What the hover note on a detail row says.
+ *
+ * Read off the href rather than passed in at each call site, so a row cannot end
+ * up promising to call a mailto: — the protocol is already the authority on what
+ * clicking it does.
+ */
+function hintFor(href: string): string {
+  if (href.startsWith('tel:')) return 'Call Me';
+  if (href.startsWith('mailto:')) return 'Email Me';
+  return 'Open';
 }
 
 /** A row in the "details" card — tappable where the value is dialable. */
@@ -150,10 +396,19 @@ function DetailRow({ icon, label, value, href }: { icon: string; label: string; 
         <span className="block text-[10.5px] uppercase tracking-wide text-gray-400">{label}</span>
         <span className="block truncate text-[13.5px] text-gray-800">{value}</span>
       </span>
-      {href && <i className="fa-solid fa-arrow-up-right-from-square shrink-0 text-[11px] text-gray-300" />}
+      {href && (
+        <>
+          {/* Decorative: the link already reads out its label and value, so the
+              note would only repeat it to a screen reader. */}
+          <span className="gm-hint" aria-hidden="true">
+            {hintFor(href)}
+          </span>
+          <i className="fa-solid fa-arrow-up-right-from-square shrink-0 text-[11px] text-gray-300" />
+        </>
+      )}
     </>
   );
-  const cls = 'flex items-center gap-3 px-4 py-3';
+  const cls = 'gm-detail relative flex items-center gap-3 px-4 py-3';
   return href ? (
     <a href={href} className={cls}>
       {body}
@@ -316,8 +571,34 @@ export default function BusinessCardPage() {
       tablet-poster size and pushed the Save and messaging buttons, which are the
       entire point of the page, below the fold.
     */
-    <main className="mx-auto max-w-md px-4 pb-10 pt-5 lg:max-w-4xl lg:px-8 lg:pt-10">
-      <div className="lg:grid lg:grid-cols-2 lg:items-start lg:gap-10">
+    <>
+      {/* Once for the page, not once per button — ActionButton renders three
+          times and three identical stylesheets would do the same job. */}
+      <style>{`${ENTRANCE_CSS}${ACTION_ICON_CSS}${DETAIL_HINT_CSS}`}</style>
+
+      {/* The page's own mark, and deliberately not a child of <main>.
+
+          In the flow it did two things it should not: pushed the card down, and
+          sat directly above the details column closely enough to read as that
+          column's heading. Out of the flow it is measured from the page corner
+          instead, so the layout below is exactly where it was without the logo,
+          and on a wide screen it sits well clear of the content in the margin.
+
+          This leans on <main> being unpositioned — if it ever gains `relative`,
+          this snaps back to the content edge and looks like part of the column
+          again. Absolute rather than fixed, so it scrolls away with the page
+          rather than shadowing the buttons. */}
+      <header className="gm-enter-fade-in absolute right-4 top-5 z-10 lg:right-8 lg:top-7">
+        <a href="/" className="inline-block">
+          <img src={LOGO_SRC} alt="Getmeds" className="h-auto w-[92px] lg:w-[148px]" />
+        </a>
+      </header>
+
+      {/* The phone-only top padding is the one concession: at that width there
+          is no margin beside the content to put a logo in, so the card has to
+          start below it. Desktop keeps its original pt-10. */}
+      <main className="mx-auto max-w-md px-4 pb-10 pt-[84px] lg:max-w-4xl lg:px-8 lg:pt-10">
+        <div className="lg:grid lg:grid-cols-2 lg:items-start lg:gap-10">
         {/* ── Left: the card artwork ──
             Whoever is looking at this is holding the paper version, so matching
             it is what makes the page read as "this card" rather than "a Getmeds
@@ -328,7 +609,7 @@ export default function BusinessCardPage() {
             images side by side answer "what is on the back?" without asking
             anyone to find a control and click it. */}
         {front && (
-          <div className="mb-4 lg:mb-0">
+          <div className="gm-enter-left mb-4 lg:mb-0">
             <CardFace
               src={front}
               alt={`Business card for ${card.fullName}`}
@@ -369,7 +650,7 @@ export default function BusinessCardPage() {
         )}
 
         {/* ── Right: who they are, and what you can do about it ── */}
-        <div>
+        <div className="gm-enter-right">
       <div className="mb-6 text-center lg:text-left">
         <h1 className="text-[22px] font-semibold leading-tight tracking-tight text-gray-900">
           {card.fullName}
@@ -436,7 +717,9 @@ export default function BusinessCardPage() {
         </p>
       )}
 
-      <section className="mt-5 overflow-hidden rounded-[18px] bg-white" style={{ boxShadow: CARD_SHADOW }}>
+      {/* No `overflow-hidden`: the hover note on each row sits outside this card,
+          and the clip would cut it off. Nothing here paints to the corners. */}
+      <section className="mt-5 rounded-[18px] bg-white" style={{ boxShadow: CARD_SHADOW }}>
         {mobile && (
           <DetailRow icon="fa-solid fa-mobile-screen" label="Mobile" value={formatPhone(mobile)} href={telLink(mobile)} />
         )}
@@ -467,7 +750,8 @@ export default function BusinessCardPage() {
         </p>
       </div>
         </div>
-      </div>
-    </main>
+        </div>
+      </main>
+    </>
   );
 }
