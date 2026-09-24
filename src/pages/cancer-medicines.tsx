@@ -7,7 +7,7 @@ import { urlFor } from '../lib/sanity';
 import type { Product as SanityProduct, Category } from '../types/sanity';
 import { injectHTML } from '../lib/injectHTML';
 import { sortByFeaturedOrder } from '../lib/categoryImageKey';
-import { setPageMeta, injectJsonLd, removeJsonLd, specialtyUrl, conditionReviewFields, ORGANIZATION_ID } from '../lib/seo';
+import { setPageMeta, injectJsonLd, removeJsonLd, specialtyUrl, conditionReviewFields, ogImageForFolder, CONDITIONS_OG_IMAGE, ORGANIZATION_ID } from '../lib/seo';
 import { folderDisplayName } from '../lib/queries';
 
 
@@ -796,6 +796,8 @@ export default function CancerMedicines() {
       title: isCondition ? `${displayLabel} - ${sectionLabel}` : `${displayLabel}${folderQualifier}`,
       description,
       path,
+      // Same cards scripts/prerender-slugs.cjs bakes in for conditions and category folders.
+      image: isCondition ? CONDITIONS_OG_IMAGE : ogImageForFolder(activeFolder || matchedCat?.slug),
     });
 
     // Mirrors the BreadcrumbList baked in by scripts/prerender-slugs.cjs under this same

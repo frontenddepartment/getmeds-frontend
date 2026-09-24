@@ -18,6 +18,7 @@
 const fs = require('fs');
 const path = require('path');
 const { withSiteName } = require('./lib/site-title.cjs');
+const { ORDER_OG_IMAGE, ogImageTags } = require('./lib/og-images.cjs');
 
 const DOMAIN = 'https://getmeds.ph';
 const DIST_DIR = path.join(__dirname, '..', 'dist');
@@ -69,6 +70,9 @@ function injectHead(template, { title, description, canonicalPath }) {
   // own, or every audience page would canonicalise to the hub and drop out of the index.
   html = html.replace(/[ \t]*<link\s+rel=["']canonical["'][^>]*>\r?\n?/gi, '');
   html = html.replace(/[ \t]*<meta\s+property=["']og:url["'][^>]*>\r?\n?/gi, '');
+  // A shell that ships its own share image (order-medicines.html does) would otherwise end
+  // up with two og:image blocks once this page's own is appended.
+  html = html.replace(/[ \t]*<meta\s+property=["']og:image(?::[a-z]+)?["'][^>]*>\r?\n?/gi, '');
 
   html = html.replace(/<title>[\s\S]*?<\/title>/i, `<title>${escapeHtml(fullTitle)}</title>`);
   html = html.replace(/<meta\s+name=["']description["'][\s\S]*?>/i, `<meta name="description" content="${escapeHtml(description)}">`);
@@ -79,7 +83,7 @@ function injectHead(template, { title, description, canonicalPath }) {
     `<meta property="og:site_name" content="Getmeds Philippines">`,
     `<meta property="og:title" content="${escapeHtml(fullTitle)}">`,
     `<meta property="og:description" content="${escapeHtml(description)}">`,
-    `<meta property="og:image" content="${DOMAIN}/assets/getmedslogo.png">`,
+    ...ogImageTags(ORDER_OG_IMAGE),
     `<meta property="og:url" content="${canonicalUrl}">`,
   ].join('\n    ');
 

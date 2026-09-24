@@ -9,6 +9,7 @@
 const fs = require('fs');
 const path = require('path');
 const { withSiteName, truncateAtWord } = require('./lib/site-title.cjs');
+const { DEFAULT_OG_IMAGE, CONDITIONS_OG_IMAGE, ogImageForFolder, ogImageTags } = require('./lib/og-images.cjs');
 
 const DOMAIN = 'https://getmeds.ph';
 const DIST_DIR = path.join(__dirname, '..', 'dist');
@@ -249,7 +250,7 @@ function getDisplayName(row) {
 // `jsonLdBlocks` is a list of { id, data } — a page carries several (its own Drug or
 // MedicalWebPage block plus a BreadcrumbList), and each id has to match the id used by
 // src/lib/seo.ts at runtime so hydration updates the block in place.
-function injectHead(template, { title, description, canonicalPath, ogType, jsonLdBlocks = [] }) {
+function injectHead(template, { title, description, canonicalPath, ogType, ogImage = DEFAULT_OG_IMAGE, jsonLdBlocks = [] }) {
   let html = template;
   const fullTitle = withSiteName(title);
   const canonicalUrl = `${DOMAIN}${canonicalPath}`;
@@ -258,6 +259,9 @@ function injectHead(template, { title, description, canonicalPath, ogType, jsonL
   // prerendered page would carry two conflicting canonicals.
   html = html.replace(/[ \t]*<link\s+rel=["']canonical["'][^>]*>\r?\n?/gi, '');
   html = html.replace(/[ \t]*<meta\s+property=["']og:url["'][^>]*>\r?\n?/gi, '');
+  // A shell that ships its own share image (order-medicines.html does) would otherwise end
+  // up with two og:image blocks once this page's own is appended.
+  html = html.replace(/[ \t]*<meta\s+property=["']og:image(?::[a-z]+)?["'][^>]*>\r?\n?/gi, '');
   // Same reasoning for the shell's noindex: product-detail.html must not be indexed at its
   // own URL, but every page prerendered from it is a real page that must be. Strip the tag
   // here so the noindex stays on the shell alone. The comment above it goes too, so the
@@ -287,7 +291,7 @@ function injectHead(template, { title, description, canonicalPath, ogType, jsonL
     `<meta property="og:site_name" content="Getmeds Philippines">`,
     `<meta property="og:title" content="${escapeHtml(fullTitle)}">`,
     `<meta property="og:description" content="${escapeHtml(description)}">`,
-    `<meta property="og:image" content="${DOMAIN}/assets/getmedslogo.png">`,
+    ...ogImageTags(ogImage),
     `<meta property="og:url" content="${canonicalUrl}">`,
     // Each carries the same id the page uses at runtime (src/lib/seo.ts injectJsonLd), so
     // hydration updates the block in place instead of appending a rival second one.
@@ -388,6 +392,9 @@ async function main() {
       description,
       canonicalPath,
       ogType: 'product',
+      // The category's card, not the product's photo: a pack shot beside our paid campaigns is
+      // the medicine photography Meta flags, and a product name is advertising under RA 9711.
+      ogImage: ogImageForFolder(folder),
       jsonLdBlocks: [
         {
           id: 'jsonld-drug',
@@ -486,6 +493,7 @@ async function main() {
       description,
       canonicalPath,
       ogType: 'website',
+      ogImage: CONDITIONS_OG_IMAGE,
       jsonLdBlocks: [
         {
           id: 'jsonld-medical-webpage',
@@ -565,6 +573,7 @@ async function main() {
       description,
       canonicalPath,
       ogType: 'website',
+      ogImage: ogImageForFolder(folder),
       jsonLdBlocks: [
         {
           id: 'jsonld-medical-webpage',

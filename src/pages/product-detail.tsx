@@ -9,7 +9,7 @@ import { Turnstile, useTurnstile } from '../lib/turnstile';
 import { AddToCart } from '../lib/AddToCart';
 import { isAppMode, needsPrescription } from '../lib/cart';
 import { loadDetails } from '../lib/accountStore';
-import { setPageMeta, injectJsonLd, truncateAtWord, ORGANIZATION_ID } from '../lib/seo';
+import { setPageMeta, injectJsonLd, truncateAtWord, ogImageForFolder, ORGANIZATION_ID } from '../lib/seo';
 import { validateFiles, ALLOWED_FILE_TYPES_ACCEPT } from '../lib/fileUpload';
 import AlertModal from '../lib/AlertModal';
 import { PortableText } from '@portabletext/react';
@@ -364,7 +364,9 @@ export default function ProductDetail() {
           title: found.metaTitle || displayName,
           description: truncateAtWord(description, 160),
           path: prettyPath,
-          image: imgUrl,
+          // The category's share card, not the pack shot: medicine photography beside our paid
+          // campaigns is what Meta flags, and matches what scripts/prerender-slugs.cjs serves.
+          image: ogImageForFolder(found.categoryFolder),
           type: 'product',
         });
         // Kept field-for-field in step with the block scripts/prerender-slugs.cjs bakes in
