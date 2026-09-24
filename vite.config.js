@@ -43,12 +43,17 @@ const PWA_MODE = `
     // browser tabs and bounce a real app user out to the website.
     // navigator.standalone is the iOS-only predecessor, still needed for
     // Safari before 16.4.
-    var m = window.matchMedia;
+    // Called as window.matchMedia(...) rather than through a detached
+    // reference: an unbound copy only works because this script is sloppy-mode,
+    // where a bare call still gets the global object as its receiver. That is
+    // the kind of thing that breaks silently the day someone wraps this in a
+    // module, and a redirect that fails silently is the whole bug below.
     var standalone =
-      (m && (m('(display-mode: standalone)').matches ||
-             m('(display-mode: minimal-ui)').matches ||
-             m('(display-mode: fullscreen)').matches ||
-             m('(display-mode: window-controls-overlay)').matches)) ||
+      (typeof window.matchMedia === 'function' && (
+        window.matchMedia('(display-mode: standalone)').matches ||
+        window.matchMedia('(display-mode: minimal-ui)').matches ||
+        window.matchMedia('(display-mode: fullscreen)').matches ||
+        window.matchMedia('(display-mode: window-controls-overlay)').matches)) ||
       window.navigator.standalone === true;
 
     // cleanUrls is on, so the same page answers to /app-home, /app-home.html
