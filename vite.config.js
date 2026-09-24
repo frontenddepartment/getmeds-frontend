@@ -35,19 +35,53 @@ const PWA_MODE = `
 <script>
 (function () {
   try {
-    if (!(window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true)) return;
-    document.documentElement.classList.add('pwa-standalone');
+    // Every display mode that means "launched as an installed app". The
+    // manifest asks for standalone, but a browser is free to hand back a
+    // neighbouring mode: desktop Chrome reports window-controls-overlay once
+    // that feature is on, and a user can pick minimal-ui or fullscreen at
+    // install time. Checking only 'standalone' would read those as ordinary
+    // browser tabs and bounce a real app user out to the website.
+    // navigator.standalone is the iOS-only predecessor, still needed for
+    // Safari before 16.4.
+    var m = window.matchMedia;
+    var standalone =
+      (m && (m('(display-mode: standalone)').matches ||
+             m('(display-mode: minimal-ui)').matches ||
+             m('(display-mode: fullscreen)').matches ||
+             m('(display-mode: window-controls-overlay)').matches)) ||
+      window.navigator.standalone === true;
 
-    // getmeds.ph/ is a marketing page — hero carousel, statistics, CSR — which
-    // is right for someone arriving from a search result and wrong for someone
-    // who installed the app to browse the catalogue. The app has its own home,
-    // and this sends the root there before anything paints, so the marketing
-    // page never flashes up first. Website visitors are untouched: this only
-    // runs in a standalone window.
-    var p = location.pathname;
-    if (p === '/' || p === '/index.html') {
-      location.replace('/app-home' + location.search + location.hash);
+    // cleanUrls is on, so the same page answers to /app-home, /app-home.html
+    // and /app-home/ — compare one normalised form rather than three literals.
+    var p = location.pathname.replace(/\\.html$/, '').replace(/\\/+$/, '') || '/';
+    var rest = location.search + location.hash;
+
+    if (standalone) {
+      document.documentElement.classList.add('pwa-standalone');
+
+      // getmeds.ph/ is a marketing page — hero carousel, statistics, CSR —
+      // which is right for someone arriving from a search result and wrong for
+      // someone who installed the app to browse the catalogue. The app has its
+      // own home, and this sends the root there before anything paints, so the
+      // marketing page never flashes up first.
+      if (p === '/' || p === '/index') location.replace('/app-home' + rest);
+      return;
     }
+
+    // ── Not the installed app ──
+    // The reverse trip, and the reason it matters: /app-home is the manifest's
+    // start_url and is built to sit inside the app shell. It deliberately does
+    // not mount the website's navigation (see the note in src/pages/app-home.tsx)
+    // because the tab bar is its navigation — and the tab bar only exists in a
+    // standalone window. Opened in an ordinary tab it is a dead end: no header,
+    // no menu, no way to anywhere else on the site. A pasted or shared link,
+    // a bookmark synced to a desktop, or a search result would all land there.
+    //
+    // So a browser gets the website's own homepage instead. Note this is not
+    // the mirror image of the redirect above: that one is about showing the
+    // right home, this one is about not stranding someone on a page whose
+    // navigation is missing.
+    if (p === '/app-home') location.replace('/' + rest);
   } catch (e) { /* never let a display-mode probe break the page */ }
 })();
 </script>`;
