@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" class="overflow-x-hidden">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover">
+    <link rel="icon" href="/icons/favicon-32.png" sizes="32x32" type="image/png" />
+    <link rel="icon" href="/icons/favicon-16.png" sizes="16x16" type="image/png" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#1D9FDA" />
+    <title>Sitemap - All Pages, Medicines &amp; Articles | Getmeds</title>
+    <meta name="description" content="Browse every page on Getmeds Philippines in one place: medicine categories, products, conditions, ordering options, company information, policies and blog articles.">
+    <link rel="canonical" href="https://getmeds.ph/sitemap">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1D9FDA',
+                        secondary: '#61A644',
+                        dark: '#1A202C',
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+    </style>
+</head>
+
+<body class="bg-[#F8FAFC] text-gray-800 antialiased flex flex-col min-h-screen">
+
+    <!-- Navbar Component -->
+    <div id="navbar-placeholder"></div>
+
+    <main class="flex-grow w-full max-w-6xl mx-auto px-4 sm:px-6 pt-32 pb-20">
+        <header class="mb-10">
+            <p class="text-sm font-semibold uppercase tracking-widest text-secondary mb-2">Sitemap</p>
+            <h1 class="text-3xl md:text-4xl font-extrabold text-dark mb-3">Every page on Getmeds</h1>
+            <p class="text-gray-500 max-w-2xl">
+                A complete index of the site. Search engines can use the
+                <a href="/sitemap.xml" class="text-primary hover:underline">XML sitemap</a> and
+                <a href="/image-sitemap.xml" class="text-primary hover:underline">image sitemap</a>.
+            </p>
+        </header>
+
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 md:p-10">
+            <!-- The block between these markers is rewritten on every build by
+                 scripts/generate-sitemap.cjs from the same data as the XML sitemaps.
+                 Edit the page around it, not inside it. -->
+            <!-- SITEMAP:START -->
+            <!-- SITEMAP:END -->
+        </div>
+    </main>
+
+    <!-- Footer Component -->
+    <div id="footer-placeholder"></div>
+
+    <script src="/components/components.js"></script>
+</body>
+
+</html>

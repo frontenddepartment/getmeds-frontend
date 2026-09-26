@@ -474,7 +474,10 @@
                         { label: 'Medical Disclaimer', slug: 'medical-disclaimer' },
                         { label: 'Prescription Policy', slug: 'prescription-policy' },
                         { label: 'Shipping & Delivery Policy', slug: 'shipping-and-delivery-policy' },
-                        { label: 'Return & Refund Policy', slug: 'return-and-refund-policy' }
+                        { label: 'Return & Refund Policy', slug: 'return-and-refund-policy' },
+                        // Not a policy, but it lives in this row. It has no policiesDisclaimers
+                        // doc, so it always renders as a plain link to the HTML sitemap page.
+                        { label: 'Sitemap', slug: 'sitemap' }
                     ];
 
                     const policyQuery = `*[_type == "policiesDisclaimers"]{ title, "slug": slug.current, displayMode, contentHtml }`;
