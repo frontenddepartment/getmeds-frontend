@@ -326,8 +326,8 @@ export default function GetMedsHomepage() {
   const fallbackHeroSlides = [
     {
       bg: 'assets/imagebanner.jpg',
-      heading: 'Life-Saving Access.\nRedefining Healthcare Possibilities.',
-      sub: 'Getmeds is a global pharmaceutical company advancing healthcare access in the Philippines, supplying patients, doctors, pharmacies, and hospitals with medicines from essential therapies to advanced hospital treatments.',
+      heading: 'Life-Saving Medicines for Patients, Doctors,\nPharmacies & Hospitals in the Philippines',
+      sub: 'Getmeds is a global pharmaceutical company advancing healthcare access nationwide through essential medicines, hospital therapies and cancer treatments.',
       link: null as string | null,
     },
     {
@@ -721,8 +721,8 @@ export default function GetMedsHomepage() {
 
               {/* Action Buttons */}
               <div className="flex flex-col sm:flex-row gap-3 pt-2 pointer-events-auto">
-                <a href="/cancer-medicines" className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:opacity-90 text-white text-center font-bold uppercase tracking-wider text-[11px] px-6 py-3 rounded-lg shadow-2xl shadow-blue-500/40 transition-all flex items-center justify-center gap-2 group">
-                  Our Solutions <i className="fa-solid fa-chevron-right group-hover:translate-x-1 transition-transform"></i>
+                <a href="/product-range" className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:opacity-90 text-white text-center font-bold uppercase tracking-wider text-[11px] px-6 py-3 rounded-lg shadow-2xl shadow-blue-500/40 transition-all flex items-center justify-center gap-2 group">
+                  Our Medicines <i className="fa-solid fa-chevron-right group-hover:translate-x-1 transition-transform"></i>
                 </a>
                 <button onClick={() => setIsInquiryOpen(true)} className="bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/40 text-center font-bold uppercase tracking-wider text-[11px] px-6 py-3 rounded-lg transition-all flex items-center justify-center gap-2">
                   <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">Become a Partner</span>
@@ -1025,7 +1025,7 @@ export default function GetMedsHomepage() {
           <h3 className="text-3xl md:text-4xl font-black bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent mb-2 group-hover:scale-110 transition-transform duration-300">
             <AnimatedCounter end={2000} suffix="+" />
           </h3>
-          <p className="text-gray-600 font-bold text-sm md:text-base leading-tight">Molecules in portfolio</p>
+          <p className="text-gray-600 font-bold text-sm md:text-base leading-tight">Medicines in portfolio</p>
         </div>
 
         {/* Stat 2 */}
@@ -1172,7 +1172,7 @@ export default function GetMedsHomepage() {
               From Essential Medicines to Advanced Therapies.
             </h2>
             <p className="text-gray-500 text-[13px]">
-              Most distributors operate in one layer of the market. Getmeds is built for all four layers.
+              Getmeds is built for all four layers.
             </p>
           </div>
 
@@ -1465,7 +1465,7 @@ export default function GetMedsHomepage() {
               Capabilities that move medicines, partnerships, and patients forward.
             </h2>
             <p className="text-gray-500 text-base leading-relaxed">
-              Getmeds operates a full-stack pharmaceutical platform — from global sourcing and regulatory compliance to last-mile distribution, government access, and digital health.
+              Getmeds operates across the pharmaceutical supply chain from global sourcing and regulatory compliance to nationwide distribution and last-mile delivery, helping make quality medicines accessible across the Philippines.
             </p>
           </div>
 
@@ -1702,7 +1702,7 @@ export default function GetMedsHomepage() {
         const whyFeatures = [
           { icon: 'fa-bolt', accent: '#F97316', title: 'First-to-market sourcing', desc: 'We move the moment a patent cliffs globally.' },
           { icon: 'fa-snowflake', accent: '#0EA5E9', title: 'Cold-chain excellence', desc: 'Biologics-ready logistics nationwide.' },
-          { icon: 'fa-flag', accent: '#6366F1', title: 'Filipino-first formulations', desc: 'Engineered for local disease patterns.' },
+          { icon: 'fa-flag', accent: '#6366F1', title: 'Filipino-first portfolio', desc: 'Selected for local disease patterns.' },
           { icon: 'fa-heart-pulse', accent: '#F43F5E', title: 'Patient Assistance Program', desc: 'Adherence, access, affordability.' },
         ];
         return (
@@ -1790,7 +1790,7 @@ export default function GetMedsHomepage() {
                 icon: 'fa-certificate',
                 color: '#6366F1',
                 title: 'FDA Philippines Licensed',
-                desc: 'Fully licensed by the Food and Drug Administration of the Philippines for pharmaceutical importation and distribution.',
+                desc: 'Fully licensed by the Food and Drug Administration of the Philippines as a wholesaler, importer, distributor and retail pharmacy.',
               },
             ].map((item, i) => (
               <div key={i} className={`text-center ca-anim ca-zoom ca-d${i + 1}`}>

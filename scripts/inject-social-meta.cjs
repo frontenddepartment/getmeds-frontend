@@ -19,6 +19,7 @@
 // Runs after the prerender passes so it sees their output, and before the postbuild guards.
 const fs = require('fs');
 const path = require('path');
+const { DEFAULT_OG_IMAGE, ogImageTags } = require('./lib/og-images.cjs');
 
 const DIST_DIR = path.join(__dirname, '..', 'dist');
 const SKIP_DIRS = new Set(['assets', 'components']);
@@ -27,7 +28,6 @@ const SKIP_DIRS = new Set(['assets', 'components']);
 // the card a scraper reads differs from the one a person sees after the page loads.
 const DOMAIN = 'https://getmeds.ph';
 const OG_SITE_NAME = 'Getmeds Philippines';
-const DEFAULT_IMAGE = `${DOMAIN}/assets/getmedslogo.png`;
 const TWITTER_CARD = 'summary_large_image';
 
 function walk(dir, acc = []) {
@@ -90,7 +90,7 @@ function main() {
     const add = [];
     if (!has(html, 'og:title')) add.push(`<meta property="og:title" content="${title}">`);
     if (description && !has(html, 'og:description')) add.push(`<meta property="og:description" content="${description}">`);
-    if (!has(html, 'og:image')) add.push(`<meta property="og:image" content="${DEFAULT_IMAGE}">`);
+    if (!has(html, 'og:image')) add.push(...ogImageTags(DEFAULT_OG_IMAGE));
     if (!has(html, 'og:type')) add.push(`<meta property="og:type" content="website">`);
     if (!has(html, 'og:site_name')) add.push(`<meta property="og:site_name" content="${OG_SITE_NAME}">`);
     if (canonical && !has(html, 'og:url')) add.push(`<meta property="og:url" content="${canonical}">`);

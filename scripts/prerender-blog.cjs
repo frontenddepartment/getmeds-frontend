@@ -12,6 +12,7 @@ const fs = require('fs');
 const path = require('path');
 const https = require('https');
 const { withSiteName, truncateAtWord } = require('./lib/site-title.cjs');
+const { DEFAULT_OG_IMAGE, ogImageTags } = require('./lib/og-images.cjs');
 
 const DOMAIN = 'https://getmeds.ph';
 const WP_API_ROOT = 'https://cms.getmeds.ph';
@@ -137,12 +138,14 @@ function injectHead(template, { title, description, canonicalPath, image, jsonLd
   let html = template;
   const fullTitle = withSiteName(title);
   const canonicalUrl = `${DOMAIN}${canonicalPath}`;
-  const ogImage = image || `${DOMAIN}/assets/getmedslogo.png`;
   // The static shells now ship their own canonical/og:url so that un-prerendered URLs
   // are self-canonical. Strip those before appending this page's own, otherwise the
   // prerendered page would carry two conflicting canonicals.
   html = html.replace(/[ \t]*<link\s+rel=["']canonical["'][^>]*>\r?\n?/gi, '');
   html = html.replace(/[ \t]*<meta\s+property=["']og:url["'][^>]*>\r?\n?/gi, '');
+  // A shell that ships its own share image (order-medicines.html does) would otherwise end
+  // up with two og:image blocks once this page's own is appended.
+  html = html.replace(/[ \t]*<meta\s+property=["']og:image(?::[a-z]+)?["'][^>]*>\r?\n?/gi, '');
   // Same reasoning for the shell's noindex: blog-detail.html must not be indexed at its own
   // URL, but every post prerendered from it is a real page that must be. Strip the tag here
   // so the noindex stays on the shell alone. The comment above it goes too, so the written
@@ -160,7 +163,9 @@ function injectHead(template, { title, description, canonicalPath, image, jsonLd
     `<meta property="og:site_name" content="Getmeds Philippines">`,
     `<meta property="og:title" content="${escapeHtml(fullTitle)}">`,
     `<meta property="og:description" content="${escapeHtml(description)}">`,
-    `<meta property="og:image" content="${escapeHtml(ogImage)}">`,
+    // A post's own cover image wins; its dimensions aren't known here, so only the share
+    // card fallback carries width/height.
+    ...(image ? [`<meta property="og:image" content="${escapeHtml(image)}">`] : ogImageTags(DEFAULT_OG_IMAGE)),
     `<meta property="og:url" content="${canonicalUrl}">`,
     `<script type="application/ld+json">${JSON.stringify({ '@context': 'https://schema.org', ...jsonLd })}</script>`,
   ].join('\n    ');

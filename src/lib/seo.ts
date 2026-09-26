@@ -1,10 +1,25 @@
+import ogImages from './og-images.json';
+
 const SITE_NAME = 'Getmeds';
 // og:site_name is the brand label social platforms print above the card, and it is the
 // one the Organization JSON-LD carries as alternateName. SITE_NAME stays the short form
 // because withSiteName() appends it to page titles.
 const OG_SITE_NAME = 'Getmeds Philippines';
 const BASE_URL = 'https://getmeds.ph';
-const DEFAULT_IMAGE = `${BASE_URL}/assets/getmedslogo.png`;
+// Share-card images, from the same table the prerender scripts read (scripts/lib/og-images.cjs),
+// so hydration never swaps the card a scraper saw for a different one.
+const DEFAULT_IMAGE = `${BASE_URL}/assets/${ogImages.default.file}`;
+const IMAGE_BY_FOLDER = new Map<string, string>(
+  Object.values(ogImages.categories).flatMap(({ file, folders }) =>
+    folders.map((folder): [string, string] => [folder, `${BASE_URL}/assets/${file}`])
+  )
+);
+export const CONDITIONS_OG_IMAGE = `${BASE_URL}/assets/${ogImages.conditions.file}`;
+
+/** The category share card for a folder such as "blood-disorder-medicines"; the site default otherwise. */
+export function ogImageForFolder(folder?: string | null): string {
+  return (folder && IMAGE_BY_FOLDER.get(folder.trim())) || DEFAULT_IMAGE;
+}
 /**
  * @id of the Organization node stamped into every static shell by
  * scripts/inject-organization-jsonld.cjs. Page-level blocks reference it instead of
