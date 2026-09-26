@@ -114,6 +114,16 @@ function stripHtml(html) {
   return decodeWpEntities(String(html || '').replace(/<[^>]*>/g, '')).replace(/\s+/g, ' ').trim();
 }
 
+// A few older posts were built with WPBakery, which is no longer active on the CMS, so its
+// [vc_row][vc_column]... shortcodes come through the API as literal text — and when a post has
+// no hand-written excerpt, WordPress builds one from the body, shortcodes first. Without this
+// they end up at the front of the meta description and in Google's snippet. Only vc_ tags are
+// removed: posts contain other square brackets (citations, Tailwind classes) that must stay.
+// Kept in step with stripPageBuilderShortcodes in src/lib/queries.ts.
+function stripPageBuilderShortcodes(text) {
+  return String(text || '').replace(/\[\/?vc_[^\]]*\]/g, '');
+}
+
 function escapeHtml(str) {
   return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
@@ -127,7 +137,7 @@ function parseWpPost(item) {
   return {
     slug: item.slug || '',
     title: decodeWpEntities(stripHtml(item.title?.rendered || '')),
-    description: truncateAtWord(stripHtml(item.excerpt?.rendered || ''), 160),
+    description: truncateAtWord(stripHtml(stripPageBuilderShortcodes(item.excerpt?.rendered)), 160),
     image,
     tag,
     date: item.date || '',

@@ -733,6 +733,15 @@ export async function getNewsBySlug(slug: string, preview: boolean = false) {
   }
 }
 
+// Older posts built with WPBakery (no longer active on the CMS) come through the API with their
+// [vc_row][vc_column]... shortcodes as literal text, in the body and in any auto-built excerpt.
+// Only vc_ tags are removed; posts contain other square brackets that must stay. Paragraphs left
+// holding nothing but a shortcode are dropped too. Kept in step with the same function in
+// scripts/prerender-blog.cjs, which writes the prerendered description.
+function stripPageBuilderShortcodes(html: string): string {
+  return html.replace(/\[\/?vc_[^\]]*\]/g, '').replace(/<p>\s*<\/p>/g, '');
+}
+
 function parseWpPost(item: any): News {
   const categories = item._embedded?.['wp:term']?.[0] || [];
   const tag = categories[0]?.name || 'News';
@@ -740,12 +749,12 @@ function parseWpPost(item: any): News {
   const featuredMedia = item._embedded?.['wp:featuredmedia']?.[0] || {};
   const image = featuredMedia.source_url || '';
   
-  const rawExcerpt = item.excerpt?.rendered || '';
+  const rawExcerpt = stripPageBuilderShortcodes(item.excerpt?.rendered || '');
   let description = rawExcerpt.replace(/<[^>]*>/g, '');
   description = description.replace(/&amp;nbsp;/g, ' ').replace(/&nbsp;/g, ' ');
   description = description.replace(/&#\d+;/g, '').trim();
   
-  const rawContent = item.content?.rendered || '';
+  const rawContent = stripPageBuilderShortcodes(item.content?.rendered || '');
   const cleanContent = rawContent.replace(/<div id="ez-toc-container"[\s\S]*?<\/nav>\s*<\/div>/g, '');
   
   const textOnly = cleanContent.replace(/<[^>]*>/g, '');
