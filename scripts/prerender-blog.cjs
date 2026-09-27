@@ -13,6 +13,7 @@ const path = require('path');
 const https = require('https');
 const { withSiteName, truncateAtWord } = require('./lib/site-title.cjs');
 const { DEFAULT_OG_IMAGE, ogImageTags } = require('./lib/og-images.cjs');
+const body = require('./lib/prerender-body.cjs');
 
 const DOMAIN = 'https://getmeds.ph';
 const WP_API_ROOT = 'https://cms.getmeds.ph';
@@ -144,6 +145,63 @@ function parseWpPost(item) {
   };
 }
 
+// The post as /api/blog/posts returns it (parse_wp_post in the backend, then cleanNewsItem in
+// src/lib/queries.ts), so the page can use the preloaded copy exactly as if it had fetched it.
+function toNewsItem(item) {
+  const categories = item._embedded?.['wp:term']?.[0] || [];
+  const featuredMedia = item._embedded?.['wp:featuredmedia']?.[0] || {};
+  const content = stripPageBuilderShortcodes(item.content?.rendered || '')
+    .replace(/<div id="ez-toc-container"[\s\S]*?<\/nav>\s*<\/div>/g, '')
+    .replace(/<p>\s*<\/p>/g, '');
+  const words = content.replace(/<[^>]*>/g, '').split(/\s+/).filter(Boolean).length;
+  return {
+    _id: String(item.id || ''),
+    _type: 'news',
+    tag: categories[0] ? decodeWpEntities(categories[0].name || 'News') : 'News',
+    title: decodeWpEntities(item.title?.rendered || ''),
+    slug: item.slug || '',
+    date: item.date || '',
+    description: stripHtml(stripPageBuilderShortcodes(item.excerpt?.rendered)),
+    readTime: `${Math.max(1, Math.round(words / 200))} min read`,
+    image: String(featuredMedia.source_url || '').replace(/^https?:\/\/(cms\.|www\.)?getmeds\.ph/i, '').replace(/^http:\/\/173\.231\.197\.156/, ''),
+    contentHtml: content,
+    source_link: item.link || '',
+  };
+}
+
+// Same output as formatDate() in src/pages/blog-detail.tsx. WordPress dates carry no zone,
+// so they read as the same wall-clock time here as in a visitor's browser.
+function formatDate(dateStr) {
+  const d = new Date(dateStr);
+  if (!dateStr || isNaN(d.getTime())) return dateStr || '';
+  const datePart = d.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+  const timePart = d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+  return `${datePart} • ${timePart}`;
+}
+
+// The article as readable HTML inside #root, using the class names blog-detail.tsx renders
+// with (so it's styled by the same compiled stylesheet and lines up with the page React draws
+// over it). Sidebar widgets (contents, share buttons) are left for the app.
+function articleMarkup(news) {
+  const e = body.escapeHtml;
+  return [
+    '<div id="navbar-container" class="sticky top-0 z-[50]"></div>',
+    '<div class="max-w-3xl mx-auto px-4 pt-6 pb-2 relative z-10"><a href="/blog" class="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-800 transition-colors">Back</a></div>',
+    '<div class="max-w-3xl mx-auto px-4 text-center py-4 relative z-10">',
+    `<span class="inline-block text-xs font-semibold px-3 py-1 rounded-full mb-5 text-white" style="background: linear-gradient(135deg, #61A644, #1D9FDA)">${e(news.tag)}</span>`,
+    `<h1 class="text-2xl md:text-3xl font-semibold text-gray-900 leading-snug mb-4">${e(news.title)}</h1>`,
+    `<p class="text-xs text-gray-400">${e(formatDate(news.date))}${news.readTime ? ` • ${e(news.readTime)}` : ''}</p>`,
+    '</div>',
+    news.image
+      ? `<div class="max-w-2xl mx-auto px-4 mt-6 mb-10 relative z-10"><img src="${e(news.image)}" alt="${e(news.title)}" fetchpriority="high" decoding="async" class="w-full rounded-2xl object-cover" style="height: 340px"></div>`
+      : '',
+    '<div class="max-w-4xl mx-auto px-4 pb-20 relative z-10"><div class="flex gap-10">',
+    '<aside class="hidden md:flex flex-col gap-6 w-48 flex-shrink-0 sticky top-8 self-start"></aside>',
+    `<article class="flex-1 min-w-0 break-words"><div class="gm-article prose prose-blue max-w-none text-gray-700 text-sm leading-relaxed">${body.sanitizeCmsHtml(news.contentHtml)}</div></article>`,
+    '</div></div>',
+  ].join('\n');
+}
+
 function injectHead(template, { title, description, canonicalPath, image, jsonLd }) {
   let html = template;
   const fullTitle = withSiteName(title);
@@ -219,7 +277,8 @@ async function main() {
     seenSlugs.add(post.slug);
 
     const canonicalPath = `/blog/${post.slug}`;
-    const html = injectHead(blogTemplate, {
+    const news = toNewsItem(item);
+    let html = injectHead(blogTemplate, {
       title: post.title,
       description: post.description || `${post.title} — read the full article on the Getmeds blog.`,
       canonicalPath,
@@ -234,6 +293,10 @@ async function main() {
         mainEntityOfPage: `${DOMAIN}${canonicalPath}`,
       },
     });
+    // The article itself, readable without JavaScript, plus the same data for the app's first
+    // render (see scripts/lib/prerender-body.cjs).
+    html = body.fillRoot(html, articleMarkup(news));
+    html = body.addPreload(html, { news: { key: post.slug, data: news } });
 
     writeFile(path.join(DIST_DIR, 'blog', `${post.slug}.html`), html);
     count++;

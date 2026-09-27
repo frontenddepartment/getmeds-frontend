@@ -7,6 +7,7 @@
 // files, so anything that puts class names on a page has to be listed here:
 //   - the pages themselves and their React code
 //   - the navbar/footer fragments components.js injects at runtime
+//   - the prerender scripts, which write page content into the HTML at build time
 //   - cms-classes.txt: class names written inside CMS content (WordPress post bodies,
 //     Sanity policy HTML), collected at build time by scripts/collect-cms-tailwind-classes.cjs.
 //     A class that first appears in the CMS after the last deploy won't be styled until
@@ -18,6 +19,7 @@ module.exports = (extend) => ({
       '../../*.html',
       '../../src/**/*.{ts,tsx,js,jsx}',
       '../../public/components/**/*.{html,js}',
+      '../../scripts/**/*.cjs', // markup the prerender scripts write into page bodies
       '../cms-classes.txt',
     ],
   },
