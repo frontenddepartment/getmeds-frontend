@@ -1,10 +1,12 @@
 import React from 'react';
-import ReactDOM from 'react-dom/client';
+import { mountPage } from '../lib/handoff';
 import CancerMedicines from '../pages/cancer-medicines';
 
 const rootElement = document.getElementById('root');
 if (rootElement) {
-  ReactDOM.createRoot(rootElement).render(
+  // mountPage, not createRoot: keeps the prerendered listing on screen until the app is ready.
+  mountPage(
+    rootElement,
     <React.StrictMode>
       <CancerMedicines />
     </React.StrictMode>

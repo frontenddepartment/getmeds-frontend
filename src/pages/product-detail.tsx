@@ -13,6 +13,7 @@ import { setPageMeta, injectJsonLd, truncateAtWord, ogImageForFolder, ORGANIZATI
 import { validateFiles, ALLOWED_FILE_TYPES_ACCEPT } from '../lib/fileUpload';
 import AlertModal from '../lib/AlertModal';
 import { PortableText } from '@portabletext/react';
+import { usePageReady } from '../lib/handoff';
 
 interface ProductWithCategory extends Omit<SanityProduct, 'category'> {
   category?: Category;
@@ -58,6 +59,8 @@ export default function ProductDetail() {
   const { data: categoriesData } = useCategories();
   const [product, setProduct] = useState<ProductWithCategory | null>(null);
   const [notFound, setNotFound] = useState(false);
+  // Swaps out the prerendered copy of this product once the live one (or not-found) is drawn.
+  usePageReady(!productsLoading && (product !== null || notFound));
   const [descriptionTab, setDescriptionTab] = useState<'description' | 'prescription'>('description');
   /**
    * Whether to draw the phone-shaped version of this page.

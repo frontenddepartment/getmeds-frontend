@@ -9,6 +9,7 @@ import { injectHTML } from '../lib/injectHTML';
 import { sortByFeaturedOrder } from '../lib/categoryImageKey';
 import { setPageMeta, injectJsonLd, removeJsonLd, specialtyUrl, conditionReviewFields, ogImageForFolder, CONDITIONS_OG_IMAGE, ORGANIZATION_ID } from '../lib/seo';
 import { folderDisplayName } from '../lib/queries';
+import { usePageReady } from '../lib/handoff';
 
 
 interface ProductWithCategory extends Omit<SanityProduct, 'category'> {
@@ -129,6 +130,8 @@ export default function CancerMedicines() {
   const { data: productsDataRaw, loading: productsLoading } = useProducts();
   const productsData = productsDataRaw as ProductWithCategory[] | null;
   const { data: categoriesData, loading: categoriesLoading } = useCategories();
+  // Swaps out the prerendered listing once the live one has its products and categories.
+  usePageReady(!productsLoading && !categoriesLoading);
 
   const [openCategories, setOpenCategories] = useState<Set<string>>(new Set());
   const [selectedCategory, setSelectedCategory] = useState<{ category: string; subCategory: string }>({
