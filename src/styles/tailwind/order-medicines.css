@@ -1,0 +1,4 @@
+@config "../../../tailwind/themes/order-medicines.cjs";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

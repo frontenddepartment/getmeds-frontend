@@ -1,0 +1,4 @@
+@config "../../../tailwind/themes/services.cjs";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

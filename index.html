@@ -81,25 +81,8 @@
     <link rel="dns-prefetch" href="https://cdn.sanity.io" />
 
     <!-- Tailwind (you can keep the CDN or switch to a PostCSS build) -->
-    <script src="https://cdn.tailwindcss.com"></script>
 
     <!-- Tailwind config – keep the colours you already use -->
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#0D99FF',
-                        secondary: '#4A5568',
-                        dark: '#1A202C',
-                        footer: '#1A1D2B',
-                        cardbg: '#F8FAFC',
-                    },
-                    fontFamily: { sans: ['Poppins', 'sans-serif'] },
-                },
-            },
-        };
-    </script>
 
     <!-- Font‑awesome + Google fonts (optional) -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
@@ -179,6 +162,7 @@
   "publisher": { "@id": "https://getmeds.ph/#organization" }
 }
     </script>
+    <link rel="stylesheet" href="/src/styles/tailwind/home.css">
 </head>
 
 <body data-page="home" class="bg-white text-gray-800 antialiased">
