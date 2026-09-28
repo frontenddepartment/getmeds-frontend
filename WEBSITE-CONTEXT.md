@@ -897,6 +897,19 @@ and smoother. The Compassionate Special Permit covers two situations:
 Metro Manila 1747
 **Hours** — 8:00 AM – 5:00 PM, Monday to Friday
 
+#### Quotation banner
+
+Shown at the bottom of the page, under all three tabs.
+
+> ## Kailangan ng Quotation para sa Gamot sa Cancer?
+>
+> Mag-request ng quotation sa Getmeds para sa cancer at chemotherapy medicines na kailangan para
+> sa inyong DSWD o PCSO application.
+
+- **Quotation Delivery** — Mag-request ng quotation at ihahatid namin ito sa inyong tahanan.
+- **Request a Quotation** — 0919 076 9105
+- **Para sa Email Inquiries** — info@getmeds.ph. Pakilagay ang iyong buong pangalan, aktibong phone number, at email address, at ihanda at i-attach sa iyong email ang iyong valid government ID at prescription para sa mas mabilis na proseso ng iyong quotation.
+
 ---
 
 ### 4.8 Global Presence

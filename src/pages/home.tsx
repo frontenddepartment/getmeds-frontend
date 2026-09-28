@@ -707,9 +707,9 @@ export default function GetMedsHomepage() {
         {/* Hero Content Area — heading, subtext, and buttons hidden on the 2nd slide */}
         {heroIndex !== 1 && (
           <div className="max-w-7xl mx-auto px-6 w-full relative z-10 flex-grow flex items-center justify-start pt-20 md:pt-28 pb-16 md:pb-20 text-left pointer-events-none">
-            <div className="max-w-2xl space-y-3 flex flex-col items-start">
+            <div className="max-w-3xl space-y-3 flex flex-col items-start">
               <div style={{ opacity: heroFading ? 0 : 1, transition: 'opacity 0.4s ease' }}>
-                <h1 className="text-2xl md:text-5xl lg:text-6xl font-bold leading-[1.1] tracking-tight bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent mb-3">
+                <h1 className="text-2xl md:text-[40px] lg:text-[52px] font-bold leading-[1.15] tracking-normal bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent mb-3">
                   {heroSlides[heroIndex].heading.split('\n').map((line, i, arr) => (
                     <React.Fragment key={i}>{line}{i < arr.length - 1 && <br />}</React.Fragment>
                   ))}

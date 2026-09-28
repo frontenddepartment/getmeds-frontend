@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Truck, Phone, Mail, type LucideIcon } from 'lucide-react';
 import { injectHTML } from '../lib/injectHTML';
 import { useImageMapper } from '../lib/useSanity';
 import { ProgressiveHeroImage } from '../lib/ProgressiveHeroImage';
@@ -6,6 +7,40 @@ import { ProgressiveHeroImage } from '../lib/ProgressiveHeroImage';
 type SectionTab = 'steps' | 'requirements' | 'faqs';
 
 const GRADIENT = 'linear-gradient(135deg, #61A644, #1D9FDA)';
+// Must match the floating tab bar's top-[92px] class.
+const FLOATING_BAR_TOP = 92;
+
+// Cards in the quotation CTA banner. Every card sits on the brand GRADIENT with white content.
+const QUOTE_CARDS: { title: string; Icon: LucideIcon; href?: string; body: React.ReactNode }[] = [
+  {
+    title: 'Quotation Delivery',
+    Icon: Truck,
+    body: (
+      <p className="text-white text-sm leading-relaxed">
+        Mag-request ng quotation at ihahatid namin ito sa inyong tahanan.
+      </p>
+    ),
+  },
+  {
+    title: 'Request a Quotation',
+    Icon: Phone,
+    href: 'tel:+639190769105',
+    body: <p className="text-white font-semibold text-base sm:text-lg">0919 076 9105</p>,
+  },
+  {
+    title: 'Para sa Email Inquiries',
+    Icon: Mail,
+    href: 'mailto:info@getmeds.ph',
+    body: (
+      <>
+        <p className="text-white font-semibold text-base sm:text-lg break-all">info@getmeds.ph</p>
+        <p className="text-white text-xs leading-relaxed mt-1.5">
+          Pakilagay ang iyong buong pangalan, aktibong phone number, at email address, at ihanda at i-attach sa iyong email ang iyong valid government ID at prescription para sa mas mabilis na proseso ng iyong quotation.
+        </p>
+      </>
+    ),
+  },
+];
 
 function StepNumber({ n, done }: { n: number; done?: boolean }) {
   return (
@@ -52,6 +87,8 @@ export default function PatientAssistanceProgram() {
   const tabBarPassedRef = useRef(false);
   const lastScrollYRef = useRef(0);
   const sectionRef = useRef<HTMLDivElement>(null);
+  const tabSectionRef = useRef<HTMLElement>(null);
+  const floatingBarRef = useRef<HTMLDivElement>(null);
   const introHeaderRef = useRef<HTMLDivElement>(null);
   const [introHeaderWidth, setIntroHeaderWidth] = useState<number | null>(null);
 
@@ -107,7 +144,17 @@ export default function PatientAssistanceProgram() {
       const currentY = window.scrollY;
       const goingDown = currentY > lastScrollYRef.current;
       lastScrollYRef.current = currentY;
-      if (tabBarPassedRef.current) setTabBarFloating(goingDown);
+      if (!tabBarPassedRef.current) return;
+      // The floating bar belongs to the tabbed section only. Once that section's content
+      // has scrolled up past the bar, hide it so it never covers what follows (CTA banner, footer).
+      const section = tabSectionRef.current;
+      const bar = floatingBarRef.current;
+      let pastSection = false;
+      if (section && bar) {
+        const contentBottom = section.getBoundingClientRect().bottom - parseFloat(getComputedStyle(section).paddingBottom);
+        pastSection = contentBottom < FLOATING_BAR_TOP + bar.offsetHeight;
+      }
+      setTabBarFloating(goingDown && !pastSection);
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
@@ -176,7 +223,7 @@ export default function PatientAssistanceProgram() {
 
       {/* Floating Tab Bar (appears when inline tab bar scrolls out of view) */}
       <div className={`fixed top-[92px] left-0 right-0 z-[49] flex justify-center px-4 pointer-events-none transition-all duration-500 ease-in-out ${tabBarFloating ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}`}>
-        <div className="pointer-events-auto relative w-full max-w-5xl">
+        <div ref={floatingBarRef} className={`${tabBarFloating ? 'pointer-events-auto' : 'pointer-events-none'} relative w-full max-w-5xl`}>
           <div className="bg-white rounded-2xl p-2 flex gap-2 overflow-x-auto border border-gray-200">
             {TABS.map(tab => (
               <button
@@ -271,7 +318,7 @@ export default function PatientAssistanceProgram() {
         </section>
 
         {/* Tabbed Section */}
-        <section className="max-w-5xl mx-auto px-4 sm:px-6 pt-8 pb-16">
+        <section ref={tabSectionRef} className="max-w-5xl mx-auto px-4 sm:px-6 pt-8 pb-16">
 
           {/* Heading */}
           <div ref={sectionRef} className="text-center mb-7">
@@ -603,6 +650,48 @@ export default function PatientAssistanceProgram() {
             </div>
           )}
 
+        </section>
+
+        {/* CTA Banner */}
+        <section className="max-w-5xl mx-auto px-4 sm:px-6 pb-16 reveal">
+          <div className="grid md:grid-cols-5 gap-6 md:gap-10 items-start">
+
+            <div className="md:col-span-2">
+              <h2 className="text-2xl md:text-3xl font-semibold text-gray-900 leading-snug">
+                Kailangan ng Quotation para sa Gamot sa Cancer?
+              </h2>
+              <div className="mt-3 w-10 h-1 bg-gradient-to-r from-[#61A644] to-[#1D9FDA] rounded-full" />
+              <p className="mt-4 text-gray-600 text-sm md:text-base leading-relaxed">
+                Mag-request ng quotation sa Getmeds para sa cancer at chemotherapy medicines na kailangan para sa inyong DSWD o PCSO application.
+              </p>
+            </div>
+
+            <div className="md:col-span-3 space-y-3">
+              {QUOTE_CARDS.map(card => {
+                const cardClass = 'group relative block rounded-2xl overflow-hidden p-4 sm:p-5';
+                const inner = (
+                  <>
+                    <div className="flex items-start justify-between gap-4 mb-3">
+                      <card.Icon className="w-9 h-9 sm:w-10 sm:h-10 text-white shrink-0" strokeWidth={1.5} />
+                      {card.href && (
+                        <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0 text-white group-hover:bg-white group-hover:text-gray-900 transition-colors duration-300">
+                          <i className="fa-solid fa-arrow-right -rotate-45 text-base" />
+                        </div>
+                      )}
+                    </div>
+                    <h3 className="text-white text-lg sm:text-xl font-medium leading-snug">{card.title}</h3>
+                    <div className="mt-3 pt-3 border-t border-white/30">{card.body}</div>
+                  </>
+                );
+                return card.href ? (
+                  <a key={card.title} href={card.href} className={cardClass} style={{ background: GRADIENT }}>{inner}</a>
+                ) : (
+                  <div key={card.title} className={cardClass} style={{ background: GRADIENT }}>{inner}</div>
+                );
+              })}
+            </div>
+
+          </div>
         </section>
 
         {/* Footer */}
