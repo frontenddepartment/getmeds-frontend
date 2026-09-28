@@ -16,6 +16,7 @@ const fs = require('fs');
 const path = require('path');
 const { withSiteName, excerptFromHtml } = require('./lib/site-title.cjs');
 const { DEFAULT_OG_IMAGE, ogImageTags } = require('./lib/og-images.cjs');
+const body = require('./lib/prerender-body.cjs');
 
 const DOMAIN = 'https://getmeds.ph';
 const DIST_DIR = path.join(__dirname, '..', 'dist');
@@ -82,6 +83,25 @@ function slugOf(doc) {
 // and left stored entities to be escaped a second time into "&amp;mdash;".
 function excerptFrom(contentHtml) {
   return excerptFromHtml(contentHtml, 155);
+}
+
+// The policy itself inside #root, with policy.tsx's own classes, readable without
+// JavaScript and on screen until the live page takes over (src/lib/handoff.ts).
+function policyMarkup({ title, effectiveDate, lastUpdated, contentHtml }) {
+  const e = body.escapeHtml;
+  return [
+    '<div class="max-w-6xl mx-auto px-4 pt-24 pb-2 relative z-10"><a href="/" class="inline-flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-900 transition-colors font-medium">Back to Home</a></div>',
+    '<div class="max-w-6xl mx-auto px-4 text-center py-6 relative z-10">',
+    '<span class="inline-block text-xs font-semibold px-3 py-1 rounded-md mb-3 text-white uppercase tracking-wider shadow-xs" style="background: linear-gradient(135deg, #61A644, #1D9FDA)">Policies &amp; Disclaimers</span>',
+    `<h1 class="text-2xl md:text-3xl font-bold text-gray-900 leading-snug mb-2">${e(title)}</h1>`,
+    `<p class="text-xs text-gray-500">Effective Date: ${e(effectiveDate)}${lastUpdated ? ` &bull; Last Updated: ${e(lastUpdated)}` : ''}</p>`,
+    '</div>',
+    '<div class="max-w-4xl mx-auto px-4 pb-20 mt-4 relative z-10"><main class="min-w-0"><article class="min-w-0">',
+    contentHtml
+      ? `<div class="policy-html-content bg-white p-6 md:p-10 rounded-lg border border-gray-200 shadow-xs">${body.sanitizeCmsHtml(contentHtml)}</div>`
+      : '',
+    '</article></main></div>',
+  ].join(String.fromCharCode(10));
 }
 
 function escapeHtml(str) {
@@ -153,7 +173,13 @@ async function main() {
       canonicalPath: `/${p.slug}`,
     });
 
-    fs.writeFileSync(path.join(DIST_DIR, `${p.slug}.html`), html, 'utf8');
+    const withContent = body.fillRoot(html, policyMarkup({
+      title,
+      effectiveDate,
+      lastUpdated: (doc && doc.lastUpdated) || p.effectiveDate,
+      contentHtml: doc && doc.contentHtml,
+    }));
+    fs.writeFileSync(path.join(DIST_DIR, `${p.slug}.html`), withContent, 'utf8');
     written++;
   });
 

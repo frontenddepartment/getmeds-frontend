@@ -1,10 +1,12 @@
 import React from 'react';
-import ReactDOM from 'react-dom/client';
+import { mountPage } from '../lib/handoff';
 import CentralizedPolicyPage from '../pages/policy';
 
 const rootElement = document.getElementById('root');
 if (rootElement) {
-  ReactDOM.createRoot(rootElement).render(
+  // mountPage, not createRoot: keeps the prerendered policy on screen until the app is ready.
+  mountPage(
+    rootElement,
     <React.StrictMode>
       <CentralizedPolicyPage />
     </React.StrictMode>

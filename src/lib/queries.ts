@@ -660,7 +660,7 @@ export async function getNews() {
     const res = await fetch(await withBlogVersion(`/api/blog/posts?per_page=${BLOG_LISTING_PER_PAGE}`));
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
     const data = await res.json();
-    return data.items || [];
+    return (data.items || []).map(cleanNewsItem);
   } catch (err) {
     console.error('Error fetching news from backend API:', err);
     return [];
@@ -673,7 +673,7 @@ export async function getNewsPage(page: number, perPage: number = 20): Promise<{
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
     const data = await res.json();
     return {
-      items: data.items || [],
+      items: (data.items || []).map(cleanNewsItem),
       totalPages: data.totalPages || 1
     };
   } catch (err) {
@@ -687,7 +687,7 @@ export async function getNewsById(id: string, preview: boolean = false) {
     const url = preview ? `/api/blog/posts/${id}?preview=true` : await withBlogVersion(`/api/blog/posts/${id}`);
     const res = await fetch(url, preview ? { cache: 'no-store' } : undefined);
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-    return await res.json();
+    return cleanNewsItem(await res.json());
   } catch (err) {
     console.error(`Error fetching news item ${id} from backend API:`, err);
     return null;
@@ -726,11 +726,32 @@ export async function getNewsBySlug(slug: string, preview: boolean = false) {
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
     const data = await res.json();
     if (!data.items || data.items.length === 0) return null;
-    return data.items[0];
+    return cleanNewsItem(data.items[0]);
   } catch (err) {
     console.error(`Error fetching news item by slug ${slug} from backend API:`, err);
     return null;
   }
+}
+
+// Older posts built with WPBakery (no longer active on the CMS) come through the API with their
+// [vc_row][vc_column]... shortcodes as literal text, in the body and in any auto-built excerpt.
+// Only vc_ tags are removed; posts contain other square brackets that must stay. Paragraphs left
+// holding nothing but a shortcode are dropped too. Kept in step with the same function in
+// scripts/prerender-blog.cjs, which writes the prerendered description.
+function stripPageBuilderShortcodes(html: string): string {
+  return html.replace(/\[\/?vc_[^\]]*\]/g, '').replace(/<p>\s*<\/p>/g, '');
+}
+
+// The backend's /api/blog/* passes WordPress text through as-is, shortcodes included, so every
+// item read from it goes through here too — not just the posts parsed from WordPress directly.
+function cleanNewsItem<T>(item: T): T {
+  if (!item || typeof item !== 'object') return item;
+  const post = item as T & { description?: unknown; contentHtml?: unknown };
+  return {
+    ...post,
+    ...(typeof post.description === 'string' ? { description: stripPageBuilderShortcodes(post.description).trim() } : {}),
+    ...(typeof post.contentHtml === 'string' ? { contentHtml: stripPageBuilderShortcodes(post.contentHtml) } : {}),
+  };
 }
 
 function parseWpPost(item: any): News {
@@ -740,12 +761,12 @@ function parseWpPost(item: any): News {
   const featuredMedia = item._embedded?.['wp:featuredmedia']?.[0] || {};
   const image = featuredMedia.source_url || '';
   
-  const rawExcerpt = item.excerpt?.rendered || '';
+  const rawExcerpt = stripPageBuilderShortcodes(item.excerpt?.rendered || '');
   let description = rawExcerpt.replace(/<[^>]*>/g, '');
   description = description.replace(/&amp;nbsp;/g, ' ').replace(/&nbsp;/g, ' ');
   description = description.replace(/&#\d+;/g, '').trim();
   
-  const rawContent = item.content?.rendered || '';
+  const rawContent = stripPageBuilderShortcodes(item.content?.rendered || '');
   const cleanContent = rawContent.replace(/<div id="ez-toc-container"[\s\S]*?<\/nav>\s*<\/div>/g, '');
   
   const textOnly = cleanContent.replace(/<[^>]*>/g, '');

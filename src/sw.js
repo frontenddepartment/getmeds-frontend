@@ -96,8 +96,9 @@ registerRoute(
 )
 
 // ── Third-party CDNs the pages cannot render without ─────────────────────────
-// Styling comes from the Tailwind Play CDN, icons from Font Awesome and the
-// phone field from intl-tel-input — all cross-origin. Without this a cached
+// Icons come from Font Awesome and the phone field from intl-tel-input — both
+// cross-origin. (Tailwind used to be a third: it is now compiled into each
+// page's own stylesheet and precached with the rest of the build.) Without this a cached
 // page opens offline completely unstyled, which is arguably worse than an
 // honest offline notice. These are opaque (status 0) cross-origin responses,
 // which is why CacheableResponsePlugin has to accept 0 alongside 200.
@@ -107,7 +108,6 @@ registerRoute(
 // backend rejects.
 registerRoute(
   ({ url }) =>
-    url.hostname === 'cdn.tailwindcss.com' ||
     url.hostname === 'cdnjs.cloudflare.com' ||
     url.hostname === 'cdn.jsdelivr.net',
   new CacheFirst({

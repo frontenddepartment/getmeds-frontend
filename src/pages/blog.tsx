@@ -2,6 +2,7 @@
 import { injectHTML } from '../lib/injectHTML';
 import { useNewsPaginated, useNewsCategories } from '../lib/useSanity';
 import { getBlogListingImageUrl } from '../lib/sanity';
+import { usePageReady } from '../lib/handoff';
 
 const formatDate = (dateStr: string | undefined | null) => {
   if (!dateStr) return '';
@@ -35,6 +36,8 @@ export default function Blog() {
   // only created a second copy to disagree with, which is what Audit 4 found.
 
   const { articles, loading, loadingMore, hasMore, loadMore, loadMoreError } = useNewsPaginated();
+  // Swaps out the prerendered post list once the live listing has its first page of posts.
+  usePageReady(!loading);
   // Dedicated lightweight endpoint (WordPress tags, not full post bodies) so the
   // category pills don't need every article loaded first just to know which
   // categories actually have posts.

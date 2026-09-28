@@ -14,6 +14,7 @@
  */
 
 import { useState, useEffect } from 'react'
+import { readPreload } from './preload'
 import {
   getHomePage,
   getAboutPage,
@@ -120,13 +121,22 @@ function useFetch<T>(fetcher: () => Promise<T>) {
 }
 
 // Variant that re-runs when a param changes
-function useFetchWithParam<T, P>(fetcher: (param: P) => Promise<T>, param: P) {
-  const [data, setData] = useState<T | null>(null)
-  const [loading, setLoading] = useState(true)
+// `preloaded` returns data the build baked into the page for this param (see ./preload), which
+// then stands in for the fetch — including on the very first render.
+function useFetchWithParam<T, P>(fetcher: (param: P) => Promise<T>, param: P, preloaded?: (param: P) => T | undefined) {
+  const [data, setData] = useState<T | null>(() => (param && preloaded ? preloaded(param) ?? null : null))
+  const [loading, setLoading] = useState(() => !(param && preloaded && preloaded(param) !== undefined))
   const [error, setError] = useState<Error | null>(null)
 
   useEffect(() => {
     if (!param) return
+    const seeded = preloaded ? preloaded(param) : undefined
+    if (seeded !== undefined) {
+      setData(seeded)
+      setLoading(false)
+      setError(null)
+      return
+    }
     let cancelled = false
     setLoading(true)
     setError(null)
@@ -540,7 +550,12 @@ export function useNewsById(id: string, preview: boolean = false) {
 }
 
 export function useNewsBySlug(slug: string, preview: boolean = false) {
-  return useFetchWithParam<News | null, string>((paramSlug) => getNewsBySlug(paramSlug, preview), slug)
+  // A preview shows the draft, so it never takes the published copy baked into the page.
+  return useFetchWithParam<News | null, string>(
+    (paramSlug) => getNewsBySlug(paramSlug, preview),
+    slug,
+    preview ? undefined : (paramSlug) => readPreload<News>('news', paramSlug),
+  )
 }
 
 export function useNewsPaginated(perPage: number = BLOG_PAGE_SIZE) {

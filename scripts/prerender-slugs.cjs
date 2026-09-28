@@ -10,6 +10,7 @@ const fs = require('fs');
 const path = require('path');
 const { withSiteName, truncateAtWord } = require('./lib/site-title.cjs');
 const { DEFAULT_OG_IMAGE, CONDITIONS_OG_IMAGE, ogImageForFolder, ogImageTags } = require('./lib/og-images.cjs');
+const body = require('./lib/prerender-body.cjs');
 
 const DOMAIN = 'https://getmeds.ph';
 const DIST_DIR = path.join(__dirname, '..', 'dist');
@@ -304,6 +305,78 @@ function injectHead(template, { title, description, canonicalPath, ogType, ogIma
   return html;
 }
 
+// ---- Page content written into #root (audit item 07) ----
+// Readable without JavaScript for crawlers; on screen for visitors until the live page takes
+// over (src/lib/handoff.ts). Plain, lightly styled markup with class names the app already
+// uses, and no ids, so nothing collides with the React page mounted alongside it.
+const e = (s) => body.escapeHtml(s);
+const SHELL_OPEN = '<main class="max-w-5xl mx-auto px-4 pt-28 pb-16 text-gray-800">';
+const SHELL_CLOSE = '</main>';
+
+// "Breast Cancer" -> "Breast Cancer Medicines"; a name that already names a product type
+// ("Iohexol Contrast Media") is used as-is. Same rule as conditionHeading() in
+// src/pages/cancer-medicines.tsx, so the prerendered heading and the live one agree.
+function conditionHeading(name) {
+  const n = String(name || '').trim();
+  return /\b(medicines?|media)$/i.test(n) ? n : `${n} Medicines`;
+}
+
+function crumbs(trail) {
+  return `<nav aria-label="Breadcrumb" class="text-xs text-gray-500 mb-6">${trail
+    .map((c) => (c.url ? `<a href="${e(c.url)}" class="hover:text-primary">${e(c.name)}</a>` : `<span>${e(c.name)}</span>`))
+    .join(' <span aria-hidden="true">›</span> ')}</nav>`;
+}
+
+// Sheet text uses plain line breaks; each non-empty line becomes a paragraph.
+function paragraphs(text) {
+  return String(text || '')
+    .split(/\r?\n+/)
+    .map((l) => l.trim())
+    .filter(Boolean)
+    .map((l) => `<p class="text-sm leading-relaxed text-gray-700 mb-3">${e(l)}</p>`)
+    .join('');
+}
+
+function productList(items) {
+  if (!items.length) return '';
+  return `<ul class="grid sm:grid-cols-2 gap-3">${items
+    .map((p) => `<li class="border border-gray-200 rounded-xl p-4"><a href="${e(p.url)}" class="font-semibold text-gray-900 hover:text-primary">${e(p.name)}</a>${p.detail ? `<p class="text-xs text-gray-500 mt-1">${e(p.detail)}</p>` : ''}</li>`)
+    .join('')}</ul>`;
+}
+
+function productMarkup({ row, displayName, folder, conditions }) {
+  const facts = [
+    row.genericName && ['Generic name', row.genericName],
+    row.strength && ['Strength', row.strength],
+    row.form && ['Dosage form', row.form],
+    ['Prescription', 'Prescription only (Rx)'],
+  ].filter(Boolean);
+  return [
+    SHELL_OPEN,
+    crumbs([{ name: 'All Products', url: '/product-range' }, { name: folderDisplayName(folder), url: `/${folder}` }, { name: displayName }]),
+    `<h1 class="text-2xl md:text-3xl font-semibold text-gray-900 mb-4">${e(displayName)}</h1>`,
+    `<dl class="grid grid-cols-2 gap-x-6 gap-y-2 text-sm mb-8 max-w-xl">${facts.map(([k, v]) => `<dt class="text-gray-500">${e(k)}</dt><dd class="text-gray-900">${e(v)}</dd>`).join('')}</dl>`,
+    conditions.length
+      ? `<h2 class="text-lg font-semibold text-gray-900 mb-2">Used for</h2><ul class="flex flex-wrap gap-2 mb-8">${conditions.map((c) => `<li><a href="${e(c.url)}" class="inline-block text-xs border border-gray-200 rounded-full px-3 py-1 hover:text-primary">${e(c.name)}</a></li>`).join('')}</ul>`
+      : '',
+    row.indications ? `<h2 class="text-lg font-semibold text-gray-900 mb-2">Indications</h2>${paragraphs(row.indications)}` : '',
+    row.dosageAdministration ? `<h2 class="text-lg font-semibold text-gray-900 mt-6 mb-2">Dosage and administration</h2>${paragraphs(row.dosageAdministration)}` : '',
+    '<p class="text-sm text-gray-700 mt-8">Prescription medicine, supplied by Getmeds, an FDA Philippines-licensed distributor. <a href="/order-medicines" class="text-primary underline">Request a quotation</a>.</p>',
+    SHELL_CLOSE,
+  ].join('\n');
+}
+
+function listingMarkup({ trail, heading, intro, sections }) {
+  return [
+    SHELL_OPEN,
+    trail ? crumbs(trail) : '',
+    `<h1 class="text-2xl md:text-3xl font-semibold text-gray-900 mb-3">${e(heading)}</h1>`,
+    intro ? `<p class="text-sm text-gray-600 mb-8 max-w-2xl">${e(intro)}</p>` : '',
+    ...sections.map((s) => `${s.title ? `<h2 class="text-lg font-semibold text-gray-900 mt-8 mb-3">${s.url ? `<a href="${e(s.url)}" class="hover:text-primary">${e(s.title)}</a>` : e(s.title)}</h2>` : ''}${productList(s.items)}`),
+    SHELL_CLOSE,
+  ].join('\n');
+}
+
 function escapeHtml(str) {
   return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
@@ -358,6 +431,18 @@ async function main() {
     if (!crossFolderSlugs.has(slug)) crossFolderSlugs.set(slug, new Set());
     crossFolderSlugs.get(slug).add(folder);
   });
+
+  // Condition name -> its hub URL, across every row (a product's "Also Linked From" names a
+  // condition whose own row may sit elsewhere in the sheet) — same idea as
+  // buildConditionSlugLookup() in src/lib/queries.ts. And each product's display name -> its
+  // canonical page, for the product lists on the condition and category pages.
+  const conditionUrlByName = new Map();
+  rows.forEach((row) => {
+    const name = String(row.subCategory || '').trim();
+    if (!name || !row.conditionSlug || conditionUrlByName.has(name.toLowerCase())) return;
+    conditionUrlByName.set(name.toLowerCase(), row.conditionHubUrl ? stripDomain(row.conditionHubUrl) : `/conditions/${String(row.conditionSlug).trim()}`);
+  });
+  const productLinkByName = new Map();
 
   const seenProductSlugs = new Set();
   let productCount = 0;
@@ -428,7 +513,21 @@ async function main() {
       ],
     });
 
-    writeFile(path.join(DIST_DIR, folder, `${slug}.html`), html);
+    const conditions = [row.subCategory, ...String(row.alsoLinkedFrom || '').split(',')]
+      .map((n) => String(n || '').trim())
+      .filter(Boolean)
+      .filter((n, i, all) => all.indexOf(n) === i)
+      .map((n) => ({ name: n, url: conditionUrlByName.get(n.toLowerCase()) }))
+      .filter((c) => c.url);
+    if (!productLinkByName.has(displayName)) {
+      productLinkByName.set(displayName, {
+        name: displayName,
+        url: canonicalPath,
+        detail: [row.strength, row.form].map((v) => String(v || '').trim()).filter(Boolean).join(' · '),
+      });
+    }
+
+    writeFile(path.join(DIST_DIR, folder, `${slug}.html`), body.fillRoot(html, productMarkup({ row, displayName, folder, conditions })));
     productCount++;
   });
 
@@ -525,7 +624,17 @@ async function main() {
       ],
     });
 
-    writeFile(path.join(DIST_DIR, 'conditions', `${slug}.html`), html);
+    const conditionItems = Array.from(group.products).map((n) => productLinkByName.get(n)).filter(Boolean);
+    writeFile(path.join(DIST_DIR, 'conditions', `${slug}.html`), body.fillRoot(html, listingMarkup({
+      trail: [
+        { name: 'All Products', url: '/product-range' },
+        ...(group.category && group.folder ? [{ name: group.category, url: `/${group.folder}` }] : []),
+        { name: group.name },
+      ],
+      heading: conditionHeading(group.name),
+      intro: description,
+      sections: [{ items: conditionItems }],
+    })));
     conditionCount++;
   });
 
@@ -593,7 +702,23 @@ async function main() {
       ],
     });
 
-    writeFile(path.join(DIST_DIR, `${folder}.html`), html);
+    // The category's conditions, each with its products, then anything filed under the
+    // category without a condition.
+    const inFolder = [...conditionGroups.entries()].filter(([, g]) => g.folder === folder);
+    const listed = new Set();
+    const sections = inFolder.map(([cSlug, g]) => {
+      const items = Array.from(g.products).map((n) => productLinkByName.get(n)).filter(Boolean);
+      items.forEach((i) => listed.add(i.name));
+      return { title: g.name, url: g.hubUrl ? stripDomain(g.hubUrl) : `/conditions/${cSlug}`, items };
+    });
+    const rest = Array.from(group.products).filter((n) => !listed.has(n)).map((n) => productLinkByName.get(n)).filter(Boolean);
+    if (rest.length) sections.push({ title: sections.length ? 'Other products' : '', items: rest });
+    writeFile(path.join(DIST_DIR, `${folder}.html`), body.fillRoot(html, listingMarkup({
+      trail: [{ name: 'All Products', url: '/product-range' }, { name: `${group.name}${qualifier}` }],
+      heading: `${group.name}${qualifier}`,
+      intro: description,
+      sections,
+    })));
     categoryCount++;
   });
 
@@ -624,7 +749,17 @@ async function main() {
         },
       ],
     });
-    writeFile(path.join(DIST_DIR, `${file}.html`), html);
+    // Every category with its products: the page crawlers use to reach the whole catalogue.
+    const sections = [...categoryGroups.entries()].map(([folder, g]) => ({
+      title: g.name === folderDisplayName(folder) || (foldersPerCategory.get(g.name) || []).length < 2 ? g.name : `${g.name} — ${folderDisplayName(folder)}`,
+      url: `/${folder}`,
+      items: Array.from(g.products).map((n) => productLinkByName.get(n)).filter(Boolean),
+    }));
+    writeFile(path.join(DIST_DIR, `${file}.html`), body.fillRoot(html, listingMarkup({
+      heading: 'Product Range',
+      intro: allProductsDescription,
+      sections,
+    })));
     categoryCount++;
   });
 

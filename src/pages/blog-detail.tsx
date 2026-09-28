@@ -44,7 +44,15 @@ const slugify = (text: string | undefined | null) => {
 };
 
 export default function BlogDetail() {
-  const [slug, setSlug] = useState<string>('');
+  // A plain /blog/<slug> visit is known before the first render, so the article the build baked
+  // into the page (src/lib/preload.ts) can be drawn on that render. Previews and ?p= links
+  // still resolve in the effect below.
+  const [slug, setSlug] = useState<string>(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('preview') === 'true' || params.get('preview_id') || params.get('p') || params.get('id')) return '';
+    const segments = window.location.pathname.split('/').filter(Boolean);
+    return segments[0] === 'blog' && segments[1] ? segments[1] : '';
+  });
   const [articleId, setArticleId] = useState<string>('');
   const [isPreview, setIsPreview] = useState<boolean>(false);
   const [activeSection, setActiveSection] = useState(0);

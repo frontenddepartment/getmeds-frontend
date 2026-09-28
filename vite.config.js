@@ -110,18 +110,28 @@ const PWA_MODE = `
  * holding on to yesterday's modules is a miserable thing to debug — and
  * nothing about the app shell needs it.
  */
+// The app CSS goes in ahead of the page's compiled Tailwind stylesheet, which sits at the end of
+// <head> — the spot the old CDN build's generated <style> used to land — so utilities keep
+// winning ties against these rules, as the pages were built against. In dev the link is still
+// the source path; in a build Vite has already swapped it for the hashed /assets/ file (the
+// build hook runs with order: 'post' for that reason).
+const TAILWIND_LINK = /<link rel="stylesheet"[^>]*href="(?:\/src\/styles\/tailwind\/|\/assets\/)[^"]*\.css"[^>]*>/;
 const injectAppShell = (html) =>
-  html
+  (TAILWIND_LINK.test(html)
+    ? html.replace(TAILWIND_LINK, (m) => PWA_TABBAR_CSS + m)
+    : html.replace('</head>', PWA_TABBAR_CSS + '</head>'))
     .replace('<head>', '<head>' + PWA_MODE)
-    .replace('</head>', PWA_TABBAR_CSS + '</head>')
     .replace('</body>', PWA_TABBAR + '\n</body>');
 
 function injectPwaRuntime() {
   return {
     name: 'inject-pwa-runtime',
     apply: 'build', // the SW half of this must never run in dev
-    transformIndexHtml(html) {
-      return injectAppShell(html).replace('</body>', SW_REGISTER + '\n</body>');
+    transformIndexHtml: {
+      order: 'post', // after Vite has emitted the page's stylesheet <link> (see injectAppShell)
+      handler(html) {
+        return injectAppShell(html).replace('</body>', SW_REGISTER + '\n</body>');
+      },
     },
   };
 }
@@ -459,17 +469,7 @@ export default defineConfig(async ({ mode }) => {
 
         name: 'inject-chatbot-meta',
         transformIndexHtml(html) {
-          const suppressor = `\n  <script>
-    (function() {
-      var w = console.warn;
-      console.warn = function() {
-        if (arguments[0] && typeof arguments[0] === 'string' && arguments[0].indexOf('cdn.tailwindcss.com') !== -1) return;
-        w.apply(console, arguments);
-      };
-    })();
-  </script>`;
           return html
-            .replace('<head>', '<head>' + suppressor)
             .replace(
               '</head>',
               `  <meta name="getmeds-sanity-project-id" content="${sanityProjectId}" />

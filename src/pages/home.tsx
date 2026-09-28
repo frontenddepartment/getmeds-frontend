@@ -14,13 +14,6 @@ import { computeCategoryKey, linkCategoryKeys } from '../lib/categoryImageKey';
 import { ORDER_AUDIENCES, audiencePath } from '../lib/orderAudiences';
 
 
-// Declare global tailwind interface
-declare global {
-  interface Window {
-    tailwind?: any;
-  }
-}
-
 
 const AnimatedCounter = ({ end, duration = 2000, suffix = "" }: { end: number, duration?: number, suffix?: string }) => {
   const [count, setCount] = useState(0);
@@ -485,46 +478,9 @@ export default function GetMedsHomepage() {
       document.head.appendChild(link);
     }
 
-    // 3. Inject Tailwind CDN
-    if (!window.tailwind && !document.getElementById('tailwind-cdn-home')) {
-      const script = document.createElement('script');
-      script.id = 'tailwind-cdn-home';
-      script.src = 'https://cdn.tailwindcss.com';
-      script.onload = () => {
-        if (window.tailwind) {
-          window.tailwind.config = {
-            theme: {
-              extend: {
-                colors: {
-                  primary: '#1D9FDA',
-                  accent: '#6BB84A',
-                  dark: '#1A202C',
-                },
-                fontFamily: {
-                  sans: ['Poppins', 'Inter', 'sans-serif'],
-                }
-              }
-            }
-          };
-        }
-      };
-      document.head.appendChild(script);
-    } else if (window.tailwind) {
-      window.tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              primary: '#1D9FDA',
-              accent: '#6BB84A',
-              dark: '#1A202C',
-            },
-            fontFamily: {
-              sans: ['Poppins', 'Inter', 'sans-serif'],
-            }
-          }
-        }
-      };
-    }
+    // 3. Tailwind: no longer injected here. index.html and home-preview.html link the compiled
+    //    home theme (src/styles/tailwind/home.css), which carries the colours this block used
+    //    to hand the CDN at runtime.
 
     // 4. Scroll listener for sticky transparent header transition
     const handleScroll = () => {

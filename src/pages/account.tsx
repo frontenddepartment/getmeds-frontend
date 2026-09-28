@@ -14,6 +14,8 @@ import {
 import { compressImage, fileToBase64 } from '../lib/fileUpload';
 import { USER_TYPES, typeByValue } from '../lib/audienceTypes';
 import AlertModal from '../lib/AlertModal';
+import PointsCard from '../lib/PointsCard';
+import { captureReferralFromUrl, signOut as signOutOfPoints } from '../lib/rewards';
 
 /**
  * account.tsx
@@ -163,6 +165,8 @@ export default function Account() {
     // links from the navbar, the blog and the homepage land on the form
     // rather than on the inquiry list.
     if (window.location.hash === '#details') setTab('details');
+    // An invite link (?ref=GM…) — kept for the points card to offer.
+    captureReferralFromUrl();
     // Clears any prescriptions or IDs saved while the account screen could
     // still store files. Nothing writes them now, so this finds nothing on
     // every visit after the first — but it must run, because leaving them
@@ -278,6 +282,8 @@ export default function Account() {
 
   const wipe = async () => {
     await clearAllDeviceData();
+    // The points session is on this device too; the points stay with Getmeds.
+    signOutOfPoints();
     setDetails({});
     await refresh();
   };
@@ -335,6 +341,10 @@ export default function Account() {
             <i className="fa-solid fa-arrow-right-from-bracket mr-1.5 text-[11px]" />Logout
           </button>
         </div>
+
+        {/* Getmeds Points: an app-only feature, and the one thing on this
+            screen that lives with Getmeds rather than on the phone. */}
+        {app && <PointsCard />}
 
         {consented === false && (
           <div className="mb-5 rounded-[18px] bg-white p-4" style={{ boxShadow: CARD }}>
@@ -619,6 +629,7 @@ export default function Account() {
           <p className="text-[11.5px] leading-relaxed text-gray-400">
             Your inquiries and details are stored on this device only. They are not sent
             to Getmeds until you submit a request, and they will not appear on your other devices.
+            {app && ' Getmeds Points are the exception: if you sign in, Getmeds keeps your mobile number, your points, your referral code and the type of each request that earned them.'}
           </p>
           <button type="button" onClick={wipe} className="mt-3 text-[12px] font-semibold text-gray-400 underline">
             Clear saved data on this device

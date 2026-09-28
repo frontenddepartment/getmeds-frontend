@@ -26,6 +26,7 @@
 const DB_NAME = 'getmeds-offline'
 const DB_VERSION = 1
 import { recordInquiry } from './accountStore'
+import { noteSubmitResult, pointsAuthHeader } from './rewards'
 
 const QUEUE_STORE = 'inquiry-queue'
 const DRAFT_STORE = 'inquiry-drafts'
@@ -197,13 +198,16 @@ export async function submitInquiry(
 
   if (navigator.onLine !== false) {
     try {
+      // In the app, a signed-in customer's session rides along so the backend
+      // can add their points; see rewards.ts.
       const response = await fetch(endpoint, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...pointsAuthHeader() },
         body: JSON.stringify(payload),
       })
       if (response.ok) {
         const body = await response.json().catch(() => null)
+        noteSubmitResult(body)
         await remember('sent')
         return { status: 'sent', body }
       }
@@ -277,10 +281,11 @@ export async function flushQueue(
     try {
       const response = await fetch(endpoint, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...pointsAuthHeader() },
         body: JSON.stringify(item.payload),
       })
       if (response.ok) {
+        noteSubmitResult(await response.json().catch(() => null))
         await deleteQueued(item.id)
         sent++
       } else {

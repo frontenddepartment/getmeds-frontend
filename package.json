@@ -6,9 +6,9 @@
   "scripts": {
     "dev": "vite",
     "sync:sanity": "node scripts/sync-static-to-sanity.mjs",
-    "prebuild": "node scripts/sync-static-to-sanity.mjs && node scripts/inject-organization-jsonld.cjs && node scripts/generate-sitemap.cjs && node scripts/update-vercel-headers.cjs",
+    "prebuild": "node scripts/sync-static-to-sanity.mjs && node scripts/inject-organization-jsonld.cjs && node scripts/generate-sitemap.cjs && node scripts/collect-cms-tailwind-classes.cjs && node scripts/update-vercel-headers.cjs",
     "build": "vite build",
-    "postbuild": "node scripts/prerender-slugs.cjs && node scripts/prerender-blog.cjs && node scripts/prerender-policies.cjs && node scripts/prerender-order-medicines.cjs && node scripts/inject-social-meta.cjs && node scripts/check-duplicate-titles.cjs && node scripts/check-descriptions.cjs && node scripts/check-meta-drift.cjs && node scripts/check-canonicals.cjs",
+    "postbuild": "node scripts/prerender-slugs.cjs && node scripts/prerender-blog.cjs && node scripts/prerender-policies.cjs && node scripts/prerender-order-medicines.cjs && vite build --config vite.ssr.config.mjs && node scripts/prerender-static-pages.cjs && node scripts/inject-social-meta.cjs && node scripts/check-duplicate-titles.cjs && node scripts/check-descriptions.cjs && node scripts/check-meta-drift.cjs && node scripts/check-canonicals.cjs",
     "preview": "vite preview",
     "clean": "rimraf dist",
     "deploy:refresh": "node scripts/deploy-refresh.cjs"
@@ -30,6 +30,7 @@
     "@types/canvas-confetti": "^1.9.0",
     "rimraf": "^5.0.0",
     "sharp": "^0.35.4",
+    "tailwindcss": "3.4.17",
     "vite": "^8.1.4",
     "vite-plugin-pwa": "^1.3.0",
     "workbox-build": "^7.4.1",

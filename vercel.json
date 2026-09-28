@@ -17,6 +17,31 @@
       "permanent": true
     },
     {
+      "source": "/blog/nutrition-tips-for-a-healthy-immune-system",
+      "destination": "/blog/nutrition-tips-to-boost-your-immune-system",
+      "permanent": true
+    },
+    {
+      "source": "/blog/cough-and-cold-medicines",
+      "destination": "/blog/best-cough-and-cold-otc-medicines",
+      "permanent": true
+    },
+    {
+      "source": "/blog/how-to-cure-cough-and-cold",
+      "destination": "/blog/best-cough-and-cold-otc-medicines",
+      "permanent": true
+    },
+    {
+      "source": "/blog/maintain-a-healthy-weight",
+      "destination": "/blog/ways-to-maintain-healthy-weight",
+      "permanent": true
+    },
+    {
+      "source": "/blog/best-supplements-and-vitamins-for-kids",
+      "destination": "/blog/best-vitamin-supplements-for-kids",
+      "permanent": true
+    },
+    {
       "source": "/articles",
       "destination": "/blog",
       "permanent": true
@@ -2130,10 +2155,6 @@
       "destination": "/blog/curcumin-a-fine-ingredient-to-fight-inflammation"
     },
     {
-      "source": "/blog/nutrition-tips-for-a-healthy-immune-system",
-      "destination": "/blog/nutrition-tips-for-a-healthy-immune-system"
-    },
-    {
       "source": "/blog/role-of-vitamin-d-in-the-fight-against-covid19",
       "destination": "/blog/role-of-vitamin-d-in-the-fight-against-covid19"
     },
@@ -2446,7 +2467,7 @@
       "destination": "/cancer-medicines"
     },
     {
-      "source": "/:slug((?!404|about-us|app-home|blog-detail|blog-preview|blog|business-card|cancer-medicines|careers|cart|coming-soon|contact-us|csr|edit-profile|employee-verification|global-presence|home-preview|index|meditations|order-medicines|patient-assistance-program-preview|patient-assistance-program|policy|product-detail|profile|search|services|under-development|ungc|offline|conditions|cancer-medicine|blood-disorder-medicines|anemia-medicines|antibiotics|hormonal-therapy|diabetes-medicines|bone-health-medicines|heart-medicines|contrast-media|anti-inflammatory-medicines|pain-management|kidney-medicines|allergy-medicines|brain-cancer-medicines|product-range|api/|wp-json/|wp-content/|assets/|public/|components/|data/|src/|dist/|node_modules/|_vercel/|masteradmin|masteradlorock|masteradlorockpd|masteradlorockpdprocess|masteradlogriyon|adminadlorock|[^/]+\\.[^/]+$)[^/]+)",
+      "source": "/:slug((?!404|about-us|app-home|blog-detail|blog-preview|blog|business-card|cancer-medicines|careers|cart|coming-soon|contact-us|csr|edit-profile|employee-verification|global-presence|home-preview|index|meditations|order-medicines|patient-assistance-program-preview|patient-assistance-program|policy|product-detail|profile|search|services|sitemap|under-development|ungc|offline|conditions|cancer-medicine|blood-disorder-medicines|anemia-medicines|antibiotics|hormonal-therapy|diabetes-medicines|bone-health-medicines|heart-medicines|contrast-media|anti-inflammatory-medicines|pain-management|kidney-medicines|allergy-medicines|brain-cancer-medicines|product-range|api/|wp-json/|wp-content/|assets/|public/|components/|data/|src/|dist/|node_modules/|_vercel/|masteradmin|masteradlorock|masteradlorockpd|masteradlorockpdprocess|masteradlogriyon|adminadlorock|[^/]+\\.[^/]+$)[^/]+)",
       "destination": "https://getmeds-admin.vercel.app/api/resolve-slug/:slug"
     },
     {
@@ -2866,7 +2887,7 @@
       ]
     },
     {
-      "source": "/:slug((?!404|about-us|app-home|blog-detail|blog-preview|blog|business-card|cancer-medicines|careers|cart|coming-soon|contact-us|csr|edit-profile|employee-verification|global-presence|home-preview|index|meditations|order-medicines|patient-assistance-program-preview|patient-assistance-program|policy|product-detail|profile|search|services|under-development|ungc|offline|conditions|cancer-medicine|blood-disorder-medicines|anemia-medicines|antibiotics|hormonal-therapy|diabetes-medicines|bone-health-medicines|heart-medicines|contrast-media|anti-inflammatory-medicines|pain-management|kidney-medicines|allergy-medicines|brain-cancer-medicines|product-range|api/|wp-json/|wp-content/|assets/|public/|components/|data/|src/|dist/|node_modules/|_vercel/|masteradmin|masteradlorock|masteradlorockpd|masteradlorockpdprocess|masteradlogriyon|adminadlorock|[^/]+\\.[^/]+$)[^/]+)",
+      "source": "/:slug((?!404|about-us|app-home|blog-detail|blog-preview|blog|business-card|cancer-medicines|careers|cart|coming-soon|contact-us|csr|edit-profile|employee-verification|global-presence|home-preview|index|meditations|order-medicines|patient-assistance-program-preview|patient-assistance-program|policy|product-detail|profile|search|services|sitemap|under-development|ungc|offline|conditions|cancer-medicine|blood-disorder-medicines|anemia-medicines|antibiotics|hormonal-therapy|diabetes-medicines|bone-health-medicines|heart-medicines|contrast-media|anti-inflammatory-medicines|pain-management|kidney-medicines|allergy-medicines|brain-cancer-medicines|product-range|api/|wp-json/|wp-content/|assets/|public/|components/|data/|src/|dist/|node_modules/|_vercel/|masteradmin|masteradlorock|masteradlorockpd|masteradlorockpdprocess|masteradlogriyon|adminadlorock|[^/]+\\.[^/]+$)[^/]+)",
       "headers": [
         {
           "key": "Access-Control-Allow-Origin",
