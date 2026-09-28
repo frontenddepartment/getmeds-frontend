@@ -125,6 +125,12 @@ const getProductDisplayName = (p: { name?: string; brandName?: string; genericNa
 const getProductConditions = (p: { conditions?: string[]; subCategory?: string }) =>
   p.conditions && p.conditions.length ? p.conditions : (p.subCategory ? [p.subCategory] : []);
 
+// "Breast Cancer" -> "Breast Cancer Medicines". A name that already names a product type
+// ("Iohexol Contrast Media") is used as-is. Kept in step with conditionHeading() in
+// scripts/prerender-slugs.cjs, which writes the same heading into the prerendered page.
+const conditionHeading = (name: string) =>
+  /\b(medicines?|media)$/i.test(name.trim()) ? name.trim() : `${name.trim()} Medicines`;
+
 export default function CancerMedicines() {
   const { getImage, categoryImages } = useImageMapper('product-range');
   const { data: productsDataRaw, loading: productsLoading } = useProducts();
@@ -939,6 +945,7 @@ export default function CancerMedicines() {
     selectedCategory.category === cat.name;
 
   const displayCategory = selectedCategory.subCategory !== 'All' ? selectedCategory.subCategory : selectedCategory.category;
+  const conditionName = selectedCategory.subCategory !== 'All' ? selectedCategory.subCategory : '';
 
   // Drives the breadcrumb slide direction: drilling into a category/condition (depth
   // increasing) slides the new crumb in from the right; stepping back out (depth
@@ -1096,9 +1103,23 @@ export default function CancerMedicines() {
               <div className="absolute pointer-events-none hidden md:block" style={{ width: 85, height: 85, borderRadius: '50%', top: '-15px', right: '38%', background: 'radial-gradient(circle at 38% 32%, rgba(80,220,210,0.55), rgba(30,170,200,0.30))', backdropFilter: 'blur(2px)', border: '1px solid rgba(255,255,255,0.22)' }} />
               <div className="absolute pointer-events-none" style={{ width: 280, height: 80, borderRadius: '50%', bottom: '-48px', left: '22%', background: 'radial-gradient(ellipse at 50% 40%, rgba(40,160,230,0.38), rgba(20,130,210,0.18))', backdropFilter: 'blur(2px)' }} />
               <div className="relative z-10 transition-all duration-300">
-                <h1 className="text-xl sm:text-2xl md:text-3xl font-semibold text-white tracking-tight leading-tight">
-                  {selectedCategory.category !== 'All' ? selectedCategory.category : 'Products'}
-                </h1>
+                {/* A condition page's main heading is the condition ("Breast Cancer Medicines"),
+                    with its category as a label above it. Before, every condition shared its
+                    category's heading, so e.g. all 18 oncology condition pages read "Oncology". */}
+                {conditionName ? (
+                  <>
+                    {selectedCategory.category !== 'All' && (
+                      <p className="text-white/80 text-[11px] sm:text-xs font-semibold uppercase tracking-widest mb-1">{selectedCategory.category}</p>
+                    )}
+                    <h1 className="text-xl sm:text-2xl md:text-3xl font-semibold text-white tracking-tight leading-tight">
+                      {conditionHeading(conditionName)}
+                    </h1>
+                  </>
+                ) : (
+                  <h1 className="text-xl sm:text-2xl md:text-3xl font-semibold text-white tracking-tight leading-tight">
+                    {selectedCategory.category !== 'All' ? selectedCategory.category : 'Products'}
+                  </h1>
+                )}
                 <p className="text-white/75 text-[12px] sm:text-[13px] mt-1 font-medium">Comprehensive catalog of pharmaceutical solutions. Browse categories and send inquiries directly.</p>
               </div>
             </div>

@@ -313,6 +313,14 @@ const e = (s) => body.escapeHtml(s);
 const SHELL_OPEN = '<main class="max-w-5xl mx-auto px-4 pt-28 pb-16 text-gray-800">';
 const SHELL_CLOSE = '</main>';
 
+// "Breast Cancer" -> "Breast Cancer Medicines"; a name that already names a product type
+// ("Iohexol Contrast Media") is used as-is. Same rule as conditionHeading() in
+// src/pages/cancer-medicines.tsx, so the prerendered heading and the live one agree.
+function conditionHeading(name) {
+  const n = String(name || '').trim();
+  return /\b(medicines?|media)$/i.test(n) ? n : `${n} Medicines`;
+}
+
 function crumbs(trail) {
   return `<nav aria-label="Breadcrumb" class="text-xs text-gray-500 mb-6">${trail
     .map((c) => (c.url ? `<a href="${e(c.url)}" class="hover:text-primary">${e(c.name)}</a>` : `<span>${e(c.name)}</span>`))
@@ -623,7 +631,7 @@ async function main() {
         ...(group.category && group.folder ? [{ name: group.category, url: `/${group.folder}` }] : []),
         { name: group.name },
       ],
-      heading: `${group.name} Medicines`,
+      heading: conditionHeading(group.name),
       intro: description,
       sections: [{ items: conditionItems }],
     })));
