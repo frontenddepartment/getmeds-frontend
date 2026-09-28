@@ -107,14 +107,35 @@ export function isAppMode(): boolean {
 
 // ── Consent ──────────────────────────────────────────────────────────────────
 
-export const hasConsent = (): Promise<boolean> =>
-  safe(tx<boolean | undefined>(META, 'readonly', (s) => s.get(CONSENT_KEY)).then((v) => v === true), false)
+/**
+ * The answer given in this page session, kept alongside the stored one.
+ *
+ * If the phone refuses to store the answer (storage full, blocked site data,
+ * a write cut short by leaving the page), the stored record stays empty and
+ * the next tap on "add" would ask the same question again, forever. Holding
+ * the answer here means a customer is asked once per visit at most.
+ */
+let sessionConsent: boolean | null = null
 
-/** Granting only records the choice. Withdrawing also erases the list. */
-export async function setConsent(granted: boolean): Promise<void> {
-  await safe(tx<void>(META, 'readwrite', (s) => s.put(granted, CONSENT_KEY)), undefined as void)
+export const hasConsent = (): Promise<boolean> =>
+  safe(tx<boolean | undefined>(META, 'readonly', (s) => s.get(CONSENT_KEY)).then((v) => v === true), false).then(
+    (stored) => stored || sessionConsent === true
+  )
+
+/**
+ * Granting only records the choice. Withdrawing also erases the list.
+ * Resolves false when the choice could not be stored on the phone (it still
+ * holds for this visit).
+ */
+export async function setConsent(granted: boolean): Promise<boolean> {
+  sessionConsent = granted
+  const stored = await tx<void>(META, 'readwrite', (s) => s.put(granted, CONSENT_KEY)).then(
+    () => true,
+    () => false
+  )
   if (!granted) await clearCart()
   announce()
+  return stored
 }
 
 // ── The list ─────────────────────────────────────────────────────────────────

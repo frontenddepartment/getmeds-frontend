@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import {
   addToCart,
   hasConsent,
@@ -20,7 +21,10 @@ import {
  * would only confuse.
  *
  * The consent sheet appears once, on the first attempt to save something —
- * not on launch. Asking before anyone has shown interest is a dialog people
+ * not on launch. It is drawn at the page level (a portal), not inside the
+ * button: the button usually sits inside a product card that is a link, and
+ * a sheet inside that link turned every tap on it, "Allow and save"
+ * included, into a trip to the product page, cutting the save short. Asking before anyone has shown interest is a dialog people
  * dismiss without reading; asking at the moment they tap "add" makes the
  * question concrete and the answer meaningful.
  */
@@ -30,11 +34,21 @@ function ConsentSheet({
 }: {
   onDecide: (granted: boolean) => void;
 }) {
-  return (
-    <div className="fixed inset-0 z-[10000] flex items-end justify-center bg-black/50 p-0" role="dialog" aria-modal="true">
-      <div className="w-full max-w-lg rounded-t-3xl bg-white p-6 pb-8">
+  return createPortal(
+    <div
+      className="fixed inset-0 z-[10000] flex items-end justify-center bg-black/50 p-0"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="consent-title"
+      // React still bubbles portal events up to the card; stop them here.
+      onClick={(e) => {
+        e.stopPropagation();
+        if (e.target === e.currentTarget) onDecide(false);
+      }}
+    >
+      <div className="w-full max-w-lg rounded-t-3xl bg-white p-6" style={{ paddingBottom: 'calc(32px + env(safe-area-inset-bottom, 0px))' }}>
         <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-gray-200" />
-        <h2 className="text-[17px] font-semibold text-gray-900">Save your list on this phone?</h2>
+        <h2 id="consent-title" className="text-[17px] font-semibold text-gray-900">Save your list on this phone?</h2>
         <p className="mt-2 text-[13.5px] leading-relaxed text-gray-600">
           To keep a request list, Getmeds needs to store the products you choose on this device.
         </p>
@@ -75,7 +89,8 @@ function ConsentSheet({
           Not now
         </button>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 
@@ -89,6 +104,7 @@ export function AddToCart({
   const [app, setApp] = useState(false);
   const [saved, setSaved] = useState(false);
   const [asking, setAsking] = useState(false);
+  const [notice, setNotice] = useState('');
 
   useEffect(() => {
     setApp(isAppMode());
@@ -118,8 +134,17 @@ export function AddToCart({
 
   const decide = async (granted: boolean) => {
     setAsking(false);
-    await setConsent(granted);
-    if (granted) await addToCart(item);
+    const stored = await setConsent(granted);
+    if (!granted) return;
+    const result = await addToCart(item);
+    if (result === 'failed' || !stored) {
+      setNotice(
+        result === 'failed'
+          ? 'This phone is not letting Getmeds save your list. Check that site data is allowed for getmeds.ph, then try again.'
+          : 'Added for now. This phone did not keep your choice, so we may ask again next time.'
+      );
+      window.setTimeout(() => setNotice(''), 6000);
+    }
   };
 
   const label = saved ? 'Remove from list' : 'Add to request list';
@@ -159,6 +184,17 @@ export function AddToCart({
       )}
 
       {asking && <ConsentSheet onDecide={decide} />}
+      {notice &&
+        createPortal(
+          <div
+            role="status"
+            className="fixed inset-x-4 z-[10001] rounded-2xl bg-gray-900 px-4 py-3 text-[12.5px] leading-snug text-white shadow-lg"
+            style={{ bottom: 'calc(96px + env(safe-area-inset-bottom, 0px))' }}
+          >
+            {notice}
+          </div>,
+          document.body
+        )}
     </>
   );
 }
