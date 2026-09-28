@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { injectHTML } from '../lib/injectHTML';
 import { getAllPolicies } from '../lib/queries';
+import { usePageReady } from '../lib/handoff';
 import { PoliciesDisclaimers } from '../types/sanity';
 import { setPageMeta, excerptFromHtml } from '../lib/seo';
 
@@ -49,11 +50,24 @@ const DEFAULT_POLICIES = [
   },
 ];
 
+// Which policy the URL asks for: ?slug=, else the path, else the refund policy.
+function getSlugFromUrl(): string {
+  const path = window.location.pathname.replace(/^\/|\/$/g, '');
+  const querySlug = new URLSearchParams(window.location.search).get('slug');
+  if (querySlug) return querySlug;
+  const matchingPolicy = DEFAULT_POLICIES.find(p => p.slug === path);
+  return matchingPolicy ? matchingPolicy.slug : 'return-and-refund-policy';
+}
+
 export default function CentralizedPolicyPage() {
   const [policies, setPolicies] = useState<PoliciesDisclaimers[]>([]);
-  const [activeSlug, setActiveSlug] = useState<string>('return-and-refund-policy');
+  // Read from the URL on the first render, so the page never draws the refund policy's title
+  // for a frame before switching to the one actually requested.
+  const [activeSlug, setActiveSlug] = useState<string>(getSlugFromUrl);
   const [copied, setCopied] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
+  // Swaps out the prerendered copy of this policy once the live one has loaded.
+  usePageReady(!loading);
 
   // 1. Inject Header & Footer on mount
   useEffect(() => {
@@ -76,19 +90,6 @@ export default function CentralizedPolicyPage() {
 
   // 2. Parse current URL slug on mount or URL change
   useEffect(() => {
-    const getSlugFromUrl = () => {
-      const path = window.location.pathname.replace(/^\/|\/$/g, '');
-      const searchParams = new URLSearchParams(window.location.search);
-      const querySlug = searchParams.get('slug');
-
-      if (querySlug) return querySlug;
-
-      const matchingPolicy = DEFAULT_POLICIES.find(p => p.slug === path);
-      if (matchingPolicy) return matchingPolicy.slug;
-
-      return 'return-and-refund-policy';
-    };
-
     setActiveSlug(getSlugFromUrl());
   }, []);
 
