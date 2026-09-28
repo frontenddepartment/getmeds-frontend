@@ -70,6 +70,112 @@ function Ring({ pct }: { pct: number }) {
   );
 }
 
+const SKY =
+  'radial-gradient(60% 55% at 30% 70%, rgba(255,255,255,.85), transparent 70%),' +
+  'radial-gradient(45% 45% at 62% 45%, rgba(255,255,255,.7), transparent 70%),' +
+  'radial-gradient(40% 40% at 88% 80%, rgba(255,255,255,.55), transparent 70%),' +
+  'linear-gradient(180deg,#BFD9EE 0%,#D8E8F4 60%,#E6EFF6 100%)';
+
+/**
+ * What a guest sees instead of the profile card. A guest has no balance, no
+ * code and nothing to log out of, so this says what signing in gives and
+ * offers one way in. The sign-in itself opens in a sheet (see SignInSheet).
+ */
+export function GuestCard({ onSignIn }: { onSignIn: () => void }) {
+  const perks: Array<[string, string]> = [
+    ['fa-star', 'Earn points on every request you send'],
+    ['fa-user-plus', 'Get more when a friend joins with your code'],
+    ['fa-mobile-screen', 'No password. We text you a 6-digit code.'],
+  ];
+  return (
+    <section
+      className="mb-5 rounded-[28px] border border-[#EEF1F5] bg-white p-2 pb-5"
+      style={{ boxShadow: '0 10px 30px rgba(23,43,77,.07)' }}
+      aria-label="Sign in"
+    >
+      <div className="h-[92px] rounded-[22px]" style={{ background: SKY }} />
+      <div className="-mt-[46px] flex justify-center">
+        <span className="flex h-[88px] w-[88px] items-center justify-center rounded-full border-[5px] border-white bg-[#EAF4FB]">
+          <i className="fa-solid fa-user text-[30px]" style={{ color: BRAND }} />
+        </span>
+      </div>
+      <div className="mt-3 px-5 text-center">
+        <h1 className="text-[21px] font-semibold text-gray-900">Welcome to Getmeds</h1>
+        <p className="mx-auto mt-1 max-w-[290px] text-[13px] leading-relaxed text-gray-500">
+          Sign in with your mobile number to start collecting Getmeds Points.
+        </p>
+      </div>
+      <ul className="mx-4 mt-4 space-y-2.5">
+        {perks.map(([icon, text]) => (
+          <li key={text} className="flex items-center gap-3 text-[13px] text-gray-700">
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#F1F8FE]">
+              <i className={`fa-solid ${icon} text-[12px]`} style={{ color: BRAND }} />
+            </span>
+            {text}
+          </li>
+        ))}
+      </ul>
+      <div className="mx-4 mt-5">
+        <button
+          type="button"
+          onClick={onSignIn}
+          className="w-full rounded-full py-3.5 text-[14px] font-semibold text-white"
+          style={{ background: 'linear-gradient(135deg,#1D9FDA,#61A644)' }}
+        >
+          Sign in with mobile number
+        </button>
+      </div>
+    </section>
+  );
+}
+
+/** A plain list of what a guest can still open, one row each. */
+export function GuestList({ rows }: { rows: Array<{ icon: string; label: string; hint?: string; onClick: () => void }> }) {
+  return (
+    <section className="mb-5 overflow-hidden rounded-[22px] border border-[#EEF1F5] bg-white" aria-label="On this phone">
+      <p className="px-4 pb-1 pt-3.5 text-[11px] font-semibold uppercase tracking-wide text-gray-400">On this phone</p>
+      {rows.map((r) => (
+        <button
+          key={r.label}
+          type="button"
+          onClick={r.onClick}
+          className="flex w-full items-center gap-3 border-t border-gray-50 px-4 py-3.5 text-left first-of-type:border-t-0"
+        >
+          <i className={`fa-solid ${r.icon} w-5 text-center text-[15px] text-gray-400`} />
+          <span className="flex-1 text-[13.5px] font-medium text-gray-800">{r.label}</span>
+          {r.hint && <span className="text-[12px] text-gray-400">{r.hint}</span>}
+          <i className="fa-solid fa-chevron-right text-[11px] text-gray-300" />
+        </button>
+      ))}
+    </section>
+  );
+}
+
+/** Bottom sheet above the tab bar (which sits at z-index 9999). */
+export function SignInSheet({ open, onClose, children }: { open: boolean; onClose: () => void; children: React.ReactNode }) {
+  if (!open) return null;
+  return (
+    <div className="fixed inset-0 z-[10050] flex items-end" role="dialog" aria-modal="true" aria-label="Sign in">
+      <button type="button" aria-label="Close" onClick={onClose} className="absolute inset-0 bg-[rgba(15,23,42,.45)]" />
+      <div
+        className="relative max-h-[90vh] w-full overflow-y-auto rounded-t-[28px] bg-white px-5 pt-3"
+        style={{ paddingBottom: 'calc(20px + env(safe-area-inset-bottom, 0px))' }}
+      >
+        <div className="mx-auto mb-3 h-1 w-10 rounded-full bg-gray-200" />
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Close"
+          className="absolute right-4 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-gray-500"
+        >
+          <i className="fa-solid fa-xmark text-[13px]" />
+        </button>
+        {children}
+      </div>
+    </div>
+  );
+}
+
 export default function ProfileCard({ name, subtitle, avatar, completeness, onEdit, stats, actions }: Props) {
   const initial = (name || 'G').charAt(0).toUpperCase();
   const pct = Math.max(0, Math.min(100, Math.round(completeness)));

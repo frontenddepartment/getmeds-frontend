@@ -15,7 +15,7 @@ import { compressImage, fileToBase64 } from '../lib/fileUpload';
 import { USER_TYPES, typeByValue } from '../lib/audienceTypes';
 import AlertModal from '../lib/AlertModal';
 import PointsCard, { usePoints } from '../lib/PointsCard';
-import ProfileCard from '../lib/ProfileCard';
+import ProfileCard, { GuestCard, GuestList, SignInSheet } from '../lib/ProfileCard';
 import { captureReferralFromUrl, inviteLink, signOut as signOutOfPoints } from '../lib/rewards';
 
 /**
@@ -137,6 +137,12 @@ export default function Account() {
   const [busy, setBusy] = useState(false);
   const [alert, setAlert] = useState<{ title?: string; message: string | string[] } | null>(null);
   const points = usePoints();
+  const [signInOpen, setSignInOpen] = useState(false);
+  /**
+   * A guest in the app sees a short list instead of the tabs, and opens one
+   * section at a time; everything else about the account needs signing in.
+   */
+  const [guestOpen, setGuestOpen] = useState<Tab | null>(null);
 
   const refresh = useCallback(async () => {
     setConsented(await hasConsent());
@@ -314,6 +320,14 @@ export default function Account() {
     return (filled / keys.length) * 100;
   }, [details, audience]);
 
+  const guest = app && !points.signedIn;
+  const showSections = !guest || guestOpen !== null;
+  const openGuest = (t: Tab) => {
+    setTab(t);
+    setGuestOpen(t);
+    window.setTimeout(() => scrollTo('account-tabs'), 50);
+  };
+
   const scrollTo = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
   const logout = () => {
@@ -344,9 +358,12 @@ export default function Account() {
   };
 
   const pointsAccount = points.summary?.account;
-  const profileSubtitle = points.signedIn
+  // A new customer has a number before they have a name; never call someone
+  // who just signed in "Guest".
+  const profileName = displayName || pointsAccount?.name || '';
+  const profileSubtitle = profileName
     ? [audience?.label ?? 'Getmeds member', pointsAccount?.mobile].filter(Boolean).join(' · ')
-    : 'Sign in below to earn Getmeds Points on every request you send.';
+    : `${audience?.label ?? 'Getmeds member'} · Add your name in Edit profile`;
 
   return (
     <>
@@ -355,9 +372,26 @@ export default function Account() {
       <main className={`mx-auto flex max-w-3xl flex-col ${app ? 'px-4 pb-8 pt-5' : 'px-6 pb-16 pt-28'}`}>
         {/* Identity. The app gets the profile card; the website keeps the
             plain row, since it has no points to show. */}
-        {app && (
+        {guest && (
+          <>
+            <GuestCard onSignIn={() => setSignInOpen(true)} />
+            <GuestList
+              rows={[
+                {
+                  icon: 'fa-file-lines',
+                  label: 'Requests sent from this phone',
+                  hint: inquiries && inquiries.length > 0 ? String(inquiries.length) : undefined,
+                  onClick: () => openGuest('inquiries'),
+                },
+                { icon: 'fa-id-card', label: 'Saved details for forms', onClick: () => openGuest('details') },
+                { icon: 'fa-headset', label: 'Contact us', onClick: () => { window.location.href = '/contact-us'; } },
+              ]}
+            />
+          </>
+        )}
+        {app && !guest && (
           <ProfileCard
-            name={displayName || pointsAccount?.name || ''}
+            name={profileName || pointsAccount?.mobile || ''}
             subtitle={profileSubtitle}
             avatar={avatar}
             completeness={completeness}
@@ -441,9 +475,12 @@ export default function Account() {
 
         {/* Getmeds Points: an app-only feature, and the one thing on this
             screen that lives with Getmeds rather than on the phone. */}
-        {app && <PointsCard points={points} />}
+        {app && !guest && <PointsCard points={points} />}
+        <SignInSheet open={signInOpen && guest} onClose={() => setSignInOpen(false)}>
+          <PointsCard points={points} bare />
+        </SignInSheet>
 
-        {consented === false && (
+        {consented === false && showSections && (
           <div className="mb-5 rounded-[18px] bg-white p-4" style={{ boxShadow: CARD }}>
             <p className="text-[13.5px] font-semibold text-gray-900">Keep your details on this phone?</p>
             <p className="mt-1.5 text-[12px] leading-relaxed text-gray-500">
@@ -462,11 +499,24 @@ export default function Account() {
         )}
 
         <div id="account-tabs" className="scroll-mt-4">
-          <Segmented tab={tab} setTab={setTab} counts={counts} />
+          {guest ? (
+            showSections && (
+              <div className="mb-4 flex items-center justify-between">
+                <p className="text-[15px] font-semibold text-gray-900">
+                  {tab === 'inquiries' ? 'Requests sent from this phone' : 'Saved details for forms'}
+                </p>
+                <button type="button" onClick={() => setGuestOpen(null)} className="text-[12.5px] font-semibold text-gray-400">
+                  Close
+                </button>
+              </div>
+            )
+          ) : (
+            <Segmented tab={tab} setTab={setTab} counts={counts} />
+          )}
         </div>
 
         {/* ── Inquiries ─────────────────────────────────────────────────── */}
-        {tab === 'inquiries' && (
+        {tab === 'inquiries' && showSections && (
           <section>
             {inquiries === null ? (
               <div className="space-y-2.5">
@@ -563,7 +613,7 @@ export default function Account() {
         )}
 
         {/* ── Details ───────────────────────────────────────────────────── */}
-        {tab === 'details' && (
+        {tab === 'details' && showSections && (
           <section className="rounded-[18px] bg-white p-4" style={{ boxShadow: CARD }}>
             <p className="text-[13.5px] font-semibold text-gray-900">Your details</p>
             <p className="mt-1 text-[11.5px] leading-relaxed text-gray-500">

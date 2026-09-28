@@ -196,7 +196,11 @@ export function usePoints(): PointsState {
   return { signedIn, summary, loadError };
 }
 
-export default function PointsCard({ points }: { points: PointsState }) {
+/**
+ * `bare` drops the card around the sign-in form, for when it is shown inside
+ * the account screen's sign-in sheet rather than on the page.
+ */
+export default function PointsCard({ points, bare = false }: { points: PointsState; bare?: boolean }) {
   const { signedIn, summary, loadError } = points;
 
   const [step, setStep] = useState<Step>('number');
@@ -333,7 +337,12 @@ export default function PointsCard({ points }: { points: PointsState }) {
 
   // ── Signing in ─────────────────────────────────────────────────────────────
   return (
-    <section id="points" className="mb-5 scroll-mt-4 rounded-[24px] border border-[#EEF1F5] bg-white p-4" style={{ boxShadow: CARD }} aria-label="Getmeds Points">
+    <section
+      id={bare ? undefined : 'points'}
+      className={bare ? '' : 'mb-5 scroll-mt-4 rounded-[24px] border border-[#EEF1F5] bg-white p-4'}
+      style={bare ? undefined : { boxShadow: CARD }}
+      aria-label="Getmeds Points"
+    >
       <div className="flex items-start gap-3.5">
         <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full" style={{ background: '#F1F8FE' }}>
           <i className="fa-solid fa-star text-[16px]" style={{ color: BRAND }} />
