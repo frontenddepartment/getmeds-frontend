@@ -14,8 +14,9 @@ import {
 import { compressImage, fileToBase64 } from '../lib/fileUpload';
 import { USER_TYPES, typeByValue } from '../lib/audienceTypes';
 import AlertModal from '../lib/AlertModal';
-import PointsCard from '../lib/PointsCard';
-import { captureReferralFromUrl, signOut as signOutOfPoints } from '../lib/rewards';
+import PointsCard, { usePoints } from '../lib/PointsCard';
+import ProfileCard from '../lib/ProfileCard';
+import { captureReferralFromUrl, inviteLink, signOut as signOutOfPoints } from '../lib/rewards';
 
 /**
  * account.tsx
@@ -135,6 +136,7 @@ export default function Account() {
   const [savedFlash, setSavedFlash] = useState(false);
   const [busy, setBusy] = useState(false);
   const [alert, setAlert] = useState<{ title?: string; message: string | string[] } | null>(null);
+  const points = usePoints();
 
   const refresh = useCallback(async () => {
     setConsented(await hasConsent());
@@ -300,12 +302,106 @@ export default function Account() {
   /** Decides which extra fields the form below even asks for. */
   const audience = typeByValue(details.userType);
 
+  /**
+   * How much of the details form is filled in, for the ring on the profile
+   * card. Counts what the forms actually use: the four basics, plus the
+   * fields this type of customer is asked for. The picture is left out on
+   * purpose; it fills in nothing.
+   */
+  const completeness = useMemo(() => {
+    const keys = ['name', 'phone', 'email', 'userType', ...(audience?.fields.map((f) => f.key) ?? [])];
+    const filled = keys.filter((k) => String((details as Record<string, unknown>)[k] ?? '').trim() !== '').length;
+    return (filled / keys.length) * 100;
+  }, [details, audience]);
+
+  const scrollTo = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  const logout = () => {
+    signOutOfPoints();
+    const w = window as unknown as { logoutUser?: () => void };
+    if (typeof w.logoutUser === 'function') w.logoutUser();
+    window.location.href = '/';
+  };
+
+  /** Shares the invite link, or sends a guest to sign in first. */
+  const invite = async () => {
+    const code = points.summary?.account.referralCode;
+    if (!code) {
+      scrollTo('points');
+      return;
+    }
+    const text = `Get the Getmeds app and add my code ${code} under My account > Getmeds Points.`;
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: 'Getmeds', text, url: inviteLink(code) });
+      } else {
+        await navigator.clipboard.writeText(`${text} ${inviteLink(code)}`);
+        setAlert({ title: 'Invite copied', message: 'Paste it into a chat to send it to a friend.' });
+      }
+    } catch {
+      /* share sheet closed */
+    }
+  };
+
+  const pointsAccount = points.summary?.account;
+  const profileSubtitle = points.signedIn
+    ? [audience?.label ?? 'Getmeds member', pointsAccount?.mobile].filter(Boolean).join(' · ')
+    : 'Sign in below to earn Getmeds Points on every request you send.';
+
   return (
     <>
       <div id="navbar-placeholder"></div>
 
       <main className={`mx-auto flex max-w-3xl flex-col ${app ? 'px-4 pb-8 pt-5' : 'px-6 pb-16 pt-28'}`}>
-        {/* Identity */}
+        {/* Identity. The app gets the profile card; the website keeps the
+            plain row, since it has no points to show. */}
+        {app && (
+          <ProfileCard
+            name={displayName || pointsAccount?.name || ''}
+            subtitle={profileSubtitle}
+            avatar={avatar}
+            completeness={completeness}
+            onEdit={() => {
+              setTab('details');
+              window.setTimeout(() => scrollTo('account-tabs'), 50);
+            }}
+            stats={[
+              {
+                label: 'Points',
+                value: pointsAccount ? pointsAccount.pointsBalance.toLocaleString('en-PH') : '—',
+                onClick: () => scrollTo('points'),
+              },
+              {
+                label: 'Requests',
+                value: String(inquiries?.length ?? 0),
+                onClick: () => {
+                  setTab('inquiries');
+                  window.setTimeout(() => scrollTo('account-tabs'), 50);
+                },
+              },
+              {
+                label: 'Friends invited',
+                value: points.signedIn ? String(points.summary?.referral?.friendsJoined ?? 0) : '—',
+                onClick: () => scrollTo('points'),
+              },
+            ]}
+            // Inviting and logging out only mean something to a signed-in
+            // customer; a guest gets the way in instead.
+            actions={
+              points.signedIn
+                ? [
+                    { icon: 'fa-share-nodes', label: 'Invite a friend', onClick: invite },
+                    { icon: 'fa-headset', label: 'Contact us', onClick: () => { window.location.href = '/contact-us'; } },
+                    { icon: 'fa-arrow-right-from-bracket', label: 'Log out', onClick: logout, tone: 'danger' },
+                  ]
+                : [
+                    { icon: 'fa-right-to-bracket', label: 'Sign in', onClick: () => { scrollTo('points'); document.getElementById('points-mobile')?.focus({ preventScroll: true }); } },
+                    { icon: 'fa-headset', label: 'Contact us', onClick: () => { window.location.href = '/contact-us'; } },
+                  ]
+            }
+          />
+        )}
+        {!app && (
         <div className="mb-5 flex items-center gap-3.5 rounded-[18px] bg-white p-4" style={{ boxShadow: CARD }}>
           <span
             className="flex h-[52px] w-[52px] shrink-0 items-center justify-center overflow-hidden rounded-full text-[20px] font-bold text-white"
@@ -341,10 +437,11 @@ export default function Account() {
             <i className="fa-solid fa-arrow-right-from-bracket mr-1.5 text-[11px]" />Logout
           </button>
         </div>
+        )}
 
         {/* Getmeds Points: an app-only feature, and the one thing on this
             screen that lives with Getmeds rather than on the phone. */}
-        {app && <PointsCard />}
+        {app && <PointsCard points={points} />}
 
         {consented === false && (
           <div className="mb-5 rounded-[18px] bg-white p-4" style={{ boxShadow: CARD }}>
@@ -364,7 +461,9 @@ export default function Account() {
           </div>
         )}
 
-        <Segmented tab={tab} setTab={setTab} counts={counts} />
+        <div id="account-tabs" className="scroll-mt-4">
+          <Segmented tab={tab} setTab={setTab} counts={counts} />
+        </div>
 
         {/* ── Inquiries ─────────────────────────────────────────────────── */}
         {tab === 'inquiries' && (

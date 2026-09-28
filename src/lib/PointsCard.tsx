@@ -156,10 +156,48 @@ function Referral({ summary }: { summary: PointsSummary }) {
   );
 }
 
-export default function PointsCard() {
+export interface PointsState {
+  signedIn: boolean;
+  summary: PointsSummary | null;
+  loadError: string;
+}
+
+/**
+ * The signed-in customer's points, kept fresh on REWARDS_CHANGED_EVENT. The
+ * account screen calls this once and hands it to both the profile card and
+ * this card, so the balance is fetched once per change, not twice.
+ */
+export function usePoints(): PointsState {
   const [signedIn, setSignedIn] = useState(isSignedIn);
   const [summary, setSummary] = useState<PointsSummary | null>(null);
   const [loadError, setLoadError] = useState('');
+
+  const load = useCallback(async () => {
+    const now = isSignedIn();
+    setSignedIn(now);
+    if (!now) {
+      setSummary(null);
+      return;
+    }
+    try {
+      setSummary(await fetchSummary());
+      setLoadError('');
+    } catch (e) {
+      setLoadError(message(e));
+    }
+  }, []);
+
+  useEffect(() => {
+    load();
+    window.addEventListener(REWARDS_CHANGED_EVENT, load);
+    return () => window.removeEventListener(REWARDS_CHANGED_EVENT, load);
+  }, [load]);
+
+  return { signedIn, summary, loadError };
+}
+
+export default function PointsCard({ points }: { points: PointsState }) {
+  const { signedIn, summary, loadError } = points;
 
   const [step, setStep] = useState<Step>('number');
   const [mobile, setMobile] = useState('');
@@ -185,27 +223,6 @@ export default function PointsCard() {
     s.async = true;
     document.head.appendChild(s);
   }, [signedIn, turnstile.enabled]);
-
-  const load = useCallback(async () => {
-    const now = isSignedIn();
-    setSignedIn(now);
-    if (!now) {
-      setSummary(null);
-      return;
-    }
-    try {
-      setSummary(await fetchSummary());
-      setLoadError('');
-    } catch (e) {
-      setLoadError(message(e));
-    }
-  }, []);
-
-  useEffect(() => {
-    load();
-    window.addEventListener(REWARDS_CHANGED_EVENT, load);
-    return () => window.removeEventListener(REWARDS_CHANGED_EVENT, load);
-  }, [load]);
 
   useEffect(() => {
     if (wait <= 0) return;
@@ -257,21 +274,18 @@ export default function PointsCard() {
   if (signedIn) {
     const account = summary?.account;
     return (
-      <section className="mb-5 overflow-hidden rounded-[18px] bg-white" style={{ boxShadow: CARD }} aria-label="Getmeds Points">
-        <div className="flex items-center gap-4 p-4 text-white" style={{ background: GRADIENT }}>
-          <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white/20">
-            <i className="fa-solid fa-star text-[19px]" />
+      <section id="points" className="mb-5 scroll-mt-4 rounded-[24px] border border-[#EEF1F5] bg-white p-4" style={{ boxShadow: CARD }} aria-label="Getmeds Points">
+        <div className="mb-3 flex items-center gap-3">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-white" style={{ background: GRADIENT }}>
+            <i className="fa-solid fa-star text-[13px]" />
           </span>
-          <div className="min-w-0 flex-1">
-            <p className="text-[11.5px] font-semibold uppercase tracking-wide text-white/80">Getmeds Points</p>
-            <p className="text-[28px] font-bold leading-tight">
-              {account ? account.pointsBalance.toLocaleString('en-PH') : '–'}
-              <span className="ml-1.5 text-[13px] font-semibold text-white/80">pts</span>
-            </p>
-          </div>
+          <p className="flex-1 text-[14px] font-semibold text-gray-900">Getmeds Points</p>
+          <span className="rounded-full bg-[#F1F8FE] px-3 py-1 text-[12.5px] font-bold" style={{ color: BRAND }}>
+            {account ? account.pointsBalance.toLocaleString('en-PH') : '–'} pts
+          </span>
         </div>
 
-        <div className="p-4">
+        <div>
           {loadError && !summary && <p className="text-[12px] text-red-500">{loadError}</p>}
           {!summary && !loadError && <div className="h-4 w-2/3 animate-pulse rounded bg-gray-100" />}
           {account && (
@@ -319,7 +333,7 @@ export default function PointsCard() {
 
   // ── Signing in ─────────────────────────────────────────────────────────────
   return (
-    <section className="mb-5 rounded-[18px] bg-white p-4" style={{ boxShadow: CARD }} aria-label="Getmeds Points">
+    <section id="points" className="mb-5 scroll-mt-4 rounded-[24px] border border-[#EEF1F5] bg-white p-4" style={{ boxShadow: CARD }} aria-label="Getmeds Points">
       <div className="flex items-start gap-3.5">
         <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full" style={{ background: '#F1F8FE' }}>
           <i className="fa-solid fa-star text-[16px]" style={{ color: BRAND }} />
