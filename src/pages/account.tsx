@@ -16,6 +16,7 @@ import { USER_TYPES, typeByValue } from '../lib/audienceTypes';
 import AlertModal from '../lib/AlertModal';
 import PointsCard, { usePoints } from '../lib/PointsCard';
 import ProfileCard, { GuestCard, GuestList, SignInSheet } from '../lib/ProfileCard';
+import DetailsScreen from '../lib/DetailsScreen';
 import { captureReferralFromUrl, inviteLink, signOut as signOutOfPoints } from '../lib/rewards';
 
 /**
@@ -143,6 +144,9 @@ export default function Account() {
    * section at a time; everything else about the account needs signing in.
    */
   const [guestOpen, setGuestOpen] = useState<Tab | null>(null);
+  /** The app's full-screen "My details"; the website keeps the Details tab. */
+  const [detailsOpen, setDetailsOpen] = useState(false);
+  const closeDetails = useCallback(() => setDetailsOpen(false), []);
 
   const refresh = useCallback(async () => {
     setConsented(await hasConsent());
@@ -172,7 +176,10 @@ export default function Account() {
     // /edit-profile redirects here with #details, so the old "Edit Profile"
     // links from the navbar, the blog and the homepage land on the form
     // rather than on the inquiry list.
-    if (window.location.hash === '#details') setTab('details');
+    if (window.location.hash === '#details') {
+      if (app) setDetailsOpen(true);
+      else setTab('details');
+    }
     // An invite link (?ref=GM…) — kept for the points card to offer.
     captureReferralFromUrl();
     // Clears any prescriptions or IDs saved while the account screen could
@@ -226,7 +233,7 @@ export default function Account() {
     await refresh();
   };
 
-  const persistDetails = async () => {
+  const persistDetails = async (): Promise<boolean> => {
     setBusy(true);
     const ok = await saveDetails(details);
     setBusy(false);
@@ -235,7 +242,7 @@ export default function Account() {
         title: 'Not saved',
         message: 'Getmeds needs your permission to keep these details on this device.',
       });
-      return;
+      return false;
     }
 
     /**
@@ -266,6 +273,7 @@ export default function Account() {
 
     setSavedFlash(true);
     window.setTimeout(() => setSavedFlash(false), 2200);
+    return true;
   };
 
   /** Avatar picking. Downscaled hard: this is displayed at 52px. */
@@ -310,12 +318,13 @@ export default function Account() {
 
   /**
    * How much of the details form is filled in, for the ring on the profile
-   * card. Counts what the forms actually use: the four basics, plus the
-   * fields this type of customer is asked for. The picture is left out on
-   * purpose; it fills in nothing.
+   * card. Counts what "My details" requires: name, mobile, who is asking,
+   * and the required fields for that type of customer. Optional fields and
+   * the picture are left out, so a finished form reads 100%.
    */
   const completeness = useMemo(() => {
-    const keys = ['name', 'phone', 'email', 'userType', ...(audience?.fields.map((f) => f.key) ?? [])];
+    // Email is optional on the form, so it is not counted here either.
+    const keys = ['name', 'phone', 'userType', ...(audience?.fields.filter((f) => f.required).map((f) => f.key) ?? [])];
     const filled = keys.filter((k) => String((details as Record<string, unknown>)[k] ?? '').trim() !== '').length;
     return (filled / keys.length) * 100;
   }, [details, audience]);
@@ -383,7 +392,12 @@ export default function Account() {
                   hint: inquiries && inquiries.length > 0 ? String(inquiries.length) : undefined,
                   onClick: () => openGuest('inquiries'),
                 },
-                { icon: 'fa-id-card', label: 'Saved details for forms', onClick: () => openGuest('details') },
+                {
+                  icon: 'fa-id-card',
+                  label: 'My details',
+                  hint: completeness >= 100 ? 'Complete' : `${Math.round(completeness)}%`,
+                  onClick: () => setDetailsOpen(true),
+                },
                 { icon: 'fa-headset', label: 'Contact us', onClick: () => { window.location.href = '/contact-us'; } },
               ]}
             />
@@ -395,10 +409,7 @@ export default function Account() {
             subtitle={profileSubtitle}
             avatar={avatar}
             completeness={completeness}
-            onEdit={() => {
-              setTab('details');
-              window.setTimeout(() => scrollTo('account-tabs'), 50);
-            }}
+            onEdit={() => setDetailsOpen(true)}
             stats={[
               {
                 label: 'Points',
@@ -476,6 +487,34 @@ export default function Account() {
         {/* Getmeds Points: an app-only feature, and the one thing on this
             screen that lives with Getmeds rather than on the phone. */}
         {app && !guest && <PointsCard points={points} />}
+        {app && !guest && (
+          <GuestList
+            rows={[
+              {
+                icon: 'fa-id-card',
+                label: 'My details',
+                hint: completeness >= 100 ? 'Complete' : `${Math.round(completeness)}%`,
+                onClick: () => setDetailsOpen(true),
+              },
+            ]}
+          />
+        )}
+        {detailsOpen && (
+          <DetailsScreen
+            details={details}
+            setDetails={setDetails}
+            avatar={avatar}
+            onPickAvatar={onPickAvatar}
+            onRemoveAvatar={() => setDetails((d) => ({ ...d, avatar: undefined }))}
+            consented={consented}
+            busy={busy}
+            onClose={closeDetails}
+            onSave={async () => {
+              if (consented === false) await grant();
+              return persistDetails();
+            }}
+          />
+        )}
         <SignInSheet open={signInOpen && guest} onClose={() => setSignInOpen(false)}>
           <PointsCard points={points} bare />
         </SignInSheet>
@@ -510,6 +549,11 @@ export default function Account() {
                 </button>
               </div>
             )
+          ) : app ? (
+            <p className="mb-3 px-1 text-[15px] font-semibold text-gray-900">
+              Your requests
+              {counts.inquiries > 0 && <span className="ml-1.5 text-[12px] font-medium text-gray-400">{counts.inquiries}</span>}
+            </p>
           ) : (
             <Segmented tab={tab} setTab={setTab} counts={counts} />
           )}
@@ -613,7 +657,7 @@ export default function Account() {
         )}
 
         {/* ── Details ───────────────────────────────────────────────────── */}
-        {tab === 'details' && showSections && (
+        {tab === 'details' && showSections && !app && (
           <section className="rounded-[18px] bg-white p-4" style={{ boxShadow: CARD }}>
             <p className="text-[13.5px] font-semibold text-gray-900">Your details</p>
             <p className="mt-1 text-[11.5px] leading-relaxed text-gray-500">
