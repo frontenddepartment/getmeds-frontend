@@ -212,6 +212,10 @@ export default function PatientAssistanceProgram() {
 
         {/* Hero Banner */}
         <section className="w-full mx-auto px-3 sm:px-4 md:px-6 mt-3 md:mt-4 mb-0 max-w-[1600px]">
+          {/* The page's title is lettered into the banner artwork, so it has no text heading of
+              its own. This gives it one for search engines and screen readers, worded as the
+              banner reads; visitors see the artwork as before. */}
+          <h1 className="sr-only">Patient Assistance Program: Chemotherapy &amp; Cancer Medicines</h1>
           <div className={`relative rounded-[10px] md:rounded-[1.5rem] overflow-hidden min-h-[190px] sm:min-h-[360px] md:min-h-[450px] lg:min-h-[500px] flex items-end group transition-colors duration-500 ${!heroImgLoaded ? 'bg-gray-200 animate-pulse' : 'bg-gray-100'}`}>
             {!imagesLoading && (() => {
               const heroFullSrc = getImage('PAP Hero Background', 'assets/pap-banner.png');
