@@ -512,8 +512,12 @@ async function generate() {
     addImages(`${DOMAIN}/blog/${post.slug}`, [publicWpUrl(media && media.source_url)]);
   });
 
+  // No sitemap.xsl here. That stylesheet draws a URL table (priority, change frequency,
+  // last modified), which this file doesn't have, so it showed a list of pages with three
+  // empty columns and none of the images. Browsers are also dropping XSLT, and warn about
+  // it on every page that uses it. Search engines never used the stylesheet; people who
+  // want a readable list have /sitemap.
   let imageXml = '<?xml version="1.0" encoding="UTF-8"?>\n';
-  imageXml += '<?xml-stylesheet type="text/xsl" href="/sitemap.xsl"?>\n';
   imageXml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">\n';
   let imageCount = 0;
   imagesByPage.forEach((urls, pageUrl) => {
