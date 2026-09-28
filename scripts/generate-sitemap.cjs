@@ -19,6 +19,19 @@ const PRIORITY = { MAIN: '1.0', SECONDARY: '0.8', STATIC: '0.5' };
 //                          SITEMAP:START/END markers is regenerated here.
 const HTML_SITEMAP_FILE = path.join(__dirname, '..', 'sitemap.html');
 
+// Slugs of blog posts that vercel.json redirects to another post ("/blog/<slug>" sources).
+function blogRedirectedSlugs() {
+  try {
+    const config = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'vercel.json'), 'utf8'));
+    return new Set((config.redirects || [])
+      .filter((r) => r && typeof r.source === 'string' && /^\/blog\/[^/:*]+$/.test(r.source))
+      .map((r) => r.source.slice('/blog/'.length)));
+  } catch (err) {
+    console.warn('[Sitemap] Could not read blog redirects from vercel.json:', err.message);
+    return new Set();
+  }
+}
+
 function xmlEscape(str) {
   return String(str)
     .replace(/&/g, '&amp;')
@@ -454,10 +467,9 @@ async function generate() {
   console.log('[Sitemap] Generated product-sitemap.xml successfully.');
 
   // 3. Generate blog-sitemap.xml
-  const redirectedSlugs = new Set([
-    'how-to-get-medical-assistance-from-dswd',
-    '14-essential-cancer-screening-tests-for-women-early-detection-in-the-philippines'
-  ]);
+  // Posts that 301 elsewhere stay out of the sitemap. Read from vercel.json's redirects, the
+  // one place a blog redirect is declared (duplicate posts merged under audit item 09 included).
+  const redirectedSlugs = blogRedirectedSlugs();
   const livePosts = posts.filter(post => post.slug && !redirectedSlugs.has(post.slug));
 
   const blogUrls = [];

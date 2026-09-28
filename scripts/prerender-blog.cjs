@@ -284,6 +284,16 @@ async function main() {
   let count = 0;
   const skipped = [];
   const listed = [];
+  // Same source as generate-sitemap.cjs: blog posts vercel.json redirects to another post.
+  let redirectedSlugs = new Set();
+  try {
+    const config = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'vercel.json'), 'utf8'));
+    redirectedSlugs = new Set((config.redirects || [])
+      .filter((r) => r && typeof r.source === 'string' && /^\/blog\/[^/:*]+$/.test(r.source))
+      .map((r) => r.source.slice('/blog/'.length)));
+  } catch (err) {
+    console.warn('[Prerender Blog] Could not read blog redirects from vercel.json:', err.message);
+  }
   const seenSlugs = new Set();
 
   rawPosts.forEach((item) => {
@@ -297,7 +307,8 @@ async function main() {
 
     const canonicalPath = `/blog/${post.slug}`;
     const news = toNewsItem(item);
-    listed.push(news);
+    // A post that redirects to another one (vercel.json) stays off the /blog listing.
+    if (!redirectedSlugs.has(post.slug)) listed.push(news);
     let html = injectHead(blogTemplate, {
       title: post.title,
       description: post.description || `${post.title} — read the full article on the Getmeds blog.`,

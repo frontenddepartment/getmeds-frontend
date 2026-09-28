@@ -17,6 +17,31 @@
       "permanent": true
     },
     {
+      "source": "/blog/nutrition-tips-for-a-healthy-immune-system",
+      "destination": "/blog/nutrition-tips-to-boost-your-immune-system",
+      "permanent": true
+    },
+    {
+      "source": "/blog/cough-and-cold-medicines",
+      "destination": "/blog/best-cough-and-cold-otc-medicines",
+      "permanent": true
+    },
+    {
+      "source": "/blog/how-to-cure-cough-and-cold",
+      "destination": "/blog/best-cough-and-cold-otc-medicines",
+      "permanent": true
+    },
+    {
+      "source": "/blog/maintain-a-healthy-weight",
+      "destination": "/blog/ways-to-maintain-healthy-weight",
+      "permanent": true
+    },
+    {
+      "source": "/blog/best-supplements-and-vitamins-for-kids",
+      "destination": "/blog/best-vitamin-supplements-for-kids",
+      "permanent": true
+    },
+    {
       "source": "/articles",
       "destination": "/blog",
       "permanent": true
@@ -2128,10 +2153,6 @@
     {
       "source": "/blog/curcumin-a-fine-ingredient-to-fight-inflammation",
       "destination": "/blog/curcumin-a-fine-ingredient-to-fight-inflammation"
-    },
-    {
-      "source": "/blog/nutrition-tips-for-a-healthy-immune-system",
-      "destination": "/blog/nutrition-tips-for-a-healthy-immune-system"
     },
     {
       "source": "/blog/role-of-vitamin-d-in-the-fight-against-covid19",
