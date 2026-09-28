@@ -202,6 +202,24 @@ function articleMarkup(news) {
   ].join('\n');
 }
 
+// The /blog listing: its intro plus every post as a link, newest first — readable without
+// JavaScript and the crawl path to all of them. On screen until the live listing has loaded
+// its posts (src/lib/handoff.ts, blog.tsx).
+function listingMarkup(posts) {
+  const e = body.escapeHtml;
+  const sorted = [...posts].sort((a, b) => String(b.date).localeCompare(String(a.date)));
+  return [
+    '<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-2"><div class="mb-10">',
+    '<span class="inline-block bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent font-bold uppercase tracking-widest text-sm mb-3">Our Blog</span>',
+    '<h1 class="text-3xl md:text-4xl font-semibold text-gray-900 leading-tight mb-3">Insights from Getmeds</h1>',
+    '<p class="text-gray-500 text-[15px] max-w-full leading-relaxed">Stay informed with the latest news, health guides, and updates from Getmeds — your trusted source for pharmaceutical insights and patient care resources in the Philippines.</p>',
+    '</div></div>',
+    '<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-10"><ul class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">',
+    ...sorted.map((n) => `<li><a href="/blog/${e(n.slug)}" class="block"><span class="text-xs text-gray-400">${e(n.tag)} • ${e(formatDate(n.date).split(' • ')[0])}</span><span class="block font-semibold text-gray-900 mt-1">${e(n.title)}</span>${n.description ? `<span class="block text-sm text-gray-500 mt-1 line-clamp-2">${e(truncateAtWord(n.description, 140))}</span>` : ''}</a></li>`),
+    '</ul></div>',
+  ].join(String.fromCharCode(10));
+}
+
 function injectHead(template, { title, description, canonicalPath, image, jsonLd }) {
   let html = template;
   const fullTitle = withSiteName(title);
@@ -265,6 +283,7 @@ async function main() {
 
   let count = 0;
   const skipped = [];
+  const listed = [];
   const seenSlugs = new Set();
 
   rawPosts.forEach((item) => {
@@ -278,6 +297,7 @@ async function main() {
 
     const canonicalPath = `/blog/${post.slug}`;
     const news = toNewsItem(item);
+    listed.push(news);
     let html = injectHead(blogTemplate, {
       title: post.title,
       description: post.description || `${post.title} — read the full article on the Getmeds blog.`,
@@ -303,6 +323,12 @@ async function main() {
   });
 
   console.log(`[Prerender Blog] Wrote ${count} blog post page(s) into dist/blog/.`);
+
+  const listingPath = path.join(DIST_DIR, 'blog.html');
+  if (fs.existsSync(listingPath)) {
+    writeFile(listingPath, body.fillRoot(fs.readFileSync(listingPath, 'utf8'), listingMarkup(listed)));
+    console.log(`[Prerender Blog] Wrote the /blog listing with ${listed.length} post link(s).`);
+  }
   if (skipped.length) {
     console.log(`[Prerender Blog] Skipped ${skipped.length} post(s) with no slug/title: ${skipped.slice(0, 5).join(', ')}${skipped.length > 5 ? '…' : ''}`);
   }

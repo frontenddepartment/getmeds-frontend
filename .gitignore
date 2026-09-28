@@ -55,3 +55,6 @@ AUDIT CHECKLIST
 
 # Assets quarantined pending deletion — restore with: git checkout -- public/assets
 _orphaned-assets/
+
+# Build-time server bundle for scripts/prerender-static-pages.cjs
+dist-ssr/

@@ -34,7 +34,9 @@ import { ORDER_AUDIENCES, ORDER_MEDICINES_BASE, audienceFromPath, audiencePath }
 import OrderMedicinesHub from '../lib/OrderMedicinesHub';
 
 
-export default function OrderMedicines() {
+// `ssrPath` is only passed by the build-time render (src/ssr/static-pages.tsx), which has no
+// window to read the audience from; in the browser the page reads its own URL.
+export default function OrderMedicines({ ssrPath }: { ssrPath?: string } = {}) {
   // No setPageMeta here. This is a multi-page app with no client-side router, so
   // this URL never changes while the page is open — the title, description and OG
   // tags served in order-medicines.html are already the final ones. Re-setting them on mount
@@ -287,7 +289,7 @@ export default function OrderMedicines() {
   // link, a cleared browser — was shown the patient form and asked who they were.
   // The path is read once on mount: this is a multi-page app with no client-side
   // router, so it cannot change while the page is open.
-  const audience = audienceFromPath(typeof window === 'undefined' ? '' : window.location.pathname);
+  const audience = audienceFromPath(ssrPath ?? (typeof window === 'undefined' ? '' : window.location.pathname));
   const isHub = !audience;
   const orderUserType = audience ? audience.type : '';
   // Labels keyed by internal type, as the forms and stored records still expect.
