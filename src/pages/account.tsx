@@ -17,6 +17,18 @@ import AlertModal from '../lib/AlertModal';
 import PointsCard, { usePoints } from '../lib/PointsCard';
 import ProfileCard, { GuestCard, GuestList, SignInSheet } from '../lib/ProfileCard';
 import DetailsScreen from '../lib/DetailsScreen';
+import { saveProfile, useAccountData, manilaToday, addDays, type Profile } from '../lib/accountApi';
+import { Card, ListRow, Toast, useToast } from '../lib/ui/Screen';
+import PatientsScreen from '../lib/account/PatientsScreen';
+import AddressesScreen from '../lib/account/AddressesScreen';
+import RxWalletScreen from '../lib/account/RxWalletScreen';
+import SavedScreen from '../lib/account/SavedScreen';
+import RemindersScreen from '../lib/account/RemindersScreen';
+import RequestsScreen from '../lib/account/RequestsScreen';
+import RewardsScreen from '../lib/account/RewardsScreen';
+import PapScreen from '../lib/account/PapScreen';
+import GuidesScreen from '../lib/account/GuidesScreen';
+import PrivacyScreen from '../lib/account/PrivacyScreen';
 import { captureReferralFromUrl, inviteLink, signOut as signOutOfPoints } from '../lib/rewards';
 
 /**
@@ -126,6 +138,15 @@ function Segmented({ tab, setTab, counts }: { tab: Tab; setTab: (t: Tab) => void
   );
 }
 
+const SCREENS = ['patients', 'addresses', 'wallet', 'saved', 'reminders', 'requests', 'rewards', 'pap', 'guides', 'privacy'] as const;
+type ScreenKey = (typeof SCREENS)[number];
+
+/** My details as the account keeps it: everything but the picture. */
+function profileOf(d: SavedDetails): Profile {
+  const { avatar: _avatar, savedAt: _savedAt, ...rest } = d;
+  return rest as Profile;
+}
+
 export default function Account() {
   const [app] = useState(isAppMode);
   const [user, setUser] = useState<LocalUser | null>(null);
@@ -147,6 +168,11 @@ export default function Account() {
   /** The app's full-screen "My details"; the website keeps the Details tab. */
   const [detailsOpen, setDetailsOpen] = useState(false);
   const closeDetails = useCallback(() => setDetailsOpen(false), []);
+  /** Which full-screen page is open. Each also opens from a link: /profile#<key>. */
+  const [screen, setScreen] = useState<ScreenKey | null>(null);
+  const closeScreen = useCallback(() => setScreen(null), []);
+  const account = useAccountData();
+  const [toast, showToast] = useToast();
 
   const refresh = useCallback(async () => {
     setConsented(await hasConsent());
@@ -180,6 +206,8 @@ export default function Account() {
       if (app) setDetailsOpen(true);
       else setTab('details');
     }
+    const fromHash = window.location.hash.slice(1) as ScreenKey;
+    if (app && (SCREENS as readonly string[]).includes(fromHash)) setScreen(fromHash);
     // An invite link (?ref=GM…) — kept for the points card to offer.
     captureReferralFromUrl();
     // Clears any prescriptions or IDs saved while the account screen could
@@ -222,6 +250,24 @@ export default function Account() {
       email: d.email || user.email || '',
     }));
   }, [user]);
+
+  /**
+   * For a signed-in customer, My details lives with Getmeds so it follows
+   * them to another phone. The first time the account loads: if it already
+   * has details, they fill the form; if not, whatever this phone had saved
+   * is sent up once. The picture stays on the phone either way.
+   */
+  const profileSynced = React.useRef(false);
+  useEffect(() => {
+    if (!app || !points.signedIn || !account.data || profileSynced.current) return;
+    profileSynced.current = true;
+    const server = account.data.profile || {};
+    if (Object.values(server).some((v) => String(v ?? '').trim())) {
+      setDetails((d) => ({ ...d, ...server }));
+    } else if (details.name || details.phone) {
+      saveProfile(profileOf(details)).catch(() => { /* retried on the next save */ });
+    }
+  }, [app, points.signedIn, account.data, details]);
 
   const counts = useMemo(
     () => ({ inquiries: inquiries?.length ?? 0, details: 0 }),
@@ -330,6 +376,21 @@ export default function Account() {
   }, [details, audience]);
 
   const guest = app && !points.signedIn;
+  const acct = account.data;
+  const today = manilaToday();
+  const dueSoon = addDays(today, 1);
+  const remindersDue = (acct?.refillReminders ?? []).filter((r) => r.active !== false && r.nextDue <= dueSoon).length;
+  const rxAttention = (acct?.rx ?? []).filter((r) => r.expiresOn && r.expiresOn <= addDays(today, 30)).length;
+  const papOpen = (acct?.pap ?? []).find((a) => ['submitted', 'reviewing', 'needs_info'].includes(a.status));
+  const serverRequests = acct?.requests.length ?? 0;
+  /** Screens that need an account send a guest to sign in instead. */
+  const open = (key: ScreenKey) => {
+    if (key !== 'guides' && !points.signedIn) {
+      setSignInOpen(true);
+      return;
+    }
+    setScreen(key);
+  };
   const showSections = !guest || guestOpen !== null;
   const openGuest = (t: Tab) => {
     setTab(t);
@@ -398,7 +459,8 @@ export default function Account() {
                   hint: completeness >= 100 ? 'Complete' : `${Math.round(completeness)}%`,
                   onClick: () => setDetailsOpen(true),
                 },
-                { icon: 'fa-headset', label: 'Contact us', onClick: () => { window.location.href = '/contact-us'; } },
+                { icon: 'fa-book-medical', label: 'Health guides', onClick: () => open('guides') },
+                { icon: 'fa-comments', label: 'Chat with us', onClick: () => { window.location.href = '/chat'; } },
               ]}
             />
           </>
@@ -418,7 +480,7 @@ export default function Account() {
               },
               {
                 label: 'Requests',
-                value: String(inquiries?.length ?? 0),
+                value: String(points.signedIn ? serverRequests : inquiries?.length ?? 0),
                 onClick: () => {
                   setTab('inquiries');
                   window.setTimeout(() => scrollTo('account-tabs'), 50);
@@ -488,17 +550,39 @@ export default function Account() {
             screen that lives with Getmeds rather than on the phone. */}
         {app && !guest && <PointsCard points={points} />}
         {app && !guest && (
-          <GuestList
-            rows={[
-              {
-                icon: 'fa-id-card',
-                label: 'My details',
-                hint: completeness >= 100 ? 'Complete' : `${Math.round(completeness)}%`,
-                onClick: () => setDetailsOpen(true),
-              },
-            ]}
-          />
+          <div className="mb-6 space-y-5">
+            <Card title="My account">
+              <ListRow icon="fa-id-card" title="My details" detail="Used to fill in your requests" hint={completeness >= 100 ? 'Complete' : `${Math.round(completeness)}%`} onClick={() => setDetailsOpen(true)} />
+              <ListRow icon="fa-user-group" title="Patients" detail="People you request medicines for" hint={acct?.patients.length || undefined} onClick={() => open('patients')} />
+              <ListRow icon="fa-location-dot" title="Delivery addresses" hint={acct?.addresses.length || undefined} onClick={() => open('addresses')} />
+              <ListRow icon="fa-file-prescription" title="Prescription wallet" detail="Upload once, attach to any request" hint={rxAttention ? <span className="font-semibold text-amber-600">{rxAttention} expiring</span> : acct?.rx.length || undefined} onClick={() => open('wallet')} />
+            </Card>
+            <Card title="Medicines">
+              <ListRow icon="fa-bookmark" title="Saved medicines" detail="Get a text when one is back in stock" hint={acct?.savedProducts.length || undefined} onClick={() => open('saved')} />
+              <ListRow icon="fa-bell" title="Refill reminders" detail="We text you the day before" hint={remindersDue ? <span className="font-semibold text-[#1D9FDA]">{remindersDue} due</span> : acct?.refillReminders.length || undefined} onClick={() => open('reminders')} />
+            </Card>
+            <Card title="Rewards and support">
+              <ListRow icon="fa-gift" title="Rewards" detail="Use your points" hint={pointsAccount ? `${pointsAccount.pointsBalance.toLocaleString('en-PH')} pts` : undefined} onClick={() => open('rewards')} />
+              <ListRow icon="fa-hand-holding-heart" title="Patient Assistance" detail={papOpen ? 'Application in progress' : 'Support for long-course treatment'} onClick={() => open('pap')} />
+              <ListRow icon="fa-book-medical" title="Health guides" onClick={() => open('guides')} />
+              <ListRow icon="fa-comments" title="Chat with us" detail="Ask about a medicine or a request" onClick={() => { window.location.href = '/chat'; }} />
+            </Card>
+            <Card>
+              <ListRow icon="fa-shield-halved" title="Privacy and data" detail="Download or delete your account" onClick={() => open('privacy')} />
+            </Card>
+          </div>
         )}
+        {screen === 'patients' && <PatientsScreen onClose={closeScreen} />}
+        {screen === 'addresses' && <AddressesScreen onClose={closeScreen} />}
+        {screen === 'wallet' && <RxWalletScreen onClose={closeScreen} />}
+        {screen === 'saved' && <SavedScreen onClose={closeScreen} />}
+        {screen === 'reminders' && <RemindersScreen onClose={closeScreen} />}
+        {screen === 'requests' && <RequestsScreen onClose={closeScreen} />}
+        {screen === 'rewards' && <RewardsScreen onClose={closeScreen} />}
+        {screen === 'pap' && <PapScreen onClose={closeScreen} />}
+        {screen === 'guides' && <GuidesScreen onClose={closeScreen} />}
+        {screen === 'privacy' && <PrivacyScreen onClose={closeScreen} onSignedOut={closeScreen} />}
+        <Toast text={toast} />
         {detailsOpen && (
           <DetailsScreen
             details={details}
@@ -506,12 +590,26 @@ export default function Account() {
             avatar={avatar}
             onPickAvatar={onPickAvatar}
             onRemoveAvatar={() => setDetails((d) => ({ ...d, avatar: undefined }))}
-            consented={consented}
+            // A signed-in customer's details are kept with Getmeds, so no
+            // on-phone permission is needed to save them.
+            consented={points.signedIn ? true : consented}
             busy={busy}
             onClose={closeDetails}
             onSave={async () => {
-              if (consented === false) await grant();
-              return persistDetails();
+              if (!points.signedIn) {
+                if (consented === false) await grant();
+                return persistDetails();
+              }
+              try {
+                const bonus = await saveProfile(profileOf(details));
+                if (bonus > 0) showToast(`+${bonus} points for completing your details`);
+              } catch (e) {
+                setAlert({ title: 'Not saved', message: (e as Error)?.message || 'Check your connection and try again.' });
+                return false;
+              }
+              // The picture, and a copy for offline forms, stay on the phone.
+              if (consented) await persistDetails();
+              return true;
             }}
           />
         )}
@@ -552,7 +650,9 @@ export default function Account() {
           ) : app ? (
             <p className="mb-3 px-1 text-[15px] font-semibold text-gray-900">
               Your requests
-              {counts.inquiries > 0 && <span className="ml-1.5 text-[12px] font-medium text-gray-400">{counts.inquiries}</span>}
+              {(points.signedIn ? serverRequests : counts.inquiries) > 0 && (
+                <span className="ml-1.5 text-[12px] font-medium text-gray-400">{points.signedIn ? serverRequests : counts.inquiries}</span>
+              )}
             </p>
           ) : (
             <Segmented tab={tab} setTab={setTab} counts={counts} />
@@ -560,7 +660,9 @@ export default function Account() {
         </div>
 
         {/* ── Inquiries ─────────────────────────────────────────────────── */}
-        {tab === 'inquiries' && showSections && (
+        {app && !guest && <RequestsScreen embedded />}
+
+        {tab === 'inquiries' && showSections && !(app && !guest) && (
           <section>
             {inquiries === null ? (
               <div className="space-y-2.5">
@@ -819,11 +921,20 @@ export default function Account() {
         {/* Privacy — stated plainly rather than buried, because what is stored
             here says which medicines someone has asked for. */}
         <div className="mt-8 border-t border-gray-200 pt-4">
-          <p className="text-[11.5px] leading-relaxed text-gray-400">
-            Your inquiries and details are stored on this device only. They are not sent
-            to Getmeds until you submit a request, and they will not appear on your other devices.
-            {app && ' Getmeds Points are the exception: if you sign in, Getmeds keeps your mobile number, your points, your referral code and the type of each request that earned them.'}
-          </p>
+          {app && points.signedIn ? (
+            <p className="text-[11.5px] leading-relaxed text-gray-400">
+              Your details, patients, addresses, saved medicines, reminders, prescriptions and
+              request history are kept with Getmeds, so they are there on any phone you sign in
+              on. Your picture and your request list stay on this phone. See Privacy and data to
+              download or delete everything.
+            </p>
+          ) : (
+            <p className="text-[11.5px] leading-relaxed text-gray-400">
+              Your inquiries and details are stored on this device only. They are not sent
+              to Getmeds until you submit a request, and they will not appear on your other devices.
+              {app && ' If you sign in, they are kept with Getmeds instead, so they follow you to any phone.'}
+            </p>
+          )}
           <button type="button" onClick={wipe} className="mt-3 text-[12px] font-semibold text-gray-400 underline">
             Clear saved data on this device
           </button>

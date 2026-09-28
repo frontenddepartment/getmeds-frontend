@@ -134,11 +134,12 @@ export default function DetailsScreen({
     // The site's floating scroll-to-top button sits above everything and
     // would land on the form.
     const toTop = document.getElementById('scroll-to-top');
-    if (toTop) toTop.style.visibility = 'hidden';
+    // Its stylesheet uses !important, so only an inline !important wins.
+    if (toTop) toTop.style.setProperty('display', 'none', 'important');
     return () => {
       window.removeEventListener('popstate', onPop);
       document.body.style.overflow = prev;
-      if (toTop) toTop.style.visibility = '';
+      if (toTop) toTop.style.removeProperty('display');
     };
   }, [onClose]);
 

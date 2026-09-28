@@ -58,6 +58,8 @@ export interface PointsSummary {
   history: PointsHistoryItem[];
   /** 0 when points are switched off in the Studio. */
   pointsPerRequest: number;
+  /** One-time bonuses, 0 when off. */
+  bonuses?: { profile: number; refill: number };
   referral: ReferralStatus;
 }
 
@@ -109,7 +111,7 @@ export function noteSubmitResult(body: unknown): number {
   return points;
 }
 
-async function call<T>(path: string, init: RequestInit = {}): Promise<T> {
+export async function call<T>(path: string, init: RequestInit = {}): Promise<T> {
   let response: Response;
   try {
     response = await fetch(`${apiBase()}${path}`, {
@@ -205,3 +207,15 @@ function forgetPendingReferral(): void {
 }
 
 export const inviteLink = (code: string) => `https://getmeds.ph/profile?ref=${encodeURIComponent(code)}`;
+
+/** A call to an /api/account endpoint as the signed-in customer. Signs out on 401. */
+export async function authedCall<T>(path: string, init: RequestInit = {}): Promise<T> {
+  const token = readSession();
+  if (!token) throw new RewardsError('Please sign in first.', 401);
+  try {
+    return await call<T>(path, { ...init, headers: { ...(init.headers || {}), Authorization: `Bearer ${token}` } });
+  } catch (e) {
+    if (e instanceof RewardsError && e.status === 401) signOut();
+    throw e;
+  }
+}

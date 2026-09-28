@@ -27,6 +27,7 @@ const DB_NAME = 'getmeds-offline'
 const DB_VERSION = 1
 import { recordInquiry } from './accountStore'
 import { noteSubmitResult, pointsAuthHeader } from './rewards'
+import { loadAccountData } from './accountApi'
 
 const QUEUE_STORE = 'inquiry-queue'
 const DRAFT_STORE = 'inquiry-drafts'
@@ -167,9 +168,10 @@ function productsIn(payload: Record<string, unknown>): string[] {
 }
 
 export async function submitInquiry(
-  payload: Record<string, unknown>,
+  rawPayload: Record<string, unknown>,
   { endpoint, returnPath = window.location.pathname, needsVerification }: SubmitOptions
 ): Promise<SubmitResult> {
+  const payload = withAppMeta(rawPayload)
   /**
    * The account screen's history is written here rather than in each form,
    * because this is the only door every inquiry goes through — a form added
@@ -208,6 +210,8 @@ export async function submitInquiry(
       if (response.ok) {
         const body = await response.json().catch(() => null)
         noteSubmitResult(body)
+        // The request now shows in the signed-in customer's history.
+        if (payload.appMeta) loadAccountData(true)
         await remember('sent')
         return { status: 'sent', body }
       }
@@ -245,6 +249,31 @@ export async function submitInquiry(
   } catch {
     return { status: 'failed', error: 'You appear to be offline, and this device could not save the inquiry.' }
   }
+}
+
+/**
+ * For a signed-in customer in the app, adds `appMeta`: the items as a list
+ * (for request history and Order again) plus anything the form set itself
+ * (the patient, the refill reminder it came from). The backend keeps it with
+ * the account and never puts it in the sheet or the email.
+ */
+function withAppMeta(payload: Record<string, unknown>): Record<string, unknown> {
+  if (!pointsAuthHeader().Authorization) {
+    const { appMeta: _drop, ...rest } = payload
+    return rest
+  }
+  const extra = (payload.additionalData ?? {}) as Record<string, unknown>
+  const own = (payload.appMeta ?? {}) as Record<string, unknown>
+  let items = own.items as unknown[] | undefined
+  if (!items && Array.isArray(extra.items)) {
+    items = (extra.items as Array<Record<string, unknown>>).map((i) => ({
+      name: String(i?.name ?? ''), url: String(i?.url ?? ''), strength: String(i?.strength ?? ''), form: String(i?.form ?? ''),
+    }))
+  }
+  if (!items && typeof extra.productName === 'string') {
+    items = [{ name: extra.productName, url: typeof extra.productUrl === 'string' ? extra.productUrl : window.location.pathname }]
+  }
+  return { ...payload, appMeta: { ...own, items: items ?? [] } }
 }
 
 /**

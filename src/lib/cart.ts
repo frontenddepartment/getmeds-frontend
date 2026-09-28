@@ -157,6 +157,14 @@ export const countCart = (): Promise<number> => listCart().then((l) => l.length)
 export async function addToCart(item: Omit<CartItem, 'addedAt'>): Promise<'added' | 'needs-consent' | 'failed'> {
   if (!(await hasConsent())) return 'needs-consent'
   try {
+    // The same medicine can arrive under different ids (the product page
+    // uses its catalogue id; saved medicines and reminders use the page
+    // slug), so one product page means one row in the list.
+    const existing = (await listCart()).find((c) => c.url === item.url && c.id !== item.id)
+    if (existing) {
+      announce()
+      return 'added'
+    }
     await tx<void>(ITEMS, 'readwrite', (s) => s.put({ ...item, addedAt: Date.now() }))
     announce()
     return 'added'

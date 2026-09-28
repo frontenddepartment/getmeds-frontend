@@ -7,6 +7,7 @@ import { getApiUrl } from '../lib/api';
 import { submitInquiry } from '../lib/offlineInquiry';
 import { Turnstile, useTurnstile } from '../lib/turnstile';
 import { AddToCart } from '../lib/AddToCart';
+import { ProductAccountPanel, SaveProductButton } from '../lib/account/ProductActions';
 import { isAppMode, needsPrescription } from '../lib/cart';
 import { loadDetails } from '../lib/accountStore';
 import { setPageMeta, injectJsonLd, truncateAtWord, ogImageForFolder, ORGANIZATION_ID } from '../lib/seo';
@@ -638,7 +639,20 @@ export default function ProductDetail() {
     }
   };
 
-
+  /**
+   * This product as the app's account features keep it (saved medicines,
+   * stock alerts, refill reminders): the same fields the sticky bar hands
+   * AddToCart, so a saved medicine and a list row look alike.
+   */
+  const accountProduct = app && product
+    ? {
+        name: getProductDisplayName(product),
+        url: location.pathname,
+        image: product.image?.asset ? getProductImage(product, 140) : undefined,
+        strength: product.strength,
+        form: product.form,
+      }
+    : null;
 
   return (
     <div style={{ fontFamily: "'Poppins', sans-serif" }} className="bg-white text-gray-800 antialiased min-h-screen flex flex-col">
@@ -662,14 +676,17 @@ export default function ProductDetail() {
             >
               <i className="fa-solid fa-arrow-left text-[14px]" />
             </a>
-            <button
-              type="button"
-              onClick={shareProduct}
-              aria-label="Share this product"
-              className="flex h-10 w-10 items-center justify-center rounded-full bg-[#F3F6FB] text-gray-700"
-            >
-              <i className="fa-solid fa-share-nodes text-[14px]" />
-            </button>
+            <div className="flex items-center gap-2">
+              {accountProduct && <SaveProductButton product={accountProduct} />}
+              <button
+                type="button"
+                onClick={shareProduct}
+                aria-label="Share this product"
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-[#F3F6FB] text-gray-700"
+              >
+                <i className="fa-solid fa-share-nodes text-[14px]" />
+              </button>
+            </div>
           </div>
         )}
 
@@ -848,6 +865,12 @@ export default function ProductDetail() {
                         </span>
                       )}
                     </div>
+
+                    {/* Account actions: a stock alert when it is out, and a
+                        refill reminder. Signed-out taps explain sign-in. */}
+                    {accountProduct && (
+                      <ProductAccountPanel product={accountProduct} outOfStock={product.availability === false} />
+                    )}
 
                     {/* The slot a storefront gives to price. Saying plainly
                         that there is a quote coming is more useful than an

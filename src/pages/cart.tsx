@@ -26,6 +26,11 @@ import { useProducts } from '../lib/useSanity';
 import { type CatalogueRow, productImage } from '../lib/catalogueItem';
 import { USER_TYPES, type TypeDef, typeByValue } from '../lib/audienceTypes';
 import { loadDetails, type SavedDetails } from '../lib/accountStore';
+import { isSignedIn } from '../lib/rewards';
+import { addRx, useAccountData, type AccountData } from '../lib/accountApi';
+import PatientsScreen from '../lib/account/PatientsScreen';
+import AddressesScreen from '../lib/account/AddressesScreen';
+import { WalletPicker, prepareForWallet } from '../lib/account/RxWalletScreen';
 
 /**
  * cart.tsx
@@ -55,6 +60,64 @@ const BLANK = {
   age: '', address: '',
   contactName: '', contactRelationship: '',
 };
+
+/**
+ * Signed-in app customers only.
+ *
+ * A refill reminder's "Request now" leaves this in sessionStorage as
+ * {key, name}; the request it leads to carries the key so the backend can
+ * move that reminder on.
+ */
+const REFILL_KEY = 'getmeds_refill_key';
+
+function readRefill(): { key: string; name: string } | null {
+  try {
+    const raw = sessionStorage.getItem(REFILL_KEY);
+    const v = raw ? JSON.parse(raw) : null;
+    return v && typeof v.key === 'string' && v.key ? { key: v.key, name: String(v.name ?? '') } : null;
+  } catch {
+    return null;
+  }
+}
+
+/** Stands in for useAccountData() for guests and the website, which never fetch. */
+const useNoAccount = () => ({ data: null as AccountData | null });
+
+/**
+ * "Save to wallet" after a fresh upload. Runs only once the request has been
+ * sent, and swallows every failure: the request is what matters, and it has
+ * already gone. Resolves with how many files were saved.
+ */
+async function saveUploadsToWallet(list: Array<{ file: File; label: string; medicine: string }>, patientName?: string): Promise<number> {
+  let saved = 0;
+  for (const { file, label, medicine } of list) {
+    try {
+      const prepared = await prepareForWallet(file);
+      await addRx({ label: label.slice(0, 80), medicine, patientName, ...prepared });
+      saved++;
+    } catch {
+      /* a wallet failure never touches the request */
+    }
+  }
+  return saved;
+}
+
+/** A small pick chip for "Ordering for" and "Deliver to". */
+function Chip({ id, on, onClick, children }: { id: string; on: boolean; onClick: () => void; children: React.ReactNode }) {
+  return (
+    <button
+      id={id}
+      type="button"
+      aria-pressed={on}
+      onClick={onClick}
+      className={`inline-flex max-w-full items-center gap-1.5 truncate rounded-full border px-3 py-1.5 text-[12px] font-semibold ${
+        on ? 'border-[#1D9FDA] bg-[#F1F8FE] text-[#1D9FDA]' : 'border-gray-200 bg-white text-gray-600'
+      }`}
+    >
+      {children}
+    </button>
+  );
+}
 
 export default function Cart() {
   const [items, setItems] = useState<CartItem[] | null>(null);
@@ -91,6 +154,27 @@ export default function Cart() {
   const [sameAsPatient, setSameAsPatient] = useState(true);
   const [terms, setTerms] = useState(false);
   const [privacy, setPrivacy] = useState(false);
+
+  /**
+   * A signed-in customer in the app keeps patients, addresses and a
+   * prescription wallet with Getmeds, and the form offers them. Decided once,
+   * like `app`: signing in happens on another page, and a guest or the website
+   * never fetches the account at all (useNoAccount), so their form is exactly
+   * what it was.
+   */
+  const [member] = useState(() => isAppMode() && isSignedIn());
+  const useAccount = member ? useAccountData : useNoAccount;
+  const account = useAccount().data;
+  const patients = account?.patients ?? [];
+  const addresses = account?.addresses ?? [];
+  // '' is "Me"; otherwise the _key of the saved patient this request is for.
+  const [forKey, setForKey] = useState('');
+  const [screen, setScreen] = useState<'patients' | 'addresses' | null>(null);
+  const [walletFor, setWalletFor] = useState<CartItem | null>(null);
+  // Item id → the wallet label attached to it, so the row can say where it came from.
+  const [walletUsed, setWalletUsed] = useState<Record<string, string>>({});
+  const [saveToWallet, setSaveToWallet] = useState<Record<string, boolean>>({});
+  const [walletNote, setWalletNote] = useState('');
 
   const turnstile = useTurnstile(step === 'form');
 
@@ -143,28 +227,88 @@ export default function Cart() {
     return next as typeof BLANK;
   }, []);
 
+  /**
+   * Two sources can fill the form: the details saved on this phone, and, for
+   * a signed-in app customer, the profile kept with Getmeds (plus their
+   * default address). They arrive in either order, and the server's copy wins.
+   *
+   * "Wins" has to stop short of the visitor's own typing, so each fill
+   * remembers what it put in (autoFilled). A later fill may replace a field
+   * that is empty or still holds that earlier automatic value, and nothing
+   * else. With only the phone's details, as for every guest, autoFilled starts
+   * empty and this is the same empty-fields-only fill as before.
+   */
+  const device = React.useRef<SavedDetails | null>(null);
+  const server = React.useRef<SavedDetails | null>(null);
+  const autoFilled = React.useRef<Partial<typeof BLANK>>({});
+  // Set once the visitor picks an audience themselves; a later fill keeps it.
+  const typePicked = React.useRef(false);
+
+  const applyPrefill = useCallback(() => {
+    if (!device.current && !server.current) return;
+    const d: SavedDetails = { ...(device.current || {}), ...(server.current || {}) };
+    saved.current = d;
+    const known = typeByValue(d.userType) || null;
+    if (known) setType((t) => (t && typePicked.current ? t : known));
+
+    const fill = formFor(known);
+    // Snapshot first: the updater may run after the ref below has moved on.
+    const before = { ...autoFilled.current };
+    setForm((f) => {
+      const next = { ...f };
+      for (const key of Object.keys(fill) as Array<keyof typeof BLANK>) {
+        if (fill[key] && (!next[key] || next[key] === before[key])) next[key] = fill[key];
+      }
+      return next;
+    });
+    for (const key of Object.keys(fill) as Array<keyof typeof BLANK>) {
+      if (fill[key]) autoFilled.current[key] = fill[key];
+    }
+  }, [formFor]);
+
   const prefilled = React.useRef(false);
   useEffect(() => {
     if (prefilled.current) return;
     prefilled.current = true;
     loadDetails().then((d) => {
       if (!d) return;
-      saved.current = d;
-      const known = typeByValue(d.userType) || null;
-      if (known) setType((t) => t || known);
-
-      // Fills only fields still empty, so a half-typed form is never
-      // overwritten.
-      const fill = formFor(known);
-      setForm((f) => {
-        const next = { ...f };
-        for (const key of Object.keys(fill) as Array<keyof typeof BLANK>) {
-          if (!next[key] && fill[key]) next[key] = fill[key];
-        }
-        return next;
-      });
+      device.current = d;
+      applyPrefill();
     });
-  }, [formFor]);
+  }, [applyPrefill]);
+
+  // The server profile, once, as soon as the account arrives. The default
+  // address stands in for the profile's own, so it is the one preselected.
+  const serverPrefilled = React.useRef(false);
+  useEffect(() => {
+    if (!member || !account || serverPrefilled.current) return;
+    serverPrefilled.current = true;
+    const s: Record<string, string> = {};
+    for (const [k, v] of Object.entries(account.profile || {})) {
+      if (typeof v === 'string' && v.trim()) s[k] = v;
+    }
+    const home = account.addresses.find((a) => a.isDefault) || account.addresses[0];
+    if (home?.address) s.address = home.address;
+    server.current = s as SavedDetails;
+    applyPrefill();
+  }, [member, account, applyPrefill]);
+
+  /** "Ordering for": Me, or a saved patient whose name and age fill the form. */
+  const orderFor = (key: string) => {
+    const me = saved.current;
+    const p = patients.find((x) => x._key === key);
+    // Tapping the chip already chosen changes nothing, so typing is never lost.
+    if ((p ? key : '') === forKey) return;
+    setForKey(p ? key : '');
+    if (p) {
+      // The caregiver becomes the contact person for someone else's request.
+      setForm((f) => ({ ...f, name: p.name, age: p.age || '', contactName: me?.name || f.contactName }));
+      setSameAsPatient(false);
+    } else {
+      setForm((f) => ({ ...f, name: me?.name || '', age: me?.age || '' }));
+      setSameAsPatient(true);
+    }
+  };
 
   const refresh = useCallback(async () => {
     const list = await listCart();
@@ -319,7 +463,46 @@ export default function Cart() {
         return `• ${it.name}${detail ? ` (${detail})` : ''}${it.needsRx ? ' — prescription required' : ''}`;
       });
 
+      /**
+       * For a signed-in app customer: the items (with pictures, for request
+       * history and Order again), who the request is for, and the refill
+       * reminder it came from. withAppMeta() in offlineInquiry merges this in.
+       */
+      const patientName = type.kind === 'patient' ? patients.find((p) => p._key === forKey)?.name : undefined;
+      const refill = member ? readRefill() : null;
+      const appMeta = member
+        ? {
+            items: chosen.map((it) => ({
+              id: it.id,
+              name: it.name,
+              url: it.url,
+              image: it.image || '',
+              strength: it.strength || '',
+              form: it.form || '',
+            })),
+            ...(patientName ? { patientName } : {}),
+            ...(refill ? { refillKey: refill.key } : {}),
+          }
+        : undefined;
+
+      // Fresh uploads the customer asked to keep. Taken now, before the list
+      // is cleared; saved only once the request has gone.
+      const toWallet =
+        member && type.kind === 'patient'
+          ? rxNeeded
+              .filter((it) => saveToWallet[it.id] && !walletUsed[it.id])
+              .flatMap((it) => {
+                const files = rxByItem[it.id] || [];
+                return files.map((file, n) => ({
+                  file,
+                  medicine: it.name,
+                  label: files.length > 1 ? `${it.name}, page ${n + 1}` : it.name,
+                }));
+              })
+          : [];
+
       const payload = {
+        ...(appMeta ? { appMeta } : {}),
         // Routed by who is asking, so it lands in the sheet that audience's
         // team already works rather than all four funnelling into one.
         inquiryType: type.inquiryType,
@@ -368,6 +551,24 @@ export default function Cart() {
 
       if (result.status === 'failed') { setError(result.error); return; }
 
+      if (member) {
+        // The reminder's key rode along (a queued request keeps it in its
+        // payload), so the next request must not carry it again.
+        if (refill) {
+          try { sessionStorage.removeItem(REFILL_KEY); } catch { /* storage blocked */ }
+        }
+        if (result.status === 'sent' && toWallet.length) {
+          setWalletNote('Saving your prescription to your wallet…');
+          saveUploadsToWallet(toWallet, patientName || form.name.trim() || undefined).then((n) =>
+            setWalletNote(
+              n === toWallet.length
+                ? 'Your prescription is saved in your wallet for next time.'
+                : 'Your request was sent, but we could not save the prescription to your wallet. Add it from Account, Prescription wallet.'
+            )
+          );
+        }
+      }
+
       // Sent or safely queued — either way the request is recorded, so the list
       // should not sit there inviting a duplicate submission.
       setQueued(result.status === 'queued');
@@ -408,6 +609,12 @@ export default function Cart() {
                 ? 'You were offline, so your request is saved on this device and will be sent automatically as soon as you have a connection.'
                 : 'Our team will get back to you with availability and pricing. Prescription items still need a valid prescription.'}
             </p>
+            {walletNote && (
+              <p className="mt-3 flex max-w-sm items-start gap-2 rounded-2xl bg-white px-3.5 py-2.5 text-left text-[12px] leading-snug text-gray-600">
+                <i className="fa-solid fa-file-prescription mt-[2px] text-[11px] text-[#1D9FDA]"></i>
+                {walletNote}
+              </p>
+            )}
             <a href="/product-range" className="mt-6 rounded-full px-7 py-3 text-sm font-semibold text-white"
               style={{ background: 'linear-gradient(135deg,#1D9FDA,#61A644)' }}>
               Keep browsing
@@ -430,7 +637,7 @@ export default function Cart() {
                   type="button"
                   // Resets to what the account knows for THIS audience rather
                   // than to blank — see formFor().
-                  onClick={() => { setType(t); setForm(formFor(t)); setStep('form'); }}
+                  onClick={() => { typePicked.current = true; setType(t); setForm(formFor(t)); setForKey(''); setStep('form'); }}
                   className="flex w-full items-center gap-4 rounded-2xl border border-gray-200 bg-white p-4 text-left transition hover:border-primary"
                 >
                   <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full"
@@ -454,18 +661,68 @@ export default function Cart() {
             </p>
 
             <form onSubmit={submit} className="mt-6 space-y-3">
-              <input required className={field} placeholder="Your name *" value={form.name}
+              {member && type.kind === 'patient' && (
+                <div>
+                  <div className="mb-1.5 flex items-center justify-between px-0.5">
+                    <p className="text-[12.5px] font-semibold text-gray-700">Ordering for</p>
+                    <button id="cart-add-patient" type="button" onClick={() => setScreen('patients')}
+                      className="text-[12px] font-semibold text-[#1D9FDA]">
+                      <i className="fa-solid fa-plus mr-1 text-[10px]"></i>Add patient
+                    </button>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    <Chip id="cart-for-me" on={!forKey} onClick={() => orderFor('')}>
+                      <i className="fa-solid fa-user text-[10px]"></i>Me
+                    </Chip>
+                    {patients.map((p) => (
+                      <Chip key={p._key} id={`cart-for-${p._key}`} on={forKey === p._key} onClick={() => orderFor(p._key)}>
+                        {p.name}
+                        {p.relationship && <span className="font-normal opacity-70">{p.relationship}</span>}
+                      </Chip>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <input id="cart-name" required className={field}
+                placeholder={member && forKey ? "Patient's name *" : 'Your name *'} value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })} />
 
               {type.fields.map((f) => (
-                <input
-                  key={f.key}
-                  required={f.required}
-                  className={field}
-                  placeholder={f.required ? `${f.label} *` : `${f.label} (optional)`}
-                  value={form[f.key]}
-                  onChange={(e) => setForm({ ...form, [f.key]: e.target.value })}
-                />
+                <React.Fragment key={f.key}>
+                  {member && f.key === 'address' && (
+                    <div>
+                      <div className="mb-1.5 flex items-center justify-between px-0.5">
+                        <p className="text-[12.5px] font-semibold text-gray-700">Deliver to</p>
+                        <button id="cart-add-address" type="button" onClick={() => setScreen('addresses')}
+                          className="text-[12px] font-semibold text-[#1D9FDA]">
+                          <i className="fa-solid fa-plus mr-1 text-[10px]"></i>Add address
+                        </button>
+                      </div>
+                      {addresses.length > 0 && (
+                        <div className="flex flex-wrap gap-1.5">
+                          {addresses.map((a) => (
+                            <Chip key={a._key} id={`cart-address-${a._key}`}
+                              on={form.address.trim() === a.address.trim()}
+                              onClick={() => setForm((cur) => ({ ...cur, address: a.address }))}>
+                              <i className="fa-solid fa-location-dot text-[10px]"></i>
+                              {a.label || 'Address'}
+                              {a.isDefault && <span className="font-normal opacity-70">Default</span>}
+                            </Chip>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  <input
+                    id={`cart-${f.key}`}
+                    required={f.required}
+                    className={field}
+                    placeholder={f.required ? `${f.label} *` : `${f.label} (optional)`}
+                    value={form[f.key]}
+                    onChange={(e) => setForm({ ...form, [f.key]: e.target.value })}
+                  />
+                </React.Fragment>
               ))}
 
               <input required type="email" className={field} placeholder="Email *" value={form.email}
@@ -502,18 +759,44 @@ export default function Cart() {
                           <div key={it.id}>
                             <p className="text-[12px] font-semibold leading-snug text-gray-700">{it.name}</p>
                             <input
+                              id={`rx-file-${it.id}`}
                               type="file" multiple accept={ALLOWED_FILE_TYPES_ACCEPT}
                               onChange={(e) => {
                                 const { valid, errors } = validateFiles(Array.from(e.target.files || []));
                                 setError(errors[0] || '');
                                 setRxByItem((prev) => ({ ...prev, [it.id]: valid }));
+                                if (member) {
+                                  // A fresh upload replaces anything taken from the wallet.
+                                  setWalletUsed(({ [it.id]: _gone, ...rest }) => rest);
+                                }
                               }}
                               className="mt-1 w-full text-[12px] file:mr-3 file:rounded-full file:border-0 file:bg-gray-100 file:px-3 file:py-1.5 file:text-[12px] file:font-semibold"
                             />
+                            {member && (
+                              <button id={`rx-wallet-${it.id}`} type="button" onClick={() => setWalletFor(it)}
+                                className="mt-1.5 inline-flex items-center gap-1.5 rounded-full bg-[#F1F8FE] px-3 py-1.5 text-[12px] font-semibold text-[#1D9FDA]">
+                                <i className="fa-solid fa-wallet text-[10.5px]"></i>Use from wallet
+                              </button>
+                            )}
                             {rxByItem[it.id]?.length ? (
                               <p className="mt-1 text-[11.5px] text-green-700">
-                                {rxByItem[it.id].length} file{rxByItem[it.id].length === 1 ? '' : 's'} attached
+                                {walletUsed[it.id]
+                                  ? `From your wallet: ${walletUsed[it.id]}`
+                                  : `${rxByItem[it.id].length} file${rxByItem[it.id].length === 1 ? '' : 's'} attached`}
                               </p>
+                            ) : null}
+                            {member && rxByItem[it.id]?.length && !walletUsed[it.id] ? (
+                              <label htmlFor={`rx-save-${it.id}`} className="mt-1.5 flex items-center gap-2">
+                                <input
+                                  id={`rx-save-${it.id}`}
+                                  type="checkbox"
+                                  checked={Boolean(saveToWallet[it.id])}
+                                  onChange={(e) => setSaveToWallet((prev) => ({ ...prev, [it.id]: e.target.checked }))}
+                                  className="h-4 w-4 rounded border-gray-300"
+                                  style={{ accentColor: '#1D9FDA' }}
+                                />
+                                <span className="text-[11.5px] text-gray-600">Save to my prescription wallet</span>
+                              </label>
                             ) : null}
                           </div>
                         ))}
@@ -718,6 +1001,29 @@ export default function Cart() {
           </>
         )}
       </main>
+
+      {/* Signed-in app customers only: the account screens and the wallet,
+          opened over the form so nothing typed is lost. */}
+      {member && screen === 'patients' && <PatientsScreen startAdding onClose={() => setScreen(null)} />}
+      {member && screen === 'addresses' && <AddressesScreen startAdding onClose={() => setScreen(null)} />}
+      {member && walletFor && (
+        <WalletPicker
+          medicine={walletFor.name}
+          onClose={() => setWalletFor(null)}
+          onPick={(file, doc) => {
+            const id = walletFor.id;
+            // Stored exactly as an upload would be, so submit() compresses,
+            // encodes and categorises it the same way.
+            setRxByItem((prev) => ({ ...prev, [id]: [file] }));
+            setWalletUsed((prev) => ({ ...prev, [id]: doc.label }));
+            setSaveToWallet((prev) => ({ ...prev, [id]: false }));
+            const input = document.getElementById(`rx-file-${id}`) as HTMLInputElement | null;
+            if (input) input.value = '';
+            setError('');
+            setWalletFor(null);
+          }}
+        />
+      )}
 
       <div id="footer-container"></div>
     </>

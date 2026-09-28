@@ -153,9 +153,9 @@
         } catch (e) { /* treat an unreadable display-mode as "website" */ }
 
         if (gmStandalone) {
-            // Anything that used to open the chat goes to the contact form instead,
-            // so those buttons are never dead.
-            window.openGetmedsChat = function () { window.location.href = '/contact-us'; };
+            // The app has its own full-screen chat page (/chat), which loads
+            // Tawk there; everywhere else in the app stays free of the widget.
+            window.openGetmedsChat = function () { window.location.href = '/chat'; };
             return;
         }
 

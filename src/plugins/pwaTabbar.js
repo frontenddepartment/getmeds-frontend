@@ -47,8 +47,9 @@
  * product page has its own inquiry form, and a permanent circle over the
  * content is a choice on every screen for something almost nobody was taking.
  *
- * Tawk is not in that column because the app does not load it at all; the rule
- * hiding it below is only a guard against pages served from an older cache.
+ * Tawk is not in that column because the app does not load it at all, except
+ * on /chat, where it opens full screen; the rule hiding it below is only a
+ * guard against pages served from an older cache.
  *
  * The raised centre button breaks the top line by design — it sits about 16px
  * proud of the capsule, which is what makes it read as the primary action.
@@ -96,12 +97,14 @@ const APP_RULES = `
   /* Tawk is no longer injected in the app at all (see components.js). This is
      the belt to that braces: a page still served from an older cache would
      inject it, and it would land straight on the tab bar. Selectors are broad
-     because Tawk's markup differs between widget versions. */
-  iframe[title*="chat" i],
-  .widget-visible,
-  .widget-visible iframe,
-  #tawkchat-container,
-  .tawk-min-container {
+     because Tawk's markup differs between widget versions.
+     The one exception is /chat (src/pages/chat.tsx), which loads Tawk on
+     purpose and opens it full screen, so the rule skips that page. */
+  body:not([data-page="chat"]) iframe[title*="chat" i],
+  body:not([data-page="chat"]) .widget-visible,
+  body:not([data-page="chat"]) .widget-visible iframe,
+  body:not([data-page="chat"]) #tawkchat-container,
+  body:not([data-page="chat"]) .tawk-min-container {
     display: none !important;
   }
 
@@ -296,7 +299,7 @@ ${squircleRules('')}
   .gm-cart-badge:not([data-count="0"]) { display: flex; }
 
   /* ── The "More" sheet ──
-     Six entries, not the website's thirty. The drawer this replaces was built
+     Nine entries, not the website's thirty. The drawer this replaces was built
      for a site whose job is to explain the company to someone deciding whether
      to trust it: Global Network sub-brands, UNGC, Careers, Employee
      Verification. Almost all of that is read once, before installing, and none
@@ -329,6 +332,9 @@ ${squircleRules('')}
        the transition has something to move from on the very first open. */
     transform: translateY(100%);
     transition: transform .26s cubic-bezier(.22, 1, .36, 1);
+    /* Nine rows fit most phones; a short one scrolls rather than clipping. */
+    max-height: 88vh;
+    overflow-y: auto;
   }
   .gm-sheet[data-open="1"] { transform: translateY(0); }
 
@@ -382,6 +388,8 @@ export const PWA_TABBAR = `
   <a href="/profile"><svg class="gm-sheet-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>My account</span><svg class="gm-sheet-go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></a>
   <a href="/product-range"><svg class="gm-sheet-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.5 20.5 20 11a5 5 0 0 0-7-7l-9.5 9.5a5 5 0 0 0 7 7Z"/><path d="m8.5 8.5 7 7"/></svg><span>Browse all products</span><svg class="gm-sheet-go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></a>
   <a href="/patient-assistance-program"><svg class="gm-sheet-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/><path d="M3.5 12.5h4l1-2 2.5 5 2-8 1.7 5h5.8"/></svg><span>Patient Assistance</span><svg class="gm-sheet-go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></a>
+  <a href="/profile#guides"><svg class="gm-sheet-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg><span>Health guides</span><svg class="gm-sheet-go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></a>
+  <a href="/chat"><svg class="gm-sheet-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/><path d="M8 12h.01"/><path d="M12 12h.01"/><path d="M16 12h.01"/></svg><span>Chat with us</span><svg class="gm-sheet-go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></a>
   <a href="/contact-us"><svg class="gm-sheet-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3"/></svg><span>Contact us</span><svg class="gm-sheet-go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></a>
   <a href="/about-us"><svg class="gm-sheet-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4.5"/><path d="M12 8.2h.01"/></svg><span>About Getmeds</span><svg class="gm-sheet-go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></a>
   <a href="/policy"><svg class="gm-sheet-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12.5c0 5-3.5 7.5-7.68 8.95a1 1 0 0 1-.63 0C7.5 20 4 17.5 4 12.5V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.5 3.8 17 5 19 5a1 1 0 0 1 1 1z"/></svg><span>Privacy &amp; policies</span><svg class="gm-sheet-go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></a>
