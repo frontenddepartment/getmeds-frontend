@@ -281,6 +281,7 @@ export default function AboutUsClient() {
             loop
             playsInline
             onLoadedData={() => setHeroImgLoaded(true)}
+            onError={() => setHeroImgLoaded(true)}
             className={`absolute inset-0 w-full h-full object-cover object-center transform group-hover:scale-105 transition-[opacity,transform] duration-700 ${heroImgLoaded ? 'opacity-100' : 'opacity-0'}`}
           />
 
@@ -322,6 +323,7 @@ export default function AboutUsClient() {
             loop
             playsInline
             onLoadedData={() => setHeroImgLoaded(true)}
+            onError={() => setHeroImgLoaded(true)}
             className={`absolute inset-0 w-full h-full object-cover object-center transition-opacity duration-700 ${heroImgLoaded ? 'opacity-100' : 'opacity-0'}`}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none"></div>

@@ -452,8 +452,10 @@ export function useImageMapper(_page?: string) {
     const video: any = doc?.videos?.[0]?.video
     if (!video) return fallback
     if (typeof video === 'string') return video
-    if (video.url) return video.url
+    // Prefer the Sanity CDN copy; the external (Supabase) url is only a fallback for
+    // videos that were never uploaded to Sanity, since that bucket can go offline.
     if (video.asset?.url) return video.asset.url
+    if (video.url) return video.url
     return fallback
   }
 
