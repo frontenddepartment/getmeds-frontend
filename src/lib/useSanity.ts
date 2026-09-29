@@ -1,3 +1,5 @@
+'use client';
+
 /**
  * useSanity.ts
  * ─────────────────────────────────────────────
@@ -252,7 +254,7 @@ export function useCategories() {
 }
 
 export function useCategoryBySlug(slug: string) {
-  return useFetchWithParam<Category, string>(getCategoryBySlug, slug)
+  return useFetchWithParam<Category | null, string>(getCategoryBySlug, slug)
 }
 
 // ─────────────────────────────────────────────
@@ -447,7 +449,7 @@ export function useImageMapper(_page?: string) {
   const getVideo = (name: string, fallback: string): string => {
     if (!allAssets) return fallback
     const doc = allAssets.find((asset) => asset.name === name)
-    const video = doc?.videos?.[0]?.video
+    const video: any = doc?.videos?.[0]?.video
     if (!video) return fallback
     if (typeof video === 'string') return video
     if (video.url) return video.url

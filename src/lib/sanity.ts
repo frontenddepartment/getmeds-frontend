@@ -1,24 +1,16 @@
 import { createClient } from '@sanity/client'
 import { createImageUrlBuilder } from '@sanity/image-url'
-import type { SanityImage } from '../types/sanity'
 
 export const client = createClient({
-  projectId: import.meta.env.VITE_SANITY_PROJECT_ID,
-  dataset: import.meta.env.VITE_SANITY_DATASET,
-  apiVersion: import.meta.env.VITE_SANITY_API_VERSION,
+  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || process.env.VITE_SANITY_PROJECT_ID || 's7ocz8zp',
+  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || process.env.VITE_SANITY_DATASET || 'production',
+  apiVersion: process.env.NEXT_PUBLIC_SANITY_API_VERSION || process.env.VITE_SANITY_API_VERSION || '2023-05-03',
   useCdn: true,
 })
 
 const builder = createImageUrlBuilder(client)
 
-// WordPress never gives us a pre-resized rendition through the admin backend's
-// /api/blog/posts response — just the single full-size source_url. Loading
-// that at full resolution is wasteful on the /blog LISTING page (many small
-// thumbnails on screen at once), so listing images are routed through
-// images.weserv.nl (a free resizing proxy) via getBlogListingImageUrl() below.
-// The /blog/[slug] detail page intentionally does NOT use this — it shows one
-// image at full size/quality, via the ordinary urlFor(), still lazy-loaded.
-const WORDPRESS_ROOT = (import.meta as any).env?.VITE_WORDPRESS_API_ROOT || 'https://cms.getmeds.ph'
+const WORDPRESS_ROOT = process.env.NEXT_PUBLIC_WORDPRESS_API_ROOT || process.env.VITE_WORDPRESS_API_ROOT || 'https://cms.getmeds.ph'
 
 function toAbsoluteUrl(url: string): string {
   if (/^https?:\/\//i.test(url)) return url
@@ -83,9 +75,6 @@ export function getLowResUrl(url: string, width = 100, quality = 30): string {
 
 export function urlFor(source: any) {
   if (typeof source === 'string' && (source.startsWith('http') || source.startsWith('/'))) {
-    // Deliberately full-res, unproxied — used by the blog DETAIL page (and
-    // anywhere else showing a single image at real size). The blog LISTING
-    // page uses getBlogListingImageUrl() instead, which actually resizes.
     return {
       width: () => ({
         height: () => ({ url: () => source }),

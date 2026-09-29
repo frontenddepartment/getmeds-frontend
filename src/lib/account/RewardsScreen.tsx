@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState } from 'react';
 import { BRAND, Card, Empty, ErrorNote, ListRow, PrimaryButton, Screen, Sheet, SmallButton, GRADIENT } from '../ui/Screen';
 import { redeemReward, shortDate, useAccountData, type Redemption, type Reward } from '../accountApi';

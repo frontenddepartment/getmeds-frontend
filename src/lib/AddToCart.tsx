@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import {
@@ -70,7 +72,7 @@ function ConsentSheet({
 
         <p className="mt-4 text-[11.5px] leading-relaxed text-gray-400">
           Processed in accordance with the Data Privacy Act of 2012. See our{' '}
-          <a href="/policy" className="underline">Privacy Policy</a>.
+          <a href="/privacy-policy" className="underline">Privacy Policy</a>.
         </p>
 
         <button

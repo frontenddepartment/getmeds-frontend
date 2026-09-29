@@ -1,10 +1,5 @@
-// The /order-medicines hub — the page a visitor lands on when they have not yet
-// said who they are. Its only job is to route them to the right audience page;
-// every form lives one level down, under /order-medicines/:slug.
-//
-// Copy is the approved "Order Medicines Hub — Final Page Copy" document. Headings
-// and body text here are that copy verbatim — change them there first.
 import React from 'react';
+import Link from 'next/link';
 import {
   BadgeCheck, FileCheck, Headset, Siren, ShieldCheck, Stethoscope,
   Truck, Snowflake, MapPinned, Clock, HandHeart,
@@ -88,7 +83,6 @@ export default function OrderMedicinesHub() {
           className="relative rounded-[20px] overflow-hidden px-8 md:px-14 py-12"
           style={{ background: 'linear-gradient(135deg, #3aaf5c 0%, #1ab8c4 45%, #1a99d6 100%)' }}
         >
-          {/* Decorative glassy circles — same treatment as the audience pages */}
           <div className="absolute pointer-events-none" style={{ width: 160, height: 160, borderRadius: '50%', bottom: '-55px', left: '28%', background: 'radial-gradient(circle at 40% 35%, rgba(100,240,200,0.55), rgba(30,180,210,0.30))', backdropFilter: 'blur(2px)', border: '1px solid rgba(255,255,255,0.25)' }} />
           <div className="absolute pointer-events-none hidden md:block" style={{ width: 180, height: 180, borderRadius: '50%', bottom: '-70px', right: '8%', background: 'radial-gradient(circle at 42% 38%, rgba(130,230,230,0.45), rgba(60,190,210,0.22))', backdropFilter: 'blur(2px)', border: '1px solid rgba(255,255,255,0.22)' }} />
           <div className="absolute pointer-events-none hidden md:block" style={{ width: 85, height: 85, borderRadius: '50%', top: '-15px', right: '38%', background: 'radial-gradient(circle at 38% 32%, rgba(80,220,210,0.55), rgba(30,170,200,0.30))', backdropFilter: 'blur(2px)', border: '1px solid rgba(255,255,255,0.22)' }} />
@@ -123,16 +117,13 @@ export default function OrderMedicinesHub() {
           {/* ── The four audiences — the whole point of this page ── */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {ORDER_AUDIENCES.map((a, i) => (
-              <a
+              <Link
                 key={a.slug}
                 href={audiencePath(a)}
                 className={`ca-anim ca-zoom ${['ca-d1', 'ca-d2', 'ca-d3', 'ca-d4'][i]} group flex flex-col overflow-hidden border border-gray-200 rounded-[15px] bg-white hover:border-primary/50 hover:shadow-lg transition-all duration-200`}
               >
-                {/* Photo band. Every word of the card sits on white BELOW this, never
-                    over it — a photo makes no contrast guarantee, and four different
-                    photos make four different ones. The only thing overlapping the
-                    image is the icon badge, which carries no text. */}
                 <div className="relative">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={a.image}
                     alt={a.imageAlt}
@@ -140,8 +131,6 @@ export default function OrderMedicinesHub() {
                     height={450}
                     className="block w-full h-[132px] object-cover"
                   />
-                  {/* Darkens the foot of the photo so the white ring around the badge
-                      reads against a light image as well as a dark one. */}
                   <div
                     aria-hidden="true"
                     className="absolute inset-x-0 bottom-0 h-16 pointer-events-none"
@@ -163,7 +152,7 @@ export default function OrderMedicinesHub() {
                     <i className="fa-solid fa-arrow-right text-[10px] group-hover:translate-x-1 transition-transform"></i>
                   </span>
                 </div>
-              </a>
+              </Link>
             ))}
           </div>
 
@@ -181,9 +170,6 @@ export default function OrderMedicinesHub() {
 
           {/* ── Senior Citizen and PWD discounts ── */}
           <div className="ca-anim ca-up grid grid-cols-1 lg:grid-cols-3 gap-4">
-            {/* justify-center because this cell stretches to the height of the two
-                stat cards beside it; without it the copy sits at the top and leaves
-                a block of dead space underneath. */}
             <div className="lg:col-span-2 border border-gray-100 rounded-[15px] p-6 flex flex-col justify-center">
               <h2 className="text-xl font-semibold text-gray-900 mb-2">Senior Citizen and PWD discounts</h2>
               <p className="text-[14px] text-gray-600 leading-relaxed">

@@ -266,3 +266,42 @@ export function conditionReviewFields(lastReviewed?: string, reviewedBy?: string
     },
   };
 }
+
+export function buildNextMetadata(pageKey: string, customTitle?: string, customDescription?: string) {
+  const titles: Record<string, string> = {
+    careers: 'Careers at Getmeds Philippines | Join Our Team',
+    'employee-verification': 'Employee Verification | Getmeds Philippines',
+    'global-presence': 'Global Presence & Reach | Getmeds Philippines',
+    meditations: 'Meditations & Wellness | Getmeds Philippines',
+    ungc: 'UN Global Compact Commitment | Getmeds Philippines',
+  };
+  const descriptions: Record<string, string> = {
+    careers: 'Explore career opportunities at Getmeds. Join our team in making specialty medicines accessible and affordable across the Philippines.',
+    'employee-verification': 'Verify employment details for Getmeds team members.',
+    'global-presence': 'Learn about Getmeds global presence and network supporting medicine access.',
+    meditations: 'Wellness resources and guidance for patients and healthcare professionals.',
+    ungc: 'Getmeds commitment to the United Nations Global Compact initiative and sustainable practices.',
+  };
+
+  const title = customTitle || titles[pageKey] || `${pageKey} | Getmeds`;
+  const description = customDescription || descriptions[pageKey] || 'Getmeds - Specialty Medicine Access in the Philippines.';
+  const fullTitle = withSiteName(title);
+
+  return {
+    title: fullTitle,
+    description,
+    openGraph: {
+      title: fullTitle,
+      description,
+      siteName: OG_SITE_NAME,
+      images: [{ url: DEFAULT_IMAGE }],
+    },
+    twitter: {
+      card: 'summary_large_image' as const,
+      title: fullTitle,
+      description,
+      images: [DEFAULT_IMAGE],
+    },
+  };
+}
+

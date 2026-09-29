@@ -1,0 +1,4 @@
+/* sitemap.html: <body class="bg-[#F8FAFC] ..."> — the page ground behind the navbar and footer. */
+body:has([data-page="sitemap"]) {
+  background-color: #F8FAFC;
+}

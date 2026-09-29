@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useEffect, useRef, useState } from 'react';
 import { Card, Empty, ErrorNote, Field, PrimaryButton, Screen, Sheet, SmallButton, Toast, inputClass, useToast } from '../ui/Screen';
 import {

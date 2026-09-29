@@ -20,10 +20,9 @@ const PENDING_REFERRAL_KEY = 'getmeds_pending_referral';
 /** Fired on window when the session or the balance changes. */
 export const REWARDS_CHANGED_EVENT = 'getmeds:rewards-changed';
 
-const apiBase = (): string =>
-  window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-    ? 'http://localhost:8000/api'
-    : '/api';
+// Relative, as in the original: next.config.ts rewrites /api/:path* to the
+// admin backend, so the calls stay same-origin (no CORS) in every environment.
+const apiBase = (): string => '/api';
 
 export interface PointsAccount {
   /** Masked, e.g. "+63 917 *** 4567". */

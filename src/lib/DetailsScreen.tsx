@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useEffect, useRef, useState } from 'react';
 import type { SavedDetails } from './accountStore';
 import { USER_TYPES, typeByValue } from './audienceTypes';

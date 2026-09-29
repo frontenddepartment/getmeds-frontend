@@ -359,7 +359,7 @@ export async function getProductBySlug(slug: string) {
 export async function getProductsByCategory(categoryId: string) {
   const products = await fetchProductsFromExcel()
   return products
-    .filter((p) => p.category?._id === categoryId)
+    .filter((p) => (p.category as any)?._id === categoryId)
     .sort((a, b) => (a.name || '').localeCompare(b.name || ''))
 }
 
@@ -602,10 +602,18 @@ function getBlogVersion(): Promise<string> {
   return blogVersionPromise
 }
 
+function getBackendApiBase(): string {
+  // In the browser, same-origin: next.config.ts rewrites /api/* to the backend, as vercel.json did.
+  if (typeof window !== 'undefined') return ''
+  const envUrl = process.env.NEXT_PUBLIC_BACKEND_API_URL || process.env.VITE_BACKEND_API_URL || 'https://getmeds-admin.vercel.app'
+  return envUrl.replace(/\/$/, '')
+}
+
 async function withBlogVersion(url: string): Promise<string> {
   const token = await getBlogVersion()
-  if (!token) return url
-  return `${url}${url.includes('?') ? '&' : '?'}v=${encodeURIComponent(token)}`
+  const baseUrl = url.startsWith('/') ? `${getBackendApiBase()}${url}` : url
+  if (!token) return baseUrl
+  return `${baseUrl}${baseUrl.includes('?') ? '&' : '?'}v=${encodeURIComponent(token)}`
 }
 
 /**
@@ -684,7 +692,8 @@ export async function getNewsPage(page: number, perPage: number = 20): Promise<{
 
 export async function getNewsById(id: string, preview: boolean = false) {
   try {
-    const url = preview ? `/api/blog/posts/${id}?preview=true` : await withBlogVersion(`/api/blog/posts/${id}`);
+    const rawUrl = `/api/blog/posts/${id}`
+    const url = preview ? `${getBackendApiBase()}${rawUrl}?preview=true` : await withBlogVersion(rawUrl);
     const res = await fetch(url, preview ? { cache: 'no-store' } : undefined);
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
     return cleanNewsItem(await res.json());
@@ -706,7 +715,8 @@ export async function getNewsCategories(): Promise<string[]> {
     // browser/CDN kept serving a stale category list (new/renamed WP categories
     // wouldn't show up in the pills until a hard refresh).
     const cacheBuster = `t=${Date.now()}`;
-    const res = await fetch(`/wp-json/wp/v2/categories?per_page=100&_fields=id,name,count&${cacheBuster}`, { cache: 'no-store' });
+    const wpRoot = process.env.NEXT_PUBLIC_WORDPRESS_API_ROOT || process.env.VITE_WORDPRESS_API_ROOT || 'https://cms.getmeds.ph';
+    const res = await fetch(`${wpRoot.replace(/\/$/, '')}/wp-json/wp/v2/categories?per_page=100&_fields=id,name,count&${cacheBuster}`, { cache: 'no-store' });
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
     const categories: { name: string; count: number }[] = await res.json();
     return categories
@@ -721,7 +731,8 @@ export async function getNewsCategories(): Promise<string[]> {
 
 export async function getNewsBySlug(slug: string, preview: boolean = false) {
   try {
-    const url = preview ? `/api/blog/posts?slug=${slug}&preview=true` : await withBlogVersion(`/api/blog/posts?slug=${slug}`);
+    const rawUrl = `/api/blog/posts?slug=${slug}`
+    const url = preview ? `${getBackendApiBase()}${rawUrl}&preview=true` : await withBlogVersion(rawUrl);
     const res = await fetch(url, preview ? { cache: 'no-store' } : undefined);
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
     const data = await res.json();

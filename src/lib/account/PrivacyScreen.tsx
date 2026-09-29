@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState } from 'react';
 import { BRAND, Card, ErrorNote, Field, ListRow, PrimaryButton, Screen, Sheet, Toast, inputClass, useToast } from '../ui/Screen';
 import { deleteAccount, exportAccount, manilaToday } from '../accountApi';

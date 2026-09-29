@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useEffect, useRef, useState } from 'react';
 
 /**
@@ -14,6 +16,10 @@ import React, { useEffect, useRef, useState } from 'react';
  *
  * Requires the api.js script on the page:
  *   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+ *
+ * The Vite build put that tag in every HTML shell. Next.js has no per-page
+ * shell, so ensureTurnstileScript() injects the same tag on demand (once) the
+ * first time a form using the widget mounts.
  */
 
 declare global {
@@ -32,7 +38,26 @@ declare global {
  * secret, verification is skipped entirely.
  */
 export const TURNSTILE_SITE_KEY =
-  (import.meta.env.VITE_TURNSTILE_SITE_KEY as string | undefined) || '';
+  process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ||
+  process.env.VITE_TURNSTILE_SITE_KEY ||
+  '';
+
+export const TURNSTILE_SCRIPT_SRC = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
+
+/**
+ * Adds the Turnstile api.js <script async defer> to <head> if it is not on the
+ * page already. Safe to call repeatedly; a no-op on the server.
+ */
+export function ensureTurnstileScript(): void {
+  if (typeof document === 'undefined') return;
+  if (window.turnstile) return;
+  if (document.querySelector(`script[src^="${TURNSTILE_SCRIPT_SRC}"]`)) return;
+  const s = document.createElement('script');
+  s.src = TURNSTILE_SCRIPT_SRC;
+  s.async = true;
+  s.defer = true;
+  document.head.appendChild(s);
+}
 
 export interface TurnstileHandle {
   /** Current token, or '' when unsolved. Send this as `turnstileToken`. */
@@ -59,6 +84,8 @@ export function useTurnstile(active: boolean = true): TurnstileHandle {
 
   useEffect(() => {
     if (!active || !TURNSTILE_SITE_KEY) return;
+
+    ensureTurnstileScript();
 
     let cancelled = false;
     // Two things have to arrive before the widget can be drawn, and NEITHER is

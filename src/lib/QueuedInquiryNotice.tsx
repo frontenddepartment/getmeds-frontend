@@ -1,20 +1,10 @@
+'use client';
+
 import React, { useCallback, useEffect, useState } from 'react';
+import Link from 'next/link';
 import { getApiUrl } from './api';
 import { flushQueue, deleteQueued, INQUIRY_QUEUED_EVENT, type QueuedInquiry } from './offlineInquiry';
 
-/**
- * QueuedInquiryNotice
- * ─────────────────────────────────────────────
- * Drops onto any page that carries an inquiry form. On mount, whenever the
- * connection returns, and whenever a submission is queued, it sends what it can
- * and then tells the visitor exactly where their inquiry stands.
- *
- * The telling is the point. An inquiry that vanishes into a queue and reappears
- * silently is worse than one that failed loudly, because the visitor never
- * learns whether Getmeds heard them. So the forms deliberately do NOT show their
- * success modal for a queued submission — this does the talking instead, and
- * only claims delivery once the server has actually accepted it.
- */
 export function QueuedInquiryNotice() {
   const [sent, setSent] = useState(0);
   const [pending, setPending] = useState<QueuedInquiry[]>([]);
@@ -26,7 +16,7 @@ export function QueuedInquiryNotice() {
     if (result.sent > 0) setSent((n) => n + result.sent);
     setPending(result.needsAttention);
     setWaiting(result.waiting);
-    setDismissed(false); // a new development deserves to be seen again
+    setDismissed(false);
   }, []);
 
   useEffect(() => {
@@ -76,13 +66,13 @@ export function QueuedInquiryNotice() {
                 : ' — the security check expired while you were offline.'}
             </p>
             <div className="mt-2.5 flex items-center gap-3">
-              <a
+              <Link
                 href={item.returnPath}
                 className="text-white text-xs font-semibold rounded-full px-4 py-2"
                 style={{ background: 'linear-gradient(135deg,#1D9FDA,#61A644)' }}
               >
                 Finish it
-              </a>
+              </Link>
               <button
                 type="button"
                 onClick={() => discard(item.id)}

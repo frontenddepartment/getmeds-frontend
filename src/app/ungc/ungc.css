@@ -1,0 +1,26 @@
+/* Ported from ungc.html <style>; scoped to the page root (data-page="ungc"). */
+[data-page="ungc"] .hero-shadow-up {
+  box-shadow: 0 -40px 60px -20px rgba(0, 0, 0, 0.08);
+  position: relative;
+  z-index: 10;
+}
+
+[data-page="ungc"] .sdg-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 16px;
+  border-radius: 9999px;
+  background: white;
+  border: 1px solid #e5e7eb;
+  font-size: 13px;
+  font-weight: 500;
+  color: #4b5563;
+  transition: all 0.3s ease;
+}
+
+[data-page="ungc"] .sdg-pill:hover {
+  border-color: #0D99FF;
+  color: #0D99FF;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(13, 153, 255, 0.1);
+}

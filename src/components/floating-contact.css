@@ -1,0 +1,105 @@
+/* Ported from getmeds_frontend/public/components/components.js (injectChatLinks, injectScrollToTop). */
+
+/* Stacked above #scroll-to-top, which is 50px at right 30px / bottom 100px (44px at
+   right 20px / bottom 110px on a phone). The column starts 12px above it and shares
+   its centre line; these offsets have to move if that button does. */
+#gm-chat-links {
+  position: fixed;
+  right: 31px;
+  bottom: 162px;
+  z-index: 9999998;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+#gm-chat-links.gm-chat-links--hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+#gm-chat-links a {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+#gm-chat-links a:hover {
+  transform: translateY(-3px) scale(1.06);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
+}
+#gm-chat-links svg {
+  width: 26px;
+  height: 26px;
+  fill: #fff;
+}
+@media (max-width: 640px) {
+  #gm-chat-links {
+    right: 20px;
+    bottom: 164px;
+    gap: 8px;
+  }
+  #gm-chat-links a {
+    width: 44px;
+    height: 44px;
+  }
+  #gm-chat-links svg {
+    width: 24px;
+    height: 24px;
+  }
+  /* The cookie banner spans the full width on a phone and Tawk is hidden
+     while it is up (analytics consent), so these step aside with it. */
+  body:has(.gmc-banner) #gm-chat-links {
+    display: none;
+  }
+}
+
+#scroll-to-top {
+  position: fixed !important;
+  bottom: 100px !important;
+  right: 30px !important;
+  width: 50px !important;
+  height: 50px !important;
+  background: linear-gradient(135deg, #61A644 0%, #1D9FDA 100%) !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 15px !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2) !important;
+  z-index: 9999999 !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease !important;
+  transform: translateY(12px) !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+#scroll-to-top.show {
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: translateY(0) !important;
+}
+#scroll-to-top:hover {
+  transform: translateY(-5px) scale(1.08) !important;
+  box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3) !important;
+  filter: brightness(1.1) !important;
+}
+#scroll-to-top:active {
+  transform: scale(0.95) !important;
+}
+@media (max-width: 640px) {
+  #scroll-to-top {
+    bottom: 110px !important;
+    right: 20px !important;
+    width: 44px !important;
+    height: 44px !important;
+    border-radius: 12px !important;
+  }
+}

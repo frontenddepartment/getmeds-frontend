@@ -1,9 +1,7 @@
+'use client';
+
 import { useEffect, useState } from 'react';
 
-// Shared validation-feedback modal, styled to match the "Not on Record" card in
-// employee-verification.tsx (gradient icon circle, centered card, gradient-text
-// close action) so form errors read as part of the site's design instead of a
-// native browser alert() box.
 interface AlertModalProps {
   open: boolean;
   onClose: () => void;
@@ -14,8 +12,6 @@ interface AlertModalProps {
 export default function AlertModal({ open, onClose, title = "Please Check This", message }: AlertModalProps) {
   const [mounted, setMounted] = useState(false);
   const [visible, setVisible] = useState(false);
-  // Keeps showing the last real content while the card fades out, instead of
-  // blanking out the instant the caller clears its state on close.
   const [cached, setCached] = useState({ title, message });
 
   useEffect(() => {
@@ -30,7 +26,7 @@ export default function AlertModal({ open, onClose, title = "Please Check This",
       const timeout = setTimeout(() => setMounted(false), 200);
       return () => clearTimeout(timeout);
     }
-  }, [open]);
+  }, [open, title, message, mounted]);
 
   if (!mounted) return null;
 

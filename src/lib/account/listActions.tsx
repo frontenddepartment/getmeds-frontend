@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState } from 'react';
 import { addToCart, setConsent, type CartItem } from '../cart';
 import { accountData, newKey, saveList, slugOf, type SavedProduct } from '../accountApi';

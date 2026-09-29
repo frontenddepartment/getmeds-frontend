@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useEffect, useRef, useState } from 'react';
 import { BRAND, Empty, ErrorNote, Screen, SmallButton, Toast, useToast } from '../ui/Screen';
 import { newKey, saveList, useAccountData, type SavedArticle } from '../accountApi';

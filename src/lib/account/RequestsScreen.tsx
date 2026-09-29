@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState } from 'react';
 import { shortDate, useAccountData, type RequestItem, type ServerRequest } from '../accountApi';
 import { Empty, ErrorNote, PrimaryButton, Screen, SmallButton, Toast, useToast, BRAND } from '../ui/Screen';

@@ -17,7 +17,18 @@ const FALLBACK_MS = 15000
 let baked: HTMLElement | null = null
 let appRoot: HTMLElement | null = null
 
+// App Router hand-off (components/PrerenderHandoff.tsx): server-rendered crawler markup
+// stays on screen until the page reports ready. A counter rather than a flag, so a wrapper
+// can tell a ready signal from its own page apart from one left over by a previous page.
+export const PAGE_READY_EVENT = 'getmeds:page-ready'
+let readyCount = 0
+export function getPageReadyCount(): number {
+  return readyCount
+}
+
 export function markPageReady(): void {
+  readyCount++
+  if (typeof window !== 'undefined') window.dispatchEvent(new Event(PAGE_READY_EVENT))
   if (!baked || !appRoot) return
   baked.remove()
   appRoot.removeAttribute('style')

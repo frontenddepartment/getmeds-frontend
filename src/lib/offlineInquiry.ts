@@ -169,7 +169,7 @@ function productsIn(payload: Record<string, unknown>): string[] {
 
 export async function submitInquiry(
   rawPayload: Record<string, unknown>,
-  { endpoint, returnPath = window.location.pathname, needsVerification }: SubmitOptions
+  { endpoint, returnPath = typeof window !== 'undefined' ? window.location.pathname : '/', needsVerification }: SubmitOptions
 ): Promise<SubmitResult> {
   const payload = withAppMeta(rawPayload)
   /**
@@ -198,7 +198,7 @@ export async function submitInquiry(
   // correctly without anyone remembering to pass a flag.
   const carriesToken = needsVerification ?? Boolean(payload.turnstileToken)
 
-  if (navigator.onLine !== false) {
+  if (typeof navigator !== 'undefined' && navigator.onLine !== false) {
     try {
       // In the app, a signed-in customer's session rides along so the backend
       // can add their points; see rewards.ts.
@@ -243,7 +243,9 @@ export async function submitInquiry(
     await tx<void>(QUEUE_STORE, 'readwrite', (s) => s.put(entry))
     // The form that called us is about to stop showing a spinner. It must not
     // claim the inquiry was received, so the notice component is told instead.
-    window.dispatchEvent(new CustomEvent(INQUIRY_QUEUED_EVENT))
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent(INQUIRY_QUEUED_EVENT))
+    }
     await remember('queued')
     return { status: 'queued', hadAttachments }
   } catch {
@@ -271,7 +273,7 @@ function withAppMeta(payload: Record<string, unknown>): Record<string, unknown> 
     }))
   }
   if (!items && typeof extra.productName === 'string') {
-    items = [{ name: extra.productName, url: typeof extra.productUrl === 'string' ? extra.productUrl : window.location.pathname }]
+    items = [{ name: extra.productName, url: typeof extra.productUrl === 'string' ? extra.productUrl : (typeof window !== 'undefined' ? window.location.pathname : '/') }]
   }
   return { ...payload, appMeta: { ...own, items: items ?? [] } }
 }
@@ -288,7 +290,7 @@ export async function flushQueue(
 
   // Offline: nothing can be sent, but the visitor should still be told their
   // inquiry is held rather than lost.
-  if (navigator.onLine === false) {
+  if (typeof navigator !== 'undefined' && navigator.onLine === false) {
     const held = await listQueued()
     return {
       sent: 0,

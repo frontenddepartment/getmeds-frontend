@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 
 interface LinkableImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   /** Redirect URL from getImageLink()/getSliderImageLinks(). Renders a plain <img> when falsy. */
@@ -14,20 +15,36 @@ interface LinkableImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
 
 /**
  * Drop-in replacement for <img> that navigates to `link` when clicked, if provided.
- * Uses `display: contents` on the wrapping <a> so it never affects layout/positioning —
+ * Uses `display: contents` on the wrapping <a>/Link so it never affects layout/positioning —
  * the <img> keeps its own size, position, and styling exactly as if unwrapped.
  */
 export function LinkableImage({ link, newTab = true, ...imgProps }: LinkableImageProps) {
+  /* eslint-disable-next-line @next/next/no-img-element */
   const img = <img {...imgProps} />;
   if (!link) return img;
+
+  const isExternal = link.startsWith('http://') || link.startsWith('https://') || link.startsWith('//');
+
+  if (isExternal || newTab) {
+    return (
+      <a
+        href={link}
+        {...(newTab ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+        style={{ display: 'contents', cursor: 'pointer' }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        {img}
+      </a>
+    );
+  }
+
   return (
-    <a
+    <Link
       href={link}
-      {...(newTab ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
       style={{ display: 'contents', cursor: 'pointer' }}
       onClick={(e) => e.stopPropagation()}
     >
       {img}
-    </a>
+    </Link>
   );
 }

@@ -1,0 +1,68 @@
+/* Ported from meditations.html <style>; scoped to the page root (data-page="meditations"). */
+
+/* Override navbar background to blend with hero section on this page only */
+:root:has([data-page="meditations"]) #global-nav-wrapper,
+:root:has([data-page="meditations"]) #global-nav {
+  border-bottom: none !important;
+}
+
+/* Glassmorphism utility */
+[data-page="meditations"] .glass-panel {
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Animated equalizing waves */
+[data-page="meditations"] .equalizer-wave {
+  display: flex;
+  align-items: flex-end;
+  gap: 2.5px;
+  height: 30px;
+}
+
+[data-page="meditations"] .equalizer-bar {
+  width: 3px;
+  height: 10%;
+  background: linear-gradient(to top, #61A644, #1D9FDA);
+  border-radius: 3px;
+  transition: height 0.15s ease-in-out;
+}
+
+[data-page="meditations"] .equalizer-bar.active {
+  animation: bounce-bar 1.2s ease-in-out infinite alternate;
+}
+
+@keyframes bounce-bar {
+  0% { height: 10%; }
+  100% { height: 100%; }
+}
+
+/* Custom breathing ring pulsing animation */
+@keyframes breathe-in-out {
+  0%, 100% {
+    transform: scale(0.9);
+    opacity: 0.45;
+    box-shadow: 0 0 10px rgba(97, 166, 68, 0.2), 0 0 20px rgba(29, 159, 218, 0.1);
+  }
+  50% {
+    transform: scale(1.15);
+    opacity: 0.95;
+    box-shadow: 0 0 25px rgba(97, 166, 68, 0.4), 0 0 50px rgba(29, 159, 218, 0.3);
+  }
+}
+
+[data-page="meditations"] .pulse-breathing-active {
+  animation: breathe-in-out 4s ease-in-out infinite;
+}
+
+/* Hide scrollbars */
+[data-page="meditations"] .no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+[data-page="meditations"] .no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
