@@ -1,0 +1,24 @@
+{
+  "meta": {
+    "title": "Page Not Found - Getmeds",
+    "description": "The requested page could not be found."
+  },
+  "errorCode": "404",
+  "errorBadge": "Oops! Error",
+  "heading": "Page Not Found",
+  "description": "The page you are looking for might have been removed, had its name changed, or is temporarily unavailable.",
+  "actions": [
+    {
+      "label": "Back to Home",
+      "href": "/",
+      "icon": "fa-solid fa-house",
+      "isPrimary": true
+    },
+    {
+      "label": "Search Medicines",
+      "href": "/cancer-medicines",
+      "icon": "fa-solid fa-magnifying-glass",
+      "isPrimary": false
+    }
+  ]
+}

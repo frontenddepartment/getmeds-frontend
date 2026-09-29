@@ -1,0 +1,34 @@
+{
+  "meta": {
+    "title": "My Profile - Getmeds",
+    "description": "Manage your Getmeds user profile, prescriptions, order history, and account settings."
+  },
+  "heading": "My Account",
+  "sections": [
+    {
+      "id": "overview",
+      "title": "Account Overview",
+      "icon": "fa-solid fa-user"
+    },
+    {
+      "id": "prescriptions",
+      "title": "Saved Prescriptions",
+      "icon": "fa-solid fa-file-prescription"
+    },
+    {
+      "id": "orders",
+      "title": "Order History",
+      "icon": "fa-solid fa-box"
+    },
+    {
+      "id": "addresses",
+      "title": "Delivery Addresses",
+      "icon": "fa-solid fa-location-dot"
+    },
+    {
+      "id": "settings",
+      "title": "Security Settings",
+      "icon": "fa-solid fa-lock"
+    }
+  ]
+}

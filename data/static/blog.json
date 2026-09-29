@@ -1,0 +1,22 @@
+{
+  "meta": {
+    "title": "Blog — Getmeds",
+    "description": "Stay informed with the latest news, health guides, and updates from Getmeds — your trusted source for pharmaceutical insights and patient care resources in the Philippines.",
+    "path": "/blog.html"
+  },
+  "hero": {
+    "heading": "Getmeds Insights & Articles",
+    "description": "Latest updates on oncology, pharmaceutical supply chain, healthcare access, and wellness."
+  },
+  "categories": [
+    "All",
+    "Oncology",
+    "Health & Wellness",
+    "CSR & Community",
+    "Regulatory Updates",
+    "Company News"
+  ],
+  "pagination": {
+    "pageSize": 9
+  }
+}

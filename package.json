@@ -4,6 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "sync:sanity": "node scripts/sync-static-to-sanity.mjs",
+    "prebuild": "node scripts/sync-static-to-sanity.mjs && node scripts/collect-cms-tailwind-classes.cjs",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"

@@ -10,6 +10,7 @@
  * cached — see the NetworkOnly route below.
  */
 import type { PrecacheEntry, RouteMatchCallbackOptions, SerwistGlobalConfig } from 'serwist';
+import { STATIC_CATEGORY_FOLDERS } from '../lib/categoryFolders';
 import {
   CacheFirst,
   CacheableResponsePlugin,
@@ -36,12 +37,7 @@ const CARD_SHELL = '/business-card';
 
 // The real product category folders (from vercel.json's rewrites). Used to tell a product URL
 // apart from a marketing page, since both are two segments.
-const PRODUCT_CATEGORIES = [
-  'cancer-medicines', 'blood-disorder-medicines', 'antibiotics', 'heart-medicines',
-  'anemia-medicines', 'hormonal-therapy', 'diabetes-medicines', 'bone-health-medicines',
-  'allergy-medicines', 'contrast-media', 'anti-inflammatory-medicines', 'pain-management',
-  'kidney-medicines', 'brain-cancer-medicines', 'product-range',
-];
+const PRODUCT_CATEGORIES = [...STATIC_CATEGORY_FOLDERS, 'product-range'];
 
 const isProductUrl = (url: URL) => {
   const seg = url.pathname.split('/').filter(Boolean);

@@ -9,27 +9,12 @@
 // a client component.
 import { unstable_cache } from 'next/cache';
 import { getProducts, getCategories, folderDisplayName } from './queries';
+import { STATIC_CATEGORY_FOLDERS } from './categoryFolders';
 
 export const DOMAIN = 'https://getmeds.ph';
 export const REVALIDATE_SECONDS = 3600;
 
-// Category folders routed onto the listing / product pages in getmeds_frontend/vercel.json.
-export const STATIC_CATEGORY_FOLDERS = [
-  'cancer-medicines',
-  'blood-disorder-medicines',
-  'anemia-medicines',
-  'antibiotics',
-  'hormonal-therapy',
-  'diabetes-medicines',
-  'bone-health-medicines',
-  'heart-medicines',
-  'contrast-media',
-  'anti-inflammatory-medicines',
-  'pain-management',
-  'kidney-medicines',
-  'allergy-medicines',
-  'brain-cancer-medicines',
-];
+export { STATIC_CATEGORY_FOLDERS };
 
 // The ":subcategory(...)" list from vercel.json — "/<folder>/<one of these>" is a
 // condition listing, anything else under a folder is a product page.

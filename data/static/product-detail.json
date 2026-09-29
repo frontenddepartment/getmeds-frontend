@@ -1,0 +1,19 @@
+{
+  "meta": {
+    "title": "Product Detail — Getmeds",
+    "description": "View product specifications, active ingredients, dosage forms, storage conditions, and prescribing information.",
+    "path": "/product-detail.html"
+  },
+  "disclaimer": {
+    "text": "Prescription required for rx-only medications. Always consult a licensed medical professional before administering any prescription medication.",
+    "fdaBadge": "FDA Philippines Licensed Distributor"
+  },
+  "sections": [
+    "Overview",
+    "Active Ingredients",
+    "Indications",
+    "Dosage & Administration",
+    "Storage & Handling",
+    "FDA Certification"
+  ]
+}

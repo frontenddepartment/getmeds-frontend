@@ -1,0 +1,17 @@
+{
+  "meta": {
+    "title": "Under Development - Getmeds",
+    "description": "This section of Getmeds is currently under construction."
+  },
+  "badge": "Construction in Progress",
+  "heading": "Page Under Development",
+  "description": "We're currently working hard to build this section of Getmeds. It will be available very soon, check back later!",
+  "actions": [
+    {
+      "label": "Go Back Home",
+      "href": "/",
+      "icon": "fa-solid fa-arrow-left",
+      "isPrimary": true
+    }
+  ]
+}

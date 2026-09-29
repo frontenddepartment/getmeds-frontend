@@ -1,0 +1,143 @@
+{
+  "meta": {
+    "title": "Getmeds",
+    "description": "Pharmaceutical company in the Philippines specializing in oncology, hematology, anesthesia, rare diseases, and essential medicines. FDA Philippines licensed. UN Global Compact member.",
+    "path": "/"
+  },
+  "topBar": {
+    "label": "Connect With Us",
+    "phone": "+63 919 076 9103",
+    "phoneHref": "contact-us.html",
+    "socialLinks": [
+      {
+        "platform": "Facebook",
+        "icon": "fa-brands fa-facebook",
+        "href": "#"
+      },
+      {
+        "platform": "LinkedIn",
+        "icon": "fa-brands fa-linkedin",
+        "href": "#"
+      }
+    ]
+  },
+  "hero": {
+    "backgroundImage": "assets/herosectiontsx.jpg",
+    "heading": "Your Trusted Pharmaceutical Company in the Philippines",
+    "headingLine1": "Your Health Deserves",
+    "headingAccent": "The Best Care Possible",
+    "description": "Access the world's finest medical care from the comfort of your home. Discover how our global network empowers your health journey.",
+    "subheading": "Getmeds delivers precision pharmaceutical solutions, digital oncology care, and nationwide healthcare distribution.",
+    "slides": [
+      {
+        "image": "assets/slideone.jpg"
+      },
+      {
+        "image": "assets/slidetwo.jpg"
+      },
+      {
+        "image": "assets/slidethree.jpg"
+      }
+    ]
+  },
+  "stats": [
+    {
+      "value": 50000,
+      "suffix": "+",
+      "label": "Patients Helped"
+    },
+    {
+      "value": 11,
+      "suffix": "+",
+      "label": "Countries Served"
+    },
+    {
+      "value": 500,
+      "suffix": "+",
+      "label": "Partner Clinics"
+    },
+    {
+      "value": 24,
+      "suffix": "/7",
+      "label": "Hour Support"
+    }
+  ],
+  "features": [
+    {
+      "icon": "fa-solid fa-truck-fast",
+      "title": "Fast Delivery",
+      "description": "Speedy medication delivery straight to your doorstep."
+    },
+    {
+      "icon": "fa-solid fa-shield-halved",
+      "title": "Secure Platform",
+      "description": "Your health data is safe with our advanced security."
+    },
+    {
+      "icon": "fa-solid fa-headset",
+      "title": "24/7 Support",
+      "description": "Our customer care and medical experts are always ready."
+    },
+    {
+      "icon": "fa-solid fa-tags",
+      "title": "Best Prices",
+      "description": "Affordable medicine and discounted lab tests for you."
+    }
+  ],
+  "productTabs": [
+    {
+      "id": "all",
+      "label": "All"
+    },
+    {
+      "id": "oncology",
+      "label": "Oncology"
+    },
+    {
+      "id": "hematology",
+      "label": "Hematology"
+    },
+    {
+      "id": "anti-infectives",
+      "label": "Anti-Infectives"
+    },
+    {
+      "id": "cardiology",
+      "label": "Cardiology"
+    }
+  ],
+  "appSection": {
+    "heading": "Download the Getmeds App",
+    "description": "Manage your prescriptions, track orders, and access our full range of healthcare services from your phone.",
+    "image": "assets/app.jpg",
+    "appStoreLabel": "Download on the App Store",
+    "googlePlayLabel": "Get it on Google Play"
+  },
+  "therapeuticAreas": [
+    {
+      "name": "Oncology",
+      "slug": "oncology",
+      "description": "Advanced targeted therapies, chemotherapy, and supportive care medications."
+    },
+    {
+      "name": "Hematology",
+      "slug": "hematology",
+      "description": "Specialized blood disorder treatments, factor concentrates, and anemia management."
+    },
+    {
+      "name": "Anesthesia",
+      "slug": "anesthesia",
+      "description": "Precision neuromuscular blockers, sedatives, and operating room pharmaceuticals."
+    },
+    {
+      "name": "Rare Diseases",
+      "slug": "rare-diseases",
+      "description": "Orphan drugs and specialty biological products for orphan disease management."
+    },
+    {
+      "name": "Essential Medicines",
+      "slug": "essential-medicines",
+      "description": "FDA-approved high quality generic and branded hospital requirements."
+    }
+  ]
+}

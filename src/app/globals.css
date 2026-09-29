@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+/* Class names used inside CMS-authored HTML (WordPress post bodies, Sanity policy pages), which
+   no source file contains. Refreshed before every build by scripts/collect-cms-tailwind-classes.cjs. */
+@source "../styles/cms-classes.txt";
+
 /*
  * The original site (getmeds_frontend) was built on Tailwind v3 with one theme per page.
  * This file restores both so every class renders the way it did there.
