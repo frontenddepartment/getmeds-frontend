@@ -6,8 +6,9 @@ const DOMAIN = 'https://getmeds.ph';
 const url = (file) => `${DOMAIN}/assets/${file}`;
 
 const imageByFolder = new Map();
+// The version stamp gives a replaced category image a new URL; see the JSON comment.
 Object.values(config.categories).forEach(({ file, folders }) => {
-  folders.forEach((folder) => imageByFolder.set(folder, url(file)));
+  folders.forEach((folder) => imageByFolder.set(folder, `${url(file)}?v=${config.categoryVersion}`));
 });
 
 const DEFAULT_OG_IMAGE = url(config.default.file);

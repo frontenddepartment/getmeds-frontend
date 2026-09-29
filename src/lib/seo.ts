@@ -11,7 +11,7 @@ const BASE_URL = 'https://getmeds.ph';
 const DEFAULT_IMAGE = `${BASE_URL}/assets/${ogImages.default.file}`;
 const IMAGE_BY_FOLDER = new Map<string, string>(
   Object.values(ogImages.categories).flatMap(({ file, folders }) =>
-    folders.map((folder): [string, string] => [folder, `${BASE_URL}/assets/${file}`])
+    folders.map((folder): [string, string] => [folder, `${BASE_URL}/assets/${file}?v=${ogImages.categoryVersion}`])
   )
 );
 export const CONDITIONS_OG_IMAGE = `${BASE_URL}/assets/${ogImages.conditions.file}`;

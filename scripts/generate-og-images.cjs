@@ -1,5 +1,7 @@
-// Generates the sixteen share-card images (og-*.jpg) into public/assets/ from the table in
-// src/lib/og-images.json. Run by hand after changing a label — `node scripts/generate-og-images.cjs`
+// Generates the three share-card images that have no designer artwork (og-default, og-order,
+// og-conditions) into public/assets/ from the table in src/lib/og-images.json. The thirteen
+// category images are designer-made and dropped into public/assets/ by hand, so they are
+// deliberately not in the list below: running this must never overwrite them. Run by hand after changing a label — `node scripts/generate-og-images.cjs`
 // — and commit the output; it is not part of the build, so a build machine without the fonts
 // can never produce a different picture from the one that was reviewed.
 //
@@ -111,7 +113,7 @@ async function render(file, label, chip) {
 }
 
 async function main() {
-  const entries = [config.default, config.order, ...Object.values(config.categories), config.conditions];
+  const entries = [config.default, config.order, config.conditions];
   const chip = await logoChip();
   console.log(`[OG Images] Writing ${entries.length} image(s) to public/assets/:`);
   for (const { file, label } of entries) await render(file, label, chip);

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useProducts } from '../lib/useSanity';
 import { injectHTML } from '../lib/injectHTML';
 import { AddToCart } from '../lib/AddToCart';
@@ -56,6 +56,56 @@ const GROUND = '#F3F6FB';
 const BRAND = '#1D9FDA';
 const BRAND_GREEN = '#61A644';
 const CARD_SHADOW = '0 2px 10px rgba(23,43,77,.055)';
+
+/**
+ * The promo slider at the top of the screen. A slide is either a brand gradient
+ * with a big faded icon, or a photo (`image`) with a dark wash so the words stay
+ * readable; `imagePosition` is where the photo is anchored when it is cropped to
+ * the slide's shape. Order is the order they show in.
+ */
+type PromoSlide = {
+  href: string;
+  title: string;
+  sub: string;
+  cta: string;
+  background: string;
+  icon?: string;
+  image?: string;
+  imagePosition?: string;
+};
+
+const PROMO_SLIDES: PromoSlide[] = [
+  {
+    href: '/order-medicines/patients',
+    title: 'Have a prescription?',
+    sub: 'Send us a photo and we\u2019ll come back to you with availability.',
+    cta: 'Upload now',
+    background: 'linear-gradient(118deg,#1D9FDA 0%,#2F8FD6 52%,#61A644 165%)',
+    icon: 'fa-file-prescription',
+  },
+  {
+    href: '/patient-assistance-program',
+    title: 'Patient Assistance Program',
+    sub: 'Libreng chemotherapy at gamot sa cancer sa tulong ng DSWD at PCSO.',
+    cta: 'Alamin dito',
+    background: '#0A2A43',
+    image: '/assets/app-promo-pap.jpg',
+    imagePosition: 'center 30%',
+  },
+  {
+    href: '/product-range',
+    title: 'Looking for a medicine?',
+    sub: 'Browse specialty medicines from oncology to cardiology, all in one catalogue.',
+    cta: 'Browse catalogue',
+    background: 'linear-gradient(118deg,#61A644 0%,#4E9C4A 55%,#1D9FDA 165%)',
+    icon: 'fa-pills',
+  },
+];
+
+// How long the slider leaves someone alone after they touch it. Long enough to
+// read the slide they chose; short enough that the slider does not look broken.
+const PROMO_PAUSE_MS = 8000;
+const PROMO_INTERVAL_MS = 5000;
 
 const FOLDER_ICON: Record<string, string> = {
   'cancer-medicines': 'fa-ribbon',
@@ -175,6 +225,32 @@ export default function AppHome() {
     return () => window.removeEventListener(CART_CHANGED_EVENT, paint);
   }, []);
 
+  // The promo slider. Native scroll-snap does the swiping, so the state here is
+  // only which slide is in view (for the dots) and when the slider was last
+  // touched (so autoplay does not yank a slide away from someone reading it).
+  const promoRef = useRef<HTMLDivElement>(null);
+  const promoTouchedAt = useRef(0);
+  const [promoIndex, setPromoIndex] = useState(0);
+
+  const slideInView = (el: HTMLDivElement) => Math.round(el.scrollLeft / el.clientWidth);
+  const onPromoScroll = () => { if (promoRef.current) setPromoIndex(slideInView(promoRef.current)); };
+  const markPromoTouched = () => { promoTouchedAt.current = Date.now(); };
+  const goToPromo = (i: number) => {
+    markPromoTouched();
+    promoRef.current?.scrollTo({ left: i * promoRef.current.clientWidth, behavior: 'smooth' });
+  };
+
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const id = setInterval(() => {
+      const el = promoRef.current;
+      if (!el || Date.now() - promoTouchedAt.current < PROMO_PAUSE_MS) return;
+      const next = (slideInView(el) + 1) % PROMO_SLIDES.length;
+      el.scrollTo({ left: next * el.clientWidth, behavior: 'smooth' });
+    }, PROMO_INTERVAL_MS);
+    return () => clearInterval(id);
+  }, []);
+
   // Each tile borrows the first real photo in its folder, so the strip reads as
   // a catalogue rather than a list of icons. Folders whose products have no
   // image attached yet fall back to the icon.
@@ -256,39 +332,87 @@ export default function AppHome() {
       </header>
 
       <main className="mx-auto max-w-2xl px-4 pb-2">
-        {/* A storefront puts an offer in this slot; this one puts the errand
-            people actually arrive with, because the app's whole job is turning
-            a prescription into a quote. */}
-        <a
-          href="/order-medicines/patients"
-          className="relative mb-6 mt-4 block overflow-hidden rounded-[20px] p-5 text-white"
-          style={{ background: 'linear-gradient(118deg,#1D9FDA 0%,#2F8FD6 52%,#61A644 165%)' }}
-        >
-          <span
-            aria-hidden="true"
-            className="pointer-events-none absolute -right-8 -top-10 h-40 w-40 rounded-full bg-white/10"
-          />
-          <span
-            aria-hidden="true"
-            className="pointer-events-none absolute -bottom-16 right-10 h-32 w-32 rounded-full bg-white/[0.07]"
-          />
-          <i
-            aria-hidden="true"
-            className="fa-solid fa-file-prescription pointer-events-none absolute -right-1 bottom-1 text-[86px] text-white/20"
-          />
-          <div className="relative max-w-[64%]">
-            <p className="text-[19px] font-medium leading-tight">Have a prescription?</p>
-            <p className="mt-1.5 text-[12.5px] leading-snug text-white/85">
-              Send us a photo and we&rsquo;ll come back to you with availability.
-            </p>
-            <span
-              className="mt-3.5 inline-flex items-center rounded-full bg-white px-4 py-2 text-[12px] font-medium"
-              style={{ color: BRAND }}
-            >
-              Upload now
-            </span>
+        {/* A storefront puts an offer in this slot. The first slide is the errand
+            people actually arrive with, because the app's whole job is turning a
+            prescription into a quote; the two behind it are the next most-asked-for
+            things. Swipeable, and it advances on its own until someone touches it. */}
+        <div className="mb-6 mt-4">
+          <div
+            ref={promoRef}
+            onScroll={onPromoScroll}
+            onPointerDown={markPromoTouched}
+            className="gm-hscroll flex snap-x snap-mandatory overflow-x-auto rounded-[20px]"
+            aria-roledescription="carousel"
+          >
+            {PROMO_SLIDES.map((slide, i) => (
+              <a
+                key={slide.href}
+                href={slide.href}
+                className="relative block min-h-[156px] w-full shrink-0 snap-start overflow-hidden rounded-[20px] p-5 text-white"
+                style={{ background: slide.background }}
+                aria-label={`${slide.title} ${slide.sub}`}
+              >
+                {slide.image ? (
+                  <>
+                    <img
+                      src={slide.image}
+                      alt=""
+                      loading={i === 0 ? 'eager' : 'lazy'}
+                      className="pointer-events-none absolute inset-0 h-full w-full object-cover"
+                      style={{ objectPosition: slide.imagePosition }}
+                    />
+                    {/* Dark on the left, where the words are, clear on the right. */}
+                    <span
+                      aria-hidden="true"
+                      className="pointer-events-none absolute inset-0"
+                      style={{ background: 'linear-gradient(90deg, rgba(10,42,67,.9) 0%, rgba(10,42,67,.6) 55%, rgba(10,42,67,.15) 100%)' }}
+                    />
+                  </>
+                ) : (
+                  <>
+                    <span
+                      aria-hidden="true"
+                      className="pointer-events-none absolute -right-8 -top-10 h-40 w-40 rounded-full bg-white/10"
+                    />
+                    <span
+                      aria-hidden="true"
+                      className="pointer-events-none absolute -bottom-16 right-10 h-32 w-32 rounded-full bg-white/[0.07]"
+                    />
+                    <i
+                      aria-hidden="true"
+                      className={`fa-solid ${slide.icon} pointer-events-none absolute -right-1 bottom-1 text-[86px] text-white/20`}
+                    />
+                  </>
+                )}
+                <div className="relative max-w-[64%]">
+                  <p className="text-[19px] font-medium leading-tight">{slide.title}</p>
+                  <p className="mt-1.5 text-[12.5px] leading-snug text-white/85">{slide.sub}</p>
+                  <span
+                    className="mt-3.5 inline-flex items-center rounded-full bg-white px-4 py-2 text-[12px] font-medium"
+                    style={{ color: BRAND }}
+                  >
+                    {slide.cta}
+                  </span>
+                </div>
+              </a>
+            ))}
           </div>
-        </a>
+
+          <div className="mt-2.5 flex justify-center gap-1.5" role="tablist" aria-label="Slides">
+            {PROMO_SLIDES.map((slide, i) => (
+              <button
+                key={slide.href}
+                type="button"
+                role="tab"
+                aria-selected={i === promoIndex}
+                aria-label={`Slide ${i + 1} of ${PROMO_SLIDES.length}: ${slide.title}`}
+                onClick={() => goToPromo(i)}
+                className="h-1.5 rounded-full transition-all duration-300"
+                style={{ width: i === promoIndex ? 18 : 6, background: i === promoIndex ? BRAND : '#C9D3E0' }}
+              />
+            ))}
+          </div>
+        </div>
 
         <section className="mb-6">
           <SectionHeading title="Categories" href="/product-range" />
