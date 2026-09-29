@@ -26,7 +26,28 @@ const ADMIN_PANELS = [
   'adminadlorock',
 ];
 
+// Browser code only receives NEXT_PUBLIC_* variables; a VITE_* name (what the old Vite site,
+// and so its Vercel project, used) is never inlined, and reading it in the browser gives
+// undefined. Accept either name here so a build with only the VITE_* variables set still
+// ships the values. Without this the Turnstile site key came out empty, no verification
+// widget rendered, and the backend rejected every form with "complete the verification check".
+const PUBLIC_ENV_NAMES = [
+  'BACKEND_API_URL',
+  'SANITY_PROJECT_ID',
+  'SANITY_DATASET',
+  'SANITY_API_VERSION',
+  'WORDPRESS_API_ROOT',
+  'TURNSTILE_SITE_KEY',
+];
+const publicEnv = Object.fromEntries(
+  PUBLIC_ENV_NAMES.flatMap((name) => {
+    const value = process.env[`NEXT_PUBLIC_${name}`] || process.env[`VITE_${name}`];
+    return value ? [[`NEXT_PUBLIC_${name}`, value]] : [];
+  }),
+);
+
 const nextConfig: NextConfig = {
+  env: publicEnv,
   experimental: {
     cpus: 1,
     workerThreads: false,
