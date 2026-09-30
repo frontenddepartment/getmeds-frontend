@@ -19,6 +19,7 @@ const SCROLL_THRESHOLD = 300;
 interface TawkHooks {
   onChatMaximized?: (...args: unknown[]) => void;
   onChatMinimized?: (...args: unknown[]) => void;
+  onLoad?: (...args: unknown[]) => void;
   maximize?: () => void;
   toggle?: () => void;
   popup?: () => void;
@@ -79,11 +80,17 @@ export default function FloatingContactButtons() {
     w.Tawk_API = w.Tawk_API || {};
     w.Tawk_LoadStart = new Date();
 
+    // Asked to open before the widget script has loaded: load it now, open once ready.
+    let openWhenReady = false;
     w.openGetmedsChat = () => {
       const api = w.Tawk_API;
       if (api && typeof api.maximize === 'function') api.maximize();
       else if (api && typeof api.toggle === 'function') api.toggle();
       else if (api && typeof api.popup === 'function') api.popup();
+      else {
+        openWhenReady = true;
+        loadTawk();
+      }
     };
 
     // Tawk's open chat window covers this corner, so the chat links hide while it is open.
@@ -98,8 +105,20 @@ export default function FloatingContactButtons() {
     };
     hook('onChatMaximized', true);
     hook('onChatMinimized', false);
+    const previousOnLoad = tawk.onLoad;
+    tawk.onLoad = function (this: unknown, ...args: unknown[]) {
+      if (typeof previousOnLoad === 'function') previousOnLoad.apply(this, args);
+      if (openWhenReady) {
+        openWhenReady = false;
+        w.openGetmedsChat?.();
+      }
+    };
 
-    if (!document.getElementById(TAWK_SCRIPT_ID)) {
+    // The widget is ~190 KB of script nobody needs in the first seconds, so it loads once the
+    // page has finished and the browser is idle (or 4s later at most), or on the visitor's
+    // first scroll/tap/keypress — whichever comes first. Kept off the page's startup path.
+    function loadTawk() {
+      if (document.getElementById(TAWK_SCRIPT_ID)) return;
       const propertyId =
         w.TAWK_PROPERTY_ID ||
         document.querySelector<HTMLMetaElement>('meta[name="tawk-property-id"]')?.content ||
@@ -118,6 +137,30 @@ export default function FloatingContactButtons() {
       if (s0 && s0.parentNode) s0.parentNode.insertBefore(s1, s0);
       else document.head.appendChild(s1);
     }
+
+    const firstInput = ['scroll', 'pointerdown', 'keydown', 'touchstart'] as const;
+    let idleHandle: number | undefined;
+    let timer: number | undefined;
+    const start = () => {
+      cleanup();
+      loadTawk();
+    };
+    const whenIdle = () => {
+      const ric = (w as unknown as { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number }).requestIdleCallback;
+      if (ric) idleHandle = ric(start, { timeout: 4000 });
+      else timer = window.setTimeout(start, 2000);
+    };
+    function cleanup() {
+      firstInput.forEach((ev) => window.removeEventListener(ev, start, true));
+      window.removeEventListener('load', whenIdle);
+      if (timer !== undefined) window.clearTimeout(timer);
+      const cic = (w as unknown as { cancelIdleCallback?: (h: number) => void }).cancelIdleCallback;
+      if (idleHandle !== undefined && cic) cic(idleHandle);
+    }
+    firstInput.forEach((ev) => window.addEventListener(ev, start, { capture: true, once: true, passive: true }));
+    if (document.readyState === 'complete') whenIdle();
+    else window.addEventListener('load', whenIdle, { once: true });
+    return cleanup;
   }, []);
 
   // Back-to-top visibility: the window or any inner scroll container past the threshold.

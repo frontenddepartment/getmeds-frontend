@@ -1,5 +1,24 @@
 import type { Metadata } from 'next';
-import HomeClient from './HomeClient';
+import HomeClient, { type HeroSlideImage } from './HomeClient';
+import { getHeroSlides } from '@/lib/queries';
+
+// The hero slides are fetched here so the first slide's picture is in the HTML (it's the
+// page's main picture for PageSpeed). The page is rebuilt in the background at most every
+// 5 minutes, so a hero change in Sanity shows up within that window.
+export const revalidate = 300;
+
+async function loadHeroSlides(): Promise<HeroSlideImage[] | null> {
+  try {
+    // The query returns the single "Home Hero Background" document; getHeroSlides() is typed
+    // as an array for the browser hook's sake.
+    const doc = (await getHeroSlides()) as unknown as { images?: HeroSlideImage[] } | null;
+    return doc?.images?.length ? doc.images : null;
+  } catch (err) {
+    // Built-in fallback slides render instead; the browser fetch still tries again.
+    console.error('[home] Failed to load hero slides:', err);
+    return null;
+  }
+}
 
 // Title, description, canonical and OG tags copied from getmeds_frontend/index.html.
 const TITLE = 'Getmeds | Trusted Pharmaceutical Company & Healthcare Provider';
@@ -40,7 +59,8 @@ const WEBSITE_JSON_LD = {
   publisher: { '@id': 'https://getmeds.ph/#organization' },
 };
 
-export default function Page() {
+export default async function Page() {
+  const initialHeroSlides = await loadHeroSlides();
   return (
     <>
       <script
@@ -48,7 +68,7 @@ export default function Page() {
         id="jsonld-website"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(WEBSITE_JSON_LD) }}
       />
-      <HomeClient />
+      <HomeClient initialHeroSlides={initialHeroSlides} />
     </>
   );
 }

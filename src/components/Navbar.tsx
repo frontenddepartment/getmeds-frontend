@@ -14,7 +14,7 @@ import './chrome.css';
 import { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { client } from '@/lib/sanity';
+import { client, sizedSanityUrl } from '@/lib/sanity';
 import { fetchSiteLogoUrl } from '@/lib/siteSettings';
 import {
   loadDynamicMenu,
@@ -126,10 +126,10 @@ const DEFAULT_SLIDES: Record<string, Slide> = {
   globalPresence: { title: 'Global Presence', href: '/global-presence', img: '/assets/globalpresencehero.jpg', desc: 'Discover seamless healthcare solutions. Access a world-class medical network worldwide, efficiently linking you with top care continuously.' },
   meditations: { title: 'Meditations', href: '/meditations', img: '/assets/categories.png', desc: 'Nurture your mind, body, and soul. Discover clinical mindfulness, guided breathing exercises, and soothing ambient soundscapes designed to support your holistic wellness journey.' },
   csr: { title: 'CSR', href: '/csr', img: '/assets/patienthand.jpg', desc: 'We don\'t just distribute medicine; we facilitate healing. Through NGO partnerships and digital health advocacy, we ensure no patient navigates their journey alone.' },
-  careers: { title: 'Careers', href: '/careers', img: '/assets/careershero.png', desc: 'Join our mission to make healthcare accessible worldwide. We\'re looking for passionate individuals to innovate and grow with us.' },
+  careers: { title: 'Careers', href: '/careers', img: '/assets/careershero.webp', desc: 'Join our mission to make healthcare accessible worldwide. We\'re looking for passionate individuals to innovate and grow with us.' },
   ungc: { title: 'United Nations Global Compact', href: '/ungc', img: '/assets/ungcimage.jpg', desc: 'At Getmeds Philippines, we do more than provide medicines—we drive meaningful impact through responsible healthcare, compassion, and sustainable action.' },
   blog: { title: 'Blog', href: '/blog', img: '/assets/fallback.jpg', desc: 'Stay updated with our latest news and medical articles.' },
-  'join-us': { title: 'Join Us', href: '/careers#join-form', img: '/assets/careershero.png', desc: 'Apply for our open positions and start your journey with us.' },
+  'join-us': { title: 'Join Us', href: '/careers#join-form', img: '/assets/careershero.webp', desc: 'Apply for our open positions and start your journey with us.' },
 };
 
 const ROTATION_KEYS = ['services', 'globalPresence', 'meditations', 'csr', 'careers', 'ungc', 'blog', 'join-us'];
@@ -267,6 +267,12 @@ export default function Navbar() {
   const [slides, setSlides] = useState<Record<string, Slide> | null>(null);
   const [activeSlide, setActiveSlide] = useState('services');
   const [gnOpen, setGnOpen] = useState(false);
+  // The Company slider pictures and the Global Network map are only attached once their menu
+  // has been opened: hidden-menu background images still download, and together they were
+  // ~12 MB on every page load. After the first open they stay attached (cached, no re-fetch).
+  const [companyMenuSeen, setCompanyMenuSeen] = useState(false);
+  const [gnSeen, setGnSeen] = useState(false);
+  if (gnOpen && !gnSeen) setGnSeen(true);
   const [gnIn, setGnIn] = useState(0);
   const [megaSuppressed, setMegaSuppressed] = useState(false);
 
@@ -521,10 +527,10 @@ export default function Navbar() {
               </a>
               {/* Socials */}
               <div className="flex items-center space-x-2 sm:space-x-4 border-l border-white/20 pl-2 sm:pl-6">
-                <a href="https://www.facebook.com/getmedsphilippines/" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition text-white">
+                <a href="https://www.facebook.com/getmedsphilippines/" target="_blank" rel="noopener noreferrer" aria-label="Getmeds on Facebook" className="hover:text-primary transition text-white">
                   <i className="fa-brands fa-facebook-f text-[11px] sm:text-[14px]"></i>
                 </a>
-                <a href="https://www.linkedin.com/company/getmeds" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition text-white">
+                <a href="https://www.linkedin.com/company/getmeds" target="_blank" rel="noopener noreferrer" aria-label="Getmeds on LinkedIn" className="hover:text-primary transition text-white">
                   <i className="fa-brands fa-linkedin-in text-[11px] sm:text-[14px]"></i>
                 </a>
               </div>
@@ -540,7 +546,7 @@ export default function Navbar() {
               <div className="w-[140px] lg:w-[170px] flex-shrink-0 flex items-center">
                 <Link href="/" className={activeCls('/', 'flex items-center')}>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={logoUrl || '/assets/getmedslogo.png'} alt="Getmeds Logo" className="h-10 w-auto object-contain" />
+                  <img src={logoUrl ? sizedSanityUrl(logoUrl, { h: 160 }) : '/assets/getmedslogo.webp'} alt="Getmeds Logo" width={71} height={40} className="h-10 w-auto object-contain" />
                 </Link>
               </div>
 
@@ -635,11 +641,16 @@ export default function Navbar() {
                 <Link href="/about-us" className={activeCls('/about-us', 'hover:text-primary transition whitespace-nowrap')}>About Us</Link>
                 <Link id="pap-nav-link" href="/patient-assistance-program" className="opacity-80 hover:opacity-100 transition-all duration-200 hover:-translate-y-0.5 transform">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img id="pap-nav-logo" src="/assets/pap.png" alt="Patient Assistance Program" />
+                  <img id="pap-nav-logo" src="/assets/pap.webp" alt="Patient Assistance Program" width={154} height={88} />
                 </Link>
 
                 {/* Company Dropdown */}
-                <div className="group h-20 flex items-center pwa-hide" onMouseLeave={() => setMegaSuppressed(false)}>
+                <div
+                  className="group h-20 flex items-center pwa-hide"
+                  onMouseEnter={() => setCompanyMenuSeen(true)}
+                  onFocus={() => setCompanyMenuSeen(true)}
+                  onMouseLeave={() => setMegaSuppressed(false)}
+                >
                   <button
                     id="company-nav-btn"
                     type="button"
@@ -695,7 +706,7 @@ export default function Navbar() {
                                   prefetch={false}
                                   data-slide-key={key}
                                   className={`absolute inset-0 bg-cover bg-center transition-opacity duration-700 cursor-pointer ${on ? 'opacity-100 pointer-events-auto z-10' : 'opacity-0 pointer-events-none z-0'}`}
-                                  style={{ backgroundImage: `url('${s.img}')` }}
+                                  style={companyMenuSeen ? { backgroundImage: `url('${sizedSanityUrl(s.img, { w: 1000 })}')` } : undefined}
                                 >
                                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
                                   <div className="absolute bottom-6 left-6 right-6">
@@ -707,21 +718,21 @@ export default function Navbar() {
                             })
                           ) : (
                             <>
-                              <Link href="/about-us" prefetch={false} className="absolute inset-0 bg-cover bg-center company-slide-1 transition-opacity duration-1000 cursor-pointer" style={{ backgroundImage: "url('/assets/about_us_hero.png')" }}>
+                              <Link href="/about-us" prefetch={false} className="absolute inset-0 bg-cover bg-center company-slide-1 transition-opacity duration-1000 cursor-pointer" style={companyMenuSeen ? { backgroundImage: "url('/assets/about_us_hero.webp')" } : undefined}>
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
                                 <div className="absolute bottom-6 left-6 right-6">
                                   <h3 className="text-white font-bold text-xl mb-1">About Us</h3>
                                   <p className="text-white/80 text-sm">Learn more about our mission and vision.</p>
                                 </div>
                               </Link>
-                              <Link href="/global-presence" prefetch={false} className="absolute inset-0 bg-cover bg-center company-slide-2 transition-opacity duration-1000 cursor-pointer" style={{ backgroundImage: "url('/assets/globalpresencehero.jpg')" }}>
+                              <Link href="/global-presence" prefetch={false} className="absolute inset-0 bg-cover bg-center company-slide-2 transition-opacity duration-1000 cursor-pointer" style={companyMenuSeen ? { backgroundImage: "url('/assets/globalpresencehero.jpg')" } : undefined}>
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
                                 <div className="absolute bottom-6 left-6 right-6">
                                   <h3 className="text-white font-bold text-xl mb-1">Global Presence</h3>
                                   <p className="text-white/80 text-sm">We are expanding healthcare solutions worldwide.</p>
                                 </div>
                               </Link>
-                              <Link href="/careers" prefetch={false} className="absolute inset-0 bg-cover bg-center company-slide-3 transition-opacity duration-1000 cursor-pointer" style={{ backgroundImage: "url('/assets/careershero.png')" }}>
+                              <Link href="/careers" prefetch={false} className="absolute inset-0 bg-cover bg-center company-slide-3 transition-opacity duration-1000 cursor-pointer" style={companyMenuSeen ? { backgroundImage: "url('/assets/careershero.webp')" } : undefined}>
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
                                 <div className="absolute bottom-6 left-6 right-6">
                                   <h3 className="text-white font-bold text-xl mb-1">Careers</h3>
@@ -755,7 +766,7 @@ export default function Navbar() {
                     }}
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src="/assets/globalnetworklogo.png" alt="Global Network" className="gn-logo" />
+                    <img src="/assets/globalnetworklogo.webp" width={54} height={36} alt="Global Network" className="gn-logo" />
                     <svg className="gn-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true" style={gnOpen ? { transform: 'rotate(180deg)' } : undefined}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                     </svg>
@@ -829,7 +840,7 @@ export default function Navbar() {
               {/* Patient Assistance Program */}
               <Link href="/patient-assistance-program" prefetch={false} onClick={closeMobile} className="flex items-center px-3 py-2 border-b border-gray-100">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/assets/pap.png" alt="Patient Assistance Program" className="h-10 w-auto object-contain opacity-80 hover:opacity-100 transition" />
+                <img src="/assets/pap.webp" alt="Patient Assistance Program" width={70} height={40} className="h-10 w-auto object-contain opacity-80 hover:opacity-100 transition" />
               </Link>
 
               {/* Company accordion */}
@@ -911,7 +922,7 @@ export default function Navbar() {
 
                 <div className={gnLinkCls(GLOBAL_NETWORK.length + 1, 'gn-col-map')} aria-hidden="true">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="/assets/countries.png" alt="" />
+                  {gnSeen && <img src="/assets/countries.webp" alt="" decoding="async" width={1000} height={563} />}
                 </div>
               </div>
             </div>

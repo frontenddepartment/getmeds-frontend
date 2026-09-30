@@ -1210,6 +1210,7 @@ export default function AboutUsClient() {
           {/* Close Button */}
           <button
             onClick={() => setIsInquiryOpen(false)}
+            aria-label="Close"
             className="absolute top-6 right-6 text-gray-400 hover:text-gray-900 transition-colors w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200"
           >
             <i className="fa-solid fa-xmark text-lg"></i>

@@ -11,7 +11,7 @@ import { useHeroSlides, useImageMapper, useNews, useSiteSettings, useCategories,
 import { getApiUrl } from '@/lib/api';
 import { submitInquiry } from '@/lib/offlineInquiry';
 import { Turnstile, useTurnstile } from '@/lib/turnstile';
-import { urlFor } from '@/lib/sanity';
+import { urlFor, getBlogListingImageUrl } from '@/lib/sanity';
 import { LinkableImage } from '@/lib/LinkableImage';
 import { computeCategoryKey, linkCategoryKeys } from '@/lib/categoryImageKey';
 // The same four audiences the navbar's Order Medicines menu links to
@@ -74,7 +74,10 @@ const slugify = (text: string | undefined | null) => {
     .replace(/-+$/, '');
 };
 
-export default function HomeClient() {
+/** One entry of the "Home Hero Background" pageAsset's images[] (see pageAsset.heroSlides). */
+export type HeroSlideImage = { image?: any; altText?: string; enableLink?: boolean; link?: string };
+
+export default function HomeClient({ initialHeroSlides = null }: { initialHeroSlides?: HeroSlideImage[] | null }) {
   const [, setIsScrolled] = useState(false);
 
   useEffect(() => {
@@ -116,7 +119,10 @@ export default function HomeClient() {
     return merged;
   }, [featuredNews, newsItems]);
 
-  const { data: heroSlidesData } = useHeroSlides();
+  // The server passes the hero slides in (page.tsx), so the first slide's picture is in the
+  // HTML and starts downloading straight away; the browser fetch below only refreshes them.
+  const { data: heroSlidesLive } = useHeroSlides();
+  const heroSlidesData: HeroSlideImage[] | null = heroSlidesLive ?? initialHeroSlides;
   // Same subcategory data already used for the sidebar flyout on the product-range/cancer-medicines
   // pages (getCategories() aggregates each Excel product's condition/subCategory names under its
   // Product Range category) — reused here rather than inventing a separate data source.
@@ -159,18 +165,18 @@ export default function HomeClient() {
   // e.g. Cardiology or Anti-Infectives pointed at the wrong, nonexistent path). See
   // goToCategoryListing() below for how "See All" now routes instead.
   const therapCardsBase = useMemo(() => [
-    { name: "Oncology", fallback: "assets/therapeuticareaoncology.png", marquee: "Breast Cancer • Ovarian Cancer • Non-Small Cell Lung Cancer • Prostate Cancer • Colorectal Cancer • Pancreatic Cancer • " },
-    { name: "Hematology", fallback: "assets/therapeuticareahematology.png", marquee: "Acute Myeloid Leukemia • Chronic Myeloid Leukemia • Hodgkin/Non-Hodgkin's Lymphoma • Sickle Cell Anemia • " },
+    { name: "Oncology", fallback: "assets/therapeuticareaoncology.webp", marquee: "Breast Cancer • Ovarian Cancer • Non-Small Cell Lung Cancer • Prostate Cancer • Colorectal Cancer • Pancreatic Cancer • " },
+    { name: "Hematology", fallback: "assets/therapeuticareahematology.webp", marquee: "Acute Myeloid Leukemia • Chronic Myeloid Leukemia • Hodgkin/Non-Hodgkin's Lymphoma • Sickle Cell Anemia • " },
     { name: "Anti-Infectives", fallback: "assets/therapeuticareaantiinfectives.jpg", marquee: "Respiratory Infections • Urinary Tract Infections • Skin and Soft Tissue Infections • Bone and Joint Infections • " },
     { name: "Endocrinology", fallback: "assets/therapeuticareaendocrinology.jpg", marquee: "Endometriosis • Fibrocystic Breast Disease • Diabetes Management • Thyroid Disorders • Metabolic Syndrome • " },
     { name: "Orthopedic", fallback: "assets/orthopedic.jpg", marquee: "Multiple Myeloma • Osteoporosis • Joint Replacement Support • Fracture Recovery • Bone Metastases • " },
-    { name: "Cardiology", fallback: "assets/therapeuticareacardiology.png", marquee: "Arrhythmia Management • Hypertension/Angina • Heart Failure • Atrial Fibrillation • Coronary Artery Disease • " },
+    { name: "Cardiology", fallback: "assets/therapeuticareacardiology.webp", marquee: "Arrhythmia Management • Hypertension/Angina • Heart Failure • Atrial Fibrillation • Coronary Artery Disease • " },
     { name: "Radiology", fallback: "assets/radiology.jpg", marquee: "Contrast Media • Diagnostic Imaging • CT & MRI Contrast Agents • Nuclear Medicine • Radiopharmaceuticals • " },
     { name: "Rheumatology", fallback: "assets/rheumatology.jpg", marquee: "Rheumatoid Arthritis • Osteoarthritis • Lupus • Gout • Ankylosing Spondylitis • " },
     { name: "Pain Management", fallback: "assets/pain-management.jpg", marquee: "Chronic Pain • Post-Surgical Pain • Neuropathic Pain • Analgesics • Anesthesia Support • " },
     { name: "Nephrology / Renal", fallback: "assets/nephrology-renal.jpg", marquee: "Chronic Kidney Disease • Dialysis Support • Renal Anemia • Electrolyte Management • Nephrotic Syndrome • " },
     { name: "Respiratory", fallback: "assets/respiratory.jpg", marquee: "Seasonal Allergic Rhinitis • Asthma • COPD • Bronchitis • Pulmonary Hypertension • Chronic Kidney Disease • " },
-    { name: "Neurology", fallback: "assets/therapeuticareaneurology.png", marquee: "Glioblastoma Multiforme • Chronic Pain • Inflammatory Disorders • Osteoporosis • Multiple Myeloma • Neuro-Oncology • " },
+    { name: "Neurology", fallback: "assets/therapeuticareaneurology.webp", marquee: "Glioblastoma Multiforme • Chronic Pain • Inflammatory Disorders • Osteoporosis • Multiple Myeloma • Neuro-Oncology • " },
   ], []);
 
   const therapBaseByKey = useMemo(() => {
@@ -306,7 +312,7 @@ export default function HomeClient() {
     return sorted.map((entry) => {
       const keys = linkCategoryKeys(entry);
       const base = keys.length === 1 ? therapBaseByKey.get(keys[0]) : undefined;
-      const fallback = base?.fallback || "assets/therapeuticareaoncology.png";
+      const fallback = base?.fallback || "assets/therapeuticareaoncology.webp";
       const primaryKey = keys[0] || '';
       return {
         name: entry.categoryLabel || base?.name || primaryKey,
@@ -326,19 +332,22 @@ export default function HomeClient() {
   // --- Hero Slider ---
   const fallbackHeroSlides = [
     {
-      bg: 'assets/imagebanner.jpg',
+      bg: 'assets/imagebanner.webp',
+      bgMobile: 'assets/imagebanner.webp',
       heading: 'Life-Saving Medicines for Patients, Doctors,\nPharmacies & Hospitals in the Philippines',
       sub: 'Getmeds is a global pharmaceutical company advancing healthcare access nationwide through essential medicines, hospital therapies and cancer treatments.',
       link: null as string | null,
     },
     {
-      bg: 'assets/homebanner.png',
+      bg: 'assets/homebanner.webp',
+      bgMobile: 'assets/homebanner.webp',
       heading: 'Advanced Cancer Medicines.\nHope Delivered to Every Patient.',
       sub: 'From oncology to hematology, we bring world-class cancer treatments directly to Filipino patients and healthcare institutions nationwide.',
       link: null as string | null,
     },
     {
-      bg: 'assets/homebanner3.png',
+      bg: 'assets/homebanner3.webp',
+      bgMobile: 'assets/homebanner3.webp',
       heading: 'Compassionate Care.\nA Global Reach,\nA Local Heart.',
       sub: 'With a presence across multiple countries, Getmeds connects global pharmaceutical innovation with the communities that need it most.',
       link: null as string | null,
@@ -350,7 +359,9 @@ export default function HomeClient() {
     ? heroSlidesData.slice(0, 5).map((s, idx) => {
       const fallback = fallbackHeroSlides[idx % fallbackHeroSlides.length];
       return {
-        bg: s.image ? urlFor(s.image).url() : fallback.bg,
+        // Sized for the screen instead of the full upload, in AVIF/WebP where supported.
+        bg: s.image ? urlFor(s.image).width(1920).quality(75).auto('format').url() : fallback.bg,
+        bgMobile: s.image ? urlFor(s.image).width(900).quality(75).auto('format').url() : fallback.bg,
         heading: s.altText || fallback.heading,
         sub: fallback.sub,
         link: s.enableLink && s.link ? s.link as string : null,
@@ -358,6 +369,18 @@ export default function HomeClient() {
     })
     : fallbackHeroSlides;
   const [heroIndex, setHeroIndex] = useState(0);
+  // Only the showing slide's picture loads at first; the rest wait until the page has finished
+  // loading, so they don't compete with the first slide (the page's main picture).
+  const [heroRestReady, setHeroRestReady] = useState(false);
+  useEffect(() => {
+    const go = () => setHeroRestReady(true);
+    if (document.readyState === 'complete') {
+      const t = window.setTimeout(go, 300);
+      return () => window.clearTimeout(t);
+    }
+    window.addEventListener('load', go, { once: true });
+    return () => window.removeEventListener('load', go);
+  }, []);
   const [heroFading, setHeroFading] = useState(false);
   // One <h1> per page: only the first slide ("Life-Saving Medicines…") is the
   // page's main heading. The other slides render the same styling as <h2>.
@@ -665,6 +688,15 @@ export default function HomeClient() {
         }
       ` }} />
 
+      {/* The first slide is the page's main picture: announce it in the HTML head at high
+          priority (React hoists these <link>s), one size per layout. */}
+      {heroSlides[0] && (
+        <>
+          <link rel="preload" as="image" href={getImage(heroSlides[0].bg, heroSlides[0].bg)} media="(min-width: 768px)" fetchPriority="high" />
+          <link rel="preload" as="image" href={getImage(heroSlides[0].bgMobile, heroSlides[0].bgMobile)} media="(max-width: 767px)" fetchPriority="high" />
+        </>
+      )}
+
       {/* Desktop Hero Container - Slider */}
       <div
         className="hidden md:flex relative min-h-[600px] w-full overflow-hidden flex-col justify-between"
@@ -678,7 +710,7 @@ export default function HomeClient() {
             className="absolute inset-0 bg-center transition-opacity duration-700"
             onClick={() => { if (slide.link) window.open(slide.link, '_blank', 'noopener,noreferrer'); }}
             style={{
-              backgroundImage: `url('${getImage(slide.bg, slide.bg)}')`,
+              backgroundImage: i === heroIndex || heroRestReady ? `url('${getImage(slide.bg, slide.bg)}')` : undefined,
               // Slide 2 is a self-contained banner graphic (its own logo/text baked
               // in — see the `heroIndex !== 1` check below that hides the overlay
               // heading for it), but it shares the same 2048x1162 canvas as the
@@ -733,9 +765,11 @@ export default function HomeClient() {
           >
             <div className="max-w-7xl mx-auto px-[max(1.5rem,calc(4.5rem_-_(100vw_-_80rem)/2))] w-full flex flex-col items-start">
               <img
-                src="assets/logoandtextpap.png"
+                src="assets/logoandtextpap.webp"
                 alt="Patient Assistance Program — Chemotherapy & Cancer Medicines"
-                className="w-[500px] lg:w-[600px] -mb-8 select-none pointer-events-none"
+                width={1200}
+                height={700}
+                className="w-[500px] lg:w-[600px] h-auto -mb-8 select-none pointer-events-none"
                 draggable={false}
               />
 
@@ -800,21 +834,27 @@ export default function HomeClient() {
 
         {/* Slide dots */}
         <div className="absolute bottom-5 left-0 right-0 z-20 flex items-center justify-center pointer-events-none">
-          <div className="flex items-center gap-2 pointer-events-auto">
+          <div className="flex items-center pointer-events-auto">
             {heroSlides.map((_, i) => (
+              // The dot stays 8px; the button around it is a 24px tap target.
               <button
                 key={i}
                 type="button"
                 aria-label={`Go to slide ${i + 1}`}
                 aria-current={i === heroIndex ? 'true' : undefined}
                 onClick={() => goToHeroSlide(i)}
-                className="transition-all duration-300 rounded-full"
-                style={{
-                  width: i === heroIndex ? '24px' : '8px',
-                  height: '8px',
-                  background: i === heroIndex ? 'white' : 'rgba(255,255,255,0.45)',
-                }}
-              />
+                className="h-6 flex items-center justify-center transition-all duration-300"
+                style={{ width: i === heroIndex ? '36px' : '24px' }}
+              >
+                <span
+                  className="block rounded-full transition-all duration-300"
+                  style={{
+                    width: i === heroIndex ? '24px' : '8px',
+                    height: '8px',
+                    background: i === heroIndex ? 'white' : 'rgba(255,255,255,0.45)',
+                  }}
+                />
+              </button>
             ))}
           </div>
         </div>
@@ -888,7 +928,7 @@ export default function HomeClient() {
                 className="absolute inset-0 bg-center transition-opacity duration-700"
                 onClick={() => { if (slide.link) window.open(slide.link, '_blank', 'noopener,noreferrer'); }}
                 style={{
-                  backgroundImage: `url('${getImage(slide.bg, slide.bg)}')`,
+                  backgroundImage: i === heroIndex || heroRestReady ? `url('${getImage(slide.bgMobile, slide.bgMobile)}')` : undefined,
                   backgroundSize: 'cover',
                   backgroundPosition: 'center',
                   backgroundRepeat: 'no-repeat',
@@ -931,9 +971,11 @@ export default function HomeClient() {
             {heroIndex === 1 && (
               <div className="absolute inset-0 z-10 flex items-center justify-start pl-3 transition-opacity duration-400 pointer-events-none" style={{ opacity: heroFading ? 0 : 1 }}>
                 <img
-                  src="assets/logoandtextpap.png"
+                  src="assets/logoandtextpap.webp"
                   alt="Patient Assistance Program — Chemotherapy & Cancer Medicines"
-                  className="w-[220px] select-none"
+                  width={1200}
+                  height={700}
+                  className="w-[220px] h-auto select-none"
                   draggable={false}
                 />
               </div>
@@ -1083,7 +1125,7 @@ export default function HomeClient() {
             </p>
             <div className="mt-6 md:hidden">
               <a href="/about-us" className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] text-white font-bold text-sm px-8 py-3 rounded-full transition-transform hover:opacity-90 inline-block whitespace-nowrap">
-                Learn More
+                Learn More<span className="sr-only"> about Getmeds</span>
               </a>
             </div>
           </div>
@@ -1095,7 +1137,7 @@ export default function HomeClient() {
           <div className="hidden md:block absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
             <div className="bg-white p-2.5 rounded-full">
               <a href="/about-us" className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] text-white font-bold text-sm px-8 py-3 rounded-full transition-transform hover:opacity-90 inline-block whitespace-nowrap">
-                Learn More
+                Learn More<span className="sr-only"> about Getmeds</span>
               </a>
             </div>
           </div>
@@ -1111,7 +1153,7 @@ export default function HomeClient() {
               <LinkableImage
                 link={getImageLink('Patient First Section Image') || '/product-range'}
                 newTab={false}
-                src={getImage('Patient First Section Image', 'assets/genericslider.jpg')}
+                src={getImage('Patient First Section Image', 'assets/genericslider.webp')}
                 alt="Medical Professional"
                 className={bannerCardClass}
               />
@@ -1120,7 +1162,7 @@ export default function HomeClient() {
               <LinkableImage
                 link={getImageLink('Patient Second Section Image') || '/patient-assistance-program'}
                 newTab={false}
-                src={getImage('Patient Second Section Image', 'assets/test.jpg')}
+                src={getImage('Patient Second Section Image', 'assets/test.webp')}
                 alt="Medical Facility"
                 className={bannerCardClass}
               />
@@ -1188,7 +1230,7 @@ export default function HomeClient() {
             {/* Card 1: Foundation */}
             <div className="gm-icon-host bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ca-anim ca-zoom ca-d1">
               <i className="fa-solid fa-pills text-3xl text-[#1D9FDA] mb-4 block"></i>
-              <h4 className="text-lg font-semibold text-gray-900 mb-2">Foundation</h4>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Foundation</h3>
               <p className="text-sm font-bold text-gray-500 mb-1">Everyday medicines, never out of reach.</p>
               <p className="text-sm text-gray-500">Branded generics and essential medicines.</p>
             </div>
@@ -1196,7 +1238,7 @@ export default function HomeClient() {
             {/* Card 2: Acceleration */}
             <div className="gm-icon-host bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ca-anim ca-zoom ca-d2">
               <i className="fa-solid fa-bolt text-3xl text-[#61A644] mb-4 block"></i>
-              <h4 className="text-lg font-semibold text-gray-900 mb-2">Acceleration</h4>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Acceleration</h3>
               <p className="text-sm font-bold text-gray-500 mb-1">Smarter therapies, faster access.</p>
               <p className="text-sm text-gray-500">Off-patent molecules, fixed-dose combinations, and new delivery systems.</p>
             </div>
@@ -1204,7 +1246,7 @@ export default function HomeClient() {
             {/* Card 3: Frontier */}
             <div className="gm-icon-host bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ca-anim ca-zoom ca-d3">
               <i className="fa-solid fa-microscope text-3xl text-[#5533FF] mb-4 block"></i>
-              <h4 className="text-lg font-semibold text-gray-900 mb-2">Frontier</h4>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Frontier</h3>
               <p className="text-sm font-bold text-gray-500 mb-1">Advanced therapies, within reach.</p>
               <p className="text-sm text-gray-500">Oncology, hematology, specialty medicines and rare disease.</p>
             </div>
@@ -1212,7 +1254,7 @@ export default function HomeClient() {
             {/* Card 4: Beyond the molecule */}
             <div className="gm-icon-host bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ca-anim ca-zoom ca-d4">
               <i className="fa-solid fa-network-wired text-3xl text-[#FFB020] mb-4 block"></i>
-              <h4 className="text-lg font-semibold text-gray-900 mb-2">Beyond the molecule</h4>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Beyond the molecule</h3>
               <p className="text-sm font-bold text-gray-500 mb-1">The access infrastructure.</p>
               <p className="text-sm text-gray-500">Cold-chain logistics, last-mile delivery, and patient programs.</p>
             </div>
@@ -1459,6 +1501,7 @@ export default function HomeClient() {
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => setTherapPage(p => Math.max(0, p - 1))}
+                      aria-label="Previous therapeutic areas"
                       disabled={therapPage === 0}
                       className={`w-10 h-10 rounded-full border bg-white flex items-center justify-center transition-colors ${therapPage === 0 ? 'border-gray-200 text-gray-300 cursor-not-allowed' : 'border-gray-300 text-gray-600 hover:bg-gray-100'}`}
                     >
@@ -1466,6 +1509,7 @@ export default function HomeClient() {
                     </button>
                     <button
                       onClick={() => setTherapPage(p => Math.min(totalPages - 1, p + 1))}
+                      aria-label="Next therapeutic areas"
                       disabled={therapPage === totalPages - 1}
                       className={`w-10 h-10 rounded-full border bg-white flex items-center justify-center transition-colors ${therapPage === totalPages - 1 ? 'border-gray-200 text-gray-300 cursor-not-allowed' : 'border-gray-300 text-gray-600 hover:bg-gray-100'}`}
                     >
@@ -1766,7 +1810,7 @@ export default function HomeClient() {
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-10 pt-10 border-t border-gray-100 ca-anim ca-up ca-d2">
                 {whyFeatures.map((item, i) => (
                   <div key={i}>
-                    <h4 className="font-bold text-gray-900 text-base mb-2">{item.title}</h4>
+                    <h3 className="font-bold text-gray-900 text-base mb-2">{item.title}</h3>
                     <p className="text-gray-600 md:text-gray-400 text-sm leading-relaxed mb-4">{item.desc}</p>
                     {/* Outlined pill in the item's accent; on hover the accent sweeps in
                         from the left to fill it and the text turns white. */}
@@ -1775,7 +1819,7 @@ export default function HomeClient() {
                       className="group/lm inline-flex items-center gap-1.5 text-sm font-semibold rounded-full px-4 py-1.5 border-solid border-[color:var(--accent)] text-[color:var(--accent)] bg-[linear-gradient(var(--accent),var(--accent))] bg-no-repeat bg-left bg-[length:0%_100%] transition-[background-size,color] duration-300 ease-out hover:bg-[length:100%_100%] hover:text-white focus-visible:bg-[length:100%_100%] focus-visible:text-white focus-visible:outline-none motion-reduce:transition-none"
                       style={{ '--accent': item.accent } as React.CSSProperties}
                     >
-                      Learn More <i className="fa-solid fa-arrow-right text-[11px] transition-[translate] duration-300 group-hover/lm:translate-x-0.5"></i>
+                      Learn More<span className="sr-only"> about {item.title.toLowerCase()}</span> <i className="fa-solid fa-arrow-right text-[11px] transition-[translate] duration-300 group-hover/lm:translate-x-0.5" aria-hidden="true"></i>
                     </a>
                   </div>
                 ))}
@@ -1982,14 +2026,18 @@ export default function HomeClient() {
                 style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' } as React.CSSProperties}
               >
                 {homeNewsItems.map((article) => {
+                  // Blog posts come from WordPress as plain URLs, which urlFor() can't resize (a
+                  // 712 KB PNG was loading here); the blog page's resizer handles both kinds.
                   const imgUrl = article.image
-                    ? urlFor(article.image).width(800).url()
+                    ? typeof article.image === 'string'
+                      ? getBlogListingImageUrl(article.image, 800)
+                      : urlFor(article.image).width(800).auto('format').url()
                     : 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&q=80&w=800';
                   return (
                     <a key={article._id} href={`/blog/${article.slug || slugify(article.title)}`} className="relative rounded-3xl overflow-hidden cursor-pointer md:hover:-translate-y-2 md:hover:shadow-2xl transition-all duration-500 group block flex-shrink-0 w-[82%] md:w-auto snap-center mb-0 md:mb-0 h-[300px] md:h-[460px]">
 
                       {/* Full background image */}
-                      <img src={imgUrl} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt={article.title} />
+                      <img src={imgUrl} loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt={article.title} />
 
                       {/* Dark gradient overlay */}
                       <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(10,15,30,0.92) 0%, rgba(10,15,30,0.55) 45%, rgba(10,15,30,0.15) 100%)' }}></div>
@@ -2119,6 +2167,7 @@ export default function HomeClient() {
           {/* Close Button */}
           <button
             onClick={() => setIsInquiryOpen(false)}
+            aria-label="Close"
             className="absolute top-6 right-6 text-gray-400 hover:text-gray-900 transition-colors w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200"
           >
             <i className="fa-solid fa-xmark text-lg"></i>

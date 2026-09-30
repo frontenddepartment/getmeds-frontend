@@ -310,7 +310,7 @@ const CareersClient: React.FC = () => {
       <section className="hidden sm:block w-full mx-auto px-3 sm:px-4 md:px-6 mt-3 md:mt-4 mb-0 max-w-[1600px]">
         <div className={`relative rounded-[10px] md:rounded-[1.5rem] overflow-hidden min-h-[360px] md:min-h-[500px] flex items-end transition-colors duration-500 ${!heroImgLoaded ? 'bg-gray-200 animate-pulse' : 'bg-gray-100'}`}>
           {!imagesLoading && (() => {
-            const heroFullSrc = getImage('Careers Hero Background', 'assets/careershero.png');
+            const heroFullSrc = getImage('Careers Hero Background', 'assets/careershero.webp');
             return (
               <ProgressiveHeroImage
                 link={getImageLink('Careers Hero Background')}
@@ -347,7 +347,7 @@ const CareersClient: React.FC = () => {
       <section className="block sm:hidden w-full px-3 mt-3 mb-4">
         <div className={`relative aspect-[16/10] w-full rounded-[10px] overflow-hidden mb-3 shadow-sm transition-colors duration-500 ${!heroImgLoaded ? 'bg-gray-200 animate-pulse' : 'bg-gray-100'}`}>
           {!imagesLoading && (() => {
-            const heroFullSrc = getImage('Careers Hero Background', 'assets/careershero.png');
+            const heroFullSrc = getImage('Careers Hero Background', 'assets/careershero.webp');
             return (
               <ProgressiveHeroImage
                 link={getImageLink('Careers Hero Background')}

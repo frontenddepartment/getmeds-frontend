@@ -303,7 +303,7 @@ export default function EmployeeVerificationClient() {
                     {Array.from({ length: 36 }).map((_, idx) => (
                       <div key={idx} className="flex items-center justify-center">
                         <img
-                          src="/assets/getmedslogo.png"
+                          src="/assets/getmedslogo.webp"
                           alt=""
                           className="opacity-[0.20] object-contain"
                           draggable={false}

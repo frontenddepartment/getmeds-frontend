@@ -20,6 +20,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import FooterModals, { openDynamicPolicyModal } from '@/components/FooterModals';
 import ChromeExtras from '@/components/ChromeExtras';
+import { sizedSanityUrl } from '@/lib/sanity';
 import { fetchPolicies, fetchSiteSettings, type ContactGroup, type PolicyDoc, type SiteSettings } from '@/lib/siteSettings';
 
 // ── Single owner for the page-wide pieces ─────────────────────────────────────
@@ -174,7 +175,7 @@ export default function Footer() {
       : `© ${year} Getmeds Philippines, Inc. All rights reserved.`;
   }
 
-  const staticLegalCls = 'footer-link text-gray-500 hover:!text-white text-xs p-0';
+  const staticLegalCls = 'footer-link text-gray-400 hover:!text-white text-xs p-0';
 
   const firstSegment = pathname.replace(/^\//, '').split('/')[0].replace(/\.html$/, '');
   const showFooter = !NO_FOOTER_ROUTES.has(firstSegment);
@@ -204,7 +205,9 @@ export default function Footer() {
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   id="footer-logo"
-                  src={logo.src || '/assets/getmedslogo.png'}
+                  src={logo.src ? sizedSanityUrl(logo.src, { h: 128 }) : '/assets/getmedslogo.webp'}
+                  width={57}
+                  height={32}
                   alt={logo.alt || 'Getmeds Logo'}
                   className="h-8 w-auto object-contain brightness-0 invert opacity-90"
                 />
@@ -213,9 +216,9 @@ export default function Footer() {
                 Getmeds is a pharmaceutical company in the Philippines specializing in oncology, hematology, anesthesia, rare diseases, and essential medicines. FDA Philippines licensed. UN Global Compact member.
               </p>
               <div id="footer-socials" className="flex items-center space-x-4 flex-wrap gap-y-2">
-                <a href="https://www.facebook.com/getmedsphilippines/" target="_blank" rel="noopener noreferrer" title="Facebook" className="text-[#1877F2] hover:scale-110 transition-transform duration-300 text-[22px]"><i className="fa-brands fa-facebook"></i></a>
+                <a href="https://www.facebook.com/getmedsphilippines/" target="_blank" rel="noopener noreferrer" title="Facebook" aria-label="Getmeds on Facebook" className="text-[#1877F2] hover:scale-110 transition-transform duration-300 text-[22px]"><i className="fa-brands fa-facebook"></i></a>
                 <a href="https://twitter.com/getmeds_ph" target="_blank" rel="noopener noreferrer" title="Twitter" className="text-[#1DA1F2] hover:scale-110 transition-transform duration-300 text-[22px]"><i className="fa-brands fa-twitter"></i></a>
-                <a href="https://www.linkedin.com/company/getmeds" target="_blank" rel="noopener noreferrer" title="LinkedIn" className="text-[#0A66C2] hover:scale-110 transition-transform duration-300 text-[22px]"><i className="fa-brands fa-linkedin"></i></a>
+                <a href="https://www.linkedin.com/company/getmeds" target="_blank" rel="noopener noreferrer" title="LinkedIn" aria-label="Getmeds on LinkedIn" className="text-[#0A66C2] hover:scale-110 transition-transform duration-300 text-[22px]"><i className="fa-brands fa-linkedin"></i></a>
                 <a href="https://www.tiktok.com/@getmedsph" target="_blank" rel="noopener noreferrer" title="TikTok" className="text-white hover:scale-110 transition-transform duration-300 text-[22px]"><i className="fa-brands fa-tiktok"></i></a>
                 <a href="https://www.instagram.com/getmeds_ph/" target="_blank" rel="noopener noreferrer" title="Instagram" className="text-[#E1306C] hover:scale-110 transition-transform duration-300 text-[22px]"><i className="fa-brands fa-instagram"></i></a>
                 <a href="https://www.youtube.com/@getmedsph" target="_blank" rel="noopener noreferrer" title="YouTube" className="text-[#FF0000] hover:scale-110 transition-transform duration-300 text-[22px]"><i className="fa-brands fa-youtube"></i></a>
@@ -298,7 +301,7 @@ export default function Footer() {
 
           </div>
 
-          <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-gray-500">
+          <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-gray-400">
             <p id="footer-copyright">
               {copyright !== null ? copyright : <>&copy; <span id="footer-year">{year}</span> Getmeds Philippines, Inc. All rights reserved.</>}
             </p>
@@ -312,7 +315,7 @@ export default function Footer() {
                       <button
                         key={slug}
                         type="button"
-                        className="footer-link text-gray-500 hover:text-white bg-transparent border-none cursor-pointer text-xs p-0"
+                        className="footer-link text-gray-400 hover:text-white bg-transparent border-none cursor-pointer text-xs p-0"
                         onClick={(e) => {
                           e.preventDefault();
                           openDynamicPolicyModal(text, item?.contentHtml || '<p>No content available.</p>');
@@ -323,7 +326,7 @@ export default function Footer() {
                     );
                   }
                   return (
-                    <Link key={slug} href={`/${slug}`} className="footer-link text-gray-500 hover:text-white text-xs p-0">
+                    <Link key={slug} href={`/${slug}`} className="footer-link text-gray-400 hover:text-white text-xs p-0">
                       {text}
                     </Link>
                   );

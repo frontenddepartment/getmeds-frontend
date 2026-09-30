@@ -33,6 +33,16 @@ function resizeSanityCdnUrl(url: string, width?: number, height?: number, qualit
 }
 
 /**
+ * A Sanity CDN image at display size, in the browser's best format (auto=format: AVIF/WebP).
+ * Non-Sanity URLs come back unchanged. Use for logos and banners that were being served at
+ * full upload size (the logo upload is 7122x4000 for a 40px-tall mark).
+ */
+export function sizedSanityUrl(url: string, size: { w?: number; h?: number; q?: number }): string {
+  if (!url || !url.includes('cdn.sanity.io')) return url
+  return resizeSanityCdnUrl(url, size.w, size.h, size.q ?? 80)
+}
+
+/**
  * Blog LISTING page only (blog.tsx) — shrinks a blog cover image (Sanity CDN
  * or external/WordPress URL) to the given size instead of loading it full-res.
  * Do not use this on the blog detail page; use urlFor() there instead.
