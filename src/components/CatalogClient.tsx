@@ -177,8 +177,8 @@ export default function CatalogClient(_props: { initialFolder?: string } = {}) {
     } catch { return {}; }
   });
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [activeFlyoutCat, setActiveFlyoutCat] = useState<any | null>(null);
-  const [flyoutVisible, setFlyoutVisible] = useState(false);
+  // Sidebar category whose subcategories are expanded underneath it.
+  const [expandedCat, setExpandedCat] = useState<string | null>(null);
   const [filterPanelOpen, setFilterPanelOpen] = useState(false);
   const filterPanelRef = useRef<HTMLDivElement>(null);
   const [inquiryDropdown, setInquiryDropdown] = useState<{
@@ -226,25 +226,6 @@ export default function CatalogClient(_props: { initialFolder?: string } = {}) {
     setInquiryDropdown({ rowId, product: p, top, left, width });
   };
 
-  const openFlyout = (cat: any) => {
-    if (activeFlyoutCat?.name === cat.name && flyoutVisible) {
-      setFlyoutVisible(false);
-      setTimeout(() => setActiveFlyoutCat(null), 450);
-      return;
-    }
-    setFlyoutVisible(false);
-    setActiveFlyoutCat(cat);
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        setFlyoutVisible(true);
-      });
-    });
-  };
-
-  const closeFlyout = () => {
-    setFlyoutVisible(false);
-    setTimeout(() => setActiveFlyoutCat(null), 450);
-  };
 
   const searchWrapperRef = useRef<HTMLDivElement>(null);
   const tableRef = useRef<HTMLDivElement>(null);
@@ -934,6 +915,24 @@ export default function CatalogClient(_props: { initialFolder?: string } = {}) {
   const isCatParentActive = (cat: any) =>
     selectedCategory.category === cat.name;
 
+  // Clicking a category filters to it straight away and opens its subcategories below it,
+  // so narrowing further is optional. Clicking the category that's already showing in full
+  // just folds its list open/closed; clicking it while a subcategory is picked goes back up
+  // to the whole category.
+  const onSidebarCategoryClick = (cat: any) => {
+    if (isCatParentActive(cat) && selectedCategory.subCategory === 'All') {
+      setExpandedCat(prev => (prev === cat.name ? null : cat.name));
+      return;
+    }
+    selectCategory(cat.name, 'All');
+    setExpandedCat(cat.name);
+  };
+
+  // Arriving on a category or condition URL (or going back/forward) opens that category's list.
+  useEffect(() => {
+    if (selectedCategory.category !== 'All') setExpandedCat(selectedCategory.category);
+  }, [selectedCategory.category]);
+
   const displayCategory = selectedCategory.subCategory !== 'All' ? selectedCategory.subCategory : selectedCategory.category;
   const conditionName = selectedCategory.subCategory !== 'All' ? selectedCategory.subCategory : '';
 
@@ -1004,9 +1003,9 @@ export default function CatalogClient(_props: { initialFolder?: string } = {}) {
           </div>
           <nav className="px-3 py-3 space-y-0.5">
             <button
-              onClick={() => selectCategory('All', 'All')}
+              onClick={() => { selectCategory('All', 'All'); setExpandedCat(null); }}
               className="w-full flex items-center justify-between px-4 py-2.5 rounded-[10px] text-[13px] font-semibold transition-all duration-200"
-              style={selectedCategory.category === 'All' && !flyoutVisible
+              style={selectedCategory.category === 'All'
                 ? { background: 'linear-gradient(to right, #61A644, #1D9FDA)', color: '#fff' }
                 : { color: '#374151' }}
             >
@@ -1015,77 +1014,64 @@ export default function CatalogClient(_props: { initialFolder?: string } = {}) {
             {categoriesLoading ? (
               <SidebarSkeleton />
             ) : (
-              sidebarCategories.map(cat => (
-                <button
-                   key={cat.name}
-                   onClick={() => openFlyout(cat)}
-                   className="w-full flex items-center justify-between px-4 py-2.5 rounded-[10px] text-[13px] font-semibold transition-all duration-200 hover:bg-gray-50 group"
-                   style={(flyoutVisible ? activeFlyoutCat?.name === cat.name : isCatParentActive(cat))
-                     ? { background: 'linear-gradient(to right, #61A644, #1D9FDA)', color: '#fff' }
-                     : { color: '#374151' }}
-                >
-                  <span className="text-left leading-snug truncate">{cat.name}</span>
-                </button>
-              ))
+              sidebarCategories.map(cat => {
+                const hasSubs = cat.subItems.length > 0;
+                const expanded = hasSubs && expandedCat === cat.name;
+                const subListId = `subcats-${cat._id || cat.name}`.replace(/[^a-zA-Z0-9_-]/g, '-');
+                return (
+                  <div key={cat.name}>
+                    <button
+                      onClick={() => onSidebarCategoryClick(cat)}
+                      aria-expanded={hasSubs ? expanded : undefined}
+                      aria-controls={hasSubs ? subListId : undefined}
+                      className="w-full flex items-center justify-between gap-2 px-4 py-2.5 rounded-[10px] text-[13px] font-semibold transition-all duration-200 hover:bg-gray-50 group"
+                      style={isCatParentActive(cat)
+                        ? { background: 'linear-gradient(to right, #61A644, #1D9FDA)', color: '#fff' }
+                        : { color: '#374151' }}
+                    >
+                      <span className="text-left leading-snug truncate">{cat.name}</span>
+                      {hasSubs && (
+                        <i
+                          aria-hidden="true"
+                          className={`fa-solid fa-chevron-down text-[10px] shrink-0 opacity-70 transition-transform duration-300 ${expanded ? 'rotate-180' : ''}`}
+                        />
+                      )}
+                    </button>
+                    {hasSubs && (
+                      // grid-rows 0fr -> 1fr animates the list open to its natural height.
+                      <div
+                        id={subListId}
+                        className={`grid transition-[grid-template-rows] duration-300 ease-out motion-reduce:transition-none ${expanded ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}
+                        inert={!expanded}
+                      >
+                        <div className="overflow-hidden">
+                          <div className="ml-5 mt-1 mb-2 pl-2 border-l-2 border-gray-100 space-y-0.5">
+                            {cat.subItems.map((sub: any, si: number) => {
+                              const active = isCatParentActive(cat) && selectedCategory.subCategory === sub.label;
+                              return (
+                                <button
+                                  key={si}
+                                  onClick={() => selectCategory(cat.name, sub.label)}
+                                  aria-current={active ? 'true' : undefined}
+                                  className="w-full text-left px-3 py-2 rounded-[8px] text-[12.5px] leading-snug transition-colors duration-150 hover:bg-gray-50 hover:text-gray-900"
+                                  style={active
+                                    ? { color: '#1D9FDA', fontWeight: 700, background: '#EFF8FF' }
+                                    : { color: '#6B7280' }}
+                                >
+                                  {sub.label}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })
             )}
           </nav>
         </aside>
-
-        {/* FLYOUT BACKDROP */}
-        {activeFlyoutCat && (
-          <div
-            className="absolute inset-0 z-20"
-            style={{
-              backdropFilter: flyoutVisible ? 'blur(4px)' : 'blur(0px)',
-              background: flyoutVisible ? 'rgba(0,0,0,0.08)' : 'transparent',
-              transition: 'backdrop-filter 0.4s ease, background 0.4s ease',
-            }}
-            onClick={closeFlyout}
-          />
-        )}
-
-        {/* FLYOUT SUBCATEGORY PANEL */}
-        {activeFlyoutCat && (
-          <div
-            className="absolute z-30 bg-white shadow-2xl flex flex-col sidebar-scroll overflow-y-auto"
-            style={{
-              left: (sidebarOpen ? 256 : 0) + 12,
-              top: '12px',
-              bottom: '12px',
-              width: '250px',
-              borderRadius: '15px',
-              transform: flyoutVisible ? 'translateX(0)' : 'translateX(-48px)',
-              opacity: flyoutVisible ? 1 : 0,
-              transition: 'transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.35s ease',
-            }}
-          >
-            <div className="px-4 py-4 border-b border-gray-100 flex items-center justify-between shrink-0">
-              <p
-                className="font-semibold text-gray-800 text-[13px] leading-snug cursor-pointer hover:text-primary transition-colors"
-                onClick={() => { selectCategory(activeFlyoutCat.name, 'All'); closeFlyout(); }}
-              >
-                {activeFlyoutCat.name}
-              </p>
-              <button onClick={closeFlyout} className="w-10 h-10 rounded-full hover:bg-gray-100 flex items-center justify-center transition-colors">
-                <i className="fa-solid fa-xmark text-gray-500 text-[16px]" />
-              </button>
-            </div>
-            <div className="px-2 py-2 space-y-0.5">
-              {activeFlyoutCat.subItems.map((sub: any, si: number) => (
-                <button
-                  key={si}
-                  onClick={() => { selectCategory(activeFlyoutCat.name, sub.label); closeFlyout(); }}
-                  className="w-full text-left px-3 py-2.5 rounded-[8px] text-[13.5px] transition-all duration-150 hover:bg-gray-50"
-                  style={selectedCategory.subCategory === sub.label
-                    ? { color: '#1D9FDA', fontWeight: 700, background: '#EFF8FF' }
-                    : { color: '#6B7280' }}
-                >
-                  {sub.label}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
 
         {/* MAIN CONTENT COLUMN */}
         <div ref={scrollContainerRef} className="flex-1 min-w-0 overflow-y-auto product-range-scroll" style={{ transition: 'all 0.3s ease' }}>
@@ -1173,7 +1159,12 @@ export default function CatalogClient(_props: { initialFolder?: string } = {}) {
             <div className="flex flex-col gap-3 mb-6 sm:flex-row sm:items-start sm:justify-between sm:mb-8">
               <h2 className="text-xl font-semibold text-gray-900 leading-snug sm:max-w-[55%]">
                 {displayCategory === 'All' ? 'All Products' : displayCategory}{' '}
-                <span className="text-gray-400 font-normal text-sm ml-1 whitespace-nowrap">({sorted.length} Items)</span>
+                {/* No count while loading — it would read "(0 Items)" until products arrive. */}
+                {productsLoading ? (
+                  <span aria-hidden="true" className="inline-block align-middle ml-1 h-4 w-16 rounded-full bg-gray-100 animate-pulse" />
+                ) : (
+                  <span className="text-gray-400 font-normal text-sm ml-1 whitespace-nowrap">({sorted.length} Items)</span>
+                )}
               </h2>
 
               {/* Check Products */}

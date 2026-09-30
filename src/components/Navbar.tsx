@@ -564,7 +564,15 @@ export default function Navbar() {
                             <div key={colIdx}>
                               {colSections.map((sec, secIdx) => (
                                 <Fragment key={sec.title}>
-                                  <h4 className={secIdx > 0 ? 'font-semibold text-gray-900 mb-4 border-b pb-2 text-sm mt-6' : 'font-semibold text-gray-900 mb-4 border-b pb-2 text-sm'}>{sec.title}</h4>
+                                  <h4 className={secIdx > 0 ? 'font-semibold text-gray-900 mb-4 border-b pb-2 text-sm mt-6' : 'font-semibold text-gray-900 mb-4 border-b pb-2 text-sm'}>
+                                    {/* The heading opens the whole category; its conditions below narrow it down. */}
+                                    {sec.href ? (
+                                      <Link href={sec.href} prefetch={false} onClick={() => setMegaSuppressed(true)} className="inline-flex items-center gap-1.5 hover:text-primary transition-colors group/cat">
+                                        {sec.title}
+                                        <i aria-hidden="true" className="fa-solid fa-arrow-right text-[10px] opacity-0 -translate-x-1 group-hover/cat:opacity-100 group-hover/cat:translate-x-0 transition-all duration-200"></i>
+                                      </Link>
+                                    ) : sec.title}
+                                  </h4>
                                   <ul className={secIdx < colSections.length - 1 ? 'space-y-2 text-[13px] mb-6' : 'space-y-2 text-[13px]'}>
                                     {sec.items.map((it, n) => renderProductLi(sec.title, it, `${sec.title}-${n}`))}
                                   </ul>

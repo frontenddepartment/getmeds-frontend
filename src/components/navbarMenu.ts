@@ -8,7 +8,8 @@
 import { client } from '@/lib/sanity';
 
 export type MenuItem = { href: string; label: string };
-export type MenuSection = { title: string; items: MenuItem[] };
+/** href, when set, is the whole category's listing page (the section heading links there). */
+export type MenuSection = { title: string; items: MenuItem[]; href?: string };
 
 const i = (href: string, label: string): MenuItem => ({ href, label });
 
@@ -403,7 +404,16 @@ function buildDynamicMenu(result: { json_data?: string; categoryImages?: Categor
     }
   });
 
-  const sections: Record<string, { title: string; col: number; subcategories: string[] }> = {};
+  // Category name -> its Category Folder, which is the category's own listing URL
+  // ("/cancer-medicines", "/heart-medicines"), same as the catalogue sidebar links to.
+  const folderByCategory = new Map<string, string>();
+  rows.forEach((row) => {
+    const name = String(row.category || '').trim().toLowerCase();
+    const folder = String(row.categoryFolder || '').trim();
+    if (name && folder && !folderByCategory.has(name)) folderByCategory.set(name, folder);
+  });
+
+  const sections: Record<string, { title: string; col: number; subcategories: string[]; href?: string }> = {};
   processedCategories.forEach((cat) => {
     let minCol = 3;
     let confTitle: string | null = null;
@@ -415,6 +425,9 @@ function buildDynamicMenu(result: { json_data?: string; categoryImages?: Categor
     }
     const title = cat.slugs.length > 1 ? cat.category : confTitle || cat.category;
     if (!sections[title]) sections[title] = { title, col: minCol, subcategories: [] };
+    // A heading that merges several categories ("Hematology / Oncology") has no single page.
+    const folder = cat.slugs.length === 1 ? folderByCategory.get(cat.category.toLowerCase()) : undefined;
+    if (folder && !sections[title].href) sections[title].href = `/${folder}`;
     cat.subcategory.forEach((sub) => {
       if (sub && !sections[title].subcategories.includes(sub)) sections[title].subcategories.push(sub);
     });
@@ -430,7 +443,7 @@ function buildDynamicMenu(result: { json_data?: string; categoryImages?: Categor
   const mobileSections: MenuSection[] = [];
   Object.values(sections).forEach((sec) => {
     if (sec.subcategories.length > 0) {
-      const section = { title: sec.title, items: sec.subcategories.map(toItem) };
+      const section: MenuSection = { title: sec.title, items: sec.subcategories.map(toItem), href: sec.href };
       desktopColumns[sec.col].push(section);
       mobileSections.push(section);
     }

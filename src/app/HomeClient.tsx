@@ -359,6 +359,9 @@ export default function HomeClient() {
     : fallbackHeroSlides;
   const [heroIndex, setHeroIndex] = useState(0);
   const [heroFading, setHeroFading] = useState(false);
+  // One <h1> per page: only the first slide ("Life-Saving Medicines…") is the
+  // page's main heading. The other slides render the same styling as <h2>.
+  const HeroHeading = heroIndex === 0 ? 'h1' : 'h2';
   const heroTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const goToHeroSlide = (idx: number) => {
@@ -370,12 +373,26 @@ export default function HomeClient() {
     }, 400);
   };
 
+  // The two "Patient First" banners are links; on hover they lift slightly with a
+  // deeper, soft shadow (a floating card) so people can tell. Same cue on keyboard focus.
+  const bannerCardClass =
+    'w-full h-full object-cover object-center rounded-[15px] sm:rounded-[24px] shadow-lg ' +
+    'transition-[translate,box-shadow] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-[translate] ' +
+    'hover:-translate-y-1.5 hover:shadow-[0_22px_45px_-14px_rgba(15,40,70,0.35)] ' +
+    '[a:focus-visible>&]:-translate-y-1.5 [a:focus-visible>&]:shadow-[0_22px_45px_-14px_rgba(15,40,70,0.35)] ' +
+    'motion-reduce:transition-none motion-reduce:hover:translate-y-0';
+
+  // Hovering the hero pauses autoplay (so the text can be read and selected);
+  // leaving it restarts the full 6s countdown for the current slide.
+  const [heroPaused, setHeroPaused] = useState(false);
+
   useEffect(() => {
+    if (heroPaused) return;
     heroTimerRef.current = setTimeout(() => {
       goToHeroSlide((heroIndex + 1) % heroSlides.length);
     }, 6000);
     return () => { if (heroTimerRef.current) clearTimeout(heroTimerRef.current); };
-  }, [heroIndex]);
+  }, [heroIndex, heroPaused]);
 
 
 
@@ -622,10 +639,38 @@ export default function HomeClient() {
         .float-b { animation: floatB 3.2s ease-in-out infinite 0.6s; }
         .float-c { animation: float 3.4s ease-in-out infinite 1.1s; }
         .float-d { animation: floatB 3s ease-in-out infinite 1.7s; }
+        /* Icon micro-gestures: hovering (or tabbing into) a card or button plays its icon's
+           gesture once — the phone rings, globes spin, the truck drives, and so on. */
+        @keyframes gmRing { 0%,100%{transform:rotate(0)} 10%,30%,50%{transform:rotate(-18deg)} 20%,40%,60%{transform:rotate(18deg)} 75%{transform:rotate(0)} }
+        @keyframes gmSpin { from{transform:rotate(0)} to{transform:rotate(360deg)} }
+        @keyframes gmShake { 0%,100%{transform:rotate(0)} 20%{transform:rotate(-14deg)} 40%{transform:rotate(12deg)} 60%{transform:rotate(-8deg)} 80%{transform:rotate(5deg)} }
+        @keyframes gmFlash { 0%,100%{opacity:1;transform:scale(1)} 20%{opacity:.35} 40%{opacity:1;transform:scale(1.2)} 60%{opacity:.55} 80%{opacity:1} }
+        @keyframes gmTilt { 0%,100%{transform:rotate(0)} 35%{transform:rotate(-16deg)} 65%{transform:rotate(6deg)} }
+        @keyframes gmPulse { 0%,100%{transform:scale(1)} 40%{transform:scale(1.25)} 70%{transform:scale(.95)} }
+        @keyframes gmPop { 0%,100%{transform:scale(1)} 35%{transform:scale(1.3)} 60%{transform:scale(.92)} 80%{transform:scale(1.06)} }
+        @keyframes gmDrive { 0%,100%{transform:translateX(0)} 30%{transform:translateX(5px)} 45%{transform:translate(5px,-1px)} 70%{transform:translateX(-2px)} }
+        @keyframes gmBounce { 0%,100%{transform:translateY(0)} 30%{transform:translateY(-6px)} 55%{transform:translateY(0)} 75%{transform:translateY(-2px)} }
+        @keyframes gmLift { 0%,100%{transform:translateY(0) rotate(0)} 40%{transform:translateY(-5px) rotate(-8deg)} 70%{transform:translateY(-1px) rotate(3deg)} }
+        @media (prefers-reduced-motion: no-preference) {
+          .gm-icon-host:is(:hover,:focus-within) .fa-phone { animation: gmRing .9s ease-in-out; }
+          .gm-icon-host:is(:hover,:focus-within) :is(.fa-globe,.fa-earth-americas,.fa-earth-asia) { animation: gmSpin 1s ease-in-out; }
+          .gm-icon-host:is(:hover,:focus-within) .fa-pills { animation: gmShake .6s ease-in-out; }
+          .gm-icon-host:is(:hover,:focus-within) .fa-bolt { animation: gmFlash .7s ease-in-out; }
+          .gm-icon-host:is(:hover,:focus-within) .fa-microscope { animation: gmTilt .7s ease-in-out; transform-origin: 50% 90%; }
+          .gm-icon-host:is(:hover,:focus-within) :is(.fa-network-wired,.fa-microchip) { animation: gmPulse .6s ease-in-out; }
+          .gm-icon-host:is(:hover,:focus-within) :is(.fa-shield-halved,.fa-certificate) { animation: gmPop .6s ease-out; }
+          .gm-icon-host:is(:hover,:focus-within) .fa-truck { animation: gmDrive .7s ease-in-out; }
+          .gm-icon-host:is(:hover,:focus-within) :is(.fa-store,.fa-landmark,.fa-user-doctor) { animation: gmBounce .7s ease-out; }
+          .gm-icon-host:is(:hover,:focus-within) :is(.fa-hand-holding-medical,.fa-handshake) { animation: gmLift .7s ease-in-out; }
+        }
       ` }} />
 
       {/* Desktop Hero Container - Slider */}
-      <div className="hidden md:flex relative min-h-[600px] w-full overflow-hidden flex-col justify-between">
+      <div
+        className="hidden md:flex relative min-h-[600px] w-full overflow-hidden flex-col justify-between"
+        onMouseEnter={() => setHeroPaused(true)}
+        onMouseLeave={() => setHeroPaused(false)}
+      >
         {/* Slide backgrounds */}
         {heroSlides.map((slide, i) => (
           <div
@@ -651,14 +696,16 @@ export default function HomeClient() {
 
         {/* Hero Content Area — heading, subtext, and buttons hidden on the 2nd slide */}
         {heroIndex !== 1 && (
-          <div className="max-w-7xl mx-auto px-6 w-full relative z-10 flex-grow flex items-center justify-start pt-20 md:pt-28 pb-16 md:pb-20 text-left pointer-events-none">
+          <div className="max-w-7xl mx-auto px-[max(1.5rem,calc(4.5rem_-_(100vw_-_80rem)/2))] w-full relative z-10 flex-grow flex items-center justify-start pt-20 md:pt-28 pb-16 md:pb-20 text-left pointer-events-none">
             <div className="max-w-3xl space-y-3 flex flex-col items-start">
-              <div style={{ opacity: heroFading ? 0 : 1, transition: 'opacity 0.4s ease' }}>
-                <h1 className="text-2xl md:text-[40px] lg:text-[52px] font-bold leading-[1.15] tracking-normal bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent mb-3">
+              {/* pointer-events-auto + select-text: the wrapper above passes clicks through
+                  to the slide link, which also made this copy impossible to select. */}
+              <div className="pointer-events-auto select-text" style={{ opacity: heroFading ? 0 : 1, transition: 'opacity 0.4s ease' }}>
+                <HeroHeading className="text-2xl md:text-[40px] lg:text-[52px] font-bold leading-[1.15] tracking-normal bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent selection:bg-[#1D9FDA]/20 selection:text-[#0E6F9E] mb-3">
                   {heroSlides[heroIndex].heading.split('\n').map((line, i, arr) => (
                     <React.Fragment key={i}>{line}{i < arr.length - 1 && <br />}</React.Fragment>
                   ))}
-                </h1>
+                </HeroHeading>
                 <p className="text-[#000b5d] text-sm md:text-base font-medium leading-relaxed max-w-xl">
                   {heroSlides[heroIndex].sub}
                 </p>
@@ -669,7 +716,7 @@ export default function HomeClient() {
                 <a href="/product-range" className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:opacity-90 text-white text-center font-bold uppercase tracking-wider text-[11px] px-6 py-3 rounded-lg shadow-2xl shadow-blue-500/40 transition-all flex items-center justify-center gap-2 group">
                   Our Medicines <i className="fa-solid fa-chevron-right group-hover:translate-x-1 transition-transform"></i>
                 </a>
-                <button onClick={() => setIsInquiryOpen(true)} className="bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/40 text-center font-bold uppercase tracking-wider text-[11px] px-6 py-3 rounded-lg transition-all flex items-center justify-center gap-2">
+                <button onClick={() => setIsInquiryOpen(true)} className="gm-icon-host bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/40 text-center font-bold uppercase tracking-wider text-[11px] px-6 py-3 rounded-lg transition-all flex items-center justify-center gap-2">
                   <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">Become a Partner</span>
                   <i className="fa-solid fa-phone text-[#1D9FDA]"></i>
                 </button>
@@ -684,7 +731,7 @@ export default function HomeClient() {
             className="absolute inset-0 z-10 overflow-hidden flex flex-col items-start justify-end pt-2 pb-16 text-left transition-opacity duration-400"
             style={{ opacity: heroFading ? 0 : 1 }}
           >
-            <div className="max-w-7xl mx-auto px-6 w-full flex flex-col items-start">
+            <div className="max-w-7xl mx-auto px-[max(1.5rem,calc(4.5rem_-_(100vw_-_80rem)/2))] w-full flex flex-col items-start">
               <img
                 src="assets/logoandtextpap.png"
                 alt="Patient Assistance Program — Chemotherapy & Cancer Medicines"
@@ -728,21 +775,38 @@ export default function HomeClient() {
           </div>
         )}
 
-        {/* Slider Controls — dots + arrows */}
-        <div className="absolute bottom-5 left-0 right-0 z-20 flex items-center justify-center gap-6">
-          {/* Prev */}
-          <button
-            onClick={() => goToHeroSlide((heroIndex - 1 + heroSlides.length) % heroSlides.length)}
-            className="w-8 h-8 rounded-full bg-white/20 hover:bg-white/40 backdrop-blur-sm flex items-center justify-center transition"
-          >
-            <i className="fa-solid fa-chevron-left text-white text-xs"></i>
-          </button>
+        {/* Prev / next: a full-height column on each edge. The whole strip is the button;
+            a soft shade and the arrow brighten on hover. */}
+        <button
+          type="button"
+          aria-label="Previous slide"
+          onClick={() => goToHeroSlide((heroIndex - 1 + heroSlides.length) % heroSlides.length)}
+          className="group/prev absolute inset-y-0 left-0 z-20 w-16 flex items-center justify-center bg-gradient-to-r from-black/0 to-transparent hover:from-black/15 transition-colors duration-300 focus-visible:outline-none focus-visible:from-black/15"
+        >
+          <span className="w-10 h-10 rounded-full bg-white/25 group-hover/prev:bg-white/60 group-focus-visible/prev:bg-white/60 backdrop-blur-sm flex items-center justify-center shadow-sm transition-[background-color,translate] duration-300 group-hover/prev:-translate-x-0.5">
+            <i className="fa-solid fa-chevron-left text-[#000b5d]/70 text-sm"></i>
+          </span>
+        </button>
+        <button
+          type="button"
+          aria-label="Next slide"
+          onClick={() => goToHeroSlide((heroIndex + 1) % heroSlides.length)}
+          className="group/next absolute inset-y-0 right-0 z-20 w-16 flex items-center justify-center bg-gradient-to-l from-black/0 to-transparent hover:from-black/15 transition-colors duration-300 focus-visible:outline-none focus-visible:from-black/15"
+        >
+          <span className="w-10 h-10 rounded-full bg-white/25 group-hover/next:bg-white/60 group-focus-visible/next:bg-white/60 backdrop-blur-sm flex items-center justify-center shadow-sm transition-[background-color,translate] duration-300 group-hover/next:translate-x-0.5">
+            <i className="fa-solid fa-chevron-right text-[#000b5d]/70 text-sm"></i>
+          </span>
+        </button>
 
-          {/* Dots */}
-          <div className="flex items-center gap-2">
+        {/* Slide dots */}
+        <div className="absolute bottom-5 left-0 right-0 z-20 flex items-center justify-center pointer-events-none">
+          <div className="flex items-center gap-2 pointer-events-auto">
             {heroSlides.map((_, i) => (
               <button
                 key={i}
+                type="button"
+                aria-label={`Go to slide ${i + 1}`}
+                aria-current={i === heroIndex ? 'true' : undefined}
                 onClick={() => goToHeroSlide(i)}
                 className="transition-all duration-300 rounded-full"
                 style={{
@@ -753,14 +817,6 @@ export default function HomeClient() {
               />
             ))}
           </div>
-
-          {/* Next */}
-          <button
-            onClick={() => goToHeroSlide((heroIndex + 1) % heroSlides.length)}
-            className="w-8 h-8 rounded-full bg-white/20 hover:bg-white/40 backdrop-blur-sm flex items-center justify-center transition"
-          >
-            <i className="fa-solid fa-chevron-right text-white text-xs"></i>
-          </button>
         </div>
       </div>
 
@@ -819,7 +875,12 @@ export default function HomeClient() {
         <div className="bg-white px-4">
 
           {/* Image Slider Container */}
-          <div className="relative aspect-[16/10] w-full rounded-[10px] overflow-hidden mb-4 bg-gray-100">
+          <div
+            className="relative aspect-[16/10] w-full rounded-[10px] overflow-hidden mb-4 bg-gray-100"
+            onTouchStart={() => setHeroPaused(true)}
+            onTouchEnd={() => setHeroPaused(false)}
+            onTouchCancel={() => setHeroPaused(false)}
+          >
             {/* Slide backgrounds */}
             {heroSlides.map((slide, i) => (
               <div
@@ -851,7 +912,9 @@ export default function HomeClient() {
                 className="absolute top-8 left-4 right-4 z-10 transition-opacity duration-400 pointer-events-none"
                 style={{ opacity: heroFading ? 0 : 1 }}
               >
-                <h1 className="text-[24px] font-black leading-[1.2] tracking-tight max-w-[90%]">
+                {/* Always <h2>: the desktop hero above already holds the page's one <h1>
+                    (both are in the HTML; CSS just hides one per screen size). */}
+                <h2 className="text-[24px] font-black leading-[1.2] tracking-tight max-w-[90%] pointer-events-auto select-text selection:bg-[#1D9FDA]/20 selection:text-[#0E6F9E]">
                   {heroSlides[heroIndex].heading.split('\n').map((line, i, arr) => (
                     <React.Fragment key={i}>
                       <span className="bg-gradient-to-r from-[#61A644] via-[#1D9FDA] to-[#61A644] bg-clip-text text-transparent">
@@ -860,7 +923,7 @@ export default function HomeClient() {
                       {i < arr.length - 1 && <br />}
                     </React.Fragment>
                   ))}
-                </h1>
+                </h2>
               </div>
             )}
 
@@ -1050,7 +1113,7 @@ export default function HomeClient() {
                 newTab={false}
                 src={getImage('Patient First Section Image', 'assets/genericslider.jpg')}
                 alt="Medical Professional"
-                className="w-full h-full object-cover object-center rounded-[15px] sm:rounded-[24px] shadow-lg"
+                className={bannerCardClass}
               />
             </div>
             <div className="aspect-[1200/680] w-full">
@@ -1059,7 +1122,7 @@ export default function HomeClient() {
                 newTab={false}
                 src={getImage('Patient Second Section Image', 'assets/test.jpg')}
                 alt="Medical Facility"
-                className="w-full h-full object-cover object-center rounded-[15px] sm:rounded-[24px] shadow-lg"
+                className={bannerCardClass}
               />
             </div>
           </div>
@@ -1123,7 +1186,7 @@ export default function HomeClient() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full">
             {/* Card 1: Foundation */}
-            <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ca-anim ca-zoom ca-d1">
+            <div className="gm-icon-host bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ca-anim ca-zoom ca-d1">
               <i className="fa-solid fa-pills text-3xl text-[#1D9FDA] mb-4 block"></i>
               <h4 className="text-lg font-semibold text-gray-900 mb-2">Foundation</h4>
               <p className="text-sm font-bold text-gray-500 mb-1">Everyday medicines, never out of reach.</p>
@@ -1131,7 +1194,7 @@ export default function HomeClient() {
             </div>
 
             {/* Card 2: Acceleration */}
-            <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ca-anim ca-zoom ca-d2">
+            <div className="gm-icon-host bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ca-anim ca-zoom ca-d2">
               <i className="fa-solid fa-bolt text-3xl text-[#61A644] mb-4 block"></i>
               <h4 className="text-lg font-semibold text-gray-900 mb-2">Acceleration</h4>
               <p className="text-sm font-bold text-gray-500 mb-1">Smarter therapies, faster access.</p>
@@ -1139,7 +1202,7 @@ export default function HomeClient() {
             </div>
 
             {/* Card 3: Frontier */}
-            <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ca-anim ca-zoom ca-d3">
+            <div className="gm-icon-host bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ca-anim ca-zoom ca-d3">
               <i className="fa-solid fa-microscope text-3xl text-[#5533FF] mb-4 block"></i>
               <h4 className="text-lg font-semibold text-gray-900 mb-2">Frontier</h4>
               <p className="text-sm font-bold text-gray-500 mb-1">Advanced therapies, within reach.</p>
@@ -1147,7 +1210,7 @@ export default function HomeClient() {
             </div>
 
             {/* Card 4: Beyond the molecule */}
-            <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ca-anim ca-zoom ca-d4">
+            <div className="gm-icon-host bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ca-anim ca-zoom ca-d4">
               <i className="fa-solid fa-network-wired text-3xl text-[#FFB020] mb-4 block"></i>
               <h4 className="text-lg font-semibold text-gray-900 mb-2">Beyond the molecule</h4>
               <p className="text-sm font-bold text-gray-500 mb-1">The access infrastructure.</p>
@@ -1216,7 +1279,8 @@ export default function HomeClient() {
                 color: #fff;
                 background-color: rgba(255, 255, 255, 0.2);
               }
-              .therap-card-pill:hover {
+              .therap-card-pill:hover,
+              .group:hover .therap-card-pill {
                 background-color: rgba(255, 255, 255, 0.3);
               }
               .therap-card-subpill {
@@ -1248,8 +1312,15 @@ export default function HomeClient() {
                     />
                   ))}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent therap-card-gradient-mobile" />
-                  {/* Card info overlay */}
-                  <div className="absolute bottom-5 left-4 right-4 z-10 flex items-end justify-between therap-card-text">
+                  {/* Tapping anywhere on the card goes to the category, not just "See All" */}
+                  <a
+                    href={therapCards[therapMobileActive]?.link}
+                    onClick={() => { const n = therapCards[therapMobileActive]?.categoryName; if (n) goToCategoryListing(n); }}
+                    aria-label={`See all ${therapCards[therapMobileActive]?.name ?? ''} medicines`}
+                    className="absolute inset-0 z-[5]"
+                  />
+                  {/* Card info overlay — taps pass through to the card link above, except on "See All" */}
+                  <div className="absolute bottom-5 left-4 right-4 z-10 flex items-end justify-between therap-card-text pointer-events-none">
                     <div>
                       <h3 className="text-white text-xs md:text-lg font-bold mb-0.5">{therapCards[therapMobileActive]?.name}</h3>
                       <div className="overflow-hidden w-40 sm:w-48">
@@ -1272,7 +1343,7 @@ export default function HomeClient() {
                     <a
                       href={therapCards[therapMobileActive]?.link}
                       onClick={() => { const n = therapCards[therapMobileActive]?.categoryName; if (n) goToCategoryListing(n); }}
-                      className="text-[11px] font-semibold text-white bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full px-3.5 py-1.5 transition-colors shrink-0 therap-card-pill"
+                      className="text-[11px] font-semibold text-white bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full px-3.5 py-1.5 transition-colors shrink-0 therap-card-pill pointer-events-auto"
                     >
                       See All
                     </a>
@@ -1336,7 +1407,14 @@ export default function HomeClient() {
                     {Array.from({ length: totalPages }).map((_, pageIdx) => (
                       <div key={pageIdx} className="min-w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                         {therapCards.slice(pageIdx * 4, pageIdx * 4 + 4).map((card) => (
-                          <div key={card.name} className="relative rounded-2xl overflow-hidden aspect-[3/4] group cursor-pointer">
+                          // The whole card is the link (it used to be only the "See All" pill).
+                          <a
+                            key={card.name}
+                            href={card.link}
+                            onClick={() => { if (card.categoryName) goToCategoryListing(card.categoryName); }}
+                            aria-label={`See all ${card.name} medicines`}
+                            className="relative block rounded-2xl overflow-hidden aspect-[3/4] group cursor-pointer focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#1D9FDA]/60"
+                          >
                             <img
                               src={card.img}
                               className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
@@ -1369,9 +1447,9 @@ export default function HomeClient() {
                                   <span className="text-white/75 text-xs pr-6">{card.subcategories?.join(' • ')}</span>
                                 </div>
                               </div>
-                              <a href={card.link} onClick={() => { if (card.categoryName) goToCategoryListing(card.categoryName); }} className="text-xs font-semibold text-white bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full px-3 py-1 transition-colors therap-card-pill">See All</a>
+                              <span className="inline-block text-xs font-semibold text-white bg-white/20 group-hover:bg-white/30 backdrop-blur-sm rounded-full px-3 py-1 transition-colors therap-card-pill">See All</span>
                             </div>
-                          </div>
+                          </a>
                         ))}
                       </div>
                     ))}
@@ -1420,7 +1498,7 @@ export default function HomeClient() {
               {/* Row 1 — 2 wide cards */}
 
               {/* Card 1: Global Network */}
-              <div className="col-span-6 md:col-span-3 bg-gradient-to-br from-white to-sky-100/60 rounded-2xl p-6 relative overflow-hidden flex flex-col justify-between hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer" style={{ minHeight: '220px' }}>
+              <div className="gm-icon-host col-span-6 md:col-span-3 bg-gradient-to-br from-white to-sky-100/60 rounded-2xl p-6 relative overflow-hidden flex flex-col justify-between hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer" style={{ minHeight: '220px' }}>
                 <div className="relative z-10">
                   <h3 className="text-base font-bold text-gray-900 mb-2">Global Network of Pharma Manufacturers</h3>
                   <p className="text-gray-500 text-sm leading-relaxed max-w-full md:max-w-[55%]">Strategic sourcing partnerships with leading manufacturers across India, China, Europe, and the US.</p>
@@ -1444,7 +1522,7 @@ export default function HomeClient() {
               </div>
 
               {/* Card 2: Regulatory */}
-              <div className="col-span-6 md:col-span-3 bg-gradient-to-br from-white to-violet-100/60 rounded-2xl p-6 relative overflow-hidden flex flex-col justify-between hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer" style={{ minHeight: '220px' }}>
+              <div className="gm-icon-host col-span-6 md:col-span-3 bg-gradient-to-br from-white to-violet-100/60 rounded-2xl p-6 relative overflow-hidden flex flex-col justify-between hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer" style={{ minHeight: '220px' }}>
                 <div className="relative z-10">
                   <h3 className="text-base font-bold text-gray-900 mb-2">Regulatory & Compliance</h3>
                   <p className="text-gray-500 text-sm leading-relaxed max-w-full md:max-w-[55%]">FDA Philippines, DOH, and international regulatory expertise across registration and post-market compliance.</p>
@@ -1467,7 +1545,7 @@ export default function HomeClient() {
               {/* Row 2 — 3 normal cards */}
 
               {/* Card 3: Supply Chain */}
-              <div className="col-span-6 md:col-span-2 bg-gradient-to-br from-white to-teal-100/60 rounded-2xl p-6 relative overflow-hidden flex flex-col justify-between hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer" style={{ minHeight: '220px' }}>
+              <div className="gm-icon-host col-span-6 md:col-span-2 bg-gradient-to-br from-white to-teal-100/60 rounded-2xl p-6 relative overflow-hidden flex flex-col justify-between hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer" style={{ minHeight: '220px' }}>
                 <div className="relative z-10">
                   <h3 className="text-base font-bold text-gray-900 mb-2">Precision Supply Chain & Nationwide Distribution</h3>
                   <p className="text-gray-500 text-sm leading-relaxed">Temperature-controlled logistics and last-mile delivery across Luzon, Visayas, and Mindanao.</p>
@@ -1485,7 +1563,7 @@ export default function HomeClient() {
               </div>
 
               {/* Card 4: Sales */}
-              <div className="col-span-6 md:col-span-2 bg-gradient-to-br from-white to-orange-100/60 rounded-2xl p-6 relative overflow-hidden flex flex-col justify-between hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer" style={{ minHeight: '220px' }}>
+              <div className="gm-icon-host col-span-6 md:col-span-2 bg-gradient-to-br from-white to-orange-100/60 rounded-2xl p-6 relative overflow-hidden flex flex-col justify-between hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer" style={{ minHeight: '220px' }}>
                 <div className="relative z-10">
                   <h3 className="text-base font-bold text-gray-900 mb-2">Sales and Distribution</h3>
                   <p className="text-gray-500 text-sm leading-relaxed">10,000+ pharmacy and 500+ hospital accounts, and the prescribing physicians behind them, served by dedicated nationwide sales teams.</p>
@@ -1503,7 +1581,7 @@ export default function HomeClient() {
               </div>
 
               {/* Card 5: Gov Bidding */}
-              <div className="col-span-6 md:col-span-2 bg-gradient-to-br from-white to-indigo-100/60 rounded-2xl p-6 relative overflow-hidden flex flex-col justify-between hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer" style={{ minHeight: '220px' }}>
+              <div className="gm-icon-host col-span-6 md:col-span-2 bg-gradient-to-br from-white to-indigo-100/60 rounded-2xl p-6 relative overflow-hidden flex flex-col justify-between hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer" style={{ minHeight: '220px' }}>
                 <div className="relative z-10">
                   <h3 className="text-base font-bold text-gray-900 mb-2">Government Bidding & Public Sector Access</h3>
                   <p className="text-gray-500 text-sm leading-relaxed">Partnering with government hospitals through competitive bidding to enhance access to quality healthcare and essential medicines.</p>
@@ -1523,7 +1601,7 @@ export default function HomeClient() {
               {/* Row 3 — 2 wide cards */}
 
               {/* Card 6: Gov Medical */}
-              <div className="col-span-6 md:col-span-3 bg-gradient-to-br from-white to-emerald-100/60 rounded-2xl p-6 relative overflow-hidden flex flex-col justify-between hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer" style={{ minHeight: '200px' }}>
+              <div className="gm-icon-host col-span-6 md:col-span-3 bg-gradient-to-br from-white to-emerald-100/60 rounded-2xl p-6 relative overflow-hidden flex flex-col justify-between hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer" style={{ minHeight: '200px' }}>
                 <div className="relative z-10">
                   <h3 className="text-base font-bold text-gray-900 mb-2">Government Medical Assistance & Program Accreditation</h3>
                   <p className="text-gray-500 text-sm leading-relaxed max-w-full md:max-w-[55%]">Accredited provider of chemotherapy and cancer medicines for DSWD, PCSO, and other national government medical assistance programs.</p>
@@ -1545,7 +1623,7 @@ export default function HomeClient() {
               </div>
 
               {/* Card 7: CLIDP */}
-              <div className="col-span-6 md:col-span-3 bg-gradient-to-br from-white to-purple-100/60 rounded-2xl p-6 relative overflow-hidden flex flex-col justify-between hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer" style={{ minHeight: '200px' }}>
+              <div className="gm-icon-host col-span-6 md:col-span-3 bg-gradient-to-br from-white to-purple-100/60 rounded-2xl p-6 relative overflow-hidden flex flex-col justify-between hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer" style={{ minHeight: '200px' }}>
                 <div className="relative z-10">
                   <h3 className="text-base font-bold text-gray-900 mb-2">Certificate of Listing of Identical Drug Product (CLIDP) Services</h3>
                   <p className="text-gray-500 text-sm leading-relaxed max-w-full md:max-w-[55%]">End-to-end CLIDP application, certification, and ongoing compliance management for our portfolio.</p>
@@ -1568,7 +1646,7 @@ export default function HomeClient() {
               {/* Row 4 — 2 wide cards */}
 
               {/* Card 8: International */}
-              <div className="col-span-6 md:col-span-3 bg-gradient-to-br from-white to-rose-100/60 rounded-2xl p-6 relative overflow-hidden flex flex-col justify-between hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer" style={{ minHeight: '200px' }}>
+              <div className="gm-icon-host col-span-6 md:col-span-3 bg-gradient-to-br from-white to-rose-100/60 rounded-2xl p-6 relative overflow-hidden flex flex-col justify-between hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer" style={{ minHeight: '200px' }}>
                 <div className="relative z-10">
                   <h3 className="text-base font-bold text-gray-900 mb-2">International Operations & Pharmacy Footprint</h3>
                   <p className="text-gray-500 text-sm leading-relaxed max-w-full md:max-w-[55%]">Cross-border operations and partner pharmacy networks across multiple regions, extending beyond Asia into global markets.</p>
@@ -1589,7 +1667,7 @@ export default function HomeClient() {
               </div>
 
               {/* Card 9: Digital Health */}
-              <div className="col-span-6 md:col-span-3 bg-gradient-to-br from-white to-cyan-100/60 rounded-2xl p-6 relative overflow-hidden flex flex-col justify-between hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer" style={{ minHeight: '200px' }}>
+              <div className="gm-icon-host col-span-6 md:col-span-3 bg-gradient-to-br from-white to-cyan-100/60 rounded-2xl p-6 relative overflow-hidden flex flex-col justify-between hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer" style={{ minHeight: '200px' }}>
                 <div className="relative z-10">
                   <h3 className="text-base font-bold text-gray-900 mb-2">Digital & Smart Healthcare Solutions</h3>
                   <p className="text-gray-500 text-sm leading-relaxed max-w-full md:max-w-[55%]">Patient adherence platforms, smart inventory systems, and healthcare data integrations supporting informed and connected healthcare experiences.</p>
@@ -1617,7 +1695,7 @@ export default function HomeClient() {
                   take, because a tenth card in a six-column grid has no partner
                   to share a row with — and this is the capability the section
                   heading now leads with. */}
-              <div className="col-span-6 bg-gradient-to-br from-white to-blue-100/60 rounded-2xl p-6 relative overflow-hidden flex flex-col justify-between hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer" style={{ minHeight: '200px' }}>
+              <div className="gm-icon-host col-span-6 bg-gradient-to-br from-white to-blue-100/60 rounded-2xl p-6 relative overflow-hidden flex flex-col justify-between hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer" style={{ minHeight: '200px' }}>
                 <div className="relative z-10">
                   <h3 className="text-base font-bold text-gray-900 mb-2">Physician-Direct Product Access</h3>
                   <p className="text-gray-500 text-sm leading-relaxed max-w-full md:max-w-[55%]">Product availability and inquiries, medical documentation, and Compassionate Special Permit (CSP) coordination.</p>
@@ -1690,8 +1768,14 @@ export default function HomeClient() {
                   <div key={i}>
                     <h4 className="font-bold text-gray-900 text-base mb-2">{item.title}</h4>
                     <p className="text-gray-600 md:text-gray-400 text-sm leading-relaxed mb-4">{item.desc}</p>
-                    <a href="/services" className="inline-flex items-center gap-1.5 text-sm font-semibold transition-opacity hover:opacity-70" style={{ color: item.accent }}>
-                      Learn More <i className="fa-solid fa-arrow-right text-[11px]"></i>
+                    {/* Outlined pill in the item's accent; on hover the accent sweeps in
+                        from the left to fill it and the text turns white. */}
+                    <a
+                      href="/services"
+                      className="group/lm inline-flex items-center gap-1.5 text-sm font-semibold rounded-full px-4 py-1.5 border-solid border-[color:var(--accent)] text-[color:var(--accent)] bg-[linear-gradient(var(--accent),var(--accent))] bg-no-repeat bg-left bg-[length:0%_100%] transition-[background-size,color] duration-300 ease-out hover:bg-[length:100%_100%] hover:text-white focus-visible:bg-[length:100%_100%] focus-visible:text-white focus-visible:outline-none motion-reduce:transition-none"
+                      style={{ '--accent': item.accent } as React.CSSProperties}
+                    >
+                      Learn More <i className="fa-solid fa-arrow-right text-[11px] transition-[translate] duration-300 group-hover/lm:translate-x-0.5"></i>
                     </a>
                   </div>
                 ))}
@@ -1738,7 +1822,7 @@ export default function HomeClient() {
                 desc: 'Fully licensed by the Food and Drug Administration of the Philippines as a wholesaler, importer, distributor and retail pharmacy.',
               },
             ].map((item, i) => (
-              <div key={i} className={`text-center ca-anim ca-zoom ca-d${i + 1}`}>
+              <div key={i} className={`gm-icon-host text-center ca-anim ca-zoom ca-d${i + 1}`}>
                 <div className="mb-6 flex justify-center">
                   <i className={`fa-solid ${item.icon}`} style={{ fontSize: '44px', color: item.color }}></i>
                 </div>

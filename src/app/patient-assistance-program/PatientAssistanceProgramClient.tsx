@@ -247,10 +247,6 @@ export default function PatientAssistanceProgramClient() {
 
         {/* Hero Banner */}
         <section className="w-full mx-auto px-3 sm:px-4 md:px-6 mt-3 md:mt-4 mb-0 max-w-[1600px]">
-          {/* The page's title is lettered into the banner artwork, so it has no text heading of
-              its own. This gives it one for search engines and screen readers, worded as the
-              banner reads; visitors see the artwork as before. */}
-          <h1 className="sr-only">Patient Assistance Program: Chemotherapy &amp; Cancer Medicines</h1>
           <div className={`relative rounded-[10px] md:rounded-[1.5rem] overflow-hidden min-h-[190px] sm:min-h-[360px] md:min-h-[450px] lg:min-h-[500px] flex items-end group transition-colors duration-500 ${!heroImgLoaded ? 'bg-gray-200 animate-pulse' : 'bg-gray-100'}`}>
             {!imagesLoading && (() => {
               const heroFullSrc = getImage('PAP Hero Background', 'assets/pap-banner.png');
@@ -276,9 +272,12 @@ export default function PatientAssistanceProgramClient() {
           <div className="max-w-7xl mx-auto px-4 pt-6 md:pt-10 pb-0 flex justify-center mb-0">
             <div ref={introHeaderRef} className="inline-flex items-center">
               <div className="min-w-0">
-                <p className="text-sm sm:text-lg md:text-2xl lg:text-3xl font-semibold uppercase tracking-normal sm:tracking-widest bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent leading-snug">
-                  Chemotherapy at Mga Gamot sa Cancer
-                </p>
+                {/* The page's one visible <h1>, leading with the "Patient Assistance Program" keyword
+                    (the banner above says it too, but only as lettering in the image). */}
+                <h1 className="text-sm sm:text-lg md:text-2xl lg:text-3xl font-semibold uppercase tracking-normal sm:tracking-widest bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent leading-snug">
+                  <span className="block">Patient Assistance Program</span>
+                  <span className="block">Chemotherapy at Mga Gamot sa Cancer</span>
+                </h1>
                 <div className="mt-2 w-10 h-1 bg-gradient-to-r from-[#61A644] to-[#1D9FDA] rounded-full" />
               </div>
             </div>
