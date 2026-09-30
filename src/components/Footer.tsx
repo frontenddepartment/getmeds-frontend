@@ -123,7 +123,7 @@ type LegalEntry = { label: string; slug: string; item?: PolicyDoc };
 /** Pages the original rendered without footer.html. */
 const NO_FOOTER_ROUTES = new Set(['business-card', 'card', 'chat', 'search', 'coming-soon', 'edit-profile']);
 /** Pages that did not load components.js at all (no consent banner, chat or scroll button). */
-const NO_COMPONENTS_ROUTES = new Set(['coming-soon', 'edit-profile']);
+const NO_COMPONENTS_ROUTES = new Set(['coming-soon']);
 
 const subscribeNever = () => () => {};
 const currentYear = () => String(new Date().getFullYear());

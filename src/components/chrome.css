@@ -24,12 +24,6 @@
     }
 }
 
-html.pwa-standalone .pwa-hide,
-html.pwa-standalone #gn-dropdown,
-html.pwa-standalone #gn-panel {
-    display: none !important;
-}
-
 @keyframes slideDown {
     from {
         transform: translateY(-100%);

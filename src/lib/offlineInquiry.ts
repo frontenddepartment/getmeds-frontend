@@ -26,8 +26,6 @@
 const DB_NAME = 'getmeds-offline'
 const DB_VERSION = 1
 import { recordInquiry } from './accountStore'
-import { noteSubmitResult, pointsAuthHeader } from './rewards'
-import { loadAccountData } from './accountApi'
 
 const QUEUE_STORE = 'inquiry-queue'
 const DRAFT_STORE = 'inquiry-drafts'
@@ -171,7 +169,7 @@ export async function submitInquiry(
   rawPayload: Record<string, unknown>,
   { endpoint, returnPath = typeof window !== 'undefined' ? window.location.pathname : '/', needsVerification }: SubmitOptions
 ): Promise<SubmitResult> {
-  const payload = withAppMeta(rawPayload)
+  const payload = withoutAppMeta(rawPayload)
   /**
    * The account screen's history is written here rather than in each form,
    * because this is the only door every inquiry goes through — a form added
@@ -200,18 +198,13 @@ export async function submitInquiry(
 
   if (typeof navigator !== 'undefined' && navigator.onLine !== false) {
     try {
-      // In the app, a signed-in customer's session rides along so the backend
-      // can add their points; see rewards.ts.
       const response = await fetch(endpoint, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', ...pointsAuthHeader() },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       })
       if (response.ok) {
         const body = await response.json().catch(() => null)
-        noteSubmitResult(body)
-        // The request now shows in the signed-in customer's history.
-        if (payload.appMeta) loadAccountData(true)
         await remember('sent')
         return { status: 'sent', body }
       }
@@ -254,28 +247,12 @@ export async function submitInquiry(
 }
 
 /**
- * For a signed-in customer in the app, adds `appMeta`: the items as a list
- * (for request history and Order again) plus anything the form set itself
- * (the patient, the refill reminder it came from). The backend keeps it with
- * the account and never puts it in the sheet or the email.
+ * Account extras (`appMeta`: request history, points) belong to the Getmeds mobile app, where
+ * customers sign in. The website has no accounts, so a website inquiry never carries them.
  */
-function withAppMeta(payload: Record<string, unknown>): Record<string, unknown> {
-  if (!pointsAuthHeader().Authorization) {
-    const { appMeta: _drop, ...rest } = payload
-    return rest
-  }
-  const extra = (payload.additionalData ?? {}) as Record<string, unknown>
-  const own = (payload.appMeta ?? {}) as Record<string, unknown>
-  let items = own.items as unknown[] | undefined
-  if (!items && Array.isArray(extra.items)) {
-    items = (extra.items as Array<Record<string, unknown>>).map((i) => ({
-      name: String(i?.name ?? ''), url: String(i?.url ?? ''), strength: String(i?.strength ?? ''), form: String(i?.form ?? ''),
-    }))
-  }
-  if (!items && typeof extra.productName === 'string') {
-    items = [{ name: extra.productName, url: typeof extra.productUrl === 'string' ? extra.productUrl : (typeof window !== 'undefined' ? window.location.pathname : '/') }]
-  }
-  return { ...payload, appMeta: { ...own, items: items ?? [] } }
+function withoutAppMeta(payload: Record<string, unknown>): Record<string, unknown> {
+  const { appMeta: _drop, ...rest } = payload
+  return rest
 }
 
 /**
@@ -312,11 +289,10 @@ export async function flushQueue(
     try {
       const response = await fetch(endpoint, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', ...pointsAuthHeader() },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(item.payload),
       })
       if (response.ok) {
-        noteSubmitResult(await response.json().catch(() => null))
         await deleteQueued(item.id)
         sent++
       } else {

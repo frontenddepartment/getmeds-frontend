@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 
 // Pages whose original HTML shell didn't load components.js, so they had no chat bubble,
 // chat links or back-to-top button. Kept in step with NO_COMPONENTS_ROUTES in Footer.tsx.
-const NO_COMPONENTS_ROUTES = ['/edit-profile', '/coming-soon'];
+const NO_COMPONENTS_ROUTES = ['/coming-soon'];
 
 export default function RouteGate({ children }: { children: ReactNode }) {
   const pathname = usePathname() ?? '/';

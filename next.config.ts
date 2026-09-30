@@ -1,5 +1,4 @@
 import type { NextConfig } from 'next';
-import { withSerwist } from '@serwist/turbopack';
 
 // Routing carried over from getmeds_frontend/vercel.json. Page rewrites that only existed
 // because the old site was a set of static HTML files (e.g. /antibiotics -> /cancer-medicines)
@@ -66,8 +65,8 @@ const nextConfig: NextConfig = {
       { source: '/blog-detail', headers: noindex('noindex') },
       { source: '/product-detail', headers: noindex('noindex') },
       { source: '/card/:slug*', headers: noindex('noindex, nofollow') },
-      // The browser must always re-check the service worker, or a deploy can take a long
-      // while to reach an installed app.
+      // public/sw.js retires the service worker the installed app (PWA) used to register. The
+      // browser must always re-check it, or phones would keep running the old one.
       {
         source: '/sw.js',
         headers: [
@@ -122,9 +121,21 @@ const nextConfig: NextConfig = {
       { source: '/shipping-and-delivery-policy.html', destination: '/shipping-and-delivery-policy', permanent: true },
 
       // The old site served every page as <name>.html with cleanUrls on
-      // (public/offline.html is a real file, served as-is for the service worker)
-      { source: '/:page((?!offline\\.)[a-z0-9-]+)\\.html', destination: '/:page', permanent: true },
+      { source: '/:page([a-z0-9-]+)\\.html', destination: '/:page', permanent: true },
       { source: '/index', destination: '/', permanent: true },
+
+      // Screens that belonged to the installed app (PWA). They live in the Getmeds mobile app
+      // now (getmeds_mobile_app), so the website has one address per page and no app-only
+      // pages; old links and home-screen shortcuts land on the nearest website page.
+      { source: '/app-home', destination: '/', permanent: true },
+      { source: '/search', has: [{ type: 'query', key: 'q', value: '(?<q>.+)' }], destination: '/product-range?search=:q', permanent: true },
+      { source: '/search', destination: '/product-range', permanent: true },
+      { source: '/cart', destination: '/order-medicines', permanent: true },
+      { source: '/chat', destination: '/contact-us', permanent: true },
+      { source: '/profile', destination: '/', permanent: true },
+      { source: '/account', destination: '/', permanent: true },
+      { source: '/edit-profile', destination: '/', permanent: true },
+      { source: '/offline', destination: '/', permanent: true },
     ];
   },
   async rewrites() {
@@ -140,9 +151,6 @@ const nextConfig: NextConfig = {
           { source: `/${panel}/:path*`, destination: `${ADMIN_URL}/${panel}/:path*` },
         ]),
         { source: '/card', destination: '/business-card' },
-        // The service worker is built by src/app/serwist/[path]/route.ts; it stays at /sw.js,
-        // where the old site registered it, so installed apps update in place.
-        { source: '/sw.js', destination: '/serwist/sw.js' },
       ],
       afterFiles: [],
       fallback: [],
@@ -150,5 +158,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-// withSerwist keeps esbuild (which builds the service worker) out of the server bundle.
-export default withSerwist(nextConfig);
+export default nextConfig;

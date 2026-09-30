@@ -52,7 +52,7 @@ function navPageKey(pathname: string): string {
 }
 
 /** Pages the original rendered without navbar.html at all. */
-const NO_NAVBAR_ROUTES = new Set(['app-home', 'business-card', 'card', 'chat', 'search', 'coming-soon', 'edit-profile']);
+const NO_NAVBAR_ROUTES = new Set(['business-card', 'card', 'coming-soon']);
 
 /** Pages whose navbar mount point had no positioning class (or no container), so it scrolls away. */
 const SCROLLING_NAVBAR_ROUTES = new Set([

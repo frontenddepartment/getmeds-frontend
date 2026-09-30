@@ -9,9 +9,6 @@ import './floating-contact.css';
  *   unread badge; window.openGetmedsChat opens it from anywhere on the site
  * - WhatsApp, Viber and Messenger buttons stacked above it (injectChatLinks)
  * - the back-to-top button (injectScrollToTop)
- *
- * The installed app (standalone, <= 1024px) loads none of the chat pieces: its tab bar owns that
- * corner, and it has its own full-screen chat page at /chat.
  */
 
 const TAWK_PROPERTY_ID = '6a8f969fb56df5344af1f3a0';
@@ -61,15 +58,6 @@ const CHAT_LINKS = [
   },
 ];
 
-function isInstalledApp(): boolean {
-  try {
-    const nav = window.navigator as Navigator & { standalone?: boolean };
-    return (window.matchMedia('(display-mode: standalone)').matches || nav.standalone === true) && window.innerWidth <= 1024;
-  } catch {
-    return false; // treat an unreadable display-mode as "website"
-  }
-}
-
 /** Every scroll container on the page that React content may scroll inside, besides the window. */
 function scrolledContainers(minScrollTop: number): HTMLElement[] {
   const found: HTMLElement[] = [];
@@ -82,23 +70,14 @@ function scrolledContainers(minScrollTop: number): HTMLElement[] {
 }
 
 export default function FloatingContactButtons() {
-  const [installedApp, setInstalledApp] = useState(true);
   const [chatOpen, setChatOpen] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
 
   // Tawk.to chat bubble and the global opener.
   useEffect(() => {
     const w = window as ChatWindow;
-    const app = isInstalledApp();
-    setInstalledApp(app);
-
     w.Tawk_API = w.Tawk_API || {};
     w.Tawk_LoadStart = new Date();
-
-    if (app) {
-      w.openGetmedsChat = () => { window.location.href = '/chat'; };
-      return;
-    }
 
     w.openGetmedsChat = () => {
       const api = w.Tawk_API;
@@ -162,30 +141,28 @@ export default function FloatingContactButtons() {
 
   return (
     <>
-      {!installedApp && (
-        <div id="gm-chat-links" className={chatOpen ? 'gm-chat-links--hidden' : undefined}>
-          {CHAT_LINKS.map((link) => {
-            // viber:// hands off to the app, so it has no tab to open.
-            const newTab = link.href.startsWith('http');
-            return (
-              <a
-                key={link.id}
-                href={link.href}
-                target={newTab ? '_blank' : undefined}
-                rel={newTab ? 'noopener noreferrer' : undefined}
-                data-chat-link={link.id}
-                aria-label={link.label}
-                title={link.label}
-                style={{ background: link.background }}
-              >
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d={link.path} />
-                </svg>
-              </a>
-            );
-          })}
-        </div>
-      )}
+      <div id="gm-chat-links" className={chatOpen ? 'gm-chat-links--hidden' : undefined}>
+        {CHAT_LINKS.map((link) => {
+          // viber:// hands off to the app, so it has no tab to open.
+          const newTab = link.href.startsWith('http');
+          return (
+            <a
+              key={link.id}
+              href={link.href}
+              target={newTab ? '_blank' : undefined}
+              rel={newTab ? 'noopener noreferrer' : undefined}
+              data-chat-link={link.id}
+              aria-label={link.label}
+              title={link.label}
+              style={{ background: link.background }}
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d={link.path} />
+              </svg>
+            </a>
+          );
+        })}
+      </div>
       <button
         id="scroll-to-top"
         type="button"

@@ -3,8 +3,6 @@
 import React, { useEffect, useLayoutEffect, useState, useRef, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { useProducts, useCategories, useImageMapper } from '@/lib/useSanity';
-import { AddToCart } from '@/lib/AddToCart';
-import { needsPrescription } from '@/lib/cart';
 import { urlFor } from '@/lib/sanity';
 import type { Product as SanityProduct, Category } from '@/types/sanity';
 import { sortByFeaturedOrder } from '@/lib/categoryImageKey';
@@ -1430,16 +1428,6 @@ export default function CatalogClient(_props: { initialFolder?: string } = {}) {
                               {p.form && <span className="text-[11px] text-gray-500"><span className="font-semibold text-gray-400 uppercase tracking-wide">Form</span> · {formatFieldWithLineBreaks(p.form)}</span>}
                             </div>
                             <div className="relative inquiry-dropdown-wrapper flex items-center gap-2">
-                              <AddToCart
-                                item={{
-                                  id: String(p._id || getProductDetailUrl(p)),
-                                  name: displayName,
-                                  strength: p.strength,
-                                  form: p.form,
-                                  url: getProductDetailUrl(p),
-                                  needsRx: needsPrescription((p as any).Prescription),
-                                }}
-                              />
                               <button
                                 onClick={e => toggleInquiryDropdown(e, rowId, p, 'fill')}
                                 className="flex-1 justify-center bg-primary hover:bg-blue-600 text-white text-[12px] font-bold px-4 py-2.5 rounded-full transition-all duration-300 shadow-sm inline-flex items-center gap-1.5"

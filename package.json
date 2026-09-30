@@ -14,7 +14,6 @@
     "@portabletext/react": "^8.0.1",
     "@sanity/client": "^8.7.0",
     "@sanity/image-url": "^2.1.1",
-    "@serwist/turbopack": "^9.5.12",
     "@types/canvas-confetti": "^1.9.0",
     "@types/dompurify": "^3.0.5",
     "canvas-confetti": "^1.9.4",
@@ -22,8 +21,7 @@
     "lucide-react": "^1.48.0",
     "next": "16.3.6",
     "react": "19.2.8",
-    "react-dom": "19.2.8",
-    "serwist": "^9.5.12"
+    "react-dom": "19.2.8"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

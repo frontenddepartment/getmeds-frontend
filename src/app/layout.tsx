@@ -4,8 +4,6 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import FloatingContactButtons from '@/components/FloatingContactButtons';
 import RouteGate from '@/components/RouteGate';
-import PwaTabbar from '@/lib/PwaTabbar';
-import { PwaModeScript, ServiceWorkerRegistration } from '@/lib/pwaMode';
 import { OrganizationJsonLd } from '@/components/JsonLd';
 import { DOMAIN } from '@/lib/seo-config';
 
@@ -31,7 +29,6 @@ export const metadata: Metadata = {
     ],
     apple: [{ url: '/icons/apple-touch-icon.png' }],
   },
-  manifest: '/manifest.webmanifest',
   openGraph: {
     title: 'Getmeds | Trusted Pharmaceutical Company & Healthcare Provider',
     description: 'Global pharmaceutical company in the Philippines: FDA-licensed wholesaler, importer, distributor and retail pharmacy.',
@@ -69,11 +66,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    // The PWA mode script adds html.pwa-standalone before React hydrates.
     <html lang="en" className="overflow-x-hidden" suppressHydrationWarning>
       <head>
-        {/* Must run before first paint (was PWA_MODE in getmeds_frontend/vite.config.js) */}
-        <PwaModeScript />
         <link rel="preconnect" href="https://cdn.sanity.io" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://cdn.sanity.io" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -96,8 +90,6 @@ export default function RootLayout({
         <RouteGate>
           <FloatingContactButtons />
         </RouteGate>
-        <PwaTabbar />
-        <ServiceWorkerRegistration />
       </body>
     </html>
   );

@@ -93,18 +93,6 @@ export function needsPrescription(value: unknown): boolean {
   return !['no', 'otc', 'false', 'none', 'n/a'].includes(v)
 }
 
-/** True only in the installed app at phone widths — the cart ships nowhere else. */
-export function isAppMode(): boolean {
-  try {
-    const standalone =
-      window.matchMedia('(display-mode: standalone)').matches ||
-      (window.navigator as unknown as { standalone?: boolean }).standalone === true
-    return standalone && window.innerWidth <= 1024
-  } catch {
-    return false
-  }
-}
-
 // ── Consent ──────────────────────────────────────────────────────────────────
 
 /**
