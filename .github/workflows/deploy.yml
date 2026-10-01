@@ -1,60 +1,141 @@
 name: Deploy Site
 
-# Fired by WordPress ("Deploy to getmeds.ph" in the post editor) through the
-# admin backend, which sends a repository_dispatch. Blog pages, the blog list
-# and the sitemaps are rendered on the server from WordPress and cached for up
-# to an hour (a day for the sitemaps); a fresh build clears those caches, so a
-# new or edited post's page, <title>, meta description, OG tags and JSON-LD go
-# live straight away instead of when the cache next expires.
+# Builds the site on GitHub and deploys it to the InMotion VPS (cPanel), where PM2 runs it
+# behind Apache. Replaces the old Vercel deploy hook.
+#
+# Triggers:
+#   - a push to main
+#   - WordPress "Deploy to getmeds.ph" in the post editor, through the admin backend, which
+#     sends a repository_dispatch (blog-publish). Blog pages, the blog list and the sitemaps
+#     are cached for up to an hour (a day for the sitemaps); a fresh build clears that, so a
+#     new or edited post goes live straight away.
+#   - "Run workflow" in the Actions tab
 on:
+  push:
+    branches: [main]
   repository_dispatch:
     types: [blog-publish]
   workflow_dispatch:
 
-# Collapses a burst of publishes into a single deploy: a dispatch arriving
-# while this run is still in its debounce window cancels it and starts over,
-# so ten rapid edits cost one build instead of ten.
-concurrency:
-  group: site-deploy
-  cancel-in-progress: true
-
 jobs:
-  deploy:
+  # Only for WordPress publishes. A publish arriving while this is still waiting cancels it and
+  # starts over, so ten rapid edits cost one deploy instead of ten. Nothing has been deployed
+  # yet at this point, so a cancellation here costs nothing.
+  debounce:
+    if: github.event_name == 'repository_dispatch'
     runs-on: ubuntu-latest
+    concurrency:
+      group: blog-publish-debounce
+      cancel-in-progress: true
     steps:
-      - name: Log Trigger
-        # Passed through env rather than interpolated straight into the script:
-        # these values originate in WordPress, and `${{ }}` inside a run block
-        # is substituted as raw shell text, so a crafted post title would
-        # otherwise execute on the runner.
+      - name: Log trigger
+        # Passed through env rather than interpolated into the script: these values come from
+        # WordPress, and `${{ }}` inside a run block is substituted as raw shell text, so a
+        # crafted post title would otherwise execute on the runner.
         env:
-          EVENT: ${{ github.event_name }}
           POST_TITLE: ${{ github.event.client_payload.title }}
           POST_SLUG: ${{ github.event.client_payload.slug }}
           TRIGGERED_BY: ${{ github.event.client_payload.triggered_by }}
         run: |
-          echo "Trigger:      $EVENT"
           echo "Post:         ${POST_TITLE:-(none)}"
           echo "Slug:         ${POST_SLUG:-(none)}"
           echo "Requested by: ${TRIGGERED_BY:-(none)}"
-
-      - name: Debounce
-        # Held open deliberately so that cancel-in-progress above has a window
-        # in which to collapse follow-up publishes. Nothing has been deployed
-        # yet at this point, so a cancellation here costs nothing.
+      - name: Wait for more publishes
         run: sleep 60
 
-      - name: Trigger Vercel Build
-        # Vercel does the building, exactly as it does for a push to main, so
-        # there is still only one deployment path and its build cache and
-        # environment variables are reused. The full pipeline runs there:
-        # prebuild (Sanity sync + CMS Tailwind classes) -> next build.
-        env:
-          HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}
+  deploy:
+    needs: debounce
+    # Runs after the debounce for WordPress publishes, straight away for pushes and manual runs
+    # (where the debounce job is skipped), and not at all when a newer publish cancelled it.
+    if: ${{ always() && (needs.debounce.result == 'success' || needs.debounce.result == 'skipped') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    # One deploy at a time, never cancelled halfway through an upload; a newer one waits.
+    concurrency:
+      group: site-deploy
+      cancel-in-progress: false
+    env:
+      # Read while building: NEXT_PUBLIC_* values are written into the pages, and
+      # next.config.ts reads the backend/careers URLs for its rewrites. The prebuild step
+      # (Sanity sync + CMS Tailwind classes) uses the Sanity ones.
+      NEXT_PUBLIC_BACKEND_API_URL: ${{ secrets.NEXT_PUBLIC_BACKEND_API_URL }}
+      NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_SANITY_PROJECT_ID }}
+      NEXT_PUBLIC_SANITY_DATASET: ${{ secrets.NEXT_PUBLIC_SANITY_DATASET }}
+      NEXT_PUBLIC_SANITY_API_VERSION: ${{ secrets.NEXT_PUBLIC_SANITY_API_VERSION }}
+      NEXT_PUBLIC_WORDPRESS_API_ROOT: ${{ secrets.NEXT_PUBLIC_WORDPRESS_API_ROOT }}
+      NEXT_PUBLIC_TURNSTILE_SITE_KEY: ${{ secrets.NEXT_PUBLIC_TURNSTILE_SITE_KEY }}
+      NEXT_PUBLIC_VIDRYS_SITE_KEY: ${{ secrets.NEXT_PUBLIC_VIDRYS_SITE_KEY }}
+      CAREERS_API_URL: ${{ secrets.CAREERS_API_URL }}
+      ALLOWED_CORS_ORIGIN: ${{ secrets.ALLOWED_CORS_ORIGIN }}
+      SANITY_WRITE_TOKEN: ${{ secrets.SANITY_WRITE_TOKEN }}
+      SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Prepare standalone bundle
+        # output: 'standalone' (next.config.ts) leaves out the static files and public/; the
+        # PM2 process file goes in with them.
         run: |
-          if [ -z "$HOOK" ]; then
-            echo "::error::VERCEL_DEPLOY_HOOK secret is not set on this repository."
+          cp -r .next/static .next/standalone/.next/static
+          cp -r public .next/standalone/public
+          cp ecosystem.config.cjs .next/standalone/ecosystem.config.cjs
+
+      - name: Set up SSH
+        env:
+          SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -p "${SSH_PORT:-22}" "$SSH_HOST" >> ~/.ssh/known_hosts
+
+      - name: Upload build to server
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+        # --delete keeps ~/nextapp an exact copy of this build. .env* files on the server are
+        # excluded, so they are neither uploaded nor deleted.
+        run: |
+          SSH="ssh -i ~/.ssh/deploy_key -p ${SSH_PORT:-22}"
+          $SSH "$SSH_USER@$SSH_HOST" 'mkdir -p ~/nextapp'
+          rsync -az --delete --exclude='.env*' -e "$SSH" .next/standalone/ "$SSH_USER@$SSH_HOST:~/nextapp/"
+
+      - name: Restart the app and check it answers
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+        run: |
+          ssh -i ~/.ssh/deploy_key -p "${SSH_PORT:-22}" "$SSH_USER@$SSH_HOST" 'bash -s' << 'EOF'
+            set -e
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+            cd ~/nextapp
+            pm2 startOrReload ecosystem.config.cjs --update-env
+            pm2 save
+            # Fail the deploy (and show the app's log) if the new build doesn't come up.
+            for i in $(seq 1 20); do
+              code=$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:3000/ || true)
+              if [ "$code" = "200" ]; then echo "The app answered 200."; exit 0; fi
+              sleep 3
+            done
+            echo "The app did not answer 200 within a minute (last status: ${code:-none})."
+            pm2 logs getmeds-web --lines 60 --nostream || true
             exit 1
-          fi
-          curl -fsS -X POST "$HOOK" > /dev/null
-          echo "Vercel build requested — the site updates in about 1-3 minutes."
+          EOF

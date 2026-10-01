@@ -46,6 +46,9 @@ const publicEnv = Object.fromEntries(
 );
 
 const nextConfig: NextConfig = {
+  // Self-hosted on the InMotion VPS: the build emits .next/standalone (server.js plus only the
+  // node_modules it needs), which the GitHub deploy workflow uploads and PM2 runs.
+  output: 'standalone',
   env: publicEnv,
   experimental: {
     cpus: 1,

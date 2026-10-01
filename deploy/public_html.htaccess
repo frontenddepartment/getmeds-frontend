@@ -1,0 +1,23 @@
+# Apache in front of the Next.js app on the InMotion VPS.
+# Copy this file's content to public_html/.htaccess (cPanel -> File Manager; show hidden files).
+# Needs Apache's mod_proxy + mod_proxy_http (WHM -> EasyApache 4), or every page is a 500.
+
+RewriteEngine On
+
+# cPanel AutoSSL (free Let's Encrypt certificate) proves domain ownership with files under
+# /.well-known/ - let Apache serve those itself.
+RewriteRule ^\.well-known/ - [L]
+
+# www -> bare domain, one permanent redirect (Vercel used to do this; audit tab 02).
+RewriteCond %{HTTP_HOST} ^www\.getmeds\.ph$ [NC]
+RewriteRule ^(.*)$ https://getmeds.ph/$1 [R=301,L]
+
+# http -> https
+RewriteCond %{HTTPS} !=on
+RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
+
+# Tell the app the visitor came in over https (it only ever sees http from Apache).
+RequestHeader set X-Forwarded-Proto "https"
+
+# Everything else goes to the app (PM2 keeps it running on 127.0.0.1:3000).
+RewriteRule ^(.*)$ http://127.0.0.1:3000/$1 [P,L]
