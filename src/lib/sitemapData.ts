@@ -385,7 +385,6 @@ interface UrlEntry { loc: string; lastmod?: string; changefreq: string; priority
 
 function generateUrlSetXml(urls: UrlEntry[]): string {
   let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
-  xml += '<?xml-stylesheet type="text/xsl" href="/sitemap.xsl"?>\n';
   xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
   urls.forEach((u) => {
     xml += '  <url>\n';
@@ -437,7 +436,6 @@ export async function buildBlogSitemapXml(): Promise<string> {
 export function buildSitemapIndexXml(): string {
   const date = currentDate();
   let indexXml = '<?xml version="1.0" encoding="UTF-8"?>\n';
-  indexXml += '<?xml-stylesheet type="text/xsl" href="/sitemap.xsl"?>\n';
   indexXml += '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
   ['category-sitemap.xml', 'product-sitemap.xml', 'blog-sitemap.xml'].forEach((s) => {
     indexXml += '  <sitemap>\n';
@@ -450,8 +448,7 @@ export function buildSitemapIndexXml(): string {
 }
 
 /**
- * image-sitemap.xml — one <url> per page that shows images. Deliberately no
- * sitemap.xsl: that stylesheet draws a URL table this file doesn't have.
+ * image-sitemap.xml — one <url> per page that shows images.
  */
 export async function buildImageSitemapXml(): Promise<string> {
   const [posts, { products, categoryImageUrls }, pageImages] = await Promise.all([
