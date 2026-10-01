@@ -4,6 +4,10 @@
 
 RewriteEngine On
 
+# Otherwise Apache turns "/" into "/default.htm" (cPanel's placeholder) before the proxy rule
+# runs, and the app answers the homepage with its 404 page.
+DirectoryIndex disabled
+
 # cPanel AutoSSL (free Let's Encrypt certificate) proves domain ownership with files under
 # /.well-known/ - let Apache serve those itself.
 RewriteRule ^\.well-known/ - [L]
