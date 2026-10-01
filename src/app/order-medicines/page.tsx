@@ -3,12 +3,13 @@ import OrderMedicinesClient from './[audience]/OrderMedicinesClient';
 import { ORDER_HUB_META, ORDER_MEDICINES_BASE } from '@/lib/orderAudiences';
 import { withSiteName } from '@/lib/seo';
 import { DOMAIN } from '@/lib/seo-config';
+import { withVidrysSeo } from '@/lib/vidrys/seoOverrides';
 
 // Mirrors the <head> of order-medicines.html: title, description, canonical,
 // og:url and the order share card.
 const OG_IMAGE = `${DOMAIN}/assets/og-order.jpg`;
 
-export const metadata: Metadata = {
+const baseMetadata: Metadata = {
   title: { absolute: withSiteName(ORDER_HUB_META.title) },
   description: ORDER_HUB_META.description,
   alternates: { canonical: `${DOMAIN}${ORDER_MEDICINES_BASE}` },
@@ -27,4 +28,9 @@ export const metadata: Metadata = {
 
 export default function OrderMedicinesPage() {
   return <OrderMedicinesClient />;
+}
+
+// The page's own metadata, with any Vidrys SEO fix for this path on top.
+export function generateMetadata(): Promise<Metadata> {
+  return withVidrysSeo('/order-medicines', baseMetadata);
 }

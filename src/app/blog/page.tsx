@@ -2,9 +2,10 @@ import type { Metadata } from 'next';
 import { pageMetadata } from '@/lib/pageMeta';
 import { fetchListedPosts } from '@/lib/blogServer';
 import BlogClient from './BlogClient';
+import { withVidrysSeo } from '@/lib/vidrys/seoOverrides';
 
 // Same <title>, description and canonical blog.html served.
-export const metadata: Metadata = pageMetadata({
+const baseMetadata: Metadata = pageMetadata({
   title: 'Blog - Getmeds',
   rawTitle: true,
   description:
@@ -18,4 +19,9 @@ export const revalidate = 3600;
 export default async function BlogPage() {
   const bakedPosts = await fetchListedPosts();
   return <BlogClient bakedPosts={bakedPosts} />;
+}
+
+// The page's own metadata, with any Vidrys SEO fix for this path on top.
+export function generateMetadata(): Promise<Metadata> {
+  return withVidrysSeo('/blog', baseMetadata);
 }

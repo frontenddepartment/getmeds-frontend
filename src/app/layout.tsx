@@ -60,7 +60,11 @@ export const viewport: Viewport = {
   themeColor: '#1D9FDA',
 };
 
-const FA_WEBFONTS = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts';
+// Vidrys site key (the k= of the AI-traffic tag). Public by design: every visitor's page
+// carries it. The env var wins when set; the fallback is the getmeds.ph project's key.
+const VIDRYS_SITE_KEY = process.env.NEXT_PUBLIC_VIDRYS_SITE_KEY || 'YGYjw-gS-LBnpxcbh_9AIDSUYkyndXhc';
+
+const FA_WEBFONTS ='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts';
 const FA_SWAP_CSS = [
   ['Font Awesome 6 Free', 900, 'fa-solid-900'],
   ['Font Awesome 6 Free', 400, 'fa-regular-400'],
@@ -108,6 +112,9 @@ export default function RootLayout({
             same files, so nothing downloads twice. */}
         <style dangerouslySetInnerHTML={{ __html: FA_SWAP_CSS }} />
         <OrganizationJsonLd />
+        {/* Vidrys AI-traffic tag: last thing in <head>, on every page. A plain <script>, not
+            next/script, so Vidrys' "Check installation" can see it in the HTML. */}
+        <script src={`https://vidrys-api.onrender.com/api/v1/public/t.js?k=${VIDRYS_SITE_KEY}`} defer />
       </head>
       <body className="bg-white text-gray-800 antialiased">
         {/* Navbar and Footer hide themselves on the routes whose original page had none */}

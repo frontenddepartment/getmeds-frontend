@@ -4,6 +4,7 @@ import { ORDER_AUDIENCES, audienceBySlug, ORDER_MEDICINES_BASE } from '@/lib/ord
 import { withSiteName } from '@/lib/seo'
 import { DOMAIN } from '@/lib/seo-config'
 import OrderMedicinesClient from './OrderMedicinesClient'
+import { withVidrysSeo } from '@/lib/vidrys/seoOverrides'
 
 // Same share card for every audience (scripts/prerender-order-medicines.cjs → ORDER_OG_IMAGE).
 const OG_IMAGE = `${DOMAIN}/assets/og-order.jpg`
@@ -15,7 +16,7 @@ export function generateStaticParams() {
 }
 
 // Mirrors injectHead() in scripts/prerender-order-medicines.cjs.
-export async function generateMetadata({ params }: { params: Promise<{ audience: string }> }): Promise<Metadata> {
+async function baseGenerateMetadata({ params }: { params: Promise<{ audience: string }> }): Promise<Metadata> {
   const { audience: slug } = await params
   const audience = audienceBySlug(slug)
   if (!audience) return {}
@@ -42,4 +43,9 @@ export default async function OrderMedicinesAudiencePage({ params }: { params: P
   const { audience: slug } = await params
   if (!audienceBySlug(slug)) notFound()
   return <OrderMedicinesClient audienceSlug={slug} />
+}
+
+// The page's own metadata, with any Vidrys SEO fix for this path on top.
+export async function generateMetadata(...args: Parameters<typeof baseGenerateMetadata>): Promise<Metadata> {
+  return withVidrysSeo(await `/order-medicines/${(await args[0].params).audience}`, await baseGenerateMetadata(...args))
 }

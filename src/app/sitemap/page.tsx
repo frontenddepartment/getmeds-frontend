@@ -2,13 +2,14 @@ import { Fragment } from 'react';
 import type { Metadata } from 'next';
 import { buildHtmlSitemapSections, type HtmlSitemapLink } from '@/lib/sitemapData';
 import './sitemap.css';
+import { withVidrysSeo } from '@/lib/vidrys/seoOverrides';
 
 // Port of sitemap.html. Its link block (between the SITEMAP:START/END markers) was
 // rewritten on every build by scripts/generate-sitemap.cjs from the same data as the XML
 // sitemaps; here it is built from that data at render time and refreshed daily.
 export const revalidate = 86400;
 
-export const metadata: Metadata = {
+const baseMetadata: Metadata = {
   title: { absolute: 'Sitemap - All Pages, Medicines & Articles | Getmeds' },
   description:
     'Browse every page on Getmeds Philippines in one place: medicine categories, products, conditions, ordering options, company information, policies and blog articles.',
@@ -61,4 +62,9 @@ export default async function SitemapPage() {
       </div>
     </div>
   );
+}
+
+// The page's own metadata, with any Vidrys SEO fix for this path on top.
+export function generateMetadata(): Promise<Metadata> {
+  return withVidrysSeo('/sitemap', baseMetadata);
 }

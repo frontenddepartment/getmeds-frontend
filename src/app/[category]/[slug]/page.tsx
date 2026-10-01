@@ -11,6 +11,7 @@ import {
 } from '@/lib/catalogServer';
 import { conditionSeo, productSeo, type CatalogPageSeo } from '@/lib/catalogSeo';
 import { NOT_FOUND_METADATA } from '@/lib/notFoundMetadata';
+import { withVidrysSeo } from '@/lib/vidrys/seoOverrides';
 
 // "/<folder>/<slug>", "/product-range/<slug>" and "/conditions/<slug>". As in vercel.json, a
 // condition slug renders the listing page (cancer-medicines.tsx) filtered to that condition;
@@ -53,7 +54,7 @@ function resolve(model: CatalogModel, category: string, slug: string): Resolved 
   return { kind: 'product', seo: productSeo(model, product), redirectTo };
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+async function baseGenerateMetadata({ params }: Props): Promise<Metadata> {
   const { category, slug } = await params;
   const r = resolve(await getCatalogModel(), category, slug);
   if (r.kind === 'none') return NOT_FOUND_METADATA;
@@ -80,4 +81,9 @@ export default async function CatalogSlugPage({ params, searchParams }: Props) {
     redirect(r.redirectTo + (qs ? `?${qs}` : ''));
   }
   return <ProductRoutePage seo={r.seo} categorySlug={category} productSlug={slug} />;
+}
+
+// The page's own metadata, with any Vidrys SEO fix for this path on top.
+export async function generateMetadata(...args: Parameters<typeof baseGenerateMetadata>): Promise<Metadata> {
+  return withVidrysSeo(await (async () => { const p = await args[0].params; return `/${p.category}/${p.slug}`; })(), await baseGenerateMetadata(...args));
 }

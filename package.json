@@ -8,7 +8,8 @@
     "prebuild": "node scripts/sync-static-to-sanity.mjs && node scripts/collect-cms-tailwind-classes.cjs",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "node --test \"src/**/*.test.ts\""
   },
   "dependencies": {
     "@portabletext/react": "^8.0.1",

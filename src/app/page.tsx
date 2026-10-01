@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import HomeClient, { type HeroSlideImage } from './HomeClient';
 import { getHeroSlides } from '@/lib/queries';
+import { withVidrysSeo } from '@/lib/vidrys/seoOverrides';
 
 // The hero slides are fetched here so the first slide's picture is in the HTML (it's the
 // page's main picture for PageSpeed). The page is rebuilt in the background at most every
@@ -25,7 +26,7 @@ const TITLE = 'Getmeds | Trusted Pharmaceutical Company & Healthcare Provider';
 const DESCRIPTION =
   'Global pharmaceutical company in the Philippines: FDA-licensed wholesaler, importer, distributor and retail pharmacy.';
 
-export const metadata: Metadata = {
+const baseMetadata: Metadata = {
   title: { absolute: TITLE },
   description: DESCRIPTION,
   alternates: { canonical: 'https://getmeds.ph/' },
@@ -71,4 +72,9 @@ export default async function Page() {
       <HomeClient initialHeroSlides={initialHeroSlides} />
     </>
   );
+}
+
+// The page's own metadata, with any Vidrys SEO fix for this path on top.
+export function generateMetadata(): Promise<Metadata> {
+  return withVidrysSeo('/', baseMetadata);
 }

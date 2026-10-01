@@ -144,7 +144,7 @@ const nextConfig: NextConfig = {
         { source: '/wp-json/:path*', destination: `${WORDPRESS_URL}/wp-json/:path*` },
         { source: '/wp-content/:path*', destination: `${WORDPRESS_URL}/wp-content/:path*` },
         { source: '/api/careers', destination: `${careersApiUrl}/api/careers` },
-        { source: '/api/:path*', destination: `${backendUrl}/api/:path*` },
+        { source: '/api/:path((?!vidrys(?:/|$)).*)', destination: `${backendUrl}/api/:path` },
         { source: '/public/:path*', destination: `${ADMIN_URL}/public/:path*` },
         ...ADMIN_PANELS.flatMap((panel) => [
           { source: `/${panel}`, destination: `${ADMIN_URL}/${panel}` },

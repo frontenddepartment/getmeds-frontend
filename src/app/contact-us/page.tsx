@@ -2,9 +2,10 @@ import type { Metadata } from 'next';
 import { pageMetadata } from '@/lib/pageMeta';
 import ContactUsClient from './ContactUsClient';
 import './contact-us.css';
+import { withVidrysSeo } from '@/lib/vidrys/seoOverrides';
 
 // Same <title>, description and canonical contact-us.html served.
-export const metadata: Metadata = pageMetadata({
+const baseMetadata: Metadata = pageMetadata({
   title: 'Contact Us - Getmeds',
   rawTitle: true,
   description:
@@ -14,4 +15,9 @@ export const metadata: Metadata = pageMetadata({
 
 export default function ContactUsPage() {
   return <ContactUsClient />;
+}
+
+// The page's own metadata, with any Vidrys SEO fix for this path on top.
+export function generateMetadata(): Promise<Metadata> {
+  return withVidrysSeo('/contact-us', baseMetadata);
 }

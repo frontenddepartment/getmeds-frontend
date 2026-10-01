@@ -4,6 +4,7 @@ import { CatalogRoutePage } from '@/components/CatalogRoutePages';
 import { getCatalogModel, isListingPrefix, wordpressPostExists } from '@/lib/catalogServer';
 import { allProductsSeo, categorySeo } from '@/lib/catalogSeo';
 import { NOT_FOUND_METADATA } from '@/lib/notFoundMetadata';
+import { withVidrysSeo } from '@/lib/vidrys/seoOverrides';
 
 // Single-segment URLs. Category folders (/antibiotics, /heart-medicines, ...) and /conditions
 // render the listing page, as vercel.json rewrote them onto cancer-medicines.html. Anything
@@ -23,7 +24,7 @@ const safeDecode = (v: string) => {
   }
 };
 
-export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
+async function baseGenerateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
   const { category } = await params;
   const model = await getCatalogModel();
   if (category === 'conditions') return allProductsSeo(model).metadata;
@@ -40,4 +41,9 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
   const slug = safeDecode(category);
   if (await wordpressPostExists(slug)) permanentRedirect(`/blog/${encodeURIComponent(slug)}`);
   notFound();
+}
+
+// The page's own metadata, with any Vidrys SEO fix for this path on top.
+export async function generateMetadata(...args: Parameters<typeof baseGenerateMetadata>): Promise<Metadata> {
+  return withVidrysSeo(await `/${(await args[0].params).category}`, await baseGenerateMetadata(...args));
 }
