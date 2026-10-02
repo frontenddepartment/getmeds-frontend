@@ -3,9 +3,11 @@
 import type { ReactNode } from 'react';
 import { usePathname } from 'next/navigation';
 
-// Pages whose original HTML shell didn't load components.js, so they had no chat bubble,
-// chat links or back-to-top button. Kept in step with NO_COMPONENTS_ROUTES in Footer.tsx.
-const NO_COMPONENTS_ROUTES = ['/coming-soon'];
+// Pages without the Tawk chat bubble, the WhatsApp/Viber/Messenger links and the back-to-top
+// button. /coming-soon never loaded components.js. The business card pages have their own
+// WhatsApp and Viber buttons for the person on the card, so the site-wide ones (which reach
+// Getmeds support instead) would only compete with them.
+const NO_COMPONENTS_ROUTES = ['/coming-soon', '/card', '/business-card'];
 
 export default function RouteGate({ children }: { children: ReactNode }) {
   const pathname = usePathname() ?? '/';

@@ -2,30 +2,30 @@
    /card and /card/:slug). The root layout owns <html> and <body>, so the rules
    apply only while a business-card page is mounted.
 
-   The backdrop goes on <html>, not <body>: body is only as tall as its
+   Plain white, on <html> rather than <body>: body is only as tall as its
    content, so a background set there stops short of the fold whenever a card
-   has few details on it. The colour underneath is the artwork's own average,
-   so the moment before the image decodes is not a white flash. */
+   has few details on it. */
 html:has(.gm-page-business-card) {
-  background: #D9F2FD url('/assets/businesscardbg.jpg') center / cover no-repeat fixed;
+  background: #fff;
 }
 
-/* iOS Safari sizes a fixed background against the document instead of the
-   viewport, which blows the artwork up to several times its intended scale.
-   Touch devices get the ordinary scrolling background. */
-@media (hover: none) {
-  html:has(.gm-page-business-card) {
-    background-attachment: scroll;
-  }
-}
-
-/* Left transparent on purpose (the layout's <body> is bg-white): the backdrop
-   is on <html> above, and any colour here would paint straight over it for the
-   height of the content. */
 body:has(.gm-page-business-card) {
-  background: transparent;
+  background: #fff;
 }
 
 .gm-page-business-card {
   font-family: 'Poppins', sans-serif;
+}
+
+/* The phone shows one face at a time; tapping or swiping the card turns it over
+   (BusinessCardClient). Desktop shows both faces, so it never turns. */
+@keyframes gm-card-turn {
+  from { transform: perspective(900px) rotateY(-75deg); opacity: .35; }
+  to   { transform: none; opacity: 1; }
+}
+.gm-card-turn {
+  animation: gm-card-turn .35s cubic-bezier(.2, .7, .3, 1);
+}
+@media (min-width: 1024px), (prefers-reduced-motion: reduce) {
+  .gm-card-turn { animation: none; }
 }

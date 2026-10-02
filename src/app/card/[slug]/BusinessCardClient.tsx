@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { urlFor } from '@/lib/sanity';
 import {
   CARD_PATH_PREFIX,
@@ -307,7 +307,7 @@ function ActionButton({
  * One face of the printed card.
  *
  * Pulled out because the desktop layout shows front and back at once while the
- * phone shows one at a time behind a toggle — same markup, two different
+ * phone shows one at a time (tap or swipe to turn) — same markup, two different
  * visibility rules, and duplicating the <img> would mean a second copy to keep
  * in step.
  */
@@ -434,6 +434,12 @@ function BusinessCardPage({ initialSlug }: { initialSlug?: string }) {
   const [card, setCard] = useState<BusinessCard | null>(null);
   const [state, setState] = useState<'loading' | 'ready' | 'missing' | 'error'>('loading');
   const [face, setFace] = useState<'front' | 'back'>('front');
+  // Phone only (desktop shows both faces at once): a tap or a sideways swipe on the card
+  // turns it over. A swipe is followed by a click on some browsers; lastSwipe drops that
+  // click so one swipe is one turn. `turned` keeps the turn animation off the first render.
+  const touchStart = useRef<{ x: number; y: number } | null>(null);
+  const lastSwipe = useRef(0);
+  const [turned, setTurned] = useState(false);
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
@@ -565,6 +571,12 @@ function BusinessCardPage({ initialSlug }: { initialSlug?: string }) {
   const front = card.cardImage ? urlFor(card.cardImage).width(1000).url() : '';
   const back = card.cardImageBack ? urlFor(card.cardImageBack).width(1000).url() : '';
 
+  const turnOver = () => {
+    if (!back || window.matchMedia('(min-width: 1024px)').matches) return;
+    setTurned(true);
+    setFace((f) => (f === 'front' ? 'back' : 'front'));
+  };
+
   const mobile = toE164(card.mobile);
   const office = toE164(card.officePhone);
   const wa = whatsappLink(card);
@@ -615,48 +627,66 @@ function BusinessCardPage({ initialSlug }: { initialSlug?: string }) {
             it is what makes the page read as "this card" rather than "a Getmeds
             page".
 
-            Desktop shows both faces stacked; the phone shows one at a time
-            behind the toggle below. A desktop window has the room, and two
+            Desktop shows both faces stacked; the phone shows one at a time, and
+            a tap or a sideways swipe on the card turns it over, the way you
+            would turn the paper one. A desktop window has the room, and two
             images side by side answer "what is on the back?" without asking
             anyone to find a control and click it. */}
         {front && (
-          <div className="gm-enter-left mb-4 lg:mb-0">
-            <CardFace
-              src={front}
-              alt={`Business card for ${card.fullName}`}
-              className={face === 'front' ? '' : 'hidden lg:block'}
-            />
-
-            {back && (
+          <div
+            className="gm-enter-left mb-4 lg:mb-0"
+            {...(back && {
+              role: 'button',
+              tabIndex: 0,
+              'aria-label': `Turn the card over to see the ${face === 'front' ? 'back' : 'front'}`,
+              onClick: () => {
+                if (Date.now() - lastSwipe.current < 500) return;
+                turnOver();
+              },
+              onKeyDown: (e: React.KeyboardEvent) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  turnOver();
+                }
+              },
+              onTouchStart: (e: React.TouchEvent) => {
+                const t = e.touches[0];
+                touchStart.current = { x: t.clientX, y: t.clientY };
+              },
+              onTouchEnd: (e: React.TouchEvent) => {
+                const start = touchStart.current;
+                touchStart.current = null;
+                if (!start) return;
+                const t = e.changedTouches[0];
+                const dx = t.clientX - start.x;
+                const dy = t.clientY - start.y;
+                // Clearly sideways, so a vertical page scroll that starts on the card never turns it.
+                if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+                  lastSwipe.current = Date.now();
+                  turnOver();
+                }
+              },
+              style: { cursor: 'pointer', touchAction: 'pan-y' },
+            })}
+          >
+            {/* Keyed by face so the turn animation replays on every flip. */}
+            <div key={face} className={turned ? 'gm-card-turn' : ''}>
               <CardFace
-                src={back}
-                alt={`Back of the business card for ${card.fullName}`}
-                /* The top margin is desktop-only: on a phone this sits alone
-                   where the front was, with the same spacing as before. */
-                className={`lg:mt-4 ${face === 'back' ? '' : 'hidden lg:block'}`}
+                src={front}
+                alt={`Business card for ${card.fullName}`}
+                className={face === 'front' ? '' : 'hidden lg:block'}
               />
-            )}
 
-            {/* Nothing to toggle between once both are on screen. */}
-            {back && (
-              <div className="mt-3 flex justify-center gap-1.5 lg:hidden">
-                {(['front', 'back'] as const).map((side) => (
-                  <button
-                    key={side}
-                    type="button"
-                    onClick={() => setFace(side)}
-                    className="rounded-full px-4 py-1.5 text-[11.5px] font-semibold capitalize transition"
-                    style={
-                      face === side
-                        ? { background: BRAND, color: '#fff' }
-                        : { background: '#fff', color: '#6B7280', boxShadow: CARD_SHADOW }
-                    }
-                  >
-                    {side}
-                  </button>
-                ))}
-              </div>
-            )}
+              {back && (
+                <CardFace
+                  src={back}
+                  alt={`Back of the business card for ${card.fullName}`}
+                  /* The top margin is desktop-only: on a phone this sits alone
+                     where the front was, with the same spacing as before. */
+                  className={`lg:mt-4 ${face === 'back' ? '' : 'hidden lg:block'}`}
+                />
+              )}
+            </div>
           </div>
         )}
 
