@@ -56,19 +56,36 @@ function updateCanonical(path: string) {
   el.setAttribute('href', `${BASE_URL}${path}`);
 }
 
+// Marks the blocks this file created. A block with the same id may instead have been rendered
+// by the server (JsonLdScripts in lib/catalogSeo.tsx); React owns that element and removes it
+// itself when the page changes, so it must never be taken out of the DOM from here. Doing so
+// made React's own removal throw ("The node to be removed is not a child of this node") and
+// every navigation away from a directly opened category or condition page crashed.
+const CLIENT_MARK = 'data-client-jsonld';
+
 export function injectJsonLd(id: string, data: Record<string, unknown>) {
   let el = document.getElementById(id) as HTMLScriptElement | null;
   if (!el) {
     el = document.createElement('script');
     el.id = id;
-    el.setAttribute('type', 'application/ld+json');
+    el.setAttribute(CLIENT_MARK, '');
     document.head.appendChild(el);
   }
+  el.setAttribute('type', 'application/ld+json');
   el.textContent = JSON.stringify({ '@context': 'https://schema.org', ...data });
 }
 
 export function removeJsonLd(id: string) {
-  document.getElementById(id)?.remove();
+  const el = document.getElementById(id);
+  if (!el) return;
+  if (el.hasAttribute(CLIENT_MARK)) {
+    el.remove();
+  } else {
+    // Server-rendered: leave the element where React put it, but switch it off so crawlers
+    // no longer read it as JSON-LD. injectJsonLd() switches it back on.
+    el.setAttribute('type', 'application/json');
+    el.textContent = '{}';
+  }
 }
 
 /**
