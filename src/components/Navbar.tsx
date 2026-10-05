@@ -539,7 +539,7 @@ export default function Navbar() {
         </div>
 
         {/* Navbar */}
-        <nav id="global-nav" className="w-full bg-white shadow-sm sticky top-0 z-50 border-b border-gray-100">
+        <nav id="global-nav" className="w-full bg-white sticky top-0 z-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between h-20 relative">
               {/* Logo (Left) */}
@@ -551,7 +551,7 @@ export default function Navbar() {
               </div>
 
               {/* Desktop Nav Links (Center) */}
-              <div id="global-nav-links" className="hidden lg:flex flex-1 justify-center items-center space-x-6 text-sm font-semibold text-gray-500">
+              <div id="global-nav-links" className="hidden lg:flex flex-1 justify-center items-center space-x-6 text-sm font-medium text-black">
                 <Link href="/" className={activeCls('/', 'hover:text-primary transition')}>Home</Link>
                 {/* Order Medicines — a plain link, no dropdown. */}
                 <Link href="/order-medicines" id="order-medicines-nav-link" className={activeCls('/order-medicines', 'hover:text-primary transition whitespace-nowrap')}>Order Medicines</Link>

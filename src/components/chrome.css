@@ -62,8 +62,6 @@
     top: 0;
     left: 0;
     background: #ffffff;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-    border-bottom: 1px solid #f3f4f6;
     animation: slideDown 0.4s ease-out forwards;
 }
 
@@ -87,18 +85,15 @@
     box-shadow: none !important;
 }
 
-/* Mobile-only: keep a hairline separator under the home navbar. */
+/* Mobile-only: solid white home navbar, no separator. */
 @media (max-width: 767px) {
     [data-nav-page="home"] #global-nav {
         background: #ffffff !important;
-        border-bottom: 1px solid #f3f4f6 !important;
-        box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05) !important;
     }
 }
 
 [data-nav-page="home"] #global-nav-wrapper.scrolled #global-nav {
     background: #ffffff !important;
-    border-bottom: 1px solid #f1f5f9 !important;
 }
 
 /* Link colors on home page (transparent vs scrolled) */
@@ -111,7 +106,7 @@
 }
 
 [data-nav-page="home"] #global-nav-wrapper.scrolled #global-nav-links>a {
-    color: #4b5563 !important;
+    color: #000000 !important;
 }
 
 [data-nav-page="home"] #global-nav-wrapper.scrolled #global-nav-links>a:hover {
@@ -138,7 +133,7 @@
 [data-nav-page="home"] #global-nav-wrapper.scrolled #company-nav-btn,
 [data-nav-page="home"] #global-nav-wrapper.scrolled #order-medicines-nav-link,
 [data-nav-page="home"] #global-nav-wrapper.scrolled #global-nav-links .group>a {
-    color: #4b5563 !important;
+    color: #000000 !important;
 }
 
 [data-nav-page="home"] #global-nav-wrapper.scrolled #company-nav-btn:hover,
@@ -444,19 +439,18 @@
 
 [data-nav-page="home"] #global-nav-wrapper.scrolled .gn-trigger,
 [data-nav-page="home"] #global-nav-wrapper.gn-open .gn-trigger {
-    color: #4b5563;
+    color: #000000;
 }
 
 [data-nav-page="home"] #global-nav-wrapper.gn-open #global-nav {
     background: #ffffff !important;
-    border-bottom: 1px solid #f1f5f9 !important;
 }
 
 [data-nav-page="home"] #global-nav-wrapper.gn-open #global-nav-links>a,
 [data-nav-page="home"] #global-nav-wrapper.gn-open #company-nav-btn,
 [data-nav-page="home"] #global-nav-wrapper.gn-open #order-medicines-nav-link,
 [data-nav-page="home"] #global-nav-wrapper.gn-open #global-nav-links .group>a {
-    color: #4b5563 !important;
+    color: #000000 !important;
 }
 
 [data-nav-page="home"] #global-nav-wrapper.gn-open #global-nav-links>a[href="/"] {

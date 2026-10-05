@@ -709,6 +709,10 @@ export async function getNewsById(id: string, preview: boolean = false) {
 // Blood Pressure, Covid-19, etc.) already carries a post `count` per term
 // without touching any post body, so read the pill list straight off that —
 // this is also the taxonomy `article.tag` is populated from (wp:term[0]).
+// When cms.getmeds.ph is down the browser can hang ~20s before giving up; fail sooner
+// and log a warning (not an error) — callers already fall back to an empty list.
+const WP_TIMEOUT_MS = 10_000;
+
 export async function getNewsCategories(): Promise<string[]> {
   try {
     // Cache-busted + no-store, same as getFeaturedNews below — without this the
@@ -716,7 +720,7 @@ export async function getNewsCategories(): Promise<string[]> {
     // wouldn't show up in the pills until a hard refresh).
     const cacheBuster = `t=${Date.now()}`;
     const wpRoot = process.env.NEXT_PUBLIC_WORDPRESS_API_ROOT || process.env.VITE_WORDPRESS_API_ROOT || 'https://cms.getmeds.ph';
-    const res = await fetch(`${wpRoot.replace(/\/$/, '')}/wp-json/wp/v2/categories?per_page=100&_fields=id,name,count&${cacheBuster}`, { cache: 'no-store' });
+    const res = await fetch(`${wpRoot.replace(/\/$/, '')}/wp-json/wp/v2/categories?per_page=100&_fields=id,name,count&${cacheBuster}`, { cache: 'no-store', signal: AbortSignal.timeout(WP_TIMEOUT_MS) });
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
     const categories: { name: string; count: number }[] = await res.json();
     return categories
@@ -724,7 +728,7 @@ export async function getNewsCategories(): Promise<string[]> {
       .sort((a, b) => b.count - a.count)
       .map((c) => c.name)
   } catch (err) {
-    console.error('Error fetching blog categories from WordPress:', err);
+    console.warn('Could not load blog categories from WordPress:', err);
     return [];
   }
 }
@@ -804,7 +808,7 @@ export async function getFeaturedNews() {
   try {
     const wp_root = "https://cms.getmeds.ph";
     const cacheBuster = `t=${Date.now()}`;
-    const idsRes = await fetch(`${wp_root}/wp-json/getmeds/v1/featured-blogs?${cacheBuster}`, { cache: 'no-store' });
+    const idsRes = await fetch(`${wp_root}/wp-json/getmeds/v1/featured-blogs?${cacheBuster}`, { cache: 'no-store', signal: AbortSignal.timeout(WP_TIMEOUT_MS) });
     if (!idsRes.ok) throw new Error(`HTTP error! status: ${idsRes.status}`);
     const featured_ids = await idsRes.json();
     if (!featured_ids || !Array.isArray(featured_ids)) return [];
@@ -814,12 +818,12 @@ export async function getFeaturedNews() {
     
     const postPromises = ids.map(async (id) => {
       try {
-        const postRes = await fetch(`${wp_root}/wp-json/wp/v2/posts/${id}?_embed=true&${cacheBuster}`, { cache: 'no-store' });
+        const postRes = await fetch(`${wp_root}/wp-json/wp/v2/posts/${id}?_embed=true&${cacheBuster}`, { cache: 'no-store', signal: AbortSignal.timeout(WP_TIMEOUT_MS) });
         if (!postRes.ok) return null;
         const postData = await postRes.json();
         return parseWpPost(postData);
       } catch (err) {
-        console.error(`Error fetching post ${id} from WordPress:`, err);
+        console.warn(`Could not load post ${id} from WordPress:`, err);
         return null;
       }
     });
@@ -827,7 +831,7 @@ export async function getFeaturedNews() {
     const results = await Promise.all(postPromises);
     return results.filter((item): item is News => item !== null);
   } catch (err) {
-    console.error('Error fetching featured news from WordPress:', err);
+    console.warn('Could not load featured news from WordPress:', err);
     return [];
   }
 }
