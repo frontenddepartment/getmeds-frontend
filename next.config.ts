@@ -25,6 +25,11 @@ const ADMIN_PANELS = [
   'adminadlorock',
 ];
 
+const BLOG_RELATIVE_PAGES = [
+  'services', 'about-us', 'careers', 'product-range', 'contact-us', 'meditations', 'csr',
+  'global-presence', 'ungc', 'order-medicines', 'patient-assistance-program',
+].join('|');
+
 // Browser code only receives NEXT_PUBLIC_* variables; a VITE_* name (what the old Vite site,
 // and so its Vercel project, used) is never inlined, and reading it in the browser gives
 // undefined. Accept either name here so a build with only the VITE_* variables set still
@@ -91,6 +96,16 @@ const nextConfig: NextConfig = {
       { source: '/blog/how-to-cure-cough-and-cold', destination: '/blog/best-cough-and-cold-otc-medicines', permanent: true },
       { source: '/blog/maintain-a-healthy-weight', destination: '/blog/ways-to-maintain-healthy-weight', permanent: true },
       { source: '/blog/best-supplements-and-vitamins-for-kids', destination: '/blog/best-vitamin-supplements-for-kids', permanent: true },
+
+      // Website pages the old blog templates linked without a leading "/" (so /blog/services,
+      // /blog/product-range?category=...). Google still crawls them; the query string carries over.
+      // No WordPress post uses these slugs.
+      { source: `/blog/:page(${BLOG_RELATIVE_PAGES})`, destination: '/:page', permanent: true },
+      { source: `/blog/:page(${BLOG_RELATIVE_PAGES})\\.html`, destination: '/:page', permanent: true },
+
+      // WordPress archive pages (category, tag, author, page/N). The blog has no such pages, so
+      // without these they'd be 404s now that unknown blog addresses are; /blog lists every post.
+      { source: '/blog/:archive(category|tag|author|page)/:path*', destination: '/blog', permanent: true },
 
       // Old WordPress article URLs
       { source: '/articles', destination: '/blog', permanent: true },

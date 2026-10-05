@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
+import { notFound, permanentRedirect } from 'next/navigation';
 import { pageMetadata } from '@/lib/pageMeta';
-import { fetchWpPostBySlug, postSeo, toNewsItem } from '@/lib/blogServer';
+import { fetchWpPostById, fetchWpPostBySlug, postSeo, toNewsItem } from '@/lib/blogServer';
 import BlogDetailClient from './BlogDetailClient';
 
 // Shared by /blog/<slug...> and /blog-detail. In the old site both were the one blog-detail
@@ -27,9 +28,32 @@ const SHELL_METADATA: Metadata = {
   robots: { index: false, follow: true },
 };
 
+/** A WordPress draft preview (?preview=true / ?preview_id=): always resolved in the browser. */
+function isDraftPreview(sp: BlogSearchParams): boolean {
+  return first(sp.preview) === 'true' || Boolean(first(sp.preview_id));
+}
+
+/**
+ * The post for this address, or the address's real answer: a 404 when WordPress has no such
+ * post, and for the ?p= / ?id= links (/blog-detail, old /article-detail) a 308 to the post's
+ * /blog/<slug>. Both used to be a 200 "Blog - Getmeds" shell that sent the browser on with
+ * JavaScript, which Google reports as noindex / Soft 404 instead of dropping the address.
+ * When WordPress can't be reached it stays `undefined` and the browser tries again.
+ */
 async function loadPost(routeSlug: string, sp: BlogSearchParams) {
-  if (!routeSlug || hasPreviewParams(sp)) return undefined;
-  return fetchWpPostBySlug(routeSlug);
+  if (isDraftPreview(sp)) return undefined;
+  if (!routeSlug) {
+    const linkId = first(sp.p) || first(sp.id);
+    if (!linkId) return undefined;
+    const linked = await fetchWpPostById(linkId);
+    if (linked === null) notFound();
+    if (linked) permanentRedirect(`/blog/${linked.slug}`);
+    return undefined;
+  }
+  if (hasPreviewParams(sp)) return undefined;
+  const post = await fetchWpPostBySlug(routeSlug);
+  if (post === null) notFound();
+  return post;
 }
 
 export async function blogDetailMetadata(routeSlug: string, sp: BlogSearchParams): Promise<Metadata> {

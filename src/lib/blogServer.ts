@@ -125,6 +125,27 @@ export async function fetchWpPostBySlug(slug: string): Promise<WpPost | null | u
   }
 }
 
+/**
+ * One published post by its WordPress id (the ?p= / ?id= links). Same answers as
+ * fetchWpPostBySlug: `null` = no such published post, `undefined` = the request failed.
+ */
+export async function fetchWpPostById(id: string): Promise<WpPost | null | undefined> {
+  if (!/^\d+$/.test(id)) return null; // WordPress ids are numbers; anything else names no post
+  try {
+    const res = await fetch(`${WP_API_ROOT}/wp-json/wp/v2/posts/${id}?_fields=id,slug,status`, {
+      next: { revalidate: REVALIDATE_SECONDS },
+    });
+    // 404 = no post; 401/403 = a draft or private post, which only a preview may show.
+    if (res.status === 404 || res.status === 401 || res.status === 403) return null;
+    if (!res.ok) throw new Error(`WordPress API returned status ${res.status}`);
+    const post = await res.json();
+    return post && post.slug && post.status === 'publish' ? post : null;
+  } catch (err) {
+    console.warn(`[Blog] WordPress fetch for post id ${id} failed:`, err);
+    return undefined;
+  }
+}
+
 /** A post as the /blog crawl list and blog-sitemap.xml need it. */
 export interface BlogPostSummary {
   slug: string;
