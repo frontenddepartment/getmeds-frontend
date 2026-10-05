@@ -396,13 +396,13 @@ export default function HomeClient({ initialHeroSlides = null }: { initialHeroSl
     }, 400);
   };
 
-  // The two "Patient First" banners are links; on hover they lift slightly with a
-  // deeper, soft shadow (a floating card) so people can tell. Same cue on keyboard focus.
+  // The two "Patient First" banners are links; on hover they lift slightly so people
+  // can tell. Same cue on keyboard focus.
   const bannerCardClass =
-    'w-full h-full object-cover object-center rounded-[15px] sm:rounded-[24px] shadow-lg ' +
-    'transition-[translate,box-shadow] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-[translate] ' +
-    'hover:-translate-y-1.5 hover:shadow-[0_22px_45px_-14px_rgba(15,40,70,0.35)] ' +
-    '[a:focus-visible>&]:-translate-y-1.5 [a:focus-visible>&]:shadow-[0_22px_45px_-14px_rgba(15,40,70,0.35)] ' +
+    'w-full h-full object-cover object-center rounded-[10px] sm:rounded-[12px] ' +
+    'transition-[translate] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-[translate] ' +
+    'hover:-translate-y-1.5 ' +
+    '[a:focus-visible>&]:-translate-y-1.5 ' +
     'motion-reduce:transition-none motion-reduce:hover:translate-y-0';
 
   // Hovering the hero pauses autoplay (so the text can be read and selected);
@@ -1071,35 +1071,35 @@ export default function HomeClient({ initialHeroSlides = null }: { initialHeroSl
       {/* Stat Numbers (Clean, without cards, directly under hero) */}
       <section className="relative z-10 max-w-7xl mx-auto px-6 py-12 md:py-16 grid grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12">
         {/* Stat 1 */}
-        <div className="flex flex-col items-center text-center hover:-translate-y-1 transition-all duration-300 group ca-anim ca-up ca-d1">
-          <h3 className="text-3xl md:text-4xl font-black bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent mb-2 group-hover:scale-110 transition-transform duration-300">
+        <div className="flex flex-col items-start text-left border-l-[3px] border-primary pl-5 md:pl-6 hover:-translate-y-1 transition-all duration-300 group ca-anim ca-up ca-d1">
+          <h3 className="text-3xl md:text-4xl font-semibold bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent mb-2 origin-left group-hover:scale-110 transition-transform duration-300">
             <AnimatedCounter end={2000} suffix="+" />
           </h3>
-          <p className="text-gray-600 font-bold text-sm md:text-base leading-tight">Medicines in portfolio</p>
+          <p className="text-black font-medium text-sm md:text-base leading-tight">Medicines in portfolio</p>
         </div>
 
         {/* Stat 2 */}
-        <div className="flex flex-col items-center text-center hover:-translate-y-1 transition-all duration-300 group ca-anim ca-up ca-d2">
-          <h3 className="text-3xl md:text-4xl font-black bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent mb-2 group-hover:scale-110 transition-transform duration-300">
+        <div className="flex flex-col items-start text-left border-l-[3px] border-primary pl-5 md:pl-6 hover:-translate-y-1 transition-all duration-300 group ca-anim ca-up ca-d2">
+          <h3 className="text-3xl md:text-4xl font-semibold bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent mb-2 origin-left group-hover:scale-110 transition-transform duration-300">
             <AnimatedCounter end={10000} suffix="+" />
           </h3>
-          <p className="text-gray-600 font-bold text-sm md:text-base leading-tight">Pharmacies nationwide</p>
+          <p className="text-black font-medium text-sm md:text-base leading-tight">Pharmacies nationwide</p>
         </div>
 
         {/* Stat 3 */}
-        <div className="flex flex-col items-center text-center hover:-translate-y-1 transition-all duration-300 group ca-anim ca-up ca-d3">
-          <h3 className="text-3xl md:text-4xl font-black bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent mb-2 group-hover:scale-110 transition-transform duration-300">
+        <div className="flex flex-col items-start text-left border-l-[3px] border-primary pl-5 md:pl-6 hover:-translate-y-1 transition-all duration-300 group ca-anim ca-up ca-d3">
+          <h3 className="text-3xl md:text-4xl font-semibold bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent mb-2 origin-left group-hover:scale-110 transition-transform duration-300">
             <AnimatedCounter end={500} suffix="+" />
           </h3>
-          <p className="text-gray-600 font-bold text-sm md:text-base leading-tight">Hospitals served</p>
+          <p className="text-black font-medium text-sm md:text-base leading-tight">Hospitals served</p>
         </div>
 
         {/* Stat 4 */}
-        <div className="flex flex-col items-center text-center hover:-translate-y-1 transition-all duration-300 group ca-anim ca-up ca-d4">
-          <h3 className="text-3xl md:text-4xl font-black bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent mb-2 group-hover:scale-110 transition-transform duration-300">
+        <div className="flex flex-col items-start text-left border-l-[3px] border-primary pl-5 md:pl-6 hover:-translate-y-1 transition-all duration-300 group ca-anim ca-up ca-d4">
+          <h3 className="text-3xl md:text-4xl font-semibold bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent mb-2 origin-left group-hover:scale-110 transition-transform duration-300">
             <AnimatedCounter end={2} suffix="M+" />
           </h3>
-          <p className="text-gray-600 font-bold text-sm md:text-base leading-tight">Filipino lives touched</p>
+          <p className="text-black font-medium text-sm md:text-base leading-tight">Filipino lives touched</p>
         </div>
       </section>
 
@@ -1109,7 +1109,7 @@ export default function HomeClient({ initialHeroSlides = null }: { initialHeroSl
         {/* Top Area: Text Content */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 items-start mb-16">
           {/* Left Column: Eyebrow & Title */}
-          <div className="flex flex-col justify-center items-end text-right space-y-4 max-w-lg md:ml-auto">
+          <div className="flex flex-col justify-center items-start text-left space-y-4 max-w-lg">
             <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent font-bold uppercase tracking-widest text-xs">Who We Are</span>
             <h2 className="text-3xl md:text-4xl lg:text-[42px] font-semibold text-gray-900 leading-tight tracking-tight ca-anim ca-left">
               Patient First. <br />
@@ -1120,10 +1120,10 @@ export default function HomeClient({ initialHeroSlides = null }: { initialHeroSl
 
           {/* Right Column: Description */}
           <div className="flex flex-col justify-center max-w-lg md:pt-10">
-            <p className="text-gray-500 leading-relaxed text-sm md:text-[15px]">
+            <p className="text-black leading-relaxed text-sm md:text-[15px]">
               A box of medicine isn't a product. It's a stage-IV oncology mother in Cebu waiting for her next dose. A child in Mindanao fighting leukemia. A father in Quezon City heading into surgery, trusting that the anesthesia is ready. Getmeds exists so distance, cost, and complexity never decide who lives.
             </p>
-            <div className="mt-6 md:hidden">
+            <div className="mt-6">
               <a href="/about-us" className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] text-white font-bold text-sm px-8 py-3 rounded-full transition-transform hover:opacity-90 inline-block whitespace-nowrap">
                 Learn More<span className="sr-only"> about Getmeds</span>
               </a>
@@ -1131,19 +1131,10 @@ export default function HomeClient({ initialHeroSlides = null }: { initialHeroSl
           </div>
         </div>
 
-        {/* Bottom Area: Images & Floating Button */}
+        {/* Bottom Area: Images */}
         <div className="relative mt-8">
-          {/* Floating Button Cutout Style (desktop/tablet only — shown inline under the description on mobile) */}
-          <div className="hidden md:block absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
-            <div className="bg-white p-2.5 rounded-full">
-              <a href="/about-us" className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] text-white font-bold text-sm px-8 py-3 rounded-full transition-transform hover:opacity-90 inline-block whitespace-nowrap">
-                Learn More<span className="sr-only"> about Getmeds</span>
-              </a>
-            </div>
-          </div>
-
           {/* Image Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 ca-anim ca-right ca-d2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 ca-anim ca-right ca-d2">
             {/* Both fall back to a destination in code rather than relying on
                 Sanity: these two say "here is the range" and "here is the
                 assistance programme", so they should land somewhere whether or
