@@ -551,7 +551,7 @@ export default function Navbar() {
               </div>
 
               {/* Desktop Nav Links (Center) */}
-              <div id="global-nav-links" className="hidden lg:flex flex-1 justify-center items-center space-x-6 text-sm font-semibold text-gray-500">
+              <div id="global-nav-links" className="hidden lg:flex flex-1 justify-center items-center space-x-6 text-sm font-medium text-black">
                 <Link href="/" className={activeCls('/', 'hover:text-primary transition')}>Home</Link>
                 {/* Order Medicines — a plain link, no dropdown. */}
                 <Link href="/order-medicines" id="order-medicines-nav-link" className={activeCls('/order-medicines', 'hover:text-primary transition whitespace-nowrap')}>Order Medicines</Link>

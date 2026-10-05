@@ -117,42 +117,21 @@ export default function OrderMedicinesHub() {
           {/* ── The four audiences — the whole point of this page ── */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {ORDER_AUDIENCES.map((a, i) => (
-              <Link
+              <div
                 key={a.slug}
-                href={audiencePath(a)}
-                className={`ca-anim ca-zoom ${['ca-d1', 'ca-d2', 'ca-d3', 'ca-d4'][i]} group flex flex-col overflow-hidden border border-gray-200 rounded-[15px] bg-white hover:border-primary/50 hover:shadow-lg transition-all duration-200`}
+                className={`ca-anim ca-zoom ${['ca-d1', 'ca-d2', 'ca-d3', 'ca-d4'][i]} flex flex-col`}
               >
-                <div className="relative">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={a.image}
-                    alt={a.imageAlt}
-                    width={800}
-                    height={450}
-                    className="block w-full h-[132px] object-cover"
-                  />
-                  <div
-                    aria-hidden="true"
-                    className="absolute inset-x-0 bottom-0 h-16 pointer-events-none"
-                    style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.28), rgba(0,0,0,0))' }}
-                  />
-                  <div
-                    className="absolute -bottom-5 left-5 w-11 h-11 rounded-full flex items-center justify-center ring-4 ring-white"
-                    style={{ background: 'linear-gradient(135deg,#61A644,#1D9FDA)' }}
-                  >
-                    <i className={`fa-solid ${a.icon} text-white text-[15px]`}></i>
-                  </div>
-                </div>
-
-                <div className="flex flex-col flex-1 px-5 pt-8 pb-5">
-                  <h2 className="text-[15px] font-semibold text-dark mb-1.5 leading-snug">{a.cardTitle}</h2>
-                  <p className="text-[12px] text-gray-500 leading-relaxed mb-5 flex-1">{a.cardBody}</p>
-                  <span className="inline-flex items-center gap-2 text-[12px] font-semibold text-primary">
-                    {a.cardCta}
-                    <i className="fa-solid fa-arrow-right text-[10px] group-hover:translate-x-1 transition-transform"></i>
-                  </span>
-                </div>
-              </Link>
+                <h2 className="text-[18px] font-semibold text-dark mb-2 leading-snug">{a.cardTitle}</h2>
+                <p className="text-[14px] text-gray-500 leading-relaxed mb-4 flex-1">{a.cardBody}</p>
+                <Link
+                  href={audiencePath(a)}
+                  className="group flex items-center justify-center gap-2.5 rounded-[15px] px-5 py-5 text-[15px] font-semibold text-white text-center hover:brightness-95 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200"
+                  style={{ background: 'linear-gradient(135deg,#61A644,#1D9FDA)' }}
+                >
+                  {a.cardCta}
+                  <i className="fa-solid fa-arrow-right text-[12px] group-hover:translate-x-1 transition-transform"></i>
+                </Link>
+              </div>
             ))}
           </div>
 
