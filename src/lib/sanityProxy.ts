@@ -260,6 +260,8 @@ const SANITY_QUERIES: Record<string, string> = {
       mobile,
       whatsapp,
       viber,
+      wechatId,
+      wechatQr,
       officePhone,
       email,
       active

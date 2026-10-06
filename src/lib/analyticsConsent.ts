@@ -189,7 +189,7 @@ export function initGetmedsConsent(): void {
   function hrefFor(el: Element) {
     const href = el.tagName === 'A' ? el.getAttribute('href') : null;
     if (!href || href.charAt(0) === '#' || /^javascript:/i.test(href)) return null;
-    if (/^(tel|mailto|sms|viber|whatsapp):/i.test(href)) return href.split('?')[0];
+    if (/^(tel|mailto|sms|viber|whatsapp|weixin):/i.test(href)) return href.split('?')[0];
     try {
       const url = new URL(href, location.href);
       return url.hostname === location.hostname ? url.pathname : url.hostname + url.pathname;

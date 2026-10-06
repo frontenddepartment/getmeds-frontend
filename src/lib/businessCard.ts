@@ -33,6 +33,8 @@ export interface BusinessCard {
   mobile?: string
   whatsapp?: string
   viber?: string
+  wechatId?: string
+  wechatQr?: SanityImage
   officePhone?: string
   email?: string
   active?: boolean
@@ -137,6 +139,17 @@ export function viberLink(card: BusinessCard): string {
   return `viber://chat?number=${encodeURIComponent(n)}`
 }
 
+/**
+ * WeChat is the odd one out: no link opens a chat from a number or an ID, so
+ * the card shows the ID to copy and the person's QR to scan, and this only
+ * opens the app. weixin:// does nothing where WeChat is not installed.
+ */
+export const WECHAT_APP_LINK = 'weixin://'
+
+export function wechatId(card: BusinessCard): string {
+  return (card.wechatId || '').trim()
+}
+
 export function telLink(raw?: string | null): string {
   const n = toE164(raw)
   return n ? `tel:${n}` : ''
@@ -223,7 +236,11 @@ export function buildVCard(card: BusinessCard, cardUrl?: string): string {
   // record — the number can be re-checked later without the physical card.
   if (cardUrl) lines.push(`URL:${esc(cardUrl)}`)
 
-  lines.push(`NOTE:${esc('Saved from a Getmeds business card.')}`)
+  // Contacts apps have no standard WeChat field, so the ID goes in the note
+  // where every one of them shows it.
+  const wechat = wechatId(card)
+  const note = (wechat ? `WeChat ID: ${wechat}\n` : '') + 'Saved from a Getmeds business card.'
+  lines.push(`NOTE:${esc(note)}`)
   lines.push(`REV:${new Date().toISOString().replace(/\.\d{3}Z$/, 'Z')}`)
   lines.push('END:VCARD')
 

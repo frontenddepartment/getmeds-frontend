@@ -11,6 +11,8 @@ import {
   toE164,
   viberLink,
   viberNumber,
+  WECHAT_APP_LINK,
+  wechatId,
   whatsappLink,
   whatsappNumber,
   type BusinessCard,
@@ -441,6 +443,8 @@ function BusinessCardPage({ initialSlug }: { initialSlug?: string }) {
   const lastSwipe = useRef(0);
   const [turned, setTurned] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [wechatOpen, setWechatOpen] = useState(false);
+  const [wechatCopied, setWechatCopied] = useState(false);
 
   useEffect(() => {
     if (!slug) {
@@ -581,6 +585,18 @@ function BusinessCardPage({ initialSlug }: { initialSlug?: string }) {
   const office = toE164(card.officePhone);
   const wa = whatsappLink(card);
   const viber = viberLink(card);
+  const wechat = wechatId(card);
+  const wechatQr = card.wechatQr ? urlFor(card.wechatQr).width(480).url() : '';
+
+  const copyWechat = async () => {
+    try {
+      await navigator.clipboard.writeText(wechat);
+      setWechatCopied(true);
+      setTimeout(() => setWechatCopied(false), 2000);
+    } catch {
+      // Clipboard blocked (old browser, insecure origin): the ID is on screen and selectable.
+    }
+  };
 
   return (
     /*
@@ -736,6 +752,63 @@ function BusinessCardPage({ initialSlug }: { initialSlug?: string }) {
             sub={formatPhone(viberNumber(card))}
             background="#7360F2"
           />
+        )}
+
+        {/* WeChat cannot open a chat from a link the way the two above do, so the
+            button opens a panel instead: the person's QR to scan (from another
+            phone, or saved and picked from WeChat's Scan → album) and the ID to
+            copy and paste into WeChat's Add Contacts search. */}
+        {(wechat || wechatQr) && (
+          <>
+            <ActionButton
+              onClick={() => setWechatOpen((o) => !o)}
+              icon="fa-brands fa-weixin"
+              label="Add on WeChat"
+              sub={wechat ? `WeChat ID: ${wechat}` : 'Scan the QR code'}
+              background="#07C160"
+            />
+            {wechatOpen && (
+              <div
+                className="rounded-[16px] bg-white px-4 py-4 text-center"
+                style={{ boxShadow: CARD_SHADOW }}
+              >
+                {wechatQr && (
+                  <img
+                    src={wechatQr}
+                    alt={`WeChat QR code for ${card.fullName}`}
+                    className="mx-auto mb-3 block w-full max-w-[220px] rounded-[10px]"
+                  />
+                )}
+                {wechat && (
+                  <div className="mb-3 flex items-center justify-center gap-2">
+                    <span className="select-all text-[14px] font-semibold text-gray-900">{wechat}</span>
+                    <button
+                      type="button"
+                      onClick={copyWechat}
+                      className="rounded-full px-3 py-1 text-[11.5px] font-semibold text-white"
+                      style={{ background: wechatCopied ? BRAND_GREEN : '#07C160' }}
+                    >
+                      {wechatCopied ? 'Copied' : 'Copy ID'}
+                    </button>
+                  </div>
+                )}
+                <p className="mb-3 text-[11.5px] leading-relaxed text-gray-500">
+                  {wechatQr && wechat
+                    ? 'Scan the code with WeChat, or copy the ID and search it in WeChat → Add Contacts.'
+                    : wechatQr
+                      ? 'Scan the code with WeChat → Scan. On this phone, save the image and pick it from the album in Scan.'
+                      : 'Copy the ID, then in WeChat go to Add Contacts and paste it in the search.'}
+                </p>
+                <a
+                  href={WECHAT_APP_LINK}
+                  className="inline-block rounded-full px-4 py-2 text-[12px] font-semibold"
+                  style={{ color: '#07C160', border: '1px solid #07C160' }}
+                >
+                  Open WeChat
+                </a>
+              </div>
+            )}
+          </>
         )}
       </div>
 
