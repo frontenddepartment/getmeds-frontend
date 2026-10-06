@@ -56,21 +56,10 @@ const GROUND = '#F3F6FB';
 const CARD_SHADOW = '0 2px 10px rgba(23,43,77,.055)';
 
 /*
-  A downscaled copy of the logo, shared by the mark in the header and the
-  watermark tiles on the card faces.
-
-  Not /assets/getmedslogo.png, which is 7122x4000 — fine as a hero image,
-  wasteful for a 148px header mark and worse for a 110px tile the browser has to
-  hold decoded while it paints two dozen of them on a phone.
+  A downscaled copy of the logo for the header mark. Not /assets/getmedslogo.png,
+  which is 7122x4000 — fine as a hero image, wasteful for a 148px header mark.
 */
 const LOGO_SRC = '/assets/getmeds-logo-sm.png';
-
-/*
-  WATERMARK_OPACITY is the knob: high enough to survive a screenshot, low enough
-  to read the printed phone number underneath.
-*/
-const WATERMARK_OPACITY = 0.18;
-const WATERMARK_TILES = 28;
 
 /*
   Hover motion for the icons on the three action buttons.
@@ -235,8 +224,8 @@ const ENTRANCE_CSS = `
  * menu and drag-to-desktop.
  *
  * Worth being plain about what this is: a speed bump, not protection. Anyone
- * with a screenshot key or devtools still gets the artwork, which is why the
- * watermark above is the actual answer and this only stops the effortless copy.
+ * with a screenshot key or devtools still gets the artwork; this only stops
+ * the effortless copy.
  */
 function blockSave(e: React.SyntheticEvent) {
   e.preventDefault();
@@ -318,8 +307,8 @@ function CardFace({ src, alt, className = '' }: { src: string; alt: string; clas
     <div
       className={`relative overflow-hidden rounded-[18px] bg-white ${className}`}
       style={{ boxShadow: '0 6px 24px rgba(23,43,77,.12)' }}
-      /* On the wrapper, not the <img>: the watermark sits on top, and a guard
-         here catches the right-click wherever inside the card it lands. */
+      /* On the wrapper, not the <img>, so the guard catches the right-click
+         wherever inside the card it lands. */
       onContextMenu={blockSave}
       onDragStart={blockSave}
     >
@@ -335,45 +324,6 @@ function CardFace({ src, alt, className = '' }: { src: string; alt: string; clas
           (e.currentTarget as HTMLImageElement).style.display = 'none';
         }}
       />
-      <CardWatermark />
-    </div>
-  );
-}
-
-/**
- * The tiled, slanted logo laid over a card face.
- *
- * Same treatment as the employee verification modal, so a card and a
- * verification result read as one document family.
- *
- * Purely decorative: `pointer-events-none` keeps it from swallowing the
- * right-click guard on the wrapper, and the empty alt keeps two dozen copies of
- * the logo out of the accessibility tree.
- *
- * The grid is deliberately larger than the card (`-inset-24`) and carries more
- * tiles than fit, because rotating it swings the corners inward — the overflow
- * is what keeps them covered, and the parent clips the rest. At `-inset-16` the
- * rotated top edge cuts across the card's top-left corner and leaves it bare.
- */
-function CardWatermark() {
-  return (
-    <div className="pointer-events-none absolute inset-0 select-none overflow-hidden">
-      <div
-        className="absolute -inset-24 grid grid-cols-4 content-start gap-x-6 gap-y-4"
-        style={{ transform: 'rotate(-20deg)' }}
-      >
-        {Array.from({ length: WATERMARK_TILES }).map((_, i) => (
-          <img
-            key={i}
-            src={LOGO_SRC}
-            alt=""
-            aria-hidden="true"
-            draggable={false}
-            className="w-full max-w-[110px] justify-self-center"
-            style={{ opacity: WATERMARK_OPACITY }}
-          />
-        ))}
-      </div>
     </div>
   );
 }
