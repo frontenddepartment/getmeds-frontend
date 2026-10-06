@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import HomeClient, { type HeroSlideImage } from './HomeClient';
 import { getHeroSlides } from '@/lib/queries';
 import { withVidrysSeo } from '@/lib/vidrys/seoOverrides';
+import { HOME_FAQ_JSON_LD } from '@/lib/homeFaqs';
 
 // The hero slides are fetched here so the first slide's picture is in the HTML (it's the
 // page's main picture for PageSpeed). The page is rebuilt in the background at most every
@@ -68,6 +69,12 @@ export default async function Page() {
         type="application/ld+json"
         id="jsonld-website"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(WEBSITE_JSON_LD) }}
+      />
+      {/* FAQPage block built from the same list the FAQ accordion renders. */}
+      <script
+        type="application/ld+json"
+        id="jsonld-faq"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(HOME_FAQ_JSON_LD).replace(/</g, '\\u003c') }}
       />
       <HomeClient initialHeroSlides={initialHeroSlides} />
     </>

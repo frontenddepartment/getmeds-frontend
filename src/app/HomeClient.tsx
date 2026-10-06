@@ -18,6 +18,7 @@ import { computeCategoryKey, linkCategoryKeys } from '@/lib/categoryImageKey';
 // (public/components/navbar.html). Each is its own URL now, so this chooser
 // navigates rather than stashing the answer for the next page to read.
 import { ORDER_AUDIENCES, audiencePath } from '@/lib/orderAudiences';
+import { HOME_FAQS } from '@/lib/homeFaqs';
 
 
 
@@ -1871,64 +1872,7 @@ export default function HomeClient({ initialHeroSlides = null }: { initialHeroSl
 
       {/* FAQ Section */}
       {(() => {
-        const faqs: { q: string; a: React.ReactNode }[] = [
-          {
-            q: 'Is Getmeds registered with FDA Philippines?',
-            a: 'Yes. Getmeds holds a valid License to Operate from FDA Philippines as a wholesaler, importer, distributor and retail pharmacy.',
-          },
-          {
-            q: 'Is Getmeds legit?',
-            a: 'Yes. Getmeds Philippines, Inc. is licensed by the Food and Drug Administration of the Philippines as a wholesaler, importer, distributor and retail pharmacy, and is PDEA-licensed for controlled substances. Every order is dispensed under PRC-licensed Filipino pharmacists. We serve patients, doctors, pharmacies and hospitals nationwide.',
-          },
-          {
-            q: 'Where is Getmeds located in the Philippines?',
-            a: "Getmeds' head office is at Unit 305, 17 Vatican Bldg. Vatican Drive BF Resort Village, Talon Dos, Las Piñas, Metro Manila. This is our principal office and business address in the Philippines.",
-          },
-          {
-            q: 'Who is the owner of Getmeds?',
-            a: (<span>Getmeds was founded and is owned by <a href="https://www.linkedin.com/in/nareshbishnoi/" target="_blank" rel="noopener noreferrer" className="font-semibold underline" style={{ color: '#1D9FDA' }}>Naresh Bishnoi</a>, who also serves as Director and is a United Nations Global Compact SDG Champion.</span>),
-          },
-          {
-            q: 'What products does Getmeds offer?',
-            a: (
-              <span>
-                Getmeds distributes pharmaceutical products across the Philippines in these therapeutic areas:<br /><br />
-                <span className="block space-y-1">
-                  <span className="block">• <strong>Oncology</strong> — targeted therapies, chemotherapy and supportive cancer care</span>
-                  <span className="block">• <strong>Hematology</strong> — treatments for leukemia, anemia, coagulation disorders and blood cancers</span>
-                  <span className="block">• <strong>Anti-Infectives</strong> — antibiotics for hospital and community use</span>
-                  <span className="block">• <strong>Cardiology</strong> — therapies for heart, vascular and cardiometabolic conditions</span>
-                  <span className="block">• <strong>Anesthesia and Pain Management</strong> — anesthetic, analgesic and perioperative medicines</span>
-                  <span className="block">• <strong>Endocrinology, Orthopedic, Rheumatology, Nephrology, Respiratory and Radiology</strong></span>
-                  <span className="block">• <strong>Rare Diseases</strong> — Named-Patient Access Programs and Compassionate Special Permit imports for medicines not registered in the Philippines</span>
-                  <span className="block">• <strong>Medical Devices</strong> — clinical devices and consumables for hospital and ambulatory care</span>
-                  <span className="block">• <strong>Essential Medicines</strong> — WHO-listed first-line therapies and branded generics</span>
-                </span>
-              </span>
-            ),
-          },
-          {
-            q: 'Does Getmeds accept Senior Citizen and PWD IDs for discounts?',
-            a: 'Yes. Getmeds complies with the Expanded Senior Citizens Act (Republic Act 9994) and the Magna Carta for Persons with Disabilities (Republic Act 10754). Qualified Senior Citizens and Persons with Disabilities receive a 20% discount plus VAT exemption on eligible prescription medicines. Submit a valid Senior Citizen or PWD ID together with your prescription when you place your order.',
-          },
-          {
-            q: 'Can doctors order medicines from Getmeds?',
-            a: 'Yes. Physicians, specialists and healthcare professionals can order products, check stock and pricing, and coordinate Compassionate Special Permit (CSP) applications directly with our team.',
-          },
-          {
-            q: 'How long does delivery take?',
-            a: 'Orders confirmed before 3:00 PM may be delivered the same day within Metro Manila, subject to product availability and order confirmation. Delivery lead times for Luzon, Visayas, and Mindanao may vary depending on the location and courier service.',
-          },
-          {
-            q: 'What payment methods do you accept?',
-            a: (
-              <span>
-                Getmeds accepts Cash on Delivery, GCash, Bank Transfer, Credit or Debit Card.<br /><br />
-                Credit terms may also be available for qualified distributor and hospital accounts, subject to approval and applicable terms.
-              </span>
-            ),
-          },
-        ];
+        const faqs = HOME_FAQS;
         return (
           <section className="py-14 px-6 bg-white reveal">
             <div className="max-w-6xl mx-auto">
@@ -1976,7 +1920,7 @@ export default function HomeClient({ initialHeroSlides = null }: { initialHeroSl
                         style={{ gridTemplateRows: i === openFaq ? '1fr' : '0fr' }}
                       >
                         <div className="overflow-hidden">
-                          <p className="text-gray-500 text-sm leading-relaxed mt-3">{faq.a}</p>
+                          <p className="text-gray-500 text-sm leading-relaxed mt-3">{faq.rich ?? faq.text}</p>
                         </div>
                       </div>
                     </div>
