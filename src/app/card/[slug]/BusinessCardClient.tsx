@@ -12,7 +12,8 @@ import {
   viberLink,
   viberNumber,
   WECHAT_APP_LINK,
-  wechatId,
+  socialLinks,
+  wechatAccounts,
   whatsappLink,
   whatsappNumber,
   type BusinessCard,
@@ -342,7 +343,20 @@ function hintFor(href: string): string {
 }
 
 /** A row in the "details" card — tappable where the value is dialable. */
-function DetailRow({ icon, label, value, href }: { icon: string; label: string; value: string; href?: string }) {
+function DetailRow({
+  icon,
+  label,
+  value,
+  href,
+  external = false,
+}: {
+  icon: string;
+  label: string;
+  value: string;
+  href?: string;
+  /** Opens in a new tab, so the card is still there after a look at the profile. */
+  external?: boolean;
+}) {
   const body = (
     <>
       <i className={`${icon} w-[18px] shrink-0 text-center text-[13px]`} style={{ color: BRAND }} />
@@ -364,7 +378,7 @@ function DetailRow({ icon, label, value, href }: { icon: string; label: string; 
   );
   const cls = 'gm-detail relative flex items-center gap-3 px-4 py-3';
   return href ? (
-    <a href={href} className={cls}>
+    <a href={href} className={cls} {...(external && { target: '_blank', rel: 'noopener noreferrer' })}>
       {body}
     </a>
   ) : (
@@ -394,7 +408,8 @@ function BusinessCardPage({ initialSlug }: { initialSlug?: string }) {
   const [turned, setTurned] = useState(false);
   const [saved, setSaved] = useState(false);
   const [wechatOpen, setWechatOpen] = useState(false);
-  const [wechatCopied, setWechatCopied] = useState(false);
+  // Which account's ID was just copied, so only that button says "Copied".
+  const [wechatCopied, setWechatCopied] = useState('');
 
   useEffect(() => {
     if (!slug) {
@@ -535,14 +550,17 @@ function BusinessCardPage({ initialSlug }: { initialSlug?: string }) {
   const office = toE164(card.officePhone);
   const wa = whatsappLink(card);
   const viber = viberLink(card);
-  const wechat = wechatId(card);
-  const wechatQr = card.wechatQr ? urlFor(card.wechatQr).width(480).url() : '';
+  const wechats = wechatAccounts(card).map((w) => ({
+    ...w,
+    qrUrl: w.qr?.asset ? urlFor(w.qr).width(480).url() : '',
+  }));
+  const links = socialLinks(card);
 
-  const copyWechat = async () => {
+  const copyWechat = async (key: string, id: string) => {
     try {
-      await navigator.clipboard.writeText(wechat);
-      setWechatCopied(true);
-      setTimeout(() => setWechatCopied(false), 2000);
+      await navigator.clipboard.writeText(id);
+      setWechatCopied(key);
+      setTimeout(() => setWechatCopied((k) => (k === key ? '' : k)), 2000);
     } catch {
       // Clipboard blocked (old browser, insecure origin): the ID is on screen and selectable.
     }
@@ -708,13 +726,19 @@ function BusinessCardPage({ initialSlug }: { initialSlug?: string }) {
             button opens a panel instead: the person's QR to scan (from another
             phone, or saved and picked from WeChat's Scan → album) and the ID to
             copy and paste into WeChat's Add Contacts search. */}
-        {(wechat || wechatQr) && (
+        {wechats.length > 0 && (
           <>
             <ActionButton
               onClick={() => setWechatOpen((o) => !o)}
               icon="fa-brands fa-weixin"
               label="Add on WeChat"
-              sub={wechat ? `WeChat ID: ${wechat}` : 'Scan the QR code'}
+              sub={
+                wechats.length > 1
+                  ? `${wechats.length} WeChat accounts`
+                  : wechats[0].id
+                    ? `WeChat ID: ${wechats[0].id}`
+                    : 'Scan the QR code'
+              }
               background="#07C160"
             />
             {wechatOpen && (
@@ -722,32 +746,40 @@ function BusinessCardPage({ initialSlug }: { initialSlug?: string }) {
                 className="rounded-[16px] bg-white px-4 py-4 text-center"
                 style={{ boxShadow: CARD_SHADOW }}
               >
-                {wechatQr && (
-                  <img
-                    src={wechatQr}
-                    alt={`WeChat QR code for ${card.fullName}`}
-                    className="mx-auto mb-3 block w-full max-w-[220px] rounded-[10px]"
-                  />
-                )}
-                {wechat && (
-                  <div className="mb-3 flex items-center justify-center gap-2">
-                    <span className="select-all text-[14px] font-semibold text-gray-900">{wechat}</span>
-                    <button
-                      type="button"
-                      onClick={copyWechat}
-                      className="rounded-full px-3 py-1 text-[11.5px] font-semibold text-white"
-                      style={{ background: wechatCopied ? BRAND_GREEN : '#07C160' }}
-                    >
-                      {wechatCopied ? 'Copied' : 'Copy ID'}
-                    </button>
+                {/* One block per account. A label only shows when there is more
+                    than one, since that is when it tells them apart. */}
+                {wechats.map((w, i) => (
+                  <div key={w.key} className={i > 0 ? 'mt-4 border-t border-gray-100 pt-4' : ''}>
+                    {wechats.length > 1 && (
+                      <p className="mb-2 text-[10.5px] uppercase tracking-wide text-gray-400">
+                        {w.label || `WeChat ${i + 1}`}
+                      </p>
+                    )}
+                    {w.qrUrl && (
+                      <img
+                        src={w.qrUrl}
+                        alt={`WeChat QR code for ${card.fullName}${w.label ? ` (${w.label})` : ''}`}
+                        className="mx-auto mb-3 block w-full max-w-[220px] rounded-[10px]"
+                      />
+                    )}
+                    {w.id && (
+                      <div className="flex items-center justify-center gap-2">
+                        <span className="select-all text-[14px] font-semibold text-gray-900">{w.id}</span>
+                        <button
+                          type="button"
+                          onClick={() => copyWechat(w.key, w.id)}
+                          className="rounded-full px-3 py-1 text-[11.5px] font-semibold text-white"
+                          style={{ background: wechatCopied === w.key ? BRAND_GREEN : '#07C160' }}
+                        >
+                          {wechatCopied === w.key ? 'Copied' : 'Copy ID'}
+                        </button>
+                      </div>
+                    )}
                   </div>
-                )}
-                <p className="mb-3 text-[11.5px] leading-relaxed text-gray-500">
-                  {wechatQr && wechat
-                    ? 'Scan the code with WeChat, or copy the ID and search it in WeChat → Add Contacts.'
-                    : wechatQr
-                      ? 'Scan the code with WeChat → Scan. On this phone, save the image and pick it from the album in Scan.'
-                      : 'Copy the ID, then in WeChat go to Add Contacts and paste it in the search.'}
+                ))}
+                <p className="my-3 text-[11.5px] leading-relaxed text-gray-500">
+                  Scan a code with WeChat → Scan (on this phone, save the image and pick it from the
+                  album there), or copy an ID and search it in WeChat → Add Contacts.
                 </p>
                 <a
                   href={WECHAT_APP_LINK}
@@ -799,6 +831,23 @@ function BusinessCardPage({ initialSlug }: { initialSlug?: string }) {
           </div>
         )}
       </section>
+
+      {/* Social media and websites, in the order set in Studio. Its own card so
+          a long list never pushes the phone and email out of reach. */}
+      {links.length > 0 && (
+        <section className="mt-3 rounded-[18px] bg-white" style={{ boxShadow: CARD_SHADOW }}>
+          {links.map((l) => (
+            <DetailRow
+              key={l.key}
+              icon={l.icon}
+              label={l.label ? `${l.name} · ${l.label}` : l.name}
+              value={l.display}
+              href={l.url}
+              external
+            />
+          ))}
+        </section>
+      )}
 
       <div className="mt-6 flex flex-col items-center gap-3 lg:items-start">
         <a
