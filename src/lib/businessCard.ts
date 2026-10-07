@@ -33,6 +33,10 @@ export interface BusinessCard {
   mobile?: string
   whatsapp?: string
   viber?: string
+  wechatId?: string
+  wechatQr?: SanityImage
+  otherWechats?: { _key?: string; wechatId?: string; qr?: SanityImage; label?: string }[]
+  socialLinks?: { _key?: string; platform?: string; link?: string; label?: string }[]
   officePhone?: string
   email?: string
   active?: boolean
@@ -137,6 +141,173 @@ export function viberLink(card: BusinessCard): string {
   return `viber://chat?number=${encodeURIComponent(n)}`
 }
 
+/**
+ * WeChat is the odd one out: no link opens a chat from a number or an ID, so
+ * the card shows the ID to copy and the person's QR to scan, and this only
+ * opens the app. weixin:// does nothing where WeChat is not installed.
+ */
+export const WECHAT_APP_LINK = 'weixin://'
+
+export function wechatId(card: BusinessCard): string {
+  return (card.wechatId || '').trim()
+}
+
+export interface WechatAccount {
+  key: string
+  id: string
+  qr?: SanityImage
+  label: string
+}
+
+/** The main WeChat first, then "Other WeChat accounts"; entries with neither an ID nor a QR are dropped. */
+export function wechatAccounts(card: BusinessCard): WechatAccount[] {
+  const all: WechatAccount[] = [
+    { key: 'main', id: wechatId(card), qr: card.wechatQr, label: '' },
+    ...(card.otherWechats || []).map((w, i) => ({
+      key: w._key || `w${i}`,
+      id: (w.wechatId || '').trim(),
+      qr: w.qr,
+      label: (w.label || '').trim(),
+    })),
+  ]
+  const seen = new Set<string>()
+  return all.filter((w) => {
+    if (!w.id && !w.qr?.asset) return false
+    if (w.id && seen.has(w.id.toLowerCase())) return false
+    if (w.id) seen.add(w.id.toLowerCase())
+    return true
+  })
+}
+
+// ── Social media & websites ──────────────────────────────────────────────────
+
+/**
+ * Per platform: its name, Font Awesome icon, its main host plus the other
+ * hosts the same pages are reachable on (rewritten to the main one, so
+ * fb.com/juan and facebook.com/juan count as one link), how a bare username
+ * becomes a profile address, and whether people write that username with an
+ * "@". Keep the keys in step with SOCIAL_PLATFORMS in the Studio schema
+ * (getmeds_database).
+ */
+const SOCIAL_PLATFORMS: Record<
+  string,
+  { name: string; icon: string; host?: string; aliases?: string[]; profile?: (user: string) => string; at?: boolean }
+> = {
+  facebook: {
+    name: 'Facebook',
+    icon: 'fa-brands fa-facebook',
+    host: 'www.facebook.com',
+    aliases: ['facebook.com', 'm.facebook.com', 'web.facebook.com', 'fb.com', 'www.fb.com'],
+    profile: (u) => `https://www.facebook.com/${u}`,
+    at: true,
+  },
+  instagram: {
+    name: 'Instagram',
+    icon: 'fa-brands fa-instagram',
+    host: 'www.instagram.com',
+    aliases: ['instagram.com', 'm.instagram.com'],
+    profile: (u) => `https://www.instagram.com/${u}/`,
+    at: true,
+  },
+  linkedin: {
+    name: 'LinkedIn',
+    icon: 'fa-brands fa-linkedin',
+    host: 'www.linkedin.com',
+    aliases: ['linkedin.com', 'm.linkedin.com', 'ph.linkedin.com', 'pk.linkedin.com'],
+    profile: (u) => `https://www.linkedin.com/in/${u}`,
+  },
+  tiktok: {
+    name: 'TikTok',
+    icon: 'fa-brands fa-tiktok',
+    host: 'www.tiktok.com',
+    aliases: ['tiktok.com', 'm.tiktok.com'],
+    profile: (u) => `https://www.tiktok.com/@${u}`,
+    at: true,
+  },
+  website: { name: 'Website', icon: 'fa-solid fa-globe' },
+}
+
+export interface SocialLink {
+  key: string
+  platform: string
+  name: string
+  icon: string
+  url: string
+  /** What the row shows: "@juan.delacruz" for a username, the address for a link. */
+  display: string
+  label: string
+}
+
+/**
+ * Turns what was typed into Studio into a safe https link, or '' to skip the
+ * row. Only http(s) ever comes out, so a pasted javascript: or a typo can never
+ * become a live link on the card.
+ */
+function socialUrl(platform: string, raw: string): string {
+  const p = SOCIAL_PLATFORMS[platform]
+  const value = raw.trim()
+  if (!p || !value) return ''
+
+  // Something that looks like an address: has a scheme, or a dot before any slash.
+  const looksLikeUrl = /^[a-z][a-z0-9+.-]*:/i.test(value) || /^[^/\s@]+\.[^/\s]+/.test(value)
+  if (looksLikeUrl || !p.profile) {
+    const withScheme = /^[a-z][a-z0-9+.-]*:/i.test(value) ? value : `https://${value}`
+    try {
+      const u = new URL(withScheme)
+      if (u.protocol !== 'https:' && u.protocol !== 'http:') return ''
+      if (!u.hostname.includes('.')) return ''
+      // A website typed as http:// keeps it, in case it really has no https.
+      if (p.host && (u.hostname === p.host || p.aliases?.includes(u.hostname))) {
+        u.hostname = p.host
+        u.protocol = 'https:'
+      }
+      return u.toString()
+    } catch {
+      return ''
+    }
+  }
+
+  // A bare username: @juan.delacruz or juan.delacruz.
+  const user = value.replace(/^@+/, '')
+  if (!/^[\w.-]+$/.test(user)) return ''
+  return p.profile(user)
+}
+
+function socialDisplay(platform: string, raw: string, url: string): string {
+  const value = raw.trim()
+  const p = SOCIAL_PLATFORMS[platform]
+  // Typed as a username: show it the way people say it.
+  const user = value.replace(/^@+/, '')
+  if (p?.profile && p.at && url === p.profile(user)) return `@${user}`
+  // A link: drop the scheme, www. and trailing slash, which are noise on a card.
+  return url.replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/\/$/, '')
+}
+
+/** Every usable link on the card, in the order Studio lists them, without repeats. */
+export function socialLinks(card: BusinessCard): SocialLink[] {
+  const seen = new Set<string>()
+  const out: SocialLink[] = []
+  ;(card.socialLinks || []).forEach((s, i) => {
+    const platform = s.platform || ''
+    const p = SOCIAL_PLATFORMS[platform]
+    const url = socialUrl(platform, s.link || '')
+    // Case and a trailing slash don't make it a different page.
+    const same = url.toLowerCase().replace(/\/$/, '')
+    if (!p || !url || seen.has(same)) return
+    seen.add(same)
+    out.push({
+      key: s._key || `s${i}`,
+      platform,
+      name: p.name,
+      icon: p.icon,
+      url,
+      display: socialDisplay(platform, s.link || '', url),
+      label: (s.label || '').trim(),
+    })
+  })
+  return out
+}
+
 export function telLink(raw?: string | null): string {
   const n = toE164(raw)
   return n ? `tel:${n}` : ''
@@ -223,7 +394,22 @@ export function buildVCard(card: BusinessCard, cardUrl?: string): string {
   // record — the number can be re-checked later without the physical card.
   if (cardUrl) lines.push(`URL:${esc(cardUrl)}`)
 
-  lines.push(`NOTE:${esc('Saved from a Getmeds business card.')}`)
+  // Social and website links as labelled URLs. The itemN. group + X-ABLabel is
+  // how iPhone names a link ("Facebook", "Instagram · Personal"); Android
+  // ignores the label and still saves the link as a website.
+  socialLinks(card).forEach((s, i) => {
+    const group = `item${i + 1}`
+    lines.push(`${group}.URL:${esc(s.url)}`)
+    lines.push(`${group}.X-ABLabel:${esc(s.label ? `${s.name} · ${s.label}` : s.name)}`)
+  })
+
+  // Contacts apps have no standard WeChat field, so the IDs go in the note
+  // where every one of them shows it. QR-only accounts have nothing to write.
+  const wechatLines = wechatAccounts(card)
+    .filter((w) => w.id)
+    .map((w) => `WeChat ID${w.label ? ` (${w.label})` : ''}: ${w.id}`)
+  const note = [...wechatLines, 'Saved from a Getmeds business card.'].join('\n')
+  lines.push(`NOTE:${esc(note)}`)
   lines.push(`REV:${new Date().toISOString().replace(/\.\d{3}Z$/, 'Z')}`)
   lines.push('END:VCARD')
 

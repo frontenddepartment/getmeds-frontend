@@ -11,6 +11,9 @@ import {
   toE164,
   viberLink,
   viberNumber,
+  WECHAT_APP_LINK,
+  socialLinks,
+  wechatAccounts,
   whatsappLink,
   whatsappNumber,
   type BusinessCard,
@@ -54,21 +57,10 @@ const GROUND = '#F3F6FB';
 const CARD_SHADOW = '0 2px 10px rgba(23,43,77,.055)';
 
 /*
-  A downscaled copy of the logo, shared by the mark in the header and the
-  watermark tiles on the card faces.
-
-  Not /assets/getmedslogo.png, which is 7122x4000 — fine as a hero image,
-  wasteful for a 148px header mark and worse for a 110px tile the browser has to
-  hold decoded while it paints two dozen of them on a phone.
+  A downscaled copy of the logo for the header mark. Not /assets/getmedslogo.png,
+  which is 7122x4000 — fine as a hero image, wasteful for a 148px header mark.
 */
 const LOGO_SRC = '/assets/getmeds-logo-sm.png';
-
-/*
-  WATERMARK_OPACITY is the knob: high enough to survive a screenshot, low enough
-  to read the printed phone number underneath.
-*/
-const WATERMARK_OPACITY = 0.18;
-const WATERMARK_TILES = 28;
 
 /*
   Hover motion for the icons on the three action buttons.
@@ -233,8 +225,8 @@ const ENTRANCE_CSS = `
  * menu and drag-to-desktop.
  *
  * Worth being plain about what this is: a speed bump, not protection. Anyone
- * with a screenshot key or devtools still gets the artwork, which is why the
- * watermark above is the actual answer and this only stops the effortless copy.
+ * with a screenshot key or devtools still gets the artwork; this only stops
+ * the effortless copy.
  */
 function blockSave(e: React.SyntheticEvent) {
   e.preventDefault();
@@ -316,8 +308,8 @@ function CardFace({ src, alt, className = '' }: { src: string; alt: string; clas
     <div
       className={`relative overflow-hidden rounded-[18px] bg-white ${className}`}
       style={{ boxShadow: '0 6px 24px rgba(23,43,77,.12)' }}
-      /* On the wrapper, not the <img>: the watermark sits on top, and a guard
-         here catches the right-click wherever inside the card it lands. */
+      /* On the wrapper, not the <img>, so the guard catches the right-click
+         wherever inside the card it lands. */
       onContextMenu={blockSave}
       onDragStart={blockSave}
     >
@@ -333,45 +325,6 @@ function CardFace({ src, alt, className = '' }: { src: string; alt: string; clas
           (e.currentTarget as HTMLImageElement).style.display = 'none';
         }}
       />
-      <CardWatermark />
-    </div>
-  );
-}
-
-/**
- * The tiled, slanted logo laid over a card face.
- *
- * Same treatment as the employee verification modal, so a card and a
- * verification result read as one document family.
- *
- * Purely decorative: `pointer-events-none` keeps it from swallowing the
- * right-click guard on the wrapper, and the empty alt keeps two dozen copies of
- * the logo out of the accessibility tree.
- *
- * The grid is deliberately larger than the card (`-inset-24`) and carries more
- * tiles than fit, because rotating it swings the corners inward — the overflow
- * is what keeps them covered, and the parent clips the rest. At `-inset-16` the
- * rotated top edge cuts across the card's top-left corner and leaves it bare.
- */
-function CardWatermark() {
-  return (
-    <div className="pointer-events-none absolute inset-0 select-none overflow-hidden">
-      <div
-        className="absolute -inset-24 grid grid-cols-4 content-start gap-x-6 gap-y-4"
-        style={{ transform: 'rotate(-20deg)' }}
-      >
-        {Array.from({ length: WATERMARK_TILES }).map((_, i) => (
-          <img
-            key={i}
-            src={LOGO_SRC}
-            alt=""
-            aria-hidden="true"
-            draggable={false}
-            className="w-full max-w-[110px] justify-self-center"
-            style={{ opacity: WATERMARK_OPACITY }}
-          />
-        ))}
-      </div>
     </div>
   );
 }
@@ -390,7 +343,20 @@ function hintFor(href: string): string {
 }
 
 /** A row in the "details" card — tappable where the value is dialable. */
-function DetailRow({ icon, label, value, href }: { icon: string; label: string; value: string; href?: string }) {
+function DetailRow({
+  icon,
+  label,
+  value,
+  href,
+  external = false,
+}: {
+  icon: string;
+  label: string;
+  value: string;
+  href?: string;
+  /** Opens in a new tab, so the card is still there after a look at the profile. */
+  external?: boolean;
+}) {
   const body = (
     <>
       <i className={`${icon} w-[18px] shrink-0 text-center text-[13px]`} style={{ color: BRAND }} />
@@ -412,7 +378,7 @@ function DetailRow({ icon, label, value, href }: { icon: string; label: string; 
   );
   const cls = 'gm-detail relative flex items-center gap-3 px-4 py-3';
   return href ? (
-    <a href={href} className={cls}>
+    <a href={href} className={cls} {...(external && { target: '_blank', rel: 'noopener noreferrer' })}>
       {body}
     </a>
   ) : (
@@ -441,6 +407,9 @@ function BusinessCardPage({ initialSlug }: { initialSlug?: string }) {
   const lastSwipe = useRef(0);
   const [turned, setTurned] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [wechatOpen, setWechatOpen] = useState(false);
+  // Which account's ID was just copied, so only that button says "Copied".
+  const [wechatCopied, setWechatCopied] = useState('');
 
   useEffect(() => {
     if (!slug) {
@@ -581,6 +550,21 @@ function BusinessCardPage({ initialSlug }: { initialSlug?: string }) {
   const office = toE164(card.officePhone);
   const wa = whatsappLink(card);
   const viber = viberLink(card);
+  const wechats = wechatAccounts(card).map((w) => ({
+    ...w,
+    qrUrl: w.qr?.asset ? urlFor(w.qr).width(480).url() : '',
+  }));
+  const links = socialLinks(card);
+
+  const copyWechat = async (key: string, id: string) => {
+    try {
+      await navigator.clipboard.writeText(id);
+      setWechatCopied(key);
+      setTimeout(() => setWechatCopied((k) => (k === key ? '' : k)), 2000);
+    } catch {
+      // Clipboard blocked (old browser, insecure origin): the ID is on screen and selectable.
+    }
+  };
 
   return (
     /*
@@ -738,6 +722,77 @@ function BusinessCardPage({ initialSlug }: { initialSlug?: string }) {
           />
         )}
 
+        {/* WeChat cannot open a chat from a link the way the two above do, so the
+            button opens a panel instead: the person's QR to scan (from another
+            phone, or saved and picked from WeChat's Scan → album) and the ID to
+            copy and paste into WeChat's Add Contacts search. */}
+        {wechats.length > 0 && (
+          <>
+            <ActionButton
+              onClick={() => setWechatOpen((o) => !o)}
+              icon="fa-brands fa-weixin"
+              label="Add on WeChat"
+              sub={
+                wechats.length > 1
+                  ? `${wechats.length} WeChat accounts`
+                  : wechats[0].id
+                    ? `WeChat ID: ${wechats[0].id}`
+                    : 'Scan the QR code'
+              }
+              background="#07C160"
+            />
+            {wechatOpen && (
+              <div
+                className="rounded-[16px] bg-white px-4 py-4 text-center"
+                style={{ boxShadow: CARD_SHADOW }}
+              >
+                {/* One block per account. A label only shows when there is more
+                    than one, since that is when it tells them apart. */}
+                {wechats.map((w, i) => (
+                  <div key={w.key} className={i > 0 ? 'mt-4 border-t border-gray-100 pt-4' : ''}>
+                    {wechats.length > 1 && (
+                      <p className="mb-2 text-[10.5px] uppercase tracking-wide text-gray-400">
+                        {w.label || `WeChat ${i + 1}`}
+                      </p>
+                    )}
+                    {w.qrUrl && (
+                      <img
+                        src={w.qrUrl}
+                        alt={`WeChat QR code for ${card.fullName}${w.label ? ` (${w.label})` : ''}`}
+                        className="mx-auto mb-3 block w-full max-w-[220px] rounded-[10px]"
+                      />
+                    )}
+                    {w.id && (
+                      <div className="flex items-center justify-center gap-2">
+                        <span className="select-all text-[14px] font-semibold text-gray-900">{w.id}</span>
+                        <button
+                          type="button"
+                          onClick={() => copyWechat(w.key, w.id)}
+                          className="rounded-full px-3 py-1 text-[11.5px] font-semibold text-white"
+                          style={{ background: wechatCopied === w.key ? BRAND_GREEN : '#07C160' }}
+                        >
+                          {wechatCopied === w.key ? 'Copied' : 'Copy ID'}
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                ))}
+                <p className="my-3 text-[11.5px] leading-relaxed text-gray-500">
+                  Scan a code with WeChat → Scan (on this phone, save the image and pick it from the
+                  album there), or copy an ID and search it in WeChat → Add Contacts.
+                </p>
+                <a
+                  href={WECHAT_APP_LINK}
+                  className="inline-block rounded-full px-4 py-2 text-[12px] font-semibold"
+                  style={{ color: '#07C160', border: '1px solid #07C160' }}
+                >
+                  Open WeChat
+                </a>
+              </div>
+            )}
+          </>
+        )}
+
         {/* Locations last: the buttons above are about this person; this one is
             about Getmeds itself — the branches worldwide, all tied to Manila. */}
         <ActionButton
@@ -786,6 +841,23 @@ function BusinessCardPage({ initialSlug }: { initialSlug?: string }) {
           </div>
         )}
       </section>
+
+      {/* Social media and websites, in the order set in Studio. Its own card so
+          a long list never pushes the phone and email out of reach. */}
+      {links.length > 0 && (
+        <section className="mt-3 rounded-[18px] bg-white" style={{ boxShadow: CARD_SHADOW }}>
+          {links.map((l) => (
+            <DetailRow
+              key={l.key}
+              icon={l.icon}
+              label={l.label ? `${l.name} · ${l.label}` : l.name}
+              value={l.display}
+              href={l.url}
+              external
+            />
+          ))}
+        </section>
+      )}
 
       <div className="mt-6 flex flex-col items-center gap-3 lg:items-start">
         <a

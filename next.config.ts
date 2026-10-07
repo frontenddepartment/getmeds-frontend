@@ -25,6 +25,46 @@ const ADMIN_PANELS = [
   'adminadlorock',
 ];
 
+const BLOG_RELATIVE_PAGES = [
+  'services', 'about-us', 'careers', 'product-range', 'contact-us', 'meditations', 'csr',
+  'global-presence', 'ungc', 'order-medicines', 'patient-assistance-program',
+].join('|');
+
+/**
+ * Old-catalogue product slugs (under /cancer-medicines/) and the current page for the same
+ * product. Google still has these from the old site; without a redirect they are 404s.
+ * Pacliget 260 mg has no current equivalent, so it stays a 404.
+ */
+const OLD_PRODUCT_ADDRESSES: Record<string, string> = {
+  'methoget-500-methotrexate-100mg-ml-n-n-500mg-5ml-solution-for-injection-n-n-im-iv-intra-arterial-intrathecal': '/cancer-medicines/methoget-500-methotrexate-500mg-5ml-injection',
+  'bendaget-bendamustine-100-mg-lyophilized-powder-for-concentrate-solution-for-iv-infusion': '/blood-disorder-medicines/bendaget-bendamustine-100mg-infusion',
+  'idaget-5-idarubicin-hydrochloride-5-mg-lyophilized-powder-for-injection-iv': '/blood-disorder-medicines/idaget-5-idarubicin-hydrochloride-5mg-injection',
+  'doseget-80-docetaxel-40-mg-ml-n-80-mg-2-ml-concentrate-solution-for-iv-infusion': '/cancer-medicines/doseget-80-docetaxel-80mg-2ml-infusion',
+  'doseget-20-docetaxel-rtu-20-mg-0-5-ml-concentrate-solution-for-iv-infusion': '/cancer-medicines/doseget-docetaxel-rtu-20mg-injection',
+  'vancoget-500-vancomycin-500-mg-powder-for-injection-i-v': '/antibiotics/vancoget-500-vancomycin-hydrochloride-500mg-injection',
+  'vancoget-1000-vancomycin-1-g-powder-for-injection-i-v': '/antibiotics/vancoget-1000-vancomycin-hydrochloride-1g-injection',
+  'capeget-capecitabine-500-mg-film-coated-tablet': '/cancer-medicines/capeget-capecitabine-500mg-tablet',
+  'oxaliget-oxaliplatin-2mg-ml-100mg-50ml-solution-for-iv-infusion': '/cancer-medicines/oxaliget-oxaliplatin-100mg-50ml-infusion',
+  'hydroxyget-hydroxyurea-500-mg-capsule': '/cancer-medicines/hydroxyget-hydroxyurea-500mg-capsule',
+  'amloget-10-amlodipine-10-mg-tablet': '/heart-medicines/amloget-10-amlodipine-besilate-10mg-tablet',
+  'amloget-5-amlodipine-5-mg-tablet': '/heart-medicines/amloget-5-amlodipine-besilate-5mg-tablet',
+  'gemget-200-gemcitabine-200-mg-lyophilized-powder-for-injection-iv': '/cancer-medicines/gemget-200-gemcitabine-200mg-injection',
+};
+
+/** Old-catalogue condition/category pages and today's condition (or category) page. */
+const OLD_CONDITION_ADDRESSES: Record<string, string> = {
+  '/product-range/osteoporosis': '/conditions/glucocorticoid-induced-osteoporosis',
+  '/cancer-medicines/osteoporosis': '/conditions/glucocorticoid-induced-osteoporosis',
+  '/product-range/fibrocystic': '/conditions/fibrocystic-breast-disease',
+  '/cancer-medicines/sickle-cell': '/conditions/sickle-cell-anemia',
+  '/product-range/respiratory': '/conditions/respiratory-infections',
+  '/product-range/uti': '/conditions/urinary-tract-infections',
+  '/cancer-medicines/aml': '/conditions/acute-myeloid-leukemia',
+  '/cancer-medicines/cml': '/conditions/chronic-myeloid-leukemia',
+  '/product-range/pain': '/conditions/chronic-pain-management',
+  '/product-range/cardiology': '/heart-medicines',
+};
+
 // Browser code only receives NEXT_PUBLIC_* variables; a VITE_* name (what the old Vite site,
 // and so its Vercel project, used) is never inlined, and reading it in the browser gives
 // undefined. Accept either name here so a build with only the VITE_* variables set still
@@ -92,6 +132,16 @@ const nextConfig: NextConfig = {
       { source: '/blog/maintain-a-healthy-weight', destination: '/blog/ways-to-maintain-healthy-weight', permanent: true },
       { source: '/blog/best-supplements-and-vitamins-for-kids', destination: '/blog/best-vitamin-supplements-for-kids', permanent: true },
 
+      // Website pages the old blog templates linked without a leading "/" (so /blog/services,
+      // /blog/product-range?category=...). Google still crawls them; the query string carries over.
+      // No WordPress post uses these slugs.
+      { source: `/blog/:page(${BLOG_RELATIVE_PAGES})`, destination: '/:page', permanent: true },
+      { source: `/blog/:page(${BLOG_RELATIVE_PAGES})\\.html`, destination: '/:page', permanent: true },
+
+      // WordPress archive pages (category, tag, author, page/N). The blog has no such pages, so
+      // without these they'd be 404s now that unknown blog addresses are; /blog lists every post.
+      { source: '/blog/:archive(category|tag|author|page)/:path*', destination: '/blog', permanent: true },
+
       // Old WordPress article URLs
       { source: '/articles', destination: '/blog', permanent: true },
       { source: '/articles.html', destination: '/blog', permanent: true },
@@ -103,11 +153,19 @@ const nextConfig: NextConfig = {
       { source: '/:year(\\d{4})/:path+', destination: '/blog/:year/:path+', permanent: true },
 
       { source: '/product-range.html', destination: '/product-range', permanent: true },
-      { source: '/cancer-medicines/amloget%2010-amlodipine-10-mg-tablet', destination: '/cancer-medicines/amloget-10-amlodipine-10-mg-tablet', permanent: true },
-      { source: '/cancer-medicines/amloget%205-amlodipine-5-mg-tablet', destination: '/cancer-medicines/amloget-5-amlodipine-5-mg-tablet', permanent: true },
-      { source: '/cancer-medicines/vancoget%20500-vancomycin-500-mg-powder-for-injection-i-v', destination: '/cancer-medicines/vancoget-500-vancomycin-500-mg-powder-for-injection-i-v', permanent: true },
-      { source: '/cancer-medicines/vancoget%201000-vancomycin-1-g-powder-for-injection-i-v', destination: '/cancer-medicines/vancoget-1000-vancomycin-1-g-powder-for-injection-i-v', permanent: true },
-      { source: '/cancer-medicines/gemget%20200-gemcitabine-200-mg-lyophilized-powder-for-injection-iv', destination: '/cancer-medicines/gemget-200-gemcitabine-200-mg-lyophilized-powder-for-injection-iv', permanent: true },
+      // Product and condition addresses from the old catalogue, straight to today's page (no
+      // second hop). Before the generic /cancer-medicine/:product rule so the singular forms
+      // land here too.
+      ...Object.entries(OLD_PRODUCT_ADDRESSES).flatMap(([slug, destination]) => [
+        { source: `/cancer-medicines/${slug}`, destination, permanent: true },
+        { source: `/cancer-medicine/${slug}`, destination, permanent: true },
+      ]),
+      ...Object.entries(OLD_CONDITION_ADDRESSES).map(([source, destination]) => ({ source, destination, permanent: true })),
+      { source: '/cancer-medicines/amloget%2010-amlodipine-10-mg-tablet', destination: OLD_PRODUCT_ADDRESSES['amloget-10-amlodipine-10-mg-tablet'], permanent: true },
+      { source: '/cancer-medicines/amloget%205-amlodipine-5-mg-tablet', destination: OLD_PRODUCT_ADDRESSES['amloget-5-amlodipine-5-mg-tablet'], permanent: true },
+      { source: '/cancer-medicines/vancoget%20500-vancomycin-500-mg-powder-for-injection-i-v', destination: OLD_PRODUCT_ADDRESSES['vancoget-500-vancomycin-500-mg-powder-for-injection-i-v'], permanent: true },
+      { source: '/cancer-medicines/vancoget%201000-vancomycin-1-g-powder-for-injection-i-v', destination: OLD_PRODUCT_ADDRESSES['vancoget-1000-vancomycin-1-g-powder-for-injection-i-v'], permanent: true },
+      { source: '/cancer-medicines/gemget%20200-gemcitabine-200-mg-lyophilized-powder-for-injection-iv', destination: OLD_PRODUCT_ADDRESSES['gemget-200-gemcitabine-200-mg-lyophilized-powder-for-injection-iv'], permanent: true },
       { source: '/cancer-medicine', destination: '/cancer-medicines', permanent: true },
       { source: '/cancer-medicine/:product', destination: '/cancer-medicines/:product', permanent: true },
 
