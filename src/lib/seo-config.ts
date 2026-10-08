@@ -68,3 +68,16 @@ export function xmlEscape(str: string): string {
 export function absoluteUrl(path: string): string {
   return path ? `${DOMAIN}/${path.replace(/^\//, '')}` : `${DOMAIN}/`;
 }
+
+/**
+ * Links typed into Studio sometimes point at www.getmeds.ph or http://. Google treats those
+ * as a second copy of the site, so any link to this site is rewritten to the one canonical
+ * address (https://getmeds.ph/...). Links to other sites are returned unchanged.
+ */
+export function canonicalSiteLink(link: string): string {
+  const raw = (link || '').trim();
+  const m = raw.match(/^(?:https?:)?\/\/(?:www\.)?getmeds\.ph(?=[/?#:]|$)(?::\d+)?(.*)$/i);
+  if (!m) return raw;
+  const rest = m[1] || '/';
+  return `${DOMAIN}${rest.startsWith('/') ? rest : `/${rest}`}`;
+}

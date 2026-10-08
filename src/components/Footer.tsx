@@ -242,12 +242,12 @@ export default function Footer() {
             <div>
               <h4 className="text-white font-semibold mb-6 text-base">Product Range</h4>
               <ul className="footer-nav-grid">
-                <li><Link href="/cancer-medicines.html?category=breast-cancer" className={linkCls('/cancer-medicines.html?category=breast-cancer')}>Oncology</Link></li>
+                <li><Link href="/cancer-medicines" className={linkCls('/cancer-medicines')}>Oncology</Link></li>
                 <li><Link href="/blood-disorder-medicines" className={linkCls('/blood-disorder-medicines')}>Hematology</Link></li>
-                <li><Link href="/product-range.html?category=respiratory" className={linkCls('/product-range.html?category=respiratory')}>Anti-Infectives</Link></li>
-                <li><Link href="/product-range.html?category=endometriosis" className={linkCls('/product-range.html?category=endometriosis')}>Endocrinology</Link></li>
+                <li><Link href="/antibiotics" className={linkCls('/antibiotics')}>Anti-Infectives</Link></li>
+                <li><Link href="/hormonal-therapy" className={linkCls('/hormonal-therapy')}>Endocrinology</Link></li>
                 <li><Link href="/bone-health-medicines" className={linkCls('/bone-health-medicines')}>Orthopedic</Link></li>
-                <li><Link href="/product-range.html?category=arrhythmia" className={linkCls('/product-range.html?category=arrhythmia')}>Cardiology</Link></li>
+                <li><Link href="/heart-medicines" className={linkCls('/heart-medicines')}>Cardiology</Link></li>
               </ul>
             </div>
 

@@ -62,6 +62,7 @@ import {
 
 import { urlFor, getLowResUrl } from './sanity'
 import { computeCategoryKey, linkCategoryKeys } from './categoryImageKey'
+import { canonicalSiteLink } from './seo-config'
 
 import type {
   Product,
@@ -94,14 +95,17 @@ import type {
 // Generic fetch hook
 // ─────────────────────────────────────────────
 
-function useFetch<T>(fetcher: () => Promise<T>) {
-  const [data, setData] = useState<T | null>(null)
-  const [loading, setLoading] = useState(true)
+// `initial`: data the server already fetched and rendered into the HTML (see app/page.tsx).
+// It is shown on the first render, so the server HTML and the first browser render match and
+// crawlers get the real content; the fetch then refreshes it quietly, without a loading state.
+function useFetch<T>(fetcher: () => Promise<T>, initial?: T | null) {
+  const [data, setData] = useState<T | null>(initial ?? null)
+  const [loading, setLoading] = useState(initial == null)
   const [error, setError] = useState<Error | null>(null)
 
   useEffect(() => {
     let cancelled = false
-    setLoading(true)
+    if (initial == null) setLoading(true)
     setError(null)
 
     fetcher()
@@ -249,8 +253,8 @@ export function useProductSearch(query: string) {
 // Categories
 // ─────────────────────────────────────────────
 
-export function useCategories() {
-  return useFetch<Category[]>(getCategories)
+export function useCategories(initial?: Category[] | null) {
+  return useFetch<Category[]>(getCategories, initial)
 }
 
 export function useCategoryBySlug(slug: string) {
@@ -307,8 +311,8 @@ export function usePageAssets(_page?: string) {
   return useFetch<PageAsset[]>(getPageAssets)
 }
 
-export function useCategoryImages() {
-  return useFetch<CategoryImageLink[]>(getCategoryImages)
+export function useCategoryImages(initial?: CategoryImageLink[] | null) {
+  return useFetch<CategoryImageLink[]>(getCategoryImages, initial)
 }
 
 export function useHeroSlides() {
@@ -332,10 +336,10 @@ export function useHeroSlides() {
  * The `name` must match the "Image Name" field in Sanity exactly.
  * See PAGE-IMAGE-GUIDE.md in getmeds_database for the full name list.
  */
-export function useImageMapper(_page?: string) {
+export function useImageMapper(_page?: string, options?: { initialCategoryImages?: CategoryImageLink[] | null }) {
   const { data: allAssets, loading, error } = usePageAssets()
   const { data: settings } = useSiteSettings()
-  const { data: categoryImages, loading: categoryImagesLoading } = useCategoryImages()
+  const { data: categoryImages, loading: categoryImagesLoading } = useCategoryImages(options?.initialCategoryImages)
 
   /**
    * getImage(name, fallback) — returns the first image URL for the named slot.
@@ -406,7 +410,7 @@ export function useImageMapper(_page?: string) {
     if (!allAssets) return null
     const doc = allAssets.find((asset) => asset.name === name)
     const slide = doc?.images?.[0]
-    return slide?.enableLink && slide.link ? slide.link : null
+    return slide?.enableLink && slide.link ? canonicalSiteLink(slide.link) : null
   }
 
   /**
@@ -443,7 +447,7 @@ export function useImageMapper(_page?: string) {
     if (!allAssets) return []
     const doc = allAssets.find((asset) => asset.name === name)
     if (!doc?.images || !Array.isArray(doc.images)) return []
-    return doc.images.map((slide: any) => (slide?.enableLink && slide.link ? slide.link : null))
+    return doc.images.map((slide: any) => (slide?.enableLink && slide.link ? canonicalSiteLink(slide.link) : null))
   }
 
   const getVideo = (name: string, fallback: string): string => {
@@ -487,7 +491,7 @@ export function useImageMapper(_page?: string) {
     if (!allAssets) return null
     const doc = allAssets.find((asset) => asset.name === name)
     const slide = doc?.videos?.[0]
-    return slide?.enableLink && slide.link ? slide.link : null
+    return slide?.enableLink && slide.link ? canonicalSiteLink(slide.link) : null
   }
 
   /**
