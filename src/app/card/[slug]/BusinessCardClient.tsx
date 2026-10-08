@@ -792,6 +792,16 @@ function BusinessCardPage({ initialSlug }: { initialSlug?: string }) {
             )}
           </>
         )}
+
+        {/* Locations last: the buttons above are about this person; this one is
+            about Getmeds itself — the branches worldwide, all tied to Manila. */}
+        <ActionButton
+          href="/locations"
+          icon="fa-solid fa-earth-asia"
+          label="Our locations"
+          sub="Getmeds branches around the world"
+          background="#1785BA"
+        />
       </div>
 
       {/* Desktop only.
