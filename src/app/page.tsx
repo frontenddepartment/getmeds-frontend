@@ -37,7 +37,9 @@ const baseMetadata: Metadata = {
     description: DESCRIPTION,
     images: [
       {
-        url: 'https://getmeds.ph/assets/og-default.jpg',
+        // The Getmeds logo, not the generated "Life-Saving Medicines" card:
+        // the homepage share image should show who the site is.
+        url: 'https://getmeds.ph/assets/og-logo.jpg',
         width: 1200,
         height: 630,
         alt: 'Getmeds Philippines',

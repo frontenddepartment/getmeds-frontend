@@ -17,7 +17,7 @@ const baseMetadata: Metadata = {
   openGraph: {
     title: TITLE,
     description: DESCRIPTION,
-    images: [{ url: `${DOMAIN}/assets/og-default.jpg`, width: 1200, height: 630, alt: 'Getmeds Philippines' }],
+    images: [{ url: `${DOMAIN}/assets/og-logo.jpg`, width: 1200, height: 630, alt: 'Getmeds Philippines' }],
     type: 'website',
     siteName: 'Getmeds Philippines',
     url: URL,

@@ -36,7 +36,9 @@ export const metadata: Metadata = {
     siteName: 'Getmeds Philippines',
     images: [
       {
-        url: `${DOMAIN}/assets/og-default.jpg`,
+        // The Getmeds logo on white, not a campaign visual: the share card and
+        // the search thumbnail should show who the site is, recognisably.
+        url: `${DOMAIN}/assets/og-logo.jpg`,
         width: 1200,
         height: 630,
         alt: 'Getmeds Philippines',
@@ -49,7 +51,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Getmeds | Trusted Pharmaceutical Company & Healthcare Provider',
     description: 'Global pharmaceutical company in the Philippines: FDA-licensed wholesaler, importer, distributor and retail pharmacy.',
-    images: [`${DOMAIN}/assets/og-default.jpg`],
+    images: [`${DOMAIN}/assets/og-logo.jpg`],
   },
 };
 

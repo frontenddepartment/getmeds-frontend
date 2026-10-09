@@ -16,12 +16,12 @@ export interface SitemapPageConfig {
 }
 
 export const MAIN_PAGES: SitemapPageConfig[] = [
-  { path: '', label: 'Home', section: 'main', priority: PRIORITY.MAIN, changefreq: 'daily', images: ['/assets/getmedslogo.png', '/assets/og-default.jpg'] },
+  { path: '', label: 'Home', section: 'main', priority: PRIORITY.MAIN, changefreq: 'daily', images: ['/assets/getmedslogo.png', '/assets/og-logo.jpg'] },
   { path: 'product-range', label: 'Product Range', section: 'main', priority: PRIORITY.MAIN, changefreq: 'weekly', images: ['/assets/getmedslogo.png'] },
   { path: 'order-medicines', label: 'Order Medicines', section: 'main', priority: PRIORITY.MAIN, changefreq: 'monthly', images: ['/assets/ordermedicinedistributor.jpg'] },
   { path: 'services', label: 'Services', section: 'main', priority: PRIORITY.MAIN, changefreq: 'monthly', images: ['/assets/services_hero_new.png'] },
   { path: 'patient-assistance-program', label: 'Patient Assistance Program', section: 'main', priority: PRIORITY.MAIN, changefreq: 'monthly', images: ['/assets/pap-banner.png'] },
-  { path: 'blog', label: 'Blog', section: 'main', priority: PRIORITY.MAIN, changefreq: 'daily', images: ['/assets/og-default.jpg'] },
+  { path: 'blog', label: 'Blog', section: 'main', priority: PRIORITY.MAIN, changefreq: 'daily', images: ['/assets/og-logo.jpg'] },
 ];
 
 export const SECONDARY_PAGES: SitemapPageConfig[] = [
