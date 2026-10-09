@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import HomeClient, { type HeroSlideImage } from './HomeClient';
-import { getHeroSlides } from '@/lib/queries';
+import { getCategories, getCategoryImages, getHeroSlides, type CategoryImageLink } from '@/lib/queries';
+import { canonicalSiteLink } from '@/lib/seo-config';
+import type { Category } from '@/types/sanity';
 import { withVidrysSeo } from '@/lib/vidrys/seoOverrides';
 import { HOME_FAQ_JSON_LD } from '@/lib/homeFaqs';
 
@@ -14,12 +16,35 @@ async function loadHeroSlides(): Promise<HeroSlideImage[] | null> {
     // The query returns the single "Home Hero Background" document; getHeroSlides() is typed
     // as an array for the browser hook's sake.
     const doc = (await getHeroSlides()) as unknown as { images?: HeroSlideImage[] } | null;
-    return doc?.images?.length ? doc.images : null;
+    if (!doc?.images?.length) return null;
+    // Same canonical-link rewrite the browser applies, so the data embedded in the HTML
+    // never carries a www.getmeds.ph address either.
+    return doc.images.map((s) => (s.link ? { ...s, link: canonicalSiteLink(s.link) } : s));
   } catch (err) {
     // Built-in fallback slides render instead; the browser fetch still tries again.
     console.error('[home] Failed to load hero slides:', err);
     return null;
   }
+}
+
+// The "Therapeutic areas" section's two lists, fetched here so its cards and category links
+// are in the HTML Google reads, not gray placeholders filled in after load. Either one failing
+// leaves that list to the browser fetch, which is how the section worked before.
+async function loadTherapeuticAreas(): Promise<{
+  categoryImages: CategoryImageLink[] | null;
+  categories: Category[] | null;
+}> {
+  const [categoryImages, categories] = await Promise.all([
+    getCategoryImages().catch((err) => {
+      console.error('[home] Failed to load featured categories:', err);
+      return null;
+    }),
+    getCategories().catch((err) => {
+      console.error('[home] Failed to load categories:', err);
+      return null;
+    }),
+  ]);
+  return { categoryImages, categories };
 }
 
 // Title, description, canonical and OG tags copied from getmeds_frontend/index.html.
@@ -64,7 +89,7 @@ const WEBSITE_JSON_LD = {
 };
 
 export default async function Page() {
-  const initialHeroSlides = await loadHeroSlides();
+  const [initialHeroSlides, therapeutic] = await Promise.all([loadHeroSlides(), loadTherapeuticAreas()]);
   return (
     <>
       <script
@@ -78,7 +103,11 @@ export default async function Page() {
         id="jsonld-faq"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(HOME_FAQ_JSON_LD).replace(/</g, '\\u003c') }}
       />
-      <HomeClient initialHeroSlides={initialHeroSlides} />
+      <HomeClient
+        initialHeroSlides={initialHeroSlides}
+        initialCategoryImages={therapeutic.categoryImages}
+        initialCategories={therapeutic.categories}
+      />
     </>
   );
 }

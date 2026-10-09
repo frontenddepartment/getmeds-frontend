@@ -16,6 +16,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { client, sizedSanityUrl } from '@/lib/sanity';
 import { fetchSiteLogoUrl } from '@/lib/siteSettings';
+import type { ServerNavMenu } from '@/lib/navbarMenuServer';
 import {
   loadDynamicMenu,
   type DynamicMenu,
@@ -252,7 +253,7 @@ function loadCompanySlides(): Promise<Record<string, Slide>> {
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
-export default function Navbar() {
+export default function Navbar({ initialMenu = null }: { initialMenu?: ServerNavMenu | null }) {
   const pathname = usePathname() || '/';
   const router = useRouter();
   const pageKey = navPageKey(pathname);
@@ -263,7 +264,11 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [accordion, setAccordion] = useState<Record<string, boolean>>({});
-  const [menu, setMenu] = useState<DynamicMenu | null>(null);
+  // Starts from the menu the server built (layout.tsx), so its links are in the HTML; the
+  // browser fetch below replaces it with the full one, which also knows how to resolve clicks.
+  const [menu, setMenu] = useState<DynamicMenu | null>(() =>
+    initialMenu ? { ...initialMenu, resolve: () => undefined } : null,
+  );
   const [slides, setSlides] = useState<Record<string, Slide> | null>(null);
   const [activeSlide, setActiveSlide] = useState('services');
   const [gnOpen, setGnOpen] = useState(false);
@@ -521,7 +526,7 @@ export default function Navbar() {
             </div>
             <div className="flex items-center space-x-2 sm:space-x-6 shrink-0">
               {/* Phone — Medicine Inquiries */}
-              <a href="tel:+639190769103" className="flex items-center space-x-1 sm:space-x-2 hover:text-primary transition text-white whitespace-nowrap">
+              <a href="tel:+639190769105" className="flex items-center space-x-1 sm:space-x-2 hover:text-primary transition text-white whitespace-nowrap">
                 <i className="fa-solid fa-phone text-[10px] sm:text-xs"></i>
                 <span className="text-[10px] sm:text-xs">+63 919 076 9105</span>
               </a>

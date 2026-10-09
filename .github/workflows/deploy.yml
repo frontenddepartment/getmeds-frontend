@@ -118,6 +118,21 @@ jobs:
           $SSH "$SSH_USER@$SSH_HOST" 'mkdir -p ~/nextapp'
           rsync -az --delete --exclude='.env*' -e "$SSH" .next/standalone/ "$SSH_USER@$SSH_HOST:~/nextapp/"
 
+      - name: Stop the old app and re-sync
+        # The old app keeps serving during the upload above, and if a page's hourly refresh
+        # comes due in that time it regenerates the page with the OLD code and writes it over
+        # the new build's copy. The new app then serves that stale page for up to an hour
+        # (/services, 2026-10-09). Stopping the old app and syncing once more puts back
+        # anything it overwrote; only those few files differ, so this takes seconds.
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+        run: |
+          SSH="ssh -i ~/.ssh/deploy_key -p ${SSH_PORT:-22}"
+          $SSH "$SSH_USER@$SSH_HOST" 'export NVM_DIR="$HOME/.nvm"; [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"; pm2 stop getmeds-web || true'
+          rsync -az --delete --exclude='.env*' -e "$SSH" .next/standalone/ "$SSH_USER@$SSH_HOST:~/nextapp/"
+
       - name: Restart the app and check it answers
         env:
           SSH_HOST: ${{ secrets.SSH_HOST }}
@@ -129,7 +144,9 @@ jobs:
             export NVM_DIR="$HOME/.nvm"
             [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
             cd ~/nextapp
-            pm2 startOrReload ecosystem.config.cjs --update-env
+            # Restart, not reload: the step above stopped the app, and restart is what starts a
+            # stopped one. (With a single fork-mode process a reload was a restart anyway.)
+            pm2 startOrRestart ecosystem.config.cjs --update-env
             pm2 save
             # Fail the deploy (and show the app's log) if the new build doesn't come up.
             for i in $(seq 1 20); do

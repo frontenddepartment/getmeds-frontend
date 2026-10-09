@@ -19,11 +19,17 @@ import { computeCategoryKey, linkCategoryKeys } from '@/lib/categoryImageKey';
 // navigates rather than stashing the answer for the next page to read.
 import { ORDER_AUDIENCES, audiencePath } from '@/lib/orderAudiences';
 import { HOME_FAQS } from '@/lib/homeFaqs';
+import { canonicalSiteLink } from '@/lib/seo-config';
+import type { CategoryImageLink } from '@/lib/queries';
+import type { Category } from '@/types/sanity';
 
 
 
+// Starts at the final number, so the server HTML (what Google and AI tools read) says
+// "2,000+" rather than "0+"; the count-up from 0 only runs once it scrolls into view.
+// en-US formatting on both sides so the server and browser render the same text.
 const AnimatedCounter = ({ end, duration = 2000, suffix = "" }: { end: number, duration?: number, suffix?: string }) => {
-  const [count, setCount] = useState(0);
+  const [count, setCount] = useState(end);
   const [hasAnimated, setHasAnimated] = useState(false);
   const counterRef = React.useRef<HTMLSpanElement>(null);
 
@@ -45,6 +51,7 @@ const AnimatedCounter = ({ end, duration = 2000, suffix = "" }: { end: number, d
 
   useEffect(() => {
     if (!hasAnimated) return;
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
     let startTimestamp: number | null = null;
     const step = (timestamp: number) => {
       if (!startTimestamp) startTimestamp = timestamp;
@@ -59,7 +66,7 @@ const AnimatedCounter = ({ end, duration = 2000, suffix = "" }: { end: number, d
     window.requestAnimationFrame(step);
   }, [end, duration, hasAnimated]);
 
-  return <span ref={counterRef}>{count.toLocaleString()}{suffix}</span>;
+  return <span ref={counterRef}>{count.toLocaleString('en-US')}{suffix}</span>;
 };
 
 const slugify = (text: string | undefined | null) => {
@@ -78,7 +85,17 @@ const slugify = (text: string | undefined | null) => {
 /** One entry of the "Home Hero Background" pageAsset's images[] (see pageAsset.heroSlides). */
 export type HeroSlideImage = { image?: any; altText?: string; enableLink?: boolean; link?: string };
 
-export default function HomeClient({ initialHeroSlides = null }: { initialHeroSlides?: HeroSlideImage[] | null }) {
+export default function HomeClient({
+  initialHeroSlides = null,
+  initialCategoryImages = null,
+  initialCategories = null,
+}: {
+  initialHeroSlides?: HeroSlideImage[] | null;
+  // Fetched by page.tsx so the "Therapeutic areas" cards and their category links are in the
+  // server HTML instead of gray placeholders; the browser fetch only refreshes them.
+  initialCategoryImages?: CategoryImageLink[] | null;
+  initialCategories?: Category[] | null;
+}) {
   const [, setIsScrolled] = useState(false);
 
   useEffect(() => {
@@ -99,7 +116,7 @@ export default function HomeClient({ initialHeroSlides = null }: { initialHeroSl
     }
   }, []);
 
-  const { getImage, getImageLink, getCategoryImage, categoryImages, categoryImagesLoading } = useImageMapper('home');
+  const { getImage, getImageLink, getCategoryImage, categoryImages, categoryImagesLoading } = useImageMapper('home', { initialCategoryImages });
   const { data: newsItems } = useNews();
   const { data: featuredNews } = useFeaturedNews();
   const { data: settings } = useSiteSettings();
@@ -127,7 +144,7 @@ export default function HomeClient({ initialHeroSlides = null }: { initialHeroSl
   // Same subcategory data already used for the sidebar flyout on the product-range/cancer-medicines
   // pages (getCategories() aggregates each Excel product's condition/subCategory names under its
   // Product Range category) — reused here rather than inventing a separate data source.
-  const { data: excelCategories } = useCategories();
+  const { data: excelCategories } = useCategories(initialCategories);
   const newsSliderRef = useRef<HTMLDivElement>(null);
   const [activeNewsSlide, setActiveNewsSlide] = useState(0);
 
@@ -365,7 +382,7 @@ export default function HomeClient({ initialHeroSlides = null }: { initialHeroSl
         bgMobile: s.image ? urlFor(s.image).width(900).quality(75).auto('format').url() : fallback.bg,
         heading: s.altText || fallback.heading,
         sub: fallback.sub,
-        link: s.enableLink && s.link ? s.link as string : null,
+        link: s.enableLink && s.link ? canonicalSiteLink(s.link as string) : null,
       };
     })
     : fallbackHeroSlides;
@@ -1073,33 +1090,33 @@ export default function HomeClient({ initialHeroSlides = null }: { initialHeroSl
       <section className="relative z-10 max-w-7xl mx-auto px-6 py-12 md:py-16 grid grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12">
         {/* Stat 1 */}
         <div className="flex flex-col items-start text-left border-l-[3px] border-primary pl-5 md:pl-6 hover:-translate-y-1 transition-all duration-300 group ca-anim ca-up ca-d1">
-          <h3 className="text-3xl md:text-4xl font-semibold bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent mb-2 origin-left group-hover:scale-110 transition-transform duration-300">
+          <p className="text-3xl md:text-4xl font-semibold bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent mb-2 origin-left group-hover:scale-110 transition-transform duration-300">
             <AnimatedCounter end={2000} suffix="+" />
-          </h3>
+          </p>
           <p className="text-black font-medium text-sm md:text-base leading-tight">Medicines in portfolio</p>
         </div>
 
         {/* Stat 2 */}
         <div className="flex flex-col items-start text-left border-l-[3px] border-primary pl-5 md:pl-6 hover:-translate-y-1 transition-all duration-300 group ca-anim ca-up ca-d2">
-          <h3 className="text-3xl md:text-4xl font-semibold bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent mb-2 origin-left group-hover:scale-110 transition-transform duration-300">
+          <p className="text-3xl md:text-4xl font-semibold bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent mb-2 origin-left group-hover:scale-110 transition-transform duration-300">
             <AnimatedCounter end={10000} suffix="+" />
-          </h3>
+          </p>
           <p className="text-black font-medium text-sm md:text-base leading-tight">Pharmacies nationwide</p>
         </div>
 
         {/* Stat 3 */}
         <div className="flex flex-col items-start text-left border-l-[3px] border-primary pl-5 md:pl-6 hover:-translate-y-1 transition-all duration-300 group ca-anim ca-up ca-d3">
-          <h3 className="text-3xl md:text-4xl font-semibold bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent mb-2 origin-left group-hover:scale-110 transition-transform duration-300">
+          <p className="text-3xl md:text-4xl font-semibold bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent mb-2 origin-left group-hover:scale-110 transition-transform duration-300">
             <AnimatedCounter end={500} suffix="+" />
-          </h3>
+          </p>
           <p className="text-black font-medium text-sm md:text-base leading-tight">Hospitals served</p>
         </div>
 
         {/* Stat 4 */}
         <div className="flex flex-col items-start text-left border-l-[3px] border-primary pl-5 md:pl-6 hover:-translate-y-1 transition-all duration-300 group ca-anim ca-up ca-d4">
-          <h3 className="text-3xl md:text-4xl font-semibold bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent mb-2 origin-left group-hover:scale-110 transition-transform duration-300">
+          <p className="text-3xl md:text-4xl font-semibold bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent mb-2 origin-left group-hover:scale-110 transition-transform duration-300">
             <AnimatedCounter end={2} suffix="M+" />
-          </h3>
+          </p>
           <p className="text-black font-medium text-sm md:text-base leading-tight">Filipino lives touched</p>
         </div>
       </section>
@@ -2209,7 +2226,7 @@ export default function HomeClient({ initialHeroSlides = null }: { initialHeroSl
                 <h2 className="text-[19px] font-semibold text-gray-900 mb-4 leading-snug">Thank you for considering Getmeds as your partner.</h2>
                 <p className="text-[13px] text-gray-500 leading-relaxed">
                   Our business development team will contact you within 2 working days to discuss collaboration opportunities. For urgent concerns, please call{' '}
-                  <a href="tel:+639190769103" className="text-[#1D9FDA] font-semibold hover:underline">+63 919 076 9103</a>.
+                  <a href="tel:+639190769105" className="text-[#1D9FDA] font-semibold hover:underline">+63 919 076 9105</a>.
                 </p>
               </div>
               <div className="border-t border-gray-100 px-10 py-4 text-center">

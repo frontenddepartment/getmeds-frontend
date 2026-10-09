@@ -269,7 +269,7 @@ export default function FooterModals() {
                 <p className="font-semibold text-gray-800">Getmeds</p>
                 <p>Unit 301 &amp; 305, 17 Vatican Building, Vatican Drive, BF Resort Village, Las Piñas City, Philippines</p>
                 <p>Email: <a href="mailto:info@getmeds.ph" className="text-[#1D9FDA] hover:underline">info@getmeds.ph</a></p>
-                <p>Phone: <a href="tel:+639190769103" className="text-[#1D9FDA] hover:underline">+63 919 076 9103</a></p>
+                <p>Phone: <a href="tel:+639190769105" className="text-[#1D9FDA] hover:underline">+63 919 076 9105</a></p>
               </div>
             </section>
           </div>
@@ -317,7 +317,7 @@ export default function FooterModals() {
 
         <div>
           <p className="font-semibold text-gray-800 mb-1">Contact Us</p>
-          <p>For questions regarding these terms, contact us at <a href="mailto:info@getmeds.ph" className="text-[#1D9FDA] hover:underline">info@getmeds.ph</a> or call <a href="tel:+639190769103" className="text-[#1D9FDA] hover:underline">+63 919 076 9103</a>.</p>
+          <p>For questions regarding these terms, contact us at <a href="mailto:info@getmeds.ph" className="text-[#1D9FDA] hover:underline">info@getmeds.ph</a> or call <a href="tel:+639190769105" className="text-[#1D9FDA] hover:underline">+63 919 076 9105</a>.</p>
         </div>
       </SimpleModal>
 

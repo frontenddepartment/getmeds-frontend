@@ -252,7 +252,7 @@ export type DynamicMenu = {
   mobileSections: MenuSection[] | null;
 };
 
-const CATALOG_QUERY =
+export const CATALOG_QUERY =
   '*[_type == "product" && (remarks == "present" || remarks == "active") && defined(title)] | order(_updatedAt desc)[0]{ json_data, categoryImages }';
 
 let menuPromise: Promise<DynamicMenu | null> | null = null;
@@ -272,7 +272,7 @@ export function loadDynamicMenu(): Promise<DynamicMenu | null> {
   return menuPromise;
 }
 
-function buildDynamicMenu(result: { json_data?: string; categoryImages?: CategoryImageLink[] } | null): DynamicMenu | null {
+export function buildDynamicMenu(result: { json_data?: string; categoryImages?: CategoryImageLink[] } | null): DynamicMenu | null {
   let rows: CatalogRow[] = [];
   try {
     const jsonData = result?.json_data;

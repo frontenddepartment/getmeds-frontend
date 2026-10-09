@@ -10,7 +10,10 @@ import './services.css';
 export default function ServicesClient() {
   const { getImage, getLowResImage, getImageLink } = useImageMapper('services');
 
+  // The numbers are written out in the HTML (what Google and AI tools read); this only
+  // replays them from 0 once the stats bar scrolls into view.
   useEffect(() => {
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
     const animateCounters = () => {
       document.querySelectorAll<HTMLElement>('[data-target]').forEach(el => {
         const target = parseInt(el.dataset.target || '0');
@@ -19,7 +22,7 @@ export default function ServicesClient() {
         const step = target / (1800 / 16);
         const timer = setInterval(() => {
           current = Math.min(current + step, target);
-          const value = target >= 1000 ? Math.floor(current).toLocaleString() : Math.floor(current);
+          const value = target >= 1000 ? Math.floor(current).toLocaleString('en-US') : Math.floor(current);
           el.textContent = value + suffix;
           if (current >= target) clearInterval(timer);
         }, 16);
@@ -144,22 +147,22 @@ export default function ServicesClient() {
       <section className="max-w-[1600px] mx-auto px-3 sm:px-4 md:px-6 mb-10">
         <div className="rounded-b-[2rem] px-8 py-7 grid grid-cols-2 md:grid-cols-4 divide-x divide-gray-100">
           <div className="stat-item flex flex-col items-center px-6 py-2 border-r border-gray-100 last:border-0 reveal">
-            <span className="text-3xl md:text-4xl font-black bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent mb-2" data-target="2000">0</span>
+            <span className="text-3xl md:text-4xl font-black bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent mb-2" data-target="2000">2,000+</span>
             <span className="text-gray-600 font-bold text-sm md:text-base leading-tight">Molecules
               in portfolio</span>
           </div>
           <div className="stat-item flex flex-col items-center px-6 py-2 border-r border-gray-100 last:border-0 reveal">
-            <span className="text-3xl md:text-4xl font-black bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent mb-2" data-target="10000">0</span>
+            <span className="text-3xl md:text-4xl font-black bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent mb-2" data-target="10000">10,000+</span>
             <span className="text-gray-600 font-bold text-sm md:text-base leading-tight">Pharmacies
               nationwide</span>
           </div>
           <div className="stat-item flex flex-col items-center px-6 py-2 border-r border-gray-100 last:border-0 reveal">
-            <span className="text-3xl md:text-4xl font-black bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent mb-2" data-target="500">0</span>
+            <span className="text-3xl md:text-4xl font-black bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent mb-2" data-target="500">500+</span>
             <span className="text-gray-600 font-bold text-sm md:text-base leading-tight">Hospitals
               served</span>
           </div>
           <div className="stat-item flex flex-col items-center px-6 py-2 last:border-0 reveal">
-            <span className="text-3xl md:text-4xl font-black bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent mb-2" data-target="2" data-suffix="M+">0</span>
+            <span className="text-3xl md:text-4xl font-black bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent mb-2" data-target="2" data-suffix="M+">2M+</span>
             <span className="text-gray-600 font-bold text-sm md:text-base leading-tight">Filipino
               lives touched</span>
           </div>

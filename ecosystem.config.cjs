@@ -1,5 +1,5 @@
 // PM2 process file for the InMotion VPS. The deploy workflow copies it into the standalone
-// bundle (~/nextapp) and runs `pm2 startOrReload ecosystem.config.cjs`.
+// bundle (~/nextapp) and runs `pm2 startOrRestart ecosystem.config.cjs`.
 //
 // Server-only secrets (SANITY_WRITE_TOKEN, SANITY_REVALIDATE_SECRET, VIDRYS_SIGNING_SECRET, ...)
 // live in ~/getmeds.env on the server, outside ~/nextapp, so a deploy never overwrites them.

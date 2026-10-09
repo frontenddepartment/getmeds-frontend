@@ -5,7 +5,7 @@
   },
   "topBar": {
     "label": "Connect With Us",
-    "phone": "+63 919 076 9103",
+    "phone": "+63 919 076 9105",
     "phoneHref": "contact-us.html",
     "socialLinks": [
       { "platform": "Facebook", "icon": "fa-brands fa-facebook", "href": "#" },
