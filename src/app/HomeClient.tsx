@@ -2226,7 +2226,7 @@ export default function HomeClient({
                 <h2 className="text-[19px] font-semibold text-gray-900 mb-4 leading-snug">Thank you for considering Getmeds as your partner.</h2>
                 <p className="text-[13px] text-gray-500 leading-relaxed">
                   Our business development team will contact you within 2 working days to discuss collaboration opportunities. For urgent concerns, please call{' '}
-                  <a href="tel:+639190769103" className="text-[#1D9FDA] font-semibold hover:underline">+63 919 076 9103</a>.
+                  <a href="tel:+639190769105" className="text-[#1D9FDA] font-semibold hover:underline">+63 919 076 9105</a>.
                 </p>
               </div>
               <div className="border-t border-gray-100 px-10 py-4 text-center">

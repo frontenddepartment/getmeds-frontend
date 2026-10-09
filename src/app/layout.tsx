@@ -6,6 +6,7 @@ import FloatingContactButtons from '@/components/FloatingContactButtons';
 import RouteGate from '@/components/RouteGate';
 import { OrganizationJsonLd } from '@/components/JsonLd';
 import { DOMAIN } from '@/lib/seo-config';
+import { getServerNavMenu } from '@/lib/navbarMenuServer';
 
 export const metadata: Metadata = {
   metadataBase: new URL(DOMAIN),
@@ -76,11 +77,13 @@ const FA_SWAP_CSS = [
   )
   .join('');
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  // Built on the server so the Product Range menu's real links are in every page's HTML.
+  const navMenu = await getServerNavMenu();
   return (
     <html lang="en" className="overflow-x-hidden" suppressHydrationWarning>
       <head>
@@ -118,7 +121,7 @@ export default function RootLayout({
       </head>
       <body className="bg-white text-gray-800 antialiased">
         {/* Navbar and Footer hide themselves on the routes whose original page had none */}
-        <Navbar />
+        <Navbar initialMenu={navMenu} />
         <main>{children}</main>
         <Footer />
         <RouteGate>

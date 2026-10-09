@@ -530,7 +530,7 @@ export default function ContactUsClient() {
                   <p className="font-semibold text-gray-800">Getmeds</p>
                   <p>Unit 301 &amp; 305, 17 Vatican Building, Vatican Drive, BF Resort Village, Las Piñas City, Philippines</p>
                   <p>Email: <a href="mailto:info@getmeds.ph" className="text-[#1D9FDA] hover:underline">info@getmeds.ph</a></p>
-                  <p>Phone: <a href="tel:+639190769103" className="text-[#1D9FDA] hover:underline">+63 919 076 9103</a></p>
+                  <p>Phone: <a href="tel:+639190769105" className="text-[#1D9FDA] hover:underline">+63 919 076 9105</a></p>
                 </div>
               </section>
 

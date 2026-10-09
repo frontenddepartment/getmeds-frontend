@@ -16,6 +16,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { client, sizedSanityUrl } from '@/lib/sanity';
 import { fetchSiteLogoUrl } from '@/lib/siteSettings';
+import type { ServerNavMenu } from '@/lib/navbarMenuServer';
 import {
   loadDynamicMenu,
   type DynamicMenu,
@@ -252,7 +253,7 @@ function loadCompanySlides(): Promise<Record<string, Slide>> {
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
-export default function Navbar() {
+export default function Navbar({ initialMenu = null }: { initialMenu?: ServerNavMenu | null }) {
   const pathname = usePathname() || '/';
   const router = useRouter();
   const pageKey = navPageKey(pathname);
@@ -263,7 +264,11 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [accordion, setAccordion] = useState<Record<string, boolean>>({});
-  const [menu, setMenu] = useState<DynamicMenu | null>(null);
+  // Starts from the menu the server built (layout.tsx), so its links are in the HTML; the
+  // browser fetch below replaces it with the full one, which also knows how to resolve clicks.
+  const [menu, setMenu] = useState<DynamicMenu | null>(() =>
+    initialMenu ? { ...initialMenu, resolve: () => undefined } : null,
+  );
   const [slides, setSlides] = useState<Record<string, Slide> | null>(null);
   const [activeSlide, setActiveSlide] = useState('services');
   const [gnOpen, setGnOpen] = useState(false);
