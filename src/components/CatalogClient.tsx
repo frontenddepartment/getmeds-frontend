@@ -6,7 +6,7 @@ import { useProducts, useCategories, useImageMapper } from '@/lib/useSanity';
 import { urlFor } from '@/lib/sanity';
 import type { Product as SanityProduct, Category } from '@/types/sanity';
 import { sortByFeaturedOrder } from '@/lib/categoryImageKey';
-import { setPageMeta, injectJsonLd, removeJsonLd, specialtyUrl, conditionReviewFields, ogImageForFolder, CONDITIONS_OG_IMAGE, ORGANIZATION_ID } from '@/lib/seo';
+import { setPageMeta, injectJsonLd, removeJsonLd, specialtyUrl, conditionReviewFields, ogImageForFolder, ogImageForCondition, ORGANIZATION_ID } from '@/lib/seo';
 import { folderDisplayName } from '@/lib/queries';
 import { usePageReady } from '@/lib/handoff';
 import './CatalogClient.css';
@@ -774,8 +774,11 @@ export default function CatalogClient(_props: { initialFolder?: string } = {}) {
       title: isCondition ? `${displayLabel} - ${sectionLabel}` : `${displayLabel}${folderQualifier}`,
       description,
       path,
-      // Same cards scripts/prerender-slugs.cjs bakes in for conditions and category folders.
-      image: isCondition ? CONDITIONS_OG_IMAGE : ogImageForFolder(activeFolder || matchedCat?.slug),
+      // Same cards the server bakes in for conditions and category folders — a condition's
+      // slug is the last segment of its hub path.
+      image: isCondition
+        ? ogImageForCondition(path?.split('/').filter(Boolean).pop())
+        : ogImageForFolder(activeFolder || matchedCat?.slug),
     });
 
     // Mirrors the BreadcrumbList baked in by scripts/prerender-slugs.cjs under this same

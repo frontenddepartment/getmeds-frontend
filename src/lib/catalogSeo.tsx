@@ -7,7 +7,7 @@ import {
   withSiteName,
   truncateAtWord,
   ogImageForFolder,
-  CONDITIONS_OG_IMAGE,
+  ogImageForCondition,
   ORGANIZATION_ID,
   specialtyUrl,
   conditionReviewFields,
@@ -312,7 +312,16 @@ export function conditionSeo(model: CatalogModel, group: ConditionGroup | undefi
   const links = productLinks(model);
   const items = (group?.productNames || []).map((n) => links.get(n)).filter((x): x is ProductLink => !!x);
   return {
-    metadata: buildMetadata({ title: name, description, canonicalPath, ogType: 'website', ogImage: CONDITIONS_OG_IMAGE }),
+    // The condition's own share card (category artwork re-titled with the condition
+    // name); the slug for a static-list condition with no sheet group is the last
+    // segment of its canonical path.
+    metadata: buildMetadata({
+      title: name,
+      description,
+      canonicalPath,
+      ogType: 'website',
+      ogImage: ogImageForCondition(group?.slug || canonicalPath.split('/').filter(Boolean).pop()),
+    }),
     jsonLd: [
       {
         id: 'jsonld-medical-webpage',

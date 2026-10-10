@@ -11,10 +11,10 @@ import { getServerNavMenu } from '@/lib/navbarMenuServer';
 export const metadata: Metadata = {
   metadataBase: new URL(DOMAIN),
   title: {
-    default: 'Getmeds | Trusted Pharmaceutical Company & Healthcare Provider',
+    default: 'Getmeds | Global Pharmaceutical Company',
     template: '%s | Getmeds',
   },
-  description: 'Global pharmaceutical company in the Philippines: FDA-licensed wholesaler, importer, distributor and retail pharmacy.',
+  description: 'Getmeds is an FDA-licensed pharmaceutical importer, wholesale distributor, supplier, and retail pharmacy in the Philippines. Order medicines online.',
   keywords: ['getmeds', 'pharmaceutical company', 'philippines pharmacy', 'oncology medicines', 'cancer medicines Philippines', 'FDA licensed distributor'],
   authors: [{ name: 'Getmeds Philippines' }],
   creator: 'Getmeds Philippines',
@@ -31,8 +31,8 @@ export const metadata: Metadata = {
     apple: [{ url: '/icons/apple-touch-icon.png' }],
   },
   openGraph: {
-    title: 'Getmeds | Trusted Pharmaceutical Company & Healthcare Provider',
-    description: 'Global pharmaceutical company in the Philippines: FDA-licensed wholesaler, importer, distributor and retail pharmacy.',
+    title: 'Getmeds | Global Pharmaceutical Company',
+    description: 'Getmeds is an FDA-licensed pharmaceutical importer, wholesale distributor, supplier, and retail pharmacy in the Philippines. Order medicines online.',
     url: DOMAIN,
     siteName: 'Getmeds Philippines',
     images: [
@@ -50,8 +50,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Getmeds | Trusted Pharmaceutical Company & Healthcare Provider',
-    description: 'Global pharmaceutical company in the Philippines: FDA-licensed wholesaler, importer, distributor and retail pharmacy.',
+    title: 'Getmeds | Global Pharmaceutical Company',
+    description: 'Getmeds is an FDA-licensed pharmaceutical importer, wholesale distributor, supplier, and retail pharmacy in the Philippines. Order medicines online.',
     images: [`${DOMAIN}/assets/og-logo.jpg`],
   },
 };

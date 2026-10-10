@@ -6,8 +6,10 @@ import { DOMAIN } from '@/lib/seo-config';
 import { withVidrysSeo } from '@/lib/vidrys/seoOverrides';
 
 // Mirrors the <head> of order-medicines.html: title, description, canonical,
-// og:url and the order share card.
-const OG_IMAGE = `${DOMAIN}/assets/og-order.jpg`;
+// og:url and the order share card. ?v= is the scraper cache-buster — bump it
+// whenever og-order.jpg is replaced under the same name (v2: phone-mockup card
+// showing the order page, from assets/order-medicines/og-order-medicines.png).
+const OG_IMAGE = `${DOMAIN}/assets/og-order.jpg?v=2`;
 
 const baseMetadata: Metadata = {
   title: { absolute: withSiteName(ORDER_HUB_META.title) },

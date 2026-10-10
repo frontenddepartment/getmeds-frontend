@@ -1,4 +1,5 @@
 import ogImages from './og-images.json';
+import conditionOgImages from './og-condition-images.json';
 
 const SITE_NAME = 'Getmeds';
 // og:site_name is the brand label social platforms print above the card, and it is the
@@ -19,6 +20,17 @@ export const CONDITIONS_OG_IMAGE = `${BASE_URL}/assets/${ogImages.conditions.fil
 /** The category share card for a folder such as "blood-disorder-medicines"; the site default otherwise. */
 export function ogImageForFolder(folder?: string | null): string {
   return (folder && IMAGE_BY_FOLDER.get(folder.trim())) || DEFAULT_IMAGE;
+}
+
+/**
+ * The per-condition share card for a condition slug such as "breast-cancer" — the parent
+ * category's artwork re-titled with the condition's own name, generated into
+ * public/assets/og-conditions/ by scripts/generate-condition-og-images.cjs. Falls back to
+ * the generic conditions card for any slug without a generated file.
+ */
+export function ogImageForCondition(slug?: string | null): string {
+  const file = slug && (conditionOgImages.bySlug as Record<string, string | undefined>)[slug.trim().toLowerCase()];
+  return file ? `${BASE_URL}/assets/og-conditions/${file}?v=${conditionOgImages.version}` : CONDITIONS_OG_IMAGE;
 }
 /**
  * @id of the Organization node stamped into every static shell by

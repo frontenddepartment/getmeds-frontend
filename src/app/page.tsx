@@ -48,9 +48,9 @@ async function loadTherapeuticAreas(): Promise<{
 }
 
 // Title, description, canonical and OG tags copied from getmeds_frontend/index.html.
-const TITLE = 'Getmeds | Trusted Pharmaceutical Company & Healthcare Provider';
+const TITLE = 'Getmeds | Global Pharmaceutical Company';
 const DESCRIPTION =
-  'Global pharmaceutical company in the Philippines: FDA-licensed wholesaler, importer, distributor and retail pharmacy.';
+  'Getmeds is an FDA-licensed pharmaceutical importer, wholesale distributor, supplier, and retail pharmacy in the Philippines. Order medicines online.';
 
 const baseMetadata: Metadata = {
   title: { absolute: TITLE },

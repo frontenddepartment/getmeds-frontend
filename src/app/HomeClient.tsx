@@ -353,7 +353,7 @@ export default function HomeClient({
       bg: 'assets/imagebanner.webp',
       bgMobile: 'assets/imagebanner.webp',
       heading: 'Life-Saving Medicines for Patients, Doctors,\nPharmacies & Hospitals in the Philippines',
-      sub: 'Getmeds is a global pharmaceutical company advancing healthcare access nationwide through essential medicines, hospital therapies and cancer treatments.',
+      sub: 'Getmeds is a global pharmaceutical company and an FDA-licensed importer, wholesale distributor, and retail pharmacy, delivering essential medicines, hospital therapies, and cancer treatments nationwide.',
       link: null as string | null,
     },
     {
@@ -401,7 +401,9 @@ export default function HomeClient({
   }, []);
   const [heroFading, setHeroFading] = useState(false);
   // One <h1> per page: only the first slide ("Life-Saving Medicines…") is the
-  // page's main heading. The other slides render the same styling as <h2>.
+  // page's main heading. The other slides render the same styling as <h2>, while a
+  // screen-reader-only <h1> (rendered in the hero below) keeps the first slide's
+  // headline in the DOM, so the page never loses its single fixed <h1> mid-rotation.
   const HeroHeading = heroIndex === 0 ? 'h1' : 'h2';
   const heroTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -744,6 +746,12 @@ export default function HomeClient({
           />
         ))}
 
+        {/* While another slide shows, the first slide's headline stays in the DOM as the
+            page's single <h1> (visually hidden); the visible copy on those slides is <h2>. */}
+        {heroIndex !== 0 && (
+          <h1 className="sr-only">{heroSlides[0].heading.replace(/\n/g, ' ')}</h1>
+        )}
+
         {/* Hero Content Area — heading, subtext, and buttons hidden on the 2nd slide */}
         {heroIndex !== 1 && (
           <div className="max-w-7xl mx-auto px-[max(1.5rem,calc(4.5rem_-_(100vw_-_80rem)/2))] w-full relative z-10 flex-grow flex items-center justify-start pt-20 md:pt-28 pb-16 md:pb-20 text-left pointer-events-none">
@@ -756,7 +764,7 @@ export default function HomeClient({
                     <React.Fragment key={i}>{line}{i < arr.length - 1 && <br />}</React.Fragment>
                   ))}
                 </HeroHeading>
-                <p className="text-[#000b5d] text-sm md:text-base font-medium leading-relaxed max-w-xl">
+                <p className="hero-subheadline text-[#000b5d] text-sm md:text-base font-medium leading-relaxed max-w-xl">
                   {heroSlides[heroIndex].sub}
                 </p>
               </div>

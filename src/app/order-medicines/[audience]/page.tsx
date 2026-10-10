@@ -6,8 +6,9 @@ import { DOMAIN } from '@/lib/seo-config'
 import OrderMedicinesClient from './OrderMedicinesClient'
 import { withVidrysSeo } from '@/lib/vidrys/seoOverrides'
 
-// Same share card for every audience (scripts/prerender-order-medicines.cjs → ORDER_OG_IMAGE).
-const OG_IMAGE = `${DOMAIN}/assets/og-order.jpg`
+// Same share card for every audience. ?v= matches order-medicines/page.tsx —
+// bump both together when og-order.jpg is replaced under the same name.
+const OG_IMAGE = `${DOMAIN}/assets/og-order.jpg?v=2`
 
 export const dynamicParams = false
 
