@@ -268,6 +268,15 @@ const SANITY_QUERIES: Record<string, string> = {
       email,
       active
     }
+  `,
+  // The template every card front is drawn from (Studio → Business Cards →
+  // Card Design): a blank front, the back, and where each detail goes.
+  "businessCardDesign.main": `
+    *[_id == "business-card-design"][0] {
+      "front": front.asset->{url, "width": metadata.dimensions.width, "height": metadata.dimensions.height},
+      "back": back.asset->{url, "width": metadata.dimensions.width, "height": metadata.dimensions.height},
+      boxes
+    }
   `
 }
 

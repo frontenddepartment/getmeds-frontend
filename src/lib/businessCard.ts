@@ -1,5 +1,6 @@
 import { sanityQuery } from './sanityProxy'
 import type { SanityImage } from '../types/sanity'
+import type { CardTextBox } from './cardTemplate'
 
 /**
  * businessCard.ts
@@ -28,6 +29,7 @@ export interface BusinessCard {
   slug: string
   jobTitle?: string
   company?: string
+  /** Uploaded artwork, from before Card Design. Shown only if there is no Card Design. */
   cardImage?: SanityImage
   cardImageBack?: SanityImage
   mobile?: string
@@ -40,6 +42,27 @@ export interface BusinessCard {
   officePhone?: string
   email?: string
   active?: boolean
+}
+
+export interface CardDesignImage {
+  url: string
+  width: number
+  height: number
+}
+
+/** Studio → Business Cards → Card Design. Every card front is drawn from it. */
+export interface CardDesign {
+  front?: CardDesignImage | null
+  back?: CardDesignImage | null
+  boxes?: CardTextBox[]
+}
+
+/**
+ * Fresh for the same reason as the card: a design fix in Studio should be on
+ * the next scan, not after the CDN catches up.
+ */
+export async function getCardDesign() {
+  return sanityQuery<CardDesign | null>('businessCardDesign.main', {}, { fresh: true })
 }
 
 /** The path a printed QR code encodes. One place, because three files read it. */

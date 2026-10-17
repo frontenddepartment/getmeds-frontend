@@ -1,12 +1,13 @@
 'use client';
 
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useId, useMemo, useRef, useState } from 'react';
 import { urlFor } from '@/lib/sanity';
 import {
   CARD_PATH_PREFIX,
   downloadVCard,
   formatPhone,
   getBusinessCardBySlug,
+  getCardDesign,
   telLink,
   toE164,
   viberLink,
@@ -17,7 +18,9 @@ import {
   whatsappLink,
   whatsappNumber,
   type BusinessCard,
+  type CardDesign,
 } from '@/lib/businessCard';
+import { DEFAULT_BOXES, layoutCard, loadCardFonts, measureWithCanvas } from '@/lib/cardTemplate';
 
 /**
  * business-card.tsx
@@ -303,7 +306,18 @@ function ActionButton({
  * visibility rules, and duplicating the <img> would mean a second copy to keep
  * in step.
  */
-function CardFace({ src, alt, className = '' }: { src: string; alt: string; className?: string }) {
+function CardFace({
+  src,
+  alt,
+  className = '',
+  children,
+}: {
+  src?: string;
+  alt: string;
+  className?: string;
+  /** A drawn card (TemplateFront) instead of an image. */
+  children?: React.ReactNode;
+}) {
   return (
     <div
       className={`relative overflow-hidden rounded-[18px] bg-white ${className}`}
@@ -312,7 +326,9 @@ function CardFace({ src, alt, className = '' }: { src: string; alt: string; clas
          wherever inside the card it lands. */
       onContextMenu={blockSave}
       onDragStart={blockSave}
+      {...(children ? { role: 'img', 'aria-label': alt } : {})}
     >
+      {children ?? (
       <img
         src={src}
         alt={alt}
@@ -325,7 +341,75 @@ function CardFace({ src, alt, className = '' }: { src: string; alt: string; clas
           (e.currentTarget as HTMLImageElement).style.display = 'none';
         }}
       />
+      )}
     </div>
+  );
+}
+
+/**
+ * The front of the card, drawn from Card Design: the blank front, with this
+ * person's details in the boxes set in Studio. The same layout as the Studio
+ * preview and the print files (src/lib/cardTemplate.ts), drawn as SVG so it is
+ * sharp at any size.
+ *
+ * The text waits for the card fonts: it is measured to fit its box, and
+ * measured in a fallback font it would come out the wrong size.
+ */
+function TemplateFront({ design, card }: { design: CardDesign; card: BusinessCard }) {
+  const front = design.front!;
+  const boxes = design.boxes?.length ? design.boxes : DEFAULT_BOXES;
+  const [fontsReady, setFontsReady] = useState(false);
+  const gradient = useId().replace(/[^a-zA-Z0-9]/g, '');
+
+  useEffect(() => {
+    let alive = true;
+    loadCardFonts(boxes).then(() => alive && setFontsReady(true));
+    return () => {
+      alive = false;
+    };
+  }, [boxes]);
+
+  const items = fontsReady ? layoutCard(boxes, card, front.width, front.height, measureWithCanvas) : [];
+
+  return (
+    <svg
+      viewBox={`0 0 ${front.width} ${front.height}`}
+      className="block h-auto w-full select-none"
+      style={{ WebkitTouchCallout: 'none' }}
+      aria-hidden="true"
+    >
+      <image href={`${front.url}?w=1600&auto=format`} width={front.width} height={front.height} preserveAspectRatio="none" />
+      {items.map((item, i) => {
+        if (item.kind === 'bar') {
+          return (
+            <g key={i}>
+              <defs>
+                <linearGradient id={`${gradient}-${i}`} gradientUnits="userSpaceOnUse" x1={item.x1} x2={item.x2} y1={0} y2={0}>
+                  <stop offset="0" stopColor={item.from} />
+                  <stop offset="1" stopColor={item.to} />
+                </linearGradient>
+              </defs>
+              <path d={item.d} fill={`url(#${gradient}-${i})`} />
+            </g>
+          );
+        }
+        if (item.kind === 'shape') return <path key={i} d={item.d} fill={item.color} />;
+        return (
+          <text
+            key={i}
+            x={item.x}
+            y={item.y}
+            fontFamily={`"${item.font}", sans-serif`}
+            fontWeight={item.weight}
+            fontSize={item.size}
+            fill={item.color}
+            textAnchor={item.anchor}
+          >
+            {item.text}
+          </text>
+        );
+      })}
+    </svg>
   );
 }
 
@@ -398,6 +482,8 @@ function BusinessCardPage({ initialSlug }: { initialSlug?: string }) {
     }
   }, []);
   const [card, setCard] = useState<BusinessCard | null>(null);
+  // null: no Card Design published (cards then show their old uploaded artwork, if any).
+  const [design, setDesign] = useState<CardDesign | null>(null);
   const [state, setState] = useState<'loading' | 'ready' | 'missing' | 'error'>('loading');
   const [face, setFace] = useState<'front' | 'back'>('front');
   // Phone only (desktop shows both faces at once): a tap or a sideways swipe on the card
@@ -417,14 +503,17 @@ function BusinessCardPage({ initialSlug }: { initialSlug?: string }) {
       return;
     }
     let cancelled = false;
-    getBusinessCardBySlug(slug)
-      .then((found) => {
+    // The design is fetched alongside the card, and a design that fails to
+    // load is not a broken card: the details below still work without it.
+    Promise.all([getBusinessCardBySlug(slug), getCardDesign().catch(() => null)])
+      .then(([found, cardDesign]) => {
         if (cancelled) return;
         if (!found) {
           setState('missing');
           return;
         }
         setCard(found);
+        setDesign(cardDesign?.front?.url ? cardDesign : null);
         setState('ready');
       })
       .catch(() => {
@@ -537,8 +626,17 @@ function BusinessCardPage({ initialSlug }: { initialSlug?: string }) {
     );
   }
 
-  const front = card.cardImage ? urlFor(card.cardImage).width(1000).url() : '';
-  const back = card.cardImageBack ? urlFor(card.cardImageBack).width(1000).url() : '';
+  // Every card is drawn from Card Design. Before one is published, a card
+  // falls back to the artwork that used to be uploaded per person.
+  const front = design ? '' : card.cardImage ? urlFor(card.cardImage).width(1000).url() : '';
+  const back = design
+    ? design.back?.url
+      ? `${design.back.url}?w=1000&auto=format`
+      : ''
+    : card.cardImageBack
+      ? urlFor(card.cardImageBack).width(1000).url()
+      : '';
+  const hasFront = !!design || !!front;
 
   const turnOver = () => {
     if (!back || window.matchMedia('(min-width: 1024px)').matches) return;
@@ -616,7 +714,7 @@ function BusinessCardPage({ initialSlug }: { initialSlug?: string }) {
             would turn the paper one. A desktop window has the room, and two
             images side by side answer "what is on the back?" without asking
             anyone to find a control and click it. */}
-        {front && (
+        {hasFront && (
           <div
             className="gm-enter-left mb-4 lg:mb-0"
             {...(back && {
@@ -659,7 +757,9 @@ function BusinessCardPage({ initialSlug }: { initialSlug?: string }) {
                 src={front}
                 alt={`Business card for ${card.fullName}`}
                 className={face === 'front' ? '' : 'hidden lg:block'}
-              />
+              >
+                {design ? <TemplateFront design={design} card={card} /> : undefined}
+              </CardFace>
 
               {back && (
                 <CardFace
