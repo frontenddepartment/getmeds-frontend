@@ -260,6 +260,9 @@ export function layoutCard(
 
 let fontsLink: Promise<void> | null = null
 
+/** Longest a card waits for its fonts before drawing with a fallback. */
+export const FONT_WAIT_MS = 3000
+
 /** Loads the card fonts once, so text is measured and drawn in the real font. */
 export function loadCardFonts(boxes: CardTextBox[] = DEFAULT_BOXES): Promise<void> {
   if (typeof document === 'undefined') return Promise.resolve()
@@ -274,11 +277,14 @@ export function loadCardFonts(boxes: CardTextBox[] = DEFAULT_BOXES): Promise<voi
       document.head.appendChild(link)
     })
   }
-  return fontsLink.then(() =>
+  const loaded = fontsLink.then(() =>
     Promise.all(
       (boxes || []).map((b) => document.fonts.load(`${b.weight || 400} 40px "${b.font || 'Montserrat'}"`).catch(() => []))
     ).then(() => undefined)
   )
+  // Never wait forever: on a slow or blocked connection the card is drawn in a
+  // fallback font after FONT_WAIT_MS rather than left without its text.
+  return Promise.race([loaded, new Promise<void>((resolve) => setTimeout(resolve, FONT_WAIT_MS))])
 }
 
 let measureCtx: CanvasRenderingContext2D | null = null

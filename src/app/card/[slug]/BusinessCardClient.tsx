@@ -352,33 +352,52 @@ function CardFace({
  * preview and the print files (src/lib/cardTemplate.ts), drawn as SVG so it is
  * sharp at any size.
  *
- * The text waits for the card fonts: it is measured to fit its box, and
- * measured in a fallback font it would come out the wrong size.
+ * Shown only once complete: until the blank front has loaded and the fonts
+ * are in (or FONT_WAIT_MS has passed), a placeholder the same size holds its
+ * place. A card showing its logos with no name or number on it reads as
+ * broken, which is worse than a moment's wait.
  */
 function TemplateFront({ design, card }: { design: CardDesign; card: BusinessCard }) {
   const front = design.front!;
   const boxes = design.boxes?.length ? design.boxes : DEFAULT_BOXES;
-  const [fontsReady, setFontsReady] = useState(false);
+  const src = `${front.url}?w=1600&auto=format`;
+  const [ready, setReady] = useState(false);
   const gradient = useId().replace(/[^a-zA-Z0-9]/g, '');
 
   useEffect(() => {
     let alive = true;
-    loadCardFonts(boxes).then(() => alive && setFontsReady(true));
+    const image = new Promise<void>((resolve) => {
+      const img = new Image();
+      img.onload = () => resolve();
+      img.onerror = () => resolve();
+      img.src = src;
+    });
+    Promise.all([image, loadCardFonts(boxes)]).then(() => alive && setReady(true));
     return () => {
       alive = false;
     };
-  }, [boxes]);
+  }, [boxes, src]);
 
-  const items = fontsReady ? layoutCard(boxes, card, front.width, front.height, measureWithCanvas) : [];
+  if (!ready) {
+    return (
+      <div
+        className="w-full animate-pulse bg-[#EEF2F7]"
+        style={{ aspectRatio: `${front.width} / ${front.height}` }}
+      />
+    );
+  }
+
+  const items = layoutCard(boxes, card, front.width, front.height, measureWithCanvas);
 
   return (
     <svg
       viewBox={`0 0 ${front.width} ${front.height}`}
-      className="block h-auto w-full select-none"
+      className="gm-card-reveal block h-auto w-full select-none"
       style={{ WebkitTouchCallout: 'none' }}
       aria-hidden="true"
     >
-      <image href={`${front.url}?w=1600&auto=format`} width={front.width} height={front.height} preserveAspectRatio="none" />
+      <style>{'.gm-card-reveal{animation:gm-card-reveal .25s ease-out}@keyframes gm-card-reveal{from{opacity:0}to{opacity:1}}@media (prefers-reduced-motion:reduce){.gm-card-reveal{animation:none}}'}</style>
+      <image href={src} width={front.width} height={front.height} preserveAspectRatio="none" />
       {items.map((item, i) => {
         if (item.kind === 'bar') {
           return (
@@ -498,6 +517,8 @@ function BusinessCardPage({ initialSlug }: { initialSlug?: string }) {
   const [wechatCopied, setWechatCopied] = useState('');
 
   useEffect(() => {
+    // Fonts load alongside the card data rather than after it.
+    loadCardFonts();
     if (!slug) {
       setState('missing');
       return;
