@@ -88,7 +88,7 @@ export const GOOGLE_FONTS_URL =
 export const DEFAULT_BOXES: CardTextBox[] = [
   {
     _key: 'name', label: 'Name', field: 'fullName', font: 'Montserrat', weight: 700,
-    size: 4.04, color: '#0031A0', x: 7.68, y: 43.48, maxWidth: 46, align: 'left',
+    size: 4.04, color: '#0031A0', x: 7.68, y: 43.48, maxWidth: 60, align: 'left',
   },
   {
     _key: 'position', label: 'Position', field: 'jobTitle', font: 'Montserrat', weight: 600,
