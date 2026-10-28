@@ -1,0 +1,358 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #111315;
+  --primary: #1d9fda;
+  --primary-dark: #1D9FDA;
+  --primary-deep: #073b57;
+  --primary-soft: #e3f4fc;
+  --ink-soft: #343a40;
+  --glass: rgba(255, 255, 255, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.75);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-dark: var(--primary-dark);
+  --color-primary-deep: var(--primary-deep);
+  --color-primary-soft: var(--primary-soft);
+  --color-ink-soft: var(--ink-soft);
+  --font-sans: var(--font-poppins);
+  --font-display: var(--font-poppins);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-poppins), var(--font-inter), system-ui, sans-serif;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: #1d9fda;
+  color: #fff;
+}
+
+/* ---------- Glass ---------- */
+.glass {
+  background: rgba(255, 255, 255, 0.88);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border: 1px solid #dde9f2;
+  box-shadow:
+    0 1px 2px rgba(13, 84, 120, 0.04),
+    0 10px 24px -16px rgba(13, 84, 120, 0.12);
+}
+
+.glass-dark {
+  background: rgba(12, 42, 62, 0.72);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(120, 200, 245, 0.14);
+  box-shadow: 0 6px 20px rgba(0, 20, 35, 0.25);
+}
+
+.glass-chip {
+  background: #ffffff;
+  border: 1px solid #dde9f2;
+}
+
+.glass-nav {
+  /* stays white-glass even over saturated backgrounds (no saturate boost, higher white) */
+  background: rgba(255, 255, 255, 0.9);
+  -webkit-backdrop-filter: blur(22px);
+  backdrop-filter: blur(22px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 10px 32px -12px rgba(13, 84, 120, 0.15);
+}
+
+/* ---------- Aurora background ---------- */
+.aurora {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.aurora::before,
+.aurora::after {
+  content: "";
+  position: absolute;
+  width: 56rem;
+  height: 56rem;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.13;
+}
+.aurora::before {
+  background: radial-gradient(circle, #1D9FDA 0%, transparent 62%);
+  top: -22rem;
+  right: -14rem;
+  animation: drift 16s ease-in-out infinite alternate;
+}
+.aurora::after {
+  background: radial-gradient(circle, #1D9FDA 0%, transparent 62%);
+  bottom: -26rem;
+  left: -16rem;
+  animation: drift 20s ease-in-out infinite alternate-reverse;
+}
+@keyframes drift {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to { transform: translate3d(4rem, 3rem, 0) scale(1.12); }
+}
+
+/* ---------- Grid texture ---------- */
+.grid-texture {
+  /* removed per clean-benchmark pass (Antigravity/Linear): pure white, no texture */
+  display: none;
+}
+
+/* ---------- Type ---------- */
+.font-display {
+  font-family: var(--font-poppins), system-ui, sans-serif;
+  letter-spacing: -0.02em;
+}
+
+.text-gradient {
+  color: var(--primary);
+}
+
+/* ---------- Buttons ---------- */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 9999px;
+  padding: 0.8rem 1.75rem;
+  font-weight: 600;
+  color: #fff;
+  background: var(--primary);
+  box-shadow: 0 6px 16px -8px rgba(29, 159, 218, 0.55);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.btn-primary:hover {
+  transform: translateY(-1px);
+  filter: brightness(0.93);
+  box-shadow: 0 8px 20px -8px rgba(29, 159, 218, 0.6);
+}
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 9999px;
+  padding: 0.8rem 1.75rem;
+  font-weight: 600;
+  color: var(--foreground);
+  background: #ffffff;
+  border: 1px solid #d8e4ee;
+  transition: all 0.25s ease;
+}
+.btn-ghost:hover {
+  background: var(--primary-soft);
+  transform: translateY(-1px);
+}
+
+/* ---------- 3D tilt ---------- */
+.tilt-wrap {
+  perspective: 1000px;
+}
+.tilt-card {
+  transform-style: preserve-3d;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease;
+}
+.tilt-card > .tilt-raise {
+  transform: translateZ(18px);
+}
+
+/* ---------- Misc ---------- */
+.scrollbar-none::-webkit-scrollbar { display: none; }
+.scrollbar-none { scrollbar-width: none; }
+
+/* ---------- Slim custom scrollbar ---------- */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 5px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(29, 159, 218, 0.25);
+  border-radius: 9999px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(29, 159, 218, 0.5);
+}
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(29, 159, 218, 0.25) transparent;
+}
+
+@keyframes float-y {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-14px); }
+}
+.animate-float { animation: float-y 6s ease-in-out infinite; }
+.animate-float-slow { animation: float-y 9s ease-in-out infinite; }
+
+@keyframes pulse-ring {
+  0% { transform: scale(0.75); opacity: 0.9; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+.pulse-ring::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid #1d9fda;
+  animation: pulse-ring 2.2s cubic-bezier(0.2, 0.6, 0.4, 1) infinite;
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 36s linear infinite;
+}
+.marquee-track:hover { animation-play-state: paused; }
+
+/* Above-the-fold entrance: a CSS-only rise that never hides the text, so it is
+   readable in the server HTML and paints immediately (SEO + LCP). */
+@keyframes rise-in {
+  from { transform: translateY(18px); }
+  to { transform: translateY(0); }
+}
+.rise-in {
+  animation: rise-in 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Search results illustration: the lens stops on each card for ~1.3s; that card's
+   bar fills and its tick pops (staggered by --d), then fades before the next pass. */
+@keyframes search-scan {
+  0%, 22% { transform: translateY(0); }
+  33%, 55% { transform: translateY(90px); }
+  66%, 88% { transform: translateY(180px); }
+  100% { transform: translateY(0); }
+}
+@keyframes search-pop {
+  0%, 8% { transform: scale(0); }
+  14% { transform: scale(1.15); }
+  18%, 72% { transform: scale(1); }
+  80%, 100% { transform: scale(0); }
+}
+@keyframes search-fill {
+  0%, 8% { transform: scaleX(0); }
+  25%, 72% { transform: scaleX(1); }
+  80%, 100% { transform: scaleX(0); }
+}
+.search-illo-lens { animation: search-scan 6s cubic-bezier(0.65, 0, 0.35, 1) infinite; }
+.search-illo-pop,
+.search-illo-fill {
+  transform-box: fill-box;
+  animation: search-pop 6s ease-out var(--d) infinite both;
+}
+.search-illo-pop { transform-origin: center; }
+.search-illo-fill { transform-origin: left; animation-name: search-fill; }
+
+/* Skewed wipe-fill hover (adapted from Uiverse.io by SujitAdroja) */
+.btn-wipe {
+  position: relative;
+  z-index: 0;
+  overflow: hidden;
+  transition: color 0.6s;
+}
+.btn-wipe::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -40px;
+  height: 100%;
+  width: 0%;
+  transform: skewX(45deg);
+  background-color: #1d9fda;
+  z-index: -1;
+  transition: width 0.6s;
+}
+.btn-wipe:hover { color: #fff; }
+.btn-wipe:hover::before { width: 160%; }
+/* Scripted "as if hovered" state for the scroll-in wave */
+.btn-wipe.wipe-auto { color: #fff; }
+.btn-wipe.wipe-auto::before { width: 160%; }
+/* White variant for pills on the brand-blue band: fills white, text turns blue */
+.btn-wipe-light::before { background-color: #fff; }
+.btn-wipe-light:hover,
+.btn-wipe-light.wipe-auto { color: #1d9fda; }
+
+/* ---------- Spiral Stream (port of public/spiralstream.html) ---------- */
+.spiral-stream {
+  --bg: #1d9fda;
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  perspective: 1400px;
+  perspective-origin: 50% 50%;
+}
+.spiral-stream__stage {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 0;
+  height: 0;
+  transform-style: preserve-3d;
+}
+.spiral-stream__card {
+  position: absolute;
+  left: 0;
+  top: 0;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #fff center / contain no-repeat;
+  box-shadow: 0 10px 30px rgba(6, 60, 96, 0.3);
+  backface-visibility: visible;
+  will-change: transform, opacity;
+}
+/* soft fade at the top and bottom edges */
+.spiral-stream::before,
+.spiral-stream::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 18%;
+  z-index: 2;
+  pointer-events: none;
+}
+.spiral-stream::before { top: 0; background: linear-gradient(var(--bg), transparent); }
+.spiral-stream::after { bottom: 0; background: linear-gradient(transparent, var(--bg)); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  /* Show the finished state rather than the hidden end of the loop */
+  .search-illo-lens,
+  .search-illo-pop,
+  .search-illo-fill { animation: none !important; transform: none; }
+}
+
+/* Home page, below the hero: keep a lone word from wrapping onto its own last line.
+   Layered so per-element utilities like text-balance still win. */
+@layer base {
+  .text-flow :is(h2, h3, h4) {
+    text-wrap: balance;
+  }
+  .text-flow :is(p, li, a, span, blockquote, summary) {
+    text-wrap: pretty;
+  }
+}
