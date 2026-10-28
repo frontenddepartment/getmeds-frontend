@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import {
-  ChevronRight, Clock, FileCheck2, HandHeart, HeartHandshake, Leaf,
+  ArrowRight, ChevronRight, Clock, FileCheck2, HandHeart, HeartHandshake, Leaf,
   Lock, PhoneCall, Pill, ShieldCheck, Snowflake, Stethoscope, Tablets, Truck,
 } from "lucide-react";
 import { contact, orderFaqs } from "@/lib/data";
@@ -10,6 +10,7 @@ import { Reveal, Stagger, StaggerItem } from "@/components/ui";
 import Faq from "@/components/Faq";
 import FaqSchema from "@/components/FaqSchema";
 import Vouchers from "@/components/Vouchers";
+import { WhatsAppIcon } from "@/components/SocialIcons";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/order-medicines" },
@@ -128,42 +129,45 @@ export default function OrderPage() {
             <p className="mt-6 max-w-2xl text-[15.5px] leading-relaxed text-black md:text-[15px] xl:mt-4 xl:max-w-xl xl:text-white xl:drop-shadow">
               Prescription medicine delivery for patients, doctors, pharmacies and hospitals across the Philippines.
             </p>
-          </Reveal>
-        </div>
-        {/* homepage pair (filled blue + black outline). xl+: anchored to the section bottom so it
-            tracks the image's white wave at any width (the copy above sits a fixed distance from the top) */}
-        <div className="relative xl:absolute xl:inset-x-0 xl:bottom-[15%]">
-          <Reveal immediate className="mx-auto max-w-7xl px-5 md:px-10">
-            <div className="mt-9 flex flex-wrap items-center gap-4 xl:mt-0">
+            {/* WhatsApp is the main way to order, so it leads (filled); Order Medicines follows (outlined).
+                Same height, padding and type on both; on the blue sky (xl+) the pair switches to white. */}
+            <div className="mt-12 flex flex-wrap items-center gap-3 sm:gap-4 xl:mt-14">
               <a
                 href={contact.whatsapp}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rounded-full border-2 border-primary bg-primary px-7 py-3 text-sm font-semibold text-white transition hover:brightness-95"
+                className="inline-flex h-[52px] items-center gap-2.5 rounded-full border-2 border-primary bg-primary pl-2 pr-6 text-[15px] font-semibold text-white shadow-[0_10px_24px_-12px_rgba(29,159,218,0.7)] transition hover:border-primary-deep hover:bg-primary-deep xl:border-white xl:bg-white xl:text-primary-deep xl:shadow-[0_12px_26px_-12px_rgba(6,40,64,0.6)] xl:hover:border-primary-soft xl:hover:bg-primary-soft"
               >
+                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#25D366] text-white">
+                  <WhatsAppIcon className="h-5 w-5" />
+                </span>
                 Order via WhatsApp
               </a>
+              {/* Plain <a>, not <Link>: a native hash jump is what sets :target, which plays the cards' cue below */}
               <a
-                href={`tel:${contact.phone.replace(/\s/g, "")}`}
-                className="rounded-full border-2 border-black px-7 py-3 text-sm font-semibold text-black transition hover:bg-black/5"
+                href="#audiences"
+                className="group inline-flex h-[52px] items-center gap-2.5 rounded-full border-2 border-primary-deep/80 px-6 text-[15px] font-semibold text-primary-deep transition hover:bg-primary-deep/5 xl:border-white xl:bg-transparent xl:text-white xl:hover:bg-white/10"
               >
-                {contact.phone}
+                Order Medicines
+                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" aria-hidden />
               </a>
             </div>
+
           </Reveal>
         </div>
       </section>
 
       {/* Audiences — no heading, sits right under the hero; compact on mobile so the order cards below stay close to the top */}
-      <section className="pb-6 md:pb-8 lg:pt-2">
+      <section id="audiences" className="scroll-mt-32 pb-6 md:pb-8 lg:pt-2">
         <div className="mx-auto max-w-7xl px-5 md:px-10">
           <Stagger className="grid grid-cols-2 gap-3 md:gap-4 lg:grid-cols-4">
-            {audiences.map(({ title, text, cta }) => (
+            {audiences.map(({ title, text, cta }, i) => (
               <StaggerItem key={title} className="h-full">
                 <Link
                   href="/contact-us"
                   aria-label={`${title}: ${cta}`}
-                  className="group relative flex h-full flex-col rounded-3xl bg-[#1D9FDA] p-4 text-white transition-transform duration-300 hover:-translate-y-1 md:p-5"
+                  style={{ "--cue-i": i } as React.CSSProperties}
+                  className="cue-card group relative flex h-full flex-col rounded-3xl bg-[#1D9FDA] p-4 text-white transition-transform duration-300 hover:-translate-y-1 md:p-5"
                 >
                   {/* chunky arrow, as in the reference; pinned to the corner so it doesn't add height */}
                   <svg
@@ -352,8 +356,8 @@ export default function OrderPage() {
         </div>
       </section>
 
-      {/* Delivery */}
-      <section className="relative bg-white py-16">
+      {/* Delivery (#delivery: the hero's "Nationwide delivery" badge jumps here) */}
+      <section id="delivery" className="relative scroll-mt-28 bg-white py-16">
         <div className="relative mx-auto max-w-7xl px-5 md:px-10">
           <Reveal className="mb-12 md:mb-16">
             <h2 className="font-display text-3xl font-semibold leading-tight text-black md:text-[2.6rem]">
