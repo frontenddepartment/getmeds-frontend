@@ -38,8 +38,10 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  // globals.css sets smooth scrolling; data-scroll-behavior lets Next switch it off during
+  // navigation so a new page opens at the top.
   return (
-    <html lang="en">
+    <html lang="en" data-scroll-behavior="smooth">
       <body className={`${inter.variable} ${poppins.variable} antialiased`}>
         <Navbar />
         <main>{children}</main>
