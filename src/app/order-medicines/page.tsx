@@ -18,6 +18,13 @@ export const metadata: Metadata = {
     "Buy prescription medicines online from Getmeds, an FDA-licensed importer, wholesaler, distributor and retail pharmacy. Delivery across the Philippines.",
 };
 
+/* Coloured ordering pills stacked on the hero person's right; `nudge` keeps a slight stagger. */
+const heroPills = [
+  { label: "Order online", color: "bg-[#E5484D] text-white", nudge: "mr-[8%]" },
+  { label: "Upload your prescription", color: "bg-[#61A644] text-white", nudge: "" },
+  { label: "Nationwide delivery", color: "bg-[#F2B705] text-[#3a2a00]", nudge: "mr-[5%]" },
+];
+
 /* Brand-blue cards with a big white arrow, all white-on-blue. */
 const audiences = [
   { title: "Patients & Families", text: "Upload a prescription and we deliver to your door.", cta: "Order with a prescription" },
@@ -83,20 +90,31 @@ export default function OrderPage() {
     <>
       <FaqSchema page="order" />
 
-      {/* Hero image. xl+: copy sits in the sky on the left, white on blue.
+      {/* Hero image. xl+: copy sits on the blue on the left, in white.
           Below xl: the image is too short, so the copy stacks below it in the usual navy/black. */}
       <section className="relative bg-white pb-14 xl:pb-0">
-        <Image
-          src="/images/testingimage.png" /* trial image; previous: /images/herosectionordermedicines.png */
-          alt="Smiling Getmeds team member ordering medicines on her phone"
-          width={1746}
-          height={901}
-          priority
-          sizes="100vw"
-          className="h-auto w-full brightness-[1.03]"
-        />
-        {/* soft blue shade behind the copy so white text stays legible over clouds; fades out before the wave */}
-        <div className="pointer-events-none absolute inset-x-0 top-0 hidden h-[57%] bg-gradient-to-r from-[#0a5a8c]/60 via-[#0a5a8c]/35 via-45% to-transparent [mask-image:linear-gradient(to_bottom,black_65%,transparent)] xl:block" />
+        <div className="relative">
+          <Image
+            src="/images/herosectionfinal.png"
+            alt="Smiling Getmeds team member ordering medicines on her phone"
+            width={5456}
+            height={2816}
+            priority
+            sizes="100vw"
+            className="h-auto w-full"
+          />
+          {/* ordering pills on the person's right: one group floating in one motion; % position tracks her at any width */}
+          <div className="animate-float absolute right-[2%] top-[26%] hidden flex-col items-end gap-1.5 md:flex lg:gap-2">
+            {heroPills.map(({ label, color, nudge }) => (
+              <span
+                key={label}
+                className={`whitespace-nowrap rounded-full border border-white/40 px-3 py-1.5 text-[11px] font-semibold shadow-[0_10px_24px_-12px_rgba(6,40,64,0.55)] lg:px-4 lg:py-2 lg:text-xs ${color} ${nudge}`}
+              >
+                {label}
+              </span>
+            ))}
+          </div>
+        </div>
         <div className="relative mx-auto max-w-7xl px-5 md:px-10 xl:absolute xl:inset-x-0 xl:top-0 xl:pt-36">
           <Reveal immediate>
             <span className="block text-[11px] font-semibold uppercase tracking-[0.24em] text-primary xl:text-white xl:drop-shadow">
@@ -386,24 +404,29 @@ export default function OrderPage() {
       {/* Patient Assistance Program — its own section, right after the reasons */}
       <section className="mb-16 bg-[#1D9FDA] py-12 md:py-16">
         <div className="mx-auto max-w-7xl px-5 md:px-10">
-          <Reveal>
-            <div className="max-w-3xl">
+          {/* title on the left (two lines), description + button on the right */}
+          <Reveal className="grid gap-6 md:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)] md:items-center md:gap-12">
+            <div>
               <HandHeart className="h-7 w-7 text-white" />
-              <h2 className="font-display mt-4 text-2xl font-semibold text-white md:text-3xl">
-                Patient Assistance Program
+              <h2 className="font-display mt-4 text-3xl font-semibold leading-tight text-white md:text-[2.6rem]">
+                Patient Assistance
+                <br />
+                Program
               </h2>
-              <p className="mt-3 text-sm leading-relaxed text-white md:text-base">
+            </div>
+            <div>
+              <p className="text-sm leading-relaxed text-white md:text-base">
                 Applying for medicine assistance? Getmeds provides official price quotations for your
                 prescribed medicines and accepts Guarantee Letters from DSWD, PCSO, the Office of the
                 President (OP), and the Office of the Vice President (OVP).
               </p>
+              <Link
+                href="/patient-assistance-program"
+                className="mt-6 inline-flex items-center rounded-full border border-white/40 bg-white/15 px-6 py-2.5 text-sm font-semibold text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.35)] backdrop-blur-md transition-colors hover:bg-white/25"
+              >
+                Learn more about the Patient Assistance Program
+              </Link>
             </div>
-            <Link
-              href="/patient-assistance-program"
-              className="mt-6 inline-flex items-center rounded-full border border-white/40 bg-white/15 px-6 py-2.5 text-sm font-semibold text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.35)] backdrop-blur-md transition-colors hover:bg-white/25"
-            >
-              Learn more about the Patient Assistance Program
-            </Link>
           </Reveal>
         </div>
       </section>
@@ -430,42 +453,39 @@ export default function OrderPage() {
       </section>
 
       {/* Closing CTA */}
-      {/* lg+: the banner takes the photo's own 1983x793 shape so the full image shows, nothing cut off;
-          below that the photo is pinned to the top so the top edge is never cropped */}
-      <section className="relative w-full overflow-hidden py-14 text-white md:py-12 md:text-black lg:flex lg:aspect-[1983/793] lg:items-center lg:py-0">
+      {/* Shorter than the photo: it's anchored to the bottom so the trim comes off the top.
+          Copy sits white on the left over the green cubicles; the agent stays visible on the right. */}
+      <section className="relative w-full overflow-hidden py-14 text-white md:py-12 lg:flex lg:aspect-[1947/560] lg:items-center lg:py-0">
         <Image
-          src="/images/cta.png"
+          src="/images/ctabannerordermedicines.png"
           alt=""
           fill
           sizes="100vw"
-          className="object-cover object-[20%_top] md:object-left-top"
+          className="object-cover object-[70%_bottom] md:object-bottom"
           aria-hidden
         />
-        {/* Mobile gradient to protect white text; desktop copy sits dark on the photo's light right side */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#073b57]/90 via-[#073b57]/55 to-black/20 md:hidden" />
+        {/* shade behind the copy: full on phones, a left-to-right fade from md up */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#073b57]/90 via-[#073b57]/60 to-black/25 md:bg-gradient-to-r md:from-[#073b57]/80 md:via-[#073b57]/45 md:via-45% md:to-transparent md:to-70%" />
 
         <div className="relative mx-auto w-full max-w-7xl px-5 md:px-10">
           <div className="grid items-center gap-8 md:grid-cols-2">
-            {/* Left side spacer leaves the doctor visible */}
-            <div className="hidden md:block" />
-
-            {/* Right side CTA copy */}
+            {/* Left side CTA copy */}
             <Reveal className="text-center md:text-left">
-              <h2 className="font-display text-3xl font-semibold leading-tight text-white drop-shadow-md md:text-4xl md:text-[#0B2E5E] md:drop-shadow-none lg:text-[2.6rem]">
+              <h2 className="font-display text-3xl font-semibold leading-tight text-white drop-shadow-md md:text-4xl lg:text-[2.6rem]">
                 Ready to order?
               </h2>
-              <p className="mx-auto mt-4 max-w-xl text-base leading-relaxed text-white/95 drop-shadow-sm md:mx-0 md:text-lg md:text-black md:drop-shadow-none">
+              <p className="mx-auto mt-4 max-w-xl text-base leading-relaxed text-white/95 drop-shadow-sm md:mx-0 md:text-lg">
                 Choose a category to get started, or message us if you need help finding your medicine.
               </p>
               <div className="mt-6 flex justify-center md:justify-start">
                 <a
                   href="#order-cards"
-                  className="inline-flex items-center rounded-full bg-white px-6 py-2.5 text-sm font-semibold text-[#073b57] transition hover:bg-white/90 md:bg-primary md:text-white md:hover:brightness-95"
+                  className="inline-flex items-center rounded-full bg-white px-6 py-2.5 text-sm font-semibold text-[#073b57] transition hover:bg-white/90"
                 >
                   Start your order
                 </a>
               </div>
-              <p className="mt-5 text-sm text-white/95 drop-shadow-sm md:text-black md:drop-shadow-none">
+              <p className="mt-5 text-sm text-white/95 drop-shadow-sm">
                 Questions? Message us on{" "}
                 <a href={contact.viber} className="font-semibold underline underline-offset-4 hover:opacity-85">
                   Viber
@@ -476,6 +496,9 @@ export default function OrderPage() {
                 </a>
               </p>
             </Reveal>
+
+            {/* Right side spacer leaves the agent visible */}
+            <div className="hidden md:block" />
           </div>
         </div>
       </section>

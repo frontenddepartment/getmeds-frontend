@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import {
   ArrowRight, Award, BadgeCheck, Building, Compass, Eye, Globe2, HandHeart,
@@ -6,7 +7,6 @@ import {
 } from "lucide-react";
 import { leaders } from "@/lib/data";
 import { Reveal, SectionHeading, Stagger, StaggerItem, TiltCard } from "@/components/ui";
-import PageHero from "@/components/PageHero";
 import { IlloTeam } from "@/components/Illustrations";
 
 export const metadata: Metadata = {
@@ -49,16 +49,54 @@ const advantages = [
 export default function AboutPage() {
   return (
     <>
-      <PageHero
-        eyebrow="About Getmeds"
-        title={<>Your Compassionate <span className="text-gradient">Health Ally.</span></>}
-        text="A new standard of care for a new generation of patients. Advanced science. Trusted medicine. Closer access. Better outcomes. Greater hope."
-      >
-        <Link href="/contact-us" className="btn-primary">
-          Contact Us <ArrowRight className="h-4 w-4" />
-        </Link>
-        <Link href="/careers" className="btn-ghost">Explore Careers</Link>
-      </PageHero>
+      {/* Hero image, same treatment as Order Medicines. xl+: copy sits white on the blue at the left.
+          Below xl the image is too short, so the copy stacks below it in navy/black. */}
+      <section className="relative bg-white pb-14 xl:pb-0">
+        <Image
+          src="/images/aboutusherosection.png"
+          alt="Getmeds team member helping patients"
+          width={5456}
+          height={2816}
+          priority
+          sizes="100vw"
+          className="h-auto w-full"
+        />
+        <div className="relative mx-auto max-w-7xl px-5 md:px-10 xl:absolute xl:inset-x-0 xl:top-0 xl:pt-36">
+          <Reveal immediate>
+            <span className="block text-[11px] font-semibold uppercase tracking-[0.24em] text-primary xl:text-white xl:drop-shadow">
+              About Getmeds
+            </span>
+            <h1 className="font-display mt-6 text-[clamp(1.6rem,7.2vw,1.85rem)] font-semibold leading-[1.12] tracking-tight text-[#0B2E5E] md:text-[clamp(1.45rem,3.5vw+0.2rem,3.2rem)] xl:mt-4 xl:text-white xl:drop-shadow-md">
+              {/* exactly two lines from md up; free wrapping on phones where line one doesn't fit */}
+              <span className="md:block md:whitespace-nowrap">Your Compassionate</span>{" "}
+              <span className="text-primary md:block md:whitespace-nowrap xl:text-white">Health Ally.</span>
+            </h1>
+            <p className="mt-6 max-w-2xl text-[15.5px] leading-relaxed text-black md:text-[15px] xl:mt-4 xl:max-w-xl xl:text-white xl:drop-shadow">
+              A new standard of care for a new generation of patients. Advanced science. Trusted medicine. Closer
+              access. Better outcomes. Greater hope.
+            </p>
+          </Reveal>
+        </div>
+        {/* same button pair as Order Medicines; xl+: anchored to the section bottom so it sits on the white wave */}
+        <div className="relative xl:absolute xl:inset-x-0 xl:bottom-[15%]">
+          <Reveal immediate className="mx-auto max-w-7xl px-5 md:px-10">
+            <div className="mt-9 flex flex-wrap items-center gap-4 xl:mt-0">
+              <Link
+                href="/contact-us"
+                className="rounded-full border-2 border-primary bg-primary px-7 py-3 text-sm font-semibold text-white transition hover:brightness-95"
+              >
+                Contact Us
+              </Link>
+              <Link
+                href="/careers"
+                className="rounded-full border-2 border-black px-7 py-3 text-sm font-semibold text-black transition hover:bg-black/5"
+              >
+                Explore Careers
+              </Link>
+            </div>
+          </Reveal>
+        </div>
+      </section>
 
       {/* Story */}
       <section className="py-14">

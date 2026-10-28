@@ -57,12 +57,9 @@ const itemVar = {
 
 type DD = null | "products" | "company" | "network";
 
-/* Pages whose bar shows the raised glass pill even before scrolling (others start transparent). */
-const ELEVATED_AT_TOP = new Set(["/", "/order-medicines", "/product-range"]);
 
 export default function Navbar() {
   const pathname = usePathname();
-  const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [dd, setDd] = useState<DD>(null);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -74,20 +71,13 @@ export default function Navbar() {
   }, []);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  useEffect(() => {
     setOpen(false);
     setDd(null);
     setSearchOpen(false);
   }, [pathname]);
 
-  // pages whose hero sits on a dark photo: transparent bar uses white text and logos
-  const onDark = pathname === "/global-network" && !scrolled && !dd;
+  // the bar is always the raised white pill now, so it never needs the white-on-dark variant
+  const onDark = false;
 
   const linkCls = (href: string) =>
     `whitespace-nowrap px-2 py-2 text-sm font-medium transition-colors xl:px-3 ${
@@ -97,7 +87,7 @@ export default function Navbar() {
     }`;
 
   const panelLink =
-    "flex items-center rounded-lg px-3 py-2 text-[15px] font-medium text-primary-deep transition hover:bg-[#f2f8fc] hover:text-primary";
+    "nav-underline relative inline-flex items-center px-3 py-2 text-[15px] font-medium text-primary-deep transition-colors hover:text-primary";
 
   const chevron = (key: DD) =>
     `h-4 w-4 transition-transform duration-300 ${dd === key ? "rotate-180" : ""}`;
@@ -231,9 +221,7 @@ export default function Navbar() {
           } ${
             dd || searchOpen
               ? "glass-nav !shadow-[0_6px_16px_-14px_rgba(13,84,120,0.12)]"
-              : scrolled || ELEVATED_AT_TOP.has(pathname)
-                ? "glass-nav"
-                : "bg-transparent border border-transparent"
+              : "glass-nav"
           }`}
         >
           <Link href="/" className="flex shrink-0 items-center">

@@ -1,65 +1,105 @@
 "use client";
 
-/* Therapeutic-area section — brand-blue band: the ribbon Spiral Stream on the left,
-   two-tone heading and the therapeutic-area pills on the right. */
+/* Therapeutic-area section — white band with a two-tone heading and one sliding row of
+   compact white category cards (thin border, no shadow). Each card has a brand-blue circle
+   (inside a faint halo) holding a product from that area, and links to the product range. */
 
+import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { therapeuticAreas } from "@/lib/data";
-import SpiralStream from "./SpiralStream";
+
+// Placeholder product shots per area (public/images/products/sample1–10) until real ones are picked
+const AREA_IMAGES: Record<string, string> = {
+  oncology: "sample8",
+  hematology: "sample2",
+  "anti-infectives": "sample3",
+  endocrinology: "sample4",
+  orthopedic: "sample1",
+  cardiology: "sample6",
+  "neuro-oncology": "sample5",
+  respiratory: "sample10",
+  nephrology: "sample9",
+  pain: "sample7",
+  rheumatology: "sample1",
+};
 
 export default function AreaSlider() {
-  const pillsRef = useRef<HTMLDivElement | null>(null);
+  const trackRef = useRef<HTMLDivElement | null>(null);
 
-  // On first scroll into view, play the wipe hover effect on all pills at once
-  useEffect(() => {
-    const wrap = pillsRef.current;
-    if (!wrap || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const timers: number[] = [];
-    const io = new IntersectionObserver(
-      ([en]) => {
-        if (!en.isIntersecting) return;
-        io.disconnect();
-        const pills = Array.from(wrap.children) as HTMLElement[];
-        timers.push(
-          window.setTimeout(() => pills.forEach((p) => p.classList.add("wipe-auto")), 400),
-          window.setTimeout(() => pills.forEach((p) => p.classList.remove("wipe-auto")), 1800)
-        );
-      },
-      { threshold: 0.5 }
-    );
-    io.observe(wrap);
-    return () => {
-      io.disconnect();
-      timers.forEach(clearTimeout);
-    };
-  }, []);
+  // slide by roughly one viewport of cards
+  const slide = (dir: 1 | -1) => {
+    const el = trackRef.current;
+    if (el) el.scrollBy({ left: dir * el.clientWidth * 0.8, behavior: "smooth" });
+  };
 
   return (
-    <div className="bg-[#1D9FDA] text-white">
-      <div className="mx-auto grid max-w-7xl items-center gap-4 px-5 py-8 md:px-10 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.4fr)] lg:gap-10 lg:py-4">
-        <SpiralStream className="h-[320px] md:h-[380px] lg:h-[440px]" />
-
-        <div className="pb-6 lg:pb-0">
-          <p className="font-display text-2xl font-light text-white/85 md:text-[2rem]">
-            Therapeutic areas we serve
-          </p>
-          <h2 className="font-display text-2xl font-semibold leading-tight text-white md:text-[2.3rem]">
-            across the Philippines.
-          </h2>
-
-          {/* pills grow to fill each row edge to edge */}
-          <div ref={pillsRef} className="mt-8 flex flex-wrap gap-2.5 md:mt-10 md:gap-3">
-            {therapeuticAreas.map((a) => (
-              <Link
-                key={a.slug}
-                href="/product-range"
-                className="btn-wipe btn-wipe-light grow rounded-full border border-white bg-transparent px-5 py-2.5 text-center text-sm font-medium text-white md:px-6 md:py-3 md:text-[15px]"
-              >
-                {a.name}
-              </Link>
-            ))}
+    <div className="bg-white">
+      <div className="mx-auto max-w-7xl px-5 py-12 md:px-10 md:py-14">
+        <div className="flex items-end justify-between gap-6">
+          <div>
+            <p className="font-display text-2xl font-light text-ink-soft/80 md:text-[2rem]">
+              Therapeutic areas we serve
+            </p>
+            <h2 className="font-display text-2xl font-semibold leading-tight text-primary-deep md:text-[2.3rem]">
+              across the Philippines.
+            </h2>
           </div>
+          <div className="hidden shrink-0 gap-2 md:flex">
+            <button
+              type="button"
+              onClick={() => slide(-1)}
+              aria-label="Previous therapeutic areas"
+              className="flex h-11 w-11 items-center justify-center rounded-full border border-gray-300 text-primary-deep transition hover:border-[#1D9FDA] hover:bg-[#1D9FDA] hover:text-white"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </button>
+            <button
+              type="button"
+              onClick={() => slide(1)}
+              aria-label="Next therapeutic areas"
+              className="flex h-11 w-11 items-center justify-center rounded-full border border-gray-300 text-primary-deep transition hover:border-[#1D9FDA] hover:bg-[#1D9FDA] hover:text-white"
+            >
+              <ChevronRight className="h-5 w-5" />
+            </button>
+          </div>
+        </div>
+
+        {/* one sliding row; swipe/scroll on touch, arrows on desktop */}
+        <div
+          ref={trackRef}
+          className="mt-8 flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2 [scrollbar-width:none] md:mt-10 md:gap-4 [&::-webkit-scrollbar]:hidden"
+        >
+          {therapeuticAreas.map((a) => (
+            <div
+              key={a.slug}
+              className="group relative flex h-[150px] w-[240px] shrink-0 snap-start flex-col overflow-hidden rounded-xl border border-gray-200 bg-white p-4 text-black md:w-[260px]"
+            >
+              {/* faint halo + brand-blue circle with the area's product */}
+              <span aria-hidden className="absolute -bottom-14 -right-14 h-44 w-44 rounded-full bg-[#1D9FDA]/[0.07]" />
+              <span aria-hidden className="absolute -bottom-4 -right-4 h-32 w-32 rounded-full bg-[#1D9FDA]/[0.08]" />
+              <div aria-hidden className="absolute bottom-4 right-4 h-[84px] w-[84px] rounded-full bg-[#1D9FDA]">
+                <Image
+                  src={`/images/products/${AREA_IMAGES[a.slug] ?? "sample1"}.png`}
+                  alt=""
+                  fill
+                  sizes="140px"
+                  className="-translate-y-[16%] scale-[1.4] object-contain drop-shadow-[0_8px_10px_rgba(6,40,64,0.35)] transition duration-300 group-hover:-translate-y-[20%] group-hover:scale-[1.47]"
+                />
+              </div>
+
+              <h3 className="font-display relative max-w-[58%] text-[15px] font-semibold leading-snug">{a.name}</h3>
+              <div className="relative mt-auto">
+                <Link
+                  href="/product-range"
+                  className="inline-flex items-center justify-center rounded-md bg-primary px-3.5 py-1.5 text-xs font-semibold text-white transition hover:brightness-95"
+                >
+                  View products
+                </Link>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>

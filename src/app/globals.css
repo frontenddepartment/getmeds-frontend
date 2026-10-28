@@ -225,6 +225,48 @@ body {
 }
 .marquee-track:hover { animation-play-state: paused; }
 
+/* PAP guide step numbers: a soft ring that radiates out, like a map location pin */
+.step-ping::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background: var(--ping, #1d9fda);
+  opacity: 0;
+  z-index: -1;
+  animation: step-ping 2.4s cubic-bezier(0, 0, 0.2, 1) infinite;
+  animation-delay: var(--ping-delay, 0s);
+}
+@keyframes step-ping {
+  0% { transform: scale(1); opacity: 0.45; }
+  80%, 100% { transform: scale(2); opacity: 0; }
+}
+
+/* Navbar dropdown links: blue-to-white underline grows left to right on hover,
+   and shrinks back right to left when the pointer leaves */
+.nav-underline::after {
+  content: "";
+  position: absolute;
+  left: 0.75rem;
+  right: 0.75rem;
+  bottom: 0.3rem;
+  height: 2px;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, #1d9fda, #ffffff);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.35s ease;
+}
+.nav-underline:hover::after,
+.nav-underline:focus-visible::after { transform: scaleX(1); }
+
+/* Chat button "typing..." dots (Contact Us hero) */
+@keyframes typing-dot {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.45; }
+  30% { transform: translateY(-3px); opacity: 1; }
+}
+.typing-dot { animation: typing-dot 1.2s ease-in-out infinite; }
+
 /* Above-the-fold entrance: a CSS-only rise that never hides the text, so it is
    readable in the server HTML and paints immediately (SEO + LCP). */
 @keyframes rise-in {
@@ -287,52 +329,7 @@ body {
 /* Scripted "as if hovered" state for the scroll-in wave */
 .btn-wipe.wipe-auto { color: #fff; }
 .btn-wipe.wipe-auto::before { width: 160%; }
-/* White variant for pills on the brand-blue band: fills white, text turns blue */
-.btn-wipe-light::before { background-color: #fff; }
-.btn-wipe-light:hover,
-.btn-wipe-light.wipe-auto { color: #1d9fda; }
 
-/* ---------- Spiral Stream (port of public/spiralstream.html) ---------- */
-.spiral-stream {
-  --bg: #1d9fda;
-  position: relative;
-  width: 100%;
-  overflow: hidden;
-  perspective: 1400px;
-  perspective-origin: 50% 50%;
-}
-.spiral-stream__stage {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 0;
-  height: 0;
-  transform-style: preserve-3d;
-}
-.spiral-stream__card {
-  position: absolute;
-  left: 0;
-  top: 0;
-  border-radius: 10px;
-  overflow: hidden;
-  background: #fff center / contain no-repeat;
-  box-shadow: 0 10px 30px rgba(6, 60, 96, 0.3);
-  backface-visibility: visible;
-  will-change: transform, opacity;
-}
-/* soft fade at the top and bottom edges */
-.spiral-stream::before,
-.spiral-stream::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  height: 18%;
-  z-index: 2;
-  pointer-events: none;
-}
-.spiral-stream::before { top: 0; background: linear-gradient(var(--bg), transparent); }
-.spiral-stream::after { bottom: 0; background: linear-gradient(transparent, var(--bg)); }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {

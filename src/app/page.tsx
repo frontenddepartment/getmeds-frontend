@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Image, { getImageProps } from "next/image";
 import Link from "next/link";
-import { ArrowRight, ShieldCheck } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { capabilities, stats } from "@/lib/data";
 import { Counter, Reveal, Stagger, StaggerItem } from "@/components/ui";
 import Faq from "@/components/Faq";
@@ -124,6 +124,21 @@ export default function Home() {
         </div>
       </section>
 
+      {/* credentials strip along the hero's bottom edge: solid brand blue, white text, dot separators */}
+      <div className="overflow-hidden bg-[#1D9FDA] py-2.5 md:py-3">
+        <div className="marquee-track">
+          {[...marqueeItems, ...marqueeItems].map((m, i) => (
+            <span
+              key={i}
+              className="flex shrink-0 items-center whitespace-nowrap text-xs font-semibold text-white md:text-sm"
+            >
+              <span className="px-4 md:px-6">{m}</span>
+              <span aria-hidden className="h-1 w-1 rounded-full bg-white/70" />
+            </span>
+          ))}
+        </div>
+      </div>
+
       {/* everything below the hero: balanced headings, no single-word last lines */}
       <div className="text-flow">
       {/* ================= Therapeutic areas: split slider ================= */}
@@ -164,53 +179,23 @@ export default function Home() {
         ))}
       </section>
 
-      {/* ================= Impact band (dark, benchmark layout) ================= */}
+      {/* ================= Impact band: four trust signals splitting the full width ================= */}
       <section className="bg-[#1D9FDA] text-white">
-        <div className="mx-auto grid max-w-7xl gap-10 px-5 pb-10 pt-20 md:px-10 md:pt-24 lg:grid-cols-[1fr_1.7fr] xl:grid-cols-[1fr_2.6fr]">
-          <Reveal>
-            <p className="text-[11px] font-bold uppercase tracking-[0.24em] text-white/85">
-              <span className="mr-2">•</span>Our impact
-            </p>
-          </Reveal>
-          <Reveal delay={0.08}>
-            <h2 className="font-display text-3xl font-semibold leading-snug text-white md:text-[2.4rem] xl:text-[2.1rem]">
-              <span className="xl:block xl:whitespace-nowrap">Advancing access to <span className="whitespace-nowrap">life-saving</span> medicines</span>{" "}
-              <span className="xl:block xl:whitespace-nowrap">for Filipino patients since 2020.</span>
-            </h2>
-            <p className="mt-5 max-w-2xl text-sm leading-relaxed text-white/80">
-              From everyday essentials to advanced oncology therapies, we combine global
-              sourcing, regulatory expertise and nationwide cold-chain delivery so the
-              medicines doctors prescribe actually reach their patients.
-            </p>
-            <div className="mt-10 grid max-w-2xl grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-4 xl:gap-x-8">
-              {stats.map((st) => (
-                <div key={st.label}>
-                  <Counter
-                    value={st.value}
-                    suffix={st.suffix}
-                    className="font-display text-3xl font-semibold md:text-4xl"
-                  />
-                  <p className="mt-1.5 text-balance text-xs leading-snug text-white/75">{st.label}</p>
-                </div>
-              ))}
+        <Reveal className="mx-auto grid max-w-7xl grid-cols-2 px-5 py-12 md:grid-cols-4 md:px-10 md:py-16">
+          {stats.map((st, i) => (
+            <div
+              key={st.label}
+              className={`px-4 py-5 text-center md:py-2 ${i % 2 === 1 ? "border-l border-white/25" : ""} ${i >= 2 ? "border-t border-white/25 md:border-t-0" : ""} ${i === 2 ? "md:border-l" : ""}`}
+            >
+              <Counter
+                value={st.value}
+                suffix={st.suffix}
+                className="font-display text-4xl font-semibold md:text-5xl"
+              />
+              <p className="mt-2 text-balance text-sm leading-snug text-white/80">{st.label}</p>
             </div>
-          </Reveal>
-        </div>
-
-        {/* credentials marquee */}
-        <div className="overflow-hidden pb-14 pt-8">
-          <div className="marquee-track gap-4 px-4">
-            {[...marqueeItems, ...marqueeItems].map((m, i) => (
-              <span
-                key={i}
-                className="flex shrink-0 items-center gap-2.5 rounded-full bg-[#00B4D8] px-5 py-2.5 text-sm font-semibold text-white"
-              >
-                <ShieldCheck className="h-4 w-4 text-white" />
-                {m}
-              </span>
-            ))}
-          </div>
-        </div>
+          ))}
+        </Reveal>
       </section>
 
       {/* ================= Portfolio layers ================= */}
