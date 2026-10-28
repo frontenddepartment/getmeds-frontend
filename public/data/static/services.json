@@ -1,0 +1,166 @@
+{
+  "meta": {
+    "title": "Our Services - Getmeds | Revolutionizing Healthcare Access",
+    "description": "Getmeds delivers precision pharmaceutical solutions and nationwide distribution — from regulatory compliance and government bidding to pioneering digital oncology care."
+  },
+  "hero": {
+    "image": "assets/services_hero_new.png",
+    "imageAlt": "Healthcare Services",
+    "headingLine1": "Our",
+    "headingAccent": "Services",
+    "description": "Getmeds delivers precision pharmaceutical solutions and nationwide distribution — from regulatory compliance and government bidding to pioneering digital oncology care."
+  },
+  "stats": [
+    {
+      "value": 120,
+      "suffix": "+",
+      "label": "Countries Served"
+    },
+    {
+      "value": 50000,
+      "suffix": "+",
+      "label": "Patients Helped"
+    },
+    {
+      "value": 500,
+      "suffix": "+",
+      "label": "Partner Clinics"
+    },
+    {
+      "value": 24,
+      "suffix": "/7",
+      "label": "Hour Support"
+    }
+  ],
+  "sectionLabel": "Corporate Services",
+  "sectionHeading": "Our Core Competencies",
+  "sectionDescription": "Ten capabilities. Four focus areas. One complete pharmaceutical partner for Filipino patients, doctors, hospitals, pharmacies, and manufacturers.",
+  "focusAreas": [
+    {
+      "id": "foundation",
+      "number": "01",
+      "label": "Foundation",
+      "tagline": "The global backbone behind every Getmeds medicine.",
+      "stats": "50+ manufacturers · 5 international standards · Full lifecycle regulatory management",
+      "services": [
+        {
+          "id": "global-manufacturer-network",
+          "icon": "fa-solid fa-earth-asia",
+          "title": "Global Network of Pharma Manufacturers",
+          "description": "Strategic sourcing partnerships with 50+ manufacturers across India, China, Europe, and the US — all WHO, PIC/S, US FDA, EU MHRA, and UK MHRA recognized. Every partner facility meets international quality standards, ensuring the medicines Filipino doctors prescribe and patients receive are backed by globally verified manufacturing."
+        },
+        {
+          "id": "regulatory-compliance",
+          "icon": "fa-solid fa-file-shield",
+          "title": "Regulatory & Compliance",
+          "description": "FDA Philippines, DOH, PDEA (S-4 and S-5), BOC, and EDPMS expertise across product registration, post-market compliance, and pharmacovigilance. Our regulatory team manages the full lifecycle — from Certificate of Product Registration application to license renewals — so partners can operate with confidence and speed."
+        }
+      ]
+    },
+    {
+      "id": "reach",
+      "number": "02",
+      "label": "Reach",
+      "tagline": "How our medicines get to every corner of Filipino healthcare.",
+      "stats": "10,000+ pharmacies · 500+ hospitals · Nationwide reach · Government bidding expertise",
+      "services": [
+        {
+          "id": "precision-supply-chain",
+          "icon": "fa-solid fa-truck-ramp-box",
+          "title": "Precision Supply Chain & Nationwide Distribution",
+          "description": "WHO GSDP-compliant cold-chain logistics with batch-level traceability and urgent-response delivery across Luzon, Visayas, and Mindanao. Built for the urgency of Filipino healthcare, with specialized handling for biologics, oncology therapies, and specialty molecules."
+        },
+        {
+          "id": "sales-distribution",
+          "icon": "fa-solid fa-handshake",
+          "title": "Sales and Distribution",
+          "description": "10,000+ pharmacy accounts served through dedicated nationwide sales teams across Luzon, Visayas, and Mindanao. Long-term partnership approach with account-managed service, product training, and market development support."
+        },
+        {
+          "id": "government-bidding",
+          "icon": "fa-solid fa-building-columns",
+          "title": "Government Bidding & Public Sector Access",
+          "description": "Proven tender experience supplying oncology, hematology, and anesthesia medicines to public hospitals nationwide. Dedicated bidding specialists handle full documentation, compliance protocols, and competitive quotation preparation."
+        }
+      ]
+    },
+    {
+      "id": "who-we-serve",
+      "number": "03",
+      "label": "Who We Serve",
+      "tagline": "The patients, doctors, and hospitals we're built for.",
+      "stats": "500+ hospitals · Filipino oncologists, hematologists, anesthesiologists · Compassionate access for rare disease patients",
+      "services": [
+        {
+          "id": "hospital-partnerships",
+          "icon": "fa-solid fa-hospital",
+          "title": "Hospital Partnerships & Institutional Supply",
+          "description": "Trusted by 500+ Filipino hospitals across public and private healthcare — with dedicated account managers, cold-chain oncology handling, and urgent-response supply for ICU and critical care units. Formulary-ready documentation for hospital pharmacy committees and specialty procurement for hard-to-source therapies."
+        },
+        {
+          "id": "doctor-support",
+          "icon": "fa-solid fa-user-doctor",
+          "title": "Doctor & Healthcare Professional Support",
+          "description": "Partnership with Filipino oncologists, hematologists, anesthesiologists, and specialists across the country. Product education, clinical information, and Named-Patient Access Program coordination — because doctors succeed when their prescribed medicines actually reach their patients."
+        },
+        {
+          "id": "direct-to-patient-care",
+          "icon": "fa-solid fa-hand-holding-medical",
+          "title": "Direct-to-Patient Care & Access Programs",
+          "description": "Prescription order fulfillment, refill support, affordable pricing, and nationwide delivery for Filipino patients. Patient Assistance Programs (PAP), Named-Patient Access Programs (NPAP), and Compassionate Special Permit (CSP) imports ensure continuous access to life-saving medicines — especially for oncology and rare disease treatments."
+        }
+      ]
+    },
+    {
+      "id": "programs-access",
+      "number": "04",
+      "label": "Programs & Access",
+      "tagline": "Specialized services for government and pharmaceutical partners.",
+      "stats": "DSWD · PCSO · OVP · OP accredited · CLIDP for pharmaceutical partners",
+      "services": [
+        {
+          "id": "government-medical-assistance",
+          "icon": "fa-solid fa-landmark",
+          "title": "Government Medical Assistance & Program Accreditation",
+          "description": "Accredited chemotherapy and cancer medicine provider for DSWD, PCSO, Office of the Vice President (OVP), and Office of the President (OP) medical assistance programs. Fast quotations and streamlined guarantee letter processing ensure Filipino patients receive their medicines quickly and without administrative barriers."
+        },
+        {
+          "id": "clidp",
+          "icon": "fa-solid fa-box-open",
+          "title": "Certificate of Listing of Identical Drug Product (CLIDP) Services",
+          "description": "End-to-end CLIDP application, certification, and ongoing compliance management across our Certificate of Product Registration portfolio. Fast-track processing, low-risk market entry, and flexible minimum order quantities for pharmaceutical partners."
+        }
+      ]
+    }
+  ],
+  "whyTrust": {
+    "sectionLabel": "Our Promise",
+    "heading": "Why Trust Getmeds for Your Health?",
+    "description": "We don't just distribute medicine; we facilitate healing. Through strict quality standards and advanced digital solutions, we ensure your healthcare journey is safe, private, and efficient.",
+    "items": [
+      {
+        "icon": "fa-solid fa-shield-halved",
+        "title": "Verified Authenticity",
+        "description": "Strict international quality standards ensuring genuine care."
+      },
+      {
+        "icon": "fa-solid fa-user-shield",
+        "title": "Patient Data Privacy",
+        "description": "Banking-grade encryption protecting your health records."
+      },
+      {
+        "icon": "fa-solid fa-clock",
+        "title": "Efficiency Redefined",
+        "description": "Optimized steps for speed — less waiting, more healing."
+      }
+    ]
+  },
+  "cta": {
+    "heading": "Ready to Experience Better Healthcare?",
+    "description": "Join thousands of patients who trust Getmeds for fast, reliable, and expert medical services every day.",
+    "primaryAction": "Order Medicines",
+    "primaryHref": "order-medicines.html",
+    "secondaryAction": "Contact Us",
+    "secondaryHref": "contact-us.html"
+  }
+}

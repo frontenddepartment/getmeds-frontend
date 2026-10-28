@@ -1,0 +1,22 @@
+{
+  "meta": {
+    "title": "Employee Verification Portal — Getmeds",
+    "description": "Verify whether someone contacting you is a genuine Getmeds Philippines employee before sharing personal information or making any payment.",
+    "path": "/employee-verification.html"
+  },
+  "hero": {
+    "badge": "Official Verification Portal",
+    "heading": "Employee Verification",
+    "description": "Protecting our clients and partners. Enter an employee ID, email address, or phone number to verify their current employment status with Getmeds Philippines."
+  },
+  "instructions": [
+    "Enter the full name, official email, or employee ID of the representative.",
+    "Click verify to query our live authorized employee registry.",
+    "Only official Getmeds representatives with valid credentials will be confirmed."
+  ],
+  "support": {
+    "email": "hr@getmeds.ph",
+    "phone": "+63 2 8123 4567",
+    "notice": "If you suspect fraudulent activity, please report immediately to our HR Security team."
+  }
+}

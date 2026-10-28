@@ -1,0 +1,5 @@
+/* Ported from global-presence.html <style>; scoped to the page root (data-page="global-presence"). */
+[data-page="global-presence"] .fade-bottom {
+  mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
+}

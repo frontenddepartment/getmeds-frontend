@@ -1,0 +1,16 @@
+{
+  "meta": {
+    "title": "Prescription Policy — Getmeds",
+    "description": "Rules and requirements for uploading and verifying medical prescriptions on Getmeds Philippines.",
+    "path": "/prescription-policy.html"
+  },
+  "badge": "FDA & PDEA Compliance",
+  "heading": "Prescription Policy",
+  "lastUpdated": "August 07, 2026",
+  "requirements": [
+    "Valid prescription from a licensed physician registered in the Philippines (PRC ID required).",
+    "Must clearly state patient full name, date, medication name, dosage, quantity, and doctor signature/license details.",
+    "Special Dangerous Drugs (S2) require an official PDEA yellow prescription form.",
+    "Prescriptions must not be expired or exceed maximum allowable refills."
+  ]
+}

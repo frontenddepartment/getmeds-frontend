@@ -1,0 +1,29 @@
+{
+  "meta": {
+    "title": "Privacy Policy — Getmeds",
+    "description": "Getmeds Philippines Privacy Policy in compliance with Republic Act No. 10173 (Data Privacy Act of 2012).",
+    "path": "/privacy-policy.html"
+  },
+  "badge": "Compliance & Legal Policy",
+  "heading": "Privacy Policy",
+  "lastUpdated": "August 07, 2026",
+  "summary": "Getmeds Philippines is committed to protecting your personal data in accordance with Republic Act No. 10173 (Data Privacy Act of 2012).",
+  "sections": [
+    {
+      "title": "Information We Collect",
+      "content": "We collect personal information such as name, contact details, delivery address, prescription documents, and payment details."
+    },
+    {
+      "title": "How We Use Your Data",
+      "content": "To fulfill prescription orders, coordinate cold-chain delivery, process patient assistance guarantees, and improve services."
+    },
+    {
+      "title": "Data Protection & Security",
+      "content": "We employ banking-grade encryption, secure servers, and strict access controls to safeguard your health records."
+    },
+    {
+      "title": "Your Rights",
+      "content": "Under RA 10173, you have the right to access, correct, object to, or request deletion of your personal data."
+    }
+  ]
+}

@@ -1,0 +1,137 @@
+/* From the inline <style> in coming-soon.html, scoped to .gm-coming-soon.
+   :root tokens and the body rules moved onto the wrapper. */
+/* Colour tokens — Getmeds healthcare blue (the logo / theme-color blue). */
+.gm-coming-soon {
+    --ink: #1A202C;
+    --ink-soft: #4A5568;
+    --accent: #1D9FDA;
+    --accent-dark: #1580B3;
+    --maxw: 1180px;
+    --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.gm-coming-soon {
+    margin: 0;
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    color: var(--ink);
+    background: #ffffff;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+}
+
+.gm-coming-soon h1 {
+    font-weight: 600;
+    line-height: 1.12;
+    letter-spacing: -0.01em;
+}
+
+/* ---- The coming-soon page ---- */
+.gm-coming-soon .uc-section {
+    display: flex;
+    align-items: center;
+    min-height: 100vh;
+    padding: 64px 0;
+    background: #ffffff;
+    box-sizing: border-box;
+}
+
+.gm-coming-soon .uc-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.95fr);
+    align-items: center;
+    gap: 56px;
+}
+
+.gm-coming-soon .uc-title {
+    font-size: clamp(30px, 4vw, 46px);
+    line-height: 1.1;
+    margin: 0 0 16px;
+}
+
+.gm-coming-soon .uc-line {
+    max-width: 26rem;
+    margin: 0 0 32px;
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+}
+
+.gm-coming-soon .uc-art {
+    width: 100%;
+    height: auto;
+}
+
+.gm-coming-soon .uc-gear {
+    animation: uc-spin 14s linear infinite;
+}
+
+.gm-coming-soon .uc-gear--reverse {
+    animation-duration: 9s;
+    animation-direction: reverse;
+}
+
+@keyframes uc-spin {
+    to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .gm-coming-soon .uc-gear { animation: none; }
+}
+
+@media (max-width: 860px) {
+    .gm-coming-soon .uc-grid { grid-template-columns: 1fr; gap: 40px; }
+    /* Illustration below the message, so the text is never pushed off the fold. */
+    .gm-coming-soon .uc-art { order: 2; max-width: 380px; }
+}
+
+/* ---- Site-wide pieces the page uses ---- */
+.gm-coming-soon .wrap {
+    width: 100%;
+    max-width: var(--maxw);
+    margin: 0 auto;
+    padding: 0 32px;
+    box-sizing: border-box;
+}
+
+@media (max-width: 480px) {
+    .gm-coming-soon .wrap { padding: 0 20px; }
+}
+
+.gm-coming-soon .eyebrow {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent-dark);
+    margin-bottom: 14px;
+}
+
+.gm-coming-soon .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 22px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.25s var(--ease);
+    border: 1px solid transparent;
+    cursor: pointer;
+}
+
+.gm-coming-soon .btn-primary {
+    background: var(--accent);
+    color: #fff;
+}
+
+.gm-coming-soon .btn-primary:hover {
+    background: var(--accent-dark);
+    transform: translateY(-1px);
+}
+
+.gm-coming-soon .btn:focus-visible {
+    outline: 3px solid rgba(29, 159, 218, 0.4);
+    outline-offset: 2px;
+}

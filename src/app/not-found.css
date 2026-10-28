@@ -1,0 +1,22 @@
+/* Ported from 404.html; scoped to the page root (data-page="404"). */
+
+/* 404.html: <body class="bg-[#F8FAFC] ... flex flex-col min-h-screen"> with a flex-grow <main>.
+   The layout's <main> becomes the column here so the content can fill and centre in it. */
+body:has([data-page="404"]) {
+  background-color: #F8FAFC;
+}
+
+body:has([data-page="404"]) > main {
+  display: flex;
+  flex-direction: column;
+}
+
+[data-page="404"] .gradient-text {
+  background: linear-gradient(135deg, #1D9FDA, #61A644);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+[data-page="404"] .custom-glow {
+  box-shadow: 0 10px 40px -10px rgba(29, 159, 218, 0.2);
+}

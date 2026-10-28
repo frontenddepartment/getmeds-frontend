@@ -1,0 +1,33 @@
+{
+  "meta": {
+    "title": "Edit Profile - Getmeds",
+    "description": "Update your contact details, delivery address, and personal information."
+  },
+  "heading": "Edit Profile Settings",
+  "fields": [
+    {
+      "name": "fullName",
+      "label": "Full Name",
+      "type": "text",
+      "required": true
+    },
+    {
+      "name": "email",
+      "label": "Email Address",
+      "type": "email",
+      "required": true
+    },
+    {
+      "name": "phone",
+      "label": "Phone Number",
+      "type": "tel",
+      "required": true
+    },
+    {
+      "name": "address",
+      "label": "Default Delivery Address",
+      "type": "textarea",
+      "required": false
+    }
+  ]
+}

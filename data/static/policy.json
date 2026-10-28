@@ -1,0 +1,50 @@
+{
+  "meta": {
+    "title": "Compliance & Legal Policies — Getmeds",
+    "description": "Official policies, terms of service, privacy compliance, return procedures, and medical disclaimers of Getmeds Philippines.",
+    "path": "/policy.html"
+  },
+  "hero": {
+    "badge": "Legal & Compliance",
+    "heading": "Getmeds Policies & Terms",
+    "description": "Transparency, safety, and regulatory compliance are at the heart of our operations. Review our legal policies below."
+  },
+  "policies": [
+    {
+      "title": "Privacy Policy",
+      "slug": "privacy-policy",
+      "path": "/privacy-policy.html",
+      "summary": "How we protect your personal health information under RA 10173."
+    },
+    {
+      "title": "Terms of Service",
+      "slug": "terms-of-service",
+      "path": "/terms-of-service.html",
+      "summary": "Rules and guidelines governing your use of Getmeds website and services."
+    },
+    {
+      "title": "Return & Refund Policy",
+      "slug": "return-and-refund-policy",
+      "path": "/return-and-refund-policy.html",
+      "summary": "17-point detailed guidelines on eligible claims, cold-chain exclusions, and refund timelines."
+    },
+    {
+      "title": "Prescription Policy",
+      "slug": "prescription-policy",
+      "path": "/prescription-policy.html",
+      "summary": "FDA & PDEA requirements for prescription validation and ordering."
+    },
+    {
+      "title": "Shipping & Delivery Policy",
+      "slug": "shipping-and-delivery-policy",
+      "path": "/shipping-and-delivery-policy.html",
+      "summary": "Logistics standards, cold-chain transport, and nationwide delivery timelines."
+    },
+    {
+      "title": "Medical Disclaimer",
+      "slug": "medical-disclaimer",
+      "path": "/medical-disclaimer.html",
+      "summary": "Important medical information disclaimers and emergency health notices."
+    }
+  ]
+}

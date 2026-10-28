@@ -1,0 +1,24 @@
+{
+  "meta": {
+    "title": "Medical Disclaimer — Getmeds",
+    "description": "Getmeds medical information disclaimer and emergency health advice notice.",
+    "path": "/medical-disclaimer.html"
+  },
+  "badge": "Legal & Medical Notice",
+  "heading": "Medical Disclaimer",
+  "lastUpdated": "August 07, 2026",
+  "sections": [
+    {
+      "title": "Not Professional Medical Advice",
+      "content": "The information provided on Getmeds website is for informational and educational purposes only and is not intended as a substitute for advice from your physician or other healthcare professional."
+    },
+    {
+      "title": "Emergency Medical Conditions",
+      "content": "Do not use Getmeds website for emergency medical needs. If you are experiencing a medical emergency, immediately call your doctor, dial emergency services (911/117), or go to the nearest hospital emergency room."
+    },
+    {
+      "title": "Prescription Compliance",
+      "content": "All prescription products require a valid prescription issued by a licensed physician in the Philippines."
+    }
+  ]
+}

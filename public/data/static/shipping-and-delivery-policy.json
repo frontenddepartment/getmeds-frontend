@@ -1,0 +1,28 @@
+{
+  "meta": {
+    "title": "Shipping & Delivery Policy — Getmeds",
+    "description": "Learn about Getmeds cold-chain logistics, nationwide coverage, estimated delivery windows, and shipping fees.",
+    "path": "/shipping-and-delivery-policy.html"
+  },
+  "badge": "Logistics & Supply Chain",
+  "heading": "Shipping & Delivery Policy",
+  "lastUpdated": "August 07, 2026",
+  "coverageZones": [
+    {
+      "zone": "Metro Manila & Greater Manila",
+      "leadTime": "Same Day / Next Day",
+      "coldChainSupported": true
+    },
+    {
+      "zone": "Luzon Provinces",
+      "leadTime": "1 - 3 Business Days",
+      "coldChainSupported": true
+    },
+    {
+      "zone": "Visayas & Mindanao Key Cities",
+      "leadTime": "2 - 4 Business Days",
+      "coldChainSupported": true
+    }
+  ],
+  "coldChainStandards": "WHO GSDP-compliant temperature-monitored packaging (2°C - 8°C) with real-time data loggers for temperature-sensitive oncology & biological products."
+}

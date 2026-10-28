@@ -1,0 +1,12 @@
+{
+  "meta": {
+    "title": "Blog Detail — Getmeds",
+    "description": "Read detailed articles and health insights from Getmeds experts.",
+    "path": "/blog-detail.html"
+  },
+  "sidebar": {
+    "relatedArticlesHeading": "Related Articles",
+    "shareHeading": "Share Article",
+    "tagsHeading": "Categories"
+  }
+}

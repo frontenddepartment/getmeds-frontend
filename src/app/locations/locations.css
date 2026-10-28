@@ -1,0 +1,123 @@
+/* =========================================================================
+   Getmeds locations globe — /locations.
+   Everything is scoped under .sg so it can sit inside any page.
+   Change the colours here; change the branch data in LocationsGlobe.tsx.
+   ========================================================================= */
+
+/* Page shell (not part of the globe widget itself) */
+.locations-page { max-width: 1180px; margin: 0 auto; padding: 28px 24px 56px; }
+.locations-topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 28px; }
+.locations-topbar img { width: 120px; height: auto; display: block; }
+.locations-topbar .back { display: inline-flex; align-items: center; justify-content: center; padding: 8px; border: 0; background: none; color: #111827; cursor: pointer; transition: transform .15s; }
+.locations-topbar .back:hover { transform: translateX(-2px); }
+.locations-topbar .back svg { width: 22px; height: 22px; }
+
+.sg {
+  --sg-p: #1D9FDA;        /* main colour */
+  --sg-p-50: #eaf6fc;
+  --sg-p-100: #d2ecf8;
+  --sg-p-200: #a6d9f1;
+  --sg-p-300: #6fc1e8;
+  --sg-p-400: #3fade0;
+  --sg-p-600: #1785ba;
+  --sg-p-700: #136a95;
+  --sg-route: #f59e0b;    /* animated route lines */
+  --sg-ink: #111827;
+  --sg-ink-2: #4b5767;
+  --sg-ink-3: #6b7889;
+  --sg-ink-4: #9aa6b4;
+  --sg-rule: #e2e7ed;
+  --sg-rule-2: #eef1f5;
+  --sg-canvas: #ffffff;
+  --sg-bench: #f6f8fa;
+  --sg-shadow: 0 1px 2px rgba(16, 24, 40, .04), 0 6px 20px rgba(16, 24, 40, .06);
+  font: 400 14px/1.55 Poppins, sans-serif;
+  color: var(--sg-ink);
+  -webkit-font-smoothing: antialiased;
+}
+.sg *, .sg *::before, .sg *::after { box-sizing: border-box; }
+.sg button { font: inherit; color: inherit; }
+
+/* Heading */
+.sg-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
+.sg-head h2 { margin: 0; font-size: 18px; font-weight: 600; letter-spacing: -.01em; }
+.sg-head p { margin: 0; color: var(--sg-ink-3); font-size: 13.5px; }
+
+/* Layout: globe on the left, branches on the right */
+.sg-grid { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 24px; }
+@media (max-width: 900px) { .sg-grid { grid-template-columns: 1fr; } }
+
+/* Globe card */
+/* No border or shadow: the globe floats on the page, card-less. */
+.sg-box { position: relative; background: radial-gradient(circle at 50% 45%, var(--sg-p-50), var(--sg-canvas) 70%); border-radius: 16px; padding: 8px; }
+.sg-map { position: relative; width: 100%; }
+.sg-map > svg { display: block; width: 100%; height: auto; margin: 0 auto; cursor: grab; touch-action: none; border-radius: 18px; }
+.sg-map > svg:active { cursor: grabbing; }
+.sg-loading { display: grid; place-items: center; min-height: 320px; color: var(--sg-ink-3); font-size: 13px; text-align: center; padding: 20px; }
+
+/* Globe drawing */
+.sg-ocean { stroke: var(--sg-p-200); stroke-width: 1; }
+.sg-grat { fill: none; stroke: var(--sg-p-300); stroke-opacity: .35; stroke-width: .6; }
+.sg-land { fill: var(--sg-p-200); stroke: var(--sg-canvas); stroke-width: .5; cursor: pointer; transition: fill .25s, opacity .3s, filter .2s; }
+.sg-land:hover { filter: brightness(1.08); }
+.sg-land.sup { fill: var(--sg-p-400); }
+.sg-land.home { fill: var(--sg-p-700); }
+.sg-land.active { stroke: var(--sg-ink); stroke-width: 1.4; }
+.sg-map.zoomed .sg-land:not(.active) { opacity: .72; }
+.sg-arc { fill: none; stroke: var(--sg-route); stroke-width: 2; stroke-linecap: round; stroke-dasharray: 5 7; animation: sg-flow 1.1s linear infinite; }
+@keyframes sg-flow { to { stroke-dashoffset: -24; } }
+.sg-dot { fill: var(--sg-canvas); stroke: var(--sg-p-700); stroke-width: 2; cursor: pointer; }
+.sg-dot.home { fill: var(--sg-p); stroke: var(--sg-canvas); stroke-width: 2.5; }
+.sg-pulse { fill: var(--sg-p); animation: sg-pulse 2.2s ease-out infinite; transform-box: fill-box; transform-origin: center; pointer-events: none; }
+@keyframes sg-pulse { from { transform: scale(.5); opacity: .6; } to { transform: scale(2.6); opacity: 0; } }
+.sg-label { font: 600 10.5px Poppins, sans-serif; fill: var(--sg-ink); paint-order: stroke; stroke: var(--sg-canvas); stroke-width: 3.5px; stroke-linejoin: round; pointer-events: none; }
+.sg-pinlogo { pointer-events: none; }
+
+/* + / − / reset */
+.sg-tools { position: absolute; top: 10px; right: 10px; display: grid; gap: 6px; z-index: 2; }
+.sg-icon-btn { width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--sg-rule-2); background: var(--sg-canvas); box-shadow: 0 1px 2px rgba(16, 24, 40, .06); display: grid; place-items: center; cursor: pointer; font-size: 17px; font-weight: 600; color: var(--sg-ink-2); transition: transform .15s, background .15s, color .15s; }
+.sg-icon-btn:hover { background: var(--sg-p-50); color: var(--sg-p); transform: scale(1.08); }
+.sg-icon-btn svg { width: 15px; height: 15px; }
+
+/* Line under the globe */
+.sg-info { display: flex; gap: 16px; flex-wrap: wrap; align-items: center; justify-content: space-between; margin-top: 10px; font-size: 13px; color: var(--sg-ink-2); min-height: 26px; }
+.sg-info b { font-weight: 600; color: var(--sg-ink); }
+
+/* Buttons */
+.sg-btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 30px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--sg-rule); background: var(--sg-canvas); color: var(--sg-ink-2); font-size: 12.5px; font-weight: 600; cursor: pointer; box-shadow: 0 1px 2px rgba(16, 24, 40, .06); transition: background .15s, color .15s, transform .15s; }
+.sg-btn:hover { background: var(--sg-bench); color: var(--sg-ink); transform: translateY(-1px); }
+.sg-btn.quiet { border-color: transparent; box-shadow: none; background: transparent; }
+.sg-btn.quiet:hover { background: var(--sg-rule-2); }
+.sg-btn svg { width: 14px; height: 14px; }
+
+/* Branches list */
+.sg-side-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
+.sg-side-head h3 { margin: 0; font-size: 15px; font-weight: 600; }
+.sg-side-head p { margin: 2px 0 0; font-size: 12.5px; color: var(--sg-ink-3); }
+.sg-list { list-style: none; margin: 0; padding: 0; background: var(--sg-canvas); border: 1px solid var(--sg-rule-2); border-radius: 10px; overflow: hidden; }
+.sg-list li { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--sg-rule-2); cursor: pointer; transition: background .15s; }
+.sg-list li:last-child { border-bottom: 0; }
+.sg-list li:hover, .sg-list li.on { background: var(--sg-bench); }
+.sg-list li:focus-visible { outline: none; box-shadow: inset 0 0 0 2px var(--sg-p-300); }
+.sg-list .sg-ico { position: relative; flex: none; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: var(--sg-p-50); color: var(--sg-p); overflow: hidden; }
+.sg-list .sg-ico.home { background: var(--sg-p); color: #fff; overflow: visible; }
+.sg-list .sg-ico svg { width: 15px; height: 15px; }
+/* Country flags: cropped to the circle. The ::after hairline keeps a flag with
+   a white edge (Vanuatu, the PH triangle) from dissolving into the card, and
+   the ring on .home keeps Manila reading as the headquarters. */
+.sg-list .sg-ico img { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 50%; }
+.sg-list .sg-ico::after { content: ''; position: absolute; inset: 0; border-radius: 50%; box-shadow: inset 0 0 0 1px rgba(16, 24, 40, .12); pointer-events: none; }
+.sg-list .sg-ico.home::after { box-shadow: inset 0 0 0 1px rgba(16, 24, 40, .12), 0 0 0 2px var(--sg-canvas), 0 0 0 4px var(--sg-p); }
+.sg-list .sg-grow { flex: 1; min-width: 0; }
+.sg-list b { display: block; font-weight: 600; font-size: 13.5px; }
+.sg-list .sg-meta { color: var(--sg-ink-3); font-size: 12.5px; }
+.sg-list .sg-chev { width: 16px; height: 16px; color: var(--sg-ink-4); flex: none; transition: transform .2s, color .2s; }
+.sg-list li:hover .sg-chev { transform: translateX(4px); color: var(--sg-p); }
+.sg-note { font-size: 11.5px; color: var(--sg-ink-4); margin: 8px 0 0; }
+
+/* Tooltip */
+.sg-tip { position: fixed; z-index: 1000; pointer-events: none; background: #111827; color: #fff; font: 400 12px/1.45 Poppins, sans-serif; padding: 7px 11px; border-radius: 10px; box-shadow: 0 16px 36px rgba(16, 24, 40, .18); opacity: 0; transform: translate(-50%, calc(-100% - 14px)); transition: opacity .12s; white-space: nowrap; }
+.sg-tip b { display: block; font-weight: 600; font-size: 12.5px; }
+.sg-tip.show { opacity: 1; }
+
+@media (prefers-reduced-motion: reduce) { .sg *, .sg-tip { animation: none !important; transition: none !important; } }

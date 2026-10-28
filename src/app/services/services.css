@@ -1,0 +1,161 @@
+/*
+ * Page CSS ported verbatim from getmeds_frontend/services.html's inline <style>.
+ * Scoped under .services-page because Next.js keeps stylesheets loaded across
+ * client-side navigations, so bare class names would leak into other pages.
+ * (The shell's `body { font-family: Poppins; background: #fff }` is already the
+ * global default in globals.css / layout.tsx.)
+ */
+/* Wrapped in @layer components so Tailwind utilities still win ties, matching the
+   original where the compiled Tailwind stylesheet loaded after this <style> block. */
+@layer components {
+
+
+.services-page .glass-card {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.services-page .text-gradient {
+  background: linear-gradient(135deg, #61A644, #1D9FDA);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Service card hover */
+.services-page .service-card {
+  transition: transform 0.35s cubic-bezier(.22, .68, 0, 1.2), box-shadow 0.35s ease;
+}
+
+.services-page .service-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 30px 60px -12px rgba(13, 153, 255, 0.18);
+}
+
+.services-page .service-card:hover .svc-icon {
+  transform: scale(1.12) rotate(6deg);
+}
+
+.services-page .svc-icon {
+  transition: transform 0.35s cubic-bezier(.22, .68, 0, 1.2);
+}
+
+/* Stat counter */
+.services-page .stat-item {
+  border-right: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.services-page .stat-item:last-child {
+  border-right: none;
+}
+
+/* Scroll Reveal Effect */
+.services-page .reveal {
+  transform: translateY(30px);
+  opacity: 0;
+  transition: all 0.8s ease-out;
+}
+
+.services-page .reveal.active {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* FAQ accordion */
+.services-page .faq-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease, padding 0.3s ease;
+}
+
+.services-page .faq-body.open {
+  max-height: 300px;
+}
+
+.services-page .faq-chevron {
+  transition: transform 0.3s ease;
+}
+
+.services-page .faq-item.open .faq-chevron {
+  transform: rotate(180deg);
+}
+
+/* Process step connector */
+.services-page .step-line {
+  background: linear-gradient(to bottom, #1D9FDA, #61A644);
+}
+
+/* Floating card bounce */
+@keyframes services-float {
+  0%,
+  100% {
+    transform: translateY(-8px)
+  }
+
+  50% {
+    transform: translateY(0)
+  }
+}
+
+.services-page .animate-float {
+  animation: services-float 3.5s ease-in-out infinite;
+}
+
+/* Gradient icon backgrounds */
+.services-page .icon-blue {
+  background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+  color: #1D9FDA;
+}
+
+.services-page .icon-green {
+  background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+  color: #61A644;
+}
+
+.services-page .icon-purple {
+  background: linear-gradient(135deg, #f3e8ff, #e9d5ff);
+  color: #9333ea;
+}
+
+.services-page .icon-orange {
+  background: linear-gradient(135deg, #ffedd5, #fed7aa);
+  color: #ea580c;
+}
+
+.services-page .icon-teal {
+  background: linear-gradient(135deg, #ccfbf1, #99f6e4);
+  color: #0d9488;
+}
+
+.services-page .icon-rose {
+  background: linear-gradient(135deg, #ffe4e6, #fecdd3);
+  color: #e11d48;
+}
+
+.services-page .badge-pill {
+  background: linear-gradient(135deg, rgba(97, 166, 68, .12), rgba(29, 159, 218, .12));
+  border: 1px solid rgba(29, 159, 218, .2);
+  color: #1D9FDA;
+}
+
+.services-page .btn-gradient {
+  background: linear-gradient(90deg, #61A644, #1D9FDA, #61A644);
+  background-size: 200% auto;
+  transition: background-position .5s ease, box-shadow .3s ease;
+}
+
+.services-page .btn-gradient:hover {
+  background-position: right center;
+  box-shadow: 0 8px 24px rgba(29, 159, 218, .4);
+}
+
+/* From the inline <style> in src/pages/services.tsx. Plain CSS (not a Tailwind before:
+   utility) — Tailwind's before:/after: utilities set content: var(--tw-content) on the
+   pseudo-element, which resets Font Awesome's glyph and makes the icon disappear. */
+.services-page .icon-gradient::before {
+  background: linear-gradient(90deg, #61A644, #1D9FDA);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+}
