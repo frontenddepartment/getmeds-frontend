@@ -263,11 +263,11 @@ export const networkEras = [
 ];
 
 export const capabilities = [
-  { icon: "Globe2", title: "Global Network of Pharma Manufacturers", text: "Strategic sourcing partnerships with leading manufacturers across India, China, Europe, and the US." },
-  { icon: "BadgeCheck", title: "Regulatory & Compliance", text: "FDA Philippines, DOH, and international regulatory expertise across registration and post-market compliance." },
-  { icon: "Snowflake", title: "Precision Supply Chain & Nationwide Distribution", text: "Temperature-controlled logistics and last-mile delivery across Luzon, Visayas, and Mindanao." },
-  { icon: "Store", title: "Sales and Distribution", text: "10,000+ pharmacy and 500+ hospital accounts, and the prescribing physicians behind them, served by dedicated nationwide sales teams." },
-  { icon: "Landmark", title: "Government Bidding & Public Sector Access", text: "Partnering with government hospitals through competitive bidding to enhance access to quality healthcare and essential medicines." },
+  { icon: "Globe2", title: "Global Network of Pharma Manufacturers", text: "Strategic sourcing partnerships with 50+ manufacturers across India, China, Europe, and the US — all WHO, PIC/S, US FDA, EU MHRA, and UK MHRA recognized. Every partner facility meets international quality standards, ensuring the medicines Filipino doctors prescribe and patients receive are backed by globally verified manufacturing." },
+  { icon: "BadgeCheck", title: "Regulatory & Compliance", text: "FDA Philippines, DOH, PDEA (S-4 and S-5), BOC, and EDPMS expertise across product registration, post-market compliance, and pharmacovigilance. Our regulatory team manages the full lifecycle — from Certificate of Product Registration application to license renewals — so partners can operate with confidence and speed." },
+  { icon: "Snowflake", title: "Precision Supply Chain & Nationwide Distribution", text: "WHO GSDP-compliant cold-chain logistics with batch-level traceability and urgent-response delivery across Luzon, Visayas, and Mindanao. Built for the urgency of Filipino healthcare, with specialized handling for biologics, oncology therapies, and specialty molecules." },
+  { icon: "Store", title: "Sales and Distribution", text: "10,000+ pharmacy accounts served through dedicated nationwide sales teams across Luzon, Visayas, and Mindanao. Long-term partnership approach with account-managed service, product training, and market development support." },
+  { icon: "Landmark", title: "Government Bidding & Public Sector Access", text: "Proven tender experience supplying oncology, hematology, and anesthesia medicines to public hospitals nationwide. Dedicated bidding specialists handle full documentation, compliance protocols, and competitive quotation preparation." },
   { icon: "HandHeart", title: "Government Medical Assistance & Program Accreditation", text: "Accredited provider of chemotherapy and cancer medicines for DSWD, PCSO, and other national government medical assistance programs." },
   { icon: "FileCheck2", title: "Certificate of Listing of Identical Drug Product (CLIDP) Services", text: "End-to-end CLIDP application, certification, and ongoing compliance management for our portfolio." },
   { icon: "Plane", title: "International Operations & Pharmacy Footprint", text: "Cross-border operations and partner pharmacy networks across multiple regions, extending beyond Asia into global markets." },
@@ -417,6 +417,84 @@ export const orderFaqSchema = {
   "@context": "https://schema.org",
   "@type": "FAQPage",
   mainEntity: orderFaqs.map((f) => ({
+    "@type": "Question",
+    name: f.q,
+    acceptedAnswer: { "@type": "Answer", text: f.a },
+  })),
+};
+
+/*
+ * Patient Assistance Program FAQ — final copy, word-for-word (all 12 in the accordion AND the
+ * schema; Q10–11 are in Filipino). Same `a`-is-HTML contract as the other FAQ lists.
+ */
+export const papFaqs: FaqItem[] = [
+  {
+    q: "What is PCSO MAP (Medical Assistance Program)?",
+    a: "<p>The PCSO Medical Assistance Program (MAP), also called IMAP, is a government assistance program that helps cover medicine and treatment costs for financially incapacitated patients — including those needing cancer and chemotherapy medicines.</p>",
+    schema: true,
+  },
+  {
+    q: "What does AICS mean?",
+    a: "<p>AICS stands for Assistance to Individuals in Crisis Situations, a DSWD program that provides medical, burial, transportation, or food assistance to Filipinos facing a crisis — including cancer patients needing chemotherapy medicines.</p>",
+    schema: true,
+  },
+  {
+    q: "Who can qualify for PCSO or DSWD medical assistance?",
+    a: "<p>Patients who need financial help for prescribed treatment, including chemotherapy or other cancer treatments, and who can provide the required medical and supporting documents, may qualify. Final approval is at the discretion of DSWD or PCSO.</p>",
+    schema: true,
+  },
+  {
+    q: "How do I apply for PCSO MAP online?",
+    a: "<p>Download and complete the PCSO IMAP Application Form from the PCSO website, prepare your medical documents and valid ID, secure three price quotations for your medicine (the first from Getmeds), then submit everything through PCSO’s online application process.</p>",
+    schema: true,
+  },
+  {
+    q: "Where can I get the PCSO MAP application form?",
+    a: "<p>The PCSO IMAP Application Form can be downloaded directly from the official PCSO website.</p>",
+    schema: true,
+  },
+  {
+    q: "Do I need to book an online appointment for DSWD Medical Assistance (AICS)?",
+    a: "<p>Submission for DSWD AICS is currently done in person at your nearest DSWD Satellite Office. Some offices may require an online appointment first — please confirm with your local DSWD office or our Patient Assistance Officer.</p>",
+    schema: true,
+  },
+  {
+    q: "What are the requirements for PCSO and DSWD cancer medicine assistance?",
+    a: "<p>Requirements include a medical prescription, treatment protocol, and medical abstract from your doctor, a valid government ID, and additional documents specific to each agency — such as a Social Case Study Report and Certificate of Indigency for DSWD, or a completed IMAP Application Form and three price quotations for PCSO.</p>",
+    schema: true,
+  },
+  {
+    q: "How many price quotations do I need for PCSO, and can Getmeds provide one?",
+    a: "<p>PCSO requires three (3) official price quotations for your cancer medicine from different distributors or suppliers. Getmeds can provide the first quotation — the other two need to be requested from different suppliers.</p>",
+    schema: true,
+  },
+  {
+    q: "How long does the PCSO/DSWD application process take?",
+    a: "<p>Processing time varies depending on the agency and how complete your submitted documents are. Our Patient Assistance Officer can guide you through each step to help avoid delays.</p>",
+    schema: true,
+  },
+  {
+    q: "Ano ang Guarantee Letter o GL?",
+    a: "<p>Kapag naaprubahan ang iyong aplikasyon at mga kinakailangang dokumento, maglalabas ang ahensiya ng Guarantee Letter (GL) para sa pasyente o sa kaniyang kinatawan. Ang GL ay isang mahalagang dokumento na nagpapatunay na ang ahensiya ang sasagot sa lahat ng gastusin para sa gamot ng pasyente. Sa pamamagitan ng GL, magkakaroon ka ng katiyakan na ang iyong gamot ay maibibigay nang walang abala sa bayad.</p><p>Ang pasyente o ang kinatawan nito ang kailangang magdala ng GL sa nakasaad na medicine distributor o supplier. Sila ang responsable sa pagbibigay ng gamot ayon sa nakasaad sa dokumento.</p><p>Para sa mas malinaw na gabay sa pag-claim ng iyong mga gamot, makipag-ugnayan sa aming Patient Assistance Officer, na handang tumulong sa bawat hakbang ng proseso.</p>",
+    schema: true,
+  },
+  {
+    q: "Ano ang Compassionate Special Permit?",
+    a: "<p>Nag-aalok din ang Getmeds ng tulong para sa mga gamot sa cancer na nangangailangan ng espesyal na permit, upang mas mapabilis at maayos ang proseso ng pagkuha.</p><p>Halimbawa nito ang Compassionate Special Permit, na ginagamit para sa:</p><ul><li><strong>Restricted Use of Covered Pharmaceutical Products and Medical Devices for Human Use</strong> — para makagamit ng mga gamot at medical devices na limitado ang paggamit.</li><li><strong>Access to unregistered drugs and medical devices for seriously ill patients</strong> — tulad ng mga pasyenteng may advanced stage cancer, lalo na kung walang mas mabisa o alternatibong therapy na magagamit.</li></ul>",
+    schema: true,
+  },
+  {
+    q: "Does Getmeds also help with the Office of the President or Office of the Vice President medical assistance?",
+    a: "<p>Yes — aside from DSWD and PCSO, Getmeds is also accredited to assist patients coordinating with the Office of the President and Office of the Vice President for medical assistance covering cancer and chemotherapy medicines.</p>",
+    schema: true,
+  },
+];
+
+/** FAQPage JSON-LD for /patient-assistance-program only — all 12, answers identical to the accordion. */
+export const papFaqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: papFaqs.map((f) => ({
     "@type": "Question",
     name: f.q,
     acceptedAnswer: { "@type": "Answer", text: f.a },

@@ -7,8 +7,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import {
   ArrowRight,
   ChevronDown,
-  Filter,
-  FunnelX,
+  LayoutGrid,
+  List,
   RotateCcw,
   Search,
   SlidersHorizontal,
@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { productCategories, products, type Product } from "@/lib/data";
 import { Reveal } from "@/components/ui";
+import NoResultsIllustration from "@/components/NoResultsIllustration";
 
 type FormFilter = "all" | "injectable" | "oral";
 type SortOption = "default" | "name-asc" | "name-desc" | "category";
@@ -43,6 +44,7 @@ export default function ProductRangeClient({ productLinks }: { productLinks: Rec
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
   // Phones show the list in pages of MOBILE_PAGE ("Load more"); desktop always shows everything.
   const [mobileLimit, setMobileLimit] = useState(MOBILE_PAGE);
+  const [view, setView] = useState<"grid" | "table">("grid");
   const catalogRef = useRef<HTMLElement>(null);
 
   // Sidebar's CSP note hides while the bottom "Can't find what you need?" banner is on screen.
@@ -92,8 +94,8 @@ export default function ProductRangeClient({ productLinks }: { productLinks: Rec
       transition={{ layout: { duration: 0.65, ease: EASE_OUT } }}
       className={`flex w-full items-center bg-white ring-1 ring-slate-200 ${
         compact
-          ? "gap-1 p-1 shadow-[0_8px_18px_-10px_rgba(7,59,87,0.4)] focus-within:ring-2 focus-within:ring-primary"
-          : "gap-2 p-1.5 shadow-lg shadow-[#0a5a8c]/25 xl:ring-white/60"
+          ? "gap-1 p-1 focus-within:ring-2 focus-within:ring-[#1D9FDA]"
+          : "gap-1.5 p-1 shadow-md shadow-[#0a5a8c]/15 xl:ring-white/60"
       }`}
     >
       <div className="relative min-w-0 flex-1">
@@ -108,7 +110,7 @@ export default function ProductRangeClient({ productLinks }: { productLinks: Rec
           placeholder={compact ? "Search medicines" : "Search by brand, generic name or form"}
           aria-label="Search products"
           className={`w-full rounded-full bg-transparent text-primary-deep outline-none placeholder:text-slate-400 [&::-webkit-search-cancel-button]:hidden ${
-            compact ? "py-2 pl-9 pr-7 text-[14px]" : "py-3 pl-11 pr-8 text-[15px]"
+            compact ? "py-2 pl-9 pr-7 text-[14px]" : "py-2.5 pl-10 pr-8 text-[14px]"
           }`}
         />
         {query && (
@@ -126,12 +128,15 @@ export default function ProductRangeClient({ productLinks }: { productLinks: Rec
         <button
           type="submit"
           aria-label="Search"
-          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-white transition-colors hover:bg-primary-deep"
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#1D9FDA] text-white transition hover:brightness-95"
         >
           <Search className="h-3.5 w-3.5" aria-hidden />
         </button>
       ) : (
-        <button type="submit" className="btn-primary shrink-0">
+        <button
+          type="submit"
+          className="shrink-0 rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-white transition hover:brightness-95"
+        >
           Search
         </button>
       )}
@@ -262,7 +267,7 @@ export default function ProductRangeClient({ productLinks }: { productLinks: Rec
             </p>
             {/* Hero search (lg+; phones use the bar above the catalog). The slot keeps its height while the
                 bar is away in the sidebar, so nothing below it jumps. */}
-            <div ref={heroSearchSlotRef} className="mt-7 hidden h-[60px] max-w-xl lg:block">
+            <div ref={heroSearchSlotRef} className="mt-7 hidden h-[50px] max-w-lg lg:block">
               {!heroSearchPassed && renderSearchBar(false)}
             </div>
             {/* Whole catalog: a real href for crawlers, handled in-page for visitors */}
@@ -272,25 +277,21 @@ export default function ProductRangeClient({ productLinks }: { productLinks: Rec
                 e.preventDefault();
                 browseAll();
               }}
-              className="group mt-6 inline-flex items-center gap-2.5 rounded-full bg-white py-2 pl-4 pr-3 text-[14px] font-semibold text-primary-deep ring-1 ring-primary/25 transition hover:ring-primary/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary xl:mt-3.5 xl:shadow-md xl:shadow-[#0a5a8c]/20"
+              className="mt-6 inline-flex items-center rounded-full bg-[#1D9FDA] px-5 py-2 text-[14px] font-medium text-white shadow-[0_3px_10px_-4px_rgba(6,40,64,0.18)] transition hover:brightness-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary xl:mt-3.5"
             >
               Browse all products
-              <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[12px] tabular-nums text-primary">
-                {products.length}
-              </span>
-              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
             </Link>
           </Reveal>
         </div>
       </section>
 
-      <section ref={catalogRef} className="scroll-mt-28 bg-white pb-24 pt-4">
+      <section ref={catalogRef} className="scroll-mt-28 bg-white pt-4">
         {/* Hero copy and catalog share this wide container so big screens fill with products instead of side margins */}
         <div className="mx-auto max-w-[1760px] px-4 sm:px-6 lg:px-8 2xl:px-10">
           {/* Main 2-column Layout: Sticky Sidebar on Left + Products Catalog on Right */}
           <div className="flex flex-col gap-8 lg:flex-row">
             {/* ===================== SIDEBAR ===================== */}
-            <aside className="w-full shrink-0 lg:w-72 xl:w-80">
+            <aside className="w-full shrink-0 lg:w-56 xl:w-60">
               {/* Mobile Search & Filter Header Toggle */}
               <div className="lg:hidden">
                 <div className="flex items-center gap-2 rounded-2xl border border-slate-200/80 bg-white p-2.5 shadow-xs">
@@ -355,15 +356,12 @@ export default function ProductRangeClient({ productLinks }: { productLinks: Rec
               <div
                 className={`${mobileFilterOpen ? "mt-4 block" : "hidden"} lg:sticky lg:top-28 lg:z-20 lg:block`}
               >
-                {/* Landing spot for the travelling search bar (lg+). Kept outside the scrolling list below,
-                    whose overflow would clip the bar while it flies in from the hero. */}
-                <div className="mb-6 hidden h-[42px] lg:block">{heroSearchPassed && renderSearchBar(true)}</div>
 
                 <div className="custom-scrollbar rounded-lg bg-white p-5 ring-1 ring-slate-200 lg:max-h-[calc(100vh-8.5rem-66px)] lg:overflow-y-auto lg:p-0 lg:pr-2 lg:ring-0 [overflow-anchor:none]">
 
                   <nav aria-label="Product categories">
                     <div className="flex items-center justify-between gap-3">
-                      <h2 className="font-display text-[20px] font-semibold text-primary-deep">Product categories</h2>
+                      <h2 className="font-display text-[20px] font-semibold text-primary-deep">Categories</h2>
                       {hasActiveFilters && (
                         <button
                           type="button"
@@ -461,14 +459,14 @@ export default function ProductRangeClient({ productLinks }: { productLinks: Rec
             {/* ===================== RIGHT: PRODUCT CATALOG ===================== */}
             <main className="min-w-0 flex-1">
               {/* Product Header / Sort Bar */}
-              <div className="mb-6 flex flex-col gap-3 rounded-2xl border border-slate-200/90 bg-white p-4 shadow-[0_2px_12px_-2px_rgba(0,0,0,0.04)] sm:flex-row sm:items-center sm:justify-between">
-                <div>
-                  <h2 className="font-display text-lg font-bold text-primary-deep">
+              <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between lg:gap-6">
+                <div className="shrink-0">
+                  <h2 className="font-display text-2xl font-semibold text-black">
                     {category === "All" ? "All Medicines" : category}
                   </h2>
-                  <p className="text-xs font-medium text-slate-500">
+                  <p className="text-sm font-medium text-black">
                     Showing{" "}
-                    <span className="font-bold text-primary-dark">
+                    <span className="font-bold text-black">
                       {filtered.length}
                     </span>{" "}
                     {filtered.length === 1 ? "product" : "products"}
@@ -476,7 +474,7 @@ export default function ProductRangeClient({ productLinks }: { productLinks: Rec
                       <>
                         {" "}
                         in{" "}
-                        <span className="font-bold text-primary-dark">
+                        <span className="font-bold text-black">
                           {category}
                         </span>
                       </>
@@ -484,82 +482,58 @@ export default function ProductRangeClient({ productLinks }: { productLinks: Rec
                   </p>
                 </div>
 
-                {/* Sort Option */}
-                <div className="flex items-center gap-2 self-start sm:self-auto">
-                  <span className="text-xs font-semibold text-slate-500">
+                {/* Landing spot for the travelling search bar (lg+), right after the title */}
+                <div className="hidden h-[42px] min-w-0 max-w-md flex-1 lg:block">{heroSearchPassed && renderSearchBar(true)}</div>
+
+                {/* View toggle + sort */}
+                <div className="flex items-center gap-3 self-start sm:self-auto">
+                  <div className="flex items-center rounded-full border border-slate-200 bg-white p-1" role="group" aria-label="Product view">
+                    {([
+                      ["grid", LayoutGrid, "Grid view"],
+                      ["table", List, "Table view"],
+                    ] as const).map(([v, Icon, label]) => (
+                      <button
+                        key={v}
+                        type="button"
+                        onClick={() => setView(v)}
+                        aria-pressed={view === v}
+                        aria-label={label}
+                        title={label}
+                        className={`flex h-8 w-8 items-center justify-center rounded-full transition ${
+                          view === v ? "bg-[#1D9FDA] text-white" : "text-slate-500 hover:text-black"
+                        }`}
+                      >
+                        <Icon className="h-4 w-4" />
+                      </button>
+                    ))}
+                  </div>
+                  <span className="text-sm font-medium text-black">
                     Sort:
                   </span>
                   <div className="relative">
                     <select
                       value={sortBy}
                       onChange={(e) => setSortBy(e.target.value as SortOption)}
-                      className="cursor-pointer appearance-none rounded-xl border border-slate-200 bg-white py-2 pl-3 pr-8 text-[13px] font-semibold lg:py-1.5 lg:text-xs text-primary-deep outline-none transition hover:border-primary focus:border-primary focus:ring-2 focus:ring-primary/20"
+                      className="cursor-pointer appearance-none rounded-full border border-slate-200 bg-white py-2.5 pl-4 pr-10 text-sm font-medium text-black outline-none transition hover:border-primary focus:border-primary focus:ring-2 focus:ring-primary/20"
                     >
                       <option value="default">Default Order</option>
                       <option value="name-asc">Brand (A – Z)</option>
                       <option value="name-desc">Brand (Z – A)</option>
                       <option value="category">Category</option>
                     </select>
-                    <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400" />
+                    <ChevronDown className="pointer-events-none absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
                   </div>
                 </div>
               </div>
 
-              {/* Active Filter Chips (if any) */}
-              {hasActiveFilters && (
-                <div className="mb-5 flex flex-wrap items-center gap-2">
-                  <span className="text-xs font-medium text-slate-500">
-                    Active filters:
-                  </span>
-
-                  {category !== "All" && (
-                    <button
-                      onClick={() => setCategory("All")}
-                      className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-semibold text-primary-dark transition hover:bg-primary/20"
-                    >
-                      <span>Category: {category}</span>
-                      <X className="h-3 w-3" />
-                    </button>
-                  )}
-
-                  {formFilter !== "all" && (
-                    <button
-                      onClick={() => setFormFilter("all")}
-                      className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-semibold text-primary-dark transition hover:bg-primary/20"
-                    >
-                      <span>
-                        Form: {formFilter === "injectable" ? "Injections / IV" : "Oral"}
-                      </span>
-                      <X className="h-3 w-3" />
-                    </button>
-                  )}
-
-                  {query.trim() && (
-                    <button
-                      onClick={() => setQuery("")}
-                      className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-semibold text-primary-dark transition hover:bg-primary/20"
-                    >
-                      <span>Search: &ldquo;{query}&rdquo;</span>
-                      <X className="h-3 w-3" />
-                    </button>
-                  )}
-
-                  <button
-                    type="button"
-                    onClick={clearAllFilters}
-                    aria-label="Clear all filters"
-                    title="Clear all filters"
-                    className="flex h-7 w-7 items-center justify-center rounded-full bg-primary-deep text-white transition hover:bg-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
-                  >
-                    <FunnelX className="h-3.5 w-3.5" aria-hidden />
-                  </button>
-                </div>
-              )}
-
-              {/* Product Grid */}
+              {/* Product Grid / Table */}
               <motion.div
                 layout
-                className="grid grid-cols-2 gap-2.5 sm:gap-3.5 xl:grid-cols-3 2xl:grid-cols-4"
+                className={
+                  view === "grid"
+                    ? "grid grid-cols-2 gap-2.5 sm:gap-3.5 lg:grid-cols-3 xl:grid-cols-4"
+                    : "flex flex-col gap-2.5"
+                }
               >
                 <AnimatePresence mode="popLayout">
                   {filtered.map((p, i) => (
@@ -567,6 +541,7 @@ export default function ProductRangeClient({ productLinks }: { productLinks: Rec
                       key={p.brand + p.strength}
                       product={p}
                       link={productLink(productLinks, p.brand)}
+                      row={view === "table"}
                       className={i >= mobileLimit ? "max-lg:hidden" : ""}
                     />
                   ))}
@@ -587,11 +562,9 @@ export default function ProductRangeClient({ productLinks }: { productLinks: Rec
 
               {/* Empty state */}
               {filtered.length === 0 && (
-                <div className="rounded-2xl border border-slate-200/90 bg-white p-12 text-center shadow-xs">
-                  <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-                    <Filter className="h-7 w-7" />
-                  </div>
-                  <h3 className="font-display mt-4 text-lg font-bold text-primary-deep">
+                <div className="rounded-2xl border border-slate-200/90 bg-white px-6 py-10 text-center md:p-12">
+                  <NoResultsIllustration className="mx-auto h-auto w-full max-w-[15rem]" />
+                  <h3 className="font-display mt-4 text-lg font-semibold text-black">
                     No matching medicines found
                   </h3>
                   <p className="mx-auto mt-2 max-w-md text-sm text-slate-500">
@@ -605,7 +578,10 @@ export default function ProductRangeClient({ productLinks }: { productLinks: Rec
                     >
                       Clear All Filters
                     </button>
-                    <Link href="/contact-us" className="btn-primary text-xs">
+                    <Link
+                      href="/contact-us"
+                      className="inline-flex items-center rounded-full bg-[#1D9FDA] px-7 py-3 text-xs font-semibold text-white transition hover:brightness-95"
+                    >
                       Ask About an Unlisted Medicine
                     </Link>
                   </div>
@@ -614,27 +590,25 @@ export default function ProductRangeClient({ productLinks }: { productLinks: Rec
             </main>
           </div>
 
-          {/* Bottom CTA Banner */}
-          <div ref={bannerRef} />
-          <Reveal className="mt-14">
-            <div className="relative overflow-hidden rounded-2xl bg-primary-deep p-8 text-white md:p-12">
-              <div className="pointer-events-none absolute -right-20 -top-20 h-80 w-80 rounded-full bg-primary/20 blur-[110px]" />
-              <div className="relative flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
-                <div>
-                  <h2 className="font-display text-2xl font-bold md:text-3xl">
-                    Can&apos;t find what you need?
-                  </h2>
-                  <p className="mt-2 max-w-xl text-white/70">
-                    For medicines not registered in the Philippines, we
-                    coordinate Compassionate Special Permit (CSP) imports with
-                    your physician, subject to FDA approval.
-                  </p>
-                </div>
-                <Link href="/contact-us" className="btn-primary shrink-0">
-                  Request Assistance <ArrowRight className="h-4 w-4" />
-                </Link>
-              </div>
+        </div>
+
+        {/* Bottom CTA Banner: full-width brand-green band sitting directly on the footer */}
+        <div ref={bannerRef} className="mt-14" />
+        <div className="bg-[#61A644] text-white">
+          <Reveal className="mx-auto flex max-w-[1760px] flex-col items-start justify-between gap-6 px-4 py-12 sm:px-6 md:flex-row md:items-center md:py-14 lg:px-8 2xl:px-10">
+            <div>
+              <h2 className="font-display text-2xl font-semibold md:text-[2rem]">Can&apos;t find what you need?</h2>
+              <p className="mt-2 max-w-xl text-[15px] leading-relaxed text-white/90 md:text-base">
+                For medicines not registered in the Philippines, we coordinate Compassionate Special Permit (CSP)
+                imports with your physician, subject to FDA approval.
+              </p>
             </div>
+            <Link
+              href="/contact-us"
+              className="inline-flex shrink-0 items-center rounded-full bg-white px-7 py-3 text-sm font-semibold text-[#3d7a26] transition hover:bg-white/90"
+            >
+              Request Assistance
+            </Link>
           </Reveal>
         </div>
       </section>
@@ -682,15 +656,65 @@ function PackShot({ product }: { product: Product }) {
 function ProductCard({
   product: p,
   link,
+  row = false,
   className = "",
 }: {
   product: Product;
   link: ProductLink;
+  row?: boolean; // table view: one product per row
   className?: string;
 }) {
   const { href, image } = link;
   // Keyword-rich name for the button and assistive tech; the visible text stays short
   const actionLabel = `Order ${p.brand} (${p.generic} ${p.strength}) online in the Philippines`;
+
+  if (row) {
+    return (
+      <motion.article
+        layout
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.25, ease: EASE_OUT }}
+        className={`group flex items-center gap-3 rounded-2xl border border-slate-200 bg-white p-2.5 sm:gap-5 sm:p-3 ${className}`}
+      >
+        <Link
+          href={href}
+          tabIndex={-1}
+          aria-hidden
+          className="relative flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-[#f6f8fa] sm:h-20 sm:w-20"
+        >
+          {image ? (
+            // eslint-disable-next-line @next/next/no-img-element -- Sanity CDN already serves a resized, auto-format image
+            <img src={image} alt="" loading="lazy" decoding="async" className="h-full w-full object-contain p-1.5 mix-blend-multiply" />
+          ) : (
+            <PackShot product={p} />
+          )}
+        </Link>
+        <div className="grid min-w-0 flex-1 gap-0.5 md:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)_minmax(0,1.2fr)] md:items-center md:gap-4">
+          <h3 className="font-display truncate text-[15px] font-semibold text-primary sm:text-base">
+            <Link href={href} className="rounded-sm transition-colors hover:text-primary-deep focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">
+              {p.brand}
+            </Link>
+          </h3>
+          <p className="text-[13px] font-medium leading-snug text-slate-800">
+            {p.generic} {p.strength}
+          </p>
+          <p className="text-[13px] leading-snug text-slate-500">
+            {p.form} <span className="text-slate-400">· {p.category}</span>
+          </p>
+        </div>
+        <Link
+          href={href}
+          aria-label={actionLabel}
+          title={actionLabel}
+          className="flex shrink-0 items-center gap-1.5 rounded-xl bg-primary px-3 py-2 text-[13px] font-semibold text-white transition-colors hover:bg-primary-deep focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 sm:px-4"
+        >
+          Order now
+        </Link>
+      </motion.article>
+    );
+  }
 
   return (
     <motion.article
@@ -705,7 +729,7 @@ function ProductCard({
         href={href}
         tabIndex={-1}
         aria-hidden
-        className="relative flex aspect-square items-center justify-center overflow-hidden rounded-t-md border-b border-slate-200 bg-[#f6f8fa]"
+        className="relative flex aspect-[4/3] items-center justify-center overflow-hidden rounded-t-md border-b border-slate-200 bg-[#f6f8fa]"
       >
         {image ? (
           // eslint-disable-next-line @next/next/no-img-element -- Sanity CDN already serves a resized, auto-format image
@@ -721,7 +745,7 @@ function ProductCard({
         )}
       </Link>
 
-      <div className="flex flex-1 flex-col p-3.5 sm:p-4">
+      <div className="flex flex-1 flex-col p-3 sm:p-3.5">
         <h3 className="font-display truncate text-[16px] font-semibold text-primary sm:text-[17px]">
           <Link href={href} className="rounded-sm transition-colors hover:text-primary-deep focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">
             {p.brand}
@@ -737,7 +761,7 @@ function ProductCard({
           href={href}
           aria-label={actionLabel}
           title={actionLabel}
-          className="mt-4 flex items-center justify-center gap-1.5 rounded-md bg-primary px-3 py-2.5 text-[14px] font-semibold text-white shadow-[0_6px_14px_-8px_rgba(29,159,218,0.7)] transition-colors hover:bg-primary-deep focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+          className="mt-3 flex items-center justify-center gap-1.5 rounded-md bg-primary px-3 py-2 text-[14px] font-semibold text-white shadow-[0_6px_14px_-8px_rgba(29,159,218,0.7)] transition-colors hover:bg-primary-deep focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
         >
           Order now
           <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" aria-hidden />

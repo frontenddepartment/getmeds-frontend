@@ -2,12 +2,14 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import {
-  ArrowRight, Award, BadgeCheck, Building, Compass, Eye, Globe2, HandHeart,
-  HeartPulse, Lightbulb, ShieldCheck, Target, Users,
+  BadgeCheck, Check, Compass, Eye, Globe2, HandHeart,
+  HandCoins, HeartPulse, Lightbulb, PackageSearch, Target, Truck, Users,
 } from "lucide-react";
-import { leaders } from "@/lib/data";
-import { Reveal, SectionHeading, Stagger, StaggerItem, TiltCard } from "@/components/ui";
-import { IlloTeam } from "@/components/Illustrations";
+import { Reveal, Stagger, StaggerItem } from "@/components/ui";
+import IsoFocus from "@/components/IsoFocus";
+import DedicatedPills from "@/components/DedicatedPills";
+import DepthStack from "@/components/DepthStack";
+import CoreValues from "@/components/CoreValues";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/about-us" },
@@ -16,34 +18,32 @@ export const metadata: Metadata = {
     "Getmeds is a global pharmaceutical company based in the Philippines with a portfolio spanning Oncology, Hematology, Anesthesiology, and Rare Diseases.",
 };
 
-const highlights = [
-  { Icon: ShieldCheck, title: "FDA Philippines Licensed Distributor", text: "Licensed for pharmaceutical importation, wholesale, and distribution." },
-  { Icon: Globe2, title: "UN Global Compact Member & SDG Driver", text: "Aligned with the UN's ten principles and actively contributing to the Sustainable Development Goals." },
-  { Icon: BadgeCheck, title: "WHO GSDP Compliant", text: "Operating to World Health Organization standards for pharmaceutical storage, handling, and distribution." },
-  { Icon: Award, title: "PDEA Licensed (S-4 & S-5)", text: "Licensed for the handling and distribution of dangerous drugs and controlled precursor chemicals." },
-  { Icon: Building, title: "BOC & EDPMS Compliant", text: "Fully compliant with Bureau of Customs and DOH Electronic Drug Price Monitoring requirements." },
-  { Icon: HandHeart, title: "PCO Accredited", text: "Pollution Control Officer accredited under DENR Environmental Management Bureau standards." },
-];
-
 const commitments = [
-  { Icon: Users, title: "Collaboration and Excellence", text: "Fostering collaborations with leading medical professionals, researchers, and partners to accelerate breakthroughs and reshape the future of healthcare." },
-  { Icon: HeartPulse, title: "Compassion & Integrity", text: "Built on compassion for patients and their families — unwavering in integrity and transparency, always doing what is right." },
-  { Icon: Lightbulb, title: "Pioneering Medicine Solutions", text: "Delivering medicine solutions that address the unmet needs of patients worldwide, exploring novel therapies for challenging conditions." },
-  { Icon: Globe2, title: "Global Accessibility", text: "Healthcare knows no boundaries. A seamless global presence ensures the needs of patients are met without delay." },
-  { Icon: HandHeart, title: "Empowering Patients", text: "Accessible connection to life-saving medicines, cutting-edge treatments, and vital healthcare resources." },
-  { Icon: Compass, title: "Advancing Healthcare E-Commerce", text: "A state-of-the-art platform that redefines accessibility — patients and providers can access medications regardless of geography." },
+  { Icon: Users, title: "Collaboration and Excellence", text: "By fostering collaborations with leading medical professionals, researchers, and partners, we strive for synergistic partnerships that aim to accelerate breakthroughs and reshape the future of healthcare." },
+  { Icon: HeartPulse, title: "Compassion & Integrity", text: "Our foundation is built upon compassion for patients and their families. We are unwavering in our commitment to integrity and transparency, ensuring every action is guided by doing what is right." },
+  { Icon: Lightbulb, title: "Pioneering Medicine Solutions", text: "We are dedicated to delivering medicine solutions that address the unmet needs of patients worldwide, exploring novel therapies that make a difference in challenging medical conditions." },
+  { Icon: Globe2, title: "Global Accessibility", text: "We believe healthcare knows no boundaries. Our commitment to a seamless global presence through synergistic partnerships ensures the needs of patients are met globally without delay." },
+  { Icon: HandHeart, title: "Empowering Patients", text: "We strive to empower patients by providing them with accessible connection to life-saving medicines and providers, cutting-edge treatments, and vital healthcare resources." },
+  { Icon: Compass, title: "Advancing Healthcare E-Commerce", text: "Through our state-of-the-art e-commerce platform, we aim to redefine healthcare accessibility. Our seamless and secure online marketplace will ensure patients and providers can access medications regardless of geographic boundaries." },
 ];
 
-const values = [
-  "Compassion", "Integrity", "Precision", "Innovation", "Security", "Speed", "Expertise",
-  "Global", "Safety", "Care", "Affordable", "Reliable", "Community", "Excellence",
-];
-
+// Order Medicines category-card look: solid colour circle with a white icon per card
 const advantages = [
-  { title: "Globally Sourced Quality", text: "Verified under FDA Philippines and international quality standards." },
-  { title: "Hard-to-Find Access", text: "Compassionate Special Permit imports and rare disease therapies unavailable elsewhere." },
-  { title: "Nationwide Logistics", text: "Reliable cold-chain delivery across Luzon, Visayas, and Mindanao." },
-  { title: "Sustainable Pricing", text: "Rapid-response sourcing and fair pricing for the patients and partners we serve." },
+  { Icon: BadgeCheck, iconBg: "bg-[#1D9FDA]", title: "Globally Sourced Quality", text: "Verified under FDA Philippines and international quality standards." },
+  { Icon: PackageSearch, iconBg: "bg-[#F2B705]", title: "Hard-to-Find Access", text: "Compassionate Special Permit imports and rare disease therapies unavailable elsewhere." },
+  { Icon: Truck, iconBg: "bg-[#E5484D]", title: "Nationwide Logistics", text: "Reliable cold-chain delivery across Luzon, Visayas, and Mindanao." },
+  { Icon: HandCoins, iconBg: "bg-[#61A644]", title: "Sustainable Pricing", text: "Rapid-response sourcing and fair pricing for the patients and partners we serve." },
+];
+
+/* Highlights in the blue panel under the hero */
+const aboutHighlights = [
+  { title: "FDA Philippines Licensed Distributor", text: "Licensed by the Food and Drug Administration of the Philippines for pharmaceutical importation, wholesale, and distribution." },
+  { title: "UN Global Compact Member & SDG Driver", text: "Aligned with the United Nations' ten principles and actively contributing to the UN Sustainable Development Goals through ethical, responsible business practices." },
+  { title: "WHO Good Storage and Distribution Practices Compliant", text: "Operating to World Health Organization standards for pharmaceutical storage, handling, and distribution." },
+  { title: "PDEA Licensed (S-4 and S-5)", text: "Philippine Drug Enforcement Agency licensed for the handling and distribution of dangerous drugs (S-4) and controlled precursor chemicals (S-5)." },
+  { title: "BOC Compliant", text: "Fully compliant with Bureau of Customs requirements for pharmaceutical importation and clearance." },
+  { title: "EDPMS Compliant", text: "Electronic Drug Price Monitoring System compliant — fulfilling DOH price reporting and transparency requirements." },
+  { title: "PCO Accredited", text: "Pollution Control Officer accredited under DENR Environmental Management Bureau standards." },
 ];
 
 export default function AboutPage() {
@@ -98,115 +98,134 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Story */}
-      <section className="py-14">
-        <div className="mx-auto grid max-w-7xl items-start gap-10 px-5 md:px-10 lg:grid-cols-[1.2fr_1fr]">
+      {/* Team photo slider on the left, the About Us summary on the right */}
+      <section className="bg-white pb-12 pt-2 md:pb-16 md:pt-4">
+        <div className="mx-auto grid max-w-7xl gap-10 px-5 md:px-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)] lg:items-start lg:gap-16">
           <Reveal>
-            <div className="glass rounded-2xl p-8 md:p-10">
-              <span className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
-                Our story
-              </span>
-              <h2 className="font-display mt-3 text-2xl font-bold text-primary-deep md:text-3xl">
-                Driven by innovation, science, and deep compassion.
-              </h2>
-              <p className="mt-5 leading-relaxed text-ink-soft">
-                Getmeds, established in 2020, is a global pharmaceutical company based in the
-                Philippines with a diverse portfolio spanning Oncology, Hematology, Anesthesiology,
-                and Rare Diseases. It is driven by innovation, science, and a deep commitment to
-                improving access and affordability of life-changing therapies for Filipino patients
-                and healthcare partners.
-              </p>
-              <p className="mt-4 leading-relaxed text-ink-soft">
-                At its core, Getmeds is guided by compassion — ensuring that every medicine
-                delivered reflects care, dignity, and hope for patients and families in need. With
-                continuing expansion across the Asia-Pacific region and beyond, Getmeds is poised to
-                create an even greater impact on global healthcare.
-              </p>
-              <div className="mt-6 flex flex-wrap gap-2">
-                {values.map((v) => (
-                  <span key={v} className="glass-chip rounded-full px-3.5 py-1.5 text-xs font-semibold text-primary-dark">
-                    {v}
-                  </span>
-                ))}
-              </div>
-            </div>
+            <IsoFocus className="h-[320px] sm:h-[380px] lg:h-[420px]" />
           </Reveal>
+          <Reveal delay={0.08}>
+            <p className="text-sm font-semibold text-primary">About Us</p>
+            {/* same size and weight as Contact Us's "Get in touch with us." */}
+            <h2 className="font-display mt-2 text-2xl font-semibold text-black md:text-[2rem]">
+              Inside Getmeds
+              <br />
+              Our People &amp; Culture
+            </h2>
+            <p className="mt-4 text-[15px] leading-relaxed text-ink-soft md:text-base">
+              Getmeds, established in 2020, is a global pharmaceutical company based in the Philippines with a diverse
+              portfolio spanning Oncology, Hematology, Anesthesiology, and Rare Diseases. It is driven by innovation,
+              science, and a deep commitment to improving access and affordability of life-changing therapies for
+              Filipino patients and healthcare partners. At its core, Getmeds is guided by compassion — ensuring that
+              every medicine delivered reflects care, dignity, and hope for patients and families in need. With a
+              strong focus on accessibility and cost-effective healthcare solutions, the company works to make
+              high-quality treatments more reachable, especially for underserved communities. With its continuing
+              expansion across the Asia-Pacific region and beyond, Getmeds is poised to create an even greater impact
+              on global healthcare.
+            </p>
+          </Reveal>
+        </div>
+      </section>
 
-          <div className="grid gap-4">
-            <Reveal delay={0.1}>
-              <TiltCard className="glass rounded-xl p-7">
-                <div className="tilt-raise">
-                  <span className="flex h-11 w-11 items-center justify-center rounded-lg bg-primary text-white shadow-md shadow-primary/20">
-                    <Target className="h-5 w-5" />
-                  </span>
-                  <h3 className="font-display mt-4 text-lg font-bold text-primary-deep">Mission</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-ink-soft">
-                    To transform the landscape of oncological, hematological, critical care, rare
-                    medicine and healthcare e-commerce through relentless innovation, compassionate
-                    service, and international collaboration.
-                  </p>
-                </div>
-              </TiltCard>
+      {/* Split block, same size and colours as Order Medicines' "What we supply": blue panel + white grid panel,
+          full-bleed and edge to edge. Content to come. */}
+      <section>
+        <div className="grid md:grid-cols-[minmax(0,2.2fr)_minmax(0,1fr)] xl:grid-cols-[minmax(0,1fr)_calc((100vw-80rem)/2+26rem)]">
+          {/* Highlights: credentials with glassy check circles, white on blue.
+              Left padding lines up with the max-w-7xl container on wide screens. */}
+          <div className="min-h-[250px] bg-[#1D9FDA] px-5 py-12 text-white md:min-h-[440px] md:px-10 md:py-14 xl:pl-[calc((100vw-80rem)/2+2.5rem)]">
+            <Reveal>
+              <h2 className="font-display text-2xl font-semibold md:text-[2rem]">Highlights</h2>
             </Reveal>
-            <Reveal delay={0.2}>
-              <TiltCard className="glass rounded-xl p-7">
-                <div className="tilt-raise">
-                  <span className="flex h-11 w-11 items-center justify-center rounded-lg bg-primary text-white shadow-md shadow-primary/20">
-                    <Eye className="h-5 w-5" />
-                  </span>
-                  <h3 className="font-display mt-4 text-lg font-bold text-primary-deep">Vision</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-ink-soft">
-                    To be the global beacon of hope and innovation — a world where every patient has
-                    access from first-line treatments to the most advanced medicines, where borders
-                    do not limit healthcare.
-                  </p>
-                </div>
-              </TiltCard>
-            </Reveal>
+            <div className="mt-8 grid gap-x-10 gap-y-6 md:grid-cols-2">
+              {aboutHighlights.map((h, i) => (
+                <Reveal key={h.title} delay={(i % 2) * 0.06}>
+                  <div className="flex gap-4">
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/50 bg-white/15 shadow-[inset_0_1px_0_rgba(255,255,255,0.35)] backdrop-blur-md">
+                      <Check className="h-5 w-5 text-white" strokeWidth={2.6} />
+                    </span>
+                    <div>
+                      <h3 className="font-display text-base font-semibold leading-snug md:text-[17px]">{h.title}</h3>
+                      <p className="mt-1 text-sm leading-relaxed text-white/85">{h.text}</p>
+                    </div>
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+          </div>
+          {/* white with the faint box grid the therapeutic-areas section used */}
+          <div
+            className="min-h-[300px] overflow-hidden bg-white px-5 py-12 md:min-h-[440px] md:px-10 md:py-14"
+            style={{
+              backgroundImage:
+                "linear-gradient(#eef2f6 1px, transparent 1px), linear-gradient(90deg, #eef2f6 1px, transparent 1px)",
+              backgroundSize: "72px 72px",
+            }}
+          >
+            <DedicatedPills />
           </div>
         </div>
       </section>
 
-      {/* Credentials */}
-      <section className="relative py-20">
-        <div className="aurora" />
-        <div className="relative mx-auto max-w-7xl px-5 md:px-10">
-          <SectionHeading
-            eyebrow="Highlights"
-            title={<>Licensed, accredited, <span className="text-gradient">and verified.</span></>}
-          />
-          <Stagger className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {highlights.map(({ Icon, title, text }) => (
-              <StaggerItem key={title}>
-                <div className="glass h-full rounded-xl p-6 transition hover:-translate-y-1 hover:shadow-lg hover:shadow-primary/10">
-                  <span className="flex h-11 w-11 items-center justify-center rounded-lg bg-primary/10 text-primary-dark">
-                    <Icon className="h-5 w-5" />
-                  </span>
-                  <h3 className="font-display mt-4 font-bold text-primary-deep">{title}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-ink-soft">{text}</p>
-                </div>
-              </StaggerItem>
-            ))}
-          </Stagger>
+      {/* Depth stack: team photos drifting out of the distance toward the viewer */}
+      <section className="bg-white">
+        <DepthStack className="aspect-[3/1] max-h-[60vh] min-h-[280px]" />
+      </section>
+
+      {/* Mission and Vision */}
+      <section className="bg-white py-12 md:py-16">
+        <div className="mx-auto grid max-w-7xl gap-8 px-5 md:grid-cols-2 md:gap-12 md:px-10">
+          {[
+            {
+              Icon: Target,
+              eyebrow: "Our Drive",
+              title: "Mission",
+              text: "Our mission is to transform the landscape of oncological, hematological, critical care, rare medicine and healthcare e-commerce through relentless innovation, compassionate service, and international collaboration.",
+            },
+            {
+              Icon: Eye,
+              eyebrow: "Our Goal",
+              title: "Vision",
+              text: "To be the global beacon of hope and innovation, tirelessly dedicated to improving the lives of humankind. We envision a world where every patient has access from the first line treatments to the most advanced medicines, where borders do not limit healthcare, and where our unwavering commitment shines through every corner of the globe.",
+            },
+          ].map(({ Icon, eyebrow, title, text }, i) => (
+            <Reveal key={title} delay={i * 0.08}>
+              <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[#61A644] text-white">
+                <Icon className="h-5 w-5" />
+              </span>
+              <p className="mt-5 text-sm font-semibold text-primary">{eyebrow}</p>
+              <h2 className="font-display mt-1 text-2xl font-semibold text-black md:text-[2rem]">{title}</h2>
+              <p className="mt-3 text-[15px] leading-relaxed text-ink-soft md:text-base">{text}</p>
+            </Reveal>
+          ))}
         </div>
       </section>
 
-      {/* Commitments */}
-      <section className="py-20">
+      {/* Commitments, card style of Order Medicines' "Why order from Getmeds" */}
+      <section className="bg-white pb-16 pt-4">
         <div className="mx-auto max-w-7xl px-5 md:px-10">
-          <SectionHeading
-            eyebrow="Our commitments"
-            title={<>Enhancing patient connectivity <span className="text-gradient">and clinical reach.</span></>}
-            text="With relentless dedication to innovation, empathy, and accessible global healthcare solutions."
-          />
+          {/* title (two lines) on the left, subtext on the right */}
+          <Reveal className="mb-12 grid gap-4 md:mb-16 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] lg:items-end lg:gap-16">
+            <div>
+              <p className="text-sm font-semibold text-primary">Our Commitments</p>
+              <h2 className="font-display mt-2 text-2xl font-semibold text-black md:text-[2rem]">
+                Enhancing patient connectivity
+                <br />
+                and clinical reach.
+              </h2>
+            </div>
+            <p className="text-[15px] leading-relaxed text-ink-soft md:text-base lg:pb-1.5">
+              With relentless dedication to innovation, empathy, and accessible global healthcare solutions.
+            </p>
+          </Reveal>
           <Stagger className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {commitments.map(({ Icon, title, text }) => (
               <StaggerItem key={title}>
-                <div className="glass group h-full rounded-xl p-6 transition hover:-translate-y-1 hover:shadow-lg hover:shadow-primary/10">
-                  <span className="flex h-11 w-11 items-center justify-center rounded-lg bg-primary/10 text-primary-dark transition group-hover:bg-gradient-to-br group-hover:from-primary group-hover:to-primary-dark group-hover:text-white">
+                <div className="flex h-full flex-col rounded-3xl border border-gray-200 bg-white p-5 transition hover:-translate-y-1">
+                  <span className="flex h-11 w-11 items-center justify-center rounded-full bg-[#1D9FDA] text-white">
                     <Icon className="h-5 w-5" />
                   </span>
-                  <h3 className="font-display mt-4 font-bold text-primary-deep">{title}</h3>
+                  <h3 className="font-display mt-4 font-semibold text-black">{title}</h3>
                   <p className="mt-2 text-sm leading-relaxed text-ink-soft">{text}</p>
                 </div>
               </StaggerItem>
@@ -215,48 +234,31 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Advantages */}
-      <section className="py-10">
-        <div className="mx-auto max-w-7xl px-5 md:px-10">
-          <div className="relative overflow-hidden rounded-2xl bg-primary-deep p-8 text-white md:p-14">
-            <div className="pointer-events-none absolute -right-24 -top-24 h-96 w-96 rounded-full bg-primary/20 blur-[120px]" />
-            <Reveal>
-              <h2 className="font-display relative max-w-xl text-3xl font-bold md:text-4xl">
-                Why choose Getmeds?
-              </h2>
-            </Reveal>
-            <Stagger className="relative mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              {advantages.map((a, i) => (
-                <StaggerItem key={a.title}>
-                  <div className="glass-dark h-full rounded-xl p-6">
-                    <span className="font-display text-sm font-bold text-[#1D9FDA]">0{i + 1}</span>
-                    <h3 className="font-display mt-2 font-bold">{a.title}</h3>
-                    <p className="mt-2 text-sm text-white/65">{a.text}</p>
-                  </div>
-                </StaggerItem>
-              ))}
-            </Stagger>
-          </div>
-        </div>
-      </section>
+      {/* Core values: title left, pill cloud right */}
+      <CoreValues />
 
-      {/* Leaders */}
-      <section className="py-20">
+      {/* Advantages: plain white, four cards in the Order Medicines category-card style (no buttons) */}
+      <section className="bg-white py-12 md:py-16">
         <div className="mx-auto max-w-7xl px-5 md:px-10">
-          <SectionHeading
-            eyebrow="Our leaders"
-            title={<>The people <span className="text-gradient">behind Getmeds.</span></>}
-            text="Decades of combined expertise across pharmaceutical operations, business development, in-licensing, regulatory affairs, finance, and supply chain."
-          />
-          <Stagger className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
-            {leaders.map((l) => (
-              <StaggerItem key={l.name}>
-                <div className="glass group h-full rounded-xl p-5 text-center transition hover:-translate-y-1 hover:shadow-lg hover:shadow-primary/10">
-                  <div className="font-display mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary text-xl font-bold text-white shadow-md shadow-primary/20">
-                    {l.name.split(" ").map((p) => p[0]).slice(0, 2).join("")}
-                  </div>
-                  <h3 className="font-display mt-3 text-sm font-bold text-primary-deep">{l.name}</h3>
-                  <p className="mt-1 text-xs text-ink-soft">{l.role}</p>
+          <Reveal className="mb-10 grid gap-4 md:mb-12 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] lg:items-end lg:gap-16">
+            <div>
+              <p className="text-sm font-semibold text-primary">Our Advantages</p>
+              <h2 className="font-display mt-2 text-2xl font-semibold text-black md:text-[2rem]">Why Choose Getmeds?</h2>
+            </div>
+            <p className="text-[15px] leading-relaxed text-ink-soft md:text-base lg:pb-1">
+              We go above and beyond to ensure our services exceed your expectations when it comes to your health and
+              convenience.
+            </p>
+          </Reveal>
+          <Stagger className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {advantages.map(({ Icon, iconBg, title, text }) => (
+              <StaggerItem key={title}>
+                <div className="flex h-full flex-col rounded-3xl border border-gray-200 bg-white p-5 transition hover:-translate-y-1">
+                  <span className={`flex h-11 w-11 items-center justify-center rounded-full text-white ${iconBg}`}>
+                    <Icon className="h-5 w-5" />
+                  </span>
+                  <h3 className="font-display mt-4 font-semibold text-black">{title}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-ink-soft">{text}</p>
                 </div>
               </StaggerItem>
             ))}
@@ -264,24 +266,29 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="mx-auto max-w-7xl px-5 md:px-10">
-        <Reveal>
-          <div className="glass rounded-2xl p-10 text-center md:p-14">
-            <IlloTeam className="mx-auto -mt-2 mb-6 w-full max-w-sm" />
-            <h2 className="font-display text-3xl font-bold text-primary-deep md:text-4xl">
-              Every patient. Every doctor. <span className="text-gradient">Every partner.</span>
-            </h2>
-            <p className="mx-auto mt-4 max-w-xl text-ink-soft">
-              Whether you&apos;re seeking medicine, sourcing therapies, exploring partnerships, or
-              joining our team — one message reaches the right hands.
-            </p>
-            <div className="mt-8 flex flex-wrap justify-center gap-4">
-              <Link href="/contact-us" className="btn-primary">
-                Contact Us <ArrowRight className="h-4 w-4" />
-              </Link>
-              <Link href="/global-network" className="btn-ghost">Our Global Network</Link>
-            </div>
+      {/* CTA: full-width green band that sits directly on the footer */}
+      <section className="bg-[#61A644] text-white">
+        <Reveal className="mx-auto max-w-7xl px-5 py-14 text-center md:px-10 md:py-16">
+          <h2 className="font-display text-2xl font-semibold md:text-[2rem]">
+            Every patient. Every doctor. Every pharmacy. Every partner.
+          </h2>
+          <p className="mx-auto mt-4 max-w-2xl text-[15px] leading-relaxed text-white/90 md:text-base">
+            Getmeds is built for all of them. Whether you&apos;re seeking medicine, sourcing therapies, exploring
+            partnerships, or joining our team — one message reaches the right hands.
+          </p>
+          <div className="mt-8 flex flex-wrap justify-center gap-4">
+            <Link
+              href="/contact-us"
+              className="rounded-full bg-white px-7 py-3 text-sm font-semibold text-[#3d7a26] transition hover:bg-white/90"
+            >
+              Contact Us
+            </Link>
+            <Link
+              href="/contact-us"
+              className="rounded-full border-2 border-white px-7 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
+            >
+              Partner With Us
+            </Link>
           </div>
         </Reveal>
       </section>

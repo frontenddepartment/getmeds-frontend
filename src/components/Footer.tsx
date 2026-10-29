@@ -29,15 +29,10 @@ const policies = [
 
 export default function Footer() {
   const pathname = usePathname();
-  const isFlushPage = pathname === "/" || pathname === "/order-medicines" || pathname === "/contact-us" || pathname === "/patient-assistance-program";
+  const isFlushPage = pathname === "/" || pathname === "/order-medicines" || pathname === "/contact-us" || pathname === "/patient-assistance-program" || pathname === "/about-us" || pathname === "/services" || pathname === "/global-network" || pathname === "/product-range";
 
   return (
-    <footer className={`relative overflow-hidden bg-[#0B76AB] text-white ${isFlushPage ? "" : "mt-24"}`}>
-      <div className="pointer-events-none absolute inset-0 opacity-30">
-        <div className="absolute -top-40 right-0 h-[32rem] w-[32rem] rounded-full bg-[#1D9FDA] blur-[140px]" />
-        <div className="absolute -bottom-52 left-10 h-[28rem] w-[28rem] rounded-full bg-[#085A84] blur-[140px]" />
-      </div>
-
+    <footer className={`relative overflow-hidden bg-[#1D9FDA] text-white ${isFlushPage ? "" : "mt-24"}`}>
       <div className="relative mx-auto max-w-7xl px-5 py-16 md:px-10">
         <div className="grid gap-12 md:grid-cols-[1.4fr_1fr_1fr_1.3fr]">
           {/* Brand */}

@@ -3,9 +3,9 @@ import type { Metadata } from "next";
 /* page.tsx is a client component and can't export metadata — this server layout sets it. */
 export const metadata: Metadata = {
   alternates: { canonical: "/patient-assistance-program" },
-  title: "Patient Assistance Program: DSWD & PCSO Aid",
+  title: { absolute: "PCSO & DSWD Medical Assistance for Cancer Patients PH" },
   description:
-    "Libreng tulong para sa chemotherapy at gamot sa cancer. Get a price quotation for your DSWD, PCSO, OP or OVP Guarantee Letter and see the requirements.",
+    "Apply for PCSO Medical Assistance Program (MAP) and DSWD Medical Assistance (AICS) for cancer and chemotherapy treatment in the Philippines.",
 };
 
 /* The page copy is written in Filipino — tell search engines so it matches Filipino queries. */

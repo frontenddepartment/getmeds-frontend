@@ -32,6 +32,9 @@ export default function Globe({ selected, onSelect }: Props) {
 
   useEffect(() => {
     if (!land || !canvasRef.current || !wrapRef.current) return;
+    // hold the wrapper element itself: the ref is cleared on unmount, but a ResizeObserver
+    // callback can still fire once afterwards
+    const wrap = wrapRef.current;
 
     const landFc = land;
     const canvas = canvasRef.current;
@@ -56,7 +59,8 @@ export default function Globe({ selected, onSelect }: Props) {
     let t0 = performance.now();
 
     function resize() {
-      const rect = wrapRef.current!.getBoundingClientRect();
+      if (!wrap.isConnected) return;
+      const rect = wrap.getBoundingClientRect();
       width = rect.width;
       height = rect.height;
       canvas.width = width * dpr;
@@ -64,7 +68,8 @@ export default function Globe({ selected, onSelect }: Props) {
       canvas.style.width = `${width}px`;
       canvas.style.height = `${height}px`;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      radius = Math.min(width, height) / 2 - 14;
+      // never negative: the box can briefly measure 0 while the page lays out or hides it
+      radius = Math.max(0, Math.min(width, height) / 2 - 14);
       projection.translate([width / 2, height / 2]).scale(radius);
     }
 
@@ -85,6 +90,11 @@ export default function Globe({ selected, onSelect }: Props) {
     function draw(now: number) {
       const dt = now - t0;
       t0 = now;
+      // too small to draw (hidden, collapsed or still laying out): wait for the next frame
+      if (radius < 2) {
+        raf = requestAnimationFrame(draw);
+        return;
+      }
       if (autoSpin && !dragging) {
         rotation = [rotation[0] + dt * 0.006, rotation[1], 0];
       }
@@ -108,9 +118,9 @@ export default function Globe({ selected, onSelect }: Props) {
         cx - radius * 0.35, cy - radius * 0.4, radius * 0.1,
         cx, cy, radius
       );
-      ocean.addColorStop(0, "#0e4a6d");
-      ocean.addColorStop(0.55, "#07344f");
-      ocean.addColorStop(1, "#041f31");
+      ocean.addColorStop(0, "#3d7fc4");
+      ocean.addColorStop(0.55, "#22609f");
+      ocean.addColorStop(1, "#163f74");
       ctx.beginPath();
       path(sphere);
       ctx.fillStyle = ocean;
@@ -126,9 +136,9 @@ export default function Globe({ selected, onSelect }: Props) {
       // Land
       ctx.beginPath();
       path(landFc);
-      ctx.fillStyle = "rgba(60,170,222,0.30)";
+      ctx.fillStyle = "#61A644";
       ctx.fill();
-      ctx.strokeStyle = "rgba(140,215,250,0.45)";
+      ctx.strokeStyle = "rgba(220,245,205,0.55)";
       ctx.lineWidth = 0.7;
       ctx.stroke();
 
@@ -195,8 +205,12 @@ export default function Globe({ selected, onSelect }: Props) {
           ctx.font = "600 11px Inter, system-ui, sans-serif";
           const label = n.country;
           const tw = ctx.measureText(label).width;
-          const lx = p[0] + 12;
-          const ly = p[1] - 12;
+          // keep the tag inside the canvas: flip it to the left of the dot near the right edge,
+          // and clamp it so it never runs off either side or the top
+          let lx = p[0] + 12;
+          if (lx + tw + 8 > width) lx = p[0] - 12 - tw;
+          lx = Math.max(8, Math.min(lx, width - tw - 8));
+          const ly = Math.max(16, p[1] - 12);
           ctx.fillStyle = "rgba(4,26,40,0.78)";
           ctx.beginPath();
           ctx.roundRect(lx - 6, ly - 12, tw + 12, 18, 9);
@@ -260,7 +274,7 @@ export default function Globe({ selected, onSelect }: Props) {
 
     resize();
     const ro = new ResizeObserver(resize);
-    ro.observe(wrapRef.current);
+    ro.observe(wrap);
     canvas.addEventListener("pointerdown", onPointerDown);
     canvas.addEventListener("pointermove", onPointerMove);
     canvas.addEventListener("pointerup", onPointerUp);

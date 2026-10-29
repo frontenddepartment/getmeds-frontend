@@ -142,8 +142,15 @@ export default function Home() {
       {/* everything below the hero: balanced headings, no single-word last lines */}
       <div className="text-flow">
       {/* ================= Therapeutic areas: split slider ================= */}
-      <section className="border-b border-[#e3edf5]">
+      <section>
         <AreaSlider />
+      </section>
+
+      {/* ================= Featured Products heading (above the four-tile strip) ================= */}
+      <section className="bg-white pb-6 pt-6 md:pb-8 md:pt-8">
+        <Reveal className="mx-auto max-w-7xl px-5 md:px-10">
+          <h2 className="font-display text-2xl font-medium text-black md:text-[2rem]">Featured Products</h2>
+        </Reveal>
       </section>
 
       {/* ================= Product image strip: four tiles, edge to edge ================= */}

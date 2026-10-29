@@ -1,12 +1,12 @@
 import {
   Activity, BadgeCheck, Bone, Brain, Dna, Droplets, FileCheck2, FlaskConical,
-  Globe2, HandHeart, HeartPulse, Landmark, MonitorSmartphone, Plane, Ribbon,
+  Globe2, HandHeart, HeartPulse, Hospital, Landmark, MonitorSmartphone, Plane, Ribbon,
   ShieldPlus, Snowflake, Stethoscope, Store, Wind, Zap, type LucideIcon,
 } from "lucide-react";
 
 const map: Record<string, LucideIcon> = {
   Activity, BadgeCheck, Bone, Brain, Dna, Droplets, FileCheck2, FlaskConical,
-  Globe2, HandHeart, HeartPulse, Landmark, MonitorSmartphone, Plane, Ribbon,
+  Globe2, HandHeart, HeartPulse, Hospital, Landmark, MonitorSmartphone, Plane, Ribbon,
   ShieldPlus, Snowflake, Stethoscope, Store, Wind, Zap,
 };
 

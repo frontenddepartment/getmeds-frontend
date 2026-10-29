@@ -4,11 +4,12 @@
    once (the old site put them behind three tabs). Copy is the old site's Filipino wording. */
 
 import Image from "next/image";
+import { useState } from "react";
 import { motion } from "framer-motion";
-import { Check, Clock, Globe, MapPin } from "lucide-react";
+import { Check, ChevronDown, Clock, Globe, MapPin } from "lucide-react";
 import { Reveal } from "@/components/ui";
 import Faq from "@/components/Faq";
-import type { FaqItem } from "@/lib/data";
+import { papFaqs } from "@/lib/data";
 
 const DOCTOR_DOCS = ["Medical Prescription", "Treatment Protocol", "Medical Abstract / Clinical Summary"];
 
@@ -97,22 +98,36 @@ function CheckItem({ text, note, bullets, delay = 0, large = false, onBlue = fal
   );
 }
 
-function AgencyCard({ a, items, withSubmit }: { a: (typeof AGENCIES)[number]; items: Item[]; withSubmit?: boolean }) {
+// Step 3 agency checklist: coloured header is a toggle; the list stays closed until clicked
+function AgencyCard({ a, items }: { a: (typeof AGENCIES)[number]; items: Item[] }) {
+  const [open, setOpen] = useState(false);
+  const panelId = `agency-${a.name.slice(0, 4).toLowerCase()}`;
   return (
     <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white">
-      <p className={`px-5 py-3 text-sm font-semibold text-white ${a.head}`}>{a.name}</p>
-      <div className="p-5">
-        <ul className="space-y-3">
-          {items.map((it, i) => (
-            <CheckItem key={it.text} {...it} delay={i * 0.12} />
-          ))}
-        </ul>
-        {withSubmit && (
-          <p className={`mt-4 flex items-center gap-1.5 border-t border-gray-100 pt-4 text-xs font-medium ${a.tone}`}>
-            <a.Submit className="h-4 w-4 shrink-0" />
-            {a.submit}
-          </p>
-        )}
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        aria-expanded={open}
+        aria-controls={panelId}
+        className={`flex w-full items-center justify-between gap-3 px-4 py-3 text-left text-[13px] font-semibold text-white ${a.head}`}
+      >
+        <span className="lg:whitespace-nowrap">{a.name}</span>
+        <ChevronDown className={`h-4 w-4 shrink-0 transition-transform duration-300 ${open ? "rotate-180" : ""}`} />
+      </button>
+      <div
+        id={panelId}
+        inert={!open}
+        className={`grid transition-[grid-template-rows] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+          open ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+        }`}
+      >
+        <div className="overflow-hidden">
+          <ul className="space-y-3 p-5">
+            {items.map((it, i) => (
+              <CheckItem key={it.text} {...it} delay={i * 0.12} />
+            ))}
+          </ul>
+        </div>
       </div>
     </div>
   );
@@ -200,7 +215,7 @@ const STEPS: { title: string; body: React.ReactNode }[] = [
           Bukod sa mga medikal na dokumento mula sa iyong doktor, may karagdagang requirements na kailangang i-submit, na
           nakadepende sa ahensya ng gobyerno na iyong aaplayan:
         </p>
-        <div className="mt-4 grid gap-4 md:grid-cols-2">
+        <div className="mt-4 grid items-start gap-4 md:grid-cols-2">
           {AGENCIES.map((a) => (
             <AgencyCard key={a.name} a={a} items={[...DOCTOR_DOCS.map((text) => ({ text })), ...a.extra]} />
           ))}
@@ -238,26 +253,6 @@ const STEPS: { title: string; body: React.ReactNode }[] = [
   },
 ];
 
-// Same accordion as the home page FAQ (answers are HTML strings, all start closed)
-const FAQS: FaqItem[] = [
-  {
-    q: "Ano ang Guarantee Letter o GL?",
-    schema: false,
-    a: `<p>Kapag naaprubahan ang iyong aplikasyon at mga kinakailangang dokumento, maglalabas ang ahensiya ng Guarantee Letter (GL) para sa pasyente o sa kaniyang kinatawan. Ang GL ay isang mahalagang dokumento na nagpapatunay na ang ahensiya ang sasagot sa lahat ng gastusin para sa gamot ng pasyente. Sa pamamagitan ng GL, magkakaroon ka ng katiyakan na ang iyong gamot ay maibibigay nang walang abala sa bayad.</p>
-<p>Ang pasyente o ang kinatawan nito ang kailangang magdala ng GL sa nakasaad na medicine distributor o supplier. Sila ang responsable sa pagbibigay ng gamot ayon sa nakasaad sa dokumento.</p>
-<p>Para sa mas malinaw na gabay sa pag-claim ng iyong mga gamot, makipag-ugnayan sa aming Patient Assistance Officer, na handang tumulong sa bawat hakbang ng proseso.</p>`,
-  },
-  {
-    q: "Ano ang Compassionate Special Permit?",
-    schema: false,
-    a: `<p>Nag-aalok din ang Getmeds ng tulong para sa mga gamot sa cancer na nangangailangan ng espesyal na permit, upang mas mapabilis at maayos ang proseso ng pagkuha.</p>
-<p>Halimbawa nito ang Compassionate Special Permit, na ginagamit para sa:</p>
-<ul>
-<li><strong>Restricted Use of Covered Pharmaceutical Products and Medical Devices for Human Use</strong> — Para makagamit ng mga gamot at medical devices na limitado ang paggamit.</li>
-<li><strong>Access to unregistered drugs and medical devices for seriously ill patients</strong> — Tulad ng mga pasyenteng may advanced stage cancer, lalo na kung walang mas mabisa o alternatibong therapy na magagamit.</li>
-</ul>`,
-  },
-];
 
 export default function PapGuide() {
   return (
@@ -300,6 +295,13 @@ export default function PapGuide() {
                 );
               })}
             </ol>
+
+            {/* after step 6: where to claim the medicines */}
+            <h4 className="font-display mt-10 text-base font-semibold text-black md:text-lg">Saan Makukuha ang Iyong Mga Gamot</h4>
+            <p className="mt-2 text-sm leading-relaxed text-ink-soft">
+              Pagkatapos matanggap ang inyong Guarantee Letter (GL) mula sa ahensiya, maaari kayong pumunta sa aming opisina
+              upang makuha ang inyong gamot.
+            </p>
           </Part>
 
         </div>
@@ -330,14 +332,9 @@ export default function PapGuide() {
         <div className="space-y-6">
           {/* 3. FAQs, all answers open */}
           <Part kicker="Tanong" title="FAQs" plain bigTitle>
-            <Faq items={FAQS} theme="white" initialOpen={null} idPrefix="pap-faq" />
-
-            <h4 className="font-display mt-8 text-base font-semibold text-black md:text-lg">Saan Makukuha ang Iyong Mga Gamot</h4>
-            <p className="mt-2 text-sm leading-relaxed text-ink-soft">
-              Pagkatapos matanggap ang inyong Guarantee Letter (GL) mula sa ahensiya, maaari kayong pumunta sa aming opisina
-              upang makuha ang inyong gamot.
-            </p>
-            <div className="mt-4 grid gap-4 sm:grid-cols-2">
+            {/* all 12 answers stay in the server HTML; FAQPage schema comes from <FaqSchema page="pap" /> */}
+            <Faq items={papFaqs} theme="white" initialOpen={null} idPrefix="pap-faq" />
+            <div className="mt-8 grid gap-4 sm:grid-cols-2">
               <div className="rounded-2xl border border-gray-200 bg-white p-5">
                 <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#1D9FDA] text-white">
                   <MapPin className="h-5 w-5" />

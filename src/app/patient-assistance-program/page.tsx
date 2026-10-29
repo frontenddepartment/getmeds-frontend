@@ -7,6 +7,7 @@ import {
 import { contact } from "@/lib/data";
 import { Reveal } from "@/components/ui";
 import PapGuide from "@/components/PapGuide";
+import FaqSchema from "@/components/FaqSchema";
 
 /* The three promises shown on the PAP banner (kept in the banner's own wording). */
 const heroPerks = [
@@ -19,14 +20,17 @@ export default function PapPage() {
 
   return (
     <>
+      {/* FAQPage JSON-LD (all 12, same wording as the accordion) — this page only */}
+      <FaqSchema page="pap" />
+
       {/* Hero image, same treatment as Order Medicines. xl+: copy sits white on the blue at the left.
           Below xl the image is too short, so the copy stacks below it in navy/black. */}
       <section className="relative bg-white pb-10 xl:pb-0" lang="en">
         <Image
           src="/images/papherosection.png"
           alt="Smiling daughter hugging her mother, a cancer patient"
-          width={1746}
-          height={901}
+          width={5456}
+          height={2816}
           priority
           sizes="100vw"
           className="h-auto w-full"
@@ -37,30 +41,15 @@ export default function PapPage() {
               Government-accredited pharmaceutical distributor
             </span>
             <h1 className="font-display mt-6 text-[clamp(1.6rem,7.2vw,1.85rem)] font-semibold leading-[1.12] tracking-tight text-[#0B2E5E] md:text-[clamp(1.45rem,3.5vw+0.2rem,3.2rem)] xl:mt-4 xl:text-[min(2.7vw,2.6rem)] xl:text-white xl:drop-shadow-md">
-              {/* exactly two lines from md up; a bit smaller at xl than Order Medicines so line two clears the people */}
-              <span className="md:block md:whitespace-nowrap">Patient Assistance Program</span>{" "}
-              <span className="text-primary md:block md:whitespace-nowrap xl:text-white">Chemotherapy &amp; Cancer Medicines</span>
+              {/* line one big; line two is the longer SEO line, set smaller so it fits beside the people */}
+              <span className="block md:whitespace-nowrap">Patient Assistance Program</span>
+              <span className="mt-2 block max-w-[38rem] text-balance text-[0.62em] leading-snug text-primary xl:text-white">
+                PCSO Medical Assistance &amp; DSWD AICS for Cancer Patients
+              </span>
             </h1>
-            {/* the banner's three promises, right under the headline */}
-            <div className="mt-6 grid gap-4 sm:grid-cols-3 xl:mt-5 xl:w-max xl:grid-cols-[repeat(3,auto)] xl:gap-4">
-              {heroPerks.map(({ Icon, color, title, lines }) => (
-                <div key={title} className="flex items-start gap-3">
-                  <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-white xl:h-10 xl:w-10 ${color}`}>
-                    <Icon className="h-5 w-5" />
-                  </span>
-                  <div>
-                    <p className="font-display text-[13px] font-bold uppercase leading-tight tracking-wide text-[#0B2E5E] xl:whitespace-nowrap xl:text-[12px] xl:tracking-normal xl:text-white xl:drop-shadow">
-                      {title}
-                    </p>
-                    {lines.map((l) => (
-                      <p key={l} className="mt-0.5 text-[13px] leading-snug text-[#0B2E5E] xl:whitespace-nowrap xl:text-[12px] xl:text-white/95 xl:drop-shadow">{l}</p>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-            <p className="mt-6 max-w-2xl text-[15.5px] font-semibold leading-relaxed text-black md:text-[15px] xl:mt-4 xl:max-w-xl xl:text-white xl:drop-shadow">
-              DSWD • PCSO • Office of the President • Office of the Vice President
+            <p className="mt-6 max-w-2xl text-[15.5px] leading-relaxed text-black md:text-[15px] xl:mt-4 xl:max-w-xl xl:text-white xl:drop-shadow">
+              PCSO Medical Assistance Program (MAP) and DSWD Medical Assistance (AICS) requirements and steps for
+              cancer patients and families in the Philippines.
             </p>
           </Reveal>
         </div>
@@ -82,6 +71,27 @@ export default function PapPage() {
               </a>
             </div>
           </Reveal>
+        </div>
+      </section>
+
+      {/* The banner's three promises, right under the hero */}
+      <section className="bg-white pt-6 xl:pt-2" lang="en">
+        <div className="mx-auto grid max-w-7xl gap-6 px-5 sm:grid-cols-3 md:px-10">
+          {heroPerks.map(({ Icon, color, title, lines }, i) => (
+            <Reveal key={title} delay={i * 0.06}>
+              <div className="flex items-start gap-4">
+                <span className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-white ${color}`}>
+                  <Icon className="h-5 w-5" />
+                </span>
+                <div>
+                  <h3 className="font-display text-base font-semibold text-[#0B2E5E]">{title}</h3>
+                  {lines.map((l) => (
+                    <p key={l} className="mt-0.5 text-[15px] leading-snug text-[#0B2E5E]">{l}</p>
+                  ))}
+                </div>
+              </div>
+            </Reveal>
+          ))}
         </div>
       </section>
 

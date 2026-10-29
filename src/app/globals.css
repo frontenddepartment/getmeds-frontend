@@ -225,6 +225,34 @@ body {
 }
 .marquee-track:hover { animation-play-state: paused; }
 
+/* Iso Focus photo rail (port of public/iso-focus (1).html), About Us */
+.iso-focus {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  perspective: 2400px;
+  perspective-origin: 50% 45%;
+}
+.iso-focus__stage {
+  transform-style: preserve-3d;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 0;
+  height: 0;
+}
+.iso-focus__card {
+  position: absolute;
+  left: 0;
+  top: 0;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #e9eef3;
+  box-shadow: 0 18px 40px -12px rgba(6, 40, 64, 0.35);
+  will-change: transform, opacity;
+  transform-origin: 50% 50%;
+}
+
 /* PAP guide step numbers: a soft ring that radiates out, like a map location pin */
 .step-ping::before {
   content: "";
@@ -241,6 +269,18 @@ body {
   0% { transform: scale(1); opacity: 0.45; }
   80%, 100% { transform: scale(2); opacity: 0; }
 }
+
+/* Catalog empty state: magnifier drifts over empty cards, "?" pulses in the lens */
+@keyframes noresult-sweep {
+  0%, 100% { transform: translate(-70px, 0) rotate(-6deg); }
+  50% { transform: translate(40px, 60px) rotate(6deg); }
+}
+@keyframes noresult-q {
+  0%, 100% { transform: scale(0.85); opacity: 0.55; }
+  50% { transform: scale(1.1); opacity: 1; }
+}
+.noresult-illo-lens { animation: noresult-sweep 4.5s ease-in-out infinite; }
+.noresult-illo-q { transform-box: fill-box; transform-origin: center; animation: noresult-q 1.5s ease-in-out infinite; }
 
 /* Navbar dropdown links: blue-to-white underline grows left to right on hover,
    and shrinks back right to left when the pointer leaves */
@@ -340,7 +380,9 @@ body {
   /* Show the finished state rather than the hidden end of the loop */
   .search-illo-lens,
   .search-illo-pop,
-  .search-illo-fill { animation: none !important; transform: none; }
+  .search-illo-fill,
+  .noresult-illo-lens,
+  .noresult-illo-q { animation: none !important; transform: none; }
 }
 
 /* Home page, below the hero: keep a lone word from wrapping onto its own last line.
