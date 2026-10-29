@@ -16,7 +16,7 @@ import { usePageReady } from '@/lib/handoff';
 import { ArrowLeft, ArrowRight, BadgeCheck, Check, ChevronRight, Plus, Search, ShieldCheck, Truck, UserPlus } from 'lucide-react';
 import { WhatsAppIcon } from '@/components/SocialIcons';
 import { contact } from '@/lib/data';
-import { FDA_VERIFICATION_URL, ORDER_STEPS, productOrderFaqs, productSearchName } from '@/lib/productFaq';
+import { FDA_VERIFICATION_URL, ORDER_STEPS, productCrumbs, productOrderFaqs, productSearchDescription, productSearchName, productSearchTitle } from '@/lib/productFaq';
 import './ProductDetailClient.css';
 
 interface ProductWithCategory extends Omit<SanityProduct, 'category'> {
@@ -243,32 +243,18 @@ export default function ProductDetailClient(_props: { categorySlug?: string; pro
   // The same trail as { name, url } crumbs. Single source for both the visible breadcrumb
   // below and the BreadcrumbList JSON-LD, so the two cannot drift — Google requires the
   // marked-up trail to match the one the visitor can actually see.
-  const getBreadcrumbTrail = (p: ProductWithCategory): Array<{ name: string; url: string | null }> => {
-    const parts = getBreadcrumbParts(p).filter(part => part.toLowerCase() !== 'home');
-    const rest = parts.length
-      ? parts
-      : [getCategorizationDisplay(p), p.brandName || p.name || 'Product Details'];
-
-    return rest.map((name, idx) => {
-      const isLast = idx === rest.length - 1;
-      let url: string | null = null;
-      // Condition Hub URL (auto) is a separate "/conditions/:slug" namespace used only for
-      // the sitemap/crawling, not an in-app destination — every link here uses the category
-      // folder instead, same as the rest of the app's internal navigation.
-      if (!isLast && p.categoryFolder) {
-        if (idx === 0) {
-          url = `/${p.categoryFolder}`;
-        } else if (idx === rest.length - 2) {
-          const conditionSlug =
-            p.conditionSlugsByName?.[name]?.conditionSlug ||
-            p.conditionSlug ||
-            name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
-          url = `/${p.categoryFolder}/${conditionSlug}`;
-        }
-      }
-      return { name, url };
+  // Product Range › {Category} › {Product}: the prototype's trail, built by the same helper as the
+  // server copy (src/lib/productFaq.ts) so the visible crumbs and both JSON-LD blocks always match.
+  const getBreadcrumbTrail = (p: ProductWithCategory): Array<{ name: string; url: string | null }> =>
+    productCrumbs({
+      breadcrumb: p.breadcrumb,
+      category: getBreadcrumbParts(p).filter((part) => part.toLowerCase() !== 'home')[0] || p.category?.category,
+      categoryFolder: p.categoryFolder,
+      brandName: p.brandName,
+      name: p.name,
+      strength: p.strength,
+      isRx: p.prescription?.toUpperCase() === 'RX',
     });
-  };
 
   useEffect(() => {
     if (!productsLoading && productsData) {
@@ -335,16 +321,14 @@ export default function ProductDetailClient(_props: { categorySlug?: string; pro
         const displayName = found.brandName && found.genericName && found.brandName !== found.genericName
           ? `${found.brandName} (${found.genericName})`
           : found.name || found.brandName || 'Product Details';
-        // The Meta Description column in the product sheet is the source of truth for what
-        // Google shows. Do not fall back to indications or description body text, so search
-        // engines strictly index metaDescription for SEO snippet text.
-        const description = (
-          found.metaDescription
-          || `${displayName} — available through Getmeds Philippines. Quality pharmaceutical product for healthcare needs.`
-        ).replace(/\s+/g, ' ').trim();
+        // Google title/description follow the prototype's search format (src/lib/productFaq.ts), the
+        // same text the server copy carries, so hydration never rewrites them to something else.
+        const searchInput = { displayName, brandName: found.brandName, genericName: found.genericName, strength: found.strength, form: found.form, isRx: found.prescription?.toUpperCase() === 'RX' };
+        const description = productSearchDescription(searchInput);
         const imgUrl = found.image ? urlFor(found.image).width(1200).url() : undefined;
         setPageMeta({
-          title: found.metaTitle || displayName,
+          title: productSearchTitle(searchInput),
+          plainTitle: true,
           description: truncateAtWord(description, 160),
           path: prettyPath,
           // The category's share card, not the pack shot: medicine photography beside our paid

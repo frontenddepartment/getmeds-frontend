@@ -108,8 +108,21 @@ Search-result wording the team approved ("How it looks on Google" prototype boar
 - **Condition title:** `{Condition}: Symptoms, Treatment and Available Medicines`
 - **Category title:** `{Category}: Cancer Medicines in the Philippines`
 
-Product titles and descriptions set in the catalogue sheet (`metaTitle` / `metaDescription`) take
-priority. `src/lib/catalogSeo.tsx` uses the formats above only when the sheet leaves them blank.
+Every product page uses the product formats above (decided by the team; they replace the catalogue
+sheet's `metaTitle` / `metaDescription`). They're built in one place, `productSearchTitle` /
+`productSearchDescription` in `src/lib/productFaq.ts`, which both the server copy and the live page
+use. "Prescription required." is added only when the sheet's Prescription column is `RX`. A Vidrys SEO
+override for a path still wins over both.
+
+Status of the prototype board:
+
+- **Product pages:** title, description and breadcrumb (Home › Product Range › {Category} ›
+  {Product}) done. The "Prescription Medicines" step is added by flipping
+  `PRESCRIPTION_MEDICINES_PAGE_LIVE` in `src/lib/productFaq.ts` once `/prescription-medicines` exists.
+- **Category pages:** approved wording lives in `CATEGORY_SEARCH_COPY` (`src/lib/productFaq.ts`). Only
+  Oncology has it; add other folders there once the team approves their wording.
+- **Condition pages:** not done. "Symptoms, Treatment and Available Medicines" and "reviewed by a
+  licensed pharmacist" are true only once the pharmacist-reviewed condition content is published.
 
 ## Rules for this site
 

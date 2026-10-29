@@ -7,6 +7,7 @@ import { urlFor } from '@/lib/sanity';
 import type { Product as SanityProduct, Category } from '@/types/sanity';
 import { sortByFeaturedOrder } from '@/lib/categoryImageKey';
 import { setPageMeta, injectJsonLd, removeJsonLd, specialtyUrl, conditionReviewFields, ogImageForFolder, ogImageForCondition, ORGANIZATION_ID } from '@/lib/seo';
+import { CATEGORY_SEARCH_COPY } from '@/lib/productFaq';
 import { folderDisplayName } from '@/lib/queries';
 import { usePageReady } from '@/lib/handoff';
 import './CatalogClient.css';
@@ -770,9 +771,12 @@ export default function CatalogClient(_props: { initialFolder?: string } = {}) {
       ? ` — ${folderDisplayName(activeFolder)}`
       : '';
 
+    // A category folder with team-approved search wording uses it as is (same as the server copy)
+    const approved = !isCondition ? CATEGORY_SEARCH_COPY[activeFolder || matchedCat?.slug || ''] : undefined;
     setPageMeta({
-      title: isCondition ? `${displayLabel} - ${sectionLabel}` : `${displayLabel}${folderQualifier}`,
-      description,
+      title: approved ? approved.title : isCondition ? `${displayLabel} - ${sectionLabel}` : `${displayLabel}${folderQualifier}`,
+      plainTitle: Boolean(approved),
+      description: approved ? approved.description : description,
       path,
       // Same cards the server bakes in for conditions and category folders — a condition's
       // slug is the last segment of its hub path.
