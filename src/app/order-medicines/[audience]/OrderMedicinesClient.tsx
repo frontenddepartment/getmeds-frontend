@@ -9,6 +9,7 @@ import {
   BadgeCheck, Factory, FileCheck, Truck, Headset, Gavel, Siren,
   Boxes, Tags, CreditCard, PackageCheck, ClipboardCheck, UserRoundCheck, ListChecks,
   Stethoscope, HeartPulse, TriangleAlert,
+  Phone, Mail, X, Info, ChevronDown, Check, FileText, CloudUpload, UserRound, Upload, Syringe, Store, ShieldCheck, Ribbon, Pill, PhoneCall, Lock, Images, IdCard, Hospital, FileUp, Droplet, Dna, CircleCheck, ChevronRight,
 } from 'lucide-react';
 
 // intl-tel-input + window.gcbPhone were loaded by order-medicines.html; in
@@ -426,7 +427,7 @@ export default function OrderMedicinesClient({ audienceSlug }: { audienceSlug?: 
   // Everything that differs between the two partner forms. The markup below is shared.
   const PARTNER_FORM = isDoctorUserType
     ? {
-        badgeIcon: 'fa-user-doctor',
+        BadgeIcon: Stethoscope,
         badgeLabel: USER_TYPE_LABELS.doctor,
         heading: 'Send an Inquiry',
         subtitle: 'Submit your request and our team will follow up with product availability, pricing, documentation, or order coordination.',
@@ -445,15 +446,15 @@ export default function OrderMedicinesClient({ audienceSlug }: { audienceSlug?: 
         helpHeading: 'Contact Our Team',
         helpBlurb: 'For urgent orders or medical inquiries, reach out directly.',
         contacts: [
-          { icon: 'fa-phone', label: '+63 917 166 5029', href: 'tel:+639171665029' },
-          { icon: 'fa-phone', label: '+63 917 581 4029', href: 'tel:+639175814029' },
-          { icon: 'fa-envelope', label: 'sales9@getmeds.ph', href: 'mailto:sales9@getmeds.ph' },
-          { icon: 'fa-envelope', label: 'care20@getmeds.ph', href: 'mailto:care20@getmeds.ph' },
+          { Icon: Phone, label: '+63 917 166 5029', href: 'tel:+639171665029' },
+          { Icon: Phone, label: '+63 917 581 4029', href: 'tel:+639175814029' },
+          { Icon: Mail, label: 'sales9@getmeds.ph', href: 'mailto:sales9@getmeds.ph' },
+          { Icon: Mail, label: 'care20@getmeds.ph', href: 'mailto:care20@getmeds.ph' },
         ],
       }
     : isPharmacyUserType
     ? {
-        badgeIcon: 'fa-store',
+        BadgeIcon: Store,
         badgeLabel: USER_TYPE_LABELS.pharmacy,
         heading: 'Become a Getmeds Partner Distributor',
         subtitle: "Submit your pharmacy's details and our distributor team will follow up with product catalogs, pricing, and account setup.",
@@ -472,14 +473,14 @@ export default function OrderMedicinesClient({ audienceSlug }: { audienceSlug?: 
         helpHeading: 'Need Help Setting Up Your Distributor Account?',
         helpBlurb: 'For onboarding assistance, credit terms, or product catalog requests, contact our Pharmacy Partnerships Team directly.',
         contacts: [
-          { icon: 'fa-phone', label: '+63 908 866 7139', href: 'tel:+639088667139' },
-          { icon: 'fa-phone', label: '+63 993 373 9842', href: 'tel:+639933739842' },
-          { icon: 'fa-envelope', label: 'sales5@2mginc.com', href: 'mailto:sales5@2mginc.com' },
-          { icon: 'fa-envelope', label: 'sales22@getmeds.ph', href: 'mailto:sales22@getmeds.ph' },
+          { Icon: Phone, label: '+63 908 866 7139', href: 'tel:+639088667139' },
+          { Icon: Phone, label: '+63 993 373 9842', href: 'tel:+639933739842' },
+          { Icon: Mail, label: 'sales5@2mginc.com', href: 'mailto:sales5@2mginc.com' },
+          { Icon: Mail, label: 'sales22@getmeds.ph', href: 'mailto:sales22@getmeds.ph' },
         ],
       }
     : {
-        badgeIcon: 'fa-hospital',
+        BadgeIcon: Hospital,
         badgeLabel: USER_TYPE_LABELS.hospital,
         heading: 'Send an Inquiry',
         subtitle: "Submit your hospital's requirements and our team will follow up with formal documentation, quotations, and coordination.",
@@ -498,10 +499,10 @@ export default function OrderMedicinesClient({ audienceSlug }: { audienceSlug?: 
         helpHeading: 'Need Urgent Hospital Assistance?',
         helpBlurb: 'For emergency purchases and critical-care orders, contact our Hospital Sales Team directly for immediate coordination.',
         contacts: [
-          { icon: 'fa-phone', label: '+63 999 889 0592', href: 'tel:+639998890592' },
-          { icon: 'fa-phone', label: '+63 917 155 7029', href: 'tel:+639171557029' },
-          { icon: 'fa-envelope', label: 'sales3@getmeds.ph', href: 'mailto:sales3@getmeds.ph' },
-          { icon: 'fa-envelope', label: 'sales24@getmeds.ph', href: 'mailto:sales24@getmeds.ph' },
+          { Icon: Phone, label: '+63 999 889 0592', href: 'tel:+639998890592' },
+          { Icon: Phone, label: '+63 917 155 7029', href: 'tel:+639171557029' },
+          { Icon: Mail, label: 'sales3@getmeds.ph', href: 'mailto:sales3@getmeds.ph' },
+          { Icon: Mail, label: 'sales24@getmeds.ph', href: 'mailto:sales24@getmeds.ph' },
         ],
       };
 
@@ -935,11 +936,11 @@ export default function OrderMedicinesClient({ audienceSlug }: { audienceSlug?: 
   ];
 
   const THERAPEUTIC_AREAS = [
-    { icon: 'fa-ribbon', name: 'Oncology', desc: 'Anti-cancer medicines and supportive care products' },
-    { icon: 'fa-droplet', name: 'Hematology', desc: 'Blood disorder treatments and related specialty products' },
-    { icon: 'fa-syringe', name: 'Anesthesia', desc: 'Anesthetic and perioperative medicines for surgical and critical care use' },
-    { icon: 'fa-dna', name: 'Rare Diseases', desc: 'Specialty and orphan drug medicines for rare disease treatment' },
-    { icon: 'fa-pills', name: 'Essential Medicines', desc: 'Core hospital formulary drugs for everyday clinical needs' },
+    { Icon: Ribbon, name: 'Oncology', desc: 'Anti-cancer medicines and supportive care products' },
+    { Icon: Droplet, name: 'Hematology', desc: 'Blood disorder treatments and related specialty products' },
+    { Icon: Syringe, name: 'Anesthesia', desc: 'Anesthetic and perioperative medicines for surgical and critical care use' },
+    { Icon: Dna, name: 'Rare Diseases', desc: 'Specialty and orphan drug medicines for rare disease treatment' },
+    { Icon: Pill, name: 'Essential Medicines', desc: 'Core hospital formulary drugs for everyday clinical needs' },
   ];
 
   const HOSPITAL_REACH_STATS = [
@@ -1046,98 +1047,78 @@ export default function OrderMedicinesClient({ audienceSlug }: { audienceSlug?: 
             four audience pages below it. Everything after this point is an audience
             page, and only renders once the URL has named one. */}
         {isHub ? <OrderMedicinesHub /> : (<>
-        {/* Breadcrumb — an audience page is now a real URL a visitor can land on
-            cold, so it has to say where it sits and offer the way back up. */}
-        <nav aria-label="Breadcrumb" className="w-full px-4 md:px-6 pt-4">
-          <ol className="flex items-center gap-2 text-[12px] text-gray-400">
-            <li><a href={ORDER_MEDICINES_BASE} className="font-semibold hover:text-primary transition">Order medicines</a></li>
-            <li aria-hidden="true"><i className="fa-solid fa-chevron-right text-[8px]"></i></li>
-            <li className="font-semibold text-gray-600" aria-current="page">{audience?.cardTitle}</li>
-          </ol>
-        </nav>
-
-        {/* ── Hero + Step Cards ── */}
-        <section className="w-full px-4 md:px-6 pt-5 pb-4">
-          <div
-            className="relative rounded-[20px] overflow-hidden px-8 md:px-14 pt-12"
-            style={{ background: 'linear-gradient(135deg, #3aaf5c 0%, #1ab8c4 45%, #1a99d6 100%)' }}
-          >
-            {/* Decorative glassy circles */}
-            <div className="absolute pointer-events-none" style={{ width: 160, height: 160, borderRadius: '50%', bottom: '-55px', left: '28%', background: 'radial-gradient(circle at 40% 35%, rgba(100,240,200,0.55), rgba(30,180,210,0.30))', backdropFilter: 'blur(2px)', border: '1px solid rgba(255,255,255,0.25)' }} />
-            <div className="absolute pointer-events-none" style={{ width: 130, height: 130, borderRadius: '50%', bottom: '-42px', left: '45%', background: 'radial-gradient(circle at 38% 30%, rgba(120,100,240,0.55), rgba(60,80,220,0.35))', backdropFilter: 'blur(2px)', border: '1px solid rgba(255,255,255,0.20)' }} />
-            <div className="absolute pointer-events-none hidden md:block" style={{ width: 180, height: 180, borderRadius: '50%', bottom: '-70px', right: '8%', background: 'radial-gradient(circle at 42% 38%, rgba(130,230,230,0.45), rgba(60,190,210,0.22))', backdropFilter: 'blur(2px)', border: '1px solid rgba(255,255,255,0.22)' }} />
-            <div className="absolute pointer-events-none hidden md:block" style={{ width: 90, height: 90, borderRadius: '50%', bottom: '-20px', left: '18%', background: 'radial-gradient(circle at 35% 30%, rgba(160,240,120,0.60), rgba(40,210,130,0.35))', backdropFilter: 'blur(2px)', border: '1px solid rgba(255,255,255,0.25)' }} />
-            <div className="absolute pointer-events-none hidden md:block" style={{ width: 52, height: 52, borderRadius: '50%', top: '10px', right: '28%', background: 'radial-gradient(circle at 35% 30%, rgba(170,110,240,0.70), rgba(100,60,210,0.45))', backdropFilter: 'blur(2px)', border: '1px solid rgba(255,255,255,0.25)' }} />
-            <div className="absolute pointer-events-none hidden md:block" style={{ width: 85, height: 85, borderRadius: '50%', top: '-15px', right: '38%', background: 'radial-gradient(circle at 38% 32%, rgba(80,220,210,0.55), rgba(30,170,200,0.30))', backdropFilter: 'blur(2px)', border: '1px solid rgba(255,255,255,0.22)' }} />
-
-            <div className="relative z-10">
-              <h1 className="ca-anim ca-up text-xl sm:text-2xl md:text-3xl font-semibold text-white tracking-tight leading-tight mb-1">
-                {heroCopy.title}
-              </h1>
-              {heroCopy.tagline && (
-                <p className="ca-anim ca-up ca-d1 text-white text-[14px] sm:text-[15px] font-semibold leading-snug mt-1">
-                  {heroCopy.tagline}
-                </p>
-              )}
-              <p className={`ca-anim ca-up ca-d2 text-[12px] sm:text-[13px] mt-1 font-medium mb-10 max-w-3xl leading-relaxed ${isPartnerUserType ? 'text-white' : 'text-white/75'}`}>
-                {heroCopy.subtitle}
-              </p>
-
-              {/* Step Cards — patient prescription flow only */}
-              {!isProfessionalUserType && (
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pb-10">
-                  {[
-                    {
-                      icon: 'fa-cloud-arrow-up',
-                      label: '1. Upload',
-                      desc: 'Upload your valid prescription and contact details.'
-                    },
-                    {
-                      icon: 'fa-phone-volume',
-                      label: '2. We reach out',
-                      desc: 'Our pharmacists contact you to verify your order.'
-                    },
-                    {
-                      icon: 'fa-circle-check',
-                      label: '3. Receive Your Order',
-                      desc: 'Get your order confirmed and delivered.'
-                    }
-                  ].map((step, i) => (
-                    <div key={i} className={`ca-anim ca-zoom ${['ca-d1', 'ca-d3', 'ca-d5'][i]} bg-white/10 backdrop-blur-sm rounded-[15px] border border-white/20 p-4 md:p-6 flex flex-row items-center md:flex-col md:items-center text-left md:text-center cursor-default`}>
-                      <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-white/20 border border-white/30 flex items-center justify-center flex-shrink-0 mr-4 md:mr-0 md:mb-4">
-                        <i className={`fa-solid ${step.icon} text-white text-lg md:text-xl`}></i>
-                      </div>
-                      <div className="flex flex-col">
-                        <h3 className="text-white font-bold text-[14px] md:text-[15px] mb-1 md:mb-3">{step.label}</h3>
-                        <p className="text-white/80 md:text-white text-[12px] leading-relaxed">{step.desc}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
+        {/* ── Hero: brand-blue band, same header pattern as the rest of the site
+            (eyebrow + title left, intro right); patients also get the three steps as flat cards ── */}
+        <section className="bg-[#1D9FDA] pb-12 pt-28 text-white md:pb-14 md:pt-32">
+          <div className="mx-auto max-w-7xl px-5 md:px-10">
+            <nav aria-label="Breadcrumb" className="mb-5">
+              <ol className="flex items-center gap-2 text-[12.5px] text-white/80">
+                <li><a href={ORDER_MEDICINES_BASE} className="font-semibold transition hover:text-white">Order medicines</a></li>
+                <li aria-hidden="true"><ChevronRight className="h-3 w-3" /></li>
+                <li className="font-semibold text-white" aria-current="page">{audience?.cardTitle}</li>
+              </ol>
+            </nav>
+            <div className="grid items-end gap-5 md:grid-cols-[1.15fr_1fr] md:gap-12">
+              <div>
+                {heroCopy.tagline && <p className="text-sm font-semibold text-white/85">{heroCopy.tagline}</p>}
+                <h1 className="font-display mt-2 text-2xl font-semibold text-white md:text-[2rem]">{heroCopy.title}</h1>
+              </div>
+              <p className="max-w-lg text-[15px] leading-relaxed text-white/90">{heroCopy.subtitle}</p>
             </div>
+
+            {/* Stepper — patient prescription flow only: pulsing circles joined by a line */}
+            {!isProfessionalUserType && (
+              <ol className="mt-10 grid gap-8 md:grid-cols-3 md:gap-6">
+                {[
+                  { Icon: CloudUpload, title: 'Upload', desc: 'Upload your valid prescription and contact details.' },
+                  { Icon: PhoneCall, title: 'We reach out', desc: 'Our pharmacists contact you to verify your order.' },
+                  { Icon: CircleCheck, title: 'Receive Your Order', desc: 'Get your order confirmed and delivered.' },
+                ].map((step, i, all) => (
+                  <li key={step.title} className="relative flex flex-col items-center text-center">
+                    {/* line from this circle's centre to the next one, behind the circles */}
+                    {i < all.length - 1 && (
+                      <span aria-hidden className="absolute left-1/2 top-6 hidden h-0.5 w-[calc(100%+1.5rem)] rounded-full bg-white/45 md:block" />
+                    )}
+                    <span className="relative z-10 flex h-12 w-12 shrink-0 items-center justify-center">
+                      <span
+                        aria-hidden
+                        className="absolute inset-0 animate-ping rounded-full bg-[#61A644]/70"
+                        style={{ animationDuration: '2s', animationDelay: `${i * 0.6}s` }}
+                      />
+                      <span aria-hidden className="absolute -inset-1.5 rounded-full border-2 border-white/50 bg-[#1D9FDA]" />
+                      <span className="relative flex h-12 w-12 items-center justify-center rounded-full bg-[#61A644] text-white shadow-[0_8px_20px_-8px_rgba(6,40,64,0.5)]">
+                        <step.Icon className="h-5 w-5" strokeWidth={2.5} />
+                      </span>
+                    </span>
+                    <p className="mt-4 text-[13px] font-medium text-white/75">Step {i + 1}</p>
+                    <h3 className="font-display mt-0.5 text-lg font-semibold text-white">{step.title}</h3>
+                    <p className="mt-1 max-w-xs text-sm leading-relaxed text-white/85">{step.desc}</p>
+                  </li>
+                ))}
+              </ol>
+            )}
           </div>
         </section>
 
         {/* ── Main Content ── */}
-        <section className="py-10 bg-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+        <section className="bg-white pb-12 pt-6 md:pb-14 md:pt-8">
+          <div className="mx-auto max-w-7xl space-y-5 px-5 md:px-10">
 
             {/* Patient prescription-order flow (default/unset/skipped user type) */}
             {!isProfessionalUserType && (
             <>
             {/* Guide + Upload layout — guide shown first so users are instructed before uploading */}
-            <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
+            <div className="grid grid-cols-1 lg:grid-cols-5 gap-5 items-start">
 
               {/* LEFT: Guide for Valid Prescription */}
-              <div className="lg:col-span-2 ca-anim ca-left bg-white rounded-[15px] border border-gray-100 p-8 shadow-sm">
-                <h2 className="text-[17px] font-semibold text-dark mb-1">Guide for a valid prescription</h2>
+              <div className="lg:col-span-2 ca-anim ca-left rounded-3xl border border-gray-200 bg-white p-6">
+                <h2 className="font-display text-[17px] font-semibold text-black mb-1">Guide for a valid prescription</h2>
                 <p className="text-gray-400 text-[12px] mb-6">Please ensure the document includes:</p>
                 <ul className="space-y-3.5">
                   {GUIDE_ITEMS.map((item, i) => (
                     <li key={i} className="flex items-center gap-3">
-                      <div className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
-                        <i className="fa-solid fa-check text-[9px] text-green-600"></i>
+                      <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                        <Check className="h-3 w-3 text-primary" />
                       </div>
                       <span className="text-[13px] font-semibold text-gray-800">{item}</span>
                     </li>
@@ -1149,11 +1130,10 @@ export default function OrderMedicinesClient({ audienceSlug }: { audienceSlug?: 
               </div>
 
               {/* RIGHT: Upload Prescription Card */}
-              <div className="lg:col-span-3 ca-anim ca-left ca-d2 bg-white rounded-[15px] border border-gray-100 p-6 shadow-sm">
+              <div className="lg:col-span-3 ca-anim ca-left ca-d2 rounded-3xl border border-gray-200 bg-white p-6">
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-9 h-9 rounded-[12px] flex items-center justify-center text-white shadow-md"
-                    style={{ background: 'linear-gradient(to right,#61A644,#1D9FDA)' }}>
-                    <i className="fa-solid fa-file-prescription text-base"></i>
+                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#1D9FDA] text-white">
+                    <FileText className="h-4 w-4" />
                   </div>
                   <div>
                     <h2 className="text-[15px] font-semibold text-dark tracking-tight">Upload prescription</h2>
@@ -1164,32 +1144,32 @@ export default function OrderMedicinesClient({ audienceSlug }: { audienceSlug?: 
                 {/* Upload Zone */}
                 <label className="group cursor-pointer block mb-3">
                   <input type="file" multiple accept={ALLOWED_FILE_TYPES_ACCEPT} className="hidden" onChange={handleFileChange} />
-                  <div className="border-2 border-dashed border-gray-200 rounded-[15px] p-5 flex flex-col items-center justify-center text-center transition-all group-hover:border-primary/40 group-hover:bg-blue-50/20">
+                  <div className="border-2 border-dashed border-gray-200 rounded-2xl p-5 flex flex-col items-center justify-center text-center transition-all group-hover:border-primary/40 group-hover:bg-blue-50/20">
                     <div className="text-gray-300 group-hover:text-primary transition-colors duration-200 mb-3">
-                      <i className="fa-solid fa-cloud-arrow-up text-4xl"></i>
+                      <CloudUpload className="h-9 w-9" />
                     </div>
                     <p className="text-[13px] text-gray-400 mb-3">Click to browse — multiple files allowed</p>
-                    <span className="inline-block bg-dark group-hover:bg-primary text-white text-[13px] font-semibold px-5 py-2 rounded-[10px] transition-colors duration-200">
+                    <span className="inline-block rounded-full bg-primary px-5 py-2 text-sm font-semibold text-white transition group-hover:brightness-95">
                       Browse files
                     </span>
                   </div>
                 </label>
 
                 {/* File Preview */}
-                <div className="border border-gray-100 rounded-[15px] bg-gray-50/50 overflow-hidden" style={{ minHeight: '90px' }}>
+                <div className="border border-gray-100 rounded-2xl bg-gray-50/50 overflow-hidden" style={{ minHeight: '90px' }}>
                   {uploadedFiles.length > 0 ? (
                     <div className="p-3 grid grid-cols-3 gap-2">
                       {uploadedFiles.map((file, idx) => (
                         <div key={idx} className="relative group/thumb">
                           {file.type.startsWith('image/') ? (
                             <button type="button" onClick={() => setViewingFileUrl(URL.createObjectURL(file))}
-                              className="w-full aspect-square rounded-[10px] overflow-hidden border border-gray-100 bg-white block">
+                              className="w-full aspect-square rounded-lg overflow-hidden border border-gray-100 bg-white block">
                               <img src={URL.createObjectURL(file)} alt={file.name}
                                 className="w-full h-full object-cover hover:scale-105 transition-transform duration-200" />
                             </button>
                           ) : (
-                            <div className="w-full aspect-square rounded-[10px] border border-gray-100 bg-white flex flex-col items-center justify-center gap-1 px-1">
-                              <i className="fa-solid fa-file-pdf text-red-400 text-xl"></i>
+                            <div className="w-full aspect-square rounded-lg border border-gray-100 bg-white flex flex-col items-center justify-center gap-1 px-1">
+                              <FileText className="h-5 w-5 text-red-400" />
                               <span className="text-[9px] text-gray-400 text-center truncate w-full px-1 leading-tight">{file.name}</span>
                             </div>
                           )}
@@ -1200,21 +1180,21 @@ export default function OrderMedicinesClient({ audienceSlug }: { audienceSlug?: 
                               if (updated.length === 0) setUploadComplete(false);
                             }}
                             className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-white rounded-full border border-gray-200 shadow-sm flex items-center justify-center text-gray-400 hover:text-red-500 transition opacity-0 group-hover/thumb:opacity-100">
-                            <i className="fa-solid fa-xmark text-[9px]"></i>
+                            <X className="h-3 w-3" />
                           </button>
                         </div>
                       ))}
                     </div>
                   ) : (
                     <div className="flex flex-col items-center justify-center text-center px-4 py-6 h-full">
-                      <i className="fa-regular fa-images text-3xl text-gray-200 mb-2"></i>
+                      <Images className="h-8 w-8 text-gray-200 mb-2" />
                       <span className="text-gray-300 text-[11px]">Uploaded files appear here</span>
                     </div>
                   )}
                 </div>
 
-                <div className="mt-4 flex items-start gap-3 p-3 bg-gray-50 rounded-[12px]">
-                  <i className="fa-solid fa-circle-info text-gray-400 mt-0.5 text-sm flex-shrink-0"></i>
+                <div className="mt-4 flex items-start gap-3 p-3 bg-gray-50 rounded-xl">
+                  <Info className="h-4 w-4 text-gray-400 mt-0.5 flex-shrink-0" />
                   <p className="text-[12px] text-gray-500 leading-relaxed">Always upload a clean, legible copy for faster verification.</p>
                 </div>
               </div>
@@ -1222,9 +1202,9 @@ export default function OrderMedicinesClient({ audienceSlug }: { audienceSlug?: 
             </div>
 
             {/* ── Customer Validation Form ── */}
-            <div className="ca-anim ca-up bg-white rounded-[15px] border border-gray-100 p-8 md:p-12 shadow-sm">
-              <div className="mb-8">
-                <h2 className="text-2xl font-semibold text-gray-900 mb-1">Customer Information</h2>
+            <div className="ca-anim ca-up rounded-3xl border border-gray-200 bg-white p-6 md:p-8">
+              <div className="mb-6">
+                <h2 className="font-display text-2xl font-semibold text-black mb-1">Customer Information</h2>
                 <p className="text-gray-400 text-[13px]">Please provide accurate information so our pharmacists can process your order.</p>
               </div>
 
@@ -1232,42 +1212,41 @@ export default function OrderMedicinesClient({ audienceSlug }: { audienceSlug?: 
                 {/* Patient full name + Upload valid ID — side by side */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
                   <div className="space-y-2">
-                    <label className="text-[14px] font-semibold text-gray-700">Patient Full Name</label>
+                    <label className="text-sm font-semibold text-gray-800">Patient Full Name</label>
                     <input type="text" placeholder="Full name as shown on the prescription"
                       required
                       value={formData.patientName}
                       onChange={e => setFormData(prev => ({ ...prev, patientName: e.target.value }))}
-                      className="w-full bg-gray-50 border-none rounded-[15px] px-6 py-3.5 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition placeholder-gray-300" />
+                      className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-[14px] text-gray-800 placeholder:text-gray-400 transition focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20" />
                   </div>
 
                   {/* Upload valid ID of the patient */}
                   <div className="space-y-2">
-                    <label className="text-[14px] font-semibold text-gray-700">Upload valid ID of the patient</label>
+                    <label className="text-sm font-semibold text-gray-800">Upload valid ID of the patient</label>
                     <p className="text-[12px] text-gray-400 leading-relaxed">
                       Upload a valid government-issued ID of the patient. This helps us process your order faster and ensures the prescription is dispensed to the right person.
                     </p>
                     <div className="flex items-center gap-3 flex-wrap pt-1">
                       {!patientIdFile ? (
-                        <label className="cursor-pointer inline-flex items-center gap-2 hover:opacity-90 text-white text-[13px] font-semibold px-5 py-2.5 rounded-[10px] transition"
-                          style={{ background: 'linear-gradient(to right,#61A644,#1D9FDA)' }}>
+                        <label className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-white transition hover:brightness-95">
                           <input type="file" accept={ALLOWED_FILE_TYPES_ACCEPT} className="hidden" onChange={handlePatientIdChange} />
-                          <i className="fa-solid fa-upload text-[11px]"></i>
+                          <Upload className="h-3 w-3" />
                           Upload File
                         </label>
                       ) : (
-                        <div className="flex items-center gap-2 bg-gray-50 border border-gray-100 rounded-[10px] pl-1.5 pr-3 py-1.5">
+                        <div className="flex items-center gap-2 bg-gray-50 border border-gray-100 rounded-lg pl-1.5 pr-3 py-1.5">
                           {patientIdFile.type.startsWith('image/') ? (
                             <button type="button" onClick={() => setViewingFileUrl(URL.createObjectURL(patientIdFile))}
                               className="w-8 h-8 rounded-[7px] overflow-hidden border border-gray-100 flex-shrink-0">
                               <img src={URL.createObjectURL(patientIdFile)} alt={patientIdFile.name} className="w-full h-full object-cover" />
                             </button>
                           ) : (
-                            <i className="fa-solid fa-file-pdf text-red-400"></i>
+                            <FileText className="h-4 w-4 text-red-400" />
                           )}
                           <span className="text-[12px] text-gray-600 truncate max-w-[160px]">{patientIdFile.name}</span>
                           <button type="button" onClick={() => setPatientIdFile(null)}
                             className="text-gray-400 hover:text-red-500 transition">
-                            <i className="fa-solid fa-xmark text-[11px]"></i>
+                            <X className="h-3 w-3" />
                           </button>
                         </div>
                       )}
@@ -1277,7 +1256,7 @@ export default function OrderMedicinesClient({ audienceSlug }: { audienceSlug?: 
                 </div>
 
                 {/* Contact Person */}
-                <div className="border border-gray-100 rounded-[15px] p-6 bg-gray-50/40 space-y-4">
+                <div className="border border-gray-100 rounded-2xl p-6 bg-gray-50/40 space-y-4">
                   <h3 className="text-[15px] font-semibold text-gray-800">Contact Person</h3>
                   <label className="flex items-start gap-3 cursor-pointer">
                     <input type="checkbox"
@@ -1293,19 +1272,19 @@ export default function OrderMedicinesClient({ audienceSlug }: { audienceSlug?: 
                   {!contactSameAsPatient && (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 pt-2">
                       <div className="space-y-2">
-                        <label className="text-[14px] font-semibold text-gray-700">Contact Person's Full Name</label>
+                        <label className="text-sm font-semibold text-gray-800">Contact Person's Full Name</label>
                         <input type="text" placeholder="Person we should contact"
                           required={!contactSameAsPatient}
                           value={formData.contactName}
                           onChange={e => setFormData(prev => ({ ...prev, contactName: e.target.value }))}
-                          className="w-full bg-white border-none rounded-[15px] px-6 py-3.5 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition placeholder-gray-300" />
+                          className="w-full bg-white border-none rounded-2xl px-6 py-3.5 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition placeholder-gray-300" />
                       </div>
                       <div className="space-y-2">
-                        <label className="text-[14px] font-semibold text-gray-700">Relationship to Patient</label>
+                        <label className="text-sm font-semibold text-gray-800">Relationship to Patient</label>
                         <select
                           value={formData.contactRelationship}
                           onChange={e => setFormData(prev => ({ ...prev, contactRelationship: e.target.value }))}
-                          className="w-full bg-white border-none rounded-[15px] px-6 py-3.5 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition">
+                          className="w-full bg-white border-none rounded-2xl px-6 py-3.5 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition">
                           <option value="">Select relationship (optional)</option>
                           <option value="Family member">Family member</option>
                           <option value="Caregiver">Caregiver</option>
@@ -1322,32 +1301,32 @@ export default function OrderMedicinesClient({ audienceSlug }: { audienceSlug?: 
 
 
                 <div className="mb-8">
-                  <h2 className="text-2xl font-semibold text-gray-900 mb-1">Contact & Delivery</h2>
+                  <h2 className="font-display text-2xl font-semibold text-black mb-1">Contact & Delivery</h2>
                 </div>
 
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
                   <div className="space-y-2">
-                    <label className="text-[14px] font-semibold text-gray-700">Email Address</label>
+                    <label className="text-sm font-semibold text-gray-800">Email Address</label>
                     <input type="email" placeholder="example@domain.com"
                       required
                       value={formData.email}
                       onChange={e => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                      className="w-full bg-gray-50 border-none rounded-[15px] px-6 py-3.5 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition placeholder-gray-300" />
+                      className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-[14px] text-gray-800 placeholder:text-gray-400 transition focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20" />
                   </div>
 
                   {/* Age — right of Email, same size as the other fields */}
                   <div className="space-y-2" ref={ageDropdownRef}>
-                    <label className="text-[14px] font-semibold text-gray-700">Age</label>
+                    <label className="text-sm font-semibold text-gray-800">Age</label>
                     <div className="relative">
                       <button type="button"
                         onClick={() => setAgeDropdownOpen(o => !o)}
-                        className="w-full flex items-center justify-between bg-gray-50 rounded-[15px] px-6 py-3.5 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition cursor-pointer">
+                        className="w-full flex items-center justify-between bg-gray-50 rounded-2xl px-6 py-3.5 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition cursor-pointer">
                         <span className={formData.age ? 'text-gray-700' : 'text-gray-300'}>{formData.age || 'Age'}</span>
-                        <i className="fa-solid fa-chevron-down text-[10px] text-gray-400"></i>
+                        <ChevronDown className="h-3 w-3 text-gray-400" />
                       </button>
                       {ageDropdownOpen && (
-                        <div className="absolute top-full left-0 mt-1 w-full bg-white rounded-[12px] shadow-xl border border-gray-100 z-[60] overflow-hidden">
+                        <div className="absolute top-full left-0 mt-1 w-full bg-white rounded-xl shadow-xl border border-gray-100 z-[60] overflow-hidden">
                           <div className="max-h-48 overflow-y-auto">
                             {Array.from({ length: 63 }, (_, i) => i + 18).map(age => (
                               <button key={age} type="button"
@@ -1364,13 +1343,13 @@ export default function OrderMedicinesClient({ audienceSlug }: { audienceSlug?: 
 
                   {/* Phone number — under Email */}
                   <div className="space-y-2">
-                    <label className="text-[14px] font-semibold text-gray-700">Phone Number</label>
-                    <div className="relative flex items-center bg-gray-50 rounded-[15px] overflow-visible focus-within:ring-2 focus-within:ring-primary/20 transition">
+                    <label className="text-sm font-semibold text-gray-800">Phone Number</label>
+                    <div className="relative flex items-center bg-gray-50 rounded-2xl overflow-visible focus-within:ring-2 focus-within:ring-primary/20 transition">
                       <button type="button" onClick={() => setPhoneCountryOpen(o => !o)}
                         className="flex items-center gap-1.5 pl-4 pr-2 py-3.5 shrink-0 border-r border-gray-200 text-[13px] text-gray-700 hover:bg-gray-100 rounded-l-[15px] transition">
                         <span>{phoneCountry.flag}</span>
                         <span className="font-semibold text-gray-600">{phoneCountry.code}</span>
-                        <i className="fa-solid fa-chevron-down text-[9px] text-gray-400"></i>
+                        <ChevronDown className="h-3 w-3 text-gray-400" />
                       </button>
                       <input ref={phoneInputRef} type="tel" required
                         placeholder={(() => { const d = '9123456789'; let i = 0; return phoneCountry.mask.replace(/#/g, () => d[i++ % d.length]); })()}
@@ -1378,7 +1357,7 @@ export default function OrderMedicinesClient({ audienceSlug }: { audienceSlug?: 
                         onChange={handlePhoneChange}
                         className="flex-1 min-w-0 bg-transparent px-4 py-3.5 text-[13px] text-gray-700 outline-none placeholder-gray-300" />
                       {phoneCountryOpen && (
-                        <div className="absolute top-full left-0 mt-1 w-72 bg-white rounded-[12px] shadow-xl border border-gray-100 z-[60] overflow-hidden" onClick={e => e.stopPropagation()}>
+                        <div className="absolute top-full left-0 mt-1 w-72 bg-white rounded-xl shadow-xl border border-gray-100 z-[60] overflow-hidden" onClick={e => e.stopPropagation()}>
                           <div className="p-2 border-b border-gray-100">
                             <input autoFocus type="text" placeholder="Search country..."
                               value={phoneSearch} onChange={e => setPhoneSearch(e.target.value)}
@@ -1404,18 +1383,18 @@ export default function OrderMedicinesClient({ audienceSlug }: { audienceSlug?: 
 
                   {/* Delivery address — under Age */}
                   <div className="space-y-2">
-                    <label className="text-[14px] font-semibold text-gray-700">Delivery Address</label>
+                    <label className="text-sm font-semibold text-gray-800">Delivery Address</label>
                     <input type="text" placeholder="Complete address for courier delivery"
                       required
                       value={formData.address}
                       onChange={e => setFormData(prev => ({ ...prev, address: e.target.value }))}
-                      className="w-full bg-gray-50 border-none rounded-[15px] px-6 py-3.5 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition placeholder-gray-300" />
+                      className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-[14px] text-gray-800 placeholder:text-gray-400 transition focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20" />
                   </div>
                 </div>
 
                 {/* After-submit note */}
                 <div className="flex items-start gap-2 text-[12px] text-gray-400 pt-2">
-                  <i className="fa-solid fa-circle-info mt-0.5 flex-shrink-0"></i>
+                  <Info className="h-4 w-4 mt-0.5 flex-shrink-0" />
                   <span>Our pharmacists will contact you on the mobile number provided.</span>
                 </div>
 
@@ -1471,12 +1450,11 @@ export default function OrderMedicinesClient({ audienceSlug }: { audienceSlug?: 
                           setPatientIdFile(null);
                           setContactSameAsPatient(false);
                         }}
-                        className="shadow-none px-5 py-2 rounded-[15px] text-[13px] font-semibold text-gray-600 border border-gray-200 hover:bg-gray-50 transition">
+                        className="rounded-full border-2 border-black px-7 py-3 text-sm font-semibold text-black transition hover:bg-black/5">
                         Cancel
                       </button>
                       <button type="submit" disabled={submitState === 'sending' || (orderTurnstile.enabled && !orderTurnstile.token)}
-                        className="shadow-none hover:opacity-90 text-white font-bold py-2 px-6 rounded-[15px] text-[13px] transition disabled:opacity-50"
-                        style={{ background: 'linear-gradient(to right,#61A644,#1D9FDA)' }}>
+                        className="rounded-full border-2 border-primary bg-primary px-7 py-3 text-sm font-semibold text-white transition hover:brightness-95 disabled:opacity-50">
                         {submitState === 'sending' ? 'Submitting...' : 'Submit'}
                       </button>
                     </div>
@@ -1485,8 +1463,8 @@ export default function OrderMedicinesClient({ audienceSlug }: { audienceSlug?: 
               </form>
 
               {/* Medical Disclaimer */}
-              <div className="mt-8 p-5 bg-amber-50 border border-amber-100 rounded-[15px] flex items-start gap-3">
-                <i className="fa-solid fa-triangle-exclamation text-amber-500 mt-0.5 flex-shrink-0"></i>
+              <div className="mt-8 p-5 bg-amber-50 border border-amber-100 rounded-2xl flex items-start gap-3">
+                <TriangleAlert className="h-4 w-4 text-amber-500 mt-0.5 flex-shrink-0" />
                 <p className="text-[11px] text-amber-800 leading-relaxed">
                   <span className="font-bold">Medical Disclaimer: </span>
                   Getmeds dispenses prescription medicines only upon receipt of a valid prescription from a licensed physician. This service does not replace professional medical advice, diagnosis, or treatment. Always consult your healthcare provider for any medical concerns.
@@ -1501,14 +1479,14 @@ export default function OrderMedicinesClient({ audienceSlug }: { audienceSlug?: 
                 Message spans full width below, and the submit button sits bottom-right.
                 Hospitals get their own procurement form below instead. */}
             {isProfessionalUserType && !isPartnerUserType && (
-              <div className="ca-anim ca-up bg-white rounded-[15px] border border-gray-100 p-6 md:p-10 shadow-sm">
+              <div className="ca-anim ca-up rounded-3xl border border-gray-200 bg-white p-6 md:p-8">
                 <div className="flex items-start justify-between flex-wrap gap-3 mb-6">
                   <div>
-                    <h2 className="text-xl font-semibold text-gray-900 mb-1">Send an Inquiry</h2>
+                    <h2 className="font-display text-xl font-semibold text-black mb-1">Send an Inquiry</h2>
                     <p className="text-gray-400 text-[13px]">Submit your details and our team will follow up with a formal response.</p>
                   </div>
                   <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-blue-50 text-primary border border-blue-100 shrink-0">
-                    <i className="fa-solid fa-user-tag text-[9px]"></i>
+                    <UserRound className="h-3 w-3" />
                     {USER_TYPE_LABELS[orderUserType]}
                   </div>
                 </div>
@@ -1516,41 +1494,41 @@ export default function OrderMedicinesClient({ audienceSlug }: { audienceSlug?: 
                 <form onSubmit={handleInquirySubmit} className="space-y-6">
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-6">
                     <div className="space-y-2">
-                      <label className="text-[13px] font-semibold text-gray-700">Full Name</label>
+                      <label className="text-sm font-semibold text-gray-800">Full Name</label>
                       <input type="text" required placeholder="John Doe"
                         value={inquiryFormData.name}
                         onChange={e => setInquiryFormData(prev => ({ ...prev, name: e.target.value }))}
-                        className="w-full bg-gray-50 border-none rounded-[12px] px-4 py-3 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition placeholder-gray-300" />
+                        className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-[14px] text-gray-800 placeholder:text-gray-400 transition focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20" />
                     </div>
 
                     <div className="space-y-2">
-                      <label className="text-[13px] font-semibold text-gray-700">Email Address</label>
+                      <label className="text-sm font-semibold text-gray-800">Email Address</label>
                       <input type="email" required placeholder="example@domain.com"
                         value={inquiryFormData.email}
                         onChange={e => setInquiryFormData(prev => ({ ...prev, email: e.target.value }))}
-                        className="w-full bg-gray-50 border-none rounded-[12px] px-4 py-3 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition placeholder-gray-300" />
+                        className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-[14px] text-gray-800 placeholder:text-gray-400 transition focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20" />
                     </div>
 
                     <div className="space-y-2">
-                      <label className="text-[13px] font-semibold text-gray-700">Phone Number</label>
+                      <label className="text-sm font-semibold text-gray-800">Phone Number</label>
                       <input type="tel" required placeholder="+63 900 000 0000"
                         inputMode="numeric"
                         value={inquiryFormData.phone}
                         onChange={e => setInquiryFormData(prev => ({ ...prev, phone: e.target.value.replace(/[^\d+\s\-()]/g, '') }))}
-                        className="w-full bg-gray-50 border-none rounded-[12px] px-4 py-3 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition placeholder-gray-300" />
+                        className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-[14px] text-gray-800 placeholder:text-gray-400 transition focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20" />
                     </div>
 
                     <div className="space-y-2" ref={inquiryAgeDropdownRef}>
-                      <label className="text-[13px] font-semibold text-gray-700">Age</label>
+                      <label className="text-sm font-semibold text-gray-800">Age</label>
                       <div className="relative">
                         <button type="button"
                           onClick={() => setInquiryAgeDropdownOpen(o => !o)}
-                          className="w-full flex items-center justify-between bg-gray-50 rounded-[12px] px-4 py-3 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition cursor-pointer">
+                          className="flex w-full cursor-pointer items-center justify-between rounded-xl border border-gray-200 bg-white px-4 py-3 text-[14px] text-gray-800 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20">
                           <span className={inquiryFormData.age ? 'text-gray-700' : 'text-gray-300'}>{inquiryFormData.age || 'Age'}</span>
-                          <i className="fa-solid fa-chevron-down text-[10px] text-gray-400"></i>
+                          <ChevronDown className="h-3 w-3 text-gray-400" />
                         </button>
                         {inquiryAgeDropdownOpen && (
-                          <div className="absolute top-full left-0 mt-1 w-full bg-white rounded-[12px] shadow-xl border border-gray-100 z-[60] overflow-hidden">
+                          <div className="absolute top-full left-0 mt-1 w-full bg-white rounded-xl shadow-xl border border-gray-100 z-[60] overflow-hidden">
                             <div className="max-h-48 overflow-y-auto">
                               {Array.from({ length: 63 }, (_, i) => i + 18).map(age => (
                                 <button key={age} type="button"
@@ -1567,18 +1545,17 @@ export default function OrderMedicinesClient({ audienceSlug }: { audienceSlug?: 
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-[13px] font-semibold text-gray-700">Message</label>
+                    <label className="text-sm font-semibold text-gray-800">Message</label>
                     <textarea rows={3} placeholder="Tell us more about your requirements..."
                       value={inquiryFormData.message}
                       onChange={e => setInquiryFormData(prev => ({ ...prev, message: e.target.value }))}
-                      className="w-full bg-gray-50 border-none rounded-[12px] px-4 py-3 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition placeholder-gray-300 resize-none" />
+                      className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-[14px] text-gray-800 placeholder:text-gray-400 transition focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 resize-none" />
                   </div>
 
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <Turnstile turnstile={inquiryTurnstile} className="min-h-[65px] flex justify-start" />
                     <button type="submit" disabled={inquirySubmitState === 'sending' || (inquiryTurnstile.enabled && !inquiryTurnstile.token)}
-                      className="text-white font-bold py-3 px-10 rounded-[12px] transition-all duration-300 text-[13px] disabled:opacity-50 whitespace-nowrap"
-                      style={{ background: 'linear-gradient(to right, #61A644, #0D99FF)' }}>
+                      className="whitespace-nowrap rounded-full border-2 border-primary bg-primary px-8 py-3 text-sm font-semibold text-white transition hover:brightness-95 disabled:opacity-50">
                       {inquirySubmitState === 'sending'
                         ? 'Sending...'
                         : inquirySubmitState === 'error'
@@ -1598,16 +1575,15 @@ export default function OrderMedicinesClient({ audienceSlug }: { audienceSlug?: 
               <>
               {/* Onboarding steps — pharmacy partners only */}
               {isPharmacyUserType && (
-                <div className="ca-anim ca-up bg-white rounded-[15px] border border-gray-100 p-6 md:p-10 shadow-sm">
-                  <h2 className="text-xl font-semibold text-gray-900 mb-1.5">How Partnership Works</h2>
+                <div className="ca-anim ca-up rounded-3xl border border-gray-200 bg-white p-6 md:p-8">
+                  <h2 className="font-display text-xl font-semibold text-black mb-1.5">How Partnership Works</h2>
                   <p className="text-gray-900 text-[15px] leading-relaxed mb-6">
                     We are dedicated to providing all documents needed, competitive pricing, and fast dispatch and distribution &mdash; from onboarding to your first order.
                   </p>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     {PARTNERSHIP_STEPS.map((step, i) => (
-                      <div key={step.title} className="rounded-[14px] bg-gray-50 p-5">
-                        <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-[13px] font-bold mb-3"
-                          style={{ background: 'linear-gradient(to right,#61A644,#1D9FDA)' }}>
+                      <div key={step.title} className="rounded-2xl bg-gray-50 p-5">
+                        <div className="mb-3 flex h-8 w-8 items-center justify-center rounded-full bg-[#1D9FDA] text-[13px] font-bold text-white">
                           {i + 1}
                         </div>
                         <h3 className="text-[14px] font-semibold text-dark mb-1">{step.title}</h3>
@@ -1618,12 +1594,12 @@ export default function OrderMedicinesClient({ audienceSlug }: { audienceSlug?: 
                 </div>
               )}
 
-              <div className="ca-anim ca-up bg-white rounded-[15px] border border-gray-100 p-6 md:p-10 shadow-sm">
+              <div className="ca-anim ca-up rounded-3xl border border-gray-200 bg-white p-6 md:p-8">
                 <div className="mb-6">
                   <div className="flex items-start justify-between flex-wrap gap-3 mb-1">
-                    <h2 className="text-xl font-semibold text-gray-900">{PARTNER_FORM.heading}</h2>
+                    <h2 className="font-display text-xl font-semibold text-black">{PARTNER_FORM.heading}</h2>
                     <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-blue-50 text-primary border border-blue-100 shrink-0">
-                      <i className={`fa-solid ${PARTNER_FORM.badgeIcon} text-[9px]`}></i>
+                      <PARTNER_FORM.BadgeIcon className="h-3 w-3" />
                       {PARTNER_FORM.badgeLabel}
                     </div>
                   </div>
@@ -1633,58 +1609,58 @@ export default function OrderMedicinesClient({ audienceSlug }: { audienceSlug?: 
                 <form onSubmit={handlePartnerSubmit} className="space-y-6">
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-6">
                     <div className="space-y-2">
-                      <label className="text-[13px] font-semibold text-gray-700">Full Name</label>
+                      <label className="text-sm font-semibold text-gray-800">Full Name</label>
                       <input type="text" required placeholder={PARTNER_FORM.namePlaceholder}
                         value={partnerFormData.name}
                         onChange={e => setPartnerFormData(prev => ({ ...prev, name: e.target.value }))}
-                        className="w-full bg-gray-50 border-none rounded-[12px] px-4 py-3 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition placeholder-gray-300" />
+                        className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-[14px] text-gray-800 placeholder:text-gray-400 transition focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20" />
                     </div>
 
                     <div className="space-y-2">
-                      <label className="text-[13px] font-semibold text-gray-700">{PARTNER_FORM.positionLabel}</label>
+                      <label className="text-sm font-semibold text-gray-800">{PARTNER_FORM.positionLabel}</label>
                       <input type="text" required placeholder={PARTNER_FORM.positionPlaceholder}
                         value={partnerFormData.position}
                         onChange={e => setPartnerFormData(prev => ({ ...prev, position: e.target.value }))}
-                        className="w-full bg-gray-50 border-none rounded-[12px] px-4 py-3 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition placeholder-gray-300" />
+                        className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-[14px] text-gray-800 placeholder:text-gray-400 transition focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20" />
                     </div>
 
                     {PARTNER_FORM.showPrcLicense && (
                       <div className="space-y-2">
-                        <label className="text-[13px] font-semibold text-gray-700">PRC License Number</label>
+                        <label className="text-sm font-semibold text-gray-800">PRC License Number</label>
                         <input type="text" required placeholder={PARTNER_FORM.prcPlaceholder}
                           inputMode="numeric"
                           value={partnerFormData.prcLicense}
                           onChange={e => setPartnerFormData(prev => ({ ...prev, prcLicense: e.target.value }))}
-                          className="w-full bg-gray-50 border-none rounded-[12px] px-4 py-3 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition placeholder-gray-300" />
+                          className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-[14px] text-gray-800 placeholder:text-gray-400 transition focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20" />
                       </div>
                     )}
 
                     <div className="space-y-2">
-                      <label className="text-[13px] font-semibold text-gray-700">{PARTNER_FORM.orgLabel}</label>
+                      <label className="text-sm font-semibold text-gray-800">{PARTNER_FORM.orgLabel}</label>
                       <input type="text" required placeholder={PARTNER_FORM.orgPlaceholder}
                         value={partnerFormData.institution}
                         onChange={e => setPartnerFormData(prev => ({ ...prev, institution: e.target.value }))}
-                        className="w-full bg-gray-50 border-none rounded-[12px] px-4 py-3 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition placeholder-gray-300" />
+                        className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-[14px] text-gray-800 placeholder:text-gray-400 transition focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20" />
                     </div>
 
                     <div className="space-y-2">
-                      <label className="text-[13px] font-semibold text-gray-700">Location / City</label>
+                      <label className="text-sm font-semibold text-gray-800">Location / City</label>
                       <input type="text" required placeholder={PARTNER_FORM.locationPlaceholder}
                         value={partnerFormData.location}
                         onChange={e => setPartnerFormData(prev => ({ ...prev, location: e.target.value }))}
-                        className="w-full bg-gray-50 border-none rounded-[12px] px-4 py-3 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition placeholder-gray-300" />
+                        className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-[14px] text-gray-800 placeholder:text-gray-400 transition focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20" />
                     </div>
 
                     <div className="space-y-2">
-                      <label className="text-[13px] font-semibold text-gray-700">{PARTNER_FORM.emailLabel}</label>
+                      <label className="text-sm font-semibold text-gray-800">{PARTNER_FORM.emailLabel}</label>
                       <input type="email" required placeholder={PARTNER_FORM.emailPlaceholder}
                         value={partnerFormData.email}
                         onChange={e => setPartnerFormData(prev => ({ ...prev, email: e.target.value }))}
-                        className="w-full bg-gray-50 border-none rounded-[12px] px-4 py-3 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition placeholder-gray-300" />
+                        className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-[14px] text-gray-800 placeholder:text-gray-400 transition focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20" />
                     </div>
 
                     <div className="space-y-2">
-                      <label htmlFor="hospital-phone" className="text-[13px] font-semibold text-gray-700">Phone / Mobile Number</label>
+                      <label htmlFor="hospital-phone" className="text-sm font-semibold text-gray-800">Phone / Mobile Number</label>
                       <div className="gcb-phone-wrap">
                         <input type="tel" id="hospital-phone" name="phone" required
                           ref={partnerPhoneRef}
@@ -1692,7 +1668,7 @@ export default function OrderMedicinesClient({ audienceSlug }: { audienceSlug?: 
                           autoComplete="tel"
                           inputMode="numeric"
                           onInput={() => { if (partnerPhoneError) setPartnerPhoneError(''); }}
-                          className="w-full bg-gray-50 border-none rounded-[12px] px-4 py-3 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition placeholder-gray-300" />
+                          className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-[14px] text-gray-800 placeholder:text-gray-400 transition focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20" />
                       </div>
                       {partnerPhoneError && (
                         <p className="text-[12px] text-red-500">{partnerPhoneError}</p>
@@ -1701,16 +1677,16 @@ export default function OrderMedicinesClient({ audienceSlug }: { audienceSlug?: 
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-[13px] font-semibold text-gray-700">Message</label>
+                    <label className="text-sm font-semibold text-gray-800">Message</label>
                     <textarea rows={3} placeholder={PARTNER_FORM.messagePlaceholder}
                       value={partnerFormData.message}
                       onChange={e => setPartnerFormData(prev => ({ ...prev, message: e.target.value }))}
-                      className="w-full bg-gray-50 border-none rounded-[12px] px-4 py-3 text-[13px] text-gray-700 outline-none focus:ring-2 focus:ring-primary/20 transition placeholder-gray-300 resize-none" />
+                      className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-[14px] text-gray-800 placeholder:text-gray-400 transition focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 resize-none" />
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-[13px] font-semibold text-gray-700">Consent</label>
-                    <label className="flex items-start gap-3 cursor-pointer bg-gray-50 rounded-[12px] px-4 py-3">
+                    <label className="text-sm font-semibold text-gray-800">Consent</label>
+                    <label className="flex items-start gap-3 cursor-pointer bg-gray-50 rounded-xl px-4 py-3">
                       <input type="checkbox" required
                         checked={partnerFormData.consent}
                         onChange={e => setPartnerFormData(prev => ({ ...prev, consent: e.target.checked }))}
@@ -1729,8 +1705,7 @@ export default function OrderMedicinesClient({ audienceSlug }: { audienceSlug?: 
                       : <div />}
                     <button type="submit"
                       disabled={partnerSubmitState === 'sending' || (partnerTurnstile.enabled && !partnerTurnstile.token)}
-                      className="text-white font-bold py-3 px-10 rounded-[12px] transition-all duration-300 text-[13px] disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap shrink-0"
-                      style={{ background: 'linear-gradient(to right, #61A644, #0D99FF)' }}>
+                      className="shrink-0 whitespace-nowrap rounded-full border-2 border-primary bg-primary px-8 py-3 text-sm font-semibold text-white transition hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-50">
                       {partnerSubmitState === 'sending'
                         ? 'Sending...'
                         : partnerSubmitState === 'error'
@@ -1743,10 +1718,10 @@ export default function OrderMedicinesClient({ audienceSlug }: { audienceSlug?: 
 
               {/* Direct line for emergency/critical-care procurement, which can't wait on
                   the normal inquiry turnaround. */}
-              <div className="ca-anim ca-up bg-white rounded-[15px] border border-gray-100 p-6 md:p-8 shadow-sm">
+              <div className="ca-anim ca-up bg-white rounded-2xl border border-gray-100 p-6 md:p-8 shadow-sm">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 items-start">
                   <div>
-                    <h3 className="text-[17px] font-semibold text-gray-900 mb-1.5">{PARTNER_FORM.helpHeading}</h3>
+                    <h3 className="font-display text-[17px] font-semibold text-black mb-1.5">{PARTNER_FORM.helpHeading}</h3>
                     <p className="text-gray-900 text-[15px] leading-relaxed">{PARTNER_FORM.helpBlurb}</p>
                   </div>
                   <div>
@@ -1756,7 +1731,7 @@ export default function OrderMedicinesClient({ audienceSlug }: { audienceSlug?: 
                         <a key={item.label} href={item.href}
                           className="group flex items-center gap-2.5 text-[13px] font-semibold text-gray-700 hover:text-primary transition">
                           <span className="w-7 h-7 rounded-full bg-blue-50 flex items-center justify-center shrink-0">
-                            <i className={`fa-solid ${item.icon} text-[10px] text-primary`}></i>
+                            <item.Icon className="h-3 w-3 text-primary" />
                           </span>
                           <span className="truncate">{item.label}</span>
                         </a>
@@ -1776,16 +1751,15 @@ export default function OrderMedicinesClient({ audienceSlug }: { audienceSlug?: 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
 
                 {/* Need Assistance */}
-                <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col">
+                <div className="rounded-3xl border border-gray-200 bg-white p-6 flex flex-col">
                   <p className="text-[11px] font-semibold uppercase tracking-widest text-gray-400 mb-1.5">Need Assistance?</p>
-                  <p className="text-[15px] font-semibold mb-4"
-                    style={{ background: 'linear-gradient(to right,#61A644,#1D9FDA)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+                  <p className="text-[15px] font-semibold mb-4 text-primary">
                     Chat with our pharmacist
                   </p>
                   <div className="mt-auto space-y-3">
                     <a href="tel:+639190769105" className="flex items-center gap-3 group">
-                      <div className="w-9 h-9 rounded-[10px] bg-gray-50 flex items-center justify-center text-dark text-xs group-hover:bg-primary group-hover:text-white transition shadow-sm flex-shrink-0">
-                        <i className="fa-solid fa-phone"></i>
+                      <div className="w-9 h-9 rounded-full bg-gray-50 flex items-center justify-center text-dark text-xs group-hover:bg-primary group-hover:text-white transition shadow-sm flex-shrink-0">
+                        <Phone className="h-4 w-4" />
                       </div>
                       <div>
                         <p className="text-[13px] text-gray-400 font-medium">Customer Support</p>
@@ -1793,8 +1767,8 @@ export default function OrderMedicinesClient({ audienceSlug }: { audienceSlug?: 
                       </div>
                     </a>
                     <a href="mailto:info@getmeds.ph" className="flex items-center gap-3 group">
-                      <div className="w-9 h-9 rounded-[10px] bg-gray-50 flex items-center justify-center text-dark text-xs group-hover:bg-primary group-hover:text-white transition shadow-sm flex-shrink-0">
-                        <i className="fa-solid fa-envelope"></i>
+                      <div className="w-9 h-9 rounded-full bg-gray-50 flex items-center justify-center text-dark text-xs group-hover:bg-primary group-hover:text-white transition shadow-sm flex-shrink-0">
+                        <Mail className="h-4 w-4" />
                       </div>
                       <div>
                         <p className="text-[13px] text-gray-400 font-medium">Email Address</p>
@@ -1805,18 +1779,18 @@ export default function OrderMedicinesClient({ audienceSlug }: { audienceSlug?: 
                 </div>
 
                 {/* Secure Prescription Storage */}
-                <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col">
-                  <div className="w-11 h-11 rounded-2xl bg-green-50 flex items-center justify-center text-green-600 shadow-sm mb-4">
-                    <i className="fa-solid fa-lock text-lg"></i>
+                <div className="rounded-3xl border border-gray-200 bg-white p-6 flex flex-col">
+                  <div className="w-11 h-11 rounded-full bg-[#1D9FDA] flex items-center justify-center text-white mb-4">
+                    <Lock className="h-5 w-5" />
                   </div>
                   <h3 className="text-[15px] font-semibold text-dark mb-1">Secure prescription storage</h3>
                   <p className="text-[13px] text-gray-400 leading-relaxed">All uploads are encrypted and handled with strict confidentiality.</p>
                 </div>
 
                 {/* Patient Privacy Commitment */}
-                <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col">
-                  <div className="w-11 h-11 rounded-2xl bg-green-50 flex items-center justify-center text-green-600 shadow-sm mb-4">
-                    <i className="fa-solid fa-shield-halved text-lg"></i>
+                <div className="rounded-3xl border border-gray-200 bg-white p-6 flex flex-col">
+                  <div className="w-11 h-11 rounded-full bg-[#1D9FDA] flex items-center justify-center text-white mb-4">
+                    <ShieldCheck className="h-5 w-5" />
                   </div>
                   <h3 className="text-[15px] font-semibold text-dark mb-1">Patient Privacy Commitment</h3>
                   <p className="text-[13px] text-gray-400 leading-relaxed">
@@ -1829,9 +1803,9 @@ export default function OrderMedicinesClient({ audienceSlug }: { audienceSlug?: 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
                 {/* Licensed Pharmacy Operations */}
-                <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex items-start gap-4">
-                  <div className="w-11 h-11 rounded-[12px] bg-green-50 flex items-center justify-center text-green-600 flex-shrink-0">
-                    <i className="fa-solid fa-certificate text-lg"></i>
+                <div className="rounded-3xl border border-gray-200 bg-white p-6 flex items-start gap-4">
+                  <div className="w-11 h-11 rounded-full bg-[#1D9FDA] flex items-center justify-center text-white flex-shrink-0">
+                    <BadgeCheck className="h-5 w-5" />
                   </div>
                   <div>
                     <h3 className="text-[15px] font-semibold text-dark mb-1">Licensed Pharmacy Operations</h3>
@@ -1841,9 +1815,9 @@ export default function OrderMedicinesClient({ audienceSlug }: { audienceSlug?: 
                 </div>
 
                 {/* Pharmacist-Verified Dispensing */}
-                <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex items-start gap-4">
-                  <div className="w-11 h-11 rounded-[12px] bg-green-50 flex items-center justify-center text-green-600 flex-shrink-0">
-                    <i className="fa-solid fa-user-doctor text-lg"></i>
+                <div className="rounded-3xl border border-gray-200 bg-white p-6 flex items-start gap-4">
+                  <div className="w-11 h-11 rounded-full bg-[#1D9FDA] flex items-center justify-center text-white flex-shrink-0">
+                    <Stethoscope className="h-5 w-5" />
                   </div>
                   <div>
                     <h3 className="text-[15px] font-semibold text-dark mb-1">Pharmacist-Verified Dispensing</h3>
@@ -1866,12 +1840,12 @@ export default function OrderMedicinesClient({ audienceSlug }: { audienceSlug?: 
                       so the opening credential card sits beside it and the remaining
                       six flow underneath without leaving a hole in the layout. */}
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <h2 className={`${PARTNER_TRUST.credentialsTitleSpan} self-center p-6 text-2xl md:text-[26px] font-semibold text-gray-900 leading-snug`} style={{ textWrap: "balance" }}>
+                    <h2 className={`${PARTNER_TRUST.credentialsTitleSpan} self-center p-6 font-display text-2xl md:text-[26px] font-semibold text-black leading-snug`} style={{ textWrap: "balance" }}>
                       {PARTNER_TRUST.credentialsHeading}
                     </h2>
                     {PARTNER_TRUST.credentials.map(item => (
                       <div key={item.title} className="rounded-2xl p-6 flex flex-col">
-                        <item.Icon className="w-9 h-9 text-green-600 mb-4" strokeWidth={1.5} aria-hidden="true" />
+                        <item.Icon className="w-9 h-9 text-primary mb-4" strokeWidth={1.5} aria-hidden="true" />
                         <h3 className="text-[15px] font-semibold text-dark mb-1">{item.title}</h3>
                         <p className="text-[13px] text-gray-400 leading-relaxed">{item.desc}</p>
                       </div>
@@ -1880,14 +1854,14 @@ export default function OrderMedicinesClient({ audienceSlug }: { audienceSlug?: 
                 </div>
 
                 {/* Therapeutic areas */}
-                <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-gray-100">
-                  <h2 className="text-xl font-semibold text-gray-900 mb-1.5">Our Therapeutic Areas</h2>
+                <div className="rounded-3xl border border-gray-200 bg-white p-6 md:p-8">
+                  <h2 className="font-display text-xl font-semibold text-black mb-1.5">Our Therapeutic Areas</h2>
                   <p className="text-[15px] text-gray-900 leading-relaxed mb-6">{PARTNER_TRUST.therapeuticIntro}</p>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {THERAPEUTIC_AREAS.map(area => (
-                      <div key={area.name} className="flex items-start gap-3.5 rounded-[14px] bg-gray-50 p-4">
-                        <div className="w-9 h-9 rounded-[10px] bg-white flex items-center justify-center text-green-600 shadow-sm flex-shrink-0">
-                          <i className={`fa-solid ${area.icon} text-[13px]`}></i>
+                      <div key={area.name} className="flex items-start gap-3.5 rounded-2xl bg-gray-50 p-4">
+                        <div className="w-9 h-9 rounded-full bg-[#1D9FDA] flex items-center justify-center text-white flex-shrink-0">
+                          <area.Icon className="h-4 w-4" />
                         </div>
                         <div>
                           <h3 className="text-[14px] font-semibold text-dark mb-0.5">{area.name}</h3>
@@ -1903,24 +1877,24 @@ export default function OrderMedicinesClient({ audienceSlug }: { audienceSlug?: 
 
                 {/* Areas We Serve — pharmacy partners only */}
                 {isPharmacyUserType && (
-                  <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-gray-100">
-                    <h2 className="text-xl font-semibold text-gray-900 mb-1.5">Areas We Serve</h2>
+                  <div className="rounded-3xl border border-gray-200 bg-white p-6 md:p-8">
+                    <h2 className="font-display text-xl font-semibold text-black mb-1.5">Areas We Serve</h2>
                     <p className="text-[15px] text-gray-900 leading-relaxed">{PARTNER_TRUST.areasWeServe}</p>
                   </div>
                 )}
 
                 {/* Compassionate Special Permit — hospital and doctor partners */}
                 {PARTNER_TRUST.showCsp && (
-                <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-gray-100">
-                  <h2 className="text-xl font-semibold text-gray-900 mb-1.5">Compassionate Special Permit (CSP)</h2>
+                <div className="rounded-3xl border border-gray-200 bg-white p-6 md:p-8">
+                  <h2 className="font-display text-xl font-semibold text-black mb-1.5">Compassionate Special Permit (CSP)</h2>
                   <p className="text-[15px] text-gray-900 leading-relaxed">{PARTNER_TRUST.cspIntro}</p>
 
                   <p className="text-[13px] font-semibold text-dark mt-6 mb-3">Getmeds coordinates CSP applications for both:</p>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {PARTNER_TRUST.cspUseTypes.map(use => (
-                      <div key={use.name} className="flex items-start gap-3.5 rounded-[14px] bg-gray-50 p-4">
-                        <div className="w-9 h-9 rounded-[10px] bg-white flex items-center justify-center text-green-600 shadow-sm flex-shrink-0">
-                          <i className="fa-solid fa-check text-[13px]"></i>
+                      <div key={use.name} className="flex items-start gap-3.5 rounded-2xl bg-gray-50 p-4">
+                        <div className="w-9 h-9 rounded-full bg-[#1D9FDA] flex items-center justify-center text-white flex-shrink-0">
+                          <Check className="h-3.5 w-3.5" />
                         </div>
                         <div>
                           <h3 className="text-[14px] font-semibold text-dark mb-0.5">{use.name}</h3>
@@ -1936,7 +1910,7 @@ export default function OrderMedicinesClient({ audienceSlug }: { audienceSlug?: 
                       <ul className="space-y-2">
                         {PARTNER_TRUST.cspCommonUses.map(use => (
                           <li key={use} className="flex items-start gap-2.5 text-[14px] text-gray-600 leading-relaxed">
-                            <span className="w-1.5 h-1.5 rounded-full bg-green-600 mt-2 shrink-0" />
+                            <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0" />
                             {use}
                           </li>
                         ))}
@@ -1945,9 +1919,8 @@ export default function OrderMedicinesClient({ audienceSlug }: { audienceSlug?: 
                       <p className="text-[13px] font-semibold text-dark mt-6 mb-3">How it works:</p>
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         {PARTNER_TRUST.cspHowItWorks.map((step, i) => (
-                          <div key={step} className="rounded-[14px] bg-gray-50 p-4">
-                            <div className="w-7 h-7 rounded-full flex items-center justify-center text-white text-[12px] font-bold mb-2.5"
-                              style={{ background: 'linear-gradient(to right,#61A644,#1D9FDA)' }}>
+                          <div key={step} className="rounded-2xl bg-gray-50 p-4">
+                            <div className="mb-2.5 flex h-7 w-7 items-center justify-center rounded-full bg-[#1D9FDA] text-[12px] font-bold text-white">
                               {i + 1}
                             </div>
                             <p className="text-[12.5px] text-gray-500 leading-relaxed">{step}</p>
@@ -1961,8 +1934,8 @@ export default function OrderMedicinesClient({ audienceSlug }: { audienceSlug?: 
                     </p>
                   )}
 
-                  <div className="flex items-start gap-3 rounded-[14px] bg-amber-50 border border-amber-100 p-4 mt-6">
-                    <i className="fa-solid fa-circle-info text-amber-500 text-[13px] mt-0.5 flex-shrink-0"></i>
+                  <div className="flex items-start gap-3 rounded-2xl bg-amber-50 border border-amber-100 p-4 mt-6">
+                    <Info className="h-3.5 w-3.5 text-amber-500 mt-0.5 flex-shrink-0" />
                     <p className="text-[12.5px] text-amber-900 leading-relaxed">
                       <span className="font-semibold">Note:</span> {PARTNER_TRUST.cspNote}
                     </p>
@@ -1972,15 +1945,15 @@ export default function OrderMedicinesClient({ audienceSlug }: { audienceSlug?: 
 
                 {/* Adverse event reporting — doctors only */}
                 {isDoctorUserType && (
-                  <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-gray-100">
+                  <div className="rounded-3xl border border-gray-200 bg-white p-6 md:p-8">
                     <div className="flex items-start gap-3 mb-1.5">
                       <TriangleAlert className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" strokeWidth={1.75} aria-hidden="true" />
-                      <h2 className="text-xl font-semibold text-gray-900">Reporting an Adverse Event?</h2>
+                      <h2 className="font-display text-xl font-semibold text-black">Reporting an Adverse Event?</h2>
                     </div>
                     <p className="text-[15px] text-gray-900 leading-relaxed mb-5">
                       If you need to report a suspected adverse drug reaction or product quality complaint, please contact:
                     </p>
-                    <div className="rounded-[14px] bg-gray-50 p-5">
+                    <div className="rounded-2xl bg-gray-50 p-5">
                       <p className="text-[15px] font-semibold text-dark">{ADVERSE_EVENT_CONTACT.name}</p>
                       <p className="text-[13px] text-gray-500 mb-3">{ADVERSE_EVENT_CONTACT.role}</p>
                       <p className="text-[13px] text-gray-500 leading-relaxed mb-3">{ADVERSE_EVENT_CONTACT.address}</p>
@@ -1988,7 +1961,7 @@ export default function OrderMedicinesClient({ audienceSlug }: { audienceSlug?: 
                         <a href={`mailto:${ADVERSE_EVENT_CONTACT.email}`}
                           className="flex items-center gap-2.5 text-[13px] font-semibold text-gray-700 hover:text-primary transition">
                           <span className="w-7 h-7 rounded-full bg-blue-50 flex items-center justify-center shrink-0">
-                            <i className="fa-solid fa-envelope text-[10px] text-primary"></i>
+                            <Mail className="h-3 w-3 text-primary" />
                           </span>
                           {ADVERSE_EVENT_CONTACT.email}
                         </a>
@@ -1996,7 +1969,7 @@ export default function OrderMedicinesClient({ audienceSlug }: { audienceSlug?: 
                           <a key={phone.label} href={phone.href}
                             className="flex items-center gap-2.5 text-[13px] font-semibold text-gray-700 hover:text-primary transition">
                             <span className="w-7 h-7 rounded-full bg-blue-50 flex items-center justify-center shrink-0">
-                              <i className="fa-solid fa-phone text-[10px] text-primary"></i>
+                              <Phone className="h-3 w-3 text-primary" />
                             </span>
                             {phone.label}
                           </a>
@@ -2007,14 +1980,13 @@ export default function OrderMedicinesClient({ audienceSlug }: { audienceSlug?: 
                 )}
 
                 {/* Nationwide reach */}
-                <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-gray-100 text-center">
-                  <h2 className="text-xl font-semibold text-gray-900 mb-3">{PARTNER_TRUST.reachHeading}</h2>
+                <div className="rounded-3xl border border-gray-200 bg-white p-6 md:p-8 text-center">
+                  <h2 className="font-display text-xl font-semibold text-black mb-3">{PARTNER_TRUST.reachHeading}</h2>
                   <div className="flex flex-wrap items-baseline justify-center gap-x-3 gap-y-2 mb-3">
                     {PARTNER_TRUST.reachStats.map((stat, i) => (
                       <div key={stat.label} className="flex items-baseline gap-2">
                         {i > 0 && <span aria-hidden="true" className="text-[20px] text-gray-300 mr-1">&middot;</span>}
-                        <span className="text-[28px] font-semibold"
-                          style={{ background: 'linear-gradient(to right,#61A644,#1D9FDA)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+                        <span className="text-[28px] font-semibold text-primary">
                           {stat.value}
                         </span>
                         <span className="text-[17px] text-gray-900">{stat.label}</span>
@@ -2036,14 +2008,14 @@ export default function OrderMedicinesClient({ audienceSlug }: { audienceSlug?: 
           style={{ opacity: modalOpen ? 1 : 0, pointerEvents: modalOpen ? 'all' : 'none' }}
         >
           <div
-            className="bg-[#1A1C1E] w-full max-w-[340px] rounded-[15px] p-8 text-center shadow-2xl relative transform transition-transform duration-300"
+            className="bg-[#1A1C1E] w-full max-w-[340px] rounded-2xl p-8 text-center shadow-2xl relative transform transition-transform duration-300"
             style={{ transform: modalOpen ? 'scale(1)' : 'scale(0.95)' }}
           >
             <button onClick={closeUploadModal} className="absolute top-4 right-4 text-gray-500 hover:text-white transition">
-              <i className="fa-solid fa-xmark text-lg"></i>
+              <X className="h-5 w-5" />
             </button>
             <div className="w-16 h-16 bg-[#5E5CE6]/20 text-[#5E5CE6] rounded-2xl flex items-center justify-center mx-auto mb-6">
-              <i className="fa-solid fa-file-arrow-up text-3xl"></i>
+              <FileUp className="h-8 w-8" />
             </div>
             <h3 className="text-white text-lg font-bold mb-2">Just a moment...</h3>
             <p className="text-gray-400 text-[12px] leading-relaxed mb-8 px-4">
@@ -2057,7 +2029,7 @@ export default function OrderMedicinesClient({ audienceSlug }: { audienceSlug?: 
               <div className="text-[#5E5CE6] text-sm font-bold">{progress}%</div>
             </div>
             <button onClick={closeUploadModal}
-              className="w-full py-4 bg-gray-800 hover:bg-gray-700 text-white font-bold rounded-[12px] text-[13px] transition">
+              className="w-full py-4 bg-gray-800 hover:bg-gray-700 text-white font-bold rounded-xl text-[13px] transition">
               Cancel
             </button>
           </div>
@@ -2075,14 +2047,14 @@ export default function OrderMedicinesClient({ audienceSlug }: { audienceSlug?: 
                 onClick={() => { setSuccessModalOpen(false); window.location.reload(); }}
                 className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition z-10"
               >
-                <i className="fa-solid fa-xmark text-base"></i>
+                <X className="h-4 w-4" />
               </button>
 
               <div className="px-10 pt-12 pb-8 text-center">
                 {/* Illustration */}
                 <div className="flex justify-center mb-7">
                   <div className="check-bounce w-14 h-14 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg,#61A644,#1D9FDA)' }}>
-                    <i className="fa-solid fa-check text-white text-xl"></i>
+                    <Check className="h-5 w-5 text-white" />
                   </div>
                 </div>
 
@@ -2106,8 +2078,7 @@ export default function OrderMedicinesClient({ audienceSlug }: { audienceSlug?: 
               <div className="border-t border-gray-100 px-10 py-4 text-center">
                 <button
                   onClick={() => { setSuccessModalOpen(false); window.location.reload(); }}
-                  className="text-[13px] font-semibold hover:underline"
-                  style={{ background: 'linear-gradient(to right,#61A644,#1D9FDA)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}
+                  className="text-[13px] font-semibold hover:underline text-primary"
                 >
                   Close
                 </button>
@@ -2138,7 +2109,7 @@ export default function OrderMedicinesClient({ audienceSlug }: { audienceSlug?: 
                 onClick={() => { setIdModalVisible(false); setTimeout(() => setIdRequiredModalOpen(false), 200); }}
                 className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition z-10"
               >
-                <i className="fa-solid fa-xmark text-base"></i>
+                <X className="h-4 w-4" />
               </button>
 
               {/* Body */}
@@ -2148,7 +2119,7 @@ export default function OrderMedicinesClient({ audienceSlug }: { audienceSlug?: 
                     className="w-14 h-14 rounded-full flex items-center justify-center"
                     style={{ background: 'linear-gradient(135deg,#EF4444,#F59E0B)' }}
                   >
-                    <i className="fa-solid fa-id-card text-white text-xl"></i>
+                    <IdCard className="h-5 w-5 text-white" />
                   </div>
                 </div>
                 <h2 className="text-[19px] font-semibold text-gray-900 mb-2 leading-snug">Valid ID Required</h2>
@@ -2163,8 +2134,7 @@ export default function OrderMedicinesClient({ audienceSlug }: { audienceSlug?: 
                 <button
                   type="button"
                   onClick={() => { setIdModalVisible(false); setTimeout(() => setIdRequiredModalOpen(false), 200); }}
-                  className="text-[13px] font-semibold hover:underline"
-                  style={{ background: 'linear-gradient(to right,#61A644,#1D9FDA)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}
+                  className="text-[13px] font-semibold hover:underline text-primary"
                 >
                   I Understand, Upload Now
                 </button>
@@ -2183,7 +2153,7 @@ export default function OrderMedicinesClient({ audienceSlug }: { audienceSlug?: 
             onClick={e => e.stopPropagation()} />
           <button onClick={() => setViewingFileUrl(null)}
             className="absolute top-5 right-5 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white transition">
-            <i className="fa-solid fa-xmark text-xl"></i>
+            <X className="h-5 w-5" />
           </button>
         </div>
       )}

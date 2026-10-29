@@ -65,8 +65,8 @@ export function WhatsAppIcon({ className }: IconProps) {
 export const socials = [
   { label: "Facebook", href: contact.facebook, Icon: FacebookIcon, color: "#1877F2" },
   { label: "Twitter", href: contact.twitter, Icon: TwitterIcon, color: "#1DA1F2" },
-  { label: "LinkedIn", href: "#", Icon: LinkedInIcon, color: "#0A66C2" },
-  { label: "TikTok", href: "#", Icon: TikTokIcon, color: "#000000" },
-  { label: "Instagram", href: "#", Icon: InstagramIcon, color: "#E4405F" },
-  { label: "YouTube", href: "#", Icon: YouTubeIcon, color: "#FF0000" },
+  { label: "LinkedIn", href: contact.linkedin, Icon: LinkedInIcon, color: "#0A66C2" },
+  { label: "TikTok", href: contact.tiktok, Icon: TikTokIcon, color: "#000000" },
+  { label: "Instagram", href: contact.instagram, Icon: InstagramIcon, color: "#E4405F" },
+  { label: "YouTube", href: contact.youtube, Icon: YouTubeIcon, color: "#FF0000" },
 ];
