@@ -20,3 +20,21 @@
 .product-detail-root .rx-modal-slide{animation:slideUpRx 0.32s cubic-bezier(.22,1,.36,1) forwards}
 @keyframes slideUpId{from{opacity:0;transform:translateY(24px) scale(0.97)}to{opacity:1;transform:translateY(0) scale(1)}}
 .product-detail-root .id-modal-slide{animation:slideUpId 0.32s cubic-bezier(.22,1,.36,1) forwards}
+
+/* Inquiry panel revealed by "Inquire / Order": a short drop-in */
+@keyframes gm-reveal {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .gm-reveal { animation: gm-reveal 0.35s cubic-bezier(0.22, 1, 0.36, 1) both; }
+}
+
+/* Order box <-> inquiry types: the incoming view rises into place */
+@keyframes gm-rise {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .gm-rise { animation: gm-rise 0.45s cubic-bezier(0.22, 1, 0.36, 1) both; }
+}

@@ -67,6 +67,10 @@ export interface CatalogProduct {
   dosageAdministration?: string;
   /** Product photo linked in the Studio (Sanity CDN URL), if one is attached. */
   imageUrl?: string;
+  /** Groups the strengths of one product (e.g. every PacliGet vial size). */
+  productGroup?: string;
+  packaging?: string;
+  storageCondition?: string;
   // Condition metadata, repeated on every row filed under a condition.
   conditionHubUrl?: string;
   conditionFilipinoName?: string;
@@ -147,6 +151,9 @@ async function buildModel(): Promise<CatalogModel> {
       indications: str(p.indications),
       dosageAdministration: str(p.dosageAdministration),
       imageUrl: productImageUrl(p.image),
+      productGroup: str(p.productGroup),
+      packaging: str(p.packaging),
+      storageCondition: str(p.storageCondition),
       conditionHubUrl: str(p.conditionHubUrl),
       conditionFilipinoName: str(p.conditionFilipinoName),
       conditionSpecialty: str(p.conditionSpecialty),
@@ -164,7 +171,7 @@ async function buildModel(): Promise<CatalogModel> {
   };
 }
 
-const getCachedModel = unstable_cache(buildModel, ['getmeds-catalog-model-v2'], {
+const getCachedModel = unstable_cache(buildModel, ['getmeds-catalog-model-v3'], {
   revalidate: REVALIDATE_SECONDS,
   tags: ['catalog'],
 });
