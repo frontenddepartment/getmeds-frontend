@@ -61,6 +61,12 @@ export const pageImages: Record<string, { src: string; alt: string }[]> = {
     { src: "/images/articles/isomab-sessa.png", alt: "Professor Bill Sessa appointed Chair of Isomab's Scientific Advisory Board" },
     { src: "/images/articles/essar-us-steel.jpg", alt: "Essar eyes $18-billion US steel plant" },
   ],
+  "/ungc": [
+    { src: "/assets/ungcimage.jpg", alt: "United Nations Global Compact event attended by Getmeds Philippines" },
+    { src: "/assets/ungclogowhite.png", alt: "United Nations Global Compact logo" },
+    { src: "/assets/UNGClogo.png", alt: "UN Global Compact logo" },
+    { src: "/assets/flagsungc.png", alt: "United Nations flags representing the UN Global Compact" },
+  ],
 };
 
 /* Back-office paths kept out of search results. */
