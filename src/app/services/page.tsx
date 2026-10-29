@@ -80,7 +80,6 @@ const pillars: Pillar[] = [
     title: "Specialized services for government and pharmaceutical partners.",
     top: true,
     plain: true,
-    image: { src: "/images/ourservicesone.jpg", alt: "Getmeds staff checking a sealed GetMEDS delivery pack against the order log", width: 2000, height: 780 },
     chips: ["DSWD", "PCSO", "OVP & OP accredited", "CLIDP for pharmaceutical partners"],
     caps: [],
     cards: [
