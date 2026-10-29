@@ -154,6 +154,8 @@ export interface BlogPostSummary {
   date: string;
   modified: string;
   description: string;
+  /** WordPress featured image id (0 when the post has none). */
+  mediaId?: number;
 }
 
 async function fetchCategoryNames(): Promise<Map<number, string>> {
@@ -187,7 +189,7 @@ export async function fetchAllPostSummaries(): Promise<BlogPostSummary[] | null>
         let totalPages = 1;
         do {
           const res = await fetch(
-            `${WP_API_ROOT}/wp-json/wp/v2/posts?per_page=100&page=${page}&_fields=id,slug,title,date,modified,excerpt,categories`,
+            `${WP_API_ROOT}/wp-json/wp/v2/posts?per_page=100&page=${page}&_fields=id,slug,title,date,modified,excerpt,categories,featured_media`,
             { next: { revalidate: REVALIDATE_SECONDS } }
           );
           if (!res.ok) throw new Error(`WordPress API returned status ${res.status}`);
@@ -215,6 +217,7 @@ export async function fetchAllPostSummaries(): Promise<BlogPostSummary[] | null>
         date: String(item.date || ''),
         modified: String(item.modified || ''),
         description: stripHtml(stripPageBuilderShortcodes(item.excerpt?.rendered)),
+        mediaId: Number(item.featured_media) || 0,
       });
     });
     return out;
@@ -222,6 +225,81 @@ export async function fetchAllPostSummaries(): Promise<BlogPostSummary[] | null>
     console.warn('[Blog] Failed to fetch posts from WordPress:', err);
     return null;
   }
+}
+
+/** A post as the /blog index page shows it: card + featured carousel. */
+export interface BlogIndexPost {
+  slug: string;
+  title: string;
+  tag: string;
+  /** e.g. "September 15, 2026", formatted on the server so it can't differ from the browser's */
+  date: string;
+  excerpt: string;
+  /** ~768px image for cards, ~1536px for the featured carousel; absent when the post has no image */
+  image?: { card: string; wide: string; alt: string };
+}
+
+type MediaSizes = Record<string, { source_url?: string } | undefined>;
+
+/** Featured images for the given media ids, 100 per request (WordPress's cap). */
+async function fetchMediaImages(ids: number[]): Promise<Map<number, NonNullable<BlogIndexPost['image']>>> {
+  const out = new Map<number, NonNullable<BlogIndexPost['image']>>();
+  const unique = [...new Set(ids.filter(Boolean))];
+  const batches: number[][] = [];
+  for (let i = 0; i < unique.length; i += 100) batches.push(unique.slice(i, i + 100));
+  await Promise.all(
+    batches.map(async (batch) => {
+      try {
+        const res = await fetch(
+          `${WP_API_ROOT}/wp-json/wp/v2/media?include=${batch.join(',')}&per_page=100&_fields=id,source_url,alt_text,media_details.sizes`,
+          { next: { revalidate: REVALIDATE_SECONDS } }
+        );
+        if (!res.ok) throw new Error(`WordPress API returned status ${res.status}`);
+        const items = await res.json();
+        if (!Array.isArray(items)) return;
+        items.forEach((m: WpPost) => {
+          const sizes: MediaSizes = m.media_details?.sizes || {};
+          const pick = (...keys: string[]) => keys.map((k) => sizes[k]?.source_url).find(Boolean) || String(m.source_url || '');
+          const card = pick('medium_large', 'content-single', 'large');
+          if (!card) return;
+          out.set(Number(m.id), {
+            card,
+            wide: pick('1536x1536', 'large', 'medium_large'),
+            alt: decodeWpEntities(String(m.alt_text || '')),
+          });
+        });
+      } catch (err) {
+        console.warn('[Blog] Failed to fetch featured images:', err);
+      }
+    })
+  );
+  return out;
+}
+
+const DATE_FORMAT = new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'Asia/Manila' });
+
+/** Every listed post, newest first, with its featured image, for the /blog index page. */
+export async function fetchBlogIndex(): Promise<BlogIndexPost[]> {
+  const posts = await fetchListedPosts();
+  const images = await fetchMediaImages(posts.map((p) => p.mediaId || 0));
+  return posts
+    .slice()
+    .sort((a, b) => (a.date < b.date ? 1 : -1))
+    .map((p) => {
+      const parsed = new Date(p.date);
+      const title = decodeWpEntities(stripHtml(p.title));
+      let excerpt = decodeWpEntities(p.description).replace(/\s*\[(?:…|&hellip;|\.\.\.)\]\s*$/, '…').trim();
+      // Posts whose body opens with the title get it repeated at the start of the auto-excerpt
+      if (title && excerpt.toLowerCase().startsWith(title.toLowerCase())) excerpt = excerpt.slice(title.length).trim();
+      return {
+        slug: p.slug,
+        title,
+        tag: p.tag,
+        date: Number.isNaN(parsed.getTime()) ? '' : DATE_FORMAT.format(parsed),
+        excerpt: excerpt.length > 180 ? `${excerpt.slice(0, 177).replace(/\s+\S*$/, '')}…` : excerpt,
+        ...(p.mediaId && images.get(p.mediaId) ? { image: images.get(p.mediaId) } : {}),
+      };
+    });
 }
 
 /** Posts for the /blog crawl list: everything except posts that redirect to another one. */
