@@ -9,7 +9,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "node --test \"src/**/*.test.ts\""
+    "test": "node --test \"src/**/*.test.ts\"",
+    "seo:score": "node scripts/seo-score.mjs"
   },
   "dependencies": {
     "@portabletext/react": "^8.0.1",

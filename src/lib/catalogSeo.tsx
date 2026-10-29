@@ -13,6 +13,7 @@ import {
   conditionReviewFields,
 } from './seo';
 import ogImages from './og-images.json';
+import { FDA_VERIFICATION_URL, ORDER_STEPS, productFaqJsonLd, productOrderFaqs, productSearchName } from './productFaq';
 import {
   DOMAIN,
   ALL_PRODUCTS_DESCRIPTION,
@@ -372,8 +373,18 @@ export function productSeo(model: CatalogModel, p: CatalogProduct): CatalogPageS
   const folder = p.categoryFolder;
   const displayName = p.displayName;
   const isBranded = Boolean(p.brandName && p.genericName && p.brandName !== p.genericName);
+  // Search-result wording when the sheet has none, per the "How it looks on Google" prototype board:
+  // "Paclitaxel 300 mg/50 mL Injection Price in the Philippines" /
+  // "Buy Paclitaxel 300 mg/50 mL injection (PacliGet) from Getmeds. Send an inquiry to order and get a price quote. Prescription required."
+  const generic = String(p.genericName || displayName).replace(/\s*\(.*?\)\s*/g, ' ').trim();
+  const strength = String(p.strength || '').split(/\\n|\n/)[0].trim();
+  const formWord = /infusion|inject|vial|powder|concentrate|solution/i.test(p.form || '')
+    ? 'Injection'
+    : /capsule/i.test(p.form || '') ? 'Capsule' : /tablet/i.test(p.form || '') ? 'Tablet' : '';
+  const searchName = [generic, strength, formWord].filter(Boolean).join(' ');
   const description = truncateAtWord(
-    p.metaDescription || `${displayName} — available through Getmeds Philippines. Quality pharmaceutical product for healthcare needs.`,
+    p.metaDescription ||
+      `Buy ${[generic, strength, formWord.toLowerCase()].filter(Boolean).join(' ')}${isBranded ? ` (${String(p.brandName).trim()})` : ''} from Getmeds. Send an inquiry to order and get a price quote. Prescription required.`,
     160
   );
   const canonicalPath = productPath(p);
@@ -396,13 +407,32 @@ export function productSeo(model: CatalogModel, p: CatalogProduct): CatalogPageS
   if (p.genericName) facts.push(['Generic name', p.genericName]);
   if (p.strength) facts.push(['Strength', p.strength]);
   if (p.form) facts.push(['Dosage form', p.form]);
+  if (p.packaging) facts.push(['Packaging', p.packaging]);
   facts.push(['Prescription', 'Prescription only (Rx)']);
 
   const trail = productBreadcrumbTrail(p, folder);
 
+  // Other strengths of the same product group, for "Also available in" and the strengths FAQ
+  const strengthOf = (row: CatalogProduct) => String(row.strength || '').split(/\\n|\n/)[0].trim();
+  const strengthNum = (row: CatalogProduct) => parseFloat(strengthOf(row).replace(/,/g, '').match(/[\d.]+/)?.[0] || '0');
+  const variants = p.productGroup
+    ? model.products
+        .filter((row) => row.productGroup === p.productGroup && row.slug && row.strength)
+        .filter((row, i, rows) => rows.findIndex((r) => r.slug === row.slug) === i)
+        .sort((a, b) => strengthNum(a) - strengthNum(b))
+    : [];
+  const genericLabel = productSearchName({ genericName: p.genericName, displayName });
+  const faqs = productOrderFaqs({
+    displayName,
+    brandName: p.brandName,
+    genericName: p.genericName,
+    strengths: variants.length > 1 ? variants.map(strengthOf) : [],
+    isRx: true,
+  });
+
   return {
     metadata: buildMetadata({
-      title: p.metaTitle || displayName,
+      title: p.metaTitle || `${searchName} Price in the Philippines`,
       description,
       canonicalPath,
       ogType: 'product',
@@ -431,6 +461,7 @@ export function productSeo(model: CatalogModel, p: CatalogProduct): CatalogPageS
         },
       },
       { id: 'jsonld-breadcrumb', data: trail ? breadcrumbList(trail) : null },
+      { id: 'jsonld-faq', data: productFaqJsonLd(faqs) },
     ],
     baked: (
       <main className="max-w-5xl mx-auto px-4 pt-28 pb-16 text-gray-800">
@@ -442,6 +473,16 @@ export function productSeo(model: CatalogModel, p: CatalogProduct): CatalogPageS
           ]}
         />
         <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 mb-4">{displayName}</h1>
+        {p.imageUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element -- crawler copy; Sanity CDN already serves a resized image
+          <img
+            src={p.imageUrl}
+            alt={`${displayName}${p.form ? ` ${p.form}` : ''} by Getmeds Philippines`}
+            width={400}
+            height={400}
+            className="mb-6 h-auto w-64 rounded-2xl bg-gray-50 object-contain"
+          />
+        ) : null}
         <dl className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm mb-8 max-w-xl">
           {facts.map(([k, v]) => (
             <React.Fragment key={k}>
@@ -450,6 +491,22 @@ export function productSeo(model: CatalogModel, p: CatalogProduct): CatalogPageS
             </React.Fragment>
           ))}
         </dl>
+        {variants.length > 1 ? (
+          <>
+            <h2 className="text-lg font-semibold text-gray-900 mb-2">Also available in</h2>
+            <ul className="flex flex-wrap gap-2 mb-8">
+              {variants.map((v) => (
+                <li key={v.slug}>
+                  {v.slug === p.slug ? (
+                    <span aria-current="page" className="inline-block text-xs rounded-full bg-gray-900 px-3 py-1 text-white">{strengthOf(v)}</span>
+                  ) : (
+                    <a href={productPath(v)} className="inline-block text-xs border border-gray-200 rounded-full px-3 py-1 hover:text-primary">{strengthOf(v)}</a>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </>
+        ) : null}
         {conditions.length ? (
           <>
             <h2 className="text-lg font-semibold text-gray-900 mb-2">Used for</h2>
@@ -474,8 +531,29 @@ export function productSeo(model: CatalogModel, p: CatalogProduct): CatalogPageS
             <Paragraphs text={p.dosageAdministration} />
           </>
         ) : null}
+        {p.storageCondition ? (
+          <>
+            <h2 className="text-lg font-semibold text-gray-900 mt-6 mb-2">Storage</h2>
+            <Paragraphs text={p.storageCondition} />
+          </>
+        ) : null}
+        <h2 className="text-lg font-semibold text-gray-900 mt-8 mb-2">How to order {genericLabel} in the Philippines</h2>
+        <ol className="list-decimal pl-5 space-y-1 text-sm text-gray-700">
+          {ORDER_STEPS.map(([title, text]) => (
+            <li key={title}><strong>{title}.</strong> {text}</li>
+          ))}
+        </ol>
+        <h2 className="text-lg font-semibold text-gray-900 mt-8 mb-2">Frequently asked questions</h2>
+        {faqs.map((f) => (
+          <React.Fragment key={f.q}>
+            <h3 className="text-base font-semibold text-gray-900 mt-4">{f.q}</h3>
+            <p className="text-sm text-gray-700 mt-1">{f.a}</p>
+          </React.Fragment>
+        ))}
         <p className="text-sm text-gray-700 mt-8">
-          Prescription medicine, supplied by Getmeds, an FDA Philippines-licensed distributor.{' '}
+          Prescription medicine, supplied by Getmeds, an FDA Philippines-licensed distributor. Product
+          registrations can be checked with the{' '}
+          <a href={FDA_VERIFICATION_URL} target="_blank" rel="noopener" className="text-primary underline">Food and Drug Administration Philippines</a>.{' '}
           <a href="/order-medicines" className="text-primary underline">Request a quotation</a>.
         </p>
       </main>

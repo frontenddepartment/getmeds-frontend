@@ -13,6 +13,10 @@ import { validateFiles, ALLOWED_FILE_TYPES_ACCEPT } from '@/lib/fileUpload';
 import AlertModal from '@/lib/AlertModal';
 import { PortableText } from '@portabletext/react';
 import { usePageReady } from '@/lib/handoff';
+import { ArrowLeft, ArrowRight, BadgeCheck, Check, ChevronRight, Plus, Search, ShieldCheck, Truck, UserPlus } from 'lucide-react';
+import { WhatsAppIcon } from '@/components/SocialIcons';
+import { contact } from '@/lib/data';
+import { FDA_VERIFICATION_URL, ORDER_STEPS, productOrderFaqs, productSearchName } from '@/lib/productFaq';
 import './ProductDetailClient.css';
 
 interface ProductWithCategory extends Omit<SanityProduct, 'category'> {
@@ -50,7 +54,6 @@ export default function ProductDetailClient(_props: { categorySlug?: string; pro
   const [notFound, setNotFound] = useState(false);
   // Swaps out the prerendered copy of this product once the live one (or not-found) is drawn.
   usePageReady(!productsLoading && (product !== null || notFound));
-  const [descriptionTab, setDescriptionTab] = useState<'description' | 'prescription'>('description');
 
   const [zoomedImageOpen, setZoomedImageOpen] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
@@ -107,6 +110,25 @@ export default function ProductDetailClient(_props: { categorySlug?: string; pro
   // that page names whole groups and reads as a list ("Patients & Families"),
   // while this one asks one person to pick which of two things they are.
   // Keys stay as they were — they are what reaches the sheet's userType column.
+  // The inquiry types and form stay folded away until the visitor presses Order Now
+  const [inquiryOpen, setInquiryOpen] = useState(false);
+
+  // Short description under the price: three lines, "…" expands the rest. Overflow is measured so the
+  // "…" only appears when there really is more text.
+  const [summaryOpen, setSummaryOpen] = useState(false);
+  const [summaryOverflows, setSummaryOverflows] = useState(false);
+  const summaryRef = useRef<HTMLParagraphElement>(null);
+  useEffect(() => {
+    const el = summaryRef.current;
+    if (!el || summaryOpen) return;
+    const measure = () => setSummaryOverflows(el.scrollHeight > el.clientHeight + 1);
+    measure();
+    if (typeof ResizeObserver === 'undefined') return;
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [product, summaryOpen, inquiryOpen]);
+
   const USER_TYPE_LABELS: Record<string, string> = {
     patient:  'Patient / Family',
     doctor:   'Doctor / Healthcare Professional',
@@ -120,6 +142,7 @@ export default function ProductDetailClient(_props: { categorySlug?: string; pro
     if (ut) {
       setUserType(ut);
       setUserTypeConfirmed(true);
+      setInquiryOpen(true);
     }
   }, []);
 
@@ -565,15 +588,15 @@ export default function ProductDetailClient(_props: { categorySlug?: string; pro
   }, []);
 
   return (
-    <div ref={rootRef} style={{ fontFamily: "'Poppins', sans-serif" }} className="product-detail-root bg-white text-gray-800 antialiased flex flex-col">
+    <div ref={rootRef} style={{ fontFamily: "'Poppins', sans-serif" }} className="product-detail-root flex flex-col bg-white text-slate-800 antialiased">
       <div className="flex-1">
 
-        {/* Breadcrumb Header */}
-        <div className={`bg-white px-6 py-3 items-center justify-between border-b border-gray-100 sticky top-0 z-10 product-detail-breadcrumb flex`}>
+        {/* Breadcrumb (sits under the floating navbar) */}
+        <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-4 px-5 pb-5 pt-28 md:px-10 md:pt-32">
           <nav aria-label="Breadcrumb">
-            <ol className="flex items-center gap-1.5 text-[12px] flex-wrap">
+            <ol className="flex flex-wrap items-center gap-1.5 text-[14px]">
               <li>
-                <a href="/" className="text-gray-400 hover:text-primary transition-colors font-medium">
+                <a href="/" className="text-primary transition-colors hover:text-primary-deep">
                   Home
                 </a>
               </li>
@@ -588,10 +611,10 @@ export default function ProductDetailClient(_props: { categorySlug?: string; pro
                   const isLast = idx === trail.length - 1;
                   return (
                     <React.Fragment key={idx}>
-                      <li className="text-gray-300"><i className="fa-solid fa-chevron-right text-[9px]" /></li>
-                      <li className={isLast ? 'font-semibold text-gray-700' : ''}>
+                      <li aria-hidden className="text-slate-400"><ChevronRight className="h-3.5 w-3.5" /></li>
+                      <li className={isLast ? 'font-semibold text-[#0B2E5E]' : ''}>
                         {url ? (
-                          <a href={url} className="text-gray-400 hover:text-primary transition-colors font-medium">
+                          <a href={url} className="text-primary transition-colors hover:text-primary-deep">
                             {name}
                           </a>
                         ) : (
@@ -602,16 +625,25 @@ export default function ProductDetailClient(_props: { categorySlug?: string; pro
                   );
                 });
               })()}
-              {!product && (
+              {!product && productsLoading && (
+                // placeholder crumbs while the product loads
+                <li aria-hidden className="flex items-center gap-1.5 motion-safe:animate-pulse">
+                  <ChevronRight className="h-3.5 w-3.5 text-slate-300" />
+                  <span className="h-3.5 w-16 rounded-full bg-slate-100" />
+                  <ChevronRight className="h-3.5 w-3.5 text-slate-300" />
+                  <span className="h-3.5 w-24 rounded-full bg-slate-100" />
+                </li>
+              )}
+              {!product && !productsLoading && (
                 <>
-                  <li className="text-gray-300"><i className="fa-solid fa-chevron-right text-[9px]" /></li>
-                  <li className="font-semibold text-gray-700">Product Details</li>
+                  <li aria-hidden className="text-slate-400"><ChevronRight className="h-3.5 w-3.5" /></li>
+                  <li className="font-semibold text-[#0B2E5E]">Product Details</li>
                 </>
               )}
             </ol>
           </nav>
           <button
-            className="hidden sm:flex items-center text-gray-500 hover:text-primary transition text-sm space-x-1.5"
+            className="hidden items-center gap-1.5 text-sm text-slate-500 transition hover:text-primary sm:flex"
             onClick={() => {
               if (typeof (window as any).openGetmedsChat === 'function') {
                 (window as any).openGetmedsChat();
@@ -625,22 +657,54 @@ export default function ProductDetailClient(_props: { categorySlug?: string; pro
           </button>
         </div>
 
-        {/* Loading skeleton */}
+        {/* Loading skeleton: the same shape as the finished page below (photo + trust icons | order box),
+            so nothing jumps when the product arrives */}
         {productsLoading && (
-          <div className="max-w-6xl mx-auto p-6 lg:p-8 animate-pulse">
-            <div className="flex flex-col lg:flex-row gap-0 border border-gray-100 rounded-2xl overflow-hidden mt-4">
-              <div className="lg:w-1/2 p-8 space-y-4 border-b lg:border-b-0 lg:border-r border-gray-100">
-                <div className="h-4 bg-gray-100 rounded-full w-1/3" />
-                <div className="h-6 bg-gray-100 rounded-full w-2/3" />
-                <div className="h-4 bg-gray-100 rounded-full w-full" />
-                <div className="aspect-square bg-gray-100 rounded-2xl w-full max-w-xs mx-auto" />
-                <div className="h-48 bg-gray-100 rounded-2xl" />
+          <div role="status" aria-live="polite" className="mx-auto w-full max-w-7xl px-5 pb-20 md:px-10">
+            <span className="sr-only">Loading product details…</span>
+            <div aria-hidden className="grid grid-cols-1 gap-10 motion-safe:animate-pulse lg:grid-cols-[1.05fr_1fr] lg:gap-16 [&>*]:min-w-0">
+              <div>
+                <div className="aspect-square rounded-3xl bg-slate-100" />
+                <div className="mt-8 grid grid-cols-3 gap-4">
+                  {[0, 1, 2].map((i) => (
+                    <div key={i} className="flex flex-col items-center gap-2.5">
+                      <div className="h-7 w-7 rounded-full bg-slate-100" />
+                      <div className="h-3 w-24 max-w-full rounded-full bg-slate-100" />
+                    </div>
+                  ))}
+                </div>
               </div>
-              <div className="lg:w-1/2 p-8 space-y-4">
-                <div className="h-6 bg-gray-100 rounded-full w-1/2" />
-                {[1, 2, 3, 4].map(i => <div key={i} className="h-10 bg-gray-100 rounded-xl" />)}
-                <div className="h-20 bg-gray-100 rounded-xl" />
-                <div className="h-12 bg-gray-100 rounded-xl" />
+
+              <div className="lg:pt-2">
+                <div className="h-4 w-20 rounded-full bg-slate-100" />
+                <div className="mt-5 h-11 w-3/4 rounded-xl bg-slate-200/80" />
+                <div className="mt-3 h-5 w-1/2 rounded-full bg-slate-100" />
+                <div className="mt-5 h-4 w-5/6 rounded-full bg-slate-100" />
+                <div className="mt-7 h-7 w-40 rounded-lg bg-slate-200/80" />
+                <div className="mt-2.5 h-4 w-56 max-w-full rounded-full bg-slate-100" />
+                <div className="mt-6 space-y-2.5">
+                  <div className="h-3.5 w-full rounded-full bg-slate-100" />
+                  <div className="h-3.5 w-full rounded-full bg-slate-100" />
+                  <div className="h-3.5 w-2/3 rounded-full bg-slate-100" />
+                </div>
+                <div className="my-7 h-px bg-slate-200" />
+                <div className="h-3 w-20 rounded-full bg-slate-100" />
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {[28, 36, 28].map((w, i) => (
+                    <div key={i} className="h-11 max-w-[30%] rounded-lg bg-slate-100" style={{ width: `${w * 4}px` }} />
+                  ))}
+                </div>
+                <div className="mt-6 h-14 rounded-xl bg-slate-200/80" />
+                <div className="mt-3 h-14 rounded-xl ring-2 ring-inset ring-slate-200" />
+                <div className="mt-5 h-4 w-64 max-w-full rounded-full bg-slate-100" />
+                <div className="mt-8 border-t border-slate-200">
+                  {[0, 1, 2, 3].map((i) => (
+                    <div key={i} className="flex h-[62px] items-center justify-between border-b border-slate-200">
+                      <div className="h-3 w-40 rounded-full bg-slate-100" />
+                      <div className="h-3.5 w-3.5 rounded bg-slate-100" />
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
@@ -665,618 +729,832 @@ export default function ProductDetailClient(_props: { categorySlug?: string; pro
           </div>
         )}
 
-        {/* Product detail content */}
-        {!productsLoading && product && (
-          <div className="max-w-6xl mx-auto lg:px-4 lg:py-6">
-            <div className="flex flex-col lg:flex-row lg:border lg:border-gray-100 lg:rounded-2xl lg:shadow-sm overflow-hidden bg-white">
+        {/* Product detail content: details card left, inquiry card right */}
+        {!productsLoading && product && (() => {
+          const displayName = getProductDisplayName(product);
+          const isRx = product.prescription?.toUpperCase() === 'RX';
+          const inStock = product.availability !== false;
+          const resolvedImageUrl = getProductImage(product);
+          const hasImage = Boolean(resolvedImageUrl && !resolvedImageUrl.endsWith('no-image.png'));
+          const indications = product.indications || (product as any).indication;
+          const dosage = product.dosageAdministration || (product as any).dosageAndAdministration;
+          const storage = product.storageCondition;
+          const conditions = getProductSubcategories(product);
+          const primaryCondition = getCategorizationDisplay(product);
+          const orderedConditions = [primaryCondition, ...conditions.filter((c) => c !== primaryCondition)].filter((c) => conditions.includes(c));
+          const conditionHref = (sub: string) => {
+            const slug = product.conditionSlugsByName?.[sub]?.conditionSlug || sub.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+            return `/${product.categoryFolder || 'cancer-medicines'}/${slug}`;
+          };
+          // Other strengths of the same product group (e.g. every PacliGet vial size), each its own page
+          const productHref = (p: ProductWithCategory) =>
+            p.productPageUrl
+              ? '/' + p.productPageUrl.replace(/^https?:\/\//, '').replace(/^[^/]+\/?/, '')
+              : `/${p.categoryFolder || 'product-range'}/${p.slug?.current || ''}`;
+          const strengthValue = (p: ProductWithCategory) => parseFloat(String(p.strength || '').replace(/,/g, '').match(/[\d.]+/)?.[0] || '0');
+          const variants = product.productGroup
+            ? (productsData || [])
+                .filter((p) => p.productGroup === product.productGroup && p.strength && p.slug?.current)
+                .filter((p, i, all) => all.findIndex((q) => q.slug?.current === p.slug?.current) === i)
+                .sort((a, b) => strengthValue(a) - strengthValue(b))
+            : [];
+          const genericLabel = productSearchName({ genericName: product.genericName, displayName });
+          const faqs = productOrderFaqs({
+            displayName,
+            brandName: product.brandName,
+            genericName: product.genericName,
+            strengths: variants.length > 1 ? variants.map((v) => String(v.strength).split(/\\n|\n/)[0]) : [],
+            isRx: true,
+          });
+          const specs: Array<[string, React.ReactNode]> = [];
+          if (product.strength) specs.push(['Strength', formatFieldWithLineBreaks(product.strength)]);
+          if (product.form) specs.push(['Form', formatFieldWithLineBreaks(product.form)]);
+          if (product.packaging) specs.push(['Packaging', product.packaging]);
 
-              {/* Left Column: Product Info */}
-              <div className="lg:w-1/2 p-6 lg:p-8 border-b lg:border-b-0 lg:border-r border-gray-100 flex flex-col">
-                <div className="flex flex-col-reverse md:flex-row gap-8 mb-4">
-                <div className="w-full md:w-1/2 flex flex-col justify-center">
-                  <div className="flex flex-wrap items-start gap-x-3 gap-y-1 mb-3 text-sm text-gray-600">
-                    <span className="flex items-center font-medium whitespace-nowrap" style={{ color: '#61A644' }}>
-                      <i className="fa-solid fa-check mr-1.5" /> In stock
-                    </span>
-                    <span className="text-gray-300 whitespace-nowrap">|</span>
-                    <span className="capitalize font-medium leading-snug" style={{ color: '#0D99FF' }}>
-                      {getCategorizationDisplay(product)}
-                    </span>
-                    {product.prescription?.toUpperCase() === 'RX' && (
-                      <>
-                        <span className="text-gray-300 whitespace-nowrap">|</span>
-                        <span className="font-medium whitespace-nowrap text-red-600">
-                          Rx — Prescription Required
-                        </span>
-                      </>
-                    )}
-                  </div>
-                  <h1 className="text-xl font-bold text-gray-900 mb-4 leading-tight">
-                    {getProductDisplayName(product)}
-                  </h1>
-                  <div className="flex flex-wrap gap-x-6 gap-y-2">
-                    {product.strength && (
-                      <div>
-                        <span className="block text-[11px] text-gray-400 font-semibold">Strength</span>
-                        <span className="text-gray-800 font-medium text-[13px]">{formatFieldWithLineBreaks(product.strength)}</span>
-                      </div>
-                    )}
-                    {product.form && (
-                      <div>
-                        <span className="block text-[11px] text-gray-400 font-semibold">Form</span>
-                        <span className="text-gray-800 font-medium text-[13px]">{formatFieldWithLineBreaks(product.form)}</span>
-                      </div>
-                    )}
-                  </div>
+          const brand = product.brandName || product.name || displayName;
+          const generic = product.brandName && product.genericName && product.brandName !== product.genericName ? product.genericName : '';
+          const orderLabel = `Order ${displayName} online in the Philippines`;
+          const whatsappHref = `${contact.whatsapp}?text=${encodeURIComponent(`Hi Getmeds, I would like to order ${displayName}. I have a prescription.`)}`;
+          // Bring the order box back into view (it sits at the top of the page) and let the inquiry rise in
+          const showOrderBox = () =>
+            requestAnimationFrame(() => {
+              const box = document.getElementById('gm-order-box');
+              if (box && box.getBoundingClientRect().top < 90) box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+          const openInquiry = () => {
+            setInquiryOpen(true);
+            showOrderBox();
+          };
+          const closeInquiry = () => {
+            setInquiryOpen(false);
+            showOrderBox();
+          };
+          const summary = String(product.description || indications || '').replace(/\\n|\n/g, ' ').trim();
+          const trust = [
+            { Icon: ShieldCheck, label: 'FDA Philippines-licensed' },
+            { Icon: BadgeCheck, label: 'Pharmacist-verified' },
+            { Icon: Truck, label: 'Nationwide delivery' },
+          ];
+          const sections: Array<{ title: string; body: React.ReactNode }> = [];
+          if (product.description || indications) {
+            sections.push({
+              title: 'Description',
+              body: (
+                <div className="space-y-4">
+                  {product.description && <div>{renderRichContent(product.description)}</div>}
+                  {indications && (
+                    <div>
+                      <h3 className="mb-1 text-[14px] font-semibold text-[#0B2E5E]">Indications</h3>
+                      <div>{renderRichContent(indications)}</div>
+                    </div>
+                  )}
                 </div>
-                <div className="w-full md:w-1/2 flex items-center justify-center">
-                  {(() => {
-                    const resolvedImageUrl = getProductImage(product);
-                    const hasImage = resolvedImageUrl && !resolvedImageUrl.endsWith('no-image.png');
-                    return (
-                      <div
-                        onClick={hasImage ? () => setZoomedImageOpen(true) : undefined}
-                        className={`w-full max-w-[320px] aspect-square flex flex-col items-center justify-center bg-gray-50 rounded-[15px] border border-gray-100 p-4 overflow-hidden relative group/zoom hover:shadow-md transition-all duration-300 ${hasImage ? 'cursor-zoom-in' : ''}`}
-                      >
-                        {hasImage ? (
-                          <>
-                            <img
-                              src={resolvedImageUrl}
-                              className="w-full h-full object-contain mix-blend-multiply group-hover/zoom:scale-105 transition-transform duration-500"
-                              alt={product.name}
-                              onError={(e) => { const img = e.currentTarget; img.onerror = null; img.src = '/assets/no-image.png'; }}
-                            />
-                            <div className="absolute inset-0 bg-black/5 opacity-0 group-hover/zoom:opacity-100 flex items-center justify-center transition-opacity duration-300">
-                              <div className="bg-white/95 backdrop-blur-sm text-gray-800 rounded-full px-3 py-1.5 flex items-center gap-1.5 shadow-sm text-xs font-semibold">
-                                <i className="fa-solid fa-magnifying-glass-plus text-primary" />
-                                Click to Zoom
-                              </div>
-                            </div>
-                          </>
-                        ) : (
-                          <>
-                            <i className="fa-regular fa-image text-4xl mb-3 text-gray-300" />
-                            <span className="text-xs font-medium uppercase tracking-wider text-gray-400">No Image</span>
-                          </>
-                        )}
-                      </div>
-                    );
-                  })()}
-                </div>
-              </div>
+              ),
+            });
+          }
+          if (dosage) sections.push({ title: 'Dosage & Administration', body: renderRichContent(dosage) });
+          if (storage) sections.push({ title: 'Storage', body: renderRichContent(storage) });
+          if (isRx) {
+            sections.push({
+              title: 'Prescription Requirement',
+              body: (
+                <p>
+                  This medicine is prescription-only (Rx). A valid prescription from a licensed
+                  healthcare professional is required for purchase and dispensing, as regulated by
+                  FDA Philippines under RA 9711. Product registrations can be checked with the{' '}
+                  <a href={FDA_VERIFICATION_URL} target="_blank" rel="noopener" className="font-medium text-primary underline underline-offset-2 hover:text-primary-deep">
+                    Food and Drug Administration Philippines
+                  </a>.
+                </p>
+              ),
+            });
+          }
+          if (specs.length || product.innovator) {
+            sections.push({
+              title: 'Product Details',
+              body: (
+                <dl className="grid gap-4 sm:grid-cols-2">
+                  {specs.map(([label, value]) => (
+                    <div key={label}>
+                      <dt className="text-[13px] text-slate-500">{label}</dt>
+                      <dd className="mt-0.5 font-medium text-[#0B2E5E]">{value}</dd>
+                    </div>
+                  ))}
+                  {product.innovator && (
+                    <div>
+                      <dt className="text-[13px] text-slate-500">Innovator</dt>
+                      <dd className="mt-0.5 font-medium text-[#0B2E5E]">{product.innovator}</dd>
+                    </div>
+                  )}
+                </dl>
+              ),
+            });
+          }
 
-                {/* Description */}
-                <div className="bg-white rounded-[15px] border border-gray-100 p-5">
-                  <div className="border-b border-gray-100 mb-5 flex items-center gap-5">
+          return (
+          <div className="mx-auto w-full max-w-7xl px-5 pb-20 md:px-10">
+            <div className="grid gap-10 lg:grid-cols-[1.05fr_1fr] lg:gap-16">
+
+              {/* Gallery: one large photo with zoom, then what ordering here guarantees.
+                  Sticky on lg+ so it stays beside the order box while the inquiry panel is open. */}
+              <div className="lg:sticky lg:top-28 lg:self-start">
+                <div
+                  onClick={hasImage ? () => setZoomedImageOpen(true) : undefined}
+                  className={`group/zoom relative flex aspect-square items-center justify-center overflow-hidden rounded-3xl bg-[#f3f6f9] ${hasImage ? 'cursor-zoom-in' : ''}`}
+                >
+                  {hasImage ? (
+                    <img
+                      src={resolvedImageUrl}
+                      className="h-full w-full object-contain p-8 mix-blend-multiply transition-transform duration-500 group-hover/zoom:scale-105 md:p-12"
+                      alt={`${displayName}${product.form ? ` ${product.form}` : ''} by Getmeds Philippines`}
+                      onError={(e) => { const img = e.currentTarget; img.onerror = null; img.src = '/assets/no-image.png'; }}
+                    />
+                  ) : (
+                    <span className="text-sm text-slate-500">Product photo</span>
+                  )}
+                  {hasImage && (
                     <button
                       type="button"
-                      onClick={() => setDescriptionTab('description')}
-                      className="inline-block pb-3 text-[13px] font-semibold transition-colors"
-                      style={descriptionTab === 'description'
-                        ? { color: '#0D99FF', borderBottom: '2px solid #0D99FF' }
-                        : { color: '#9CA3AF', borderBottom: '2px solid transparent' }}
+                      onClick={(e) => { e.stopPropagation(); setZoomedImageOpen(true); }}
+                      aria-label={`Zoom image of ${displayName}`}
+                      className="absolute right-4 top-4 flex h-11 w-11 items-center justify-center rounded-full bg-white text-[#0B2E5E] shadow-[0_6px_16px_-8px_rgba(7,59,87,0.45)] transition hover:bg-primary hover:text-white"
                     >
-                      Description
+                      <Search className="h-4.5 w-4.5" aria-hidden />
                     </button>
-                    {product.prescription?.toUpperCase() === 'RX' && (
-                      <button
-                        type="button"
-                        onClick={() => setDescriptionTab('prescription')}
-                        className="inline-block pb-3 text-[13px] font-semibold transition-colors"
-                        style={descriptionTab === 'prescription'
-                          ? { color: '#DC2626', borderBottom: '2px solid #DC2626' }
-                          : { color: '#9CA3AF', borderBottom: '2px solid transparent' }}
-                      >
-                        Prescription Requirement
-                      </button>
+                  )}
+                </div>
+                <ul className="mt-8 grid grid-cols-3 gap-4 text-center">
+                  {trust.map(({ Icon, label }) => (
+                    <li key={label} className="flex flex-col items-center gap-2.5">
+                      <Icon className="h-7 w-7 text-primary" strokeWidth={1.5} aria-hidden />
+                      <span className="text-[13px] text-slate-600">{label}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Order box. "Order Now" swaps its product details for the inquiry types, which rise into
+                  place; "Back to product details" swaps back. The details stay in the page (only hidden), and
+                  the page always loads with them showing, so search engines read the full product. */}
+              <div id="gm-order-box" className="scroll-mt-28 lg:pt-2">
+                {inquiryOpen && (
+                  <div className="gm-rise">
+                    <button
+                      type="button"
+                      onClick={closeInquiry}
+                      className="group/back inline-flex items-center gap-2.5 rounded-full text-[14px] font-medium text-primary transition hover:text-primary-deep focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                    >
+                      <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-primary transition group-hover/back:-translate-x-0.5 group-hover/back:bg-primary group-hover/back:text-white">
+                        <ArrowLeft className="h-4.5 w-4.5" strokeWidth={2.25} aria-hidden />
+                      </span>
+                      Back to product details
+                    </button>
+                    <p className="font-display mt-4 text-[22px] font-semibold leading-tight text-[#0B2E5E]">
+                      {brand}
+                      {isRx && <span className="ml-1 align-super font-serif text-[0.55em] font-bold italic text-[#c0262d]" aria-label="Prescription required">Rx</span>}
+                    </p>
+                    {product.strength && <p className="mt-1 text-[14.5px] text-slate-600">{String(product.strength).split(/\\n|\n/)[0]}{product.form ? ` · ${String(product.form).split(/\\n|\n/)[0]}` : ''}</p>}
+
+                    <div id="gm-inquiry" className="mt-5 rounded-2xl bg-white p-5 ring-1 ring-slate-200 shadow-[0_18px_40px_-28px_rgba(7,59,87,0.5)] sm:p-6">
+                  <div className="mb-6">
+                    <h2 className="font-display text-[26px] font-semibold leading-tight text-[#0B2E5E]">Send inquiry</h2>
+                    <p className="mt-2 text-[15px] leading-relaxed text-slate-600">Submit your details to get a formal quote for this product.</p>
+                    {userTypeConfirmed && userType && USER_TYPE_LABELS[userType] && (
+                      <div className="relative inline-block mt-2" ref={userTypeMenuRef}>
+                        <button
+                          type="button"
+                          onClick={() => setUserTypeMenuOpen(o => !o)}
+                          className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-blue-50 text-primary border border-blue-100 hover:bg-blue-100 transition"
+                        >
+                          <i className="fa-solid fa-user-tag text-[9px]" />
+                          {USER_TYPE_LABELS[userType]}
+                          <i className={`fa-solid fa-chevron-down text-[8px] transition-transform ${userTypeMenuOpen ? 'rotate-180' : ''}`} />
+                        </button>
+                        {userTypeMenuOpen && (
+                          <div className="absolute top-full left-0 mt-1 w-56 bg-white rounded-xl shadow-xl border border-gray-100 z-[60] overflow-hidden">
+                            {Object.entries(USER_TYPE_LABELS).map(([value, label]) => (
+                              <button
+                                key={value}
+                                type="button"
+                                onClick={() => { setUserType(value); setUserTypeMenuOpen(false); }}
+                                className={`w-full text-left px-3 py-2 text-[12px] font-medium transition ${userType === value ? 'bg-blue-50 text-primary font-semibold' : 'text-gray-600 hover:bg-gray-50'}`}
+                              >
+                                {label}
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </div>
                     )}
                   </div>
-                  {descriptionTab === 'description' ? (
-                    <div data-nosnippet className="text-[14px] text-gray-600 leading-relaxed max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
-                      <div className="space-y-4">
-                        {product.description && (
-                          <div className="text-[14px] text-gray-600 leading-relaxed">
-                            {renderRichContent(product.description)}
+                  {!userTypeConfirmed ? (
+                    <div>
+                      <p className="mb-3 text-[15px] font-semibold text-[#0B2E5E]">Inquiry type:</p>
+                      <div className="mb-5 space-y-3">
+                        {Object.entries(USER_TYPE_LABELS).map(([value, label]) => (
+                          <button
+                            key={value}
+                            type="button"
+                            onClick={() => setUserType(value)}
+                            aria-pressed={userType === value}
+                            className={`flex w-full items-center gap-3 rounded-xl border px-5 py-4 text-left text-[15.5px] font-semibold transition ${userType === value ? 'border-primary bg-primary/5 text-primary' : 'border-slate-200 text-[#0B2E5E] hover:border-primary/50'}`}
+                          >
+                            <UserPlus className="h-4.5 w-4.5 shrink-0" strokeWidth={1.75} aria-hidden />
+                            {label}
+                          </button>
+                        ))}
+                      </div>
+                      <button
+                        type="button"
+                        disabled={!userType}
+                        onClick={() => setUserTypeConfirmed(true)}
+                        className="w-full rounded-xl bg-primary py-4 text-[16px] font-semibold text-white transition hover:bg-primary-deep disabled:cursor-not-allowed disabled:bg-slate-400"
+                      >
+                        Continue
+                      </button>
+                    </div>
+                  ) : userType === 'patient' ? (
+                  <form onSubmit={handleSubmit} className="space-y-4">
+                    <div>
+                      <label className="block text-[13px] font-medium text-gray-500 mb-2">Target Product</label>
+                      <input
+                        type="text"
+                        readOnly
+                        value={getProductDisplayName(product)}
+                        className="w-full bg-gray-50 border border-gray-100 rounded-xl px-3 py-2.5 text-[13px] font-semibold outline-none cursor-default"
+                        style={{ color: '#0D99FF' }}
+                      />
+                    </div>
+
+                    {/* Patient full name + Upload valid ID — mirrors order-medicines.tsx Customer Information */}
+                    <div>
+                      <label className="block text-[13px] font-medium text-gray-500 mb-2">Patient Full Name</label>
+                      <input
+                        type="text"
+                        required
+                        placeholder="Full name as shown on the prescription"
+                        value={formData.name}
+                        onChange={e => setFormData(f => ({ ...f, name: e.target.value }))}
+                        className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2.5 text-[13px] text-gray-700 outline-none focus:border-primary transition"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="block text-[13px] font-medium text-gray-500">Upload valid ID of the patient</label>
+                      <p className="text-[11px] text-gray-400 leading-relaxed">
+                        A valid government-issued ID of the patient helps us process your order faster and ensures the prescription is dispensed to the right person.
+                      </p>
+                      <div className="flex items-center gap-3 flex-wrap pt-1">
+                        {!patientIdFile ? (
+                          <label className="cursor-pointer inline-flex items-center gap-2 hover:opacity-90 text-white text-[12px] font-semibold px-4 py-2.5 rounded-xl transition"
+                            style={{ background: '#1D9FDA' }}>
+                            <input type="file" accept={ALLOWED_FILE_TYPES_ACCEPT} className="hidden" onChange={handlePatientIdChange} />
+                            <i className="fa-solid fa-upload text-[11px]"></i>
+                            Upload File
+                          </label>
+                        ) : (
+                          <div className="flex items-center gap-2 bg-gray-50 border border-gray-100 rounded-xl pl-1.5 pr-3 py-1.5">
+                            {patientIdFile.type.startsWith('image/') ? (
+                              <button type="button" onClick={() => setViewingFileUrl(URL.createObjectURL(patientIdFile))}
+                                className="w-8 h-8 rounded-[7px] overflow-hidden border border-gray-100 flex-shrink-0">
+                                <img src={URL.createObjectURL(patientIdFile)} alt={patientIdFile.name} className="w-full h-full object-cover" />
+                              </button>
+                            ) : (
+                              <i className="fa-solid fa-file-pdf text-red-400"></i>
+                            )}
+                            <span className="text-[12px] text-gray-600 truncate max-w-[160px]">{patientIdFile.name}</span>
+                            <button type="button" onClick={() => setPatientIdFile(null)}
+                              className="text-gray-400 hover:text-red-500 transition">
+                              <i className="fa-solid fa-xmark text-[11px]"></i>
+                            </button>
                           </div>
                         )}
-                        {(product.indications || (product as any).indication) && (
-                          <div>
-                            <span className="block text-[13px] font-semibold mb-1 text-gray-400">Indications</span>
-                            <div className="text-[14px] text-gray-600 leading-relaxed">
-                              {renderRichContent(product.indications || (product as any).indication)}
-                            </div>
+                        <span className="text-[11px] text-gray-400">JPG, PNG, PDF</span>
+                      </div>
+                    </div>
+
+                    {/* Contact Person */}
+                    <div className="border border-gray-100 rounded-xl p-4 bg-gray-50/40 space-y-3">
+                      <h3 className="text-[13px] font-semibold text-gray-800">Contact Person</h3>
+                      <label className="flex items-start gap-2.5 cursor-pointer">
+                        <input type="checkbox"
+                          checked={contactSameAsPatient}
+                          onChange={e => setContactSameAsPatient(e.target.checked)}
+                          className="w-4 h-4 mt-0.5 rounded-md border-gray-200 text-success focus:ring-success cursor-pointer" />
+                        <span>
+                          <span className="block text-[12px] font-semibold text-gray-700">Same as patient details</span>
+                          <span className="block text-[11px] text-gray-400 mt-0.5">Check this if the patient is the one placing the inquiry.</span>
+                        </span>
+                      </label>
+
+                      {!contactSameAsPatient && (
+                        <div className="grid grid-cols-1 gap-3 pt-1">
+                          <div className="space-y-1.5">
+                            <label className="block text-[12px] font-medium text-gray-500">Contact Person's Full Name</label>
+                            <input type="text" placeholder="Person we should contact"
+                              required={!contactSameAsPatient}
+                              value={formData.contactName}
+                              onChange={e => setFormData(f => ({ ...f, contactName: e.target.value }))}
+                              className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2.5 text-[13px] text-gray-700 outline-none focus:border-primary transition" />
                           </div>
-                        )}
-                        {(product.dosageAdministration || (product as any).dosageAndAdministration) && (
-                          <div>
-                            <span className="block text-[13px] font-semibold mb-1 text-gray-400">Dosage & Administration</span>
-                            <div className="text-[14px] text-gray-600 leading-relaxed">
-                              {renderRichContent(product.dosageAdministration || (product as any).dosageAndAdministration)}
-                            </div>
+                          <div className="space-y-1.5">
+                            <label className="block text-[12px] font-medium text-gray-500">Relationship to Patient</label>
+                            <select
+                              value={formData.contactRelationship}
+                              onChange={e => setFormData(f => ({ ...f, contactRelationship: e.target.value }))}
+                              className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2.5 text-[13px] text-gray-700 outline-none focus:border-primary transition">
+                              <option value="">Select relationship (optional)</option>
+                              <option value="Family member">Family member</option>
+                              <option value="Caregiver">Caregiver</option>
+                              <option value="Guardian">Guardian</option>
+                              <option value="Healthcare professional">Healthcare professional</option>
+                              <option value="Other">Other</option>
+                            </select>
                           </div>
-                        )}
-                        {!product.description && !product.indications && !(product as any).indication && !product.dosageAdministration && !(product as any).dosageAndAdministration && (
-                          <p>Detailed therapeutic description is not available.</p>
-                        )}
-                        <div className="mt-4 border-t border-gray-100 pt-4 grid grid-cols-2 gap-4">
-                          {product.packaging && (
-                            <div>
-                              <span className="block text-[11px] text-gray-400 uppercase font-semibold">Packaging</span>
-                              <span className="text-gray-800 font-medium text-[13px]">{product.packaging}</span>
-                            </div>
-                          )}
-                          {product.innovator && (
-                            <div>
-                              <span className="block text-[11px] text-gray-400 uppercase font-semibold">Innovator</span>
-                              <span className="text-gray-800 font-medium text-[13px]">{product.innovator}</span>
+                        </div>
+                      )}
+                    </div>
+
+                    <div>
+                      <label className="block text-[13px] font-medium text-gray-500 mb-2">Email Address</label>
+                      <input
+                        type="email"
+                        required
+                        placeholder="john@example.com"
+                        value={formData.email}
+                        onChange={e => setFormData(f => ({ ...f, email: e.target.value }))}
+                        className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2.5 text-[13px] text-gray-700 outline-none focus:border-primary transition"
+                      />
+                    </div>
+                    <div className="flex gap-3 items-end">
+                      <div className="flex-1 min-w-0">
+                        <label className="block text-[13px] font-medium text-gray-500 mb-2">Phone Number</label>
+                        <input
+                          type="tel"
+                          required
+                          placeholder="+63 900 000 0000"
+                          value={formData.phone}
+                          onChange={e => setFormData(f => ({ ...f, phone: e.target.value.replace(/[^\d+\s\-()]/g, '') }))}
+                          inputMode="numeric"
+                          className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2.5 text-[13px] text-gray-700 outline-none focus:border-primary transition"
+                        />
+                      </div>
+                      <div className="w-[90px] shrink-0" ref={ageDropdownRef}>
+                        <label className="block text-[13px] font-medium text-gray-500 mb-2">Age</label>
+                        <div className="relative">
+                          <button
+                            type="button"
+                            onClick={() => setAgeDropdownOpen(o => !o)}
+                            className="w-full flex items-center justify-between bg-white border border-gray-200 rounded-xl px-3 py-2.5 text-[13px] text-gray-700 outline-none focus:border-primary transition cursor-pointer"
+                          >
+                            <span className={formData.age ? 'text-gray-700' : 'text-gray-400'}>{formData.age || 'Age'}</span>
+                            <i className="fa-solid fa-chevron-down text-[10px] text-gray-400" />
+                          </button>
+                          {ageDropdownOpen && (
+                            <div className="absolute top-full left-0 mt-1 w-full bg-white rounded-xl shadow-xl border border-gray-100 z-[60] overflow-hidden">
+                              <div className="max-h-48 overflow-y-auto">
+                                {Array.from({ length: 63 }, (_, i) => i + 18).map(age => (
+                                  <button
+                                    key={age}
+                                    type="button"
+                                    onClick={() => { setFormData(f => ({ ...f, age: String(age) })); setAgeDropdownOpen(false); }}
+                                    className={`w-full text-left px-3 py-2 text-[13px] hover:bg-gray-50 transition ${formData.age === String(age) ? 'bg-blue-50 text-primary font-semibold' : 'text-gray-700'}`}
+                                  >
+                                    {age}
+                                  </button>
+                                ))}
+                              </div>
                             </div>
                           )}
                         </div>
                       </div>
                     </div>
-                  ) : (
-                    <div className="text-[14px] text-gray-600 leading-relaxed">
-                      This medicine is prescription-only (Rx). A valid prescription from a licensed
-                      healthcare professional is required for purchase and dispensing, as regulated by
-                      FDA Philippines under RA 9711.
-                    </div>
-                  )}
-                </div>
 
-                {/* Also used for — "Also Linked From" (auto), the other condition
-                    hubs this same product page is also linked from */}
-                {(() => {
-                  const allSubcats = getProductSubcategories(product);
-                  const primarySubcat = getCategorizationDisplay(product);
-                  const otherSubcats = allSubcats.filter(s => s !== primarySubcat);
-                  if (otherSubcats.length === 0) return null;
-                  return (
-                    <div className="mt-4 px-5 pb-5">
-                      <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-2.5">Also used for</p>
-                      <div className="flex flex-wrap gap-2">
-                        {otherSubcats.map((sub, idx) => {
-                          // Resolve the condition slug: prefer the precomputed slug from the sheet,
-                          // fall back to slugifying the condition name (same algorithm cancer-medicines.tsx uses)
-                          const conditionSlug =
-                            product.conditionSlugsByName?.[sub]?.conditionSlug ||
-                            sub.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
-                          const href = `/${product.categoryFolder || 'cancer-medicines'}/${conditionSlug}`;
-                          return (
-                            <a
-                              key={idx}
-                              href={href}
-                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-medium border border-blue-100 bg-blue-50 text-primary hover:bg-primary hover:text-white hover:border-primary transition-all duration-200"
-                            >
-                              <i className="fa-solid fa-arrow-right-to-bracket text-[9px]" />
-                              {sub}
-                            </a>
-                          );
-                        })}
-                      </div>
+                    <div>
+                      <label className="block text-[13px] font-medium text-gray-500 mb-2">Delivery Address</label>
+                      <input type="text" placeholder="Complete address for courier delivery"
+                        required
+                        value={formData.address}
+                        onChange={e => setFormData(f => ({ ...f, address: e.target.value }))}
+                        className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2.5 text-[13px] text-gray-700 outline-none focus:border-primary transition" />
                     </div>
-                  );
-                })()}
-              </div>
 
-              {/* Right Column: Inquiry Form */}
-              {/* scroll-mt clears the app's sticky header, which would
-                  otherwise cover the heading this scrolls to. */}
-              <div id="gm-inquiry" className="lg:w-1/2 bg-white p-6 lg:p-8 pb-10 scroll-mt-[68px]">
-                <div className="mb-6">
-                  <h4 className="text-lg font-bold text-gray-900">Send Inquiry</h4>
-                  <p className="text-xs text-gray-500 mt-1">Submit your details to get a formal quote for this product.</p>
-                  {userTypeConfirmed && userType && USER_TYPE_LABELS[userType] && (
-                    <div className="relative inline-block mt-2" ref={userTypeMenuRef}>
-                      <button
-                        type="button"
-                        onClick={() => setUserTypeMenuOpen(o => !o)}
-                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-blue-50 text-primary border border-blue-100 hover:bg-blue-100 transition"
-                      >
-                        <i className="fa-solid fa-user-tag text-[9px]" />
-                        {USER_TYPE_LABELS[userType]}
-                        <i className={`fa-solid fa-chevron-down text-[8px] transition-transform ${userTypeMenuOpen ? 'rotate-180' : ''}`} />
-                      </button>
-                      {userTypeMenuOpen && (
-                        <div className="absolute top-full left-0 mt-1 w-56 bg-white rounded-xl shadow-xl border border-gray-100 z-[60] overflow-hidden">
-                          {Object.entries(USER_TYPE_LABELS).map(([value, label]) => (
-                            <button
-                              key={value}
-                              type="button"
-                              onClick={() => { setUserType(value); setUserTypeMenuOpen(false); }}
-                              className={`w-full text-left px-3 py-2 text-[12px] font-medium transition ${userType === value ? 'bg-blue-50 text-primary font-semibold' : 'text-gray-600 hover:bg-gray-50'}`}
-                            >
-                              {label}
-                            </button>
+                    <div>
+                      <label className="block text-[13px] font-medium text-gray-500 mb-2">Upload Prescription (Required)</label>
+                      <input
+                        type="file"
+                        multiple
+                        accept={ALLOWED_FILE_TYPES_ACCEPT}
+                        onChange={handleFileChange}
+                        className="w-full text-[13px] text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-[12px] file:font-medium file:bg-primary/10 file:text-primary hover:file:bg-primary/20 transition cursor-pointer border border-gray-200 rounded-xl p-1.5 bg-white outline-none"
+                      />
+                      {uploadedFiles.length > 0 && (
+                        <div className="mt-2 space-y-1">
+                          {uploadedFiles.map((file, fi) => (
+                            <div key={fi} className="flex items-center text-[11px] text-gray-500 bg-gray-50 px-2 py-1.5 rounded-md border border-gray-100">
+                              <i className="fa-solid fa-file-lines mr-2" style={{ color: 'rgba(13,153,255,0.7)' }} />
+                              <span className="truncate">{file.name}</span>
+                            </div>
                           ))}
                         </div>
                       )}
                     </div>
+
+                    <div className="flex items-start gap-2 text-[11px] text-gray-400 pt-1">
+                      <i className="fa-solid fa-circle-info mt-0.5 flex-shrink-0"></i>
+                      <span>Our pharmacists will contact you on the mobile number provided.</span>
+                    </div>
+
+                    <hr className="border-gray-100" />
+
+                    <div className="space-y-2.5">
+                      <h3 className="text-[13px] font-semibold text-gray-800">Declarations and Consent</h3>
+                      <div className="flex items-start gap-2.5">
+                        <input type="checkbox" id="pd-terms"
+                          checked={formData.terms}
+                          onChange={e => setFormData(f => ({ ...f, terms: e.target.checked }))}
+                          className="w-4 h-4 mt-0.5 rounded-md border-gray-200 text-success focus:ring-success cursor-pointer" />
+                        <label htmlFor="pd-terms" className="text-[11px] text-gray-500 cursor-pointer">
+                          I confirm that the information provided is accurate and that the prescription submitted is valid.
+                        </label>
+                      </div>
+                      <div className="flex items-start gap-2.5">
+                        <input type="checkbox" id="pd-privacyConsent"
+                          checked={formData.privacyConsent}
+                          onChange={e => setFormData(f => ({ ...f, privacyConsent: e.target.checked }))}
+                          className="w-4 h-4 mt-0.5 rounded-md border-gray-200 text-success focus:ring-success cursor-pointer" />
+                        <label htmlFor="pd-privacyConsent" className="text-[11px] text-gray-500 cursor-pointer">
+                          I have read and understood the Privacy Policy and consent to the collection, use, and processing of my personal and sensitive personal information for the purpose of verifying and processing this inquiry.
+                        </label>
+                      </div>
+                    </div>
+
+                    <Turnstile turnstile={turnstile} />
+
+                    <button
+                      type="submit"
+                      disabled={submitState === 'sending' || submitState === 'sent' || (turnstile.enabled && !turnstile.token)}
+                      className="w-full text-white font-bold py-3 rounded-xl transition-all duration-500 transform active:scale-[0.98] mt-6 mb-4 text-[13px]"
+                      style={submitState === 'sent'
+                        ? { background: '#61A644' }
+                        : { background: '#1D9FDA' }}
+                    >
+                      {submitState === 'sending'
+                        ? 'Sending...'
+                        : submitState === 'sent'
+                          ? '✓ Inquiry Sent Successfully!'
+                          : submitState === 'error'
+                            ? 'Failed to submit. Try again.'
+                            : 'Submit Inquiry Request'}
+                    </button>
+
+                    {/* Medical Disclaimer */}
+                    <div className="p-4 bg-amber-50 border border-amber-100 rounded-xl flex items-start gap-2.5 mb-4">
+                      <i className="fa-solid fa-triangle-exclamation text-amber-500 mt-0.5 flex-shrink-0 text-sm"></i>
+                      <p className="text-[10.5px] text-amber-800 leading-relaxed">
+                        <span className="font-bold">Medical Disclaimer: </span>
+                        Getmeds dispenses prescription medicines only upon receipt of a valid prescription from a licensed physician. This service does not replace professional medical advice, diagnosis, or treatment.
+                      </p>
+                    </div>
+                    <div className="h-4" />
+                  </form>
+                  ) : (
+                  <form onSubmit={handleSubmit} className="space-y-4">
+                    <div>
+                      <label className="block text-[13px] font-medium text-gray-500 mb-2">Target Product</label>
+                      <input
+                        type="text"
+                        readOnly
+                        value={getProductDisplayName(product)}
+                        className="w-full bg-gray-50 border border-gray-100 rounded-xl px-3 py-2.5 text-[13px] font-semibold outline-none cursor-default"
+                        style={{ color: '#0D99FF' }}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[13px] font-medium text-gray-500 mb-2">Full Name</label>
+                      <input
+                        type="text"
+                        required
+                        placeholder="John Doe"
+                        value={formData.name}
+                        onChange={e => setFormData(f => ({ ...f, name: e.target.value }))}
+                        className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2.5 text-[13px] text-gray-700 outline-none focus:border-primary transition"
+                      />
+                    </div>
+                    <div className="flex gap-3 items-end">
+                      <div className="flex-1 min-w-0">
+                        <label className="block text-[13px] font-medium text-gray-500 mb-2">Phone Number</label>
+                        <input
+                          type="tel"
+                          required
+                          placeholder="+63 900 000 0000"
+                          value={formData.phone}
+                          onChange={e => setFormData(f => ({ ...f, phone: e.target.value.replace(/[^\d+\s\-()]/g, '') }))}
+                          inputMode="numeric"
+                          className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2.5 text-[13px] text-gray-700 outline-none focus:border-primary transition"
+                        />
+                      </div>
+                      <div className="w-[90px] shrink-0" ref={ageDropdownRef}>
+                        <label className="block text-[13px] font-medium text-gray-500 mb-2">Age</label>
+                        <div className="relative">
+                          <button
+                            type="button"
+                            onClick={() => setAgeDropdownOpen(o => !o)}
+                            className="w-full flex items-center justify-between bg-white border border-gray-200 rounded-xl px-3 py-2.5 text-[13px] text-gray-700 outline-none focus:border-primary transition cursor-pointer"
+                          >
+                            <span className={formData.age ? 'text-gray-700' : 'text-gray-400'}>{formData.age || 'Age'}</span>
+                            <i className="fa-solid fa-chevron-down text-[10px] text-gray-400" />
+                          </button>
+                          {ageDropdownOpen && (
+                            <div className="absolute top-full left-0 mt-1 w-full bg-white rounded-xl shadow-xl border border-gray-100 z-[60] overflow-hidden">
+                              <div className="max-h-48 overflow-y-auto">
+                                {Array.from({ length: 63 }, (_, i) => i + 18).map(age => (
+                                  <button
+                                    key={age}
+                                    type="button"
+                                    onClick={() => { setFormData(f => ({ ...f, age: String(age) })); setAgeDropdownOpen(false); }}
+                                    className={`w-full text-left px-3 py-2 text-[13px] hover:bg-gray-50 transition ${formData.age === String(age) ? 'bg-blue-50 text-primary font-semibold' : 'text-gray-700'}`}
+                                  >
+                                    {age}
+                                  </button>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-[13px] font-medium text-gray-500 mb-2">Email Address</label>
+                      <input
+                        type="email"
+                        required
+                        placeholder="john@example.com"
+                        value={formData.email}
+                        onChange={e => setFormData(f => ({ ...f, email: e.target.value }))}
+                        className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2.5 text-[13px] text-gray-700 outline-none focus:border-primary transition"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[13px] font-medium text-gray-500 mb-2">Message</label>
+                      <textarea
+                        rows={3}
+                        placeholder="Tell us more about your requirements..."
+                        value={formData.message}
+                        onChange={e => setFormData(f => ({ ...f, message: e.target.value }))}
+                        className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2.5 text-[13px] text-gray-700 outline-none focus:border-primary transition resize-none"
+                      />
+                    </div>
+                    <Turnstile turnstile={turnstile} />
+
+                    <button
+                      type="submit"
+                      disabled={submitState === 'sending' || submitState === 'sent' || (turnstile.enabled && !turnstile.token)}
+                      className="w-full text-white font-bold py-3 rounded-xl transition-all duration-500 transform active:scale-[0.98] mt-6 mb-8 text-[13px]"
+                      style={submitState === 'sent'
+                        ? { background: '#61A644' }
+                        : { background: '#1D9FDA' }}
+                    >
+                      {submitState === 'sending'
+                        ? 'Sending...'
+                        : submitState === 'sent'
+                          ? '✓ Inquiry Sent Successfully!'
+                          : submitState === 'error'
+                            ? 'Failed to submit. Try again.'
+                            : 'Submit Inquiry Request'}
+                    </button>
+                    <div className="h-8" />
+                  </form>
+                  )}
+                    </div>
+
+                    <a
+                      href={whatsappHref}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-3 flex h-14 w-full items-center justify-center gap-2.5 rounded-xl border-2 border-primary text-[15px] font-semibold uppercase tracking-[0.12em] text-primary transition hover:bg-primary/5"
+                    >
+                      <WhatsAppIcon className="h-5 w-5 text-[#25D366]" />
+                      Order via WhatsApp
+                    </a>
+                  </div>
+                )}
+
+                <div hidden={inquiryOpen} className={inquiryOpen ? '' : 'gm-rise'}>
+                <div className="flex flex-wrap items-center gap-2.5">
+                  {inStock && (
+                    <span className="inline-flex items-center gap-1 text-[13px] font-medium text-[#2f7a23]">
+                      <Check className="h-3.5 w-3.5" strokeWidth={2.5} aria-hidden /> In stock
+                    </span>
                   )}
                 </div>
-                {!userTypeConfirmed ? (
-                  <div>
-                    <p className="text-[13px] font-medium text-gray-500 mb-3">Inquiry Type:</p>
-                    <div className="space-y-2 mb-6">
-                      {Object.entries(USER_TYPE_LABELS).map(([value, label]) => (
-                        <button
-                          key={value}
-                          type="button"
-                          onClick={() => setUserType(value)}
-                          className={`w-full flex items-center gap-2.5 px-4 py-3 rounded-xl border text-left text-[13px] font-semibold transition ${userType === value ? 'border-primary bg-blue-50 text-primary' : 'border-gray-200 text-gray-700 hover:border-gray-300'}`}
-                        >
-                          <i className="fa-solid fa-user-tag text-[11px]" />
-                          {label}
-                        </button>
-                      ))}
-                    </div>
-                    <button
-                      type="button"
-                      disabled={!userType}
-                      onClick={() => setUserTypeConfirmed(true)}
-                      className="w-full text-white font-bold py-3 rounded-xl transition-all duration-300 text-[13px] disabled:opacity-40 disabled:cursor-not-allowed"
-                      style={{ background: 'linear-gradient(to right, #61A644, #0D99FF)' }}
-                    >
-                      Continue
-                    </button>
-                  </div>
-                ) : userType === 'patient' ? (
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <div>
-                    <label className="block text-[13px] font-medium text-gray-500 mb-2">Target Product</label>
-                    <input
-                      type="text"
-                      readOnly
-                      value={getProductDisplayName(product)}
-                      className="w-full bg-gray-50 border border-gray-100 rounded-xl px-3 py-2.5 text-[13px] font-semibold outline-none cursor-default"
-                      style={{ color: '#0D99FF' }}
-                    />
-                  </div>
 
-                  {/* Patient full name + Upload valid ID — mirrors order-medicines.tsx Customer Information */}
-                  <div>
-                    <label className="block text-[13px] font-medium text-gray-500 mb-2">Patient Full Name</label>
-                    <input
-                      type="text"
-                      required
-                      placeholder="Full name as shown on the prescription"
-                      value={formData.name}
-                      onChange={e => setFormData(f => ({ ...f, name: e.target.value }))}
-                      className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2.5 text-[13px] text-gray-700 outline-none focus:border-primary transition"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <label className="block text-[13px] font-medium text-gray-500">Upload valid ID of the patient</label>
-                    <p className="text-[11px] text-gray-400 leading-relaxed">
-                      A valid government-issued ID of the patient helps us process your order faster and ensures the prescription is dispensed to the right person.
-                    </p>
-                    <div className="flex items-center gap-3 flex-wrap pt-1">
-                      {!patientIdFile ? (
-                        <label className="cursor-pointer inline-flex items-center gap-2 hover:opacity-90 text-white text-[12px] font-semibold px-4 py-2.5 rounded-xl transition"
-                          style={{ background: 'linear-gradient(to right,#61A644,#1D9FDA)' }}>
-                          <input type="file" accept={ALLOWED_FILE_TYPES_ACCEPT} className="hidden" onChange={handlePatientIdChange} />
-                          <i className="fa-solid fa-upload text-[11px]"></i>
-                          Upload File
-                        </label>
-                      ) : (
-                        <div className="flex items-center gap-2 bg-gray-50 border border-gray-100 rounded-xl pl-1.5 pr-3 py-1.5">
-                          {patientIdFile.type.startsWith('image/') ? (
-                            <button type="button" onClick={() => setViewingFileUrl(URL.createObjectURL(patientIdFile))}
-                              className="w-8 h-8 rounded-[7px] overflow-hidden border border-gray-100 flex-shrink-0">
-                              <img src={URL.createObjectURL(patientIdFile)} alt={patientIdFile.name} className="w-full h-full object-cover" />
-                            </button>
-                          ) : (
-                            <i className="fa-solid fa-file-pdf text-red-400"></i>
-                          )}
-                          <span className="text-[12px] text-gray-600 truncate max-w-[160px]">{patientIdFile.name}</span>
-                          <button type="button" onClick={() => setPatientIdFile(null)}
-                            className="text-gray-400 hover:text-red-500 transition">
-                            <i className="fa-solid fa-xmark text-[11px]"></i>
-                          </button>
-                        </div>
-                      )}
-                      <span className="text-[11px] text-gray-400">JPG, PNG, PDF</span>
-                    </div>
-                  </div>
-
-                  {/* Contact Person */}
-                  <div className="border border-gray-100 rounded-xl p-4 bg-gray-50/40 space-y-3">
-                    <h3 className="text-[13px] font-semibold text-gray-800">Contact Person</h3>
-                    <label className="flex items-start gap-2.5 cursor-pointer">
-                      <input type="checkbox"
-                        checked={contactSameAsPatient}
-                        onChange={e => setContactSameAsPatient(e.target.checked)}
-                        className="w-4 h-4 mt-0.5 rounded-md border-gray-200 text-success focus:ring-success cursor-pointer" />
-                      <span>
-                        <span className="block text-[12px] font-semibold text-gray-700">Same as patient details</span>
-                        <span className="block text-[11px] text-gray-400 mt-0.5">Check this if the patient is the one placing the inquiry.</span>
+                <h1 className="font-display mt-4 text-[clamp(2rem,3.6vw,2.9rem)] font-semibold leading-[1.08] tracking-tight text-[#0B2E5E]">
+                  {brand}
+                  {/* Rx mark, set like an exponent after the name. Screen readers hear "Prescription required";
+                      the hover/focus label is drawn by CSS from data-tip, so the H1 text stays "DoseGet-20 Rx …". */}
+                  {isRx && (
+                    <>
+                      {' '}
+                      <span
+                        role="img"
+                        aria-label="Prescription required"
+                        tabIndex={0}
+                        data-tip="Prescription required"
+                        className="relative inline-block cursor-help align-super font-serif text-[0.4em] font-bold italic leading-none tracking-normal text-[#c0262d] outline-none
+                          after:pointer-events-none after:absolute after:left-full after:top-1/2 after:z-10 after:ml-2.5 after:-translate-y-1/2 after:translate-x-1 after:whitespace-nowrap after:rounded-md after:bg-[#0B2E5E] after:px-2.5 after:py-1.5 after:font-sans after:text-[12.5px] after:font-medium after:not-italic after:text-white after:opacity-0 after:shadow-lg after:transition after:duration-200 after:content-[attr(data-tip)]
+                          hover:after:translate-x-0 hover:after:opacity-100 focus-visible:after:translate-x-0 focus-visible:after:opacity-100 focus-visible:underline focus-visible:decoration-2
+                          max-sm:after:left-auto max-sm:after:right-0 max-sm:after:top-full max-sm:after:ml-0 max-sm:after:mt-2 max-sm:after:translate-y-0"
+                      >
+                        Rx
                       </span>
-                    </label>
+                    </>
+                  )}
+                  {generic ? ' ' : ''}
+                  {generic && <span className="mt-2 block text-[clamp(1.05rem,1.6vw,1.3rem)] font-medium tracking-normal text-slate-500">{generic}</span>}
+                </h1>
 
-                    {!contactSameAsPatient && (
-                      <div className="grid grid-cols-1 gap-3 pt-1">
-                        <div className="space-y-1.5">
-                          <label className="block text-[12px] font-medium text-gray-500">Contact Person's Full Name</label>
-                          <input type="text" placeholder="Person we should contact"
-                            required={!contactSameAsPatient}
-                            value={formData.contactName}
-                            onChange={e => setFormData(f => ({ ...f, contactName: e.target.value }))}
-                            className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2.5 text-[13px] text-gray-700 outline-none focus:border-primary transition" />
-                        </div>
-                        <div className="space-y-1.5">
-                          <label className="block text-[12px] font-medium text-gray-500">Relationship to Patient</label>
-                          <select
-                            value={formData.contactRelationship}
-                            onChange={e => setFormData(f => ({ ...f, contactRelationship: e.target.value }))}
-                            className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2.5 text-[13px] text-gray-700 outline-none focus:border-primary transition">
-                            <option value="">Select relationship (optional)</option>
-                            <option value="Family member">Family member</option>
-                            <option value="Caregiver">Caregiver</option>
-                            <option value="Guardian">Guardian</option>
-                            <option value="Healthcare professional">Healthcare professional</option>
-                            <option value="Other">Other</option>
-                          </select>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  <div>
-                    <label className="block text-[13px] font-medium text-gray-500 mb-2">Email Address</label>
-                    <input
-                      type="email"
-                      required
-                      placeholder="john@example.com"
-                      value={formData.email}
-                      onChange={e => setFormData(f => ({ ...f, email: e.target.value }))}
-                      className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2.5 text-[13px] text-gray-700 outline-none focus:border-primary transition"
-                    />
-                  </div>
-                  <div className="flex gap-3 items-end">
-                    <div className="flex-1 min-w-0">
-                      <label className="block text-[13px] font-medium text-gray-500 mb-2">Phone Number</label>
-                      <input
-                        type="tel"
-                        required
-                        placeholder="+63 900 000 0000"
-                        value={formData.phone}
-                        onChange={e => setFormData(f => ({ ...f, phone: e.target.value.replace(/[^\d+\s\-()]/g, '') }))}
-                        inputMode="numeric"
-                        className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2.5 text-[13px] text-gray-700 outline-none focus:border-primary transition"
-                      />
-                    </div>
-                    <div className="w-[90px] shrink-0" ref={ageDropdownRef}>
-                      <label className="block text-[13px] font-medium text-gray-500 mb-2">Age</label>
-                      <div className="relative">
-                        <button
-                          type="button"
-                          onClick={() => setAgeDropdownOpen(o => !o)}
-                          className="w-full flex items-center justify-between bg-white border border-gray-200 rounded-xl px-3 py-2.5 text-[13px] text-gray-700 outline-none focus:border-primary transition cursor-pointer"
-                        >
-                          <span className={formData.age ? 'text-gray-700' : 'text-gray-400'}>{formData.age || 'Age'}</span>
-                          <i className="fa-solid fa-chevron-down text-[10px] text-gray-400" />
-                        </button>
-                        {ageDropdownOpen && (
-                          <div className="absolute top-full left-0 mt-1 w-full bg-white rounded-xl shadow-xl border border-gray-100 z-[60] overflow-hidden">
-                            <div className="max-h-48 overflow-y-auto">
-                              {Array.from({ length: 63 }, (_, i) => i + 18).map(age => (
-                                <button
-                                  key={age}
-                                  type="button"
-                                  onClick={() => { setFormData(f => ({ ...f, age: String(age) })); setAgeDropdownOpen(false); }}
-                                  className={`w-full text-left px-3 py-2 text-[13px] hover:bg-gray-50 transition ${formData.age === String(age) ? 'bg-blue-50 text-primary font-semibold' : 'text-gray-700'}`}
-                                >
-                                  {age}
-                                </button>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-[13px] font-medium text-gray-500 mb-2">Delivery Address</label>
-                    <input type="text" placeholder="Complete address for courier delivery"
-                      required
-                      value={formData.address}
-                      onChange={e => setFormData(f => ({ ...f, address: e.target.value }))}
-                      className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2.5 text-[13px] text-gray-700 outline-none focus:border-primary transition" />
-                  </div>
-
-                  <div>
-                    <label className="block text-[13px] font-medium text-gray-500 mb-2">Upload Prescription (Required)</label>
-                    <input
-                      type="file"
-                      multiple
-                      accept={ALLOWED_FILE_TYPES_ACCEPT}
-                      onChange={handleFileChange}
-                      className="w-full text-[13px] text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-[12px] file:font-medium file:bg-primary/10 file:text-primary hover:file:bg-primary/20 transition cursor-pointer border border-gray-200 rounded-xl p-1.5 bg-white outline-none"
-                    />
-                    {uploadedFiles.length > 0 && (
-                      <div className="mt-2 space-y-1">
-                        {uploadedFiles.map((file, fi) => (
-                          <div key={fi} className="flex items-center text-[11px] text-gray-500 bg-gray-50 px-2 py-1.5 rounded-md border border-gray-100">
-                            <i className="fa-solid fa-file-lines mr-2" style={{ color: 'rgba(13,153,255,0.7)' }} />
-                            <span className="truncate">{file.name}</span>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="flex items-start gap-2 text-[11px] text-gray-400 pt-1">
-                    <i className="fa-solid fa-circle-info mt-0.5 flex-shrink-0"></i>
-                    <span>Our pharmacists will contact you on the mobile number provided.</span>
-                  </div>
-
-                  <hr className="border-gray-100" />
-
-                  <div className="space-y-2.5">
-                    <h3 className="text-[13px] font-semibold text-gray-800">Declarations and Consent</h3>
-                    <div className="flex items-start gap-2.5">
-                      <input type="checkbox" id="pd-terms"
-                        checked={formData.terms}
-                        onChange={e => setFormData(f => ({ ...f, terms: e.target.checked }))}
-                        className="w-4 h-4 mt-0.5 rounded-md border-gray-200 text-success focus:ring-success cursor-pointer" />
-                      <label htmlFor="pd-terms" className="text-[11px] text-gray-500 cursor-pointer">
-                        I confirm that the information provided is accurate and that the prescription submitted is valid.
-                      </label>
-                    </div>
-                    <div className="flex items-start gap-2.5">
-                      <input type="checkbox" id="pd-privacyConsent"
-                        checked={formData.privacyConsent}
-                        onChange={e => setFormData(f => ({ ...f, privacyConsent: e.target.checked }))}
-                        className="w-4 h-4 mt-0.5 rounded-md border-gray-200 text-success focus:ring-success cursor-pointer" />
-                      <label htmlFor="pd-privacyConsent" className="text-[11px] text-gray-500 cursor-pointer">
-                        I have read and understood the Privacy Policy and consent to the collection, use, and processing of my personal and sensitive personal information for the purpose of verifying and processing this inquiry.
-                      </label>
-                    </div>
-                  </div>
-
-                  <Turnstile turnstile={turnstile} />
-
-                  <button
-                    type="submit"
-                    disabled={submitState === 'sending' || submitState === 'sent' || (turnstile.enabled && !turnstile.token)}
-                    className="w-full text-white font-bold py-3 rounded-xl transition-all duration-500 transform active:scale-[0.98] mt-6 mb-4 text-[13px]"
-                    style={submitState === 'sent'
-                      ? { background: '#61A644' }
-                      : { background: 'linear-gradient(to right, #61A644, #0D99FF)' }}
-                  >
-                    {submitState === 'sending'
-                      ? 'Sending...'
-                      : submitState === 'sent'
-                        ? '✓ Inquiry Sent Successfully!'
-                        : submitState === 'error'
-                          ? 'Failed to submit. Try again.'
-                          : 'Submit Inquiry Request'}
-                  </button>
-
-                  {/* Medical Disclaimer */}
-                  <div className="p-4 bg-amber-50 border border-amber-100 rounded-xl flex items-start gap-2.5 mb-4">
-                    <i className="fa-solid fa-triangle-exclamation text-amber-500 mt-0.5 flex-shrink-0 text-sm"></i>
-                    <p className="text-[10.5px] text-amber-800 leading-relaxed">
-                      <span className="font-bold">Medical Disclaimer: </span>
-                      Getmeds dispenses prescription medicines only upon receipt of a valid prescription from a licensed physician. This service does not replace professional medical advice, diagnosis, or treatment.
-                    </p>
-                  </div>
-                  <div className="h-4" />
-                </form>
-                ) : (
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <div>
-                    <label className="block text-[13px] font-medium text-gray-500 mb-2">Target Product</label>
-                    <input
-                      type="text"
-                      readOnly
-                      value={getProductDisplayName(product)}
-                      className="w-full bg-gray-50 border border-gray-100 rounded-xl px-3 py-2.5 text-[13px] font-semibold outline-none cursor-default"
-                      style={{ color: '#0D99FF' }}
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[13px] font-medium text-gray-500 mb-2">Full Name</label>
-                    <input
-                      type="text"
-                      required
-                      placeholder="John Doe"
-                      value={formData.name}
-                      onChange={e => setFormData(f => ({ ...f, name: e.target.value }))}
-                      className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2.5 text-[13px] text-gray-700 outline-none focus:border-primary transition"
-                    />
-                  </div>
-                  <div className="flex gap-3 items-end">
-                    <div className="flex-1 min-w-0">
-                      <label className="block text-[13px] font-medium text-gray-500 mb-2">Phone Number</label>
-                      <input
-                        type="tel"
-                        required
-                        placeholder="+63 900 000 0000"
-                        value={formData.phone}
-                        onChange={e => setFormData(f => ({ ...f, phone: e.target.value.replace(/[^\d+\s\-()]/g, '') }))}
-                        inputMode="numeric"
-                        className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2.5 text-[13px] text-gray-700 outline-none focus:border-primary transition"
-                      />
-                    </div>
-                    <div className="w-[90px] shrink-0" ref={ageDropdownRef}>
-                      <label className="block text-[13px] font-medium text-gray-500 mb-2">Age</label>
-                      <div className="relative">
-                        <button
-                          type="button"
-                          onClick={() => setAgeDropdownOpen(o => !o)}
-                          className="w-full flex items-center justify-between bg-white border border-gray-200 rounded-xl px-3 py-2.5 text-[13px] text-gray-700 outline-none focus:border-primary transition cursor-pointer"
-                        >
-                          <span className={formData.age ? 'text-gray-700' : 'text-gray-400'}>{formData.age || 'Age'}</span>
-                          <i className="fa-solid fa-chevron-down text-[10px] text-gray-400" />
-                        </button>
-                        {ageDropdownOpen && (
-                          <div className="absolute top-full left-0 mt-1 w-full bg-white rounded-xl shadow-xl border border-gray-100 z-[60] overflow-hidden">
-                            <div className="max-h-48 overflow-y-auto">
-                              {Array.from({ length: 63 }, (_, i) => i + 18).map(age => (
-                                <button
-                                  key={age}
-                                  type="button"
-                                  onClick={() => { setFormData(f => ({ ...f, age: String(age) })); setAgeDropdownOpen(false); }}
-                                  className={`w-full text-left px-3 py-2 text-[13px] hover:bg-gray-50 transition ${formData.age === String(age) ? 'bg-blue-50 text-primary font-semibold' : 'text-gray-700'}`}
-                                >
-                                  {age}
-                                </button>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                  <div>
-                    <label className="block text-[13px] font-medium text-gray-500 mb-2">Email Address</label>
-                    <input
-                      type="email"
-                      required
-                      placeholder="john@example.com"
-                      value={formData.email}
-                      onChange={e => setFormData(f => ({ ...f, email: e.target.value }))}
-                      className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2.5 text-[13px] text-gray-700 outline-none focus:border-primary transition"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[13px] font-medium text-gray-500 mb-2">Message</label>
-                    <textarea
-                      rows={3}
-                      placeholder="Tell us more about your requirements..."
-                      value={formData.message}
-                      onChange={e => setFormData(f => ({ ...f, message: e.target.value }))}
-                      className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2.5 text-[13px] text-gray-700 outline-none focus:border-primary transition resize-none"
-                    />
-                  </div>
-                  <Turnstile turnstile={turnstile} />
-
-                  <button
-                    type="submit"
-                    disabled={submitState === 'sending' || submitState === 'sent' || (turnstile.enabled && !turnstile.token)}
-                    className="w-full text-white font-bold py-3 rounded-xl transition-all duration-500 transform active:scale-[0.98] mt-6 mb-8 text-[13px]"
-                    style={submitState === 'sent'
-                      ? { background: '#61A644' }
-                      : { background: 'linear-gradient(to right, #61A644, #0D99FF)' }}
-                  >
-                    {submitState === 'sending'
-                      ? 'Sending...'
-                      : submitState === 'sent'
-                        ? '✓ Inquiry Sent Successfully!'
-                        : submitState === 'error'
-                          ? 'Failed to submit. Try again.'
-                          : 'Submit Inquiry Request'}
-                  </button>
-                  <div className="h-8" />
-                </form>
+                {orderedConditions.length > 0 && (
+                  <p className="mt-4 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-[14px] text-slate-500">
+                    <span>Used for</span>
+                    {orderedConditions.map((sub, i) => (
+                      <React.Fragment key={sub}>
+                        <a href={conditionHref(sub)} className="font-medium text-primary transition hover:text-primary-deep">{sub}</a>
+                        {i < orderedConditions.length - 1 && <span aria-hidden>&middot;</span>}
+                      </React.Fragment>
+                    ))}
+                  </p>
                 )}
+
+                {/* Strength and form take the price spot: no online price for prescription medicines */}
+                {(product.strength || product.form) && (
+                  <div className="mt-6">
+                    {product.strength && (
+                      <p className="font-display text-[26px] font-semibold leading-tight text-[#0B2E5E]">{formatFieldWithLineBreaks(product.strength)}</p>
+                    )}
+                    {product.form && <p className="mt-1 text-[15px] text-slate-600">{formatFieldWithLineBreaks(product.form)}</p>}
+                  </div>
+                )}
+                <p className="mt-2 text-[13.5px] text-slate-500">Price on request: our pharmacist sends a formal quote.</p>
+
+                {/* Full text is always in the HTML (only clipped visually), so search engines read all of it;
+                    the "…" at the end of line 3 expands it in place. */}
+                {summary && (
+                  <div className="relative mt-5">
+                    <p
+                      id="gm-summary"
+                      ref={summaryRef}
+                      className={`text-[15px] leading-relaxed text-slate-600 ${summaryOpen ? '' : 'max-h-[4.875em] overflow-hidden'}`}
+                    >
+                      {summary}
+                      {summaryOpen && summaryOverflows && (
+                        <button
+                          type="button"
+                          onClick={() => setSummaryOpen(false)}
+                          aria-controls="gm-summary"
+                          aria-expanded
+                          className="ml-1.5 rounded text-[14px] font-medium text-primary transition hover:text-primary-deep"
+                        >
+                          Show less
+                        </button>
+                      )}
+                    </p>
+                    {!summaryOpen && summaryOverflows && (
+                      <button
+                        type="button"
+                        onClick={() => setSummaryOpen(true)}
+                        aria-controls="gm-summary"
+                        aria-expanded={false}
+                        aria-label="Show the full description"
+                        title="Show the full description"
+                        className="absolute bottom-0 right-0 flex items-center bg-gradient-to-r from-transparent via-white via-35% to-white pl-10 text-[15px] leading-relaxed"
+                      >
+                        <span className="rounded-full bg-primary/10 px-2.5 text-[18px] font-bold leading-[1.45] tracking-wider text-primary transition hover:bg-primary hover:text-white">…</span>
+                      </button>
+                    )}
+                  </div>
+                )}
+
+                <div className="my-7 h-px bg-slate-200" />
+
+                {variants.length > 1 && (
+                  <div className="mb-6">
+                    <h2 className="text-[12.5px] font-semibold uppercase tracking-[0.14em] text-[#0B2E5E]">Strength</h2>
+                    <ul className="mt-2.5 flex flex-wrap gap-2">
+                      {variants.map((v) => {
+                        const current = v.slug?.current === product.slug?.current;
+                        const label = String(v.strength).split(/\\n|\n/)[0];
+                        return (
+                          <li key={v.slug?.current}>
+                            {current ? (
+                              <span aria-current="page" className="inline-flex rounded-lg bg-primary px-4 py-2.5 text-[14px] font-semibold text-white">{label}</span>
+                            ) : (
+                              <a
+                                href={productHref(v)}
+                                title={`${getProductDisplayName(v)} ${label}`}
+                                className="inline-flex rounded-lg px-4 py-2.5 text-[14px] font-medium text-[#0B2E5E] ring-1 ring-slate-300 transition hover:text-primary hover:ring-primary"
+                              >
+                                {label}
+                              </a>
+                            )}
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </div>
+                )}
+
+                <div className="space-y-3">
+                  <button
+                    type="button"
+                    onClick={openInquiry}
+                    aria-expanded={inquiryOpen}
+                    aria-controls="gm-order-box"
+                    title={orderLabel}
+                    className="group flex h-14 w-full items-center justify-center gap-2.5 rounded-xl bg-primary text-[15px] font-semibold uppercase tracking-[0.12em] text-white transition hover:bg-primary-deep"
+                  >
+                    Order Now
+                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" aria-hidden />
+                  </button>
+
+                  <a
+                    href={whatsappHref}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex h-14 w-full items-center justify-center gap-2.5 rounded-xl border-2 border-primary text-[15px] font-semibold uppercase tracking-[0.12em] text-primary transition hover:bg-primary/5"
+                  >
+                    <WhatsAppIcon className="h-5 w-5 text-[#25D366]" />
+                    Order via WhatsApp
+                  </a>
+                </div>
+                <p className="mt-5 flex items-center gap-2.5 text-[14px] text-slate-600">
+                  <Truck className="h-5 w-5 text-primary" strokeWidth={1.75} aria-hidden />
+                  Delivery across Luzon, Visayas and Mindanao
+                </p>
+
+                {/* Details as accordions; every panel stays in the page for search engines */}
+                {sections.length > 0 && (
+                  <div data-nosnippet className="mt-8 border-t border-slate-200">
+                    {sections.map((sec, i) => (
+                      <details key={sec.title} open={i === 0} className="group border-b border-slate-200">
+                        <summary className="flex cursor-pointer list-none items-center justify-between gap-4 py-5 [&::-webkit-details-marker]:hidden">
+                          <h2 className="text-[13px] font-semibold uppercase tracking-[0.14em] text-[#0B2E5E]">{sec.title}</h2>
+                          <Plus className="h-4 w-4 shrink-0 text-slate-500 transition-transform duration-300 group-open:rotate-45" aria-hidden />
+                        </summary>
+                        <div className="pb-6 text-[15px] leading-relaxed text-slate-600">{sec.body}</div>
+                      </details>
+                    ))}
+                  </div>
+                )}
+                </div>
               </div>
             </div>
 
+            {/* How to order + ordering FAQs (same wording as the server copy and its FAQPage data) */}
+            <section aria-labelledby="order-heading" className="mt-16 grid gap-8 rounded-3xl bg-[#f6f9fb] p-6 md:mt-20 md:p-10 lg:grid-cols-[1fr_1.35fr] lg:gap-12">
+              <div>
+                <h2 id="order-heading" className="font-display text-[clamp(1.4rem,2.2vw,1.8rem)] font-semibold leading-tight text-[#0B2E5E]">
+                  How to order {genericLabel} in the Philippines
+                </h2>
+                <ol className="mt-6 space-y-5">
+                  {ORDER_STEPS.map(([title, text], i) => (
+                    <li key={title} className="flex gap-4">
+                      <span className="font-display flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary text-[14px] font-semibold text-white">{i + 1}</span>
+                      <span>
+                        <span className="block text-[15.5px] font-semibold text-[#0B2E5E]">{title}</span>
+                        <span className="mt-0.5 block text-[14.5px] text-slate-600">{text}</span>
+                      </span>
+                    </li>
+                  ))}
+                </ol>
+                <button
+                  type="button"
+                  onClick={openInquiry}
+                  className="mt-7 inline-flex items-center rounded-xl bg-primary px-6 py-3.5 text-[15px] font-semibold text-white transition hover:bg-primary-deep"
+                >
+                  Send an inquiry for {product.brandName || genericLabel}
+                </button>
+              </div>
+              <div>
+                <h2 className="font-display text-[clamp(1.4rem,2.2vw,1.8rem)] font-semibold leading-tight text-[#0B2E5E]">
+                  Frequently asked questions
+                </h2>
+                <div className="mt-4 border-t border-slate-200">
+                  {faqs.map((faq, i) => (
+                    <details key={faq.q} open={i === 0} className="group border-b border-slate-200">
+                      <summary className="flex cursor-pointer list-none items-center justify-between gap-4 py-4 [&::-webkit-details-marker]:hidden">
+                        <h3 className="text-[15.5px] font-semibold text-[#0B2E5E]">{faq.q}</h3>
+                        <Plus className="h-4 w-4 shrink-0 text-slate-500 transition-transform duration-300 group-open:rotate-45" aria-hidden />
+                      </summary>
+                      <p className="pb-5 text-[15px] leading-relaxed text-slate-600">{faq.a}</p>
+                    </details>
+                  ))}
+                </div>
+              </div>
+            </section>
           </div>
-        )}
+          );
+        })()}
       </div>
 
 

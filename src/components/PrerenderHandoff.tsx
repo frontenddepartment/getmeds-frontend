@@ -7,7 +7,7 @@
 // standing in for the app.
 //
 // mode="skeleton" is for pages whose live version has its own loading skeleton (the
-// catalogue): the live page shows straight away with that skeleton, and the baked copy stays
+// catalogue and product pages): the live page shows straight away with that skeleton, and the baked copy stays
 // in the HTML for crawlers but off screen, instead of flashing a plain-text version of the
 // page that then jumps into a different layout.
 import React, { useEffect, useState } from 'react';
@@ -58,7 +58,7 @@ export default function PrerenderHandoff({
         )}
         {/* Without JavaScript the skeleton would never resolve, so show the baked copy instead. */}
         <noscript>
-          <style>{'[data-prerendered-offscreen]{position:static!important;width:auto!important;height:auto!important;margin:0!important;overflow:visible!important;clip:auto!important;white-space:normal!important}.catalog-root{display:none!important}'}</style>
+          <style>{'[data-prerendered-offscreen]{position:static!important;width:auto!important;height:auto!important;margin:0!important;overflow:visible!important;clip:auto!important;white-space:normal!important}.catalog-root,.product-detail-root{display:none!important}'}</style>
         </noscript>
         <div>{children}</div>
       </>

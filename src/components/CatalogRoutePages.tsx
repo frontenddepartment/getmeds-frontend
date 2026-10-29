@@ -23,7 +23,9 @@ export function ProductRoutePage({ seo, categorySlug, productSlug }: { seo: Cata
   return (
     <>
       <JsonLdScripts blocks={seo.jsonLd} />
-      <PrerenderHandoff baked={seo.baked}>
+      {/* Live page shows its own skeleton (same shape as the finished layout) instead of flashing
+          the plain crawler copy; that copy stays in the HTML, off screen, for search engines. */}
+      <PrerenderHandoff baked={seo.baked} mode="skeleton">
         <ProductDetailClient categorySlug={categorySlug} productSlug={productSlug} />
       </PrerenderHandoff>
     </>
