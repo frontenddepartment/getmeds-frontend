@@ -45,6 +45,8 @@ export interface PageMetaOptions {
   path?: string;
   image?: string;
   type?: 'website' | 'article' | 'product';
+  /** Use the title as is, without the " - Getmeds" suffix (product titles, prototype search format). */
+  plainTitle?: boolean;
 }
 
 function updateMeta(name: string, content: string, isProperty = false) {
@@ -212,8 +214,8 @@ export function excerptFromHtml(html: string, max: number): string {
   return truncateAtWord(text, max);
 }
 
-export function setPageMeta({ title, description, path, image, type = 'website' }: PageMetaOptions) {
-  const fullTitle = withSiteName(title);
+export function setPageMeta({ title, description, path, image, type = 'website', plainTitle }: PageMetaOptions) {
+  const fullTitle = plainTitle ? title.trim() : withSiteName(title);
   document.title = fullTitle;
 
   updateMeta('description', description);

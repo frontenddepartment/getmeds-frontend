@@ -69,6 +69,8 @@ export interface CatalogProduct {
   imageUrl?: string;
   /** Groups the strengths of one product (e.g. every PacliGet vial size). */
   productGroup?: string;
+  /** "RX" for prescription-only medicines (the sheet's Prescription column) */
+  prescription?: string;
   packaging?: string;
   storageCondition?: string;
   // Condition metadata, repeated on every row filed under a condition.
@@ -152,6 +154,7 @@ async function buildModel(): Promise<CatalogModel> {
       dosageAdministration: str(p.dosageAdministration),
       imageUrl: productImageUrl(p.image),
       productGroup: str(p.productGroup),
+      prescription: str(p.prescription),
       packaging: str(p.packaging),
       storageCondition: str(p.storageCondition),
       conditionHubUrl: str(p.conditionHubUrl),
