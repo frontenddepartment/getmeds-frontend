@@ -330,13 +330,13 @@ export default function BlogDetailClient({ routeSlug, initialSlug, initialArticl
         }
         
         if (tagName === 'h1') {
-          el.className = "text-lg md:text-xl font-bold mt-8 mb-4 text-gray-900 scroll-mt-28";
+          el.className = "text-2xl md:text-3xl font-semibold mt-10 mb-4 text-gray-900 scroll-mt-32";
         } else if (tagName === 'h2') {
-          el.className = "text-base font-semibold mt-8 mb-3 scroll-mt-28 bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent";
+          el.className = "text-xl md:text-2xl font-semibold mt-10 mb-3 scroll-mt-32 text-gray-900";
         } else if (tagName === 'h3') {
-          el.className = "text-sm font-semibold mt-6 mb-2 text-gray-800 scroll-mt-28";
+          el.className = "text-lg md:text-xl font-semibold mt-8 mb-2 text-gray-800 scroll-mt-32";
         } else {
-          el.className = "text-xs font-semibold mt-5 mb-2 text-gray-700 uppercase tracking-wider scroll-mt-28";
+          el.className = "text-sm font-semibold mt-6 mb-2 text-gray-700 uppercase tracking-wider scroll-mt-32";
         }
 
         // Track only h2 and h3 in the sidebar table of contents
@@ -554,7 +554,7 @@ export default function BlogDetailClient({ routeSlug, initialSlug, initialArticl
   const portableTextComponents = useMemo(() => ({
     block: {
       normal: ({ children }: any) => (
-        <p className="text-gray-700 text-sm leading-relaxed mb-4">{children}</p>
+        <p className="text-gray-700 text-base md:text-lg leading-relaxed mb-5">{children}</p>
       ),
       h2: ({ children, value }: any) => {
         const idx = headingKeyToIndex[value._key];
@@ -562,7 +562,7 @@ export default function BlogDetailClient({ routeSlug, initialSlug, initialArticl
           <h2
             id={`heading-${idx}`}
             data-section={idx}
-            className="text-base font-semibold mt-8 mb-3 scroll-mt-28 bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent"
+            className="text-xl md:text-2xl font-semibold mt-10 mb-3 scroll-mt-32 text-gray-900"
           >
             {children}
           </h2>
@@ -574,27 +574,27 @@ export default function BlogDetailClient({ routeSlug, initialSlug, initialArticl
           <h3
             id={`heading-${idx}`}
             data-section={idx}
-            className="text-sm font-semibold mt-6 mb-2 text-gray-800 scroll-mt-28"
+            className="text-lg md:text-xl font-semibold mt-8 mb-2 text-gray-800 scroll-mt-32"
           >
             {children}
           </h3>
         );
       },
       large: ({ children }: any) => (
-        <p className="text-gray-700 text-sm leading-relaxed mb-4">{children}</p>
+        <p className="text-gray-700 text-base md:text-lg leading-relaxed mb-5">{children}</p>
       ),
       small: ({ children }: any) => (
-        <p className="text-gray-700 text-sm leading-relaxed mb-3">{children}</p>
+        <p className="text-gray-700 text-base md:text-lg leading-relaxed mb-4">{children}</p>
       ),
       center: ({ children }: any) => (
-        <p className="text-gray-700 text-sm leading-relaxed mb-4 text-center">{children}</p>
+        <p className="text-gray-700 text-base md:text-lg leading-relaxed mb-5 text-center">{children}</p>
       ),
       right: ({ children }: any) => (
-        <p className="text-gray-700 text-sm leading-relaxed mb-4 text-right">{children}</p>
+        <p className="text-gray-700 text-base md:text-lg leading-relaxed mb-5 text-right">{children}</p>
       ),
       blockquote: ({ children }: any) => (
         <blockquote
-          className="border-l-4 pl-4 my-5 italic text-gray-600 text-sm leading-relaxed"
+          className="border-l-4 pl-5 my-6 italic text-gray-600 text-base md:text-lg leading-relaxed"
           style={{ borderColor: '#1D9FDA' }}
         >
           {children}
@@ -603,10 +603,10 @@ export default function BlogDetailClient({ routeSlug, initialSlug, initialArticl
     },
     list: {
       bullet: ({ children }: any) => (
-        <ul className="space-y-1 mb-4 text-sm text-gray-600">{children}</ul>
+        <ul className="space-y-2 mb-5 text-base md:text-lg text-gray-600">{children}</ul>
       ),
       number: ({ children }: any) => (
-        <ol className="list-decimal list-inside space-y-1 mb-4 text-sm text-gray-600 pl-1">{children}</ol>
+        <ol className="list-decimal list-inside space-y-2 mb-5 text-base md:text-lg text-gray-600 pl-1">{children}</ol>
       ),
     },
     listItem: {
@@ -842,7 +842,7 @@ export default function BlogDetailClient({ routeSlug, initialSlug, initialArticl
       {article && (
         <>
           {/* Back button */}
-          <div className="max-w-3xl mx-auto px-4 pt-6 pb-2 relative z-10">
+          <div className="max-w-7xl mx-auto px-5 md:px-10 pt-6 pb-2 relative z-10">
             <a
               href="/blog"
               className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-800 transition-colors"
@@ -852,62 +852,61 @@ export default function BlogDetailClient({ routeSlug, initialSlug, initialArticl
             </a>
           </div>
 
-          {/* Article header */}
-          <div className="max-w-3xl mx-auto px-4 text-center py-4 relative z-10">
-            {/* Tag badge */}
-            <span
-              className="inline-block text-xs font-semibold px-3 py-1 rounded-full mb-5 text-white"
-              style={{ background: 'linear-gradient(135deg, #61A644, #1D9FDA)' }}
-            >
-              {article.tag}
-            </span>
+          {/* Article header: tag, title and date on the left; hero image on the right (stacked on phones) */}
+          <div className="max-w-7xl mx-auto px-5 md:px-10 py-4 mb-10 relative z-10">
+            <div className={`grid items-center gap-8 ${imgUrl ? 'md:grid-cols-2 md:gap-12' : ''}`}>
+              <div className="text-left">
+                {/* Tag badge: solid brand blue */}
+                <span className="inline-block text-xs font-semibold px-3 py-1 rounded-full mb-5 text-white bg-[#1D9FDA]">
+                  {article.tag}
+                </span>
 
-            {/* Title */}
-            <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 leading-snug mb-4">
-              {article.title}
-            </h1>
+                {/* Title */}
+                <h1 className="text-3xl md:text-4xl lg:text-[2.6rem] font-semibold text-gray-900 leading-tight mb-5">
+                  {article.title}
+                </h1>
 
-            {/* Date + read time */}
-            <p className="text-xs text-gray-400">
-              {formatDate(article.date)}
-              {article.readTime && <>&nbsp;•&nbsp;{article.readTime}</>}
-            </p>
+                {/* Date + read time */}
+                <p className="text-sm text-gray-400">
+                  {formatDate(article.date)}
+                  {article.readTime && <>&nbsp;•&nbsp;{article.readTime}</>}
+                </p>
+              </div>
+
+              {/* Hero image */}
+              {imgUrl && (
+                <img
+                  src={imgUrl}
+                  alt={article.title}
+                  fetchPriority="high"
+                  decoding="async"
+                  className="w-full h-[240px] md:h-[360px] rounded-2xl object-cover"
+                />
+              )}
+            </div>
           </div>
 
-          {/* Hero image */}
-          {imgUrl && (
-            <div className="max-w-2xl mx-auto px-4 mt-6 mb-10 relative z-10">
-              <img
-                src={imgUrl}
-                alt={article.title}
-                fetchPriority="high"
-                decoding="async"
-                className="w-full rounded-2xl object-cover"
-                style={{ height: '340px' }}
-              />
-            </div>
-          )}
-
           {/* Two-column layout */}
-          <div className="max-w-4xl mx-auto px-4 pb-20 relative z-10">
-            <div className="flex gap-10">
+          <div className="max-w-7xl mx-auto px-5 md:px-10 pb-20 relative z-10">
+            <div className="flex gap-12 lg:gap-16">
 
               {/* Left sidebar: TOC + Share */}
-              <aside className="hidden md:flex flex-col gap-6 w-48 flex-shrink-0 sticky top-8 self-start">
+              {/* thin, light-gray scrollbar (Firefox via scrollbar-*; Chromium/Safari via ::-webkit-scrollbar) */}
+              <aside className="hidden md:flex flex-col gap-8 w-64 lg:w-72 flex-shrink-0 sticky top-32 self-start max-h-[calc(100vh-9rem)] overflow-y-auto pr-3 [scrollbar-width:thin] [scrollbar-color:#e5e7eb_transparent] [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-200 hover:[&::-webkit-scrollbar-thumb]:bg-gray-300">
 
                 {/* Table of contents — only when there are headings */}
                 {headings.length > 0 && (
                   <div>
-                    <nav className="flex flex-col gap-2">
+                    <nav className="flex flex-col gap-3">
                       {headings.map(h => (
                         <button
                           key={h.key}
                           onClick={() => scrollTo(h.index)}
-                          className="text-left text-xs leading-snug transition-colors"
+                          className="text-left text-[15px] leading-snug transition-colors"
                           style={{
                             color: activeSection === h.index ? '#1D9FDA' : '#9ca3af',
                             borderLeft: activeSection === h.index ? '2px solid #1D9FDA' : '2px solid transparent',
-                            paddingLeft: h.level === 'h3' ? '16px' : '8px',
+                            paddingLeft: h.level === 'h3' ? '20px' : '10px',
                           }}
                         >
                           {h.text}
@@ -918,7 +917,7 @@ export default function BlogDetailClient({ routeSlug, initialSlug, initialArticl
                 )}
                 {/* Share Article */}
                 <div>
-                  <p className="text-xs font-semibold text-gray-700 mb-3">Share Article</p>
+                  <p className="text-sm font-semibold text-gray-700 mb-3">Share Article</p>
 
                   <div className="flex gap-2">
                     {/* Instagram */}
@@ -927,7 +926,7 @@ export default function BlogDetailClient({ routeSlug, initialSlug, initialArticl
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={() => navigator.clipboard.writeText(article.source_link as string)}
-                      className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs"
+                      className="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm"
                       style={{ background: 'linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)' }}
                       title="Copy link and open Instagram"
                     >
@@ -939,7 +938,7 @@ export default function BlogDetailClient({ routeSlug, initialSlug, initialArticl
                       href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(article.source_link as string)}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs"
+                      className="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm"
                       style={{ background: '#0077b5' }}
                       title="Share on LinkedIn"
                     >
@@ -952,7 +951,7 @@ export default function BlogDetailClient({ routeSlug, initialSlug, initialArticl
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={() => navigator.clipboard.writeText(article.source_link as string)}
-                      className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs"
+                      className="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm"
                       style={{ background: '#010101' }}
                       title="Copy link and open TikTok"
                     >
@@ -968,7 +967,7 @@ export default function BlogDetailClient({ routeSlug, initialSlug, initialArticl
 
                 {/* Intro paragraph */}
                 {article.intro && (
-                  <p className="text-gray-700 text-sm leading-relaxed mb-8">
+                  <p className="text-gray-700 text-lg md:text-xl leading-relaxed mb-8">
                     {article.intro}
                   </p>
                 )}
@@ -1000,12 +999,12 @@ export default function BlogDetailClient({ routeSlug, initialSlug, initialArticl
                 ) : processedContentHtml ? (
                   <div
                     dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(processedContentHtml) }}
-                    className="gm-article prose prose-blue max-w-none text-gray-700 text-sm leading-relaxed"
+                    className="gm-article prose md:prose-lg prose-blue max-w-none text-gray-700 text-base md:text-lg leading-relaxed"
                   />
                 ) : !mounted && article.contentHtml ? (
                   <div
                     dangerouslySetInnerHTML={{ __html: sanitizeCmsHtml(article.contentHtml) }}
-                    className="gm-article prose prose-blue max-w-none text-gray-700 text-sm leading-relaxed"
+                    className="gm-article prose md:prose-lg prose-blue max-w-none text-gray-700 text-base md:text-lg leading-relaxed"
                   />
                 ) : null}
 

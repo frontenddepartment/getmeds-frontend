@@ -29,7 +29,7 @@ const policies = [
 
 export default function Footer() {
   const pathname = usePathname();
-  const isFlushPage = pathname === "/" || pathname === "/order-medicines" || pathname === "/contact-us" || pathname === "/patient-assistance-program" || pathname === "/about-us" || pathname === "/services" || pathname === "/global-network" || pathname === "/product-range";
+  const isFlushPage = pathname === "/" || pathname === "/order-medicines" || pathname === "/contact-us" || pathname === "/patient-assistance-program" || pathname === "/about-us" || pathname === "/services" || pathname === "/global-network" || pathname === "/product-range" || pathname === "/blog" || pathname === "/ungc" || pathname === "/careers" || pathname === "/meditations";
 
   return (
     <footer className={`relative overflow-hidden bg-[#1D9FDA] text-white ${isFlushPage ? "" : "mt-24"}`}>

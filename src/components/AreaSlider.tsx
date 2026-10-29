@@ -1,7 +1,7 @@
 "use client";
 
-/* Therapeutic-area section — white band with a two-tone heading and a two-row slider of
-   pastel-tinted category cards (about 3½ columns visible on desktop, arrows to slide). Each card has a coloured circle (inside a
+/* Therapeutic-area section — white band with a one-line two-tone heading and a two-row slider of
+   pastel-tinted category cards (about 4½ columns visible on desktop, arrows to slide). Each card has a coloured circle (inside a
    faint halo) holding a product from that area, and links to the product range. */
 
 import Image from "next/image";
@@ -25,14 +25,21 @@ const AREA_IMAGES: Record<string, string> = {
   rheumatology: "sample1",
 };
 
-// Light card tints, cycled across the categories (Canva-style); the circle takes the matching strong colour
-const TINTS = [
-  { card: "bg-[#E6F4FB]", circle: "bg-[#1D9FDA]", halo: "bg-[#1D9FDA]" },
-  { card: "bg-[#EAF5E4]", circle: "bg-[#61A644]", halo: "bg-[#61A644]" },
-  { card: "bg-[#FEF6DC]", circle: "bg-[#F2B705]", halo: "bg-[#F2B705]" },
-  { card: "bg-[#FDECEC]", circle: "bg-[#E5484D]", halo: "bg-[#E5484D]" },
-  { card: "bg-[#F0EBFB]", circle: "bg-[#8B6CD9]", halo: "bg-[#8B6CD9]" },
-];
+// One colour per category (the circle); the card is a light tint of the same colour.
+const AREA_COLORS: Record<string, string> = {
+  oncology: "#B5A1D8",        // Oncology (Solid Tumors)
+  "anti-infectives": "#D9A441",
+  orthopedic: "#D6B435",
+  "neuro-oncology": "#828995",
+  nephrology: "#339B70",      // Nephrology / Renal
+  hematology: "#C75562",      // Oncology / Hematology
+  endocrinology: "#3C86C6",
+  cardiology: "#CB4050",
+  respiratory: "#8D9CA7",     // Respiratory / Allergy
+  pain: "#8262B4",            // Pain Management
+  rheumatology: "#3F73B8",
+};
+const FALLBACK_COLOR = "#1D9FDA";
 
 export default function AreaSlider() {
   const trackRef = useRef<HTMLDivElement | null>(null);
@@ -48,11 +55,11 @@ export default function AreaSlider() {
       <div className="mx-auto max-w-7xl px-5 pb-6 pt-12 md:px-10 md:pb-8 md:pt-14">
         <div className="flex items-end justify-between gap-6">
           <div>
-            <p className="font-display text-2xl font-light text-ink-soft/80 md:text-[2rem]">
-              Therapeutic areas we serve
-            </p>
-            <h2 className="font-display text-2xl font-semibold leading-tight text-primary-deep md:text-[2.3rem]">
-              across the Philippines.
+            <p className="text-sm font-semibold text-primary">Categories</p>
+            {/* same size and weight as Contact Us's "Get in touch with us." */}
+            <h2 className="font-display mt-2 text-2xl font-semibold leading-tight text-primary-deep md:text-[2rem]">
+              <span className="text-ink-soft/80">Therapeutic areas we serve</span>{" "}
+              <span>across the Philippines.</span>
             </h2>
           </div>
           <div className="hidden shrink-0 gap-2 md:flex">
@@ -75,24 +82,25 @@ export default function AreaSlider() {
           </div>
         </div>
 
-        {/* two rows that slide sideways; column width leaves the 4th column half visible on desktop */}
+        {/* two rows that slide sideways; column width leaves the 5th column half visible on desktop */}
         <div
           ref={trackRef}
-          className="mt-8 grid snap-x snap-mandatory auto-cols-[72%] grid-flow-col grid-rows-2 gap-3 overflow-x-auto pb-2 [scrollbar-width:none] sm:auto-cols-[calc((100%-1.5rem)/2.5)] md:mt-10 lg:auto-cols-[calc((100%-2.25rem)/3.5)] [&::-webkit-scrollbar]:hidden"
+          className="mt-8 grid snap-x snap-mandatory auto-cols-[72%] grid-flow-col grid-rows-2 gap-x-5 gap-y-3 overflow-x-auto pb-2 [scrollbar-width:none] sm:auto-cols-[calc((100%-2.5rem)/2.5)] md:mt-10 lg:auto-cols-[calc((100%-5rem)/4.5)] [&::-webkit-scrollbar]:hidden"
         >
-          {therapeuticAreas.map((a, i) => {
-            const t = TINTS[i % TINTS.length];
+          {therapeuticAreas.map((a) => {
+            const color = AREA_COLORS[a.slug] ?? FALLBACK_COLOR;
             return (
             // whole card is the link; title sits vertically centred on the left (no button)
             <Link
               key={a.slug}
               href="/product-range"
-              className={`group relative flex h-[104px] snap-start items-center overflow-hidden rounded-xl p-4 text-black transition hover:brightness-[0.98] ${t.card}`}
+              className="group relative flex h-[104px] snap-start items-center overflow-hidden rounded-2xl p-4 text-black transition hover:brightness-[0.98]"
+              style={{ backgroundColor: `color-mix(in srgb, ${color} 16%, white)` }}
             >
               {/* faint halo + coloured circle with the area's product */}
-              <span aria-hidden className={`absolute -bottom-12 -right-12 h-36 w-36 rounded-full opacity-[0.08] ${t.halo}`} />
-              <span aria-hidden className={`absolute -bottom-4 -right-4 h-28 w-28 rounded-full opacity-[0.1] ${t.halo}`} />
-              <div aria-hidden className={`absolute bottom-3 right-4 h-[64px] w-[64px] rounded-full ${t.circle}`}>
+              <span aria-hidden className="absolute -bottom-12 -right-12 h-36 w-36 rounded-full opacity-[0.08]" style={{ backgroundColor: color }} />
+              <span aria-hidden className="absolute -bottom-4 -right-4 h-28 w-28 rounded-full opacity-[0.1]" style={{ backgroundColor: color }} />
+              <div aria-hidden className="absolute bottom-3 right-4 h-[64px] w-[64px] rounded-full" style={{ backgroundColor: color }}>
                 <Image
                   src={`/images/products/${AREA_IMAGES[a.slug] ?? "sample1"}.png`}
                   alt=""

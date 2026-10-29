@@ -3,6 +3,7 @@ import Image, { getImageProps } from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { capabilities, stats } from "@/lib/data";
+import { getCatalogModel, productPath, resolveProduct } from "@/lib/catalogServer";
 import { Counter, Reveal, Stagger, StaggerItem } from "@/components/ui";
 import Faq from "@/components/Faq";
 import FaqSchema from "@/components/FaqSchema";
@@ -48,7 +49,27 @@ export const metadata: Metadata = {
     "Getmeds is an FDA-licensed pharmaceutical importer, wholesale distributor, supplier, and retail pharmacy in the Philippines. Order medicines online.",
 };
 
-export default function Home() {
+/* Each featured tile links to its own product page. The catalogue is looked up by brand name;
+   a brand it doesn't list yet (e.g. ErpoGet) falls back to its category listing. */
+async function featuredProductLinks(brands: { brand: string; fallback: string }[]) {
+  const model = await getCatalogModel().catch(() => null);
+  return brands.map(({ brand, fallback }) => {
+    const p = model ? resolveProduct(model, brand) : null;
+    return p ? productPath(p) : fallback;
+  });
+}
+
+// Same cadence as the product pages the tiles link to.
+export const revalidate = 3600;
+
+export default async function Home() {
+  const [pazogetHref, erpogetHref, idagetHref, sevelamedHref] = await featuredProductLinks([
+    { brand: "PazoGet-200", fallback: "/product-range?category=oncology" },
+    { brand: "ErpoGet", fallback: "/product-range?category=hematology" },
+    { brand: "IdaGet-5", fallback: "/product-range?category=hematology" },
+    { brand: "SevelaMed", fallback: "/product-range?category=nephrology" },
+  ]);
+
   return (
     <>
       {/* FAQPage JSON-LD (Q1–6) — homepage only, never in the shared layout */}
@@ -147,9 +168,9 @@ export default function Home() {
       </section>
 
       {/* ================= Featured Products heading (above the four-tile strip) ================= */}
-      <section className="bg-white pb-6 pt-6 md:pb-8 md:pt-8">
+      <section className="bg-gradient-to-r from-[#1D9FDA] from-55% via-[#1D9FDA] via-70% to-[#61A644] py-3 md:py-4">
         <Reveal className="mx-auto max-w-7xl px-5 md:px-10">
-          <h2 className="font-display text-2xl font-medium text-black md:text-[2rem]">Featured Products</h2>
+          <h2 className="font-display text-lg font-medium text-white md:text-xl">Featured Products</h2>
         </Reveal>
       </section>
 
@@ -158,6 +179,7 @@ export default function Home() {
         {[
           {
             src: "/images/pazopanib.jpeg",
+            href: pazogetHref,
             alt: "PazoGet-200 (Pazopanib 200 mg) film-coated tablets by Getmeds",
             caption: {
               title: "PazoGet (Pazopanib)",
@@ -165,15 +187,48 @@ export default function Home() {
               meta: "200 mg & 400 mg Tablets · Oncology · Rx",
             },
           },
-          { src: "/images/categoryimage2.png", alt: "Medicine bottle on a white pedestal with tablets" },
-          { src: "/images/categoryimage3.png", alt: "Medicine bottles and tablets on green" },
-          { src: "/images/categoryimage2.png", alt: "Medicine bottle on a white pedestal with tablets" },
+          {
+            src: "/images/erpoget.png",
+            href: erpogetHref,
+            alt: "ErpoGet (Epoetin Alfa 4,000 IU/mL) pre-filled syringes by Getmeds",
+            caption: {
+              title: "ErpoGet (Epoetin Alfa)",
+              subtitle: "Hematopoietic Growth Factor",
+              meta: "4,000 IU/mL Pre-filled Syringe · Hematology · Rx",
+            },
+          },
+          {
+            src: "/images/idaget.png",
+            href: idagetHref,
+            alt: "IdaGet-5 (Idarubicin Hydrochloride 5 mg) lyophilized powder for injection by Getmeds",
+            caption: {
+              title: "IdaGet-5 (Idarubicin)",
+              subtitle: "Antineoplastic Agent (Anthracycline)",
+              meta: "5 mg Lyophilized Powder for Injection · Hematology · Rx",
+            },
+          },
+          {
+            src: "/images/sevelamed.png",
+            href: sevelamedHref,
+            alt: "SevelaMed (Sevelamer Carbonate 800 mg) film-coated tablets by Getmeds",
+            caption: {
+              title: "SevelaMed (Sevelamer)",
+              subtitle: "Phosphate Binder for Hyperphosphatemia",
+              meta: "800 mg Film-Coated Tablets · Nephrology · Rx",
+            },
+          },
         ].map((img, i) => (
-          <div key={i} className="relative aspect-[2/3]">
-            <Image src={img.src} alt={img.alt} fill sizes="25vw" className="object-cover" />
+          <Link
+            key={i}
+            href={img.href}
+            aria-label={"caption" in img && img.caption ? `View ${img.caption.title}` : img.alt}
+            className="group relative block aspect-[2/3] overflow-hidden focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-inset focus-visible:ring-white/80"
+          >
+            <Image src={img.src} alt={img.alt} fill sizes="25vw" className="object-cover transition-transform duration-500 group-hover:scale-105" />
             {"caption" in img && img.caption && (
               <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#0B5E8A]/70 via-[#0B5E8A]/30 to-transparent p-2 pt-10 text-white sm:p-4 sm:pt-16 lg:p-7 lg:pt-24">
-                <p className="font-display text-[11px] font-semibold leading-tight sm:text-base lg:text-2xl">
+                {/* desktop: one line per title; size scales with the tile so the longest name still fits */}
+                <p className="font-display text-[11px] font-semibold leading-tight sm:text-base lg:whitespace-nowrap lg:text-[clamp(1rem,1.5vw,1.5rem)]">
                   {img.caption.title}
                 </p>
                 <p className="mt-0.5 text-[9px] leading-snug text-white/90 sm:text-xs lg:mt-1 lg:text-sm">
@@ -182,24 +237,24 @@ export default function Home() {
                 <p className="mt-1 hidden text-xs text-white/80 sm:block lg:mt-3 lg:text-[13px]">{img.caption.meta}</p>
               </div>
             )}
-          </div>
+          </Link>
         ))}
       </section>
 
       {/* ================= Impact band: four trust signals splitting the full width ================= */}
       <section className="bg-[#1D9FDA] text-white">
-        <Reveal className="mx-auto grid max-w-7xl grid-cols-2 px-5 py-12 md:grid-cols-4 md:px-10 md:py-16">
+        <Reveal className="mx-auto grid max-w-7xl grid-cols-2 px-5 py-9 md:grid-cols-4 md:px-10 md:py-12">
           {stats.map((st, i) => (
             <div
               key={st.label}
-              className={`px-4 py-5 text-center md:py-2 ${i % 2 === 1 ? "border-l border-white/25" : ""} ${i >= 2 ? "border-t border-white/25 md:border-t-0" : ""} ${i === 2 ? "md:border-l" : ""}`}
+              className={`px-4 py-4 text-center md:py-1 ${i % 2 === 1 ? "border-l border-white/25" : ""} ${i >= 2 ? "border-t border-white/25 md:border-t-0" : ""} ${i === 2 ? "md:border-l" : ""}`}
             >
               <Counter
                 value={st.value}
                 suffix={st.suffix}
-                className="font-display text-4xl font-semibold md:text-5xl"
+                className="font-display text-[2rem] font-semibold md:text-[2.6rem]"
               />
-              <p className="mt-2 text-balance text-sm leading-snug text-white/80">{st.label}</p>
+              <p className="mt-1.5 text-balance text-sm leading-snug text-white/80">{st.label}</p>
             </div>
           ))}
         </Reveal>

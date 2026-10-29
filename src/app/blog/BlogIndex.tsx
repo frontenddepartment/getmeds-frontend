@@ -1,17 +1,23 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowRight, ArrowUpRight } from "lucide-react";
-import Faq from "@/components/Faq";
-import { faqs } from "@/lib/data";
+import { ArrowUpRight, ChevronLeft, ChevronRight, Search } from "lucide-react";
+import NoResultsIllustration from "@/components/NoResultsIllustration";
 import type { BlogIndexPost } from "@/lib/blogServer";
 
 const PAGE = 12;
 const FEATURED = 3;
-const MAX_TOPICS = 6;
+/* Topic pills, in this order (the WordPress blog's category list). */
+const TOPICS = [
+  "Cancer", "Health", "Health Care", "Top Trending", "Covid-19", "Fitness", "Skin Care", "Weight Loss",
+  "Diabetes", "Mental health", "Hepatitis", "News", "Online Drug Store", "Hypertension", "Blood Pressure",
+  "Kids Health", "Pregnancy", "Workout", "Vitamin", "Immune System", "Muscle Gain", "Press Release",
+  "Product Launch", "Award", "Blood", "Multiple Sclerosis", "Online Pharmacy", "Partnership",
+  "Patient Stories", "Sponsorship",
+];
 const EASE_OUT = [0.22, 1, 0.36, 1] as const;
 
 /* Image, or a brand panel (white Getmeds logo on blue) for the few posts WordPress has no image for */
@@ -45,16 +51,29 @@ function Cover({ post, wide, className }: { post: BlogIndexPost; wide?: boolean;
 export default function BlogIndex({ posts }: { posts: BlogIndexPost[] }) {
   const featured = posts.slice(0, FEATURED);
 
-  // Topic chips: the most-used categories, so the row stays one line instead of every WordPress category
-  const topics = useMemo(() => {
-    const counts = new Map<string, number>();
-    posts.forEach((p) => counts.set(p.tag, (counts.get(p.tag) || 0) + 1));
-    return ["All", ...[...counts.entries()].sort((a, b) => b[1] - a[1]).slice(0, MAX_TOPICS).map(([t]) => t)];
-  }, [posts]);
+  const topics = ["All", ...TOPICS];
 
   const [topic, setTopic] = useState("All");
+  const [query, setQuery] = useState("");
+  // One-line pill row that slides sideways; the arrows move it by most of its visible width
+  const pillsRef = useRef<HTMLDivElement | null>(null);
+  const slidePills = (dir: 1 | -1) => {
+    const el = pillsRef.current;
+    if (el) el.scrollBy({ left: dir * el.clientWidth * 0.7, behavior: "smooth" });
+  };
   const [limit, setLimit] = useState(PAGE);
-  const list = useMemo(() => (topic === "All" ? posts : posts.filter((p) => p.tag === topic)), [posts, topic]);
+  // A post matches a pill through any of its categories (case-insensitive), then the search box
+  // narrows by title, excerpt or category.
+  const list = useMemo(() => {
+    const t = topic.toLowerCase();
+    const q = query.trim().toLowerCase();
+    return posts.filter((p) => {
+      const cats = (p.tags?.length ? p.tags : [p.tag]).map((c) => c.toLowerCase());
+      if (topic !== "All" && !cats.includes(t)) return false;
+      if (!q) return true;
+      return p.title.toLowerCase().includes(q) || p.excerpt.toLowerCase().includes(q) || cats.some((c) => c.includes(q));
+    });
+  }, [posts, topic, query]);
   const shown = list.slice(0, limit);
 
   // Featured carousel: advances every 6s, pauses while hovered or focused
@@ -70,23 +89,17 @@ export default function BlogIndex({ posts }: { posts: BlogIndexPost[] }) {
   return (
     <div className="bg-white">
       {/* Header: heading left, intro + jump link right */}
-      <section className="pb-10 pt-32 md:pt-40">
+      <section className="pb-8 pt-20 md:pt-26">
         <div className="mx-auto grid max-w-7xl items-end gap-6 px-5 md:grid-cols-[1.15fr_1fr] md:gap-12 md:px-10">
-          <h1 className="font-display text-[clamp(1.9rem,4.4vw,3.4rem)] font-semibold leading-[1.1] tracking-tight text-[#0B2E5E]">
-            Health insights &amp; news <span className="text-primary">from Getmeds</span>
+          {/* same size as the Order Medicines page headline */}
+          <h1 className="font-display text-[clamp(1.6rem,7.2vw,1.85rem)] font-semibold leading-[1.12] tracking-tight text-[#0B2E5E] md:text-[clamp(1.45rem,3.5vw+0.2rem,3.2rem)]">
+            Health insights &amp; news
           </h1>
           <div>
             <p className="max-w-lg text-[15px] leading-relaxed text-slate-600">
               Health guides, patient-assistance how-tos and company news, from your trusted source for
               pharmaceutical insights and patient care in the Philippines.
             </p>
-            <a
-              href="#articles"
-              className="group mt-4 inline-flex items-center gap-2 text-[15px] font-semibold text-primary transition hover:text-primary-deep"
-            >
-              Browse all articles
-              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden />
-            </a>
           </div>
         </div>
       </section>
@@ -94,7 +107,7 @@ export default function BlogIndex({ posts }: { posts: BlogIndexPost[] }) {
       {/* Featured carousel: the latest posts. The image shows clean (many already carry their title in the
           artwork, so nothing is laid over it); the story and dots sit beside it. */}
       {current && (
-        <section aria-label="Latest articles" className="pb-16 md:pb-24">
+        <section aria-label="Latest articles" className="pb-10 md:pb-14">
           <div
             className="mx-auto max-w-7xl px-5 md:px-10"
             onMouseEnter={() => setPaused(true)}
@@ -102,8 +115,9 @@ export default function BlogIndex({ posts }: { posts: BlogIndexPost[] }) {
             onFocus={() => setPaused(true)}
             onBlur={() => setPaused(false)}
           >
-            {/* lg+: image left (kept whole, at WordPress's 1200x628), story right; stacked below lg */}
-            <div className="grid gap-6 lg:grid-cols-[1.65fr_1fr] lg:items-center lg:gap-12">
+            {/* lg+: image left (kept whole, at WordPress's 1200x628), story right; stacked below lg.
+                Same column split and gap as the header above, so the story aligns with the intro text. */}
+            <div className="grid gap-6 lg:grid-cols-[1.15fr_1fr] lg:items-center lg:gap-12">
               <AnimatePresence initial={false} mode="wait">
                 <motion.div
                   key={`img-${current.slug}`}
@@ -180,18 +194,46 @@ export default function BlogIndex({ posts }: { posts: BlogIndexPost[] }) {
       )}
 
       {/* All articles */}
-      <section id="articles" className="scroll-mt-28 pb-20 md:pb-24">
+      <section id="articles" className="scroll-mt-28 pb-12 md:pb-16">
         <div className="mx-auto max-w-7xl px-5 md:px-10">
-          <h2 className="font-display text-[clamp(1.6rem,3vw,2.5rem)] font-semibold leading-tight text-[#0B2E5E]">
-            Latest articles
-          </h2>
-          <p className="mt-3 max-w-3xl text-[15px] leading-relaxed text-slate-600">
-            Cancer care, medicine prices and access, government medical assistance, and news from the Getmeds team.
-          </p>
+          {/* Title left, search box top right */}
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between md:gap-8">
+            <div>
+              <h2 className="font-display text-[clamp(1.6rem,3vw,2.5rem)] font-semibold leading-tight text-[#0B2E5E]">
+                Recent Blog Posts
+              </h2>
+            </div>
+            <label className="relative block w-full shrink-0 md:w-80">
+              <span className="sr-only">Search articles</span>
+              <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" aria-hidden />
+              <input
+                type="search"
+                value={query}
+                onChange={(e) => {
+                  setQuery(e.target.value);
+                  setLimit(PAGE);
+                }}
+                placeholder="Search articles..."
+                className="h-11 w-full rounded-full border border-slate-200 bg-white pl-11 pr-4 text-[14px] text-slate-700 placeholder:text-slate-400 transition focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+              />
+            </label>
+          </div>
 
-          {/* Phones: one swipeable row. The scroller clips anything at its edges, so it gets vertical padding
-              for the chips' rings; from md the row wraps and needs no scrolling (or clipping) at all. */}
-          <div className="scrollbar-none -mx-5 mt-6 flex gap-2 overflow-x-auto px-5 py-1.5 md:mx-0 md:flex-wrap md:overflow-visible md:px-0">
+          {/* One swipeable row at every size: swipe on phones, arrows from md. The scroller clips at its
+              edges, so it gets vertical padding for the chips' rings. */}
+          <div className="mt-3 flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => slidePills(-1)}
+              aria-label="Scroll topics left"
+              className="hidden h-9 w-9 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 transition hover:border-primary hover:text-primary md:flex"
+            >
+              <ChevronLeft className="h-4 w-4" aria-hidden />
+            </button>
+          <div
+            ref={pillsRef}
+            className="scrollbar-none -mx-5 flex min-w-0 flex-1 gap-2 overflow-x-auto px-5 py-1.5 md:mx-0 md:px-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          >
             {topics.map((t) => (
               <button
                 key={t}
@@ -211,11 +253,42 @@ export default function BlogIndex({ posts }: { posts: BlogIndexPost[] }) {
               </button>
             ))}
           </div>
+            <button
+              type="button"
+              onClick={() => slidePills(1)}
+              aria-label="Scroll topics right"
+              className="hidden h-9 w-9 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 transition hover:border-primary hover:text-primary md:flex"
+            >
+              <ChevronRight className="h-4 w-4" aria-hidden />
+            </button>
+          </div>
 
           {shown.length === 0 ? (
-            <p className="mt-10 rounded-2xl bg-slate-50 p-8 text-center text-slate-600">
-              Articles couldn&apos;t be loaded right now. Please try again in a moment.
-            </p>
+            /* Empty state: the same animated no-results scene the product range uses */
+            <div className="mt-8 rounded-2xl border border-slate-200/90 bg-white px-6 py-10 text-center md:p-12">
+              <NoResultsIllustration className="mx-auto h-auto w-full max-w-[15rem]" />
+              <h3 className="font-display mt-4 text-lg font-semibold text-[#0B2E5E]">
+                {posts.length === 0 ? "Articles couldn’t be loaded" : "No articles found"}
+              </h3>
+              <p className="mx-auto mt-2 max-w-md text-sm text-slate-500">
+                {posts.length === 0
+                  ? "Please try again in a moment."
+                  : "Nothing matches that search or topic yet. Try another keyword or browse all articles."}
+              </p>
+              {posts.length > 0 && (topic !== "All" || query) && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setTopic("All");
+                    setQuery("");
+                    setLimit(PAGE);
+                  }}
+                  className="mt-6 inline-flex items-center rounded-full border-2 border-primary bg-primary px-6 py-2.5 text-sm font-semibold text-white transition hover:brightness-95"
+                >
+                  Show all articles
+                </button>
+              )}
+            </div>
           ) : (
             <ul className="mt-8 grid gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
               {shown.map((p) => (
@@ -270,39 +343,6 @@ export default function BlogIndex({ posts }: { posts: BlogIndexPost[] }) {
               </button>
             </div>
           )}
-        </div>
-      </section>
-
-      {/* Questions */}
-      <section className="border-t border-slate-100 bg-[#f6f9fb] py-20 md:py-24">
-        <div className="mx-auto max-w-7xl px-5 md:px-10">
-          <div className="grid items-end gap-5 md:grid-cols-[1.15fr_1fr] md:gap-12">
-            <h2 className="font-display text-[clamp(1.6rem,3vw,2.5rem)] font-semibold leading-tight text-[#0B2E5E]">
-              Have a question?
-              <br />
-              <span className="text-primary">We&apos;re here to answer.</span>
-            </h2>
-            <p className="max-w-lg text-[15px] leading-relaxed text-slate-600">
-              Answers to what patients and families ask us most. Can&apos;t find yours?{" "}
-              <Link href="/contact-us" className="font-semibold text-primary hover:text-primary-deep">
-                Contact our team
-              </Link>
-              .
-            </p>
-          </div>
-          <div className="mt-10 grid items-start gap-10 lg:grid-cols-[1.4fr_1fr]">
-            <Faq items={faqs.slice(0, 5)} theme="white" idPrefix="blog-faq" />
-            <div className="relative hidden overflow-hidden rounded-3xl lg:block">
-              <Image
-                src="/images/faqsimage.png"
-                alt="Getmeds team member thinking about a question"
-                width={1254}
-                height={1254}
-                sizes="(min-width: 1024px) 36vw, 0px"
-                className="h-auto w-full object-cover"
-              />
-            </div>
-          </div>
         </div>
       </section>
     </div>

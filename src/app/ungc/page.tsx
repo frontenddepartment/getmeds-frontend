@@ -1,9 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import Link from "next/link";
 import {
-  ArrowRight,
-  ArrowUpRight,
   Gavel,
   Leaf,
   Scale,
@@ -147,6 +144,7 @@ const jsonLd = {
 };
 
 /* One column of principle groups; "right" mirrors it so it reads toward the centre photo on lg+ */
+/* White copy on a coloured panel; the icon badges are frosted glass (the lists keep their exact layout). */
 function PrincipleColumn({
   groups,
   align,
@@ -155,13 +153,13 @@ function PrincipleColumn({
   align: "left" | "right";
 }) {
   return (
-    <div className="space-y-10">
+    <div className="space-y-10 text-white">
       {groups.map(({ Icon, title, items }) => (
         <div key={title}>
           <h3
-            className={`font-display flex items-center gap-3 text-lg font-semibold text-[#0B2E5E] ${align === "right" ? "lg:flex-row-reverse" : ""}`}
+            className={`font-display flex items-center gap-3 text-lg font-semibold ${align === "right" ? "lg:flex-row-reverse" : ""}`}
           >
-            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-white">
+            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white/20 text-white ring-1 ring-white/40 backdrop-blur-sm">
               <Icon className="h-4.5 w-4.5" aria-hidden />
             </span>
             {title}
@@ -176,13 +174,13 @@ function PrincipleColumn({
                 >
                   <span
                     aria-hidden
-                    className="mt-2 h-2 w-2 shrink-0 rounded-full bg-primary ring-4 ring-primary/15"
+                    className="mt-2 h-2 w-2 shrink-0 rounded-full bg-white ring-4 ring-white/25"
                   />
                   <span>
-                    <span className="block text-[13px] font-semibold text-primary">
+                    <span className="block text-[13px] font-semibold text-white">
                       {label}:
                     </span>
-                    <span className="mt-0.5 block text-[14.5px] leading-relaxed text-slate-700">
+                    <span className="mt-0.5 block text-[14.5px] leading-relaxed text-white/85">
                       {text}
                     </span>
                   </span>
@@ -196,6 +194,21 @@ function PrincipleColumn({
   );
 }
 
+/* Event gallery tiles: three columns, left column a single tall photo, the other two stacked pairs. */
+const eventGallery = [
+  [
+    { src: "/assets/left.jpg", date: "24 Sept 2025", title: "Getmeds CEO Naresh Bishnoi at the UNGC Network Philippines Event" },
+  ],
+  [
+    { src: "/assets/topmid.jpg", date: "24 Sept 2025", title: "Leading SDG conversations in\nHealthcare Innovation" },
+    { src: "/assets/bottommid.jpg", date: "24 Sept 2025", title: "Connecting with Global Stakeholders" },
+  ],
+  [
+    { src: "/assets/topright.jpeg", date: "10 Feb 2026", title: "Commitment to Ethical Business Practices" },
+    { src: "/assets/bottomright.jpeg", date: "10 Feb 2026", title: "Pledging for a Healthier Future for All" },
+  ],
+];
+
 export default function UngcPage() {
   // Ten principles split into two columns around the centre photo, as in the reference layout
   const leftGroups = principleGroups.slice(0, 2);
@@ -208,107 +221,81 @@ export default function UngcPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Hero: one rounded photo card, headline top-left, intro card bottom-right */}
-      <section className="px-3 pt-28 sm:px-5 md:pt-32">
-        <div className="relative mx-auto min-h-[560px] max-w-[1500px] overflow-hidden rounded-[1.75rem] bg-primary-deep md:min-h-[640px]">
-          <Image
-            src="/assets/bottomright.jpeg"
-            alt="Getmeds at the UN Global Compact Network Philippines 2026 General Assembly"
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover object-[center_45%]"
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#04263a]/85 via-[#04263a]/35 to-[#04263a]/70 md:bg-gradient-to-b md:from-[#04263a]/90 md:via-[#04263a]/45 md:via-45% md:to-[#04263a]/60" />
-
-          <div className="relative flex min-h-[560px] flex-col justify-between gap-10 p-6 sm:p-10 md:min-h-[640px] md:p-14">
-            <Reveal immediate className="max-w-3xl text-white">
-              <div className="flex items-center gap-4">
-                <Image
-                  src="/assets/ungclogowhite.png"
-                  alt="United Nations Global Compact logo"
-                  width={306}
-                  height={300}
-                  className="h-auto w-14 md:w-16"
-                />
-                <span className="block text-[11px] font-semibold uppercase tracking-[0.24em] text-white/80">
-                  United Nations Global Compact
-                </span>
-              </div>
-              <h1 className="font-display mt-6 text-[clamp(2.1rem,5vw,4rem)] font-semibold leading-[1.06] tracking-tight">
-                Responsible healthcare.{" "}
-                <span className="sm:whitespace-nowrap">
-                  Sustainable action.
-                  <a
-                    href={UNGC_URL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label="Learn About UNGC (opens unglobalcompact.org)"
-                    className="ml-3 inline-flex h-[0.85em] w-[0.85em] -translate-y-[0.08em] items-center justify-center rounded-full bg-white align-middle text-primary-deep transition hover:bg-primary hover:text-white"
-                  >
-                    <ArrowUpRight
-                      className="h-[55%] w-[55%]"
-                      strokeWidth={2.5}
-                      aria-hidden
-                    />
-                  </a>
-                </span>
-              </h1>
-            </Reveal>
-
-            <Reveal immediate className="self-stretch sm:self-end">
-              <div className="max-w-sm rounded-2xl bg-white/12 p-5 text-white ring-1 ring-white/25 backdrop-blur-md sm:p-6">
-                <p className="text-[15px] leading-relaxed text-white/90">
-                  At Getmeds Philippines, we do more than provide medicines — we
-                  drive meaningful impact through responsible healthcare,
-                  compassion, and sustainable action.
-                </p>
-                <a
-                  href={UNGC_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-5 inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-[14px] font-semibold text-primary-deep transition hover:bg-primary-soft"
-                >
-                  Learn About UNGC{" "}
-                  <ArrowUpRight className="h-4 w-4" aria-hidden />
-                </a>
-              </div>
-            </Reveal>
-          </div>
+      {/* Hero: the same full-bleed image treatment and size as Contact Us; the artwork carries its own copy */}
+      <section className="relative bg-white pb-2 xl:pb-0">
+        <Image
+          src="/images/ungcherosection.png"
+          alt="Getmeds and the United Nations Global Compact: responsible healthcare, sustainable action"
+          width={1746}
+          height={901}
+          priority
+          quality={100}
+          sizes="100vw"
+          className="h-auto w-full"
+        />
+        {/* same button placement as Contact Us / CSR: xl+ anchored bottom-left on the white wave */}
+        <div className="relative xl:absolute xl:inset-x-0 xl:bottom-[15%]">
+          <Reveal immediate className="mx-auto max-w-7xl px-5 md:px-10">
+            <div className="mt-6 flex flex-wrap items-center gap-4 xl:mt-0">
+              <a
+                href={UNGC_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-full border-2 border-primary bg-primary px-7 py-3 text-sm font-semibold text-white transition hover:brightness-95"
+              >
+                Learn About UNGC
+              </a>
+            </div>
+          </Reveal>
         </div>
       </section>
 
+      {/* Page title under the hero: the only h1, two lines, with the intro beside it on the left */}
+      <section className="pb-6 pt-8 md:pb-8 md:pt-10">
+        {/* same layout as the Ten Principles header: one-line h1 left, intro right */}
+        <Reveal immediate className="mx-auto grid max-w-7xl items-end gap-5 px-5 md:grid-cols-[1.15fr_1fr] md:gap-12 md:px-10">
+          <h1 className="font-display text-2xl font-semibold text-black md:text-[2rem]">
+            United Nations <span className="text-primary">Global Compact</span>
+          </h1>
+          <p className="max-w-lg text-[15px] leading-relaxed text-slate-600">
+            At Getmeds Philippines, we do more than provide medicines—we drive meaningful impact through
+            responsible healthcare, compassion, and sustainable action.
+          </p>
+        </Reveal>
+      </section>
+
       {/* What is UNGC: photo collage left, story right */}
-      <section className="py-20 md:py-28">
-        <div className="mx-auto grid max-w-7xl items-center gap-12 px-5 md:px-10 lg:grid-cols-[1.1fr_1fr] lg:gap-20">
+      <section className="pb-8 pt-4 md:pb-10 md:pt-6">
+        {/* collage bleeds to the left edge with no gutter; the copy keeps the site column's right edge */}
+        <div className="grid items-center gap-10 lg:grid-cols-[1.1fr_1fr] lg:gap-0">
           <Reveal>
-            <div className="grid grid-cols-[1fr_1.3fr] grid-rows-[auto_auto] gap-3 sm:gap-4">
-              <div className="relative row-span-2 overflow-hidden rounded-2xl">
+            <div className="grid grid-cols-[1fr_1.3fr] grid-rows-[auto_auto] gap-0 overflow-hidden lg:rounded-r-2xl">
+              <div className="relative row-span-2 overflow-hidden">
                 <Image
-                  src="/assets/left.jpg"
-                  alt="Getmeds CEO Naresh Bishnoi at the UN Global Compact Network Philippines event"
-                  width={3000}
-                  height={4000}
+                  src="/images/ungc1.jpeg"
+                  alt="Getmeds CEO Naresh Bishnoi beside the UN Global Compact Asia-Pacific backdrop: one region, shared ambition, collective action"
+                  width={960}
+                  height={1280}
                   sizes="(min-width: 1024px) 22vw, 42vw"
                   className="h-full w-full object-cover"
                 />
               </div>
-              <div className="relative overflow-hidden rounded-2xl">
+              <div className="relative overflow-hidden">
                 <Image
-                  src="/assets/topmid.jpg"
-                  alt="Introduction of new participants at the UN Global Compact Network Philippines"
-                  width={4041}
-                  height={3388}
+                  src="/images/ungc2.jpeg"
+                  alt="Getmeds CEO Naresh Bishnoi at the UN Global Compact Forward Faster wall"
+                  width={1280}
+                  height={960}
                   sizes="(min-width: 1024px) 28vw, 56vw"
                   className="aspect-[4/3] w-full object-cover"
                 />
               </div>
-              <div className="relative overflow-hidden rounded-2xl">
+              <div className="relative overflow-hidden">
                 <Image
-                  src="/assets/bottommid.jpg"
-                  alt="UN Global Compact Network Philippines participants, including the Getmeds team"
-                  width={4000}
-                  height={3000}
+                  src="/images/ungc3.jpeg"
+                  alt="Plenary stage at UN Global Compact Forward Faster Now APAC 2026 in Colombo, Sri Lanka"
+                  width={1280}
+                  height={960}
                   sizes="(min-width: 1024px) 28vw, 56vw"
                   className="aspect-[4/3] w-full object-cover"
                 />
@@ -316,7 +303,7 @@ export default function UngcPage() {
             </div>
           </Reveal>
 
-          <Reveal>
+          <Reveal className="px-5 md:px-10 lg:pl-16 lg:pr-[max(2.5rem,calc((100vw-80rem)/2+2.5rem))]">
             <Image
               src="/assets/UNGClogo.png"
               alt="UN Global Compact logo"
@@ -343,80 +330,125 @@ export default function UngcPage() {
       </section>
 
       {/* Ten principles: centred heading, photo in the middle, principles either side */}
-      <section
-        aria-labelledby="principles-heading"
-        className="bg-[#f6f9fb] py-20 md:py-28"
-      >
-        <div className="mx-auto max-w-7xl px-5 md:px-10">
-          <Reveal className="mx-auto max-w-3xl text-center">
-            <span className="block text-[11px] font-semibold uppercase tracking-[0.24em] text-primary">
-              The Ten Principles
-            </span>
+      {/* Ten Principles heading sits on white, above the blue band */}
+      <div className="bg-white pb-10 pt-4 md:pb-12 md:pt-6">
+        <Reveal className="mx-auto grid max-w-7xl items-end gap-5 px-5 md:grid-cols-[1.15fr_1fr] md:gap-12 md:px-10">
+          <div>
+            {/* same eyebrow and heading style as About Us's "Inside Getmeds" */}
+            <p className="text-sm font-semibold text-primary">The Ten Principles</p>
             <h2
               id="principles-heading"
-              className="font-display mt-4 text-[clamp(2rem,3.8vw,3.2rem)] font-semibold leading-[1.08] text-[#0B2E5E]"
+              className="font-display mt-2 text-2xl font-semibold text-black md:text-[2rem]"
             >
               Principles that guide every decision.
             </h2>
-          </Reveal>
-
-          <div className="mt-14 grid items-center gap-12 lg:grid-cols-[1fr_300px_1fr] lg:gap-10 xl:grid-cols-[1fr_340px_1fr]">
-            <Reveal className="lg:order-1">
-              <PrincipleColumn groups={leftGroups} align="right" />
-            </Reveal>
-            <Reveal className="order-first lg:order-2">
-              <div className="relative mx-auto aspect-[3/4] max-w-[340px] overflow-hidden rounded-3xl">
-                <Image
-                  src="/assets/topright.jpeg"
-                  alt="Members of the UN Global Compact Network Philippines at a general assembly"
-                  fill
-                  sizes="(min-width: 1024px) 340px, 80vw"
-                  className="object-cover"
-                />
-              </div>
-            </Reveal>
-            <Reveal className="lg:order-3">
-              <PrincipleColumn groups={rightGroups} align="left" />
-            </Reveal>
           </div>
-
-          <p className="mt-14 text-center text-[13px] text-slate-500">
-            The Ten Principles listed above are based on and sourced from the
-            official{" "}
+          <p className="max-w-lg text-[15px] leading-relaxed text-slate-600">
+            The Ten Principles listed below are based on and sourced from the official{" "}
             <a
               href={UNGC_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="underline underline-offset-2 hover:text-primary"
+              className="font-semibold text-primary underline underline-offset-2 hover:text-primary-deep"
             >
               UN Global Compact website
             </a>
             .
           </p>
+        </Reveal>
+      </div>
+
+      <section
+        aria-labelledby="principles-heading"
+        className="py-4 md:py-6"
+      >
+        {/* edge to edge: three equal-height panels butted together, blue | white (UNGC logo) | green.
+            Inner padding keeps the copy inside the site's column on wide screens. */}
+        <div className="grid items-stretch lg:grid-cols-[1fr_300px_1fr] xl:grid-cols-[1fr_340px_1fr]">
+          <Reveal className="lg:order-1">
+            <div className="h-full bg-[#1D9FDA] px-5 py-8 md:px-10 md:py-10 lg:pl-[max(2.5rem,calc((100vw-80rem)/2+2.5rem))] lg:pr-10">
+              <PrincipleColumn groups={leftGroups} align="left" />
+            </div>
+          </Reveal>
+          <Reveal className="order-first lg:order-2">
+            {/* participant lockup: UNGC emblem with "We Support" to its right */}
+            <div className="flex h-full min-h-[260px] items-center justify-center gap-4 bg-white p-8 md:gap-5">
+              <Image
+                src="/assets/UNGClogo.png"
+                alt="UN Global Compact logo"
+                width={297}
+                height={288}
+                sizes="(min-width: 1024px) 200px, 45vw"
+                className="h-auto w-[46%] max-w-[200px] shrink-0"
+              />
+              <p className="font-display text-[1.6rem] font-bold uppercase leading-[1.05] tracking-tight text-[#0B2E5E] md:text-[1.9rem]">
+                We
+                <br />
+                Support
+              </p>
+            </div>
+          </Reveal>
+          <Reveal className="lg:order-3">
+            <div className="h-full bg-[#61A644] px-5 py-8 md:px-10 md:py-10 lg:pl-10 lg:pr-[max(2.5rem,calc((100vw-80rem)/2+2.5rem))]">
+              <PrincipleColumn groups={rightGroups} align="left" />
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* Event gallery: edge to edge, five photos (tall left, two stacked in the middle, two on the right);
+          glassy date pill top-left, caption bottom-left, slow zoom + blue wash on hover */}
+      <section aria-label="Getmeds at UN Global Compact events" className="py-4 md:py-6">
+        <div className="flex flex-col md:flex-row">
+          {eventGallery.map((col, c) => (
+            <div key={c} className="flex w-full flex-col md:w-1/3">
+              {col.map((tile) => (
+                <div
+                  key={tile.title}
+                  className={`group relative overflow-hidden ${col.length === 1 ? "h-[320px] md:h-[500px]" : "h-[250px]"}`}
+                >
+                  <Image
+                    src={tile.src}
+                    alt={tile.title.replace("\n", " ")}
+                    fill
+                    sizes="(min-width: 768px) 34vw, 100vw"
+                    className="object-cover transition duration-700 group-hover:scale-110"
+                  />
+                  <div className="pointer-events-none absolute inset-0 z-10 bg-[#1D9FDA]/0 transition-all duration-500 group-hover:bg-[#1D9FDA]/40" />
+                  <div className="pointer-events-none absolute inset-0 z-20 flex flex-col justify-between bg-gradient-to-t from-black/60 via-transparent to-black/30 p-6 md:p-8">
+                    <span className="self-start rounded-full bg-white/20 px-3 py-1 text-[12px] font-semibold text-white ring-1 ring-white/40 backdrop-blur-md">
+                      {tile.date}
+                    </span>
+                    <h3 className="font-display whitespace-pre-line text-[17px] font-semibold leading-snug text-white">{tile.title}</h3>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ))}
         </div>
       </section>
 
       {/* SDGs: heading + arrows, swipeable tiles */}
       <section
         aria-labelledby="sdg-heading"
-        className="overflow-hidden py-20 md:py-28"
+        className="overflow-hidden pb-10 pt-6 md:pb-12 md:pt-8"
       >
         <div className="mx-auto max-w-7xl px-5 md:px-10">
           <Reveal>
             <SdgCarousel
               goals={sdgs}
-              text="A global call to end poverty, protect the planet, and ensure prosperity for all."
+              text="The UNGC principles also contribute to the United Nations Sustainable Development Goals (SDGs) — a global call to end poverty, protect the planet, and ensure prosperity for all."
               heading={
                 <>
-                  <span className="block text-[11px] font-semibold uppercase tracking-[0.24em] text-primary">
+                  <span className="block text-sm font-semibold text-primary">
                     Sustainable Development Goals
                   </span>
+                  {/* same size as the Ten Principles heading */}
                   <h2
                     id="sdg-heading"
-                    className="font-display mt-4 text-[clamp(2rem,3.8vw,3.2rem)] font-semibold leading-[1.08] text-[#0B2E5E]"
+                    className="font-display mt-2 text-2xl font-semibold text-black md:text-[2rem]"
                   >
-                    Supporting all{" "}
-                    <span className="text-primary">17 SDGs.</span>
+                    How UNGC Supports the 17 Sustainable Development Goals (SDGs)
                   </h2>
                 </>
               }
@@ -425,35 +457,38 @@ export default function UngcPage() {
         </div>
       </section>
 
-      {/* Commitment: photo card with the statement over it */}
-      <section className="px-3 pb-24 sm:px-5">
-        <Reveal className="relative mx-auto max-w-[1500px] overflow-hidden rounded-[1.75rem] bg-primary-deep">
-          <Image
-            src="/assets/bottommid.jpg"
-            alt=""
-            fill
-            sizes="100vw"
-            className="object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#04263a]/95 via-[#04263a]/80 to-[#04263a]/40" />
-          <div className="relative max-w-3xl p-8 text-white sm:p-12 md:p-16">
-            <h2 className="font-display text-[clamp(1.8rem,3.4vw,2.8rem)] font-semibold leading-[1.1]">
-              Setting new standards in the healthcare industry.
-            </h2>
-            <p className="mt-5 text-[15.5px] leading-relaxed text-white/85">
-              By aligning with UNGC, Getmeds integrates these principles and
-              goals into our operations — a commitment to ethical business
-              practices, sustainable growth, and social responsibility. Every
-              step we take in business aligns with global efforts for a
-              healthier, fairer, and more sustainable world.
-            </p>
-            <Link
-              href="/csr"
-              className="mt-8 inline-flex items-center gap-2 rounded-full bg-white px-7 py-3.5 text-[15px] font-semibold text-primary-deep transition hover:bg-primary-soft"
-            >
-              See Our CSR Work <ArrowRight className="h-4 w-4" aria-hidden />
-            </Link>
-          </div>
+      {/* Alignment statement: one full-width italic paragraph under the SDGs */}
+      <section className="pb-16 pt-2 md:pb-20 md:pt-4">
+        <Reveal className="mx-auto max-w-7xl px-5 md:px-10">
+          <p className="text-lg font-medium italic leading-relaxed text-black md:text-xl md:leading-relaxed">
+            By aligning with UNGC, Getmeds Philippines, only the second pharmaceutical company of its kind in the
+            Philippines to join, integrates these principles and goals into our operations. This milestone
+            highlights our commitment to ethical business practices, sustainable growth, and social
+            responsibility. Through this partnership, we aim to set new standards in the healthcare industry,
+            improve access to quality medicines, and create a positive, lasting impact on communities
+            nationwide. Joining UNGC also reflects our dedication to the United Nations Sustainable Development
+            Goals (SDGs), ensuring that every step we take in business aligns with global efforts for a
+            healthier, fairer, and more sustainable world.
+          </p>
+        </Reveal>
+      </section>
+
+      {/* Bottom CTA band: short, brand green, sitting directly on the footer */}
+      <section className="bg-[#61A644] text-white">
+        <Reveal className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-5 px-5 py-7 md:flex-row md:items-center md:px-10 md:py-8">
+          <p className="font-display text-lg font-semibold leading-snug md:text-xl">
+            Learn more about UNGC
+            <br />
+            and its global impact
+          </p>
+          <a
+            href={UNGC_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex shrink-0 items-center rounded-full bg-white/20 px-7 py-3 text-sm font-semibold text-white ring-1 ring-white/50 backdrop-blur-md transition hover:bg-white/30"
+          >
+            Learn More
+          </a>
         </Reveal>
       </section>
     </div>

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import {
-  ArrowRight, ChevronRight, Clock, FileCheck2, HandHeart, HeartHandshake, Leaf,
+  ChevronRight, Clock, FileCheck2, HandHeart, HeartHandshake, Leaf,
   Lock, PhoneCall, Pill, ShieldCheck, Snowflake, Stethoscope, Tablets, Truck,
 } from "lucide-react";
 import { contact, orderFaqs } from "@/lib/data";
@@ -129,30 +129,31 @@ export default function OrderPage() {
             <p className="mt-6 max-w-2xl text-[15.5px] leading-relaxed text-black md:text-[15px] xl:mt-4 xl:max-w-xl xl:text-white xl:drop-shadow">
               Prescription medicine delivery for patients, doctors, pharmacies and hospitals across the Philippines.
             </p>
-            {/* WhatsApp is the main way to order, so it leads (filled); Order Medicines follows (outlined).
-                Same height, padding and type on both; on the blue sky (xl+) the pair switches to white. */}
-            <div className="mt-12 flex flex-wrap items-center gap-3 sm:gap-4 xl:mt-14">
+          </Reveal>
+        </div>
+        {/* same button pair and placement as Contact Us / CSR; xl+: anchored to the section bottom so it sits on the white wave */}
+        <div className="relative xl:absolute xl:inset-x-0 xl:bottom-[15%]">
+          <Reveal immediate className="mx-auto max-w-7xl px-5 md:px-10">
+            <div className="mt-9 flex flex-wrap items-center gap-4 xl:mt-0">
               <a
                 href={contact.whatsapp}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex h-[52px] items-center gap-2.5 rounded-full border-2 border-primary bg-primary pl-2 pr-6 text-[15px] font-semibold text-white shadow-[0_10px_24px_-12px_rgba(29,159,218,0.7)] transition hover:border-primary-deep hover:bg-primary-deep xl:border-white xl:bg-white xl:text-primary-deep xl:shadow-[0_12px_26px_-12px_rgba(6,40,64,0.6)] xl:hover:border-primary-soft xl:hover:bg-primary-soft"
+                className="inline-flex items-center gap-2.5 rounded-full border-2 border-primary bg-primary py-1.5 pl-1.5 pr-7 text-sm font-semibold text-white transition hover:brightness-95"
               >
-                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#25D366] text-white">
-                  <WhatsAppIcon className="h-5 w-5" />
+                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#25D366] text-white">
+                  <WhatsAppIcon className="h-4 w-4" />
                 </span>
                 Order via WhatsApp
               </a>
               {/* Plain <a>, not <Link>: a native hash jump is what sets :target, which plays the cards' cue below */}
               <a
                 href="#audiences"
-                className="group inline-flex h-[52px] items-center gap-2.5 rounded-full border-2 border-primary-deep/80 px-6 text-[15px] font-semibold text-primary-deep transition hover:bg-primary-deep/5 xl:border-white xl:bg-transparent xl:text-white xl:hover:bg-white/10"
+                className="rounded-full border-2 border-black px-7 py-3 text-sm font-semibold text-black transition hover:bg-black/5"
               >
                 Order Medicines
-                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" aria-hidden />
               </a>
             </div>
-
           </Reveal>
         </div>
       </section>

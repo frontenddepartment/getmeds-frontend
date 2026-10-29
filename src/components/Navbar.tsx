@@ -62,6 +62,18 @@ export default function Navbar() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [dd, setDd] = useState<DD>(null);
+  // /meditations: the bar belongs to the hero only; it slides away once the hero (#top) has scrolled
+  // out, and the page's own floating pill takes over (its arrow brings the hero, and the bar, back).
+  const [heroGone, setHeroGone] = useState(false);
+  const hideForHero = pathname === "/meditations" && heroGone;
+  useEffect(() => {
+    if (pathname !== "/meditations") return;
+    const hero = document.getElementById("top");
+    if (!hero) return;
+    const io = new IntersectionObserver(([entry]) => setHeroGone(!entry.isIntersecting), { threshold: 0 });
+    io.observe(hero);
+    return () => io.disconnect();
+  }, [pathname]);
   const [searchOpen, setSearchOpen] = useState(false);
   const closeSearch = useCallback(() => setSearchOpen(false), []);
   const openSearch = useCallback(() => {
@@ -94,9 +106,9 @@ export default function Navbar() {
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-50 transition-[padding] duration-300 md:px-6 md:pt-3 ${
+      className={`fixed inset-x-0 top-0 z-50 transition-[padding,transform,opacity] duration-300 md:px-6 md:pt-3 ${
         searchOpen ? "px-0 pt-0" : "px-3 pt-3"
-      }`}
+      } ${hideForHero ? "pointer-events-none -translate-y-full opacity-0" : ""}`}
     >
       <div className="relative mx-auto max-w-7xl" onMouseLeave={() => setDd(null)}>
         {/* ---- Sheet panel sliding out from beneath the bar ---- */}

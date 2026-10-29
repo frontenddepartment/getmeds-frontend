@@ -151,6 +151,8 @@ export interface BlogPostSummary {
   slug: string;
   title: string;
   tag: string;
+  /** Every WordPress category the post is in (the first one is `tag`), for the /blog topic filter. */
+  tags: string[];
   date: string;
   modified: string;
   description: string;
@@ -209,11 +211,16 @@ export async function fetchAllPostSummaries(): Promise<BlogPostSummary[] | null>
       // Same skips as prerender-blog.cjs: no slug/title, or already seen across pages.
       if (!slug || !title || seen.has(slug)) return;
       seen.add(slug);
-      const firstCat = Array.isArray(item.categories) ? categories.get(Number(item.categories[0])) : undefined;
+      const catIds: unknown[] = Array.isArray(item.categories) ? item.categories : [];
+      const catNames = catIds
+        .map((id) => categories.get(Number(id)))
+        .filter((n): n is string => typeof n === 'string' && n.length > 0);
+      const firstCat = catNames[0];
       out.push({
         slug,
         title: decodeWpEntities(item.title?.rendered || ''),
         tag: firstCat || 'News',
+        tags: catNames.length ? catNames : ['News'],
         date: String(item.date || ''),
         modified: String(item.modified || ''),
         description: stripHtml(stripPageBuilderShortcodes(item.excerpt?.rendered)),
@@ -232,6 +239,8 @@ export interface BlogIndexPost {
   slug: string;
   title: string;
   tag: string;
+  /** Every category the post is in, for the topic pills. */
+  tags: string[];
   /** e.g. "September 15, 2026", formatted on the server so it can't differ from the browser's */
   date: string;
   excerpt: string;
@@ -295,6 +304,7 @@ export async function fetchBlogIndex(): Promise<BlogIndexPost[]> {
         slug: p.slug,
         title,
         tag: p.tag,
+        tags: p.tags,
         date: Number.isNaN(parsed.getTime()) ? '' : DATE_FORMAT.format(parsed),
         excerpt: excerpt.length > 180 ? `${excerpt.slice(0, 177).replace(/\s+\S*$/, '')}…` : excerpt,
         ...(p.mediaId && images.get(p.mediaId) ? { image: images.get(p.mediaId) } : {}),
