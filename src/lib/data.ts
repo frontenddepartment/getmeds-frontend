@@ -526,7 +526,11 @@ export const contact = {
   messenger: "https://m.me/getmedsphilippines",
   whatsapp: "https://wa.me/639190769105",
   viber: "viber://chat?number=%2B639190769105",
-  twitter: "https://twitter.com/getmeds_ph",
+  twitter: "https://x.com/getmeds_ph",
+  linkedin: "https://www.linkedin.com/company/getmeds",
+  tiktok: "https://www.tiktok.com/@getmedsph",
+  instagram: "https://www.instagram.com/getmeds_ph/",
+  youtube: "https://www.youtube.com/@getmedsph",
 };
 
 export const navLinks = [

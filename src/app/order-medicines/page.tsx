@@ -28,10 +28,10 @@ const heroPills = [
 
 /* Brand-blue cards with a big white arrow, all white-on-blue. */
 const audiences = [
-  { title: "Patients & Families", text: "Upload a prescription and we deliver to your door.", cta: "Order with a prescription" },
-  { title: "Doctors & Healthcare Professionals", text: "Product orders, pricing and Compassionate Special Permits.", cta: "Send an inquiry" },
-  { title: "Distributors & Pharmacies", text: "Wholesale supply, credit terms and a distributor account.", cta: "Become a distributor partner" },
-  { title: "Hospitals & Institutions", text: "Quotations, emergency purchases and hospital procurement.", cta: "Request a quotation" },
+  { href: "/order-medicines/patients", title: "Patients & Families", text: "Upload a prescription and we deliver to your door.", cta: "Order with a prescription" },
+  { href: "/order-medicines/doctors", title: "Doctors & Healthcare Professionals", text: "Product orders, pricing and Compassionate Special Permits.", cta: "Send an inquiry" },
+  { href: "/order-medicines/distributors", title: "Distributors & Pharmacies", text: "Wholesale supply, credit terms and a distributor account.", cta: "Become a distributor partner" },
+  { href: "/order-medicines/hospitals", title: "Hospitals & Institutions", text: "Quotations, emergency purchases and hospital procurement.", cta: "Request a quotation" },
 ];
 
 /* The four order cards; "Start your order" in the closing banner scrolls back here (#order-cards). */
@@ -162,10 +162,10 @@ export default function OrderPage() {
       <section id="audiences" className="scroll-mt-32 pb-6 md:pb-8 lg:pt-2">
         <div className="mx-auto max-w-7xl px-5 md:px-10">
           <Stagger className="grid grid-cols-2 gap-3 md:gap-4 lg:grid-cols-4">
-            {audiences.map(({ title, text, cta }, i) => (
+            {audiences.map(({ href, title, text, cta }, i) => (
               <StaggerItem key={title} className="h-full">
                 <Link
-                  href="/contact-us"
+                  href={href}
                   aria-label={`${title}: ${cta}`}
                   style={{ "--cue-i": i } as React.CSSProperties}
                   className="cue-card group relative flex h-full flex-col rounded-3xl bg-[#1D9FDA] p-4 text-white transition-transform duration-300 hover:-translate-y-1 md:p-5"
@@ -457,55 +457,28 @@ export default function OrderPage() {
         </div>
       </section>
 
-      {/* Closing CTA */}
-      {/* Shorter than the photo: it's anchored to the bottom so the trim comes off the top.
-          Copy sits white on the left over the green cubicles; the agent stays visible on the right. */}
-      <section className="relative w-full overflow-hidden py-14 text-white md:py-12 lg:flex lg:aspect-[1947/560] lg:items-center lg:py-0">
-        <Image
-          src="/images/ctabannerordermedicines.png"
-          alt=""
-          fill
-          sizes="100vw"
-          className="object-cover object-[70%_bottom] md:object-bottom"
-          aria-hidden
-        />
-        {/* shade behind the copy: full on phones, a left-to-right fade from md up */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#073b57]/90 via-[#073b57]/60 to-black/25 md:bg-gradient-to-r md:from-[#073b57]/80 md:via-[#073b57]/45 md:via-45% md:to-transparent md:to-70%" />
-
-        <div className="relative mx-auto w-full max-w-7xl px-5 md:px-10">
-          <div className="grid items-center gap-8 md:grid-cols-2">
-            {/* Left side CTA copy */}
-            <Reveal className="text-center md:text-left">
-              <h2 className="font-display text-3xl font-semibold leading-tight text-white drop-shadow-md md:text-4xl lg:text-[2.6rem]">
-                Ready to order?
-              </h2>
-              <p className="mx-auto mt-4 max-w-xl text-base leading-relaxed text-white/95 drop-shadow-sm md:mx-0 md:text-lg">
-                Choose a category to get started, or message us if you need help finding your medicine.
-              </p>
-              <div className="mt-6 flex justify-center md:justify-start">
-                <a
-                  href="#order-cards"
-                  className="inline-flex items-center rounded-full bg-white px-6 py-2.5 text-sm font-semibold text-[#073b57] transition hover:bg-white/90"
-                >
-                  Start your order
-                </a>
-              </div>
-              <p className="mt-5 text-sm text-white/95 drop-shadow-sm">
-                Questions? Message us on{" "}
-                <a href={contact.viber} className="font-semibold underline underline-offset-4 hover:opacity-85">
-                  Viber
-                </a>{" "}
-                or call{" "}
-                <a href="tel:+639190769105" className="font-semibold underline underline-offset-4 hover:opacity-85">
-                  +639190769105
-                </a>
-              </p>
-            </Reveal>
-
-            {/* Right side spacer leaves the agent visible */}
-            <div className="hidden md:block" />
+      {/* Closing CTA: short brand-green band sitting directly on the footer */}
+      <section className="bg-[#61A644] text-white">
+        <Reveal className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-5 px-5 py-8 md:flex-row md:items-center md:px-10 md:py-9">
+          <div>
+            <h2 className="font-display text-2xl font-semibold md:text-[1.75rem]">Ready to order?</h2>
+            <p className="mt-1.5 max-w-xl text-[15px] leading-relaxed text-white/90">
+              Choose a category to get started, or message us if you need help finding your medicine.
+            </p>
+            <p className="mt-2 text-sm text-white/90">
+              Questions? Message us on{" "}
+              <a href={contact.viber} className="font-semibold underline underline-offset-4 hover:opacity-85">Viber</a>{" "}
+              or call{" "}
+              <a href="tel:+639190769105" className="font-semibold underline underline-offset-4 hover:opacity-85">+639190769105</a>
+            </p>
           </div>
-        </div>
+          <a
+            href="#order-cards"
+            className="inline-flex shrink-0 items-center rounded-full bg-white px-7 py-3 text-sm font-semibold text-[#3d7a26] transition hover:bg-white/90"
+          >
+            Start your order
+          </a>
+        </Reveal>
       </section>
     </>
   );

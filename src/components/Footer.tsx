@@ -29,7 +29,7 @@ const policies = [
 
 export default function Footer() {
   const pathname = usePathname();
-  const isFlushPage = pathname === "/" || pathname === "/order-medicines" || pathname === "/contact-us" || pathname === "/patient-assistance-program" || pathname === "/about-us" || pathname === "/services" || pathname === "/global-network" || pathname === "/product-range" || pathname === "/blog" || pathname === "/ungc" || pathname === "/careers" || pathname === "/meditations";
+  const isFlushPage = pathname === "/" || pathname === "/order-medicines" || pathname === "/contact-us" || pathname === "/patient-assistance-program" || pathname === "/about-us" || pathname === "/services" || pathname === "/global-network" || pathname === "/product-range" || pathname === "/blog" || pathname === "/ungc" || pathname === "/careers" || pathname === "/meditations" || pathname.startsWith("/order-medicines/");
 
   return (
     <footer className={`relative overflow-hidden bg-[#1D9FDA] text-white ${isFlushPage ? "" : "mt-24"}`}>
@@ -133,7 +133,7 @@ export default function Footer() {
         </div>
 
         <div className="mt-14 flex flex-col gap-4 border-t border-white/20 pt-7 text-[13px] text-white/85 xl:flex-row xl:items-center xl:justify-between">
-          <p className="xl:whitespace-nowrap">Â© 2026 Getmeds Philippines, Inc. All rights reserved.</p>
+          <p className="xl:whitespace-nowrap">&copy; 2026 Getmeds Philippines, Inc. All rights reserved.</p>
           <div className="flex flex-wrap gap-x-5 gap-y-1 xl:flex-nowrap xl:justify-end">
             {policies.map((p) => (
               <span key={p} className="cursor-pointer whitespace-nowrap py-1.5 transition hover:text-white">
