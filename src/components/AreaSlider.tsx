@@ -10,20 +10,11 @@ import { useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { therapeuticAreas } from "@/lib/data";
 
-// Placeholder product shots per area (public/images/products/sample1–10) until real ones are picked
-const AREA_IMAGES: Record<string, string> = {
-  oncology: "sample8",
-  hematology: "sample2",
-  "anti-infectives": "sample3",
-  endocrinology: "sample4",
-  orthopedic: "sample1",
-  cardiology: "sample6",
-  "neuro-oncology": "sample5",
-  respiratory: "sample10",
-  nephrology: "sample9",
-  pain: "sample7",
-  rheumatology: "sample1",
-};
+// A real Getmeds pack per area, cropped from its catalogue photo (public/images/areas/packs/<slug>.png):
+// oncology PacliGet, hematology Bortemed, anti-infectives VancoGet, endocrinology DanaGet, orthopedic ZoloGet,
+// cardiology AmloGet, neuro-oncology TemoGet, respiratory CetriGet, nephrology SevelaMed, pain Tradmin,
+// rheumatology DexGet.
+const areaImage = (slug: string) => `/images/areas/packs/${slug}.png`;
 
 // One colour per category (the circle); the card is a light tint of the same colour.
 const AREA_COLORS: Record<string, string> = {
@@ -100,13 +91,14 @@ export default function AreaSlider() {
               {/* faint halo + coloured circle with the area's product */}
               <span aria-hidden className="absolute -bottom-12 -right-12 h-36 w-36 rounded-full opacity-[0.08]" style={{ backgroundColor: color }} />
               <span aria-hidden className="absolute -bottom-4 -right-4 h-28 w-28 rounded-full opacity-[0.1]" style={{ backgroundColor: color }} />
+              {/* coloured circle with the area's pack (a transparent cut-out) rising out of it */}
               <div aria-hidden className="absolute bottom-3 right-4 h-[64px] w-[64px] rounded-full" style={{ backgroundColor: color }}>
                 <Image
-                  src={`/images/products/${AREA_IMAGES[a.slug] ?? "sample1"}.png`}
+                  src={areaImage(a.slug)}
                   alt=""
                   fill
                   sizes="130px"
-                  className="-translate-y-[16%] scale-[1.4] object-contain drop-shadow-[0_8px_10px_rgba(6,40,64,0.35)] transition duration-300 group-hover:-translate-y-[20%] group-hover:scale-[1.47]"
+                  className="-translate-y-[14%] scale-[1.3] object-contain drop-shadow-[0_8px_10px_rgba(6,40,64,0.35)] transition duration-300 group-hover:-translate-y-[18%] group-hover:scale-[1.37]"
                 />
               </div>
 

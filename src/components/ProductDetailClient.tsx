@@ -56,6 +56,8 @@ export default function ProductDetailClient(_props: { categorySlug?: string; pro
   usePageReady(!productsLoading && (product !== null || notFound));
 
   const [zoomedImageOpen, setZoomedImageOpen] = useState(false);
+  // product-page FAQ accordion: first answer open, one at a time
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [formData, setFormData] = useState({
     name: '', phone: '', email: '', message: '', age: '',
@@ -788,7 +790,7 @@ export default function ProductDetailClient(_props: { categorySlug?: string; pro
                   {product.description && <div>{renderRichContent(product.description)}</div>}
                   {indications && (
                     <div>
-                      <h3 className="mb-1 text-[14px] font-semibold text-[#0B2E5E]">Indications</h3>
+                      <h3 className="mb-1 text-[14px] font-semibold text-black">Indications</h3>
                       <div>{renderRichContent(indications)}</div>
                     </div>
                   )}
@@ -836,7 +838,9 @@ export default function ProductDetailClient(_props: { categorySlug?: string; pro
           }
 
           return (
-          <div className="mx-auto w-full max-w-7xl px-5 pb-20 md:px-10">
+          <div className="mx-auto w-full max-w-7xl px-5 pb-10 md:px-10">
+            {/* product pages: the footer sits close under the how-to-order / FAQ block (the style unmounts with the page) */}
+            <style>{'footer{margin-top:0!important}'}</style>
             <div className="grid gap-10 lg:grid-cols-[1.05fr_1fr] lg:gap-16">
 
               {/* Gallery: one large photo with zoom, then what ordering here guarantees.
@@ -1316,7 +1320,7 @@ export default function ProductDetailClient(_props: { categorySlug?: string; pro
                       href={whatsappHref}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="mt-3 flex h-14 w-full items-center justify-center gap-2.5 rounded-xl border-2 border-primary text-[15px] font-semibold uppercase tracking-[0.12em] text-primary transition hover:bg-primary/5"
+                      className="mt-3 flex h-14 w-full items-center justify-center gap-2.5 rounded-full border-2 border-primary text-[15px] font-semibold uppercase tracking-[0.12em] text-primary transition hover:bg-primary/5"
                     >
                       <WhatsAppIcon className="h-5 w-5 text-[#25D366]" />
                       Order via WhatsApp
@@ -1327,13 +1331,13 @@ export default function ProductDetailClient(_props: { categorySlug?: string; pro
                 <div hidden={inquiryOpen} className={inquiryOpen ? '' : 'gm-rise'}>
                 <div className="flex flex-wrap items-center gap-2.5">
                   {inStock && (
-                    <span className="inline-flex items-center gap-1 text-[13px] font-medium text-[#2f7a23]">
+                    <span className="inline-flex items-center gap-1 text-[12px] font-medium text-[#2f7a23]">
                       <Check className="h-3.5 w-3.5" strokeWidth={2.5} aria-hidden /> In stock
                     </span>
                   )}
                 </div>
 
-                <h1 className="font-display mt-4 text-[clamp(2rem,3.6vw,2.9rem)] font-semibold leading-[1.08] tracking-tight text-[#0B2E5E]">
+                <h1 className="font-display mt-3 text-[clamp(1.6rem,2.6vw,2.1rem)] font-semibold leading-[1.08] tracking-tight text-[#0B2E5E]">
                   {brand}
                   {/* Rx mark, set like an exponent after the name. Screen readers hear "Prescription required";
                       the hover/focus label is drawn by CSS from data-tip, so the H1 text stays "DoseGet-20 Rx …". */}
@@ -1355,11 +1359,11 @@ export default function ProductDetailClient(_props: { categorySlug?: string; pro
                     </>
                   )}
                   {generic ? ' ' : ''}
-                  {generic && <span className="mt-2 block text-[clamp(1.05rem,1.6vw,1.3rem)] font-medium tracking-normal text-slate-500">{generic}</span>}
+                  {generic && <span className="mt-1.5 block text-[clamp(0.95rem,1.3vw,1.1rem)] font-medium tracking-normal text-slate-500">{generic}</span>}
                 </h1>
 
                 {orderedConditions.length > 0 && (
-                  <p className="mt-4 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-[14px] text-slate-500">
+                  <p className="mt-3 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-[13px] text-slate-500">
                     <span>Used for</span>
                     {orderedConditions.map((sub, i) => (
                       <React.Fragment key={sub}>
@@ -1372,14 +1376,14 @@ export default function ProductDetailClient(_props: { categorySlug?: string; pro
 
                 {/* Strength and form take the price spot: no online price for prescription medicines */}
                 {(product.strength || product.form) && (
-                  <div className="mt-6">
+                  <div className="mt-5">
                     {product.strength && (
-                      <p className="font-display text-[26px] font-semibold leading-tight text-[#0B2E5E]">{formatFieldWithLineBreaks(product.strength)}</p>
+                      <p className="font-display text-[20px] font-semibold leading-tight text-[#0B2E5E]">{formatFieldWithLineBreaks(product.strength)}</p>
                     )}
-                    {product.form && <p className="mt-1 text-[15px] text-slate-600">{formatFieldWithLineBreaks(product.form)}</p>}
+                    {product.form && <p className="mt-1 text-[14px] text-slate-600">{formatFieldWithLineBreaks(product.form)}</p>}
                   </div>
                 )}
-                <p className="mt-2 text-[13.5px] text-slate-500">Price on request: our pharmacist sends a formal quote.</p>
+                <p className="mt-2 text-[12.5px] text-slate-500">Price on request: our pharmacist sends a formal quote.</p>
 
                 {/* Full text is always in the HTML (only clipped visually), so search engines read all of it;
                     the "…" at the end of line 3 expands it in place. */}
@@ -1388,7 +1392,7 @@ export default function ProductDetailClient(_props: { categorySlug?: string; pro
                     <p
                       id="gm-summary"
                       ref={summaryRef}
-                      className={`text-[15px] leading-relaxed text-slate-600 ${summaryOpen ? '' : 'max-h-[4.875em] overflow-hidden'}`}
+                      className={`text-[14px] leading-relaxed text-slate-600 ${summaryOpen ? '' : 'max-h-[4.875em] overflow-hidden'}`}
                     >
                       {summary}
                       {summaryOpen && summaryOverflows && (
@@ -1431,12 +1435,12 @@ export default function ProductDetailClient(_props: { categorySlug?: string; pro
                         return (
                           <li key={v.slug?.current}>
                             {current ? (
-                              <span aria-current="page" className="inline-flex rounded-lg bg-primary px-4 py-2.5 text-[14px] font-semibold text-white">{label}</span>
+                              <span aria-current="page" className="inline-flex rounded-full bg-primary px-5 py-2.5 text-[14px] font-semibold text-white">{label}</span>
                             ) : (
                               <a
                                 href={productHref(v)}
                                 title={`${getProductDisplayName(v)} ${label}`}
-                                className="inline-flex rounded-lg px-4 py-2.5 text-[14px] font-medium text-[#0B2E5E] ring-1 ring-slate-300 transition hover:text-primary hover:ring-primary"
+                                className="inline-flex rounded-full px-5 py-2.5 text-[14px] font-medium text-[#0B2E5E] ring-1 ring-slate-300 transition hover:text-primary hover:ring-primary"
                               >
                                 {label}
                               </a>
@@ -1455,7 +1459,7 @@ export default function ProductDetailClient(_props: { categorySlug?: string; pro
                     aria-expanded={inquiryOpen}
                     aria-controls="gm-order-box"
                     title={orderLabel}
-                    className="group flex h-14 w-full items-center justify-center gap-2.5 rounded-xl bg-primary text-[15px] font-semibold uppercase tracking-[0.12em] text-white transition hover:bg-primary-deep"
+                    className="group flex h-14 w-full items-center justify-center gap-2.5 rounded-full bg-primary text-[15px] font-semibold uppercase tracking-[0.12em] text-white transition hover:bg-primary-deep"
                   >
                     Order Now
                     <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" aria-hidden />
@@ -1465,7 +1469,7 @@ export default function ProductDetailClient(_props: { categorySlug?: string; pro
                     href={whatsappHref}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex h-14 w-full items-center justify-center gap-2.5 rounded-xl border-2 border-primary text-[15px] font-semibold uppercase tracking-[0.12em] text-primary transition hover:bg-primary/5"
+                    className="flex h-14 w-full items-center justify-center gap-2.5 rounded-full border-2 border-primary text-[15px] font-semibold uppercase tracking-[0.12em] text-primary transition hover:bg-primary/5"
                   >
                     <WhatsAppIcon className="h-5 w-5 text-[#25D366]" />
                     Order via WhatsApp
@@ -1482,7 +1486,7 @@ export default function ProductDetailClient(_props: { categorySlug?: string; pro
                     {sections.map((sec, i) => (
                       <details key={sec.title} open={i === 0} className="group border-b border-slate-200">
                         <summary className="flex cursor-pointer list-none items-center justify-between gap-4 py-5 [&::-webkit-details-marker]:hidden">
-                          <h2 className="text-[13px] font-semibold uppercase tracking-[0.14em] text-[#0B2E5E]">{sec.title}</h2>
+                          <h2 className="text-[16px] font-semibold text-black">{sec.title}</h2>
                           <Plus className="h-4 w-4 shrink-0 text-slate-500 transition-transform duration-300 group-open:rotate-45" aria-hidden />
                         </summary>
                         <div className="pb-6 text-[15px] leading-relaxed text-slate-600">{sec.body}</div>
@@ -1514,7 +1518,7 @@ export default function ProductDetailClient(_props: { categorySlug?: string; pro
                 <button
                   type="button"
                   onClick={openInquiry}
-                  className="mt-7 inline-flex items-center rounded-xl bg-primary px-6 py-3.5 text-[15px] font-semibold text-white transition hover:bg-primary-deep"
+                  className="mt-7 inline-flex items-center rounded-full bg-primary px-7 py-3.5 text-[15px] font-semibold text-white transition hover:bg-primary-deep"
                 >
                   Send an inquiry for {product.brandName || genericLabel}
                 </button>
@@ -1524,15 +1528,34 @@ export default function ProductDetailClient(_props: { categorySlug?: string; pro
                   Frequently asked questions
                 </h2>
                 <div className="mt-4 border-t border-slate-200">
-                  {faqs.map((faq, i) => (
-                    <details key={faq.q} open={i === 0} className="group border-b border-slate-200">
-                      <summary className="flex cursor-pointer list-none items-center justify-between gap-4 py-4 [&::-webkit-details-marker]:hidden">
-                        <h3 className="text-[15.5px] font-semibold text-[#0B2E5E]">{faq.q}</h3>
-                        <Plus className="h-4 w-4 shrink-0 text-slate-500 transition-transform duration-300 group-open:rotate-45" aria-hidden />
-                      </summary>
-                      <p className="pb-5 text-[15px] leading-relaxed text-slate-600">{faq.a}</p>
-                    </details>
-                  ))}
+                  {/* smooth accordion: the answer's row animates 0fr -> 1fr; answers stay in the DOM */}
+                  {faqs.map((faq, i) => {
+                    const isOpen = openFaq === i;
+                    return (
+                      <div key={faq.q} className="border-b border-slate-200">
+                        <h3>
+                          <button
+                            type="button"
+                            aria-expanded={isOpen}
+                            aria-controls={`pd-faq-${i}`}
+                            onClick={() => setOpenFaq(isOpen ? null : i)}
+                            className="flex w-full items-center justify-between gap-4 py-4 text-left text-[15.5px] font-semibold text-[#0B2E5E]"
+                          >
+                            {faq.q}
+                            <Plus className={`h-4 w-4 shrink-0 text-slate-500 transition-transform duration-300 ${isOpen ? "rotate-45" : ""}`} aria-hidden />
+                          </button>
+                        </h3>
+                        <div
+                          id={`pd-faq-${i}`}
+                          className={`grid transition-[grid-template-rows,opacity] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}`}
+                        >
+                          <div className="overflow-hidden">
+                            <p className="pb-5 text-[15px] leading-relaxed text-slate-600">{faq.a}</p>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             </section>

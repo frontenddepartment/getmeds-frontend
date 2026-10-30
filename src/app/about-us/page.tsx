@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import {
-  BadgeCheck, Check, Compass, Eye, Globe2, HandHeart,
+  ArrowUpRight, BadgeCheck, Check, Compass, Eye, Globe2, HandHeart,
   HandCoins, HeartPulse, Lightbulb, PackageSearch, Target, Truck, Users,
 } from "lucide-react";
 import { Reveal, Stagger, StaggerItem } from "@/components/ui";
@@ -10,6 +10,14 @@ import IsoFocus from "@/components/IsoFocus";
 import DedicatedPills from "@/components/DedicatedPills";
 import DepthStack from "@/components/DepthStack";
 import CoreValues from "@/components/CoreValues";
+import LicenseStack from "@/components/LicenseStack";
+
+/* Key details from the two FDA Licences to Operate (public/images/licenseone.jpeg, licensetwo.jpeg). */
+const fdaLicences = [
+  { label: "Granted to", value: "Getmeds Philippines Inc.", note: "Unit 301 & 305, 17 Vatican Bldg., Las Piñas City, Metro Manila" },
+  { label: "Drugstore", value: "CDRR-NCR-DS-295793", note: "Includes online ordering and delivery · issued 26 Feb 2024" },
+  { label: "Distributor-Importer / Wholesaler", value: "CDRR-NCR-DI/W-418260", note: "Issued 29 June 2024" },
+];
 
 export const metadata: Metadata = {
   alternates: { canonical: "/about-us" },
@@ -263,6 +271,50 @@ export default function AboutPage() {
               </StaggerItem>
             ))}
           </Stagger>
+        </div>
+      </section>
+
+      {/* FDA licences: the two certificates on the left, the key details + a link to the FDA portal on the right */}
+      <section className="bg-white pb-20 pt-2 md:pb-28">
+        <div className="mx-auto grid max-w-7xl items-center gap-10 px-5 md:px-10 lg:grid-cols-[1fr_1.1fr] lg:gap-16">
+          <Reveal>
+            {/* two certificates as a paper stack that trades places every 3 seconds */}
+            <LicenseStack />
+          </Reveal>
+
+          <Reveal delay={0.1}>
+            <span className="inline-flex items-center gap-2 rounded-full bg-[#61A644]/10 px-4 py-2 text-sm font-semibold text-[#3d7a26]">
+              <BadgeCheck className="h-4 w-4" aria-hidden /> Licensed by the FDA Philippines
+            </span>
+            <h2 className="font-display mt-4 text-2xl font-semibold text-black md:text-[2rem]">
+              Licensed to dispense, import and distribute medicines.
+            </h2>
+
+            <dl className="mt-6 divide-y divide-slate-200 border-y border-slate-200">
+              {fdaLicences.map((row) => (
+                <div key={row.label} className="grid gap-1 py-4 sm:grid-cols-[180px_1fr] sm:gap-6">
+                  <dt className="text-[15px] text-slate-500">{row.label}</dt>
+                  <dd>
+                    <p className="text-[15px] font-semibold text-[#0B2E5E]">{row.value}</p>
+                    {row.note && <p className="mt-0.5 text-sm text-slate-500">{row.note}</p>}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+
+            <p className="mt-5 text-[15px] leading-relaxed text-slate-600">
+              Every licence the FDA issues can be looked up on its own verification portal. Search for either licence
+              number above.
+            </p>
+            <a
+              href="https://verification.fda.gov.ph/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-6 inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3 text-sm font-semibold text-white transition hover:brightness-95"
+            >
+              Check it with the FDA <ArrowUpRight className="h-4 w-4" aria-hidden />
+            </a>
+          </Reveal>
         </div>
       </section>
 

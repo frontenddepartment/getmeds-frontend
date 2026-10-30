@@ -407,7 +407,7 @@ export default function OrderPage() {
       </section>
 
       {/* Patient Assistance Program — its own section, right after the reasons */}
-      <section className="mb-16 bg-[#1D9FDA] py-12 md:py-16">
+      <section className="bg-[#1D9FDA] py-12 md:py-16">
         <div className="mx-auto max-w-7xl px-5 md:px-10">
           {/* title on the left (two lines), description + button on the right */}
           <Reveal className="grid gap-6 md:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)] md:items-center md:gap-12">
@@ -438,7 +438,7 @@ export default function OrderPage() {
 
       {/* FAQ — all 13 answers are in the server HTML; schema via <FaqSchema page="order" /> */}
       <section className="bg-white">
-        <div className="mx-auto max-w-7xl px-5 py-12 md:px-10 md:py-16">
+        <div className="mx-auto max-w-7xl px-5 pb-12 pt-8 md:px-10 md:pb-16 md:pt-10">
           <div className="grid gap-6 md:grid-cols-2 md:gap-10 lg:gap-14 items-start">
             <div>
               <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-primary">

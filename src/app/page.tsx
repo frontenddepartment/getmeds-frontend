@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Image, { getImageProps } from "next/image";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { capabilities, stats } from "@/lib/data";
 import { getCatalogModel, productPath, resolveProduct } from "@/lib/catalogServer";
 import { Counter, Reveal, Stagger, StaggerItem } from "@/components/ui";
@@ -29,6 +29,13 @@ function Label({ children }: { children: React.ReactNode }) {
 const heroImage = { alt: "", fill: true, priority: true, sizes: "100vw" } as const;
 const { props: heroDesktop } = getImageProps({ ...heroImage, src: "/images/herosectionimage.png" });
 const { props: heroMobile } = getImageProps({ ...heroImage, src: "/images/mobileherosec.png" });
+
+/* Who we are: three photo links beside the story */
+const whoWeAreLinks = [
+  { href: "/ungc", src: "/images/whoweare1.png", alt: "Getmeds at the UN Global Compact", label: "UN Global Compact", cta: "SDG Commitments" },
+  { href: "/patient-assistance-program", src: "/images/whoweare22.png", alt: "Getmeds Patient Assistance Program", label: "Patient Assistance Program", cta: "Access to treatment" },
+  { href: "/careers", src: "/images/whoweare-careers-2.jpg", alt: "Getmeds team", label: "Careers", cta: "Join our team" },
+];
 
 const marqueeItems = [
   "FDA Philippines Licensed", "WHO", "PIC/S", "US FDA", "EU GMP", "UK MHRA",
@@ -162,367 +169,288 @@ export default async function Home() {
 
       {/* everything below the hero: balanced headings, no single-word last lines */}
       <div className="text-flow">
-      {/* ================= Therapeutic areas: split slider ================= */}
-      <section>
-        <AreaSlider />
-      </section>
+        {/* ================= Therapeutic areas: split slider ================= */}
+        <section>
+          <AreaSlider />
+        </section>
 
-      {/* ================= Featured Products heading (above the four-tile strip) ================= */}
-      <section className="bg-gradient-to-r from-[#1D9FDA] from-55% via-[#1D9FDA] via-70% to-[#61A644] py-3 md:py-4">
-        <Reveal className="mx-auto max-w-7xl px-5 md:px-10">
-          <h2 className="font-display text-lg font-medium text-white md:text-xl">Featured Products</h2>
-        </Reveal>
-      </section>
+        {/* ================= Featured Products heading (above the four-tile strip) ================= */}
+        <section className="bg-gradient-to-r from-[#1D9FDA] from-55% via-[#1D9FDA] via-70% to-[#61A644] py-3 md:py-4">
+          <Reveal className="mx-auto max-w-7xl px-5 md:px-10">
+            <h2 className="font-display text-lg font-medium text-white md:text-xl">Featured Products</h2>
+          </Reveal>
+        </section>
 
-      {/* ================= Product image strip: four tiles, edge to edge ================= */}
-      <section className="grid grid-cols-4">
-        {[
-          {
-            src: "/images/pazopanib.jpeg",
-            href: pazogetHref,
-            alt: "PazoGet-200 (Pazopanib 200 mg) film-coated tablets by Getmeds",
-            caption: {
-              title: "PazoGet (Pazopanib)",
-              subtitle: "First Branded Generic in the Philippines",
-              meta: "200 mg & 400 mg Tablets · Oncology · Rx",
+        {/* ================= Product image strip: four tiles, edge to edge ================= */}
+        <section className="grid grid-cols-4">
+          {[
+            {
+              src: "/images/pazopanib.jpeg",
+              href: pazogetHref,
+              alt: "PazoGet-200 (Pazopanib 200 mg) film-coated tablets by Getmeds",
+              caption: {
+                title: "PazoGet (Pazopanib)",
+                subtitle: "First Branded Generic in the Philippines",
+                meta: "200 mg & 400 mg Tablets · Oncology · Rx",
+              },
             },
-          },
-          {
-            src: "/images/erpoget.png",
-            href: erpogetHref,
-            alt: "ErpoGet (Epoetin Alfa 4,000 IU/mL) pre-filled syringes by Getmeds",
-            caption: {
-              title: "ErpoGet (Epoetin Alfa)",
-              subtitle: "Hematopoietic Growth Factor",
-              meta: "4,000 IU/mL Pre-filled Syringe · Hematology · Rx",
+            {
+              src: "/images/erpoget.png",
+              href: erpogetHref,
+              alt: "ErpoGet (Epoetin Alfa 4,000 IU/mL) pre-filled syringes by Getmeds",
+              caption: {
+                title: "ErpoGet (Epoetin Alfa)",
+                subtitle: "Hematopoietic Growth Factor",
+                meta: "4,000 IU/mL Pre-filled Syringe · Hematology · Rx",
+              },
             },
-          },
-          {
-            src: "/images/idaget.png",
-            href: idagetHref,
-            alt: "IdaGet-5 (Idarubicin Hydrochloride 5 mg) lyophilized powder for injection by Getmeds",
-            caption: {
-              title: "IdaGet-5 (Idarubicin)",
-              subtitle: "Antineoplastic Agent (Anthracycline)",
-              meta: "5 mg Lyophilized Powder for Injection · Hematology · Rx",
+            {
+              src: "/images/idaget.png",
+              href: idagetHref,
+              alt: "IdaGet-5 (Idarubicin Hydrochloride 5 mg) lyophilized powder for injection by Getmeds",
+              caption: {
+                title: "IdaGet-5 (Idarubicin)",
+                subtitle: "Antineoplastic Agent (Anthracycline)",
+                meta: "5 mg Lyophilized Powder for Injection · Hematology · Rx",
+              },
             },
-          },
-          {
-            src: "/images/sevelamed.png",
-            href: sevelamedHref,
-            alt: "SevelaMed (Sevelamer Carbonate 800 mg) film-coated tablets by Getmeds",
-            caption: {
-              title: "SevelaMed (Sevelamer)",
-              subtitle: "Phosphate Binder for Hyperphosphatemia",
-              meta: "800 mg Film-Coated Tablets · Nephrology · Rx",
+            {
+              src: "/images/sevelamed.png",
+              href: sevelamedHref,
+              alt: "SevelaMed (Sevelamer Carbonate 800 mg) film-coated tablets by Getmeds",
+              caption: {
+                title: "SevelaMed (Sevelamer)",
+                subtitle: "Phosphate Binder for Hyperphosphatemia",
+                meta: "800 mg Film-Coated Tablets · Nephrology · Rx",
+              },
             },
-          },
-        ].map((img, i) => (
-          <Link
-            key={i}
-            href={img.href}
-            aria-label={"caption" in img && img.caption ? `View ${img.caption.title}` : img.alt}
-            className="group relative block aspect-[2/3] overflow-hidden focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-inset focus-visible:ring-white/80"
-          >
-            <Image src={img.src} alt={img.alt} fill sizes="25vw" className="object-cover transition-transform duration-500 group-hover:scale-105" />
-            {"caption" in img && img.caption && (
-              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#0B5E8A]/70 via-[#0B5E8A]/30 to-transparent p-2 pt-10 text-white sm:p-4 sm:pt-16 lg:p-7 lg:pt-24">
-                {/* desktop: one line per title; size scales with the tile so the longest name still fits */}
-                <p className="font-display text-[11px] font-semibold leading-tight sm:text-base lg:whitespace-nowrap lg:text-[clamp(1rem,1.5vw,1.5rem)]">
-                  {img.caption.title}
-                </p>
-                <p className="mt-0.5 text-[9px] leading-snug text-white/90 sm:text-xs lg:mt-1 lg:text-sm">
-                  {img.caption.subtitle}
-                </p>
-                <p className="mt-1 hidden text-xs text-white/80 sm:block lg:mt-3 lg:text-[13px]">{img.caption.meta}</p>
-              </div>
-            )}
-          </Link>
-        ))}
-      </section>
-
-      {/* ================= Impact band: four trust signals splitting the full width ================= */}
-      <section className="bg-[#1D9FDA] text-white">
-        <Reveal className="mx-auto grid max-w-7xl grid-cols-2 px-5 py-9 md:grid-cols-4 md:px-10 md:py-12">
-          {stats.map((st, i) => (
-            <div
-              key={st.label}
-              className={`px-4 py-4 text-center md:py-1 ${i % 2 === 1 ? "border-l border-white/25" : ""} ${i >= 2 ? "border-t border-white/25 md:border-t-0" : ""} ${i === 2 ? "md:border-l" : ""}`}
+          ].map((img, i) => (
+            <Link
+              key={i}
+              href={img.href}
+              aria-label={"caption" in img && img.caption ? `View ${img.caption.title}` : img.alt}
+              className="group relative block aspect-[2/3] overflow-hidden focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-inset focus-visible:ring-white/80"
             >
-              <Counter
-                value={st.value}
-                suffix={st.suffix}
-                className="font-display text-[2rem] font-semibold md:text-[2.6rem]"
-              />
-              <p className="mt-1.5 text-balance text-sm leading-snug text-white/80">{st.label}</p>
-            </div>
+              <Image src={img.src} alt={img.alt} fill sizes="25vw" className="object-cover transition-transform duration-500 group-hover:scale-105" />
+              {"caption" in img && img.caption && (
+                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#0B5E8A]/70 via-[#0B5E8A]/30 to-transparent p-2 pt-10 text-white sm:p-4 sm:pt-16 lg:p-7 lg:pt-24">
+                  {/* desktop: one line per title; size scales with the tile so the longest name still fits */}
+                  <p className="font-display text-[11px] font-semibold leading-tight sm:text-base lg:whitespace-nowrap lg:text-[clamp(1rem,1.5vw,1.5rem)]">
+                    {img.caption.title}
+                  </p>
+                  <p className="mt-0.5 text-[9px] leading-snug text-white/90 sm:text-xs lg:mt-1 lg:text-sm">
+                    {img.caption.subtitle}
+                  </p>
+                  <p className="mt-1 hidden text-xs text-white/80 sm:block lg:mt-3 lg:text-[13px]">{img.caption.meta}</p>
+                </div>
+              )}
+            </Link>
           ))}
-        </Reveal>
-      </section>
+        </section>
 
-      {/* ================= Portfolio layers ================= */}
-      <section className="border-b border-[#e3edf5]">
-        <div className="mx-auto max-w-7xl px-5 py-16 md:px-10 md:py-20">
-          <div className="mb-12 grid items-end gap-6 md:mb-16 lg:grid-cols-[1.25fr_1fr] lg:gap-16">
-            <Reveal>
-              <Label>Our Pharmaceutical Portfolio</Label>
-              <h2 className="font-display mt-5 text-3xl font-medium leading-tight text-primary-deep md:text-[2.5rem]">
-                From Essential Medicines to Advanced Therapies.
-              </h2>
-            </Reveal>
-            <Reveal delay={0.1}>
-              <p className="leading-relaxed text-ink-soft lg:pb-1.5">
-                Getmeds is built for all four layers — from branded generics that keep
-                everyday treatment affordable, to specialty and rare-disease therapies
-                once out of reach for Filipino patients.
-              </p>
-            </Reveal>
-          </div>
-          <PortfolioMorph />
-        </div>
-      </section>
-
-      {/* ================= Who we are + portfolio layers ================= */}
-      <section className="border-b border-[#e3edf5]">
-        <div className="mx-auto max-w-7xl px-5 pt-14 pb-2 md:px-10 md:pt-18 md:pb-4">
-          <div className="grid gap-10 lg:grid-cols-[1.1fr_1fr]">
-            <Reveal>
-              <Label>Who we are</Label>
-              <h2 className="font-display mt-5 text-3xl font-medium leading-tight text-primary-deep md:text-[2.75rem]">
-                Patient first. Raising the standard for Filipino care.
-              </h2>
-            </Reveal>
-            <Reveal delay={0.1} className="lg:pt-10">
-              <p className="leading-relaxed text-ink-soft">
-                A box of medicine isn&apos;t a product. It&apos;s a stage-IV oncology mother in
-                Cebu waiting for her next dose. A child in Mindanao fighting leukemia. A father
-                in Quezon City heading into surgery, trusting that the anesthesia is ready.{" "}
-                <span className="font-medium text-primary">
-                  Getmeds exists so distance, cost, and complexity never decide who lives.
-                </span>
-              </p>
-              <Link
-                href="/about-us"
-                className="mt-6 inline-flex rounded-full bg-[#61A644] px-7 py-3 text-sm font-semibold text-white transition hover:brightness-95"
+        {/* ================= Impact band: four trust signals splitting the full width ================= */}
+        <section className="bg-[#1D9FDA] text-white">
+          <Reveal className="mx-auto grid max-w-7xl grid-cols-2 px-5 py-9 md:grid-cols-4 md:px-10 md:py-12">
+            {stats.map((st, i) => (
+              <div
+                key={st.label}
+                className={`px-4 py-4 text-center md:py-1 ${i % 2 === 1 ? "border-l border-white/25" : ""} ${i >= 2 ? "border-t border-white/25 md:border-t-0" : ""} ${i === 2 ? "md:border-l" : ""}`}
               >
-                About Getmeds
-              </Link>
-            </Reveal>
-          </div>
-        </div>
-      </section>
-
-      {/* ================= Serbisyong May Puso (2x2 feature grid) ================= */}
-      <section className="grid md:grid-cols-2">
-        {/* Top-left: copy + agency pills */}
-        <div className="flex flex-col justify-center bg-white px-8 py-10 md:min-h-[340px] md:px-10 md:py-12 xl:px-12">
-          <div>
-            <h2 className="font-display text-2xl font-medium leading-snug text-[#1D9FDA] md:text-[1.375rem] lg:text-[2rem]">
-              Patient Assistance Program
-            </h2>
-            <p lang="fil" className="mt-3 text-base leading-relaxed text-[#1D9FDA]">
-              Humingi ng price quotation para sa iyong Guarantee Letter.
-            </p>
-            <ul className="mt-4 flex flex-wrap gap-2.5" aria-label="Partner agencies">
-              {["DSWD", "PCSO", "OP", "OVP"].map((agency) => (
-                <li
-                  key={agency}
-                  className="rounded-full border border-[#1D9FDA] px-4 py-1.5 text-sm font-semibold tracking-wide text-[#1D9FDA]"
-                >
-                  {agency}
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div className="mt-6">
-            {/* filled pill with arrow, no shadow */}
-            <Link
-              href="/patient-assistance-program"
-              lang="fil"
-              className="group inline-flex items-center gap-2 rounded-full bg-[#1D9FDA] px-7 py-3 text-sm font-semibold text-white transition hover:brightness-95"
-            >
-              Alamin ang Proseso
-              <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-            </Link>
-          </div>
-        </div>
-
-        {/* Top-right: team collage with heart ribbon */}
-        <div className="relative min-h-[260px] md:min-h-[340px]">
-          <Image
-            src="/images/imageone.jpeg"
-            alt="The Getmeds team — Your Health, Compassionate Ally"
-            fill
-            sizes="(min-width:768px) 50vw, 100vw"
-            className="object-cover"
-          />
-          {/* rounded white stroke frame with caption */}
-          <div className="pointer-events-none absolute inset-5 flex items-end justify-center rounded-[2rem] border-2 border-white/95 pb-5 md:inset-8 md:pb-6">
-            <p
-              className="px-4 text-center text-sm font-medium text-white md:text-base"
-              style={{ textShadow: "0 2px 8px rgba(0,0,0,0.55), 0 1px 2px rgba(0,0,0,0.5)" }}
-            >
-            </p>
-          </div>
-        </div>
-
-        {/* Bottom-left: products display. Its labels are baked into the image, so phones
-            get the image's own 16:9 box — a taller box would crop the edge labels off. */}
-        <div className="relative aspect-[1600/906] md:aspect-auto md:min-h-[340px]">
-          <Image
-            src="/images/imagetwo.png"
-            alt="Getmeds product range — oncology, hematology, essential medicines and medical supplies"
-            fill
-            sizes="(min-width:768px) 50vw, 100vw"
-            className="object-cover"
-          />
-        </div>
-
-        {/* Bottom-right: All Generic Medicines (mirrors the PAP panel, inverted for the blue background) */}
-        <div className="flex flex-col justify-center bg-[#1D9FDA] px-8 py-10 text-white md:min-h-[340px] md:px-10 md:py-12 xl:px-12">
-          <div>
-            <h2 className="font-display text-2xl font-medium leading-snug text-white md:text-[1.375rem] lg:text-[2rem]">
-              All Generic Medicines
-            </h2>
-            <p lang="fil" className="mt-3 text-base leading-relaxed text-white">
-              Dekalidad at abot-kayang gamot para sa kalusugan ng pamilya.
-            </p>
-            <p className="mt-4 text-sm font-semibold tracking-wide text-white md:text-base">
-              FDA-Registered&nbsp;&nbsp;•&nbsp;&nbsp;GMP-Certified
-            </p>
-          </div>
-          <div className="mt-6">
-            <Link
-              href="/product-range"
-              lang="fil"
-              className="group inline-flex items-center gap-2 rounded-full bg-white px-7 py-3 text-sm font-semibold text-[#1D9FDA] transition hover:bg-white/90"
-            >
-              Maghanap ng Gamot
-              <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* ================= Services: numbered hairline list ================= */}
-      <section className="border-b border-[#e3edf5]">
-        <div className="mx-auto max-w-7xl px-5 pt-20 pb-8 md:px-10 md:pt-28 md:pb-10">
-          <div className="flex flex-wrap items-start justify-between gap-6">
-            <Reveal className="max-w-3xl">
-              <Label>What we do</Label>
-              <h2 className="font-display mt-5 text-3xl font-medium leading-tight text-primary-deep md:text-[2.5rem]">
-                Capabilities that move medicines, partnerships, and patients forward.
-              </h2>
-            </Reveal>
-            <Reveal delay={0.1}>
-              <p className="max-w-sm text-balance text-sm leading-relaxed text-ink-soft lg:mt-7">
-                Getmeds operates across the pharmaceutical supply chain from global sourcing and
-                regulatory compliance to nationwide distribution and last-mile delivery, helping
-                make quality medicines accessible across the Philippines.
-              </p>
-            </Reveal>
-          </div>
-
-          {/* capabilities collage — each row opens like a window as you scroll */}
-          <div className="mt-10">
-            <CapabilitiesWindow />
-          </div>
-
-          <CapabilityList items={capabilities} />
-        </div>
-      </section>
-
-      {/* ================= Why Getmeds: full-bleed blue band ================= */}
-      <section className="relative text-white">
-        <Image
-          src="/images/bluebg.png"
-          alt=""
-          fill
-          sizes="100vw"
-          className="object-cover"
-          aria-hidden
-        />
-        <div className="relative mx-auto grid max-w-7xl gap-12 px-5 py-14 md:px-10 md:py-16 lg:grid-cols-[1.1fr_1fr] lg:gap-16">
-          <Reveal className="max-w-2xl">
-            <p className="text-[11px] font-bold uppercase tracking-[0.24em] text-white/90">
-              <span className="mr-2">•</span>Why Getmeds
-            </p>
-            <h2 className="font-display mt-5 text-3xl font-medium leading-tight md:text-[2.5rem]">
-              Why doctors, hospitals and pharmacies choose Getmeds.
-            </h2>
-            <Link
-              href="/services"
-              className="mt-8 inline-flex items-center rounded-full border border-white/50 bg-transparent px-7 py-3 text-sm font-semibold text-white shadow-[inset_0_1px_1px_rgba(255,255,255,0.6),inset_0_-1px_1px_rgba(255,255,255,0.15),0_8px_24px_rgba(0,0,0,0.08)] backdrop-blur-xl backdrop-saturate-150 transition-all duration-300 hover:border-white/80 hover:shadow-[inset_0_1px_2px_rgba(255,255,255,0.8),inset_0_-1px_1px_rgba(255,255,255,0.25),0_10px_28px_rgba(0,0,0,0.12)]"
-            >
-              Learn More
-            </Link>
-          </Reveal>
-
-          <Stagger className="grid gap-8 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
-            {whyCards.map((w) => (
-              <StaggerItem key={w.title}>
-                <h3 className="font-display text-lg font-medium">{w.title}</h3>
-                <p className="mt-2 text-balance text-sm leading-relaxed text-white/80">{w.text}</p>
-              </StaggerItem>
+                <Counter
+                  value={st.value}
+                  suffix={st.suffix}
+                  className="font-display text-[2rem] font-semibold md:text-[2.6rem]"
+                />
+                <p className="mt-1.5 text-balance text-sm leading-snug text-white/80">{st.label}</p>
+              </div>
             ))}
-          </Stagger>
-        </div>
-      </section>
-
-      {/* ================= Partnership: isometric steps ================= */}
-      <section className="overflow-hidden border-b border-[#e3edf5] bg-white">
-        <div className="mx-auto max-w-7xl md:px-10">
-          <PartnerSteps />
-        </div>
-      </section>
-
-      {/* ================= Featured articles ================= */}
-      <section>
-        <div className="mx-auto max-w-7xl px-5 py-14 md:px-10 md:py-16">
-          <Reveal>
-            <Label>Featured Articles</Label>
-            <h2 className="font-display mt-5 text-3xl font-medium leading-tight text-primary-deep md:text-[2.5rem]">
-              In the news.
-            </h2>
           </Reveal>
-          <Reveal delay={0.1} className="mt-10">
-            <FeaturedArticles />
-          </Reveal>
-        </div>
-      </section>
+        </section>
 
-      {/* ================= FAQ: two-column structured ================= */}
-      <section className="border-b border-white/20 bg-[#1D9FDA] text-white">
-        <div className="mx-auto grid max-w-7xl gap-8 px-5 py-12 md:px-10 md:py-14 lg:grid-cols-[1fr_1.6fr] lg:gap-12">
-          <div className="flex flex-col">
-            <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-white">
-              <span className="mr-2">•</span>FAQ
-            </p>
-            <h2 className="font-display mt-4 text-2xl font-medium leading-tight text-white md:text-[2rem]">
-              Frequently asked questions.
-            </h2>
-            <p className="mt-4 text-sm leading-relaxed text-white md:text-base">
-              Everything you need to know about Getmeds and our services. Can&apos;t find your
-              answer?{" "}
-              <Link href="/contact-us" className="font-semibold text-white underline underline-offset-4 hover:opacity-85">
-                Talk to our team
-              </Link>
-              .
-            </p>
-            {/* cutout sits flush on the section's bottom edge (cancels the py-14 padding) */}
-            <div className="relative -mb-14 mt-auto hidden aspect-square w-full max-w-[420px] lg:block">
-              <Image
-                src="/images/faqsimage.png"
-                alt="Getmeds team member thinking about a question"
-                fill
-                sizes="420px"
-                className="object-contain object-bottom"
-              />
+        {/* ================= Portfolio layers ================= */}
+        <section>
+          <div className="mx-auto max-w-7xl px-5 pb-6 pt-16 md:px-10 md:pb-8 md:pt-20">
+            <div className="mb-12 grid items-end gap-6 md:mb-16 lg:grid-cols-[1.25fr_1fr] lg:gap-16">
+              <Reveal>
+                <Label>Our Pharmaceutical Portfolio</Label>
+                <h2 className="font-display mt-5 text-3xl font-medium leading-tight text-primary-deep md:text-[2.5rem]">
+                  From Essential Medicines to Advanced Therapies.
+                </h2>
+              </Reveal>
+              <Reveal delay={0.1}>
+                <p className="leading-relaxed text-ink-soft lg:pb-1.5">
+                  Getmeds is built for all four layers — from branded generics that keep
+                  everyday treatment affordable, to specialty and rare-disease therapies
+                  once out of reach for Filipino patients.
+                </p>
+              </Reveal>
+            </div>
+            <PortfolioMorph />
+          </div>
+        </section>
+
+        {/* ================= Who we are: title + story left, three photo links right (Novartis-style) ================= */}
+        <section>
+          <div className="mx-auto max-w-7xl px-5 pb-6 pt-6 md:px-10 md:pb-8 md:pt-8">
+            <div className="grid gap-10 lg:grid-cols-[0.72fr_2.3fr] lg:gap-10">
+              <Reveal>
+                <Label>Who we are</Label>
+                <h2 className="font-display mt-5 text-3xl font-medium leading-tight text-primary-deep md:text-[2.4rem]">
+                  Patient first. Raising the standard for Filipino care.
+                </h2>
+                <p className="mt-4 text-lg font-medium leading-snug text-primary">
+                  Getmeds exists so distance, cost, and complexity never decide who lives.
+                </p>
+              </Reveal>
+              {/* two and a half cards in view; the half-visible third invites a sideways scroll */}
+              <div className="flex min-w-0 snap-x snap-mandatory gap-5 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                {whoWeAreLinks.map((l) => (
+                  <div key={l.href} className="w-[calc((100%-2.5rem)/2.5)] min-w-[220px] shrink-0 snap-start">
+                    <Link href={l.href} className="group block">
+                      <div className="relative aspect-[3/4] overflow-hidden bg-slate-100">
+                        <Image
+                          src={l.src}
+                          alt={l.alt}
+                          fill
+                          sizes="(min-width: 1024px) 26vw, 60vw"
+                          className="object-cover transition duration-700 group-hover:scale-105"
+                        />
+                      </div>
+                      <p className="mt-4 text-sm font-medium text-primary">{l.label}</p>
+                      <p className="font-display mt-1 flex items-center gap-2 text-xl font-semibold leading-snug text-black underline-offset-[6px] group-hover:underline md:text-[1.4rem]">
+                        {l.cta}
+                        <ArrowUpRight
+                          className="h-5 w-5 shrink-0 text-primary transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                          aria-hidden
+                        />
+                      </p>
+                    </Link>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
-          <Faq />
-        </div>
-      </section>
+        </section>
+
+        {/* ================= Services: numbered hairline list ================= */}
+        <section className="border-b border-[#e3edf5]">
+          <div className="mx-auto max-w-7xl px-5 pt-8 pb-8 md:px-10 md:pt-10 md:pb-10">
+            <div className="flex flex-wrap items-start justify-between gap-6">
+              <Reveal className="max-w-3xl">
+                <Label>What we do</Label>
+                <h2 className="font-display mt-5 text-3xl font-medium leading-tight text-primary-deep md:text-[2.5rem]">
+                  Capabilities that move medicines, partnerships, and patients forward.
+                </h2>
+              </Reveal>
+              <Reveal delay={0.1}>
+                <p className="max-w-sm text-balance text-sm leading-relaxed text-ink-soft lg:mt-7">
+                  Getmeds operates across the pharmaceutical supply chain from global sourcing and
+                  regulatory compliance to nationwide distribution and last-mile delivery, helping
+                  make quality medicines accessible across the Philippines.
+                </p>
+              </Reveal>
+            </div>
+
+            {/* capabilities collage — each row opens like a window as you scroll */}
+            <div className="mt-10">
+              <CapabilitiesWindow />
+            </div>
+
+            <CapabilityList items={capabilities} />
+          </div>
+        </section>
+
+        {/* ================= Why Getmeds: full-bleed blue band ================= */}
+        <section className="relative text-white">
+          <Image
+            src="/images/bluebg.png"
+            alt=""
+            fill
+            sizes="100vw"
+            className="object-cover"
+            aria-hidden
+          />
+          <div className="relative mx-auto grid max-w-7xl gap-12 px-5 py-14 md:px-10 md:py-16 lg:grid-cols-[1.1fr_1fr] lg:gap-16">
+            <Reveal className="max-w-2xl">
+              <p className="text-[11px] font-bold uppercase tracking-[0.24em] text-white/90">
+                <span className="mr-2">•</span>Why Getmeds
+              </p>
+              <h2 className="font-display mt-5 text-3xl font-medium leading-tight md:text-[2.5rem]">
+                Why doctors, hospitals and pharmacies choose Getmeds.
+              </h2>
+              <Link
+                href="/services"
+                className="mt-8 inline-flex items-center rounded-full border border-white/50 bg-transparent px-7 py-3 text-sm font-semibold text-white shadow-[inset_0_1px_1px_rgba(255,255,255,0.6),inset_0_-1px_1px_rgba(255,255,255,0.15),0_8px_24px_rgba(0,0,0,0.08)] backdrop-blur-xl backdrop-saturate-150 transition-all duration-300 hover:border-white/80 hover:shadow-[inset_0_1px_2px_rgba(255,255,255,0.8),inset_0_-1px_1px_rgba(255,255,255,0.25),0_10px_28px_rgba(0,0,0,0.12)]"
+              >
+                Learn More
+              </Link>
+            </Reveal>
+
+            <Stagger className="grid gap-8 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+              {whyCards.map((w) => (
+                <StaggerItem key={w.title}>
+                  <h3 className="font-display text-lg font-medium">{w.title}</h3>
+                  <p className="mt-2 text-balance text-sm leading-relaxed text-white/80">{w.text}</p>
+                </StaggerItem>
+              ))}
+            </Stagger>
+          </div>
+        </section>
+
+        {/* ================= Partnership: isometric steps ================= */}
+        <section className="overflow-hidden border-b border-[#e3edf5] bg-white">
+          <div className="mx-auto max-w-7xl md:px-10">
+            <PartnerSteps />
+          </div>
+        </section>
+
+        {/* ================= Featured articles ================= */}
+        <section>
+          <div className="mx-auto max-w-7xl px-5 py-14 md:px-10 md:py-16">
+            <Reveal>
+              <Label>Featured Articles</Label>
+              <h2 className="font-display mt-5 text-3xl font-medium leading-tight text-primary-deep md:text-[2.5rem]">
+                In the news.
+              </h2>
+            </Reveal>
+            <Reveal delay={0.1} className="mt-10">
+              <FeaturedArticles />
+            </Reveal>
+          </div>
+        </section>
+
+        {/* ================= FAQ: two-column structured ================= */}
+        <section className="border-b border-white/20 bg-[#1D9FDA] text-white">
+          <div className="mx-auto grid max-w-7xl gap-8 px-5 py-12 md:px-10 md:py-14 lg:grid-cols-[1fr_1.6fr] lg:gap-12">
+            <div className="flex flex-col">
+              <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-white">
+                <span className="mr-2">•</span>FAQ
+              </p>
+              <h2 className="font-display mt-4 text-2xl font-medium leading-tight text-white md:text-[2rem]">
+                Frequently asked questions.
+              </h2>
+              <p className="mt-4 text-sm leading-relaxed text-white md:text-base">
+                Everything you need to know about Getmeds and our services. Can&apos;t find your
+                answer?{" "}
+                <Link href="/contact-us" className="font-semibold text-white underline underline-offset-4 hover:opacity-85">
+                  Talk to our team
+                </Link>
+                .
+              </p>
+              {/* cutout sits flush on the section's bottom edge (cancels the py-14 padding) */}
+              <div className="relative -mb-14 mt-auto hidden aspect-square w-full max-w-[420px] lg:block">
+                <Image
+                  src="/images/faqsimage.png"
+                  alt="Getmeds team member thinking about a question"
+                  fill
+                  sizes="420px"
+                  className="object-contain object-bottom"
+                />
+              </div>
+            </div>
+            <Faq />
+          </div>
+        </section>
       </div>
     </>
   );

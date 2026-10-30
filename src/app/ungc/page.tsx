@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { Reveal } from "@/components/ui";
 import SdgCarousel from "./SdgCarousel";
+import SdgActions from "./SdgActions";
 import { pageMetadata } from "@/lib/pageMeta";
 import { SITE_URL } from "@/lib/site";
 import { withVidrysSeo } from "@/lib/vidrys/seoOverrides";
@@ -371,21 +372,19 @@ export default function UngcPage() {
             </div>
           </Reveal>
           <Reveal className="order-first lg:order-2">
-            {/* participant lockup: UNGC emblem with "We Support" to its right */}
-            <div className="flex h-full min-h-[260px] items-center justify-center gap-4 bg-white p-8 md:gap-5">
+            {/* participant lockup: "We Support" above the UNGC emblem */}
+            <div className="flex h-full min-h-[260px] flex-col items-center justify-center gap-4 bg-white p-8">
+              <p className="font-display text-center text-[1.25rem] font-bold uppercase leading-none tracking-tight text-[#0B2E5E] md:text-[1.45rem]">
+                We Support
+              </p>
               <Image
                 src="/assets/UNGClogo.png"
                 alt="UN Global Compact logo"
                 width={297}
                 height={288}
                 sizes="(min-width: 1024px) 200px, 45vw"
-                className="h-auto w-[46%] max-w-[200px] shrink-0"
+                className="h-auto w-[60%] max-w-[200px]"
               />
-              <p className="font-display text-[1.6rem] font-bold uppercase leading-[1.05] tracking-tight text-[#0B2E5E] md:text-[1.9rem]">
-                We
-                <br />
-                Support
-              </p>
             </div>
           </Reveal>
           <Reveal className="lg:order-3">
@@ -456,6 +455,9 @@ export default function UngcPage() {
           </Reveal>
         </div>
       </section>
+
+      {/* Getmeds' own SDG actions 02–05 (2026 company profile) */}
+      <SdgActions />
 
       {/* Alignment statement: one full-width italic paragraph under the SDGs */}
       <section className="pb-16 pt-2 md:pb-20 md:pt-4">

@@ -8,7 +8,7 @@ import { Turnstile, useTurnstile, TURNSTILE_SITE_KEY } from '@/lib/turnstile';
 import {
   BadgeCheck, Factory, FileCheck, Truck, Headset, Gavel, Siren,
   Boxes, Tags, CreditCard, PackageCheck, ClipboardCheck, UserRoundCheck, ListChecks,
-  Stethoscope, HeartPulse, TriangleAlert,
+  Stethoscope, HeartPulse, TriangleAlert, MessageCircle,
   Phone, Mail, X, Info, ChevronDown, Check, FileText, CloudUpload, UserRound, Upload, Syringe, Store, ShieldCheck, Ribbon, Pill, PhoneCall, Lock, Images, IdCard, Hospital, FileUp, Droplet, Dna, CircleCheck, ChevronRight,
 } from 'lucide-react';
 
@@ -2000,6 +2000,37 @@ export default function OrderMedicinesClient({ audienceSlug }: { audienceSlug?: 
 
           </div>
         </section>
+
+        {/* Need help: short brand-green band with glassy buttons, sitting on the footer (patients only) */}
+        {!isProfessionalUserType && (
+          <section className="bg-[#61A644] text-white">
+            <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-6 px-5 py-9 md:flex-row md:items-center md:px-10 md:py-10">
+              <div>
+                <p className="text-sm font-semibold text-white/85">Need Help?</p>
+                <h2 className="font-display mt-1 text-2xl font-semibold md:text-[1.75rem]">Not sure what to do next?</h2>
+                <p className="mt-2 max-w-2xl text-[15px] leading-relaxed text-white/90">
+                  Call us or send a message. Tell us what your doctor has told you, and we will explain the next steps in simple words.
+                </p>
+              </div>
+              <div className="flex shrink-0 flex-wrap gap-3">
+                <a
+                  href="tel:+639190769105"
+                  className="inline-flex items-center gap-2 rounded-full bg-white/20 px-6 py-3 text-sm font-semibold text-white ring-1 ring-white/50 backdrop-blur-md transition hover:bg-white/30"
+                >
+                  <Phone className="h-4 w-4" /> Call us
+                </a>
+                <a
+                  href="https://m.me/getmedsphilippines"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 rounded-full bg-white/20 px-6 py-3 text-sm font-semibold text-white ring-1 ring-white/50 backdrop-blur-md transition hover:bg-white/30"
+                >
+                  <MessageCircle className="h-4 w-4" /> Send a message
+                </a>
+              </div>
+            </div>
+          </section>
+        )}
         </>)}
 
         {/* ── Upload Modal ── */}
