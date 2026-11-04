@@ -1,61 +1,16 @@
 "use client";
 
-/* Phones: a swipeable, snap-scrolling row (next card peeks in) with dots.
+/* The Blog page's featured posts on the homepage.
+   Phones: a swipeable, snap-scrolling row (next card peeks in) with dots.
    md and up: the original 2/3-column grid. */
 
 import Image from "next/image";
+import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { useRef, useState } from "react";
+import type { BlogIndexPost } from "@/lib/blogServer";
 
-type Article = {
-  category: string;
-  date: string;
-  title: string;
-  excerpt: string;
-  image: string;
-  source: string;
-  logo: string;
-  href: string;
-};
-
-const articles: Article[] = [
-  {
-    category: "Pharmaceuticals",
-    date: "Sep 29, 2026",
-    title: "Essar eyes $18-billion US steel plant: Why Indian firms are investing in US amid tariffs",
-    excerpt:
-      "While Essar Group’s investment pledge is one of the largest in the last few months, several Indian companies are boosting investment in the US. These…",
-    image: "/images/articles/essar-us-steel.jpg",
-    source: "The Indian Express",
-    logo: "/images/articles/logo-indianexpress.png",
-    href: "https://indianexpress.com/section/business/",
-  },
-  {
-    category: "Biotechnology",
-    date: "Sep 29, 2026",
-    title:
-      "Professor Bill Sessa, Former Chief Scientific Officer of Internal Medicine at Pfizer, Appointed Chair of Isomab's Scientific Advisory Board",
-    excerpt:
-      "/PRNewswire/ -- Isomab Ltd (\"Isomab\") a UK-based biotechnology company developing novel therapies to restore vascularization in cardiovascular disease,…",
-    image: "/images/articles/isomab-sessa.png",
-    source: "PR Newswire UK",
-    logo: "/images/articles/logo-prnewswire.png",
-    href: "https://www.prnewswire.co.uk/news-releases/",
-  },
-  {
-    category: "Medicines",
-    date: "Sep 29, 2026",
-    title: "WHO and partners discuss governance of traditional medicine knowledge in the AI era at WIPO-IGC",
-    excerpt:
-      "From second left to right: Dr. Suerie Moon, James Love, Ambassador Guilherme de Aguiar Patriota, Peter Harrison, Margo A Bagley©WHOBringing together…",
-    image: "/images/articles/who-wipo-igc.jpg",
-    source: "World Health Organization (WHO)",
-    logo: "/images/articles/logo-who.png",
-    href: "https://www.who.int/news",
-  },
-];
-
-export default function FeaturedArticles() {
+export default function FeaturedArticles({ posts }: { posts: BlogIndexPost[] }) {
   const track = useRef<HTMLDivElement | null>(null);
   const [active, setActive] = useState(0);
 
@@ -63,7 +18,7 @@ export default function FeaturedArticles() {
     const el = track.current;
     if (!el) return;
     const step = (el.firstElementChild as HTMLElement | null)?.offsetWidth ?? el.clientWidth;
-    setActive(Math.min(articles.length - 1, Math.round(el.scrollLeft / (step + 16))));
+    setActive(Math.min(posts.length - 1, Math.round(el.scrollLeft / (step + 16))));
   };
   const goTo = (i: number) => {
     const card = track.current?.children[i] as HTMLElement | undefined;
@@ -77,52 +32,54 @@ export default function FeaturedArticles() {
       onScroll={onScroll}
       className="scrollbar-none -mx-5 flex snap-x snap-mandatory scroll-px-5 gap-4 overflow-x-auto px-5 md:mx-0 md:grid md:snap-none md:grid-cols-2 md:gap-10 md:overflow-visible md:px-0 lg:grid-cols-3 lg:gap-9"
     >
-      {articles.map((a) => (
-        <a
-          key={a.title}
-          href={a.href}
-          target="_blank"
-          rel="noopener noreferrer"
+      {posts.map((p) => (
+        <Link
+          key={p.slug}
+          href={`/blog/${p.slug}`}
           className="group flex w-[85%] shrink-0 snap-start flex-col md:w-auto"
         >
-          <div className="relative aspect-[434/273] overflow-hidden rounded-2xl bg-[#e6e7e8]">
-            <Image
-              src={a.image}
-              alt={a.title}
-              fill
-              sizes="(min-width:1024px) 400px, (min-width:768px) 50vw, 85vw"
-              className="object-cover"
-            />
+          {/* WordPress's 1200x628 shape: many covers carry their title in the artwork, so they stay whole */}
+          <div className="relative aspect-[1200/628] overflow-hidden rounded-2xl bg-[#e6e7e8]">
+            {p.image ? (
+              // eslint-disable-next-line @next/next/no-img-element -- WordPress already serves the resized size we ask for
+              <img
+                src={p.image.card}
+                alt={p.image.alt || p.title}
+                decoding="async"
+                className="absolute inset-0 h-full w-full object-cover"
+              />
+            ) : (
+              <div className="flex h-full items-center justify-center bg-gradient-to-br from-primary to-primary-deep">
+                <Image src="/images/getmeds-logo-white.png" alt="" width={1200} height={664} sizes="160px" className="h-auto w-[38%]" />
+              </div>
+            )}
             <span className="absolute left-[18px] top-[19px] rounded-full bg-[#1D9FDA] px-3 py-1.5 text-xs font-semibold leading-none text-white">
-              {a.category}
+              {p.tag}
             </span>
             <span className="absolute right-[18px] top-[19px] rounded-full bg-black/40 px-3 py-1.5 text-xs font-semibold leading-none text-white backdrop-blur-sm">
-              {a.date}
+              {p.date}
             </span>
           </div>
 
           <h3 className="font-display mt-5 px-1 text-lg font-semibold leading-snug text-[#111827] transition-colors duration-200 group-hover:text-[#1D9FDA]">
-            {a.title}
+            {p.title}
           </h3>
-          <p className="mt-2.5 line-clamp-3 px-1 text-sm leading-relaxed text-[#6b7280]">{a.excerpt}</p>
+          <p className="mt-2.5 line-clamp-3 px-1 text-sm leading-relaxed text-[#6b7280]">{p.excerpt}</p>
 
           <div className="mt-auto flex items-center justify-between gap-3 px-1 pt-6">
-            <span className="flex min-w-0 items-center gap-2 text-[13px] leading-tight text-[#9ca3af]">
-              <Image src={a.logo} alt={`${a.source} logo`} width={16} height={16} className="h-4 w-4 shrink-0" />
-              <span>{a.source}</span>
-            </span>
+            <Image src="/images/getmeds-logo.png" alt="Getmeds" width={181} height={100} className="h-7 w-auto" />
             <span className="flex shrink-0 items-center gap-1.5 text-[13px] font-semibold text-[#111827]">
               Read Full Article
               <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-0.5" />
             </span>
           </div>
-        </a>
+        </Link>
       ))}
     </div>
     <div className="mt-4 flex justify-center md:hidden">
-      {articles.map((a, i) => (
+      {posts.map((p, i) => (
         <button
-          key={a.title}
+          key={p.slug}
           type="button"
           onClick={() => goTo(i)}
           aria-label={`Show article ${i + 1}`}

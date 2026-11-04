@@ -34,7 +34,7 @@ const audiences = [
   { href: "/order-medicines/hospitals", title: "Hospitals & Institutions", text: "Quotations, emergency purchases and hospital procurement.", cta: "Request a quotation" },
 ];
 
-/* The four order cards; "Start your order" in the closing banner scrolls back here (#order-cards). */
+/* The four order cards; the "What we supply" panel's "Start your order" scrolls here (#order-cards). */
 const categories = [
   {
     Icon: Pill, iconBg: "bg-[#1D9FDA]",
@@ -437,7 +437,7 @@ export default function OrderPage() {
       </section>
 
       {/* FAQ — all 13 answers are in the server HTML; schema via <FaqSchema page="order" /> */}
-      <section className="bg-white">
+      <section id="faq" className="scroll-mt-28 bg-white">
         <div className="mx-auto max-w-7xl px-5 pb-12 pt-8 md:px-10 md:pb-16 md:pt-10">
           <div className="grid gap-6 md:grid-cols-2 md:gap-10 lg:gap-14 items-start">
             <div>
@@ -473,7 +473,7 @@ export default function OrderPage() {
             </p>
           </div>
           <a
-            href="#order-cards"
+            href="#audiences"
             className="inline-flex shrink-0 items-center rounded-full bg-white px-7 py-3 text-sm font-semibold text-[#3d7a26] transition hover:bg-white/90"
           >
             Start your order

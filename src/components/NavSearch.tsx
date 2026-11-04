@@ -194,7 +194,7 @@ export function SearchField({ onDark, onOpenPanel }: { onDark: boolean; onOpenPa
           }}
           onFocus={() => setOpen(true)}
           placeholder="Search medicines"
-          className={`w-64 rounded-full py-1.5 pl-10 pr-4 text-sm outline-none transition [&::-webkit-search-cancel-button]:hidden ${
+          className={`w-52 min-[1366px]:w-64 rounded-full py-1.5 pl-10 pr-4 text-sm outline-none transition [&::-webkit-search-cancel-button]:hidden ${
             onDark
               ? "bg-white/15 text-white placeholder-white/60 ring-1 ring-white/30 backdrop-blur"
               : "bg-[#f5f7f9] text-primary-deep placeholder-ink-soft/60 ring-1 ring-[#e4e8ec] focus:bg-white focus:ring-primary/40"

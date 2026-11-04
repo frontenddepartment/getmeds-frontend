@@ -11,6 +11,7 @@ import DedicatedPills from "@/components/DedicatedPills";
 import DepthStack from "@/components/DepthStack";
 import CoreValues from "@/components/CoreValues";
 import LicenseStack from "@/components/LicenseStack";
+import { AboutPageSchema } from "@/components/BusinessSchema";
 
 /* Key details from the two FDA Licences to Operate (public/images/licenseone.jpeg, licensetwo.jpeg). */
 const fdaLicences = [
@@ -21,10 +22,21 @@ const fdaLicences = [
 
 export const metadata: Metadata = {
   alternates: { canonical: "/about-us" },
-  title: "About Us",
+  title: { absolute: "About Getmeds: Trusted, Licensed Pharma Since 2020" },
   description:
     "Getmeds is a global pharmaceutical company based in the Philippines with a portfolio spanning Oncology, Hematology, Anesthesiology, and Rare Diseases.",
 };
+
+/* "On this page" row under the hero; each id sits on its section below */
+const pageSections = [
+  { id: "our-people", label: "Our People" },
+  { id: "highlights", label: "Highlights" },
+  { id: "mission-vision", label: "Mission & Vision" },
+  { id: "commitments", label: "Commitments" },
+  { id: "core-values", label: "Core Values" },
+  { id: "why-getmeds", label: "Why Getmeds" },
+  { id: "fda-licences", label: "FDA Licences" },
+];
 
 const commitments = [
   { Icon: Users, title: "Collaboration and Excellence", text: "By fostering collaborations with leading medical professionals, researchers, and partners, we strive for synergistic partnerships that aim to accelerate breakthroughs and reshape the future of healthcare." },
@@ -57,6 +69,8 @@ const aboutHighlights = [
 export default function AboutPage() {
   return (
     <>
+      <AboutPageSchema />
+
       {/* Hero image, same treatment as Order Medicines. xl+: copy sits white on the blue at the left.
           Below xl the image is too short, so the copy stacks below it in navy/black. */}
       <section className="relative bg-white pb-14 xl:pb-0">
@@ -106,8 +120,23 @@ export default function AboutPage() {
         </div>
       </section>
 
+      {/* Table of contents */}
+      <div id="toc" className="bg-white pb-8">
+        <nav
+          aria-label="On this page"
+          className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-5 gap-y-2 px-5 md:px-10"
+        >
+          <span className="text-sm font-semibold text-black">On this page</span>
+          {pageSections.map(({ id, label }) => (
+            <a key={id} href={`#${id}`} className="text-sm font-medium text-ink-soft transition hover:text-primary">
+              {label}
+            </a>
+          ))}
+        </nav>
+      </div>
+
       {/* Team photo slider on the left, the About Us summary on the right */}
-      <section className="bg-white pb-12 pt-2 md:pb-16 md:pt-4">
+      <section id="our-people" className="scroll-mt-28 bg-white pb-12 pt-2 md:pb-16 md:pt-4">
         <div className="mx-auto grid max-w-7xl gap-10 px-5 md:px-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)] lg:items-start lg:gap-16">
           <Reveal>
             <IsoFocus className="h-[320px] sm:h-[380px] lg:h-[420px]" />
@@ -137,7 +166,7 @@ export default function AboutPage() {
 
       {/* Split block, same size and colours as Order Medicines' "What we supply": blue panel + white grid panel,
           full-bleed and edge to edge. Content to come. */}
-      <section>
+      <section id="highlights" className="scroll-mt-28">
         <div className="grid md:grid-cols-[minmax(0,2.2fr)_minmax(0,1fr)] xl:grid-cols-[minmax(0,1fr)_calc((100vw-80rem)/2+26rem)]">
           {/* Highlights: credentials with glassy check circles, white on blue.
               Left padding lines up with the max-w-7xl container on wide screens. */}
@@ -181,7 +210,7 @@ export default function AboutPage() {
       </section>
 
       {/* Mission and Vision */}
-      <section className="bg-white py-12 md:py-16">
+      <section id="mission-vision" className="scroll-mt-28 bg-white py-12 md:py-16">
         <div className="mx-auto grid max-w-7xl gap-8 px-5 md:grid-cols-2 md:gap-12 md:px-10">
           {[
             {
@@ -210,7 +239,7 @@ export default function AboutPage() {
       </section>
 
       {/* Commitments, card style of Order Medicines' "Why order from Getmeds" */}
-      <section className="bg-white pb-16 pt-4">
+      <section id="commitments" className="scroll-mt-28 bg-white pb-16 pt-4">
         <div className="mx-auto max-w-7xl px-5 md:px-10">
           {/* title (two lines) on the left, subtext on the right */}
           <Reveal className="mb-12 grid gap-4 md:mb-16 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] lg:items-end lg:gap-16">
@@ -246,7 +275,7 @@ export default function AboutPage() {
       <CoreValues />
 
       {/* Advantages: plain white, four cards in the Order Medicines category-card style (no buttons) */}
-      <section className="bg-white py-12 md:py-16">
+      <section id="why-getmeds" className="scroll-mt-28 bg-white py-12 md:py-16">
         <div className="mx-auto max-w-7xl px-5 md:px-10">
           <Reveal className="mb-10 grid gap-4 md:mb-12 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] lg:items-end lg:gap-16">
             <div>
@@ -275,7 +304,7 @@ export default function AboutPage() {
       </section>
 
       {/* FDA licences: the two certificates on the left, the key details + a link to the FDA portal on the right */}
-      <section className="bg-white pb-20 pt-2 md:pb-28">
+      <section id="fda-licences" className="scroll-mt-28 bg-white pb-20 pt-2 md:pb-28">
         <div className="mx-auto grid max-w-7xl items-center gap-10 px-5 md:px-10 lg:grid-cols-[1fr_1.1fr] lg:gap-16">
           <Reveal>
             {/* two certificates as a paper stack that trades places every 3 seconds */}

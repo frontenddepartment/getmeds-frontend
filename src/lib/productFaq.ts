@@ -69,6 +69,14 @@ function formWords(form?: string) {
   return { title: '', desc: '' };
 }
 
+/** "PacliGet (Paclitaxel) 300 mg/50 mL Injection": the product page's H1. */
+export function productHeading(p: Pick<ProductSearchInput, 'displayName' | 'brandName' | 'genericName' | 'strength' | 'form'>) {
+  const generic = plainGenericName(p.genericName);
+  const brand = String(p.brandName || '').trim();
+  const name = brand && generic && brand.toLowerCase() !== generic.toLowerCase() ? `${brand} (${generic})` : brand || generic || p.displayName;
+  return [name, strengthForSearch(p.strength), formWords(p.form).title].filter(Boolean).join(' ');
+}
+
 export function productSearchTitle(p: ProductSearchInput) {
   const name = [productSearchName(p), strengthForSearch(p.strength), formWords(p.form).title].filter(Boolean).join(' ');
   return `${name} Price in the Philippines`;
@@ -97,11 +105,9 @@ export const CATEGORY_SEARCH_COPY: Record<string, { title: string; description: 
 
 /*
  * Product page breadcrumb, per the prototype: Home › Product range › [Prescription medicines] ›
- * {Category} › {Product}. The "Prescription medicines" step is left out until /prescription-medicines
- * exists (a teammate is building it); flip the flag then. Shared by the visible breadcrumb, the
- * server copy and both BreadcrumbList JSON-LD blocks, so they always match.
+ * {Category} › {Product}. Shared by the visible breadcrumb, the server copy and both BreadcrumbList
+ * JSON-LD blocks, so they always match.
  */
-const PRESCRIPTION_MEDICINES_PAGE_LIVE = false;
 
 export interface ProductCrumbInput {
   /** The sheet's breadcrumb, "Home > Oncology > Breast Cancer > PacliGet"; its category step is used */
@@ -127,7 +133,7 @@ export function productCrumbs(p: ProductCrumbInput): Array<{ name: string; url: 
   const category = sheetParts.length > 1 ? sheetParts[0] : String(p.category || '').trim();
   return [
     { name: 'Product Range', url: '/product-range' },
-    ...(PRESCRIPTION_MEDICINES_PAGE_LIVE && p.isRx ? [{ name: 'Prescription Medicines', url: '/prescription-medicines' }] : []),
+    ...(p.isRx ? [{ name: 'Prescription Medicines', url: '/prescription-medicines' }] : []),
     ...(category ? [{ name: category, url: p.categoryFolder ? `/${p.categoryFolder}` : null }] : []),
     { name: productCrumbLabel(p), url: null },
   ];

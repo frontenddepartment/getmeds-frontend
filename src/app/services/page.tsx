@@ -48,20 +48,20 @@ const pillars: Pillar[] = [
     title: "How our medicines get to every corner of Filipino healthcare.",
     lines: ["How our medicines get to every", "corner of Filipino healthcare."],
     compact: true,
-    chips: ["10,000+ pharmacies", "500+ hospitals", "Nationwide reach", "Government bidding expertise"],
+    chips: ["160+ pharmacies", "300+ hospitals", "Nationwide reach", "Government bidding expertise"],
     caps: [2, 3, 4],
   },
   {
     step: "03 · Who We Serve",
     title: "The patients, doctors, and hospitals we're built for.",
     top: true,
-    chips: ["500+ hospitals", "Filipino oncologists, hematologists, anesthesiologists", "Compassionate access for rare disease patients"],
+    chips: ["300+ hospitals", "Filipino oncologists, hematologists, anesthesiologists", "Compassionate access for rare disease patients"],
     caps: [],
     cards: [
       {
         icon: "Hospital",
         title: "Hospital Partnerships & Institutional Supply",
-        text: "Trusted by 500+ Filipino hospitals across public and private healthcare — with dedicated account managers, cold-chain oncology handling, and urgent-response supply for ICU and critical care units. Formulary-ready documentation for hospital pharmacy committees and specialty procurement for hard-to-source therapies.",
+        text: "Trusted by 300+ Filipino hospitals across public and private healthcare — with dedicated account managers, cold-chain oncology handling, and urgent-response supply for ICU and critical care units. Formulary-ready documentation for hospital pharmacy committees and specialty procurement for hard-to-source therapies.",
       },
       {
         icon: "Stethoscope",

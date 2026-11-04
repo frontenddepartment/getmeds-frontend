@@ -29,7 +29,7 @@ const policies = [
 
 export default function Footer() {
   const pathname = usePathname();
-  const isFlushPage = pathname === "/" || pathname === "/order-medicines" || pathname === "/contact-us" || pathname === "/patient-assistance-program" || pathname === "/about-us" || pathname === "/services" || pathname === "/global-network" || pathname === "/product-range" || pathname === "/blog" || pathname === "/ungc" || pathname === "/careers" || pathname === "/meditations" || pathname.startsWith("/order-medicines/");
+  const isFlushPage = pathname === "/" || pathname === "/order-medicines" || pathname === "/contact-us" || pathname === "/patient-assistance-program" || pathname === "/about-us" || pathname === "/services" || pathname === "/global-network" || pathname === "/product-range" || pathname === "/prescription-medicines" || pathname === "/conditions" || pathname === "/cancer-medicines" || pathname === "/over-the-counter-medicines" || pathname === "/food-supplements" || pathname === "/medical-devices" || pathname === "/blog" || pathname === "/ungc" || pathname === "/careers" || pathname === "/meditations" || pathname.startsWith("/order-medicines/");
 
   return (
     <footer className={`relative overflow-hidden bg-[#1D9FDA] text-white ${isFlushPage ? "" : "mt-24"}`}>
@@ -40,7 +40,7 @@ export default function Footer() {
             <Link href="/" className="inline-flex items-center">
               <Image
                 src="/images/getmeds-logo-white.png"
-                alt="GetMEDS Philippines â€” Your Compassionate Health Ally"
+                alt="GetMEDS Philippines — Your Compassionate Health Ally"
                 width={1200}
                 height={664}
                 className="h-20 w-auto"

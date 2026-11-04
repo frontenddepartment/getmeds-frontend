@@ -1104,14 +1104,14 @@ export default function CatalogClient(_props: { initialFolder?: string } = {}) {
                     {selectedCategory.category !== 'All' && (
                       <p className="text-white/80 text-[11px] sm:text-xs font-semibold uppercase tracking-widest mb-1">{selectedCategory.category}</p>
                     )}
-                    <h1 className="text-xl sm:text-2xl md:text-3xl font-semibold text-white tracking-tight leading-tight">
+                    <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold text-white tracking-tight leading-tight">
                       {conditionHeading(conditionName)}
-                    </h1>
+                    </h2>
                   </>
                 ) : (
-                  <h1 className="text-xl sm:text-2xl md:text-3xl font-semibold text-white tracking-tight leading-tight">
+                  <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold text-white tracking-tight leading-tight">
                     {selectedCategory.category !== 'All' ? selectedCategory.category : 'Products'}
-                  </h1>
+                  </h2>
                 )}
                 <p className="text-white/75 text-[12px] sm:text-[13px] mt-1 font-medium">Comprehensive catalog of pharmaceutical solutions. Browse categories and send inquiries directly.</p>
               </div>

@@ -945,8 +945,8 @@ export default function OrderMedicinesClient({ audienceSlug }: { audienceSlug?: 
 
   const HOSPITAL_REACH_STATS = [
     { value: '2,000+', label: 'molecules' },
-    { value: '500+', label: 'hospitals' },
-    { value: '10,000+', label: 'pharmacies' },
+    { value: '300+', label: 'hospitals' },
+    { value: '160+', label: 'pharmacies' },
   ];
 
   const CSP_USE_TYPES = [
@@ -972,8 +972,8 @@ export default function OrderMedicinesClient({ audienceSlug }: { audienceSlug?: 
         cspNote: 'This process requires physician or institutional initiation and is subject to FDA approval and applicable regulations.',
         reachHeading: 'Trusted by Healthcare Professionals Nationwide',
         reachStats: [
-          { value: '500+', label: 'hospitals' },
-          { value: '10,000+', label: 'pharmacies' },
+          { value: '300+', label: 'hospitals' },
+          { value: '160+', label: 'pharmacies' },
           { value: '2,000+', label: 'molecules' },
         ],
         reachBlurb: 'From Luzon to Visayas to Mindanao \u2014 Getmeds supports doctors and healthcare professionals with reliable product access and support nationwide.',

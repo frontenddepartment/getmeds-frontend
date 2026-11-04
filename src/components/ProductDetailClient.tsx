@@ -13,10 +13,10 @@ import { validateFiles, ALLOWED_FILE_TYPES_ACCEPT } from '@/lib/fileUpload';
 import AlertModal from '@/lib/AlertModal';
 import { PortableText } from '@portabletext/react';
 import { usePageReady } from '@/lib/handoff';
-import { ArrowLeft, ArrowRight, BadgeCheck, Check, ChevronRight, Plus, Search, ShieldCheck, Truck, UserPlus } from 'lucide-react';
+import { BadgeCheck, Check, ChevronRight, Plus, Search, ShieldCheck, Truck, UserPlus } from 'lucide-react';
 import { WhatsAppIcon } from '@/components/SocialIcons';
 import { contact } from '@/lib/data';
-import { FDA_VERIFICATION_URL, ORDER_STEPS, productCrumbs, productOrderFaqs, productSearchDescription, productSearchName, productSearchTitle } from '@/lib/productFaq';
+import { FDA_VERIFICATION_URL, ORDER_STEPS, productCrumbs, productHeading, productOrderFaqs, productSearchDescription, productSearchName, strengthForSearch, productSearchTitle } from '@/lib/productFaq';
 import './ProductDetailClient.css';
 
 interface ProductWithCategory extends Omit<SanityProduct, 'category'> {
@@ -112,24 +112,8 @@ export default function ProductDetailClient(_props: { categorySlug?: string; pro
   // that page names whole groups and reads as a list ("Patients & Families"),
   // while this one asks one person to pick which of two things they are.
   // Keys stay as they were — they are what reaches the sheet's userType column.
-  // The inquiry types and form stay folded away until the visitor presses Order Now
-  const [inquiryOpen, setInquiryOpen] = useState(false);
-
-  // Short description under the price: three lines, "…" expands the rest. Overflow is measured so the
-  // "…" only appears when there really is more text.
-  const [summaryOpen, setSummaryOpen] = useState(false);
-  const [summaryOverflows, setSummaryOverflows] = useState(false);
-  const summaryRef = useRef<HTMLParagraphElement>(null);
-  useEffect(() => {
-    const el = summaryRef.current;
-    if (!el || summaryOpen) return;
-    const measure = () => setSummaryOverflows(el.scrollHeight > el.clientHeight + 1);
-    measure();
-    if (typeof ResizeObserver === 'undefined') return;
-    const ro = new ResizeObserver(measure);
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, [product, summaryOpen, inquiryOpen]);
+  // Which detail tab shows; every panel stays in the page
+  const [detailTab, setDetailTab] = useState(0);
 
   const USER_TYPE_LABELS: Record<string, string> = {
     patient:  'Patient / Family',
@@ -144,7 +128,6 @@ export default function ProductDetailClient(_props: { categorySlug?: string; pro
     if (ut) {
       setUserType(ut);
       setUserTypeConfirmed(true);
-      setInquiryOpen(true);
     }
   }, []);
 
@@ -643,55 +626,26 @@ export default function ProductDetailClient(_props: { categorySlug?: string; pro
           </button>
         </div>
 
-        {/* Loading skeleton: the same shape as the finished page below (photo + trust icons | order box),
+        {/* Loading skeleton: the same shape as the finished page below (details card | inquiry card),
             so nothing jumps when the product arrives */}
         {productsLoading && (
           <div role="status" aria-live="polite" className="mx-auto w-full max-w-7xl px-5 pb-20 md:px-10">
             <span className="sr-only">Loading product details…</span>
-            <div aria-hidden className="grid grid-cols-1 gap-10 motion-safe:animate-pulse lg:grid-cols-[1.05fr_1fr] lg:gap-16 [&>*]:min-w-0">
-              <div>
-                <div className="aspect-square rounded-3xl bg-slate-100" />
-                <div className="mt-8 grid grid-cols-3 gap-4">
-                  {[0, 1, 2].map((i) => (
-                    <div key={i} className="flex flex-col items-center gap-2.5">
-                      <div className="h-7 w-7 rounded-full bg-slate-100" />
-                      <div className="h-3 w-24 max-w-full rounded-full bg-slate-100" />
-                    </div>
-                  ))}
+            <div aria-hidden className="grid grid-cols-1 gap-6 motion-safe:animate-pulse lg:grid-cols-[1.6fr_1fr] [&>*]:min-w-0">
+              <div className="rounded-3xl border border-gray-200 bg-white p-5 md:p-7">
+                <div className="flex flex-col-reverse gap-5 sm:flex-row sm:justify-between">
+                  <div className="flex-1">
+                    <div className="h-4 w-20 rounded-full bg-slate-100" />
+                    <div className="mt-3 h-4 w-40 rounded-full bg-slate-100" />
+                    <div className="mt-3 h-20 w-5/6 rounded-xl bg-slate-200/80" />
+                    <div className="mt-4 h-24 w-2/3 rounded-xl bg-slate-100" />
+                  </div>
+                  <div className="aspect-[3/4] w-full rounded-xl bg-slate-100 sm:w-44 lg:w-52" />
                 </div>
+                <div className="mt-6 h-10 w-3/4 rounded-lg bg-slate-100" />
+                <div className="mt-6 h-32 rounded-lg bg-slate-100" />
               </div>
-
-              <div className="lg:pt-2">
-                <div className="h-4 w-20 rounded-full bg-slate-100" />
-                <div className="mt-5 h-11 w-3/4 rounded-xl bg-slate-200/80" />
-                <div className="mt-3 h-5 w-1/2 rounded-full bg-slate-100" />
-                <div className="mt-5 h-4 w-5/6 rounded-full bg-slate-100" />
-                <div className="mt-7 h-7 w-40 rounded-lg bg-slate-200/80" />
-                <div className="mt-2.5 h-4 w-56 max-w-full rounded-full bg-slate-100" />
-                <div className="mt-6 space-y-2.5">
-                  <div className="h-3.5 w-full rounded-full bg-slate-100" />
-                  <div className="h-3.5 w-full rounded-full bg-slate-100" />
-                  <div className="h-3.5 w-2/3 rounded-full bg-slate-100" />
-                </div>
-                <div className="my-7 h-px bg-slate-200" />
-                <div className="h-3 w-20 rounded-full bg-slate-100" />
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {[28, 36, 28].map((w, i) => (
-                    <div key={i} className="h-11 max-w-[30%] rounded-lg bg-slate-100" style={{ width: `${w * 4}px` }} />
-                  ))}
-                </div>
-                <div className="mt-6 h-14 rounded-xl bg-slate-200/80" />
-                <div className="mt-3 h-14 rounded-xl ring-2 ring-inset ring-slate-200" />
-                <div className="mt-5 h-4 w-64 max-w-full rounded-full bg-slate-100" />
-                <div className="mt-8 border-t border-slate-200">
-                  {[0, 1, 2, 3].map((i) => (
-                    <div key={i} className="flex h-[62px] items-center justify-between border-b border-slate-200">
-                      <div className="h-3 w-40 rounded-full bg-slate-100" />
-                      <div className="h-3.5 w-3.5 rounded bg-slate-100" />
-                    </div>
-                  ))}
-                </div>
-              </div>
+              <div className="h-[420px] rounded-3xl border border-gray-200 bg-white" />
             </div>
           </div>
         )}
@@ -729,7 +683,9 @@ export default function ProductDetailClient(_props: { categorySlug?: string; pro
           const primaryCondition = getCategorizationDisplay(product);
           const orderedConditions = [primaryCondition, ...conditions.filter((c) => c !== primaryCondition)].filter((c) => conditions.includes(c));
           const conditionHref = (sub: string) => {
-            const slug = product.conditionSlugsByName?.[sub]?.conditionSlug || sub.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+            const info = product.conditionSlugsByName?.[sub];
+            if (info?.conditionHubUrl) return '/' + info.conditionHubUrl.replace(/^https?:\/\//, '').replace(/^[^/]+\/?/, '');
+            const slug = info?.conditionSlug || sub.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
             return `/${product.categoryFolder || 'cancer-medicines'}/${slug}`;
           };
           // Other strengths of the same product group (e.g. every PacliGet vial size), each its own page
@@ -757,52 +713,35 @@ export default function ProductDetailClient(_props: { categorySlug?: string; pro
           if (product.form) specs.push(['Form', formatFieldWithLineBreaks(product.form)]);
           if (product.packaging) specs.push(['Packaging', product.packaging]);
 
-          const brand = product.brandName || product.name || displayName;
-          const generic = product.brandName && product.genericName && product.brandName !== product.genericName ? product.genericName : '';
-          const orderLabel = `Order ${displayName} online in the Philippines`;
           const whatsappHref = `${contact.whatsapp}?text=${encodeURIComponent(`Hi Getmeds, I would like to order ${displayName}. I have a prescription.`)}`;
-          // Bring the order box back into view (it sits at the top of the page) and let the inquiry rise in
-          const showOrderBox = () =>
-            requestAnimationFrame(() => {
-              const box = document.getElementById('gm-order-box');
-              if (box && box.getBoundingClientRect().top < 90) box.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            });
-          const openInquiry = () => {
-            setInquiryOpen(true);
-            showOrderBox();
-          };
-          const closeInquiry = () => {
-            setInquiryOpen(false);
-            showOrderBox();
-          };
-          const summary = String(product.description || indications || '').replace(/\\n|\n/g, ' ').trim();
+          // The how-to-order button below brings the inquiry card back into view
+          const openInquiry = () => document.getElementById('gm-order-box')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
           const trust = [
             { Icon: ShieldCheck, label: 'FDA Philippines-licensed' },
             { Icon: BadgeCheck, label: 'Pharmacist-verified' },
             { Icon: Truck, label: 'Nationwide delivery' },
           ];
-          const sections: Array<{ title: string; body: React.ReactNode }> = [];
-          if (product.description || indications) {
-            sections.push({
-              title: 'Description',
-              body: (
-                <div className="space-y-4">
-                  {product.description && <div>{renderRichContent(product.description)}</div>}
-                  {indications && (
-                    <div>
-                      <h3 className="mb-1 text-[14px] font-semibold text-black">Indications</h3>
-                      <div>{renderRichContent(indications)}</div>
-                    </div>
-                  )}
-                </div>
-              ),
-            });
-          }
-          if (dosage) sections.push({ title: 'Dosage & Administration', body: renderRichContent(dosage) });
-          if (storage) sections.push({ title: 'Storage', body: renderRichContent(storage) });
+          const detailBlock = (title: string, body: React.ReactNode) => (
+            <div>
+              <h3 className="mb-1 text-[14px] font-semibold text-black">{title}</h3>
+              <div>{body}</div>
+            </div>
+          );
+          const detailTabs: Array<{ title: string; body: React.ReactNode }> = [{
+            title: 'Description',
+            body: (
+              <div className="space-y-4">
+                {product.description && <div>{renderRichContent(product.description)}</div>}
+                {indications && detailBlock('Indications', renderRichContent(indications))}
+                {dosage && detailBlock('Dosage & Administration', renderRichContent(dosage))}
+                {storage && detailBlock('Storage', renderRichContent(storage))}
+                <p className="text-[13.5px] text-slate-500">Available in the Philippines through Getmeds.</p>
+              </div>
+            ),
+          }];
           if (isRx) {
-            sections.push({
-              title: 'Prescription Requirement',
+            detailTabs.push({
+              title: 'Prescription requirement',
               body: (
                 <p>
                   This medicine is prescription-only (Rx). A valid prescription from a licensed
@@ -815,95 +754,148 @@ export default function ProductDetailClient(_props: { categorySlug?: string; pro
               ),
             });
           }
-          if (specs.length || product.innovator) {
-            sections.push({
-              title: 'Product Details',
-              body: (
-                <dl className="grid gap-4 sm:grid-cols-2">
-                  {specs.map(([label, value]) => (
-                    <div key={label}>
-                      <dt className="text-[13px] text-slate-500">{label}</dt>
-                      <dd className="mt-0.5 font-medium text-[#0B2E5E]">{value}</dd>
-                    </div>
-                  ))}
-                  {product.innovator && (
-                    <div>
-                      <dt className="text-[13px] text-slate-500">Innovator</dt>
-                      <dd className="mt-0.5 font-medium text-[#0B2E5E]">{product.innovator}</dd>
-                    </div>
-                  )}
-                </dl>
-              ),
-            });
-          }
+
 
           return (
           <div className="mx-auto w-full max-w-7xl px-5 pb-10 md:px-10">
             {/* product pages: the footer sits close under the how-to-order / FAQ block (the style unmounts with the page) */}
             <style>{'footer{margin-top:0!important}'}</style>
-            <div className="grid gap-10 lg:grid-cols-[1.05fr_1fr] lg:gap-16">
+            <div className="grid gap-6 lg:grid-cols-[1.6fr_1fr] [&>*]:min-w-0">
 
-              {/* Gallery: one large photo with zoom, then what ordering here guarantees.
-                  Sticky on lg+ so it stays beside the order box while the inquiry panel is open. */}
-              <div className="lg:sticky lg:top-28 lg:self-start">
-                <div
-                  onClick={hasImage ? () => setZoomedImageOpen(true) : undefined}
-                  className={`group/zoom relative flex aspect-square items-center justify-center overflow-hidden rounded-3xl bg-[#f3f6f9] ${hasImage ? 'cursor-zoom-in' : ''}`}
-                >
-                  {hasImage ? (
-                    <img
-                      src={resolvedImageUrl}
-                      className="h-full w-full object-contain p-8 mix-blend-multiply transition-transform duration-500 group-hover/zoom:scale-105 md:p-12"
-                      alt={`${displayName}${product.form ? ` ${product.form}` : ''} by Getmeds Philippines`}
-                      onError={(e) => { const img = e.currentTarget; img.onerror = null; img.src = '/assets/no-image.png'; }}
-                    />
-                  ) : (
-                    <span className="text-sm text-slate-500">Product photo</span>
-                  )}
-                  {hasImage && (
-                    <button
-                      type="button"
-                      onClick={(e) => { e.stopPropagation(); setZoomedImageOpen(true); }}
-                      aria-label={`Zoom image of ${displayName}`}
-                      className="absolute right-4 top-4 flex h-11 w-11 items-center justify-center rounded-full bg-white text-[#0B2E5E] shadow-[0_6px_16px_-8px_rgba(7,59,87,0.45)] transition hover:bg-primary hover:text-white"
-                    >
-                      <Search className="h-4.5 w-4.5" aria-hidden />
-                    </button>
-                  )}
+              {/* Details card: the product beside its photo, then strengths, conditions and the detail tabs */}
+              <div className="rounded-3xl border border-gray-200 bg-white p-5 md:p-7">
+                <div className="flex flex-col-reverse gap-5 sm:flex-row sm:justify-between">
+                  <div className="min-w-0 flex-1">
+                    {inStock && (
+                      <p className="inline-flex items-center gap-1 text-[13px] font-medium text-[#2f7a23]">
+                        <Check className="h-3.5 w-3.5" strokeWidth={2.5} aria-hidden /> In stock
+                      </p>
+                    )}
+                    {isRx && <p className="mt-1 text-[13px] font-semibold text-[#b00020]">Rx — Prescription required</p>}
+                    <h1 className="font-display mt-2 text-[clamp(1.6rem,2.6vw,2.1rem)] font-semibold leading-[1.12] tracking-tight text-[#0B2E5E]">
+                      {productHeading({ ...product, displayName })}
+                    </h1>
+                    <dl className="mt-4 space-y-2.5">
+                      {specs.map(([label, value]) => (
+                        <div key={label}>
+                          <dt className="text-[12.5px] text-slate-500">{label}</dt>
+                          <dd className="text-[14.5px] text-[#0B2E5E]">{value}</dd>
+                        </div>
+                      ))}
+                      {product.innovator && (
+                        <div>
+                          <dt className="text-[12.5px] text-slate-500">Innovator</dt>
+                          <dd className="text-[14.5px] text-[#0B2E5E]">{product.innovator}</dd>
+                        </div>
+                      )}
+                    </dl>
+                  </div>
+
+                  <div
+                    onClick={hasImage ? () => setZoomedImageOpen(true) : undefined}
+                    className={`group/zoom relative flex aspect-[3/4] w-full shrink-0 items-center justify-center self-start overflow-hidden rounded-2xl bg-[#f3f6f9] sm:w-44 lg:w-52 ${hasImage ? 'cursor-zoom-in' : ''}`}
+                  >
+                    {hasImage ? (
+                      <img
+                        src={resolvedImageUrl}
+                        className="h-full w-full object-contain p-3 mix-blend-multiply transition-transform duration-500 group-hover/zoom:scale-105"
+                        alt={`${displayName}${product.form ? ` ${product.form}` : ''} by Getmeds Philippines`}
+                        onError={(e) => { const img = e.currentTarget; img.onerror = null; img.src = '/assets/no-image.png'; }}
+                      />
+                    ) : (
+                      <span className="text-sm text-slate-500">Product photo</span>
+                    )}
+                    {hasImage && (
+                      <button
+                        type="button"
+                        onClick={(e) => { e.stopPropagation(); setZoomedImageOpen(true); }}
+                        aria-label={`Zoom image of ${displayName}`}
+                        className="absolute right-2 top-2 flex h-11 w-11 items-center justify-center rounded-full bg-white text-[#0B2E5E] shadow-[0_6px_16px_-8px_rgba(7,59,87,0.45)] transition hover:bg-primary hover:text-white"
+                      >
+                        <Search className="h-4.5 w-4.5" aria-hidden />
+                      </button>
+                    )}
+                  </div>
                 </div>
-                <ul className="mt-8 grid grid-cols-3 gap-4 text-center">
-                  {trust.map(({ Icon, label }) => (
-                    <li key={label} className="flex flex-col items-center gap-2.5">
-                      <Icon className="h-7 w-7 text-primary" strokeWidth={1.5} aria-hidden />
-                      <span className="text-[13px] text-slate-600">{label}</span>
-                    </li>
+
+                {variants.length > 1 && (
+                  <div className="mt-5">
+                    <h2 className="text-[13.5px] font-semibold text-[#0B2E5E]">Also available in</h2>
+                    <ul className="mt-2 flex flex-wrap gap-2">
+                      {variants.map((v) => {
+                        const current = v.slug?.current === product.slug?.current;
+                        const label = strengthForSearch(v.strength);
+                        return (
+                          <li key={v.slug?.current}>
+                            {current ? (
+                              <span aria-current="page" className="inline-flex min-h-11 items-center rounded-full bg-primary px-5 text-[13.5px] font-semibold text-white">{label}</span>
+                            ) : (
+                              <a
+                                href={productHref(v)}
+                                title={`${getProductDisplayName(v)} ${label}`}
+                                className="inline-flex min-h-11 items-center rounded-full px-5 text-[13.5px] font-medium text-[#0B2E5E] ring-1 ring-slate-300 transition hover:text-primary hover:ring-primary"
+                              >
+                                {label}
+                              </a>
+                            )}
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </div>
+                )}
+
+                {orderedConditions.length > 0 && (
+                  <div className="mt-5">
+                    <h2 className="text-[13.5px] font-semibold text-[#0B2E5E]">Used for</h2>
+                    <ul className="mt-2 flex flex-wrap gap-2">
+                      {orderedConditions.map((sub) => (
+                        <li key={sub}>
+                          <a href={conditionHref(sub)} className="inline-flex min-h-11 items-center rounded-full bg-primary-soft px-4 text-[13.5px] font-medium text-primary-deep transition hover:bg-primary hover:text-white">
+                            {sub}
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {/* Every panel stays in the page (only hidden) for search engines */}
+                <div data-nosnippet className="mt-6 border-t border-slate-200 pt-1">
+                  <div role="tablist" aria-label="Product information" className="flex flex-wrap gap-6">
+                    {detailTabs.map(({ title }, i) => (
+                      <button
+                        key={title}
+                        type="button"
+                        role="tab"
+                        id={`pd-tab-${i}`}
+                        aria-selected={detailTab === i}
+                        aria-controls={`pd-panel-${i}`}
+                        onClick={() => setDetailTab(i)}
+                        className={`border-b-2 py-3 text-[14.5px] font-semibold transition ${detailTab === i ? 'border-primary text-primary' : 'border-transparent text-slate-600 hover:text-primary'}`}
+                      >
+                        {title}
+                      </button>
+                    ))}
+                  </div>
+                  {detailTabs.map(({ title, body }, i) => (
+                    <div
+                      key={title}
+                      id={`pd-panel-${i}`}
+                      role="tabpanel"
+                      aria-labelledby={`pd-tab-${i}`}
+                      hidden={detailTab !== i}
+                      className="pt-4 text-[15px] leading-relaxed text-slate-600"
+                    >
+                      {body}
+                    </div>
                   ))}
-                </ul>
+                </div>
               </div>
 
-              {/* Order box. "Order Now" swaps its product details for the inquiry types, which rise into
-                  place; "Back to product details" swaps back. The details stay in the page (only hidden), and
-                  the page always loads with them showing, so search engines read the full product. */}
-              <div id="gm-order-box" className="scroll-mt-28 lg:pt-2">
-                {inquiryOpen && (
-                  <div className="gm-rise">
-                    <button
-                      type="button"
-                      onClick={closeInquiry}
-                      className="group/back inline-flex items-center gap-2.5 rounded-full text-[14px] font-medium text-primary transition hover:text-primary-deep focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-                    >
-                      <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-primary transition group-hover/back:-translate-x-0.5 group-hover/back:bg-primary group-hover/back:text-white">
-                        <ArrowLeft className="h-4.5 w-4.5" strokeWidth={2.25} aria-hidden />
-                      </span>
-                      Back to product details
-                    </button>
-                    <p className="font-display mt-4 text-[22px] font-semibold leading-tight text-[#0B2E5E]">
-                      {brand}
-                      {isRx && <span className="ml-1 align-super font-serif text-[0.55em] font-bold italic text-[#c0262d]" aria-label="Prescription required">Rx</span>}
-                    </p>
-                    {product.strength && <p className="mt-1 text-[14.5px] text-slate-600">{String(product.strength).split(/\\n|\n/)[0]}{product.form ? ` · ${String(product.form).split(/\\n|\n/)[0]}` : ''}</p>}
-
-                    <div id="gm-inquiry" className="mt-5 rounded-2xl bg-white p-5 ring-1 ring-slate-200 shadow-[0_18px_40px_-28px_rgba(7,59,87,0.5)] sm:p-6">
+              {/* Inquiry card, always open: pick an inquiry type, Continue, then the form for that type */}
+              <div id="gm-order-box" className="scroll-mt-28 lg:sticky lg:top-28 lg:self-start">
+                    <div id="gm-inquiry" className="rounded-3xl border border-gray-200 bg-white p-5 sm:p-6">
                   <div className="mb-6">
                     <h2 className="font-display text-[26px] font-semibold leading-tight text-[#0B2E5E]">Send inquiry</h2>
                     <p className="mt-2 text-[15px] leading-relaxed text-slate-600">Submit your details to get a formal quote for this product.</p>
@@ -1316,190 +1308,28 @@ export default function ProductDetailClient(_props: { categorySlug?: string; pro
                   )}
                     </div>
 
-                    <a
-                      href={whatsappHref}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="mt-3 flex h-14 w-full items-center justify-center gap-2.5 rounded-full border-2 border-primary text-[15px] font-semibold uppercase tracking-[0.12em] text-primary transition hover:bg-primary/5"
-                    >
-                      <WhatsAppIcon className="h-5 w-5 text-[#25D366]" />
-                      Order via WhatsApp
-                    </a>
-                  </div>
-                )}
-
-                <div hidden={inquiryOpen} className={inquiryOpen ? '' : 'gm-rise'}>
-                <div className="flex flex-wrap items-center gap-2.5">
-                  {inStock && (
-                    <span className="inline-flex items-center gap-1 text-[12px] font-medium text-[#2f7a23]">
-                      <Check className="h-3.5 w-3.5" strokeWidth={2.5} aria-hidden /> In stock
-                    </span>
-                  )}
-                </div>
-
-                <h1 className="font-display mt-3 text-[clamp(1.6rem,2.6vw,2.1rem)] font-semibold leading-[1.08] tracking-tight text-[#0B2E5E]">
-                  {brand}
-                  {/* Rx mark, set like an exponent after the name. Screen readers hear "Prescription required";
-                      the hover/focus label is drawn by CSS from data-tip, so the H1 text stays "DoseGet-20 Rx …". */}
-                  {isRx && (
-                    <>
-                      {' '}
-                      <span
-                        role="img"
-                        aria-label="Prescription required"
-                        tabIndex={0}
-                        data-tip="Prescription required"
-                        className="relative inline-block cursor-help align-super font-serif text-[0.4em] font-bold italic leading-none tracking-normal text-[#c0262d] outline-none
-                          after:pointer-events-none after:absolute after:left-full after:top-1/2 after:z-10 after:ml-2.5 after:-translate-y-1/2 after:translate-x-1 after:whitespace-nowrap after:rounded-md after:bg-[#0B2E5E] after:px-2.5 after:py-1.5 after:font-sans after:text-[12.5px] after:font-medium after:not-italic after:text-white after:opacity-0 after:shadow-lg after:transition after:duration-200 after:content-[attr(data-tip)]
-                          hover:after:translate-x-0 hover:after:opacity-100 focus-visible:after:translate-x-0 focus-visible:after:opacity-100 focus-visible:underline focus-visible:decoration-2
-                          max-sm:after:left-auto max-sm:after:right-0 max-sm:after:top-full max-sm:after:ml-0 max-sm:after:mt-2 max-sm:after:translate-y-0"
-                      >
-                        Rx
-                      </span>
-                    </>
-                  )}
-                  {generic ? ' ' : ''}
-                  {generic && <span className="mt-1.5 block text-[clamp(0.95rem,1.3vw,1.1rem)] font-medium tracking-normal text-slate-500">{generic}</span>}
-                </h1>
-
-                {orderedConditions.length > 0 && (
-                  <p className="mt-3 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-[13px] text-slate-500">
-                    <span>Used for</span>
-                    {orderedConditions.map((sub, i) => (
-                      <React.Fragment key={sub}>
-                        <a href={conditionHref(sub)} className="font-medium text-primary transition hover:text-primary-deep">{sub}</a>
-                        {i < orderedConditions.length - 1 && <span aria-hidden>&middot;</span>}
-                      </React.Fragment>
-                    ))}
-                  </p>
-                )}
-
-                {/* Strength and form take the price spot: no online price for prescription medicines */}
-                {(product.strength || product.form) && (
-                  <div className="mt-5">
-                    {product.strength && (
-                      <p className="font-display text-[20px] font-semibold leading-tight text-[#0B2E5E]">{formatFieldWithLineBreaks(product.strength)}</p>
-                    )}
-                    {product.form && <p className="mt-1 text-[14px] text-slate-600">{formatFieldWithLineBreaks(product.form)}</p>}
-                  </div>
-                )}
-                <p className="mt-2 text-[12.5px] text-slate-500">Price on request: our pharmacist sends a formal quote.</p>
-
-                {/* Full text is always in the HTML (only clipped visually), so search engines read all of it;
-                    the "…" at the end of line 3 expands it in place. */}
-                {summary && (
-                  <div className="relative mt-5">
-                    <p
-                      id="gm-summary"
-                      ref={summaryRef}
-                      className={`text-[14px] leading-relaxed text-slate-600 ${summaryOpen ? '' : 'max-h-[4.875em] overflow-hidden'}`}
-                    >
-                      {summary}
-                      {summaryOpen && summaryOverflows && (
-                        <button
-                          type="button"
-                          onClick={() => setSummaryOpen(false)}
-                          aria-controls="gm-summary"
-                          aria-expanded
-                          className="ml-1.5 rounded text-[14px] font-medium text-primary transition hover:text-primary-deep"
-                        >
-                          Show less
-                        </button>
-                      )}
-                    </p>
-                    {!summaryOpen && summaryOverflows && (
-                      <button
-                        type="button"
-                        onClick={() => setSummaryOpen(true)}
-                        aria-controls="gm-summary"
-                        aria-expanded={false}
-                        aria-label="Show the full description"
-                        title="Show the full description"
-                        className="absolute bottom-0 right-0 flex items-center bg-gradient-to-r from-transparent via-white via-35% to-white pl-10 text-[15px] leading-relaxed"
-                      >
-                        <span className="rounded-full bg-primary/10 px-2.5 text-[18px] font-bold leading-[1.45] tracking-wider text-primary transition hover:bg-primary hover:text-white">…</span>
-                      </button>
-                    )}
-                  </div>
-                )}
-
-                <div className="my-7 h-px bg-slate-200" />
-
-                {variants.length > 1 && (
-                  <div className="mb-6">
-                    <h2 className="text-[12.5px] font-semibold uppercase tracking-[0.14em] text-[#0B2E5E]">Strength</h2>
-                    <ul className="mt-2.5 flex flex-wrap gap-2">
-                      {variants.map((v) => {
-                        const current = v.slug?.current === product.slug?.current;
-                        const label = String(v.strength).split(/\\n|\n/)[0];
-                        return (
-                          <li key={v.slug?.current}>
-                            {current ? (
-                              <span aria-current="page" className="inline-flex rounded-full bg-primary px-5 py-2.5 text-[14px] font-semibold text-white">{label}</span>
-                            ) : (
-                              <a
-                                href={productHref(v)}
-                                title={`${getProductDisplayName(v)} ${label}`}
-                                className="inline-flex rounded-full px-5 py-2.5 text-[14px] font-medium text-[#0B2E5E] ring-1 ring-slate-300 transition hover:text-primary hover:ring-primary"
-                              >
-                                {label}
-                              </a>
-                            )}
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  </div>
-                )}
-
-                <div className="space-y-3">
-                  <button
-                    type="button"
-                    onClick={openInquiry}
-                    aria-expanded={inquiryOpen}
-                    aria-controls="gm-order-box"
-                    title={orderLabel}
-                    className="group flex h-14 w-full items-center justify-center gap-2.5 rounded-full bg-primary text-[15px] font-semibold uppercase tracking-[0.12em] text-white transition hover:bg-primary-deep"
-                  >
-                    Order Now
-                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" aria-hidden />
-                  </button>
-
-                  <a
-                    href={whatsappHref}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex h-14 w-full items-center justify-center gap-2.5 rounded-full border-2 border-primary text-[15px] font-semibold uppercase tracking-[0.12em] text-primary transition hover:bg-primary/5"
-                  >
-                    <WhatsAppIcon className="h-5 w-5 text-[#25D366]" />
-                    Order via WhatsApp
-                  </a>
-                </div>
-                <p className="mt-5 flex items-center gap-2.5 text-[14px] text-slate-600">
-                  <Truck className="h-5 w-5 text-primary" strokeWidth={1.75} aria-hidden />
-                  Delivery across Luzon, Visayas and Mindanao
-                </p>
-
-                {/* Details as accordions; every panel stays in the page for search engines */}
-                {sections.length > 0 && (
-                  <div data-nosnippet className="mt-8 border-t border-slate-200">
-                    {sections.map((sec, i) => (
-                      <details key={sec.title} open={i === 0} className="group border-b border-slate-200">
-                        <summary className="flex cursor-pointer list-none items-center justify-between gap-4 py-5 [&::-webkit-details-marker]:hidden">
-                          <h2 className="text-[16px] font-semibold text-black">{sec.title}</h2>
-                          <Plus className="h-4 w-4 shrink-0 text-slate-500 transition-transform duration-300 group-open:rotate-45" aria-hidden />
-                        </summary>
-                        <div className="pb-6 text-[15px] leading-relaxed text-slate-600">{sec.body}</div>
-                      </details>
-                    ))}
-                  </div>
-                )}
-                </div>
+                <a
+                  href={whatsappHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-3 flex h-14 w-full items-center justify-center gap-2.5 rounded-full border-2 border-primary text-[15px] font-semibold uppercase tracking-[0.12em] text-primary transition hover:bg-primary/5"
+                >
+                  <WhatsAppIcon className="h-5 w-5 text-[#25D366]" />
+                  Order via WhatsApp
+                </a>
+                <ul className="mt-5 grid grid-cols-3 gap-3 text-center">
+                  {trust.map(({ Icon, label }) => (
+                    <li key={label} className="flex flex-col items-center gap-2">
+                      <Icon className="h-6 w-6 text-primary" strokeWidth={1.5} aria-hidden />
+                      <span className="text-[12.5px] text-slate-600">{label}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
             </div>
 
             {/* How to order + ordering FAQs (same wording as the server copy and its FAQPage data) */}
-            <section aria-labelledby="order-heading" className="mt-16 grid gap-8 rounded-3xl bg-[#f6f9fb] p-6 md:mt-20 md:p-10 lg:grid-cols-[1fr_1.35fr] lg:gap-12">
+            <section aria-labelledby="order-heading" className="mt-16 grid gap-8 rounded-3xl bg-[#f6f9fb] p-6 md:mt-12 md:p-10 lg:grid-cols-[1fr_1.35fr] lg:gap-12">
               <div>
                 <h2 id="order-heading" className="font-display text-[clamp(1.4rem,2.2vw,1.8rem)] font-semibold leading-tight text-[#0B2E5E]">
                   How to order {genericLabel} in the Philippines

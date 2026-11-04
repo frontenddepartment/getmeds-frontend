@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   ArrowRight,
@@ -16,7 +17,9 @@ import {
 } from "lucide-react";
 import { productCategories, products, type Product } from "@/lib/data";
 import { Reveal } from "@/components/ui";
+import Breadcrumb, { type BreadcrumbItem } from "@/components/Breadcrumb";
 import NoResultsIllustration from "@/components/NoResultsIllustration";
+import { searchProductsWithTypo } from "@/lib/fuzzySearch";
 
 type FormFilter = "all" | "injectable" | "oral";
 type SortOption = "default" | "name-asc" | "name-desc" | "category";
@@ -36,12 +39,53 @@ export type ProductLink = { href: string; image?: string };
 const productLink = (links: Record<string, ProductLink>, brand: string): ProductLink =>
   links[brand.trim().toLowerCase()] ?? { href: `/product-range/${encodeURIComponent(brand)}` };
 
-export default function ProductRangeClient({ productLinks }: { productLinks: Record<string, ProductLink> }) {
+function sortProducts(list: Product[], sortBy: SortOption): Product[] {
+  if (sortBy === "name-asc") {
+    return [...list].sort((a, b) => a.brand.localeCompare(b.brand));
+  }
+  if (sortBy === "name-desc") {
+    return [...list].sort((a, b) => b.brand.localeCompare(a.brand));
+  }
+  if (sortBy === "category") {
+    return [...list].sort(
+      (a, b) =>
+        a.category.localeCompare(b.category) ||
+        a.brand.localeCompare(b.brand)
+    );
+  }
+  return list;
+}
+
+export default function ProductRangeClient({
+  productLinks,
+  productConditions,
+}: {
+  productLinks: Record<string, ProductLink>;
+  productConditions: Record<string, string[]>;
+}) {
   const [category, setCategory] = useState("All");
+  // The sidebar's subcategory. Tied to its category, so changing category clears it.
+  const [picked, setPicked] = useState<{ category: string; name: string } | null>(null);
+  const condition = picked?.category === category ? picked.name : "";
+  const conditionsOf = (p: Product) => productConditions[p.brand.trim().toLowerCase()] ?? [];
+  const conditionsIn = (c: string) =>
+    [...new Set(products.filter((p) => p.category === c).flatMap(conditionsOf))].sort((a, b) => a.localeCompare(b));
   const [query, setQuery] = useState("");
   const [formFilter, setFormFilter] = useState<FormFilter>("all");
   const [sortBy, setSortBy] = useState<SortOption>("default");
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
+  // Phones: keep the selected category chip in view in the swipeable row
+  const chipRowRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const row = chipRowRef.current;
+    const chip = row?.querySelector<HTMLElement>('[aria-pressed="true"]');
+    if (!row || !chip) return;
+    // row is position:relative, so offsetLeft is measured inside it
+    const left = chip.offsetLeft - 16;
+    if (left < row.scrollLeft || chip.offsetLeft + chip.offsetWidth > row.scrollLeft + row.clientWidth) {
+      row.scrollTo({ left: Math.max(0, left), behavior: "smooth" });
+    }
+  }, [category]);
   // Phones show the list in pages of MOBILE_PAGE ("Load more"); desktop always shows everything.
   const [mobileLimit, setMobileLimit] = useState(MOBILE_PAGE);
   const [view, setView] = useState<"grid" | "table">("grid");
@@ -143,13 +187,14 @@ export default function ProductRangeClient({ productLinks }: { productLinks: Rec
     </motion.form>
   );
 
-  // Prefill search & category from query params (?q=... & ?cat=... or ?category=...)
+  // Prefill search & category from query params (?q=... & ?cat=... or ?category=...), and follow
+  // them when a navbar or footer link changes the area while this list is already open
+  const searchParams = useSearchParams();
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const q = params.get("q");
+    const q = searchParams.get("q");
     if (q) setQuery(q);
 
-    const cat = params.get("cat") || params.get("category");
+    const cat = searchParams.get("cat") || searchParams.get("category");
     if (cat) {
       const normalized = cat.toLowerCase();
       // Exact slug first ("neuro-oncology" must not land on Oncology), then the loose match old links rely on
@@ -160,8 +205,10 @@ export default function ProductRangeClient({ productLinks }: { productLinks: Rec
           normalized.includes(c.toLowerCase())
       );
       if (found) setCategory(found);
+      const cond = searchParams.get("condition");
+      if (found && cond) setPicked({ category: found, name: cond });
     }
-  }, []);
+  }, [searchParams]);
 
   // Keep ?category= in step with the selected area so the address always matches the list
   // (runs after the prefill above has read the incoming URL)
@@ -170,8 +217,10 @@ export default function ProductRangeClient({ productLinks }: { productLinks: Rec
     url.searchParams.delete("cat");
     if (category === "All") url.searchParams.delete("category");
     else url.searchParams.set("category", categorySlug(category));
+    if (condition) url.searchParams.set("condition", condition);
+    else url.searchParams.delete("condition");
     window.history.replaceState(window.history.state, "", url.pathname + url.search + url.hash);
-  }, [category]);
+  }, [category, condition]);
 
   const hasActiveFilters =
     category !== "All" || query.trim() !== "" || formFilter !== "all";
@@ -190,57 +239,130 @@ export default function ProductRangeClient({ productLinks }: { productLinks: Rec
     setFormFilter("all");
   };
 
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
+  const applySuggestion = (suggestion: string, targetCategory?: string) => {
+    setQuery(suggestion);
+    if (targetCategory && category !== "All" && category !== targetCategory) {
+      setCategory(targetCategory);
+      setPicked(null);
+    }
+  };
 
-    const list = products.filter((p) => {
-      // Category filter
+  const { filtered, typoSuggestion } = useMemo(() => {
+    const q = query.trim();
+
+    // 1. Filter base products by category, condition, and dosage form
+    const categoryMatchedProducts = products.filter((p) => {
       if (category !== "All" && p.category !== category) return false;
-
-      // Dosage form filter
+      if (condition && !conditionsOf(p).includes(condition)) return false;
       if (formFilter === "injectable" && !isInjectable(p.form)) return false;
       if (formFilter === "oral" && !isOral(p.form)) return false;
-
-      // Search query filter
-      if (q) {
-        const match =
-          p.brand.toLowerCase().includes(q) ||
-          p.generic.toLowerCase().includes(q) ||
-          p.category.toLowerCase().includes(q) ||
-          p.strength.toLowerCase().includes(q) ||
-          p.form.toLowerCase().includes(q);
-        if (!match) return false;
-      }
-
       return true;
     });
 
-    // Sorting
-    if (sortBy === "name-asc") {
-      return [...list].sort((a, b) => a.brand.localeCompare(b.brand));
-    }
-    if (sortBy === "name-desc") {
-      return [...list].sort((a, b) => b.brand.localeCompare(a.brand));
-    }
-    if (sortBy === "category") {
-      return [...list].sort(
-        (a, b) =>
-          a.category.localeCompare(b.category) ||
-          a.brand.localeCompare(b.brand)
-      );
+    if (!q) {
+      return {
+        filtered: sortProducts(categoryMatchedProducts, sortBy),
+        typoSuggestion: null,
+      };
     }
 
-    return list;
-  }, [category, formFilter, query, sortBy]);
+    // 2. Perform search with typo detection within category
+    let searchRes = searchProductsWithTypo(q, categoryMatchedProducts);
+
+    // If no matches found in selected category and user is not in "All",
+    // check across all categories so the user isn't left empty
+    let crossCategory = false;
+    if (searchRes.list.length === 0 && category !== "All") {
+      const allFormFiltered = products.filter((p) => {
+        if (formFilter === "injectable" && !isInjectable(p.form)) return false;
+        if (formFilter === "oral" && !isOral(p.form)) return false;
+        return true;
+      });
+      const globalRes = searchProductsWithTypo(q, allFormFiltered);
+      if (globalRes.list.length > 0) {
+        searchRes = globalRes;
+        crossCategory = true;
+      }
+    }
+
+    const sortedList = sortProducts(searchRes.list, sortBy);
+
+    if (searchRes.hasTypo && searchRes.suggestion) {
+      return {
+        filtered: sortedList,
+        typoSuggestion: {
+          original: q,
+          suggestion: searchRes.suggestion,
+          crossCategory,
+          matchedCategory: searchRes.list[0]?.category,
+        },
+      };
+    }
+
+    return {
+      filtered: sortedList,
+      typoSuggestion: null,
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- conditionsOf only reads productConditions
+  }, [category, condition, productConditions, formFilter, query, sortBy]);
 
   // New filters start the mobile list from the top page again
-  useEffect(() => setMobileLimit(MOBILE_PAGE), [category, formFilter, query, sortBy]);
+  useEffect(() => setMobileLimit(MOBILE_PAGE), [category, condition, formFilter, query, sortBy]);
+
+  const breadcrumbTrail: BreadcrumbItem[] = useMemo(() => {
+    // Same hierarchy as the nav: Home › Product range › Prescription medicines › category
+    const trail: BreadcrumbItem[] = [
+      { label: "Home", href: "/" },
+      { label: "Product range", href: "/product-range" },
+    ];
+
+    const hasCategory = category !== "All";
+    const hasCondition = Boolean(condition);
+    const hasQuery = Boolean(query.trim());
+
+    if (!hasCategory && !hasQuery) {
+      trail.push({ label: "Prescription medicines" });
+      return trail;
+    }
+
+    trail.push({ label: "Prescription medicines", href: "/prescription-medicines" });
+
+    if (hasCategory) {
+      if (hasCondition) {
+        trail.push({
+          label: category,
+          onClick: () => setPicked(null),
+        });
+        if (hasQuery) {
+          trail.push({
+            label: condition,
+            onClick: () => setQuery(""),
+          });
+          trail.push({ label: `Search: "${query.trim()}"` });
+        } else {
+          trail.push({ label: condition });
+        }
+      } else if (hasQuery) {
+        trail.push({
+          label: category,
+          onClick: () => setQuery(""),
+        });
+        trail.push({ label: `Search: "${query.trim()}"` });
+      } else {
+        trail.push({ label: category });
+      }
+    } else if (hasQuery) {
+      trail.push({ label: `Search: "${query.trim()}"` });
+    }
+
+    return trail;
+  }, [category, condition, query]);
 
   return (
     <div className="bg-white">
       {/* Hero image (same layout as Order Medicines). xl+: copy sits in the sky on the left, white on blue.
           Below xl: the image is too short, so the copy stacks below it in the usual navy/black. */}
-      <section className="relative bg-white pb-10 xl:pb-0">
+      <section className="relative bg-white pb-6 lg:pb-10 xl:pb-0">
         <Image
           src="/images/productrange.png"
           alt="Getmeds specialty medicines including ErpoGet, SevelaMed, PazoGet-400 and IdaGet-5"
@@ -254,15 +376,15 @@ export default function ProductRangeClient({ productLinks }: { productLinks: Rec
         <div className="pointer-events-none absolute inset-x-0 top-0 hidden h-[57%] bg-gradient-to-r from-[#0a5a8c]/60 via-[#0a5a8c]/35 via-45% to-transparent [mask-image:linear-gradient(to_bottom,black_65%,transparent)] xl:block" />
         <div className="relative mx-auto max-w-[1760px] px-5 sm:px-6 lg:px-8 2xl:px-10 xl:absolute xl:inset-x-0 xl:top-0 xl:pt-36">
           <Reveal immediate>
-            <span className="block text-[11px] font-semibold uppercase tracking-[0.24em] text-primary xl:text-white xl:drop-shadow">
+            <span className="hidden text-[11px] font-semibold uppercase tracking-[0.24em] text-primary lg:block xl:text-white xl:drop-shadow">
               Product Range
             </span>
-            <h1 className="font-display mt-6 text-[clamp(1.6rem,7.2vw,1.85rem)] font-semibold leading-[1.12] tracking-tight text-[#0B2E5E] md:text-[clamp(1.45rem,3.5vw+0.2rem,3.2rem)] xl:mt-4 xl:text-white xl:drop-shadow-md">
+            <h1 className="font-display mt-2 lg:mt-6 text-[clamp(1.6rem,7.2vw,1.85rem)] font-semibold leading-[1.12] tracking-tight text-[#0B2E5E] md:text-[clamp(1.45rem,3.5vw+0.2rem,3.2rem)] xl:mt-4 xl:text-white xl:drop-shadow-md">
               {/* exactly two lines from md up; free wrapping on phones where line one doesn't fit */}
               <span className="md:block md:whitespace-nowrap">A portfolio built for</span>{" "}
               <span className="text-primary md:block md:whitespace-nowrap xl:text-white">Filipino healthcare.</span>
             </h1>
-            <p className="mt-6 max-w-2xl text-[15.5px] leading-relaxed text-black md:text-[15px] xl:mt-4 xl:max-w-xl xl:text-white xl:drop-shadow">
+            <p className="mt-6 hidden max-w-2xl text-[15.5px] lg:block leading-relaxed text-black md:text-[15px] xl:mt-4 xl:max-w-xl xl:text-white xl:drop-shadow">
               Browse Getmeds&apos; full range of specialty pharmaceutical products across oncology, hematology, cardiology, and other therapeutic areas — FDA Philippines-licensed, prescription-based ordering, nationwide delivery.
             </p>
             {/* Hero search (lg+; phones use the bar above the catalog). The slot keeps its height while the
@@ -277,7 +399,7 @@ export default function ProductRangeClient({ productLinks }: { productLinks: Rec
                 e.preventDefault();
                 browseAll();
               }}
-              className="mt-6 inline-flex items-center rounded-full bg-[#1D9FDA] px-5 py-2 text-[14px] font-medium text-white shadow-[0_3px_10px_-4px_rgba(6,40,64,0.18)] transition hover:brightness-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary xl:mt-3.5"
+              className="mt-6 hidden items-center rounded-full bg-[#1D9FDA] px-5 py-2 lg:inline-flex text-[14px] font-medium text-white shadow-[0_3px_10px_-4px_rgba(6,40,64,0.18)] transition hover:brightness-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary xl:mt-3.5"
             >
               Browse all products
             </Link>
@@ -288,6 +410,11 @@ export default function ProductRangeClient({ productLinks }: { productLinks: Rec
       <section ref={catalogRef} className="scroll-mt-28 bg-white pt-4">
         {/* Hero copy and catalog share this wide container so big screens fill with products instead of side margins */}
         <div className="mx-auto max-w-[1760px] px-4 sm:px-6 lg:px-8 2xl:px-10">
+          {/* Breadcrumb under hero section */}
+          <div className="mb-4 sm:mb-6">
+            <Breadcrumb trail={breadcrumbTrail} />
+          </div>
+
           {/* Main 2-column Layout: Sticky Sidebar on Left + Products Catalog on Right */}
           <div className="flex flex-col gap-8 lg:flex-row">
             {/* ===================== SIDEBAR ===================== */}
@@ -333,12 +460,12 @@ export default function ProductRangeClient({ productLinks }: { productLinks: Rec
                 </div>
 
                 {/* category shortcuts: one swipeable row */}
-                <div className="scrollbar-none -mx-5 mt-3 flex gap-2 overflow-x-auto px-5 pb-1">
+                <div ref={chipRowRef} className="scrollbar-none relative -mx-4 mt-3 flex gap-2 overflow-x-auto px-4 pb-1 sm:-mx-6 sm:px-6">
                   {productCategories.map((c) => (
                     <button
                       key={c}
                       type="button"
-                      onClick={() => setCategory(c)}
+                      onClick={() => { setCategory(c); setPicked(null); }}
                       aria-pressed={category === c}
                       className={`shrink-0 whitespace-nowrap rounded-full border px-4 py-2 text-[13px] font-medium transition ${
                         category === c
@@ -380,21 +507,45 @@ export default function ProductRangeClient({ productLinks }: { productLinks: Rec
                     <ul className="mt-4 space-y-0.5">
                       {productCategories.map((c) => {
                         const active = category === c;
+                        const subs = active && c !== "All" ? conditionsIn(c) : [];
                         return (
                           <li key={c}>
                             <button
                               type="button"
                               onClick={() => {
                                 setCategory(c);
-                                if (mobileFilterOpen) setMobileFilterOpen(false);
+                                setPicked(null);
+                                // Phones: stay open when this category has subcategories to pick from
+                                if (mobileFilterOpen && (c === "All" || !conditionsIn(c).length)) setMobileFilterOpen(false);
                               }}
-                              aria-pressed={active}
+                              aria-pressed={active && !condition}
                               className={`w-full py-1.5 text-left text-[15px] transition-colors ${
                                 active ? "font-semibold text-primary" : "text-slate-700 hover:text-primary"
                               }`}
                             >
                               {c === "All" ? "All medicines" : c}
                             </button>
+                            {subs.length > 0 && (
+                              <ul className="mb-1 ml-1 space-y-0.5 border-l border-slate-200 pl-3">
+                                {subs.map((sub) => (
+                                  <li key={sub}>
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        setPicked({ category: c, name: sub });
+                                        if (mobileFilterOpen) setMobileFilterOpen(false);
+                                      }}
+                                      aria-pressed={condition === sub}
+                                      className={`w-full py-1 text-left text-[13.5px] leading-snug transition-colors ${
+                                        condition === sub ? "font-semibold text-primary" : "text-slate-600 hover:text-primary"
+                                      }`}
+                                    >
+                                      {sub}
+                                    </button>
+                                  </li>
+                                ))}
+                              </ul>
+                            )}
                           </li>
                         );
                       })}
@@ -462,7 +613,7 @@ export default function ProductRangeClient({ productLinks }: { productLinks: Rec
               <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between lg:gap-6">
                 <div className="shrink-0">
                   <h2 className="font-display text-2xl font-semibold text-black">
-                    {category === "All" ? "All Medicines" : category}
+                    {condition || (category === "All" ? "All Medicines" : category)}
                   </h2>
                   <p className="text-sm font-medium text-black">
                     Showing{" "}
@@ -470,7 +621,11 @@ export default function ProductRangeClient({ productLinks }: { productLinks: Rec
                       {filtered.length}
                     </span>{" "}
                     {filtered.length === 1 ? "product" : "products"}
-                    {category !== "All" && (
+                    {typoSuggestion ? (
+                      <span className="font-normal text-slate-600">
+                        {" "}for <strong className="font-semibold text-[#1D9FDA]">{typoSuggestion.suggestion}</strong>
+                      </span>
+                    ) : category !== "All" ? (
                       <>
                         {" "}
                         in{" "}
@@ -478,7 +633,7 @@ export default function ProductRangeClient({ productLinks }: { productLinks: Rec
                           {category}
                         </span>
                       </>
-                    )}
+                    ) : null}
                   </p>
                 </div>
 
@@ -525,6 +680,50 @@ export default function ProductRangeClient({ productLinks }: { productLinks: Rec
                   </div>
                 </div>
               </div>
+
+              {/* Typo detector note */}
+              {typoSuggestion && (
+                <div className="mb-6 flex flex-col gap-3 rounded-lg bg-gradient-to-r from-[#F0F9FD] via-[#F0F9FD] to-white p-4 text-[#0B2E5E] shadow-xs sm:flex-row sm:items-center sm:justify-between">
+                  <div className="text-sm leading-snug">
+                    <p className="text-slate-800">
+                      Showing results for{" "}
+                      <button
+                        type="button"
+                        onClick={() => applySuggestion(typoSuggestion.suggestion, typoSuggestion.matchedCategory)}
+                        className="font-bold text-[#1D9FDA] underline underline-offset-2 transition hover:text-primary-deep"
+                      >
+                        {typoSuggestion.suggestion}
+                      </button>
+                      {typoSuggestion.crossCategory && typoSuggestion.matchedCategory && (
+                        <span className="text-slate-600">
+                          {" "}in <span className="font-semibold text-slate-800">{typoSuggestion.matchedCategory}</span>
+                        </span>
+                      )}
+                      .
+                    </p>
+                    <p className="mt-0.5 text-xs text-slate-500">
+                      We couldn&apos;t find an exact match for &ldquo;{typoSuggestion.original}&rdquo; — maybe you are looking for this?
+                    </p>
+                  </div>
+                  <div className="flex shrink-0 items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => applySuggestion(typoSuggestion.suggestion, typoSuggestion.matchedCategory)}
+                      className="rounded-full bg-[#1D9FDA] px-4 py-1.5 text-xs font-semibold text-white shadow-xs transition hover:brightness-95"
+                    >
+                      Search &ldquo;{typoSuggestion.suggestion}&rdquo;
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setQuery("")}
+                      className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-600 transition hover:bg-slate-50"
+                      title="Clear search"
+                    >
+                      Clear
+                    </button>
+                  </div>
+                </div>
+              )}
 
               {/* Product Grid / Table */}
               <motion.div

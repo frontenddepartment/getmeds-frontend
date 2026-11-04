@@ -13,10 +13,9 @@ import {
   conditionReviewFields,
 } from './seo';
 import ogImages from './og-images.json';
-import { CATEGORY_SEARCH_COPY, FDA_VERIFICATION_URL, ORDER_STEPS, productCrumbs, productFaqJsonLd, productOrderFaqs, productSearchDescription, productSearchName, productSearchTitle } from './productFaq';
+import { CATEGORY_SEARCH_COPY, FDA_VERIFICATION_URL, ORDER_STEPS, productCrumbs, productFaqJsonLd, productHeading, productOrderFaqs, productSearchDescription, productSearchName, productSearchTitle } from './productFaq';
 import {
   DOMAIN,
-  ALL_PRODUCTS_DESCRIPTION,
   type CatalogModel,
   type CatalogProduct,
   type ConditionGroup,
@@ -69,11 +68,13 @@ function buildMetadata(opts: {
   plainTitle?: boolean;
 }): Metadata {
   const fullTitle = opts.plainTitle ? opts.title : withSiteName(opts.title);
+  // Google cuts snippets off at ~155-160 chars; the full text still shows as the visible intro.
+  const description = truncateAtWord(opts.description, 155);
   const canonicalUrl = `${DOMAIN}${opts.canonicalPath}`;
   const image = opts.ogImage || DEFAULT_OG_IMAGE;
   return {
     title: { absolute: fullTitle },
-    description: opts.description,
+    description: description,
     alternates: { canonical: canonicalUrl },
     ...(opts.noindex ? { robots: { index: false, follow: true } } : {}),
     openGraph: {
@@ -82,14 +83,14 @@ function buildMetadata(opts: {
       ...(opts.ogType === 'website' ? { type: 'website' as const } : {}),
       siteName: 'Getmeds Philippines',
       title: fullTitle,
-      description: opts.description,
+      description: description,
       url: canonicalUrl,
       images: [{ url: image, width: 1200, height: 630, alt: 'Getmeds Philippines' }],
     },
     twitter: {
       card: 'summary_large_image',
       title: fullTitle,
-      description: opts.description,
+      description: description,
       images: [image],
     },
   };
@@ -239,29 +240,6 @@ function foldersPerCategory(groups: Map<string, FolderGroup>): Map<string, strin
 
 // ---- Page builders -------------------------------------------------------------------
 
-/** /product-range and /conditions — "Products", canonical /product-range. */
-export function allProductsSeo(model: CatalogModel): CatalogPageSeo {
-  const canonicalPath = '/product-range';
-  const links = productLinks(model);
-  const groups = folderGroups(model);
-  const perCat = foldersPerCategory(groups);
-  const sections = [...groups.entries()].map(([folder, g]) => ({
-    title: g.name === folderDisplayName(folder) || (perCat.get(g.name) || []).length < 2 ? g.name : `${g.name} — ${folderDisplayName(folder)}`,
-    url: `/${folder}`,
-    items: g.productNames.map((n) => links.get(n)).filter((x): x is ProductLink => !!x),
-  }));
-  return {
-    metadata: buildMetadata({ title: 'Products', description: ALL_PRODUCTS_DESCRIPTION, canonicalPath, ogType: 'website' }),
-    jsonLd: [
-      {
-        id: 'jsonld-medical-webpage',
-        data: { '@type': 'CollectionPage', name: 'Product Range — Getmeds Philippines', url: `${DOMAIN}${canonicalPath}` },
-      },
-    ],
-    baked: <ListingMarkup heading="Product Range" intro={ALL_PRODUCTS_DESCRIPTION} sections={sections} />,
-  };
-}
-
 /** A Category Folder listing, e.g. /antibiotics. */
 export function categorySeo(model: CatalogModel, folder: string): CatalogPageSeo {
   const groups = folderGroups(model);
@@ -292,7 +270,13 @@ export function categorySeo(model: CatalogModel, folder: string): CatalogPageSeo
         id: 'jsonld-medical-webpage',
         data: { '@type': 'CollectionPage', name: `${label} Medicines in the Philippines`, url: `${DOMAIN}${canonicalPath}` },
       },
-      { id: 'jsonld-breadcrumb', data: breadcrumbList([{ name: 'All Products', url: '/product-range' }, { name: label }]) },
+      {
+        id: 'jsonld-breadcrumb',
+        // /cancer-medicines shows the prototype's breadcrumb; schema must match what's on screen
+        data: breadcrumbList(folder === 'cancer-medicines'
+          ? [{ name: 'Product Range', url: '/product-range' }, { name: 'Prescription Medicines', url: '/prescription-medicines' }, { name: label }]
+          : [{ name: 'All Products', url: '/product-range' }, { name: label }]),
+      },
     ],
     baked: (
       <ListingMarkup
@@ -305,17 +289,39 @@ export function categorySeo(model: CatalogModel, folder: string): CatalogPageSeo
   };
 }
 
-/** A condition listing — /conditions/<slug> or /<folder>/<condition-slug>. */
+/** Product Range › [Prescription Medicines] › Category › Condition: the page's visible crumbs and its BreadcrumbList. */
+export function conditionCrumbs(model: CatalogModel, group: ConditionGroup | undefined, fallbackName = ''): Crumb[] {
+  const isRx = model.products.some((p) => group?.productNames.includes(p.displayName) && /rx/i.test(p.prescription || ''));
+  return [
+    { name: 'Product Range', url: '/product-range' },
+    ...(isRx ? [{ name: 'Prescription Medicines', url: '/prescription-medicines' }] : []),
+    ...(group?.category && group?.folder ? [{ name: group.category, url: `/${group.folder}` }] : []),
+    { name: group?.name || fallbackName },
+  ];
+}
+
+/** The Conditions A–Z page, /conditions. Its body is components/ConditionsIndex.tsx. */
+export function conditionsIndexSeo(): CatalogPageSeo {
+  const description =
+    'Conditions grouped by category, from oncology and hematology to anti-infectives, endocrinology and cardiology, with the Getmeds medicines used to treat them.';
+  return {
+    metadata: buildMetadata({ title: 'Conditions A–Z', description, canonicalPath: '/conditions', ogType: 'website' }),
+    jsonLd: [
+      { id: 'jsonld-medical-webpage', data: { '@type': 'CollectionPage', name: 'Conditions A–Z', description, url: `${DOMAIN}/conditions` } },
+      { id: 'jsonld-breadcrumb', data: breadcrumbList([{ name: 'Home', url: '/' }, { name: 'Conditions' }]) },
+    ],
+    baked: null,
+  };
+}
+
+/** A condition page — /conditions/<slug> or /<folder>/<condition-slug>. */
 export function conditionSeo(model: CatalogModel, group: ConditionGroup | undefined, fallbackName: string, requestPath: string): CatalogPageSeo {
   const name = group?.name || fallbackName;
   const canonicalPath = group?.hubPath || requestPath;
   const description = listingDescription(name, (group?.productNames || []).slice(0, 3));
   const specialty = specialtyUrl(group?.specialty) || specialtyUrl(group?.category);
-  const trail: Crumb[] = [
-    { name: 'All Products', url: '/product-range' },
-    ...(group?.category && group?.folder ? [{ name: group.category, url: `/${group.folder}` }] : []),
-    { name },
-  ];
+  // Home first, like the product pages and the visible breadcrumb (ConditionHub adds Home itself)
+  const trail: Crumb[] = [{ name: 'Home', url: '/' }, ...conditionCrumbs(model, group, fallbackName)];
   const links = productLinks(model);
   const items = (group?.productNames || []).map((n) => links.get(n)).filter((x): x is ProductLink => !!x);
   return {
@@ -458,7 +464,7 @@ export function productSeo(model: CatalogModel, p: CatalogProduct): CatalogPageS
     baked: (
       <main className="max-w-5xl mx-auto px-4 pt-28 pb-16 text-gray-800">
         <Crumbs trail={trail} />
-        <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 mb-4">{displayName}</h1>
+        <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 mb-4">{productHeading({ ...p, displayName })}</h1>
         {p.imageUrl ? (
           // eslint-disable-next-line @next/next/no-img-element -- crawler copy; Sanity CDN already serves a resized image
           <img

@@ -1,9 +1,9 @@
 /* Content extracted from getmeds.ph — single source of truth for the revamp. */
 
 export const stats = [
-  { value: 2000, suffix: "+", label: "Medicines in portfolio" },
-  { value: 10000, suffix: "+", label: "Pharmacies nationwide" },
-  { value: 500, suffix: "+", label: "Hospitals served" },
+  { value: 128, suffix: "+", label: "Medicines in portfolio" },
+  { value: 160, suffix: "+", label: "Pharmacies nationwide" },
+  { value: 300, suffix: "+", label: "Hospitals served" },
   { value: 2, suffix: "M+", label: "Filipino lives touched" },
 ];
 
@@ -153,7 +153,8 @@ export const products: Product[] = [
   { brand: "LosaGet", generic: "Losartan Potassium", strength: "50 mg", form: "Tablet", category: "Cardiology" },
   // Radiology
   { brand: "IohexiGet", generic: "Iodine (as Iohexol)", strength: "350 mg/mL (100 mL)", form: "Solution for Injection", category: "Radiology" },
-  { brand: "DexGet", generic: "Dexamethasone", strength: "4 mg/mL (8 mg / 2 mL)", form: "Solution for Injection", category: "Radiology" },
+  // Rheumatology
+  { brand: "DexGet", generic: "Dexamethasone", strength: "4 mg/mL (8 mg / 2 mL)", form: "Solution for Injection", category: "Rheumatology" },
   // Pain / Renal / Allergy
   { brand: "Tradmin", generic: "Tramadol", strength: "50 mg", form: "Solution for Injection (IV/IM)", category: "Pain Management" },
   { brand: "SevelaMed", generic: "Sevelamer Carbonate", strength: "800 mg", form: "Tablet", category: "Nephrology" },
@@ -266,7 +267,7 @@ export const capabilities = [
   { icon: "Globe2", title: "Global Network of Pharma Manufacturers", text: "Strategic sourcing partnerships with 50+ manufacturers across India, China, Europe, and the US — all WHO, PIC/S, US FDA, EU MHRA, and UK MHRA recognized. Every partner facility meets international quality standards, ensuring the medicines Filipino doctors prescribe and patients receive are backed by globally verified manufacturing." },
   { icon: "BadgeCheck", title: "Regulatory & Compliance", text: "FDA Philippines, DOH, PDEA (S-4 and S-5), BOC, and EDPMS expertise across product registration, post-market compliance, and pharmacovigilance. Our regulatory team manages the full lifecycle — from Certificate of Product Registration application to license renewals — so partners can operate with confidence and speed." },
   { icon: "Snowflake", title: "Precision Supply Chain & Nationwide Distribution", text: "WHO GSDP-compliant cold-chain logistics with batch-level traceability and urgent-response delivery across Luzon, Visayas, and Mindanao. Built for the urgency of Filipino healthcare, with specialized handling for biologics, oncology therapies, and specialty molecules." },
-  { icon: "Store", title: "Sales and Distribution", text: "10,000+ pharmacy accounts served through dedicated nationwide sales teams across Luzon, Visayas, and Mindanao. Long-term partnership approach with account-managed service, product training, and market development support." },
+  { icon: "Store", title: "Sales and Distribution", text: "160+ pharmacy accounts served through dedicated nationwide sales teams across Luzon, Visayas, and Mindanao. Long-term partnership approach with account-managed service, product training, and market development support." },
   { icon: "Landmark", title: "Government Bidding & Public Sector Access", text: "Proven tender experience supplying oncology, hematology, and anesthesia medicines to public hospitals nationwide. Dedicated bidding specialists handle full documentation, compliance protocols, and competitive quotation preparation." },
   { icon: "HandHeart", title: "Government Medical Assistance & Program Accreditation", text: "Accredited provider of chemotherapy and cancer medicines for DSWD, PCSO, and other national government medical assistance programs." },
   { icon: "FileCheck2", title: "Certificate of Listing of Identical Drug Product (CLIDP) Services", text: "End-to-end CLIDP application, certification, and ongoing compliance management for our portfolio." },

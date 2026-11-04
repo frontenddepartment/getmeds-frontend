@@ -1,5 +1,5 @@
 /*
- * Business JSON-LD for the homepage — tells Google who Getmeds is, where it is and how
+ * Business JSON-LD for the homepage and About Us — tells Google who Getmeds is, where it is and how
  * to reach it (feeds the knowledge panel and local results). Built from `contact`, so
  * the schema always matches the footer and Contact page.
  *
@@ -65,6 +65,24 @@ export const businessSchema = {
       alternateName: "Getmeds Philippines",
       url: `${SITE_URL}/`,
       publisher: { "@id": ORG_ID },
+      inLanguage: "en-PH",
+    },
+  ],
+};
+
+/* About Us: the same business graph plus an AboutPage node pointing at it. */
+export const aboutPageSchema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    ...businessSchema["@graph"],
+    {
+      "@type": "AboutPage",
+      "@id": `${SITE_URL}/about-us#webpage`,
+      url: `${SITE_URL}/about-us`,
+      name: "About Getmeds",
+      isPartOf: { "@id": `${SITE_URL}/#website` },
+      about: { "@id": ORG_ID },
+      mainEntity: { "@id": ORG_ID },
       inLanguage: "en-PH",
     },
   ],

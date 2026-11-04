@@ -64,19 +64,19 @@ const ITEMS = [
   {
     n: "01",
     title: "World-Class Standards",
-    tone: "text-[#61A644]", // green block
+    tone: "text-[#A9E27F]", // green block, lightened for the dark photo background
     text: "Sourced from WHO, PIC/S, US FDA, EU GMP, and UK MHRA-recognized manufacturing facilities.",
   },
   {
     n: "02",
     title: "UN Global Compact Member",
-    tone: "text-[#1D9FDA]", // blue block
+    tone: "text-[#7CCFF5]", // blue block
     text: "Advancing the UN Sustainable Development Goals through ethical, responsible, and sustainable business.",
   },
   {
     n: "03",
     title: "FDA Philippines Licensed",
-    tone: "bg-gradient-to-r from-[#1D9FDA] to-[#61A644] bg-clip-text text-transparent", // gradient block
+    tone: "bg-gradient-to-r from-[#7CCFF5] to-[#A9E27F] bg-clip-text text-transparent", // gradient block
     text: "Fully licensed by the Food and Drug Administration of the Philippines as a wholesaler, importer, distributor and retail pharmacy.",
   },
 ];
@@ -419,7 +419,7 @@ function Scene({ compact = false }: { compact?: boolean }) {
     >
       <motion.svg
         viewBox={compact ? "250 210 360 265" : "0 110 845 365"}
-        className={compact ? "h-auto w-full overflow-hidden" : "h-full w-full overflow-hidden"}
+        className={compact ? "block h-auto w-full overflow-hidden" : "h-full w-full overflow-hidden"}
         aria-hidden
         initial={still ? false : { scale: 1.08, filter: "blur(8px)", opacity: 0 }}
         animate={shown ? { scale: 1, filter: "blur(0px)", opacity: 1 } : undefined}
@@ -436,7 +436,7 @@ function Scene({ compact = false }: { compact?: boolean }) {
                 x1={l.x1}
                 y1={l.y}
                 y2={l.y}
-                stroke="#3b4652"
+                stroke="#ffffff"
                 strokeWidth={1.1}
                 strokeDasharray="2.5 2.5"
                 initial={still ? false : { x2: l.x1 }}
@@ -446,7 +446,7 @@ function Scene({ compact = false }: { compact?: boolean }) {
               <motion.circle
                 cx={l.x2}
                 cy={l.y}
-                fill="#26313d"
+                fill="#ffffff"
                 initial={still ? { r: 3 } : { r: 0 }}
                 animate={shown ? { r: 3 } : undefined}
                 transition={{ duration: 0.3, ease: EASE, delay: l.delay + 0.45 }}
@@ -498,7 +498,7 @@ function Label({ title, text, tone }: { title: string; text: string; tone: strin
       <h3 className="font-display text-base font-semibold xl:text-lg">
         <span className={tone}>{title}</span>
       </h3>
-      <p className="mt-1.5 text-balance text-[13px] leading-snug text-ink-soft xl:text-sm">{text}</p>
+      <p className="mt-1.5 text-balance text-[13px] font-medium leading-snug text-white [text-shadow:0_1px_6px_rgba(6,40,63,0.9)] xl:text-sm">{text}</p>
     </>
   );
 }
@@ -506,10 +506,10 @@ function Label({ title, text, tone }: { title: string; text: string; tone: strin
 function Heading() {
   return (
     <>
-      <p className="text-[11px] font-bold uppercase tracking-[0.24em] text-primary">
-        <span className="mr-2 text-primary">•</span>Partnership
+      <p className="text-[11px] font-bold uppercase tracking-[0.24em] text-[#7CCFF5]">
+        <span className="mr-2">•</span>Partnership
       </p>
-      <h2 className="font-display mt-5 text-3xl font-medium leading-tight text-black md:text-[2.5rem]">
+      <h2 className="font-display mt-5 text-3xl font-medium leading-tight text-[#7CCFF5] md:text-[2.5rem]">
         Partner with us!
       </h2>
     </>
@@ -539,6 +539,7 @@ export default function PartnerSteps() {
       </div>
 
       {/* Mobile / tablet: heading, numbered list, then the blocks */}
+      {/* no bottom padding: the blocks run into the section's bottom edge, as on desktop */}
       <div className="px-5 pt-14 md:px-10 lg:hidden">
         <Heading />
         <div className="mt-8 space-y-6">

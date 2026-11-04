@@ -6,8 +6,21 @@ import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronDown, Menu, X } from "lucide-react";
-import { therapeuticAreas } from "@/lib/data";
+import { otherRanges, productMenu } from "@/lib/catalogueHub";
 import { SearchField, SearchPanel, SearchTrigger } from "@/components/NavSearch";
+
+const mobileProductLinks = [
+  { href: "/product-range", label: "View all products" },
+  { href: "/prescription-medicines", label: "Prescription medicines" },
+  ...otherRanges.map((r) => ({ href: `/${r.slug}`, label: r.title })),
+];
+
+const mobileLinksAfter = [
+  { href: "/conditions", label: "Conditions" },
+  { href: "/order-medicines", label: "Order medicines" },
+  { href: "/about-us", label: "About" },
+  { href: "/contact-us", label: "Contact us" },
+];
 
 const companyExplore = [
   { href: "/about-us", label: "About Us" },
@@ -19,7 +32,7 @@ const companyExplore = [
 const companyMore = [
   { href: "/csr", label: "CSR" },
   { href: "/careers", label: "Careers" },
-  { href: "/ungc", label: "United Nations Global Compact" },
+  { href: "/ungc", label: "UNGC" },
   { href: "/blog", label: "Blog" },
 ];
 
@@ -31,10 +44,6 @@ const networkOrgs = [
 ];
 
 const PANEL_DESC: Record<string, { label: string; text: string }> = {
-  products: {
-    label: "Product Range",
-    text: "Browse our full pharmaceutical portfolio — oncology, hematology, anti-infectives and more. Every product is FDA Philippines-registered and delivered nationwide.",
-  },
   company: {
     label: "About Us",
     text: "Get to know Getmeds — who we are, our services, global presence and wellness initiatives, plus careers, CSR work and the latest company updates.",
@@ -62,6 +71,7 @@ export default function Navbar() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [dd, setDd] = useState<DD>(null);
+  const [productsOpen, setProductsOpen] = useState(true);
   // /meditations: the bar belongs to the hero only; it slides away once the hero (#top) has scrolled
   // out, and the page's own floating pill takes over (its arrow brings the hero, and the bar, back).
   const [heroGone, setHeroGone] = useState(false);
@@ -88,6 +98,16 @@ export default function Navbar() {
     setSearchOpen(false);
   }, [pathname]);
 
+  // full-screen mobile menu: keep the page behind it from scrolling
+  useEffect(() => {
+    if (!open) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [open]);
+
   // the bar is always the raised white pill now, so it never needs the white-on-dark variant
   const onDark = false;
 
@@ -101,6 +121,9 @@ export default function Navbar() {
   const panelLink =
     "nav-underline relative inline-flex items-center px-3 py-2 text-[15px] font-medium text-primary-deep transition-colors hover:text-primary";
 
+  const mobileRow = (href: string) =>
+    `block px-4 py-3.5 text-[15px] font-semibold ${pathname === href ? "text-primary" : "text-primary-deep"}`;
+
   const chevron = (key: DD) =>
     `h-4 w-4 transition-transform duration-300 ${dd === key ? "rotate-180" : ""}`;
 
@@ -108,9 +131,9 @@ export default function Navbar() {
     <header
       className={`fixed inset-x-0 top-0 z-50 transition-[padding,transform,opacity] duration-300 md:px-6 md:pt-3 ${
         searchOpen ? "px-0 pt-0" : "px-3 pt-3"
-      } ${hideForHero ? "pointer-events-none -translate-y-full opacity-0" : ""}`}
+      } ${open ? "max-lg:!px-0 max-lg:!pt-0" : ""} ${hideForHero ? "pointer-events-none -translate-y-full opacity-0" : ""}`}
     >
-      <div className="relative mx-auto max-w-7xl" onMouseLeave={() => setDd(null)}>
+      <div className="relative mx-auto max-w-7xl 2xl:max-w-[1440px]" onMouseLeave={() => setDd(null)}>
         {/* ---- Sheet panel sliding out from beneath the bar ---- */}
         <AnimatePresence>
           {dd && (
@@ -127,23 +150,34 @@ export default function Navbar() {
                   {/* links */}
                   <motion.div variants={listVar} initial="hidden" animate="show" className="flex-1">
                     {dd === "products" && (
-                      <div className="grid grid-cols-2 gap-x-10">
-                        {therapeuticAreas.map((a) => (
-                          <motion.div key={a.slug} variants={itemVar}>
-                            <Link
-                              href={`/product-range?category=${encodeURIComponent(a.slug)}`}
-                              className={panelLink}
-                            >
-                              {a.name}
-                            </Link>
-                          </motion.div>
-                        ))}
-                        <motion.div variants={itemVar}>
-                          <Link
-                            href="/product-range"
-                            className="ml-3 mt-2 inline-flex items-center gap-2 rounded-full bg-[#61A644] px-5 py-2.5 text-sm font-semibold text-white transition hover:brightness-95"
-                          >
-                            View All Products
+                      <div>
+                        <motion.div variants={itemVar} className="flex items-center justify-between gap-4">
+                          <Link href="/prescription-medicines" className="text-[12px] font-bold uppercase tracking-[0.06em] text-primary transition-colors hover:text-primary-deep">
+                            Prescription medicines →
+                          </Link>
+                          <span className="text-[12px] text-ink-soft">Category (bold) · conditions underneath</span>
+                        </motion.div>
+                        <div className="mt-3 grid grid-cols-3 gap-x-6 gap-y-5">
+                          {productMenu.map((cat) => (
+                            <motion.div key={cat.name} variants={itemVar}>
+                              <Link href={cat.href} className="font-display text-[15px] font-bold text-primary-deep transition-colors hover:text-primary">
+                                {cat.name}
+                              </Link>
+                              <ul className="mt-1.5 space-y-1">
+                                {cat.conditions.map((c) => (
+                                  <li key={c.href}>
+                                    <Link href={c.href} className="text-[13.5px] text-primary transition-colors hover:text-primary-deep">
+                                      {c.label}
+                                    </Link>
+                                  </li>
+                                ))}
+                              </ul>
+                            </motion.div>
+                          ))}
+                        </div>
+                        <motion.div variants={itemVar} className="mt-4 border-t border-[#eef2f7] pt-3">
+                          <Link href="/conditions" className="text-sm font-semibold text-primary transition-colors hover:text-primary-deep">
+                            View all conditions A–Z →
                           </Link>
                         </motion.div>
                       </div>
@@ -210,14 +244,32 @@ export default function Navbar() {
                     initial={{ opacity: 0, y: 14 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.35, delay: 0.16 }}
-                    className="w-72 shrink-0 border-l border-[#eef2f7] pl-10"
+                    className={`shrink-0 border-l border-[#eef2f7] ${dd === "products" ? "w-52 pl-6" : "w-72 pl-10"}`}
                   >
-                    <p className="text-[15px] font-medium text-primary">
-                      {PANEL_DESC[dd].label}
-                    </p>
-                    <p className="mt-4 text-sm leading-relaxed text-ink-soft">
-                      {PANEL_DESC[dd].text}
-                    </p>
+                    {dd === "products" ? (
+                      <>
+                        <p className="text-[12px] font-bold uppercase tracking-[0.06em] text-ink-soft">More</p>
+                        <ul className="mt-3 space-y-3 text-sm font-medium text-primary-deep">
+                          {otherRanges.map((r) => (
+                            <li key={r.slug}>
+                              <Link href={`/${r.slug}`} className="transition-colors hover:text-primary">{r.title}</Link>
+                            </li>
+                          ))}
+                        </ul>
+                        <Link href="/product-range" className="mt-4 inline-block text-sm font-semibold text-primary transition-colors hover:text-primary-deep">
+                          View all products →
+                        </Link>
+                      </>
+                    ) : (
+                      <>
+                        <p className="text-[15px] font-medium text-primary">
+                          {PANEL_DESC[dd].label}
+                        </p>
+                        <p className="mt-4 text-sm leading-relaxed text-ink-soft">
+                          {PANEL_DESC[dd].text}
+                        </p>
+                      </>
+                    )}
                   </motion.div>
                 </div>
               </div>
@@ -227,9 +279,12 @@ export default function Navbar() {
 
         {/* ---- Pill bar (always above the sheet) ---- */}
         <div
-          className={`relative z-10 grid grid-cols-[1fr_auto_auto] items-center gap-2 lg:gap-0 rounded-full px-4 py-2.5 transition-all duration-300 md:px-6 xl:px-10 lg:grid-cols-[auto_1fr_auto] ${
+          className={`relative z-10 grid grid-cols-[1fr_auto_auto] items-center gap-2 lg:gap-0 rounded-full px-4 py-2.5 lg:py-3.5 transition-all duration-300 md:px-6 xl:px-10 lg:grid-cols-[auto_1fr_auto] ${
             /* phones: open search joins the bar into one flush, full-width block */
             searchOpen ? "max-md:rounded-none max-md:!shadow-none" : ""
+          } ${
+            /* open mobile menu: the bar sits flush on top of the full-screen sheet */
+            open ? "max-lg:!rounded-none max-lg:!shadow-none" : ""
           } ${
             dd || searchOpen
               ? "glass-nav !shadow-[0_6px_16px_-14px_rgba(13,84,120,0.12)]"
@@ -274,17 +329,29 @@ export default function Navbar() {
             </div>
 
             <Link
+              href="/ungc"
+              onMouseEnter={() => setDd(null)}
+              className={linkCls("/ungc")}
+              title="UN Global Compact"
+            >
+              UNGC
+            </Link>
+
+            {/* Patient Assistance Program logo, right of UNGC; the bar grows to fit it */}
+            <Link
               href="/patient-assistance-program"
               onMouseEnter={() => setDd(null)}
               className="mx-1 flex shrink-0 items-center transition-opacity hover:opacity-80 xl:mx-2"
               aria-label="Patient Assistance Program"
             >
               <Image
-                src="/images/paplogo.png"
+                src="/images/newpaplogo.png"
                 alt="Patient Assistance Program"
-                width={400}
-                height={183}
-                className={`h-10 w-auto xl:h-12 ${onDark ? "brightness-0 invert" : ""}`}
+                width={1708}
+                height={920}
+                sizes="120px"
+                priority
+                className="h-9 w-auto"
               />
             </Link>
 
@@ -294,7 +361,7 @@ export default function Navbar() {
           </nav>
 
           {/* Right: search + Global Network */}
-          <div className="hidden items-center gap-2 justify-self-end lg:flex xl:gap-3">
+          <div className="hidden items-center gap-2 justify-self-end lg:ml-4 lg:flex xl:gap-3">
             <div onMouseEnter={() => setDd(null)}>
               <SearchField onDark={onDark} onOpenPanel={openSearch} />
             </div>
@@ -340,49 +407,39 @@ export default function Navbar() {
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="glass-nav mx-auto mt-2 max-h-[75vh] max-w-7xl overflow-y-auto rounded-2xl p-3 lg:hidden"
+              // full width + full height: covers the screen under the bar (the bar, z-10, overlaps its top padding)
+              className="fixed inset-0 z-0 overflow-y-auto overscroll-contain bg-white pt-[62px] lg:hidden"
             >
-              {[
-                { href: "/", label: "Home" },
-                { href: "/order-medicines", label: "Order Medicines" },
-                { href: "/product-range", label: "Product Range" },
-                { href: "/about-us", label: "About Us" },
-                { href: "/patient-assistance-program", label: "Patient Assistance Program" },
-              ].map((l) => (
-                <Link
-                  key={l.href}
-                  href={l.href}
-                  className={`block rounded-xl px-4 py-3 text-sm font-semibold ${
-                    pathname === l.href ? "bg-primary/10 text-primary" : "text-ink-soft"
-                  }`}
+              <div className="divide-y divide-[#e6ecf1] border-t border-[#e6ecf1] pb-[env(safe-area-inset-bottom)]">
+              <Link href="/" className={mobileRow("/")}>Home</Link>
+              <div>
+                <button
+                  type="button"
+                  onClick={() => setProductsOpen(!productsOpen)}
+                  aria-expanded={productsOpen}
+                  className="flex w-full items-center justify-between px-4 py-3.5 text-[15px] font-semibold text-primary"
                 >
-                  {l.label}
-                </Link>
+                  Product range
+                  <ChevronDown className={`h-4 w-4 transition-transform duration-300 ${productsOpen ? "" : "-rotate-90"}`} />
+                </button>
+                {productsOpen && (
+                  <div className="bg-white pb-2">
+                    {mobileProductLinks.map((l, i) => (
+                      <Link
+                        key={l.href}
+                        href={l.href}
+                        className={`block px-7 py-2.5 text-sm ${i === 0 ? "font-semibold text-primary" : "font-medium text-primary-deep"}`}
+                      >
+                        {l.label}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+              {mobileLinksAfter.map((l) => (
+                <Link key={l.href} href={l.href} className={mobileRow(l.href)}>{l.label}</Link>
               ))}
-              <p className="px-4 pb-1 pt-3 text-[11px] font-bold uppercase tracking-[0.14em] text-primary-deep">
-                More About Getmeds
-              </p>
-              {[...companyExplore, ...companyMore].filter((l) => l.href !== "/about-us").map((l) => (
-                <Link
-                  key={l.href + l.label}
-                  href={l.href}
-                  className="block rounded-xl px-4 py-2.5 text-sm font-medium text-ink-soft"
-                >
-                  {l.label}
-                </Link>
-              ))}
-              <Link
-                href="/contact-us"
-                className="block rounded-xl px-4 py-3 text-sm font-semibold text-ink-soft"
-              >
-                Contact Us
-              </Link>
-              <Link
-                href="/global-network"
-                className="block rounded-xl px-4 py-3 text-sm font-semibold text-ink-soft"
-              >
-                Global Network
-              </Link>
+              </div>
             </motion.nav>
           )}
         </AnimatePresence>

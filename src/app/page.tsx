@@ -3,6 +3,7 @@ import Image, { getImageProps } from "next/image";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { capabilities, stats } from "@/lib/data";
+import { fetchFeaturedPosts } from "@/lib/blogServer";
 import { getCatalogModel, productPath, resolveProduct } from "@/lib/catalogServer";
 import { Counter, Reveal, Stagger, StaggerItem } from "@/components/ui";
 import Faq from "@/components/Faq";
@@ -70,6 +71,7 @@ async function featuredProductLinks(brands: { brand: string; fallback: string }[
 export const revalidate = 3600;
 
 export default async function Home() {
+  const featuredPosts = await fetchFeaturedPosts().catch(() => []);
   const [pazogetHref, erpogetHref, idagetHref, sevelamedHref] = await featuredProductLinks([
     { brand: "PazoGet-200", fallback: "/product-range?category=oncology" },
     { brand: "ErpoGet", fallback: "/product-range?category=hematology" },
@@ -134,16 +136,17 @@ export default async function Home() {
               distributor, and retail pharmacy, delivering essential medicines, hospital therapies,
               and cancer treatments nationwide.
             </p>
-            <Reveal immediate delay={0.1} className="mt-9 flex flex-wrap items-center gap-4">
+            {/* phones: one line, Order Medicines first */}
+            <Reveal immediate delay={0.1} className="mt-9 flex items-center gap-3 md:gap-4">
               <Link
                 href="/product-range"
-                className="rounded-full border-2 border-black px-7 py-3 text-sm font-semibold text-black transition hover:bg-black/5"
+                className="whitespace-nowrap rounded-full border-2 border-black px-2 py-3 text-center text-[13px] font-semibold text-black transition hover:bg-black/5 max-md:flex-1 md:px-7 md:text-sm"
               >
                 View Products
               </Link>
               <Link
                 href="/order-medicines"
-                className="rounded-full border-2 border-primary bg-primary px-7 py-3 text-sm font-semibold text-white transition hover:brightness-95"
+                className="whitespace-nowrap rounded-full border-2 border-primary bg-primary px-2 py-3 text-center text-[13px] font-semibold text-white transition hover:brightness-95 max-md:order-first max-md:flex-1 md:px-7 md:text-sm"
               >
                 Order Medicines
               </Link>
@@ -181,8 +184,8 @@ export default async function Home() {
           </Reveal>
         </section>
 
-        {/* ================= Product image strip: four tiles, edge to edge ================= */}
-        <section className="grid grid-cols-4">
+        {/* ================= Product image strip: edge to edge; below lg a swipeable row with the next tile peeking in, lg+ four tiles ================= */}
+        <section className="scrollbar-none flex snap-x snap-mandatory overflow-x-auto lg:grid lg:snap-none lg:grid-cols-4 lg:overflow-visible">
           {[
             {
               src: "/images/pazopanib.jpeg",
@@ -229,19 +232,19 @@ export default async function Home() {
               key={i}
               href={img.href}
               aria-label={"caption" in img && img.caption ? `View ${img.caption.title}` : img.alt}
-              className="group relative block aspect-[2/3] overflow-hidden focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-inset focus-visible:ring-white/80"
+              className="group relative block aspect-[2/3] w-[68vw] shrink-0 snap-start overflow-hidden sm:w-[42vw] lg:w-auto focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-inset focus-visible:ring-white/80"
             >
-              <Image src={img.src} alt={img.alt} fill sizes="25vw" className="object-cover transition-transform duration-500 group-hover:scale-105" />
+              <Image src={img.src} alt={img.alt} fill sizes="(min-width:1024px) 25vw, (min-width:640px) 42vw, 68vw" className="object-cover transition-transform duration-500 group-hover:scale-105" />
               {"caption" in img && img.caption && (
-                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#0B5E8A]/70 via-[#0B5E8A]/30 to-transparent p-2 pt-10 text-white sm:p-4 sm:pt-16 lg:p-7 lg:pt-24">
+                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#0B5E8A]/70 via-[#0B5E8A]/30 to-transparent p-4 pt-14 text-white sm:pt-16 lg:p-7 lg:pt-24">
                   {/* desktop: one line per title; size scales with the tile so the longest name still fits */}
-                  <p className="font-display text-[11px] font-semibold leading-tight sm:text-base lg:whitespace-nowrap lg:text-[clamp(1rem,1.5vw,1.5rem)]">
+                  <p className="font-display text-base font-semibold leading-tight lg:whitespace-nowrap lg:text-[clamp(1rem,1.5vw,1.5rem)]">
                     {img.caption.title}
                   </p>
-                  <p className="mt-0.5 text-[9px] leading-snug text-white/90 sm:text-xs lg:mt-1 lg:text-sm">
+                  <p className="mt-0.5 text-xs leading-snug text-white/90 lg:mt-1 lg:text-sm">
                     {img.caption.subtitle}
                   </p>
-                  <p className="mt-1 hidden text-xs text-white/80 sm:block lg:mt-3 lg:text-[13px]">{img.caption.meta}</p>
+                  <p className="mt-1 text-[11px] text-white/80 sm:text-xs lg:mt-3 lg:text-[13px]">{img.caption.meta}</p>
                 </div>
               )}
             </Link>
@@ -250,18 +253,18 @@ export default async function Home() {
 
         {/* ================= Impact band: four trust signals splitting the full width ================= */}
         <section className="bg-[#1D9FDA] text-white">
-          <Reveal className="mx-auto grid max-w-7xl grid-cols-2 px-5 py-9 md:grid-cols-4 md:px-10 md:py-12">
+          <Reveal className="mx-auto grid max-w-7xl grid-cols-4 px-3 py-6 md:px-10 md:py-12">
             {stats.map((st, i) => (
               <div
                 key={st.label}
-                className={`px-4 py-4 text-center md:py-1 ${i % 2 === 1 ? "border-l border-white/25" : ""} ${i >= 2 ? "border-t border-white/25 md:border-t-0" : ""} ${i === 2 ? "md:border-l" : ""}`}
+                className={`px-1 py-1 text-center md:px-4 ${i > 0 ? "border-l border-white/25" : ""}`}
               >
                 <Counter
                   value={st.value}
                   suffix={st.suffix}
-                  className="font-display text-[2rem] font-semibold md:text-[2.6rem]"
+                  className="font-display text-[1.35rem] font-semibold sm:text-[1.75rem] md:text-[2.6rem]"
                 />
-                <p className="mt-1.5 text-balance text-sm leading-snug text-white/80">{st.label}</p>
+                <p className="mt-1 text-balance text-[10.5px] leading-snug text-white/85 sm:text-xs md:mt-1.5 md:text-sm md:text-white/80">{st.label}</p>
               </div>
             ))}
           </Reveal>
@@ -398,13 +401,17 @@ export default async function Home() {
         </section>
 
         {/* ================= Partnership: isometric steps ================= */}
-        <section className="overflow-hidden border-b border-[#e3edf5] bg-white">
-          <div className="mx-auto max-w-7xl md:px-10">
+        <section className="relative overflow-hidden bg-[#06283f]">
+          <Image src="/images/partnerwithus.png" alt="" fill sizes="100vw" className="object-cover object-top" />
+          {/* navy veil: the collage stays visible behind the section, light text stays readable on it */}
+          <div aria-hidden className="absolute inset-0 bg-[#06283f]/80" />
+          <div className="relative mx-auto max-w-7xl md:px-10">
             <PartnerSteps />
           </div>
         </section>
 
         {/* ================= Featured articles ================= */}
+        {featuredPosts.length > 0 && (
         <section>
           <div className="mx-auto max-w-7xl px-5 py-14 md:px-10 md:py-16">
             <Reveal>
@@ -414,10 +421,11 @@ export default async function Home() {
               </h2>
             </Reveal>
             <Reveal delay={0.1} className="mt-10">
-              <FeaturedArticles />
+              <FeaturedArticles posts={featuredPosts} />
             </Reveal>
           </div>
         </section>
+        )}
 
         {/* ================= FAQ: two-column structured ================= */}
         <section className="border-b border-white/20 bg-[#1D9FDA] text-white">
@@ -440,7 +448,7 @@ export default async function Home() {
               {/* cutout sits flush on the section's bottom edge (cancels the py-14 padding) */}
               <div className="relative -mb-14 mt-auto hidden aspect-square w-full max-w-[420px] lg:block">
                 <Image
-                  src="/images/faqsimage.png"
+                  src="/images/faq-team-member.png"
                   alt="Getmeds team member thinking about a question"
                   fill
                   sizes="420px"

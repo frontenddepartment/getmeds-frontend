@@ -157,7 +157,7 @@ export default function ServicesClient() {
               nationwide</span>
           </div>
           <div className="stat-item flex flex-col items-center px-6 py-2 border-r border-gray-100 last:border-0 reveal">
-            <span className="text-3xl md:text-4xl font-black bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent mb-2" data-target="500">500+</span>
+            <span className="text-3xl md:text-4xl font-black bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent mb-2" data-target="300">300+</span>
             <span className="text-gray-600 font-bold text-sm md:text-base leading-tight">Hospitals
               served</span>
           </div>
@@ -245,7 +245,7 @@ export default function ServicesClient() {
                   </div>
                   <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default">
                     <i className="fa-solid fa-circle-check text-[#1D9FDA] text-[10px]"></i>
-                    <span className="text-[11px] font-medium text-gray-600">500+ hospitals</span>
+                    <span className="text-[11px] font-medium text-gray-600">300+ hospitals</span>
                   </div>
                   <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default">
                     <i className="fa-solid fa-circle-check text-[#1D9FDA] text-[10px]"></i>
@@ -302,7 +302,7 @@ export default function ServicesClient() {
                 <div className="flex flex-wrap gap-2 xl:justify-end xl:max-w-[520px] xl:flex-shrink-0">
                   <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default">
                     <i className="fa-solid fa-circle-check text-[#1D9FDA] text-[10px]"></i>
-                    <span className="text-[11px] font-medium text-gray-600">500+ hospitals</span>
+                    <span className="text-[11px] font-medium text-gray-600">300+ hospitals</span>
                   </div>
                   <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-gray-200 shadow-sm hover:border-[#1D9FDA] hover:text-[#1D9FDA] hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-default">
                     <i className="fa-solid fa-circle-check text-[#1D9FDA] text-[10px]"></i>
@@ -321,7 +321,7 @@ export default function ServicesClient() {
                 <i className="fa-solid fa-hospital text-2xl mb-5 block icon-gradient"></i>
                 <h4 className="text-[13px] font-bold text-gray-900 mb-3 uppercase tracking-wider">Hospital
                   Partnerships &amp; Institutional Supply</h4>
-                <p className="text-sm text-gray-500 leading-relaxed">Trusted by 500+ Filipino hospitals across
+                <p className="text-sm text-gray-500 leading-relaxed">Trusted by 300+ Filipino hospitals across
                   public and private healthcare — with dedicated account managers, cold-chain oncology handling,
                   and urgent-response supply for ICU and critical care units. Formulary-ready documentation for
                   hospital pharmacy committees and specialty procurement for hard-to-source therapies.</p>

@@ -1,19 +1,27 @@
 "use client";
 
-import { businessSchema } from "@/lib/schema";
+import { aboutPageSchema, businessSchema } from "@/lib/schema";
 
 /*
- * Homepage-only business JSON-LD (Pharmacy + WebSite). A client component for the same
- * reason as FaqSchema: the JSON is server-rendered once in the HTML and not repeated in
- * the RSC payload.
+ * Business JSON-LD (Pharmacy + WebSite) for the homepage and, with an AboutPage node, for
+ * About Us. Client components for the same reason as FaqSchema: the JSON is server-rendered
+ * once in the HTML and not repeated in the RSC payload.
  */
-export default function BusinessSchema() {
+function SchemaScript({ schema }: { schema: object }) {
   return (
     <script
       type="application/ld+json"
       dangerouslySetInnerHTML={{
-        __html: JSON.stringify(businessSchema).replace(/</g, "\\u003c"),
+        __html: JSON.stringify(schema).replace(/</g, "\\u003c"),
       }}
     />
   );
+}
+
+export default function BusinessSchema() {
+  return <SchemaScript schema={businessSchema} />;
+}
+
+export function AboutPageSchema() {
+  return <SchemaScript schema={aboutPageSchema} />;
 }

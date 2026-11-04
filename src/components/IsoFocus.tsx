@@ -9,9 +9,18 @@ import Image from "next/image";
 import { useEffect, useRef } from "react";
 
 const IMAGES = [
-  "iso1.jpg", "iso2.JPG", "iso3.jpg", "iso4.jpg", "iso5.png", "iso6.png",
-  "iso7.jpg", "iso8.jpg", "iso9.png", "iso10.png", "iso11.JPG",
-].map((f) => `/images/aboutusiso/${f}`);
+  { file: "iso1.jpg", alt: "Getmeds team on stage at a Philippine Society of Anesthesiologists event" },
+  { file: "iso2.JPG", alt: "Getmeds team member speaking with a visitor at the anesthesia product line booth" },
+  { file: "iso3.jpg", alt: "Getmeds team at the 24th ASEAN Congress of Anesthesiologists in Manila" },
+  { file: "iso4.jpg", alt: "Getmeds team in front of the 24th ASEAN Congress of Anesthesiologists screen" },
+  { file: "iso5.png", alt: "Getmeds team together at a medical convention in Pampanga" },
+  { file: "iso6.png", alt: "Getmeds team member speaking with two visitors at a Getmeds booth" },
+  { file: "iso7.jpg", alt: "Getmeds logo on the main stage screen at a hematology convention" },
+  { file: "iso8.jpg", alt: "Getmeds team member showing visitors around a medicines booth" },
+  { file: "iso9.png", alt: "Getmeds team gathered in front of their booth at a medical congress" },
+  { file: "iso10.png", alt: "Getmeds team in front of the Philippine Society of Anesthesiologists stage" },
+  { file: "iso11.JPG", alt: "Getmeds representatives on stage beside a Philippine Society of Anesthesiologists banner" },
+].map(({ file, alt }) => ({ src: `/images/aboutusiso/${file}`, alt }));
 
 const CONFIG = {
   loop: 22,          // seconds for one full cycle through all photos
@@ -101,7 +110,7 @@ export default function IsoFocus({ className = "" }: { className?: string }) {
   return (
     <div ref={rootRef} className={`iso-focus ${className}`} aria-label="Photos of the Getmeds team" role="img">
       <div ref={stageRef} className="iso-focus__stage">
-        {IMAGES.map((src, i) => (
+        {IMAGES.map(({ src, alt }, i) => (
           <div
             key={src}
             ref={(el) => {
@@ -109,7 +118,7 @@ export default function IsoFocus({ className = "" }: { className?: string }) {
             }}
             className="iso-focus__card"
           >
-            <Image src={src} alt="" fill sizes="(min-width: 1024px) 420px, 70vw" className="object-cover" />
+            <Image src={src} alt={alt} fill sizes="(min-width: 1024px) 420px, 70vw" className="object-cover" />
           </div>
         ))}
       </div>

@@ -106,13 +106,13 @@ export default function GlobalPresenceClient() {
           })()}
         </div>
         <div className="px-1">
-          <h1 className="ca-anim ca-up text-xl font-bold leading-tight mb-2 tracking-tight">
+          <h2 className="ca-anim ca-up text-xl font-bold leading-tight mb-2 tracking-tight">
             <span data-json="hero.headingLine1" className="text-gray-900">Global Healthcare </span>
             <span data-json="hero.headingAccent"
               className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent leading-tight tracking-tight">
               Without Borders
             </span>
-          </h1>
+          </h2>
           <p data-json="hero.description" className="ca-anim ca-up ca-d2 text-gray-600 text-xs mb-3 leading-relaxed font-normal text-left">
             Getmeds global network spans continents to close the healthcare gap — sourcing internationally recognized medicines and expanding access for the patients and partners who depend on us.
           </p>

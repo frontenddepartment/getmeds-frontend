@@ -10,11 +10,12 @@ import { useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { therapeuticAreas } from "@/lib/data";
 
-// A real Getmeds pack per area, cropped from its catalogue photo (public/images/areas/packs/<slug>.png):
-// oncology PacliGet, hematology Bortemed, anti-infectives VancoGet, endocrinology DanaGet, orthopedic ZoloGet,
+// A real Getmeds pack per area, trimmed from its photo in public/images/products to public/images/areas/product-packs/<slug>.png.
+// The image optimizer caches by address, so replacing a picture needs a new file or folder name, not just an overwrite:
+// oncology PacliGet, hematology IdaGet, anti-infectives VancoGet, endocrinology DanaGet, orthopedic ZoloGet,
 // cardiology AmloGet, neuro-oncology TemoGet, respiratory CetriGet, nephrology SevelaMed, pain Tradmin,
 // rheumatology DexGet.
-const areaImage = (slug: string) => `/images/areas/packs/${slug}.png`;
+const areaImage = (slug: string) => `/images/areas/product-packs/${slug}.png`;
 
 // One colour per category (the circle); the card is a light tint of the same colour.
 const AREA_COLORS: Record<string, string> = {
@@ -76,7 +77,7 @@ export default function AreaSlider() {
         {/* two rows that slide sideways; column width leaves the 5th column half visible on desktop */}
         <div
           ref={trackRef}
-          className="mt-8 grid snap-x snap-mandatory auto-cols-[72%] grid-flow-col grid-rows-2 gap-x-5 gap-y-3 overflow-x-auto pb-2 [scrollbar-width:none] sm:auto-cols-[calc((100%-2.5rem)/2.5)] md:mt-10 lg:auto-cols-[calc((100%-5rem)/4.5)] [&::-webkit-scrollbar]:hidden"
+          className="mt-8 grid snap-x snap-mandatory auto-cols-[calc((100%-0.75rem)/2.2)] grid-flow-col max-[359px]:auto-cols-[calc((100%-0.75rem)/1.8)] grid-rows-2 gap-x-3 gap-y-3 overflow-x-auto pb-2 [scrollbar-width:none] sm:auto-cols-[calc((100%-2.5rem)/2.5)] sm:gap-x-5 md:mt-10 lg:auto-cols-[calc((100%-5rem)/4.5)] [&::-webkit-scrollbar]:hidden"
         >
           {therapeuticAreas.map((a) => {
             const color = AREA_COLORS[a.slug] ?? FALLBACK_COLOR;
@@ -85,24 +86,24 @@ export default function AreaSlider() {
             <Link
               key={a.slug}
               href="/product-range"
-              className="group relative flex h-[104px] snap-start items-center overflow-hidden rounded-2xl p-4 text-black transition hover:brightness-[0.98]"
+              className="group relative flex h-[76px] snap-start items-center overflow-hidden rounded-xl p-2.5 text-black transition hover:brightness-[0.98] sm:h-[104px] sm:rounded-2xl sm:p-4"
               style={{ backgroundColor: `color-mix(in srgb, ${color} 16%, white)` }}
             >
               {/* faint halo + coloured circle with the area's product */}
               <span aria-hidden className="absolute -bottom-12 -right-12 h-36 w-36 rounded-full opacity-[0.08]" style={{ backgroundColor: color }} />
               <span aria-hidden className="absolute -bottom-4 -right-4 h-28 w-28 rounded-full opacity-[0.1]" style={{ backgroundColor: color }} />
               {/* coloured circle with the area's pack (a transparent cut-out) rising out of it */}
-              <div aria-hidden className="absolute bottom-3 right-4 h-[64px] w-[64px] rounded-full" style={{ backgroundColor: color }}>
+              <div aria-hidden className="absolute bottom-[18px] right-2 h-10 w-10 rounded-full sm:bottom-3 sm:right-4 sm:h-[64px] sm:w-[64px]" style={{ backgroundColor: color }}>
                 <Image
                   src={areaImage(a.slug)}
                   alt=""
                   fill
                   sizes="130px"
-                  className="-translate-y-[14%] scale-[1.3] object-contain drop-shadow-[0_8px_10px_rgba(6,40,64,0.35)] transition duration-300 group-hover:-translate-y-[18%] group-hover:scale-[1.37]"
+                  className="-translate-y-[8%] scale-[1.02] object-contain drop-shadow-[0_6px_8px_rgba(6,40,64,0.3)] transition duration-300 group-hover:-translate-y-[11%] group-hover:scale-[1.07]"
                 />
               </div>
 
-              <h3 className="font-display relative max-w-[60%] text-base font-semibold leading-snug">{a.name}</h3>
+              <h3 className="font-display relative max-w-[66%] text-xs font-semibold leading-snug sm:max-w-[60%] sm:text-base">{a.name}</h3>
             </Link>
             );
           })}

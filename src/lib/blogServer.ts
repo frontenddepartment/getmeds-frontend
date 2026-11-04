@@ -260,7 +260,7 @@ async function fetchMediaImages(ids: number[]): Promise<Map<number, NonNullable<
     batches.map(async (batch) => {
       try {
         const res = await fetch(
-          `${WP_API_ROOT}/wp-json/wp/v2/media?include=${batch.join(',')}&per_page=100&_fields=id,source_url,alt_text,media_details.sizes`,
+          `${WP_API_ROOT}/wp-json/wp/v2/media?include=${batch.join(',')}&per_page=100&_fields=id,source_url,alt_text,media_details`, // this WordPress drops a nested media_details.sizes
           { next: { revalidate: REVALIDATE_SECONDS } }
         );
         if (!res.ok) throw new Error(`WordPress API returned status ${res.status}`);
@@ -310,6 +310,11 @@ export async function fetchBlogIndex(): Promise<BlogIndexPost[]> {
         ...(p.mediaId && images.get(p.mediaId) ? { image: images.get(p.mediaId) } : {}),
       };
     });
+}
+
+/** The newest posts: the /blog featured carousel (FEATURED in BlogIndex.tsx) and the homepage's Featured Articles. */
+export async function fetchFeaturedPosts(): Promise<BlogIndexPost[]> {
+  return (await fetchBlogIndex()).slice(0, 3);
 }
 
 /** Posts for the /blog crawl list: everything except posts that redirect to another one. */

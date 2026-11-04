@@ -24,6 +24,8 @@ export const routes: SiteRoute[] = [
   // Main — 1.0
   { path: "/", title: "Home", description: "Life-saving medicines for patients, doctors, pharmacies and hospitals in the Philippines.", priority: 1.0, changefreq: "daily" },
   { path: "/product-range", title: "Product Range", description: "Oncology, hematology, anti-infectives, endocrinology and essential medicines.", priority: 1.0, changefreq: "daily" },
+  { path: "/prescription-medicines", title: "Prescription Medicines", description: "Browse Getmeds prescription medicines by category, from oncology and hematology to antibiotics, diabetes and heart medicines.", priority: 1.0, changefreq: "weekly" },
+  { path: "/conditions", title: "Conditions A–Z", description: "Conditions grouped by category, with the Getmeds medicines used to treat them.", priority: 1.0, changefreq: "weekly" },
   { path: "/order-medicines", title: "Order Medicines", description: "Buy prescription medicines online from Getmeds, an FDA-licensed importer, wholesaler, distributor and retail pharmacy. Delivery across the Philippines.", priority: 1.0, changefreq: "weekly" },
   { path: "/patient-assistance-program", title: "Patient Assistance Program", description: "Price quotations for DSWD, PCSO, OP and OVP Guarantee Letters.", priority: 1.0, changefreq: "weekly" },
   { path: "/services", title: "Our Services", description: "Importation, wholesale distribution, cold-chain logistics and patient programs.", priority: 1.0, changefreq: "monthly" },
@@ -54,7 +56,7 @@ export const pageImages: Record<string, { src: string; alt: string }[]> = {
     { src: "/images/imagetwo.png", alt: "Getmeds product range — oncology, hematology, essential medicines and medical supplies" },
     { src: "/images/pazopanibfeatured.jpeg", alt: "PazoGet-200 (Pazopanib 200 mg) film-coated tablets by Getmeds" },
     { src: "/images/capabilities-original.png", alt: "Getmeds team at the CPHI Japan international pharmaceutical expo, April 2026" },
-    { src: "/images/faqsimage.png", alt: "Getmeds team member thinking about a question" },
+    { src: "/images/faq-team-member.png", alt: "Getmeds team member thinking about a question" },
     { src: "/images/paplogo.png", alt: "Patient Assistance Program" },
     { src: "/images/globalnetwork.webp", alt: "Global Network" },
     { src: "/images/articles/who-wipo-igc.jpg", alt: "WHO and partners discuss governance of traditional medicine knowledge in the AI era at WIPO-IGC" },

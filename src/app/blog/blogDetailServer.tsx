@@ -76,6 +76,12 @@ export async function BlogDetailServerPage({ routeSlug, sp }: { routeSlug: strin
   const post = raw ? postSeo(raw) : null;
   const news = raw && post?.slug && post.title ? toNewsItem(raw) : null;
   const canonical = post ? `${DOMAIN}/blog/${post.slug}` : '';
+  // WordPress dates have no zone: prefer the *_gmt fields (UTC), else treat the local date as Manila time
+  const wpDate = (gmt: unknown, local: unknown) =>
+    gmt ? `${String(gmt).replace(/Z$/, '')}Z` : local ? `${String(local)}+08:00` : '';
+  const r = (raw ?? {}) as Record<string, unknown>;
+  const published = wpDate(r.date_gmt, r.date);
+  const modified = wpDate(r.modified_gmt, r.modified);
   const jsonLd = news && post
     ? {
         '@context': 'https://schema.org',
@@ -83,7 +89,16 @@ export async function BlogDetailServerPage({ routeSlug, sp }: { routeSlug: strin
         headline: post.title,
         description: post.description,
         ...(post.image ? { image: post.image } : {}),
-        ...(post.date ? { datePublished: post.date } : {}),
+        ...(published ? { datePublished: published } : {}),
+        ...(modified ? { dateModified: modified } : {}),
+        // Posts are published under the company name, not a named writer
+        author: { '@type': 'Organization', name: 'Getmeds Philippines', url: DOMAIN },
+        publisher: {
+          '@type': 'Organization',
+          '@id': `${DOMAIN}/#organization`,
+          name: 'Getmeds Philippines',
+          logo: { '@type': 'ImageObject', url: `${DOMAIN}/images/getmeds-logo.png` },
+        },
         url: canonical,
         mainEntityOfPage: canonical,
       }
