@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { CircleAlert } from "lucide-react";
 import {
-  CategoryCard, ConditionChips, FaqGrid, HubBreadcrumb, HubHeading, HubPage, HubSectionTitle, OrderFaqLink,
+  CategoryCard, ConditionChips, FaqGrid, HubBreadcrumb, HubHeading, HubPage, HubSectionTitle, OrderFaqLink, RibbonMarquee,
 } from "@/components/CatalogueHub";
 import FaqSchema from "@/components/FaqSchema";
 import { getCatalogModel } from "@/lib/catalogServer";
@@ -25,11 +25,13 @@ export default async function PrescriptionMedicinesPage() {
       <HubPage>
         <HubBreadcrumb trail={[{ label: "Home", href: "/" }, { label: "Order medicines", href: "/order-medicines" }, { label: "Prescription medicines" }]} />
         <HubHeading
+          wide
           title="Prescription Medicines"
           text="Prescription medicines by category, from oncology and hematology to antibiotics, diabetes, heart and kidney medicines, for patients, doctors, pharmacies and hospitals across the Philippines."
         />
+        <RibbonMarquee />
 
-        <p className="mt-6 flex items-start gap-2.5 rounded-3xl border border-[#f3c9c9] bg-[#fdf1f0] px-4 py-3 text-sm text-[#b00020]">
+        <p className="mt-6 flex items-start gap-2.5 rounded-xl border border-[#f3c9c9] bg-[#fdf1f0] px-4 py-3 text-sm text-[#b00020]">
           <CircleAlert aria-hidden className="mt-0.5 h-4 w-4 shrink-0" />
           Patients need a valid prescription to order these medicines. Doctors, hospitals, clinics and pharmacies order through a verified partner account.
         </p>

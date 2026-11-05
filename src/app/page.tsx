@@ -13,6 +13,7 @@ import HeroTagline from "@/components/HeroTagline";
 import PortfolioMorph from "@/components/PortfolioMorph";
 import AreaSlider from "@/components/AreaSlider";
 import PartnerSteps from "@/components/PartnerSteps";
+import CustomerReviews from "@/components/CustomerReviews";
 import CapabilityList from "@/components/CapabilityList";
 import CapabilitiesWindow from "@/components/CapabilitiesWindow";
 import FeaturedArticles from "@/components/FeaturedArticles";
@@ -410,10 +411,13 @@ export default async function Home() {
           </div>
         </section>
 
+        {/* ================= Customer reviews ================= */}
+        <CustomerReviews />
+
         {/* ================= Featured articles ================= */}
         {featuredPosts.length > 0 && (
         <section>
-          <div className="mx-auto max-w-7xl px-5 py-14 md:px-10 md:py-16">
+          <div className="mx-auto max-w-7xl px-5 pb-14 pt-10 md:px-10 md:pb-16 md:pt-12">
             <Reveal>
               <Label>Featured Articles</Label>
               <h2 className="font-display mt-5 text-3xl font-medium leading-tight text-primary-deep md:text-[2.5rem]">

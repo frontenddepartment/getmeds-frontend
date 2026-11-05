@@ -152,15 +152,15 @@ export default function Navbar() {
                     {dd === "products" && (
                       <div>
                         <motion.div variants={itemVar} className="flex items-center justify-between gap-4">
-                          <Link href="/prescription-medicines" className="text-[12px] font-bold uppercase tracking-[0.06em] text-primary transition-colors hover:text-primary-deep">
+                          <Link href="/prescription-medicines" className="text-[15px] font-semibold text-primary transition-colors hover:text-primary-deep">
                             Prescription medicines →
                           </Link>
-                          <span className="text-[12px] text-ink-soft">Category (bold) · conditions underneath</span>
+                          <span className="text-[12px] text-ink-soft">Category · conditions underneath</span>
                         </motion.div>
                         <div className="mt-3 grid grid-cols-3 gap-x-6 gap-y-5">
                           {productMenu.map((cat) => (
                             <motion.div key={cat.name} variants={itemVar}>
-                              <Link href={cat.href} className="font-display text-[15px] font-bold text-primary-deep transition-colors hover:text-primary">
+                              <Link href={cat.href} className="font-display text-[15px] font-semibold text-black transition-colors hover:text-primary">
                                 {cat.name}
                               </Link>
                               <ul className="mt-1.5 space-y-1">
@@ -248,7 +248,7 @@ export default function Navbar() {
                   >
                     {dd === "products" ? (
                       <>
-                        <p className="text-[12px] font-bold uppercase tracking-[0.06em] text-ink-soft">More</p>
+                        <p className="text-[15px] font-semibold text-black">More</p>
                         <ul className="mt-3 space-y-3 text-sm font-medium text-primary-deep">
                           {otherRanges.map((r) => (
                             <li key={r.slug}>
