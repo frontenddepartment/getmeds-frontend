@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import {
@@ -11,6 +11,10 @@ import { contact } from "@/lib/data";
 import { socials } from "@/components/SocialIcons";
 import { Reveal } from "@/components/ui";
 import PrivacyPolicyModal from "@/components/PrivacyPolicyModal";
+import { getApiUrl } from "@/lib/api";
+import { submitInquiry } from "@/lib/offlineInquiry";
+import { Turnstile, useTurnstile } from "@/lib/turnstile";
+import { QueuedInquiryNotice } from "@/lib/QueuedInquiryNotice";
 
 const channels = [
   {
@@ -51,6 +55,50 @@ const subjects = ["General Inquiry", "Customer Support", "Sales & Pricing", "HR 
 export default function ContactPage() {
   const [sent, setSent] = useState(false);
   const [policyOpen, setPolicyOpen] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState("");
+  const turnstile = useTurnstile();
+
+  // Sends the message to the backend, which logs it to the Contact Us sheet and
+  // emails the team. "Message received!" only shows once the server confirms.
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (sending) return;
+    const form = e.currentTarget;
+    const data = new FormData(form);
+    const value = (k: string) => String(data.get(k) ?? "").trim();
+    setSending(true);
+    setError("");
+    try {
+      const submission = await submitInquiry(
+        {
+          turnstileToken: turnstile.token,
+          inquiryType: "Contact Us",
+          fullName: value("name"),
+          email: value("email"),
+          phone: value("phone"),
+          subject: value("subject"),
+          message: value("message"),
+          files: [],
+        },
+        { endpoint: getApiUrl(), returnPath: "/contact-us" },
+      );
+      // Tokens are single-use, so the widget is replaced whatever the outcome.
+      turnstile.reset();
+      if (submission.status === "failed") throw new Error(submission.error);
+      form.reset();
+      // A queued (offline) inquiry is reported by QueuedInquiryNotice instead.
+      if (submission.status === "sent") setSent(true);
+    } catch (err) {
+      console.error(err);
+      setError(
+        (err instanceof Error && err.message) ||
+          `Your message could not be sent. Please try again, or email ${contact.email}.`,
+      );
+    } finally {
+      setSending(false);
+    }
+  };
 
   return (
     <>
@@ -206,10 +254,7 @@ export default function ContactPage() {
               ) : (
                 <form
                   className="mt-8 grid gap-4 sm:grid-cols-2"
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    setSent(true);
-                  }}
+                  onSubmit={handleSubmit}
                 >
                   {/* 2x2: Full Name | Email, Phone | Subject; then Message full width */}
                   {[
@@ -302,8 +347,20 @@ export default function ContactPage() {
                       </span>
                     </label>
                   </div>
-                  <button type="submit" className="inline-flex items-center justify-center rounded-full bg-[#1D9FDA] px-7 py-3.5 font-semibold text-white transition hover:bg-[#1D9FDA]/90 sm:col-span-2">
-                    Submit
+                  <div className="sm:col-span-2">
+                    <Turnstile turnstile={turnstile} className="w-full max-w-full overflow-x-auto" />
+                  </div>
+                  {error && (
+                    <p role="alert" className="text-[13px] font-medium text-[#E5484D] sm:col-span-2">
+                      {error}
+                    </p>
+                  )}
+                  <button
+                    type="submit"
+                    disabled={sending || (turnstile.enabled && !turnstile.token)}
+                    className="inline-flex items-center justify-center rounded-full bg-[#1D9FDA] px-7 py-3.5 font-semibold text-white transition hover:bg-[#1D9FDA]/90 disabled:cursor-not-allowed disabled:opacity-60 sm:col-span-2"
+                  >
+                    {sending ? "Sending..." : "Submit"}
                   </button>
                 </form>
               )}
@@ -313,6 +370,7 @@ export default function ContactPage() {
         </div>
       </section>
       <PrivacyPolicyModal open={policyOpen} onClose={() => setPolicyOpen(false)} />
+      <QueuedInquiryNotice />
     </>
   );
 }
