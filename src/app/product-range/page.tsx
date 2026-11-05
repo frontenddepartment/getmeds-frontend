@@ -1,22 +1,28 @@
-import type { Metadata } from 'next';
-import { CatalogRoutePage } from '@/components/CatalogRoutePages';
-import { getCatalogModel } from '@/lib/catalogServer';
-import { allProductsSeo } from '@/lib/catalogSeo';
-import { withVidrysSeo } from '@/lib/vidrys/seoOverrides';
+import ProductRangeClient, { type ProductLink } from "./ProductRangeClient";
+import ProductRangeHub from "./ProductRangeHub";
+import { getCatalogModel, productPath } from "@/lib/catalogServer";
 
-// Renders getmeds_frontend/src/pages/cancer-medicines.tsx; head/body as prerendered for
-// /product-range by scripts/prerender-slugs.cjs.
+// Same cadence as the product pages the cards link to.
 export const revalidate = 3600;
 
-async function baseGenerateMetadata(): Promise<Metadata> {
-  return allProductsSeo(await getCatalogModel()).metadata;
-}
+/* /product-range is the hub. Footer, sitemap and search links carry ?category=, ?cat= or ?q=,
+   which keep opening the searchable product list.
+   Server wrapper: looks up each product's real page (e.g. /cancer-medicines/<slug>) and its
+   Studio photo in the catalogue, so cards link straight to the page and show the real pack. */
+export default async function ProductRangePage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+  const { q, cat, category } = await searchParams;
+  const model = await getCatalogModel();
+  if (!q && !cat && !category) return <ProductRangeHub model={model} />;
 
-export default async function ProductRangePage() {
-  return <CatalogRoutePage seo={allProductsSeo(await getCatalogModel())} />;
-}
-
-// The page's own metadata, with any Vidrys SEO fix for this path on top.
-export async function generateMetadata(...args: Parameters<typeof baseGenerateMetadata>): Promise<Metadata> {
-  return withVidrysSeo(await '/product-range', await baseGenerateMetadata(...args));
+  const productLinks: Record<string, ProductLink> = {};
+  // Each brand's conditions, across all its strengths, for the sidebar's subcategories
+  const productConditions: Record<string, string[]> = {};
+  for (const p of model.products) {
+    const brand = p.brandName?.trim().toLowerCase();
+    if (brand && p.slug && !productLinks[brand]) {
+      productLinks[brand] = { href: productPath(p), image: p.imageUrl };
+    }
+    if (brand) productConditions[brand] = [...new Set([...(productConditions[brand] ?? []), ...p.conditions])];
+  }
+  return <ProductRangeClient productLinks={productLinks} productConditions={productConditions} />;
 }

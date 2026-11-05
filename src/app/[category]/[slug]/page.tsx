@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { notFound, redirect } from 'next/navigation';
 import { CatalogRoutePage, ProductRoutePage } from '@/components/CatalogRoutePages';
+import ConditionHub from '@/components/ConditionHub';
 import {
   getCatalogModel,
   isListingPrefix,
@@ -8,6 +9,7 @@ import {
   resolveProduct,
   productPath,
   type CatalogModel,
+  type ConditionGroup,
 } from '@/lib/catalogServer';
 import { conditionSeo, productSeo, type CatalogPageSeo } from '@/lib/catalogSeo';
 import { NOT_FOUND_METADATA } from '@/lib/notFoundMetadata';
@@ -24,7 +26,7 @@ interface Props {
 }
 
 type Resolved =
-  | { kind: 'condition'; seo: CatalogPageSeo }
+  | { kind: 'condition'; seo: CatalogPageSeo; group?: ConditionGroup }
   | { kind: 'product'; seo: CatalogPageSeo | null; redirectTo?: string }
   | { kind: 'none' };
 
@@ -41,7 +43,7 @@ function resolve(model: CatalogModel, category: string, slug: string): Resolved 
   if (!isListingPrefix(model, category)) return { kind: 'none' };
   const condition = resolveCondition(model, slug);
   if (condition) {
-    return { kind: 'condition', seo: conditionSeo(model, condition.group, condition.name, `/${category}/${slug}`) };
+    return { kind: 'condition', group: condition.group, seo: conditionSeo(model, condition.group, condition.name, `/${category}/${slug}`) };
   }
   if (category === 'conditions') return { kind: 'none' };
   // Catalogue unavailable (Sanity unreachable): let the client page try on its own rather
@@ -64,9 +66,13 @@ async function baseGenerateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function CatalogSlugPage({ params, searchParams }: Props) {
   const { category, slug } = await params;
-  const r = resolve(await getCatalogModel(), category, slug);
+  const model = await getCatalogModel();
+  const r = resolve(model, category, slug);
   if (r.kind === 'none') notFound();
-  if (r.kind === 'condition') return <CatalogRoutePage seo={r.seo} />;
+  if (r.kind === 'condition') {
+    // A slug on the old static list with no products behind it keeps the plain listing.
+    return r.group ? <ConditionHub model={model} group={r.group} seo={r.seo} /> : <CatalogRoutePage seo={r.seo} />;
+  }
   if (r.redirectTo) {
     // Any other URL a product is reachable at (another folder, /product-range/<slug>, a
     // brand-name slug...) goes to its one real URL, as product-detail.tsx did with

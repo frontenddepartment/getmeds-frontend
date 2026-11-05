@@ -46,7 +46,7 @@
       "number": "02",
       "label": "Reach",
       "tagline": "How our medicines get to every corner of Filipino healthcare.",
-      "stats": "10,000+ pharmacies · 500+ hospitals · Nationwide reach · Government bidding expertise",
+      "stats": "10,000+ pharmacies · 300+ hospitals · Nationwide reach · Government bidding expertise",
       "services": [
         {
           "id": "precision-supply-chain",
@@ -73,13 +73,13 @@
       "number": "03",
       "label": "Who We Serve",
       "tagline": "The patients, doctors, and hospitals we're built for.",
-      "stats": "500+ hospitals · Filipino oncologists, hematologists, anesthesiologists · Compassionate access for rare disease patients",
+      "stats": "300+ hospitals · Filipino oncologists, hematologists, anesthesiologists · Compassionate access for rare disease patients",
       "services": [
         {
           "id": "hospital-partnerships",
           "icon": "fa-solid fa-hospital",
           "title": "Hospital Partnerships & Institutional Supply",
-          "description": "Trusted by 500+ Filipino hospitals across public and private healthcare — with dedicated account managers, cold-chain oncology handling, and urgent-response supply for ICU and critical care units. Formulary-ready documentation for hospital pharmacy committees and specialty procurement for hard-to-source therapies."
+          "description": "Trusted by 300+ Filipino hospitals across public and private healthcare — with dedicated account managers, cold-chain oncology handling, and urgent-response supply for ICU and critical care units. Formulary-ready documentation for hospital pharmacy committees and specialty procurement for hard-to-source therapies."
         },
         {
           "id": "doctor-support",

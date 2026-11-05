@@ -1,11 +1,11 @@
 import { buildSitemapIndexXml } from '@/lib/sitemapData';
 
-// Port of the sitemap.xml that scripts/generate-sitemap.cjs wrote into public/ on every build;
-// regenerated from the same sources at most once a day.
+// Sitemap index over category-, product- and blog-sitemap.xml (the same index the live site serves).
+// robots.txt points here and at image-sitemap.xml.
 export const revalidate = 86400;
 
-export async function GET() {
-  return new Response(await buildSitemapIndexXml(), {
+export function GET() {
+  return new Response(buildSitemapIndexXml(), {
     headers: { 'Content-Type': 'application/xml; charset=utf-8' },
   });
 }

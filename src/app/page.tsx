@@ -1,118 +1,469 @@
-import type { Metadata } from 'next';
-import HomeClient, { type HeroSlideImage } from './HomeClient';
-import { getCategories, getCategoryImages, getHeroSlides, type CategoryImageLink } from '@/lib/queries';
-import { canonicalSiteLink } from '@/lib/seo-config';
-import type { Category } from '@/types/sanity';
-import { withVidrysSeo } from '@/lib/vidrys/seoOverrides';
-import { HOME_FAQ_JSON_LD } from '@/lib/homeFaqs';
+import type { Metadata } from "next";
+import Image, { getImageProps } from "next/image";
+import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
+import { capabilities, stats } from "@/lib/data";
+import { fetchFeaturedPosts } from "@/lib/blogServer";
+import { getCatalogModel, productPath, resolveProduct } from "@/lib/catalogServer";
+import { Counter, Reveal, Stagger, StaggerItem } from "@/components/ui";
+import Faq from "@/components/Faq";
+import FaqSchema from "@/components/FaqSchema";
+import BusinessSchema from "@/components/BusinessSchema";
+import HeroTagline from "@/components/HeroTagline";
+import PortfolioMorph from "@/components/PortfolioMorph";
+import AreaSlider from "@/components/AreaSlider";
+import PartnerSteps from "@/components/PartnerSteps";
+import CustomerReviews from "@/components/CustomerReviews";
+import CapabilityList from "@/components/CapabilityList";
+import CapabilitiesWindow from "@/components/CapabilitiesWindow";
+import FeaturedArticles from "@/components/FeaturedArticles";
 
-// The hero slides are fetched here so the first slide's picture is in the HTML (it's the
-// page's main picture for PageSpeed). The page is rebuilt in the background at most every
-// 5 minutes, so a hero change in Sanity shows up within that window.
-export const revalidate = 300;
-
-async function loadHeroSlides(): Promise<HeroSlideImage[] | null> {
-  try {
-    // The query returns the single "Home Hero Background" document; getHeroSlides() is typed
-    // as an array for the browser hook's sake.
-    const doc = (await getHeroSlides()) as unknown as { images?: HeroSlideImage[] } | null;
-    if (!doc?.images?.length) return null;
-    // Same canonical-link rewrite the browser applies, so the data embedded in the HTML
-    // never carries a www.getmeds.ph address either.
-    return doc.images.map((s) => (s.link ? { ...s, link: canonicalSiteLink(s.link) } : s));
-  } catch (err) {
-    // Built-in fallback slides render instead; the browser fetch still tries again.
-    console.error('[home] Failed to load hero slides:', err);
-    return null;
-  }
-}
-
-// The "Therapeutic areas" section's two lists, fetched here so its cards and category links
-// are in the HTML Google reads, not gray placeholders filled in after load. Either one failing
-// leaves that list to the browser fetch, which is how the section worked before.
-async function loadTherapeuticAreas(): Promise<{
-  categoryImages: CategoryImageLink[] | null;
-  categories: Category[] | null;
-}> {
-  const [categoryImages, categories] = await Promise.all([
-    getCategoryImages().catch((err) => {
-      console.error('[home] Failed to load featured categories:', err);
-      return null;
-    }),
-    getCategories().catch((err) => {
-      console.error('[home] Failed to load categories:', err);
-      return null;
-    }),
-  ]);
-  return { categoryImages, categories };
-}
-
-// Title, description, canonical and OG tags copied from getmeds_frontend/index.html.
-const TITLE = 'Getmeds | Global Pharmaceutical Company';
-const DESCRIPTION =
-  'Getmeds is an FDA-licensed pharmaceutical importer, wholesale distributor, supplier, and retail pharmacy in the Philippines. Order medicines online.';
-
-const baseMetadata: Metadata = {
-  title: { absolute: TITLE },
-  description: DESCRIPTION,
-  alternates: { canonical: 'https://getmeds.ph/' },
-  openGraph: {
-    url: 'https://getmeds.ph/',
-    title: TITLE,
-    description: DESCRIPTION,
-    images: [
-      {
-        // The Getmeds logo, not the generated "Life-Saving Medicines" card:
-        // the homepage share image should show who the site is.
-        url: 'https://getmeds.ph/assets/og-logo.jpg',
-        width: 1200,
-        height: 630,
-        alt: 'Getmeds Philippines',
-      },
-    ],
-    type: 'website',
-    siteName: 'Getmeds Philippines',
-  },
-};
-
-// The WebSite JSON-LD block index.html carried in addition to the site-wide Organization one
-// (which the root layout already renders).
-const WEBSITE_JSON_LD = {
-  '@context': 'https://schema.org',
-  '@type': 'WebSite',
-  '@id': 'https://getmeds.ph/#website',
-  name: 'Getmeds Philippines',
-  alternateName: 'Getmeds',
-  url: 'https://getmeds.ph/',
-  inLanguage: 'en-PH',
-  publisher: { '@id': 'https://getmeds.ph/#organization' },
-};
-
-export default async function Page() {
-  const [initialHeroSlides, therapeutic] = await Promise.all([loadHeroSlides(), loadTherapeuticAreas()]);
+/* Quiet left-aligned section label, benchmark style */
+function Label({ children }: { children: React.ReactNode }) {
   return (
-    <>
-      <script
-        type="application/ld+json"
-        id="jsonld-website"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(WEBSITE_JSON_LD) }}
-      />
-      {/* FAQPage block built from the same list the FAQ accordion renders. */}
-      <script
-        type="application/ld+json"
-        id="jsonld-faq"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(HOME_FAQ_JSON_LD).replace(/</g, '\\u003c') }}
-      />
-      <HomeClient
-        initialHeroSlides={initialHeroSlides}
-        initialCategoryImages={therapeutic.categoryImages}
-        initialCategories={therapeutic.categories}
-      />
-    </>
+    <p className="text-[11px] font-bold uppercase tracking-[0.24em] text-primary">
+      <span className="mr-2 text-primary">•</span>
+      {children}
+    </p>
   );
 }
 
-// The page's own metadata, with any Vidrys SEO fix for this path on top.
-export function generateMetadata(): Promise<Metadata> {
-  return withVidrysSeo('/', baseMetadata);
+const heroImage = { alt: "", fill: true, priority: true, sizes: "100vw" } as const;
+const { props: heroDesktop } = getImageProps({ ...heroImage, src: "/images/herosectionimage.png" });
+const { props: heroMobile } = getImageProps({ ...heroImage, src: "/images/mobileherosec.png" });
+
+/* Who we are: three photo links beside the story */
+const whoWeAreLinks = [
+  { href: "/ungc", src: "/images/whoweare1.png", alt: "Getmeds at the UN Global Compact", label: "UN Global Compact", cta: "SDG Commitments" },
+  { href: "/patient-assistance-program", src: "/images/whoweare22.png", alt: "Getmeds Patient Assistance Program", label: "Patient Assistance Program", cta: "Access to treatment" },
+  { href: "/careers", src: "/images/whoweare-careers-2.jpg", alt: "Getmeds team", label: "Careers", cta: "Join our team" },
+];
+
+const marqueeItems = [
+  "FDA Philippines Licensed", "WHO", "PIC/S", "US FDA", "EU GMP", "UK MHRA",
+  "UN Global Compact", "PDEA Licensed", "DSWD Accredited", "PCSO Accredited",
+];
+
+const whyCards = [
+  { title: "First-to-market sourcing", text: "We move the moment a patent cliffs globally." },
+  { title: "Cold-chain excellence", text: "Biologics-ready logistics nationwide." },
+  { title: "Filipino-first portfolio", text: "Selected for local disease patterns." },
+  { title: "Patient Assistance Program", text: "Adherence, access, affordability." },
+];
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+  title: { absolute: "Getmeds | Global Pharmaceutical Company" },
+  description:
+    "Getmeds is an FDA-licensed pharmaceutical importer, wholesale distributor, supplier, and retail pharmacy in the Philippines. Order medicines online.",
+};
+
+/* Each featured tile links to its own product page. The catalogue is looked up by brand name;
+   a brand it doesn't list yet (e.g. ErpoGet) falls back to its category listing. */
+async function featuredProductLinks(brands: { brand: string; fallback: string }[]) {
+  const model = await getCatalogModel().catch(() => null);
+  return brands.map(({ brand, fallback }) => {
+    const p = model ? resolveProduct(model, brand) : null;
+    return p ? productPath(p) : fallback;
+  });
+}
+
+// Same cadence as the product pages the tiles link to.
+export const revalidate = 3600;
+
+export default async function Home() {
+  const featuredPosts = await fetchFeaturedPosts().catch(() => []);
+  const [pazogetHref, erpogetHref, idagetHref, sevelamedHref] = await featuredProductLinks([
+    { brand: "PazoGet-200", fallback: "/product-range?category=oncology" },
+    { brand: "ErpoGet", fallback: "/product-range?category=hematology" },
+    { brand: "IdaGet-5", fallback: "/product-range?category=hematology" },
+    { brand: "SevelaMed", fallback: "/product-range?category=nephrology" },
+  ]);
+
+  return (
+    <>
+      {/* FAQPage JSON-LD (Q1–6) — homepage only, never in the shared layout */}
+      <FaqSchema page="home" />
+      {/* Pharmacy + WebSite JSON-LD — who Getmeds is, for Google's knowledge panel and local results */}
+      <BusinessSchema />
+
+      {/* ================= Hero: centered over photo (benchmark layout) ================= */}
+      <section className="relative overflow-hidden bg-white">
+        {/* full-bleed photo: its light left side carries the copy. Phones get a
+            portrait crop (white top for the copy, people at the bottom); each
+            device downloads only its own source. */}
+        <div className="absolute inset-0">
+          <picture>
+            <source media="(min-width: 768px)" srcSet={heroDesktop.srcSet} sizes={heroDesktop.sizes} />
+            <source media="(max-width: 767px)" srcSet={heroMobile.srcSet} sizes={heroMobile.sizes} />
+            {/* largest paint on every device: fetch it before anything else */}
+            <img
+              {...heroMobile}
+              fetchPriority="high"
+              alt="A smiling Getmeds doctor comforting a cancer patient in a headscarf"
+              className="object-contain object-bottom md:object-cover md:object-[78%_30%]"
+            />
+          </picture>
+        </div>
+        {/* sits in the gap right of the grandmother's headscarf */}
+        <HeroTagline className="absolute right-[1%] top-[28%] z-10 hidden xl:block 2xl:right-[2%]" />
+
+        <div className="relative mx-auto flex min-h-svh md:min-h-[620px] max-w-7xl flex-col items-start justify-center px-5 pb-[76vw] pt-28 text-left md:px-10 md:pb-24 md:pt-32">
+
+          {/* SEO: the page's only <h1> + subheadline render visible in the server HTML — no fade-in wrapper */}
+          <div className="relative z-10">
+            {/* hierarchy: four fixed lines that scale fluidly with the viewport (never re-wrap) */}
+            <h1 className="font-display text-[clamp(1.6rem,7.2vw,1.85rem)] md:text-[clamp(1.45rem,3.5vw+0.2rem,3.2rem)] font-semibold leading-[1.12] tracking-tight text-[#0B2E5E]">
+              <span className="block whitespace-nowrap">
+                Life-Saving{" "}
+                <span className="text-primary">
+                  Medicines
+                </span>
+              </span>
+              <span className="block whitespace-nowrap">
+                for Patients, <span className="text-primary">Doctors,</span>
+              </span>
+              <span className="block whitespace-nowrap">
+                <span className="text-primary">Pharmacies</span>{" "}
+                <span className="text-primary">&amp;</span>{" "}
+                <span className="text-primary">
+                  Hospitals
+                </span>
+              </span>
+              <span className="block whitespace-nowrap">in the Philippines</span>
+            </h1>
+            <p className="hero-subheadline mt-6 max-w-xl text-[15.5px] leading-relaxed text-black md:text-[15px]">
+              Getmeds is a global pharmaceutical company and an FDA-licensed importer, wholesale
+              distributor, and retail pharmacy, delivering essential medicines, hospital therapies,
+              and cancer treatments nationwide.
+            </p>
+            {/* phones: one line, Order Medicines first */}
+            <Reveal immediate delay={0.1} className="mt-9 flex items-center gap-3 md:gap-4">
+              <Link
+                href="/product-range"
+                className="whitespace-nowrap rounded-full border-2 border-black px-2 py-3 text-center text-[13px] font-semibold text-black transition hover:bg-black/5 max-md:flex-1 md:px-7 md:text-sm"
+              >
+                View Products
+              </Link>
+              <Link
+                href="/order-medicines"
+                className="whitespace-nowrap rounded-full border-2 border-primary bg-primary px-2 py-3 text-center text-[13px] font-semibold text-white transition hover:brightness-95 max-md:order-first max-md:flex-1 md:px-7 md:text-sm"
+              >
+                Order Medicines
+              </Link>
+            </Reveal>
+          </div>
+        </div>
+      </section>
+
+      {/* credentials strip along the hero's bottom edge: solid brand blue, white text, dot separators */}
+      <div className="overflow-hidden bg-[#1D9FDA] py-2.5 md:py-3">
+        <div className="marquee-track">
+          {[...marqueeItems, ...marqueeItems].map((m, i) => (
+            <span
+              key={i}
+              className="flex shrink-0 items-center whitespace-nowrap text-xs font-semibold text-white md:text-sm"
+            >
+              <span className="px-4 md:px-6">{m}</span>
+              <span aria-hidden className="h-1 w-1 rounded-full bg-white/70" />
+            </span>
+          ))}
+        </div>
+      </div>
+
+      {/* everything below the hero: balanced headings, no single-word last lines */}
+      <div className="text-flow">
+        {/* ================= Therapeutic areas: split slider ================= */}
+        <section>
+          <AreaSlider />
+        </section>
+
+        {/* ================= Featured Products heading (above the four-tile strip) ================= */}
+        <section className="bg-gradient-to-r from-[#1D9FDA] from-55% via-[#1D9FDA] via-70% to-[#61A644] py-3 md:py-4">
+          <Reveal className="mx-auto max-w-7xl px-5 md:px-10">
+            <h2 className="font-display text-lg font-medium text-white md:text-xl">Featured Products</h2>
+          </Reveal>
+        </section>
+
+        {/* ================= Product image strip: edge to edge; below lg a swipeable row with the next tile peeking in, lg+ four tiles ================= */}
+        <section className="scrollbar-none flex snap-x snap-mandatory overflow-x-auto lg:grid lg:snap-none lg:grid-cols-4 lg:overflow-visible">
+          {[
+            {
+              src: "/images/pazopanib.jpeg",
+              href: pazogetHref,
+              alt: "PazoGet-200 (Pazopanib 200 mg) film-coated tablets by Getmeds",
+              caption: {
+                title: "PazoGet (Pazopanib)",
+                subtitle: "First Branded Generic in the Philippines",
+                meta: "200 mg & 400 mg Tablets · Oncology · Rx",
+              },
+            },
+            {
+              src: "/images/erpoget.png",
+              href: erpogetHref,
+              alt: "ErpoGet (Epoetin Alfa 4,000 IU/mL) pre-filled syringes by Getmeds",
+              caption: {
+                title: "ErpoGet (Epoetin Alfa)",
+                subtitle: "Hematopoietic Growth Factor",
+                meta: "4,000 IU/mL Pre-filled Syringe · Hematology · Rx",
+              },
+            },
+            {
+              src: "/images/idaget.png",
+              href: idagetHref,
+              alt: "IdaGet-5 (Idarubicin Hydrochloride 5 mg) lyophilized powder for injection by Getmeds",
+              caption: {
+                title: "IdaGet-5 (Idarubicin)",
+                subtitle: "Antineoplastic Agent (Anthracycline)",
+                meta: "5 mg Lyophilized Powder for Injection · Hematology · Rx",
+              },
+            },
+            {
+              src: "/images/sevelamed.png",
+              href: sevelamedHref,
+              alt: "SevelaMed (Sevelamer Carbonate 800 mg) film-coated tablets by Getmeds",
+              caption: {
+                title: "SevelaMed (Sevelamer)",
+                subtitle: "Phosphate Binder for Hyperphosphatemia",
+                meta: "800 mg Film-Coated Tablets · Nephrology · Rx",
+              },
+            },
+          ].map((img, i) => (
+            <Link
+              key={i}
+              href={img.href}
+              aria-label={"caption" in img && img.caption ? `View ${img.caption.title}` : img.alt}
+              className="group relative block aspect-[2/3] w-[68vw] shrink-0 snap-start overflow-hidden sm:w-[42vw] lg:w-auto focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-inset focus-visible:ring-white/80"
+            >
+              <Image src={img.src} alt={img.alt} fill sizes="(min-width:1024px) 25vw, (min-width:640px) 42vw, 68vw" className="object-cover transition-transform duration-500 group-hover:scale-105" />
+              {"caption" in img && img.caption && (
+                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#0B5E8A]/70 via-[#0B5E8A]/30 to-transparent p-4 pt-14 text-white sm:pt-16 lg:p-7 lg:pt-24">
+                  {/* desktop: one line per title; size scales with the tile so the longest name still fits */}
+                  <p className="font-display text-base font-semibold leading-tight lg:whitespace-nowrap lg:text-[clamp(1rem,1.5vw,1.5rem)]">
+                    {img.caption.title}
+                  </p>
+                  <p className="mt-0.5 text-xs leading-snug text-white/90 lg:mt-1 lg:text-sm">
+                    {img.caption.subtitle}
+                  </p>
+                  <p className="mt-1 text-[11px] text-white/80 sm:text-xs lg:mt-3 lg:text-[13px]">{img.caption.meta}</p>
+                </div>
+              )}
+            </Link>
+          ))}
+        </section>
+
+        {/* ================= Impact band: four trust signals splitting the full width ================= */}
+        <section className="bg-[#1D9FDA] text-white">
+          <Reveal className="mx-auto grid max-w-7xl grid-cols-4 px-3 py-6 md:px-10 md:py-12">
+            {stats.map((st, i) => (
+              <div
+                key={st.label}
+                className={`px-1 py-1 text-center md:px-4 ${i > 0 ? "border-l border-white/25" : ""}`}
+              >
+                <Counter
+                  value={st.value}
+                  suffix={st.suffix}
+                  className="font-display text-[1.35rem] font-semibold sm:text-[1.75rem] md:text-[2.6rem]"
+                />
+                <p className="mt-1 text-balance text-[10.5px] leading-snug text-white/85 sm:text-xs md:mt-1.5 md:text-sm md:text-white/80">{st.label}</p>
+              </div>
+            ))}
+          </Reveal>
+        </section>
+
+        {/* ================= Portfolio layers ================= */}
+        <section>
+          <div className="mx-auto max-w-7xl px-5 pb-6 pt-16 md:px-10 md:pb-8 md:pt-20">
+            <div className="mb-12 grid items-end gap-6 md:mb-16 lg:grid-cols-[1.25fr_1fr] lg:gap-16">
+              <Reveal>
+                <Label>Our Pharmaceutical Portfolio</Label>
+                <h2 className="font-display mt-5 text-3xl font-medium leading-tight text-primary-deep md:text-[2.5rem]">
+                  From Essential Medicines to Advanced Therapies.
+                </h2>
+              </Reveal>
+              <Reveal delay={0.1}>
+                <p className="leading-relaxed text-ink-soft lg:pb-1.5">
+                  Getmeds is built for all four layers — from branded generics that keep
+                  everyday treatment affordable, to specialty and rare-disease therapies
+                  once out of reach for Filipino patients.
+                </p>
+              </Reveal>
+            </div>
+            <PortfolioMorph />
+          </div>
+        </section>
+
+        {/* ================= Who we are: title + story left, three photo links right (Novartis-style) ================= */}
+        <section>
+          <div className="mx-auto max-w-7xl px-5 pb-6 pt-6 md:px-10 md:pb-8 md:pt-8">
+            <div className="grid gap-10 lg:grid-cols-[0.72fr_2.3fr] lg:gap-10">
+              <Reveal>
+                <Label>Who we are</Label>
+                <h2 className="font-display mt-5 text-3xl font-medium leading-tight text-primary-deep md:text-[2.4rem]">
+                  Patient first. Raising the standard for Filipino care.
+                </h2>
+                <p className="mt-4 text-lg font-medium leading-snug text-primary">
+                  Getmeds exists so distance, cost, and complexity never decide who lives.
+                </p>
+              </Reveal>
+              {/* two and a half cards in view; the half-visible third invites a sideways scroll */}
+              <div className="flex min-w-0 snap-x snap-mandatory gap-5 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                {whoWeAreLinks.map((l) => (
+                  <div key={l.href} className="w-[calc((100%-2.5rem)/2.5)] min-w-[220px] shrink-0 snap-start">
+                    <Link href={l.href} className="group block">
+                      <div className="relative aspect-[3/4] overflow-hidden bg-slate-100">
+                        <Image
+                          src={l.src}
+                          alt={l.alt}
+                          fill
+                          sizes="(min-width: 1024px) 26vw, 60vw"
+                          className="object-cover transition duration-700 group-hover:scale-105"
+                        />
+                      </div>
+                      <p className="mt-4 text-sm font-medium text-primary">{l.label}</p>
+                      <p className="font-display mt-1 flex items-center gap-2 text-xl font-semibold leading-snug text-black underline-offset-[6px] group-hover:underline md:text-[1.4rem]">
+                        {l.cta}
+                        <ArrowUpRight
+                          className="h-5 w-5 shrink-0 text-primary transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                          aria-hidden
+                        />
+                      </p>
+                    </Link>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ================= Services: numbered hairline list ================= */}
+        <section className="border-b border-[#e3edf5]">
+          <div className="mx-auto max-w-7xl px-5 pt-8 pb-8 md:px-10 md:pt-10 md:pb-10">
+            <div className="flex flex-wrap items-start justify-between gap-6">
+              <Reveal className="max-w-3xl">
+                <Label>What we do</Label>
+                <h2 className="font-display mt-5 text-3xl font-medium leading-tight text-primary-deep md:text-[2.5rem]">
+                  Capabilities that move medicines, partnerships, and patients forward.
+                </h2>
+              </Reveal>
+              <Reveal delay={0.1}>
+                <p className="max-w-sm text-balance text-sm leading-relaxed text-ink-soft lg:mt-7">
+                  Getmeds operates across the pharmaceutical supply chain from global sourcing and
+                  regulatory compliance to nationwide distribution and last-mile delivery, helping
+                  make quality medicines accessible across the Philippines.
+                </p>
+              </Reveal>
+            </div>
+
+            {/* capabilities collage — each row opens like a window as you scroll */}
+            <div className="mt-10">
+              <CapabilitiesWindow />
+            </div>
+
+            <CapabilityList items={capabilities} />
+          </div>
+        </section>
+
+        {/* ================= Why Getmeds: full-bleed blue band ================= */}
+        <section className="relative text-white">
+          <Image
+            src="/images/bluebg.png"
+            alt=""
+            fill
+            sizes="100vw"
+            className="object-cover"
+            aria-hidden
+          />
+          <div className="relative mx-auto grid max-w-7xl gap-12 px-5 py-14 md:px-10 md:py-16 lg:grid-cols-[1.1fr_1fr] lg:gap-16">
+            <Reveal className="max-w-2xl">
+              <p className="text-[11px] font-bold uppercase tracking-[0.24em] text-white/90">
+                <span className="mr-2">•</span>Why Getmeds
+              </p>
+              <h2 className="font-display mt-5 text-3xl font-medium leading-tight md:text-[2.5rem]">
+                Why doctors, hospitals and pharmacies choose Getmeds.
+              </h2>
+              <Link
+                href="/services"
+                className="mt-8 inline-flex items-center rounded-full border border-white/50 bg-transparent px-7 py-3 text-sm font-semibold text-white shadow-[inset_0_1px_1px_rgba(255,255,255,0.6),inset_0_-1px_1px_rgba(255,255,255,0.15),0_8px_24px_rgba(0,0,0,0.08)] backdrop-blur-xl backdrop-saturate-150 transition-all duration-300 hover:border-white/80 hover:shadow-[inset_0_1px_2px_rgba(255,255,255,0.8),inset_0_-1px_1px_rgba(255,255,255,0.25),0_10px_28px_rgba(0,0,0,0.12)]"
+              >
+                Learn More
+              </Link>
+            </Reveal>
+
+            <Stagger className="grid gap-8 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+              {whyCards.map((w) => (
+                <StaggerItem key={w.title}>
+                  <h3 className="font-display text-lg font-medium">{w.title}</h3>
+                  <p className="mt-2 text-balance text-sm leading-relaxed text-white/80">{w.text}</p>
+                </StaggerItem>
+              ))}
+            </Stagger>
+          </div>
+        </section>
+
+        {/* ================= Partnership: isometric steps ================= */}
+        <section className="relative overflow-hidden bg-[#06283f]">
+          <Image src="/images/partnerwithus.png" alt="" fill sizes="100vw" className="object-cover object-top" />
+          {/* navy veil: the collage stays visible behind the section, light text stays readable on it */}
+          <div aria-hidden className="absolute inset-0 bg-[#06283f]/80" />
+          <div className="relative mx-auto max-w-7xl md:px-10">
+            <PartnerSteps />
+          </div>
+        </section>
+
+        {/* ================= Customer reviews ================= */}
+        <CustomerReviews />
+
+        {/* ================= Featured articles ================= */}
+        {featuredPosts.length > 0 && (
+        <section>
+          <div className="mx-auto max-w-7xl px-5 pb-14 pt-10 md:px-10 md:pb-16 md:pt-12">
+            <Reveal>
+              <Label>Featured Articles</Label>
+              <h2 className="font-display mt-5 text-3xl font-medium leading-tight text-primary-deep md:text-[2.5rem]">
+                In the news.
+              </h2>
+            </Reveal>
+            <Reveal delay={0.1} className="mt-10">
+              <FeaturedArticles posts={featuredPosts} />
+            </Reveal>
+          </div>
+        </section>
+        )}
+
+        {/* ================= FAQ: two-column structured ================= */}
+        <section className="border-b border-white/20 bg-[#1D9FDA] text-white">
+          <div className="mx-auto grid max-w-7xl gap-8 px-5 py-12 md:px-10 md:py-14 lg:grid-cols-[1fr_1.6fr] lg:gap-12">
+            <div className="flex flex-col">
+              <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-white">
+                <span className="mr-2">•</span>FAQ
+              </p>
+              <h2 className="font-display mt-4 text-2xl font-medium leading-tight text-white md:text-[2rem]">
+                Frequently asked questions.
+              </h2>
+              <p className="mt-4 text-sm leading-relaxed text-white md:text-base">
+                Everything you need to know about Getmeds and our services. Can&apos;t find your
+                answer?{" "}
+                <Link href="/contact-us" className="font-semibold text-white underline underline-offset-4 hover:opacity-85">
+                  Talk to our team
+                </Link>
+                .
+              </p>
+              {/* cutout sits flush on the section's bottom edge (cancels the py-14 padding) */}
+              <div className="relative -mb-14 mt-auto hidden aspect-square w-full max-w-[420px] lg:block">
+                <Image
+                  src="/images/faq-team-member.png"
+                  alt="Getmeds team member thinking about a question"
+                  fill
+                  sizes="420px"
+                  className="object-contain object-bottom"
+                />
+              </div>
+            </div>
+            <Faq />
+          </div>
+        </section>
+      </div>
+    </>
+  );
 }

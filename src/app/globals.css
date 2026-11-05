@@ -1,96 +1,415 @@
 @import "tailwindcss";
 
-/* Class names used inside CMS-authored HTML (WordPress post bodies, Sanity policy pages), which
-   no source file contains. Refreshed before every build by scripts/collect-cms-tailwind-classes.cjs. */
-@source "../styles/cms-classes.txt";
-
-/*
- * The original site (getmeds_frontend) was built on Tailwind v3 with one theme per page.
- * This file restores both so every class renders the way it did there.
- *
- * Per-page theme: a page marks its root element with data-theme="<name>", and the
- * :has() rules below swap the palette for the whole document, navbar and footer included.
- * A page with no data-theme gets the default palette, which is what most pages used.
- */
-
-/* v3 applied hover styles on touch devices too; v4 only does so where hover is supported. */
-@custom-variant hover (&:hover);
-
-@theme {
-  /* Default palette (about-us, careers, order-medicines, cancer-medicines, cart, ... themes) */
-  --color-primary: #0D99FF;
-  --color-secondary: #4A5568;
-  --color-accent: #6BB84A;
-  --color-success: #61A644;
-  --color-dark: #1A202C;
-  --color-footer: #1A1D2B;
-  --color-cardbg: #F8FAFC;
-  --color-unblue: #00ADEF;
-
-  --font-sans: 'Poppins', 'Inter', sans-serif;
-
-  /* Tailwind v3 values for the steps v4 renamed, so v3 class names keep their v3 look */
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --radius-sm: 0.125rem;
-  --blur-sm: 4px;
-  --drop-shadow-sm: 0 1px 1px rgb(0 0 0 / 0.05);
-  --drop-shadow-md: 0 4px 3px rgb(0 0 0 / 0.07), 0 2px 2px rgb(0 0 0 / 0.06);
-  --drop-shadow-lg: 0 10px 8px rgb(0 0 0 / 0.04), 0 4px 3px rgb(0 0 0 / 0.1);
-  --drop-shadow-xl: 0 20px 13px rgb(0 0 0 / 0.03), 0 8px 5px rgb(0 0 0 / 0.08);
-
-  /* v3 `ring` was 3px, semi-transparent blue; v4's is 1px currentColor */
-  --default-ring-width: 3px;
-  --default-ring-color: rgb(59 130 246 / 0.5);
+:root {
+  --background: #ffffff;
+  --foreground: #111315;
+  --primary: #1d9fda;
+  --primary-dark: #1D9FDA;
+  --primary-deep: #073b57;
+  --primary-soft: #e3f4fc;
+  --ink-soft: #343a40;
+  --glass: rgba(255, 255, 255, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.75);
 }
 
-/* home.cjs / patient-assistance-program.cjs */
-:root:has([data-theme="home"]),
-:root:has([data-theme="pap"]) {
-  --color-primary: #1D9FDA;
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-dark: var(--primary-dark);
+  --color-primary-deep: var(--primary-deep);
+  --color-primary-soft: var(--primary-soft);
+  --color-ink-soft: var(--ink-soft);
+  --font-sans: var(--font-poppins);
+  --font-display: var(--font-poppins);
 }
 
-/* 404.cjs (404 page and HTML sitemap) */
-:root:has([data-theme="notfound"]) {
-  --color-primary: #1D9FDA;
-  --color-secondary: #61A644;
+html {
+  scroll-behavior: smooth;
 }
 
-/* about-us.cjs (about-us, blog, blog-detail) */
-:root:has([data-theme="about-us"]) {
-  --color-success: #5ab04c;
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-poppins), var(--font-inter), system-ui, sans-serif;
+  overflow-x: hidden;
 }
 
-/* employee-verification.cjs (employee-verification, global-presence) */
-:root:has([data-theme="employee-verification"]) {
-  --color-footer: #111827;
+::selection {
+  background: #1d9fda;
+  color: #fff;
 }
 
+/* ---------- Glass ---------- */
+.glass {
+  background: rgba(255, 255, 255, 0.88);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border: 1px solid #dde9f2;
+  box-shadow:
+    0 1px 2px rgba(13, 84, 120, 0.04),
+    0 10px 24px -16px rgba(13, 84, 120, 0.12);
+}
+
+.glass-dark {
+  background: rgba(12, 42, 62, 0.72);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(120, 200, 245, 0.14);
+  box-shadow: 0 6px 20px rgba(0, 20, 35, 0.25);
+}
+
+.glass-chip {
+  background: #ffffff;
+  border: 1px solid #dde9f2;
+}
+
+.glass-nav {
+  /* stays white-glass even over saturated backgrounds (no saturate boost, higher white) */
+  background: rgba(255, 255, 255, 0.9);
+  -webkit-backdrop-filter: blur(22px);
+  backdrop-filter: blur(22px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 10px 32px -12px rgba(13, 84, 120, 0.15);
+}
+
+/* ---------- Aurora background ---------- */
+.aurora {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.aurora::before,
+.aurora::after {
+  content: "";
+  position: absolute;
+  width: 56rem;
+  height: 56rem;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.13;
+}
+.aurora::before {
+  background: radial-gradient(circle, #1D9FDA 0%, transparent 62%);
+  top: -22rem;
+  right: -14rem;
+  animation: drift 16s ease-in-out infinite alternate;
+}
+.aurora::after {
+  background: radial-gradient(circle, #1D9FDA 0%, transparent 62%);
+  bottom: -26rem;
+  left: -16rem;
+  animation: drift 20s ease-in-out infinite alternate-reverse;
+}
+@keyframes drift {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to { transform: translate3d(4rem, 3rem, 0) scale(1.12); }
+}
+
+/* ---------- Grid texture ---------- */
+.grid-texture {
+  /* removed per clean-benchmark pass (Antigravity/Linear): pure white, no texture */
+  display: none;
+}
+
+/* ---------- Type ---------- */
+.font-display {
+  font-family: var(--font-poppins), system-ui, sans-serif;
+  letter-spacing: -0.02em;
+}
+
+.text-gradient {
+  color: var(--primary);
+}
+
+/* ---------- Buttons ---------- */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 9999px;
+  padding: 0.8rem 1.75rem;
+  font-weight: 600;
+  color: #fff;
+  background: var(--primary);
+  box-shadow: 0 6px 16px -8px rgba(29, 159, 218, 0.55);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.btn-primary:hover {
+  transform: translateY(-1px);
+  filter: brightness(0.93);
+  box-shadow: 0 8px 20px -8px rgba(29, 159, 218, 0.6);
+}
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 9999px;
+  padding: 0.8rem 1.75rem;
+  font-weight: 600;
+  color: var(--foreground);
+  background: #ffffff;
+  border: 1px solid #d8e4ee;
+  transition: all 0.25s ease;
+}
+.btn-ghost:hover {
+  background: var(--primary-soft);
+  transform: translateY(-1px);
+}
+
+/* ---------- 3D tilt ---------- */
+.tilt-wrap {
+  perspective: 1000px;
+}
+.tilt-card {
+  transform-style: preserve-3d;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease;
+}
+.tilt-card > .tilt-raise {
+  transform: translateZ(18px);
+}
+
+/* ---------- Misc ---------- */
+.scrollbar-none::-webkit-scrollbar { display: none; }
+.scrollbar-none { scrollbar-width: none; }
+
+/* ---------- Slim custom scrollbar ---------- */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 5px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(29, 159, 218, 0.25);
+  border-radius: 9999px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(29, 159, 218, 0.5);
+}
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(29, 159, 218, 0.25) transparent;
+}
+
+@keyframes float-y {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-14px); }
+}
+.animate-float { animation: float-y 6s ease-in-out infinite; }
+
+/* Order Medicines: arriving at #audiences (hero "Order Medicines" button) makes the four cards bounce
+   one by one, then give a small pulse ring, to show they're clickable. Waits for the smooth scroll. */
+@keyframes cue-bounce-pulse {
+  0%   { transform: translateY(0); box-shadow: 0 0 0 0 rgba(29, 159, 218, 0); }
+  18%  { transform: translateY(-14px); }
+  34%  { transform: translateY(0); }
+  44%  { transform: translateY(-5px); }
+  54%  { transform: translateY(0) scale(1); box-shadow: 0 0 0 0 rgba(29, 159, 218, 0.45); }
+  70%  { transform: scale(1.025); box-shadow: 0 0 0 10px rgba(29, 159, 218, 0.18); }
+  100% { transform: scale(1); box-shadow: 0 0 0 16px rgba(29, 159, 218, 0); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  #audiences:target .cue-card {
+    animation: cue-bounce-pulse 1.5s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+    animation-delay: calc(0.6s + var(--cue-i, 0) * 0.16s);
+  }
+}
+.animate-float-slow { animation: float-y 9s ease-in-out infinite; }
+
+@keyframes pulse-ring {
+  0% { transform: scale(0.75); opacity: 0.9; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+.pulse-ring::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid #1d9fda;
+  animation: pulse-ring 2.2s cubic-bezier(0.2, 0.6, 0.4, 1) infinite;
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 36s linear infinite;
+}
+.marquee-track:hover { animation-play-state: paused; }
+
+/* Iso Focus photo rail (port of public/iso-focus (1).html), About Us */
+.iso-focus {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  perspective: 2400px;
+  perspective-origin: 50% 45%;
+}
+.iso-focus__stage {
+  transform-style: preserve-3d;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 0;
+  height: 0;
+}
+.iso-focus__card {
+  position: absolute;
+  left: 0;
+  top: 0;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #e9eef3;
+  box-shadow: 0 18px 40px -12px rgba(6, 40, 64, 0.35);
+  will-change: transform, opacity;
+  transform-origin: 50% 50%;
+}
+
+/* PAP guide step numbers: a soft ring that radiates out, like a map location pin */
+.step-ping::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background: var(--ping, #1d9fda);
+  opacity: 0;
+  z-index: -1;
+  animation: step-ping 2.4s cubic-bezier(0, 0, 0.2, 1) infinite;
+  animation-delay: var(--ping-delay, 0s);
+}
+@keyframes step-ping {
+  0% { transform: scale(1); opacity: 0.45; }
+  80%, 100% { transform: scale(2); opacity: 0; }
+}
+
+/* Catalog empty state: magnifier drifts over empty cards, "?" pulses in the lens */
+@keyframes noresult-sweep {
+  0%, 100% { transform: translate(-70px, 0) rotate(-6deg); }
+  50% { transform: translate(40px, 60px) rotate(6deg); }
+}
+@keyframes noresult-q {
+  0%, 100% { transform: scale(0.85); opacity: 0.55; }
+  50% { transform: scale(1.1); opacity: 1; }
+}
+.noresult-illo-lens { animation: noresult-sweep 4.5s ease-in-out infinite; }
+.noresult-illo-q { transform-box: fill-box; transform-origin: center; animation: noresult-q 1.5s ease-in-out infinite; }
+
+/* Navbar dropdown links: blue-to-white underline grows left to right on hover,
+   and shrinks back right to left when the pointer leaves */
+.nav-underline::after {
+  content: "";
+  position: absolute;
+  left: 0.75rem;
+  right: 0.75rem;
+  bottom: 0.3rem;
+  height: 2px;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, #1d9fda, #ffffff);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.35s ease;
+}
+.nav-underline:hover::after,
+.nav-underline:focus-visible::after { transform: scaleX(1); }
+
+/* Chat button "typing..." dots (Contact Us hero) */
+@keyframes typing-dot {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.45; }
+  30% { transform: translateY(-3px); opacity: 1; }
+}
+.typing-dot { animation: typing-dot 1.2s ease-in-out infinite; }
+
+/* Above-the-fold entrance: a CSS-only rise that never hides the text, so it is
+   readable in the server HTML and paints immediately (SEO + LCP). */
+@keyframes rise-in {
+  from { transform: translateY(18px); }
+  to { transform: translateY(0); }
+}
+.rise-in {
+  animation: rise-in 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Search results illustration: the lens stops on each card for ~1.3s; that card's
+   bar fills and its tick pops (staggered by --d), then fades before the next pass. */
+@keyframes search-scan {
+  0%, 22% { transform: translateY(0); }
+  33%, 55% { transform: translateY(90px); }
+  66%, 88% { transform: translateY(180px); }
+  100% { transform: translateY(0); }
+}
+@keyframes search-pop {
+  0%, 8% { transform: scale(0); }
+  14% { transform: scale(1.15); }
+  18%, 72% { transform: scale(1); }
+  80%, 100% { transform: scale(0); }
+}
+@keyframes search-fill {
+  0%, 8% { transform: scaleX(0); }
+  25%, 72% { transform: scaleX(1); }
+  80%, 100% { transform: scaleX(0); }
+}
+.search-illo-lens { animation: search-scan 6s cubic-bezier(0.65, 0, 0.35, 1) infinite; }
+.search-illo-pop,
+.search-illo-fill {
+  transform-box: fill-box;
+  animation: search-pop 6s ease-out var(--d) infinite both;
+}
+.search-illo-pop { transform-origin: center; }
+.search-illo-fill { transform-origin: left; animation-name: search-fill; }
+
+/* Skewed wipe-fill hover (adapted from Uiverse.io by SujitAdroja) */
+.btn-wipe {
+  position: relative;
+  z-index: 0;
+  overflow: hidden;
+  transition: color 0.6s;
+}
+.btn-wipe::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -40px;
+  height: 100%;
+  width: 0%;
+  transform: skewX(45deg);
+  background-color: #1d9fda;
+  z-index: -1;
+  transition: width 0.6s;
+}
+.btn-wipe:hover { color: #fff; }
+.btn-wipe:hover::before { width: 160%; }
+/* Scripted "as if hovered" state for the scroll-in wave */
+.btn-wipe.wipe-auto { color: #fff; }
+.btn-wipe.wipe-auto::before { width: 160%; }
+
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  /* Show the finished state rather than the hidden end of the loop */
+  .search-illo-lens,
+  .search-illo-pop,
+  .search-illo-fill,
+  .noresult-illo-lens,
+  .noresult-illo-q { animation: none !important; transform: none; }
+}
+
+/* Home page, below the hero: keep a lone word from wrapping onto its own last line.
+   Layered so per-element utilities like text-balance still win. */
 @layer base {
-  /* Tailwind v3 preflight defaults that v4 dropped */
-  *,
-  ::after,
-  ::before,
-  ::backdrop,
-  ::file-selector-button {
-    border-color: var(--color-gray-200, currentcolor);
+  .text-flow :is(h2, h3, h4) {
+    text-wrap: balance;
   }
-
-  input::placeholder,
-  textarea::placeholder {
-    color: var(--color-gray-400);
-  }
-
-  button:not(:disabled),
-  [role='button']:not(:disabled) {
-    cursor: pointer;
-  }
-
-  html {
-    color-scheme: light;
-    overflow-x: hidden;
-  }
-
-  body {
-    font-family: var(--font-sans);
+  .text-flow :is(p, li, a, span, blockquote, summary) {
+    text-wrap: pretty;
   }
 }

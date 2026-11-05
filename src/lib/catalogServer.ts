@@ -10,6 +10,7 @@
 import { unstable_cache } from 'next/cache';
 import { getProducts, getCategories, folderDisplayName } from './queries';
 import { STATIC_CATEGORY_FOLDERS } from './categoryFolders';
+import { urlFor } from './sanity';
 
 export const DOMAIN = 'https://getmeds.ph';
 export const REVALIDATE_SECONDS = 3600;
@@ -64,6 +65,14 @@ export interface CatalogProduct {
   form?: string;
   indications?: string;
   dosageAdministration?: string;
+  /** Product photo linked in the Studio (Sanity CDN URL), if one is attached. */
+  imageUrl?: string;
+  /** Groups the strengths of one product (e.g. every PacliGet vial size). */
+  productGroup?: string;
+  /** "RX" for prescription-only medicines (the sheet's Prescription column) */
+  prescription?: string;
+  packaging?: string;
+  storageCondition?: string;
   // Condition metadata, repeated on every row filed under a condition.
   conditionHubUrl?: string;
   conditionFilipinoName?: string;
@@ -109,6 +118,15 @@ export function productPath(p: CatalogProduct): string {
   return p.productPageUrl ? stripDomain(p.productPageUrl) : `/${p.categoryFolder || 'product-range'}/${p.slug}`;
 }
 
+function productImageUrl(image: unknown): string | undefined {
+  if (!image) return undefined;
+  try {
+    return str(urlFor(image).width(800).url());
+  } catch {
+    return undefined;
+  }
+}
+
 async function buildModel(): Promise<CatalogModel> {
   const [products, categories] = await Promise.all([getProducts(), getCategories()]);
   return {
@@ -134,6 +152,11 @@ async function buildModel(): Promise<CatalogModel> {
       form: str(p.form),
       indications: str(p.indications),
       dosageAdministration: str(p.dosageAdministration),
+      imageUrl: productImageUrl(p.image),
+      productGroup: str(p.productGroup),
+      prescription: str(p.prescription),
+      packaging: str(p.packaging),
+      storageCondition: str(p.storageCondition),
       conditionHubUrl: str(p.conditionHubUrl),
       conditionFilipinoName: str(p.conditionFilipinoName),
       conditionSpecialty: str(p.conditionSpecialty),
@@ -151,7 +174,7 @@ async function buildModel(): Promise<CatalogModel> {
   };
 }
 
-const getCachedModel = unstable_cache(buildModel, ['getmeds-catalog-model-v1'], {
+const getCachedModel = unstable_cache(buildModel, ['getmeds-catalog-model-v3'], {
   revalidate: REVALIDATE_SECONDS,
   tags: ['catalog'],
 });

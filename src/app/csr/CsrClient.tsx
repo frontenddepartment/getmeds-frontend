@@ -1,9 +1,10 @@
 'use client';
 
 import React, { useEffect, useRef } from 'react';
+import Image from 'next/image';
+import { Reveal } from '@/components/ui';
 import { useImageMapper } from '@/lib/useSanity';
 import { LinkableImage } from '@/lib/LinkableImage';
-import { ProgressiveHeroImage } from '@/lib/ProgressiveHeroImage';
 import './csr.css';
 
 // Port of getmeds_frontend/src/pages/csr.tsx (+ csr.html). Navbar/footer injection is
@@ -11,7 +12,7 @@ import './csr.css';
 // is covered by the layout's `scroll-smooth` class on <html>.
 
 const CsrClient: React.FC = () => {
-  const { getImage, getLowResImage, getImageLink } = useImageMapper('csr');
+  const { getImage, getImageLink } = useImageMapper('csr');
 
   const pinkSliderImages = [
     'assets/pinkrunone-web.jpg',
@@ -164,71 +165,44 @@ const CsrClient: React.FC = () => {
   return (
     <div style={{ fontFamily: "'Poppins', sans-serif" }} className="csr-page bg-white text-gray-800 antialiased">
       <div className="overflow-x-hidden">
-        {/* HERO SECTION */}
-        {/* Desktop HERO SECTION */}
-        <section className="hidden sm:block w-full mx-auto px-3 sm:px-4 md:px-6 mt-3 md:mt-4 mb-0 max-w-[1600px]">
-          <div className="relative rounded-[10px] md:rounded-[1.5rem] overflow-hidden min-h-[360px] md:min-h-[500px] flex items-end group">
-            {(() => {
-              const heroFullSrc = getImage('CSR Hero Background', 'assets/patienthand.jpg');
-              return (
-                <ProgressiveHeroImage
-                  link={getImageLink('CSR Hero Background')}
-                  fullSrc={heroFullSrc}
-                  lowSrc={getLowResImage('CSR Hero Background', heroFullSrc)}
-                  alt="Corporate Social Responsibility"
-                  className="absolute inset-0 w-full h-full object-cover object-center brightness-90 transform group-hover:scale-105"
-                  transitionClassName="transition-[opacity_0.7s,transform_4s]"
-                />
-              );
-            })()}
-            <div className="relative z-10 w-full px-8 md:px-14 pb-5 md:pb-16 pt-20 max-w-4xl reveal z-[3]">
-              <h1 className="text-[28px] md:text-[38px] leading-[1.2] font-bold mb-3 tracking-tight">
-                <span className="inline-block bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">Corporate Social</span><br />
-                <span className="inline-block bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent leading-tight tracking-tight">
-                  Responsibility
-                </span>
+        {/* HERO: same treatment and text placement as Contact Us. xl+: copy sits white on the blue at the left.
+            Below xl the image is too short, so the copy stacks below it in navy/black. */}
+        <section className="relative bg-white pb-14 xl:pb-0">
+          <Image
+            src="/images/csrherosection.jpg"
+            alt="Getmeds team member guiding a patient through his medicines"
+            width={5456}
+            height={2816}
+            priority
+            sizes="100vw"
+            className="h-auto w-full"
+          />
+          <div className="relative mx-auto max-w-7xl px-5 md:px-10 xl:absolute xl:inset-x-0 xl:top-0 xl:pt-36">
+            <Reveal immediate>
+              <h1 className="font-display mt-6 text-[clamp(1.6rem,7.2vw,1.85rem)] font-semibold leading-[1.12] tracking-tight text-[#0B2E5E] md:text-[clamp(1.45rem,3.5vw+0.2rem,3.2rem)] xl:mt-4 xl:text-white xl:drop-shadow-md">
+                {/* exactly two lines from md up; free wrapping on phones where line one doesn't fit */}
+                <span className="md:block md:whitespace-nowrap">Corporate Social</span>{" "}
+                <span className="text-primary md:block md:whitespace-nowrap xl:text-white">Responsibility</span>
               </h1>
-              <p className="text-[#000b5d] text-[13px] md:text-[14px] max-w-[650px] mb-5 leading-normal font-normal">
-                We don't just distribute medicine; we facilitate healing. Through NGO partnerships and digital
+              <p className="mt-6 max-w-2xl text-[15.5px] leading-relaxed text-black md:text-[15px] xl:mt-4 xl:max-w-xl xl:text-white xl:drop-shadow">
+                We don&apos;t just distribute medicine; we facilitate healing. Through NGO partnerships and digital
                 health advocacy, we ensure no patient navigates their journey alone.
               </p>
-              <button
-                onClick={() => document.getElementById('csr-content-start')?.scrollIntoView({ behavior: 'smooth' })}
-                className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] hover:from-[#1D9FDA] hover:to-[#61A644] text-white font-semibold py-2 px-6 rounded-full text-[13px] inline-block transition shadow-md">
-                Read More
-              </button>
-            </div>
+            </Reveal>
           </div>
-        </section>
-
-        {/* Mobile HERO SECTION */}
-        <section className="block sm:hidden w-full px-3 mt-3 mb-4">
-          <div className="relative aspect-[16/10] w-full rounded-[10px] overflow-hidden mb-3 bg-gray-900 shadow-sm">
-            {(() => {
-              const heroFullSrc = getImage('CSR Hero Background', 'assets/patienthand.jpg');
-              return (
-                <ProgressiveHeroImage
-                  link={getImageLink('CSR Hero Background')}
-                  fullSrc={heroFullSrc}
-                  lowSrc={getLowResImage('CSR Hero Background', heroFullSrc)}
-                  alt="Corporate Social Responsibility"
-                  className="absolute inset-0 w-full h-full object-cover object-center brightness-90"
-                  transitionClassName="transition-[opacity_0.7s,transform_4s]"
-                />
-              );
-            })()}
-          </div>
-          <div className="px-1 reveal">
-            <h1 className="text-xl font-bold leading-tight mb-2 tracking-tight">
-              <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">Corporate Social </span>
-              <span className="bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent">
-                Responsibility
-              </span>
-            </h1>
-            <p className="text-gray-600 text-xs mb-3 leading-relaxed font-normal text-left">
-              We don't just distribute medicine; we facilitate healing. Through NGO partnerships and digital
-              health advocacy, we ensure no patient navigates their journey alone.
-            </p>
+          {/* same button placement as Contact Us; xl+: anchored to the section bottom so it sits on the white wave */}
+          <div className="relative xl:absolute xl:inset-x-0 xl:bottom-[15%]">
+            <Reveal immediate className="mx-auto max-w-7xl px-5 md:px-10">
+              <div className="mt-9 flex flex-wrap items-center gap-4 xl:mt-0">
+                <button
+                  type="button"
+                  onClick={() => document.getElementById('csr-content-start')?.scrollIntoView({ behavior: 'smooth' })}
+                  className="rounded-full border-2 border-primary bg-primary px-7 py-3 text-sm font-semibold text-white transition hover:brightness-95"
+                >
+                  Read More
+                </button>
+              </div>
+            </Reveal>
           </div>
         </section>
 

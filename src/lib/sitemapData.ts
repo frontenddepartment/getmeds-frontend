@@ -64,6 +64,8 @@ export const STATIC_SITEMAP_PAGES: StaticSitemapPage[] = [
   { path: '', label: 'Home', section: 'main', priority: PRIORITY.MAIN, changefreq: 'daily' },
   // The all-products landing page, and what the navbar's "Product Range" links to.
   { path: 'product-range', label: 'Product Range', section: 'main', priority: PRIORITY.MAIN, changefreq: 'weekly' },
+  { path: 'prescription-medicines', label: 'Prescription Medicines', section: 'main', priority: PRIORITY.MAIN, changefreq: 'weekly' },
+  { path: 'conditions', label: 'Conditions A–Z', section: 'main', priority: PRIORITY.MAIN, changefreq: 'weekly' },
   { path: 'services', label: 'Services', section: 'main', priority: PRIORITY.MAIN, changefreq: 'monthly' },
   { path: 'patient-assistance-program', label: 'Patient Assistance Program', section: 'main', priority: PRIORITY.MAIN, changefreq: 'monthly' },
   { path: 'blog', label: 'Blog', section: 'main', priority: PRIORITY.MAIN, changefreq: 'daily' },

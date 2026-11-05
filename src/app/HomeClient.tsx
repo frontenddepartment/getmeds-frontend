@@ -1115,7 +1115,7 @@ export default function HomeClient({
         {/* Stat 3 */}
         <div className="flex flex-col items-start text-left border-l-[3px] border-primary pl-5 md:pl-6 hover:-translate-y-1 transition-all duration-300 group ca-anim ca-up ca-d3">
           <p className="text-3xl md:text-4xl font-semibold bg-gradient-to-r from-[#61A644] to-[#1D9FDA] bg-clip-text text-transparent mb-2 origin-left group-hover:scale-110 transition-transform duration-300">
-            <AnimatedCounter end={500} suffix="+" />
+            <AnimatedCounter end={300} suffix="+" />
           </p>
           <p className="text-black font-medium text-sm md:text-base leading-tight">Hospitals served</p>
         </div>
@@ -1627,7 +1627,7 @@ export default function HomeClient({
               <div className="gm-icon-host col-span-6 md:col-span-2 bg-gradient-to-br from-white to-orange-100/60 rounded-2xl p-6 relative overflow-hidden flex flex-col justify-between hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer" style={{ minHeight: '220px' }}>
                 <div className="relative z-10">
                   <h3 className="text-base font-bold text-gray-900 mb-2">Sales and Distribution</h3>
-                  <p className="text-gray-500 text-sm leading-relaxed">10,000+ pharmacy and 500+ hospital accounts, and the prescribing physicians behind them, served by dedicated nationwide sales teams.</p>
+                  <p className="text-gray-500 text-sm leading-relaxed">10,000+ pharmacy and 300+ hospital accounts, and the prescribing physicians behind them, served by dedicated nationwide sales teams.</p>
                 </div>
                 <div className="absolute bottom-0 right-0 w-28 h-28 pointer-events-none opacity-[0.08]">
                   <svg viewBox="0 0 100 100" className="w-full h-full" xmlns="http://www.w3.org/2000/svg">

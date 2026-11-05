@@ -7,6 +7,7 @@ import { urlFor } from '@/lib/sanity';
 import type { Product as SanityProduct, Category } from '@/types/sanity';
 import { sortByFeaturedOrder } from '@/lib/categoryImageKey';
 import { setPageMeta, injectJsonLd, removeJsonLd, specialtyUrl, conditionReviewFields, ogImageForFolder, ogImageForCondition, ORGANIZATION_ID } from '@/lib/seo';
+import { CATEGORY_SEARCH_COPY } from '@/lib/productFaq';
 import { folderDisplayName } from '@/lib/queries';
 import { usePageReady } from '@/lib/handoff';
 import './CatalogClient.css';
@@ -770,9 +771,12 @@ export default function CatalogClient(_props: { initialFolder?: string } = {}) {
       ? ` — ${folderDisplayName(activeFolder)}`
       : '';
 
+    // A category folder with team-approved search wording uses it as is (same as the server copy)
+    const approved = !isCondition ? CATEGORY_SEARCH_COPY[activeFolder || matchedCat?.slug || ''] : undefined;
     setPageMeta({
-      title: isCondition ? `${displayLabel} - ${sectionLabel}` : `${displayLabel}${folderQualifier}`,
-      description,
+      title: approved ? approved.title : isCondition ? `${displayLabel} - ${sectionLabel}` : `${displayLabel}${folderQualifier}`,
+      plainTitle: Boolean(approved),
+      description: approved ? approved.description : description,
       path,
       // Same cards the server bakes in for conditions and category folders — a condition's
       // slug is the last segment of its hub path.
@@ -1100,14 +1104,14 @@ export default function CatalogClient(_props: { initialFolder?: string } = {}) {
                     {selectedCategory.category !== 'All' && (
                       <p className="text-white/80 text-[11px] sm:text-xs font-semibold uppercase tracking-widest mb-1">{selectedCategory.category}</p>
                     )}
-                    <h1 className="text-xl sm:text-2xl md:text-3xl font-semibold text-white tracking-tight leading-tight">
+                    <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold text-white tracking-tight leading-tight">
                       {conditionHeading(conditionName)}
-                    </h1>
+                    </h2>
                   </>
                 ) : (
-                  <h1 className="text-xl sm:text-2xl md:text-3xl font-semibold text-white tracking-tight leading-tight">
+                  <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold text-white tracking-tight leading-tight">
                     {selectedCategory.category !== 'All' ? selectedCategory.category : 'Products'}
-                  </h1>
+                  </h2>
                 )}
                 <p className="text-white/75 text-[12px] sm:text-[13px] mt-1 font-medium">Comprehensive catalog of pharmaceutical solutions. Browse categories and send inquiries directly.</p>
               </div>

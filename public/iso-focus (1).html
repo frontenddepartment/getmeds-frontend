@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Iso Focus</title>
+<style>
+  /* ---------- Iso Focus section (copy this CSS) ---------- */
+  .iso-focus {
+    --bg: #101014;
+    position: relative;
+    width: 100%;
+    height: 100vh;            /* change to e.g. 600px to fit a section */
+    min-height: 380px;
+    overflow: hidden;
+    background: var(--bg);
+  }
+  .iso-focus {
+    perspective: 2400px;
+    perspective-origin: 50% 45%;
+  }
+  .iso-focus__stage {
+    transform-style: preserve-3d;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 0;
+    height: 0;
+  }
+  .iso-focus__card {
+    position: absolute;
+    left: 0;
+    top: 0;
+    border-radius: 4px;       /* corner roundness */
+    overflow: hidden;
+    background: #23232b center / cover no-repeat;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, .55);
+    will-change: transform, opacity, filter;
+    transform-origin: 50% 50%;
+  }
+</style>
+</head>
+<body style="margin:0;background:#101014">
+
+<!-- ---------- Iso Focus markup (copy this) ---------- -->
+<section class="iso-focus" id="isoFocus">
+  <div class="iso-focus__stage"></div>
+</section>
+
+<script>
+/* ---------- Iso Focus script (copy this) ---------- */
+(function () {
+  // 1) Your image URLs (any number). Leave empty for placeholder cards.
+  const IMAGES = [
+    // "images/work-1.jpg",
+    // "images/work-2.jpg",
+  ];
+
+  // 2) Tweak the look
+  const CONFIG = {
+    slots: 10,          // cards in the loop (used when IMAGES is empty)
+    loop: 12,           // seconds for one full cycle through all cards
+    hold: 0.55,         // share of each step the focused card stays still (0–0.9)
+    cardSize: 0.36,     // card size, fraction of the smaller side of the section
+    aspect: 1,          // card height ÷ width (1 = square)
+    depthAhead: 1.15,   // spacing of upcoming cards (top-right), × card size
+    depthBehind: 0.12,  // spacing of passed cards in the stack (bottom-left), × card size
+    stackGap: 1.0,      // empty space between the middle card and the stack, × card size
+    camY: -34,          // camera turn (degrees) – the side view / diagonal
+    camX: 26            // camera tilt (degrees)
+  };
+
+  const root = document.getElementById("isoFocus");
+  const stage = root.querySelector(".iso-focus__stage");
+
+  const N = IMAGES.length || CONFIG.slots;
+  const tones = ["#6f7556", "#e9e8df", "#2a2a24", "#8a9070", "#3b3d33",
+                 "#c9c7b8", "#55593f", "#1f2019", "#a3a68c", "#d8d5c6"];
+  const cards = [];
+  for (let i = 0; i < N; i++) {
+    const el = document.createElement("div");
+    el.className = "iso-focus__card";
+    if (IMAGES.length) el.style.backgroundImage = `url("${IMAGES[i]}")`;
+    else el.style.background =
+      `linear-gradient(160deg, ${tones[i % tones.length]}, ${tones[(i + 3) % tones.length]})`;
+    stage.appendChild(el);
+    cards.push(el);
+  }
+
+  let S = 0, cw = 0, ch = 0;
+  function measure() {
+    S = Math.min(root.clientWidth, root.clientHeight);
+    cw = S * CONFIG.cardSize;
+    ch = cw * CONFIG.aspect;
+    cards.forEach(c => {
+      c.style.width = cw + "px";
+      c.style.height = ch + "px";
+      c.style.marginLeft = -cw / 2 + "px";
+      c.style.marginTop = -ch / 2 + "px";
+    });
+  }
+  measure();
+  window.addEventListener("resize", measure);
+
+  const ease = x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+  const smooth = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
+
+  // stepped time: each card holds in focus, then everything glides one place
+  function steppedIndex(t) {
+    const stepDur = CONFIG.loop / N;
+    const raw = t / stepDur;
+    const k = Math.floor(raw), f = raw - k;
+    const move = f < CONFIG.hold ? 0 : ease((f - CONFIG.hold) / (1 - CONFIG.hold));
+    return { pos: k + move, f };
+  }
+
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const start = performance.now();
+
+  function frame(now) {
+    const t = reduced ? 0 : (now - start) / 1000;
+    const { pos } = steppedIndex(t);
+    stage.style.transform = `rotateX(${-CONFIG.camX}deg) rotateY(${CONFIG.camY}deg)`;
+
+    for (let i = 0; i < N; i++) {
+      // s: 0 = middle, negative = upcoming (top-right), positive = passed (bottom-left stack)
+      let s = ((pos - i) % N + N) % N;
+      if (s > N / 2) s -= N;
+
+      const z = s < 0
+        ? s * CONFIG.depthAhead * cw
+        : (smooth(0, 1, s) * CONFIG.stackGap + s * CONFIG.depthBehind) * cw;
+
+      const el = cards[i];
+      el.style.transform = `translate3d(0, 0, ${z}px)`;   // every card keeps the same side angle
+      const op = s < 0 ? 1 - smooth(-2.2, -3, s) : 1 - smooth(5, 6.5, s);
+      el.style.opacity = op.toFixed(3);
+    }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

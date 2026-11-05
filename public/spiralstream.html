@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Spiral Stream</title>
+<style>
+  /* ---------- Spiral Stream section (copy this CSS) ---------- */
+  .spiral-stream {
+    --bg: #101014;
+    position: relative;
+    width: 100%;
+    height: 100vh;            /* change to e.g. 600px to fit a section */
+    min-height: 420px;
+    overflow: hidden;
+    background: var(--bg);
+    perspective: 1400px;
+    perspective-origin: 50% 50%;
+  }
+  .spiral-stream__stage {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 0;
+    height: 0;
+    transform-style: preserve-3d;
+  }
+  .spiral-stream__card {
+    position: absolute;
+    left: 0;
+    top: 0;
+    border-radius: 4px;   /* corner roundness — 0px for sharp corners */
+    overflow: hidden;
+    background: #1d1d24 center / cover no-repeat;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, .45);
+    backface-visibility: visible;
+    will-change: transform, opacity;
+  }
+  /* soft fade at the top and bottom edges */
+  .spiral-stream::before,
+  .spiral-stream::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0;
+    height: 18%;
+    z-index: 2;
+    pointer-events: none;
+  }
+  .spiral-stream::before { top: 0;    background: linear-gradient(var(--bg), transparent); }
+  .spiral-stream::after  { bottom: 0; background: linear-gradient(transparent, var(--bg)); }
+</style>
+</head>
+<body style="margin:0;background:#101014">
+
+<!-- ---------- Spiral Stream markup (copy this) ---------- -->
+<section class="spiral-stream" id="spiralStream">
+  <div class="spiral-stream__stage"></div>
+</section>
+
+<script>
+/* ---------- Spiral Stream script (copy this) ---------- */
+(function () {
+  // 1) Put your own image URLs here (any number; they repeat around the spiral).
+  //    Leave empty to see placeholder cards.
+  const IMAGES = [
+    // "images/product-1.jpg",
+    // "images/product-2.jpg",
+  ];
+
+  // 2) Tweak the look
+  const CONFIG = {
+    cardsPerTurn: 8,    // cards in one wrap (card width is computed so they sit edge to edge)
+    radius: 0.30,       // spiral radius, as a fraction of section height
+    aspect: 0.58,       // card height ÷ width  (lower = more landscape)
+    rowSpacing: 2.3,    // distance between spiral rows, in card heights (higher = fewer, more open rows)
+    height: 1.3,        // spiral height, as a fraction of section height
+    maxTurns: 4,        // never show more than this many spiral rows
+    gap: 4,             // px gap between neighbouring cards (left/right)
+    loop: 28,           // seconds for one full pass (top → bottom)
+    tiltX: -8,          // camera tilt in degrees
+    direction: 1        // 1 = flows top → down, -1 = bottom → up
+  };
+
+  const root = document.getElementById("spiralStream");
+  const stage = root.querySelector(".spiral-stream__stage");
+
+  // Placeholder colors when no images are supplied
+  const hues = [210, 260, 330, 20, 160, 190, 280, 45, 120, 0, 230, 300, 90];
+
+  let cards = [], COUNT = 0, turnsRad = 0;
+  function buildCards(n) {
+    stage.innerHTML = "";
+    cards = [];
+    for (let i = 0; i < n; i++) {
+      const el = document.createElement("div");
+      el.className = "spiral-stream__card";
+      if (IMAGES.length) {
+        el.style.backgroundImage = `url("${IMAGES[i % IMAGES.length]}")`;
+      } else {
+        const h = hues[i % hues.length];
+        el.style.background =
+          `linear-gradient(135deg, hsl(${h} 45% 32%), hsl(${(h + 40) % 360} 40% 14%))`;
+      }
+      stage.appendChild(el);
+      cards.push(el);
+    }
+    COUNT = n;
+  }
+
+  let W = 0, H = 0, R = 0, spanY = 0, skew = 0, cw = 0, ch = 0;
+  function measure() {
+    W = root.clientWidth;
+    H = root.clientHeight;
+    R = Math.min(W * 0.38, H * CONFIG.radius);           // fits narrow (phone) screens too
+    const step = (Math.PI * 2) / CONFIG.cardsPerTurn;     // angle between neighbours
+    const chord = 2 * R * Math.sin(step / 2);              // straight distance between neighbours
+    cw = chord - CONFIG.gap;                               // card width (edge to edge)
+    ch = cw * CONFIG.aspect;                               // landscape card height
+    const pitch = ch * CONFIG.rowSpacing;                  // vertical drop per full wrap
+    const turns = Math.max(2, Math.min(CONFIG.maxTurns, Math.round((H * CONFIG.height) / pitch)));
+    spanY = turns * pitch;
+    turnsRad = turns * Math.PI * 2;
+    const n = turns * CONFIG.cardsPerTurn;
+    if (n !== COUNT) buildCards(n);
+    // shear so top/bottom edges follow the spiral and left/right edges stay vertical
+    skew = Math.atan2(pitch / CONFIG.cardsPerTurn, chord) * 180 / Math.PI;
+    cards.forEach(c => {
+      c.style.width = cw + "px";
+      c.style.height = ch + "px";
+      c.style.marginLeft = -cw / 2 + "px";
+      c.style.marginTop = -ch / 2 + "px";
+    });
+  }
+  measure();
+  window.addEventListener("resize", measure);
+
+  // Smoothstep fade near the ends of the spiral
+  const fade = s => {
+    const e = 0.12;
+    const a = Math.min(1, s / e), b = Math.min(1, (1 - s) / e);
+    const k = Math.min(a, b);
+    return k * k * (3 - 2 * k);
+  };
+
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const start = performance.now();
+
+  function frame(now) {
+    const t = reduced ? 0 : (now - start) / 1000;
+    const progress = (t / CONFIG.loop) * CONFIG.direction;
+    stage.style.transform = `rotateX(${CONFIG.tiltX}deg)`;
+
+    for (let i = 0; i < cards.length; i++) {
+      let s = (i / COUNT + progress) % 1;
+      if (s < 0) s += 1;
+      const y = (s - 0.5) * spanY;           // top → bottom
+      const ang = s * turnsRad;              // angle around the axis
+      const deg = ang * 180 / Math.PI;
+      const el = cards[i];
+      el.style.transform =
+        `translate3d(0, ${y}px, 0) rotateY(${deg}deg) translateZ(${R}px) skewY(${skew}deg)`;
+      // dim cards on the back of the spiral, fade the ends
+      const front = (Math.cos(ang) + 1) / 2;   // 1 = facing viewer
+      el.style.opacity = (fade(s) * (0.2 + 0.8 * front)).toFixed(3);
+      el.style.zIndex = Math.round(front * 1000);
+    }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

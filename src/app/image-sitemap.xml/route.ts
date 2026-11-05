@@ -1,7 +1,6 @@
 import { buildImageSitemapXml } from '@/lib/sitemapData';
 
-// Port of the image-sitemap.xml that scripts/generate-sitemap.cjs wrote into public/ on every build;
-// regenerated from the same sources at most once a day.
+// Every page's indexable images: products, categories, blog posts and page assets.
 export const revalidate = 86400;
 
 export async function GET() {
