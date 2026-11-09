@@ -14,9 +14,9 @@ import { WhatsAppIcon } from "@/components/SocialIcons";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/order-medicines" },
-  title: { absolute: "Buy Prescription Medicines Online in the Philippines" },
+  title: { absolute: "Order Prescription Medicine Online & Delivery Philippines" },
   description:
-    "Buy prescription medicines online from Getmeds, an FDA-licensed importer, wholesaler, distributor and retail pharmacy. Delivery across the Philippines.",
+    "Buy prescription medicines online from Getmeds, an importer, wholesaler, distributor, retail pharmacy, and online drugstore with nationwide delivery.",
 };
 
 /* Coloured ordering pills stacked on the hero person's right; `nudge` keeps a slight stagger. */
@@ -97,7 +97,7 @@ export default function OrderPage() {
         <div className="relative">
           <Image
             src="/images/herosectionfinal.png"
-            alt="Smiling Getmeds team member ordering medicines on her phone"
+            alt="Smiling Getmeds team member ordering prescription medicine on her phone"
             width={5456}
             height={2816}
             priority
@@ -121,10 +121,10 @@ export default function OrderPage() {
             <span className="block text-[11px] font-semibold uppercase tracking-[0.24em] text-primary xl:text-white xl:drop-shadow">
               Order Medicines
             </span>
-            <h1 className="font-display mt-6 text-[clamp(1.6rem,7.2vw,1.85rem)] font-semibold leading-[1.12] tracking-tight text-[#0B2E5E] md:text-[clamp(1.45rem,3.5vw+0.2rem,3.2rem)] xl:mt-4 xl:text-white xl:drop-shadow-md">
+            <h1 className="font-display mt-6 text-[clamp(1.6rem,7.2vw,1.85rem)] font-semibold leading-[1.12] tracking-tight text-[#0B2E5E] md:text-[clamp(1.45rem,3.5vw+0.2rem,3.2rem)] xl:mt-4 xl:text-[clamp(2rem,3vw,2.85rem)] xl:text-white xl:drop-shadow-md">
               {/* exactly two lines from md up; free wrapping on phones where line one doesn't fit */}
-              <span className="md:block md:whitespace-nowrap">Order Prescription Medicines</span>{" "}
-              <span className="text-primary md:block md:whitespace-nowrap xl:text-white">Online in the Philippines</span>
+              <span className="md:block md:whitespace-nowrap">Prescription Medicine Delivery</span>{" "}
+              <span className="text-primary md:block md:whitespace-nowrap xl:text-white">in the Philippines — Order Online</span>
             </h1>
             <p className="mt-6 max-w-2xl text-[15.5px] leading-relaxed text-black md:text-[15px] xl:mt-4 xl:max-w-xl xl:text-white xl:drop-shadow">
               Prescription medicine delivery for patients, doctors, pharmacies and hospitals across the Philippines.
@@ -214,11 +214,10 @@ export default function OrderPage() {
                 What we supply.
               </h2>
               <p className="mt-auto pt-10 text-sm leading-relaxed text-white/90">
-                Getmeds is a trusted pharmaceutical importer, wholesale distributor, and retail pharmacy
-                serving patients, doctors, pharmacies, and hospitals nationwide. We supply cancer medicines
-                and chemotherapy drugs, treatments for blood disorders, and essential hospital medicines,
-                including anesthesia and surgical medicines. Our complete healthcare catalog also includes
-                everyday over-the-counter (OTC) medicines, medical devices, and food supplements.
+                Getmeds is a licensed pharmaceutical importer, wholesaler, distributor, and retail pharmacy
+                based in Las Piñas City, Metro Manila, serving patients, doctors, pharmacies, and hospitals
+                nationwide. We supply cancer and chemotherapy medicines, hospital anesthesia and surgical
+                supplies, OTC medicines, medical devices, and food supplements.
               </p>
               <div className="mt-6 flex items-center justify-between gap-3">
                 <a
@@ -464,6 +463,7 @@ export default function OrderPage() {
             <h2 className="font-display text-2xl font-semibold md:text-[1.75rem]">Ready to order?</h2>
             <p className="mt-1.5 max-w-xl text-[15px] leading-relaxed text-white/90">
               Choose a category to get started, or message us if you need help finding your medicine.
+              You can also order through our mobile app.
             </p>
             <p className="mt-2 text-sm text-white/90">
               Questions? Message us on{" "}
@@ -473,10 +473,10 @@ export default function OrderPage() {
             </p>
           </div>
           <a
-            href="#audiences"
-            className="inline-flex shrink-0 items-center rounded-full bg-white px-7 py-3 text-sm font-semibold text-[#3d7a26] transition hover:bg-white/90"
+            href="#order-cards"
+            className="inline-flex shrink-0 items-center gap-2 rounded-full bg-white px-7 py-3 text-sm font-semibold text-[#3d7a26] transition hover:bg-white/90"
           >
-            Start your order
+            Start your order <span aria-hidden>↑</span>
           </a>
         </Reveal>
       </section>

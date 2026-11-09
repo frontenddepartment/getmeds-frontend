@@ -323,7 +323,7 @@ export const faqs: FaqItem[] = [
   },
   {
     q: "What are Getmeds' accepted modes of payment?",
-    a: "<p>Getmeds accepts Cash on Delivery (COD), GCash, Bank Transfer, Credit Card, and Debit Card. Qualified hospital and institutional accounts may apply for credit terms, subject to approval.</p>",
+    a: "<p>Getmeds accepts Cash on Delivery (COD), GCash, and Bank Transfer. Qualified hospital and institutional accounts may apply for credit terms, subject to approval.</p>",
     schema: false,
   },
 ];
@@ -363,7 +363,7 @@ export const orderFaqs: FaqItem[] = [
   },
   {
     q: "What are Getmeds' accepted modes of payment?",
-    a: "<p>Getmeds accepts Cash on Delivery (COD), GCash, Bank Transfer, Credit Card, and Debit Card. For orders covered by an approved Guarantee Letter, payment is coordinated based on the agency's coverage. Qualified hospital and institutional accounts may apply for credit terms, subject to approval.</p>",
+    a: "<p>Getmeds accepts Cash on Delivery (COD), GCash, and Bank Transfer. For orders covered by an approved Guarantee Letter, payment is coordinated based on the agency's coverage. Qualified hospital and institutional accounts may apply for credit terms, subject to approval.</p>",
     schema: true,
   },
   {

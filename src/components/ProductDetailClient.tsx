@@ -581,7 +581,7 @@ export default function ProductDetailClient(_props: { categorySlug?: string; pro
                   return (
                     <React.Fragment key={idx}>
                       <li aria-hidden className="text-slate-400"><ChevronRight className="h-3.5 w-3.5" /></li>
-                      <li className={isLast ? 'font-semibold text-[#0B2E5E]' : ''}>
+                      <li className={isLast ? 'font-semibold text-black' : ''}>
                         {url ? (
                           <a href={url} className="text-primary transition-colors hover:text-primary-deep">
                             {name}
@@ -606,7 +606,7 @@ export default function ProductDetailClient(_props: { categorySlug?: string; pro
               {!product && !productsLoading && (
                 <>
                   <li aria-hidden className="text-slate-400"><ChevronRight className="h-3.5 w-3.5" /></li>
-                  <li className="font-semibold text-[#0B2E5E]">Product Details</li>
+                  <li className="font-semibold text-black">Product Details</li>
                 </>
               )}
             </ol>
@@ -708,7 +708,9 @@ export default function ProductDetailClient(_props: { categorySlug?: string; pro
             strengths: variants.length > 1 ? variants.map((v) => String(v.strength).split(/\\n|\n/)[0]) : [],
             isRx: true,
           });
+          const heading = productHeading({ ...product, displayName });
           const specs: Array<[string, React.ReactNode]> = [];
+          if (product.genericName) specs.push(['Active ingredient', product.genericName]);
           if (product.strength) specs.push(['Strength', formatFieldWithLineBreaks(product.strength)]);
           if (product.form) specs.push(['Form', formatFieldWithLineBreaks(product.form)]);
           if (product.packaging) specs.push(['Packaging', product.packaging]);
@@ -772,20 +774,26 @@ export default function ProductDetailClient(_props: { categorySlug?: string; pro
                       </p>
                     )}
                     {isRx && <p className="mt-1 text-[13px] font-semibold text-[#b00020]">Rx — Prescription required</p>}
-                    <h1 className="font-display mt-2 text-[clamp(1.6rem,2.6vw,2.1rem)] font-semibold leading-[1.12] tracking-tight text-[#0B2E5E]">
-                      {productHeading({ ...product, displayName })}
+                    <h1 className="font-display mt-2 text-[clamp(1.35rem,2vw,1.7rem)] font-semibold leading-[1.15] tracking-tight text-black">
+                      <span className="block">{heading.title}</span>
+                      {heading.subtitle && (
+                        <>
+                          {' '}
+                          <span className="mt-1.5 block font-sans text-[clamp(1rem,1.4vw,1.2rem)] font-medium tracking-normal text-slate-700">{heading.subtitle}</span>
+                        </>
+                      )}
                     </h1>
                     <dl className="mt-4 space-y-2.5">
                       {specs.map(([label, value]) => (
                         <div key={label}>
                           <dt className="text-[12.5px] text-slate-500">{label}</dt>
-                          <dd className="text-[14.5px] text-[#0B2E5E]">{value}</dd>
+                          <dd className="text-[13.5px] text-black">{value}</dd>
                         </div>
                       ))}
                       {product.innovator && (
                         <div>
                           <dt className="text-[12.5px] text-slate-500">Innovator</dt>
-                          <dd className="text-[14.5px] text-[#0B2E5E]">{product.innovator}</dd>
+                          <dd className="text-[13.5px] text-black">{product.innovator}</dd>
                         </div>
                       )}
                     </dl>
@@ -820,7 +828,7 @@ export default function ProductDetailClient(_props: { categorySlug?: string; pro
 
                 {variants.length > 1 && (
                   <div className="mt-5">
-                    <h2 className="text-[13.5px] font-semibold text-[#0B2E5E]">Also available in</h2>
+                    <h2 className="text-[13px] font-semibold text-black">Also available in</h2>
                     <ul className="mt-2 flex flex-wrap gap-2">
                       {variants.map((v) => {
                         const current = v.slug?.current === product.slug?.current;
@@ -828,12 +836,12 @@ export default function ProductDetailClient(_props: { categorySlug?: string; pro
                         return (
                           <li key={v.slug?.current}>
                             {current ? (
-                              <span aria-current="page" className="inline-flex min-h-11 items-center rounded-full bg-primary px-5 text-[13.5px] font-semibold text-white">{label}</span>
+                              <span aria-current="page" className="inline-flex min-h-11 items-center rounded-full bg-primary px-5 text-[13px] font-semibold text-white">{label}</span>
                             ) : (
                               <a
                                 href={productHref(v)}
                                 title={`${getProductDisplayName(v)} ${label}`}
-                                className="inline-flex min-h-11 items-center rounded-full px-5 text-[13.5px] font-medium text-[#0B2E5E] ring-1 ring-slate-300 transition hover:text-primary hover:ring-primary"
+                                className="inline-flex min-h-11 items-center rounded-full px-5 text-[13px] font-medium text-black ring-1 ring-slate-300 transition hover:text-primary hover:ring-primary"
                               >
                                 {label}
                               </a>
@@ -847,7 +855,7 @@ export default function ProductDetailClient(_props: { categorySlug?: string; pro
 
                 {orderedConditions.length > 0 && (
                   <div className="mt-5">
-                    <h2 className="text-[13.5px] font-semibold text-[#0B2E5E]">Used for</h2>
+                    <h2 className="text-[13px] font-semibold text-black">Used for</h2>
                     <ul className="mt-2 flex flex-wrap gap-2">
                       {orderedConditions.map((sub) => (
                         <li key={sub}>
@@ -896,9 +904,9 @@ export default function ProductDetailClient(_props: { categorySlug?: string; pro
               {/* Inquiry card, always open: pick an inquiry type, Continue, then the form for that type */}
               <div id="gm-order-box" className="scroll-mt-28 lg:sticky lg:top-28 lg:self-start">
                     <div id="gm-inquiry" className="rounded-3xl border border-gray-200 bg-white p-5 sm:p-6">
-                  <div className="mb-6">
-                    <h2 className="font-display text-[26px] font-semibold leading-tight text-[#0B2E5E]">Send inquiry</h2>
-                    <p className="mt-2 text-[15px] leading-relaxed text-slate-600">Submit your details to get a formal quote for this product.</p>
+                  <div className="mb-6 @container">
+                    <h2 className="font-display text-[22px] font-semibold leading-tight text-black">Send inquiry</h2>
+                    <p className="mt-2 whitespace-nowrap text-[min(15px,3.6cqw)] leading-relaxed tracking-tight text-slate-600">Submit your details to get a formal quote for this product.</p>
                     {userTypeConfirmed && userType && USER_TYPE_LABELS[userType] && (
                       <div className="relative inline-block mt-2" ref={userTypeMenuRef}>
                         <button
@@ -929,7 +937,7 @@ export default function ProductDetailClient(_props: { categorySlug?: string; pro
                   </div>
                   {!userTypeConfirmed ? (
                     <div>
-                      <p className="mb-3 text-[15px] font-semibold text-[#0B2E5E]">Inquiry type:</p>
+                      <p className="mb-3 text-[14px] font-semibold text-black">Inquiry type:</p>
                       <div className="mb-5 space-y-3">
                         {Object.entries(USER_TYPE_LABELS).map(([value, label]) => (
                           <button
@@ -937,7 +945,7 @@ export default function ProductDetailClient(_props: { categorySlug?: string; pro
                             type="button"
                             onClick={() => setUserType(value)}
                             aria-pressed={userType === value}
-                            className={`flex w-full items-center gap-3 rounded-xl border px-5 py-4 text-left text-[15.5px] font-semibold transition ${userType === value ? 'border-primary bg-primary/5 text-primary' : 'border-slate-200 text-[#0B2E5E] hover:border-primary/50'}`}
+                            className={`flex w-full items-center gap-3 rounded-xl border px-5 py-3.5 text-left text-[14px] font-semibold transition ${userType === value ? 'border-primary bg-primary/5 text-primary' : 'border-slate-200 text-black hover:border-primary/50'}`}
                           >
                             <UserPlus className="h-4.5 w-4.5 shrink-0" strokeWidth={1.75} aria-hidden />
                             {label}
@@ -1312,9 +1320,9 @@ export default function ProductDetailClient(_props: { categorySlug?: string; pro
                   href={whatsappHref}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-3 flex h-14 w-full items-center justify-center gap-2.5 rounded-full border-2 border-primary text-[15px] font-semibold uppercase tracking-[0.12em] text-primary transition hover:bg-primary/5"
+                  className="mt-3 flex h-14 w-full items-center justify-center gap-2.5 rounded-full bg-[#61A644] text-[15px] font-semibold text-white transition hover:brightness-95"
                 >
-                  <WhatsAppIcon className="h-5 w-5 text-[#25D366]" />
+                  <WhatsAppIcon className="h-5 w-5 text-white" />
                   Order via WhatsApp
                 </a>
                 <ul className="mt-5 grid grid-cols-3 gap-3 text-center">

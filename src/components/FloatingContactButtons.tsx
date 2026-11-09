@@ -210,10 +210,14 @@ export default function FloatingContactButtons() {
         id="scroll-to-top"
         type="button"
         title="Back to Top"
+        aria-label="Back to top"
         className={showScrollTop ? 'show' : undefined}
         onClick={scrollToTop}
       >
-        <i className="fa-solid fa-chevron-up" />
+        {/* inline SVG: Font Awesome only loads on the homepage, so an <i> icon was blank elsewhere */}
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <path d="M6 15l6-6 6 6" />
+        </svg>
       </button>
     </>
   );

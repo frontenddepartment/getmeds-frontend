@@ -35,7 +35,7 @@ const { props: heroMobile } = getImageProps({ ...heroImage, src: "/images/mobile
 /* Who we are: three photo links beside the story */
 const whoWeAreLinks = [
   { href: "/ungc", src: "/images/whoweare1.png", alt: "Getmeds at the UN Global Compact", label: "UN Global Compact", cta: "SDG Commitments" },
-  { href: "/patient-assistance-program", src: "/images/whoweare22.png", alt: "Getmeds Patient Assistance Program", label: "Patient Assistance Program", cta: "Access to treatment" },
+  { href: "/about-us", src: "/images/whoweare22.png", alt: "About Getmeds", label: "Our Identity", cta: "What Drives Us" },
   { href: "/careers", src: "/images/whoweare-careers-2.jpg", alt: "Getmeds team", label: "Careers", cta: "Join our team" },
 ];
 
@@ -300,10 +300,11 @@ export default async function Home() {
               <Reveal>
                 <Label>Who we are</Label>
                 <h2 className="font-display mt-5 text-3xl font-medium leading-tight text-primary-deep md:text-[2.4rem]">
-                  Patient first. Raising the standard for Filipino care.
+                  Caring for Our Patients, People, and Planet.
                 </h2>
                 <p className="mt-4 text-lg font-medium leading-snug text-primary">
-                  Getmeds exists so distance, cost, and complexity never decide who lives.
+                  We advance Filipino healthcare, support our communities, and protect our environment
+                  through meaningful action and responsible practices.
                 </p>
               </Reveal>
               {/* two and a half cards in view; the half-visible third invites a sideways scroll */}
