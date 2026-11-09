@@ -3,6 +3,8 @@ import localFont from "next/font/local";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import FloatingContactButtons from "@/components/FloatingContactButtons";
+import RouteGate from "@/components/RouteGate";
 import { SITE_URL } from "@/lib/site";
 import { DEFAULT_OG_IMAGE } from "@/lib/pageMeta";
 
@@ -64,6 +66,11 @@ export default function RootLayout({
         <Navbar />
         <main id="main" tabIndex={-1} className="outline-none">{children}</main>
         <Footer />
+        {/* bottom-right corner: Tawk.to live chat, WhatsApp / Viber / Messenger links, back-to-top
+            (left off the business card pages, which have their own buttons; see RouteGate) */}
+        <RouteGate>
+          <FloatingContactButtons />
+        </RouteGate>
       </body>
     </html>
   );

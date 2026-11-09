@@ -69,12 +69,20 @@ function formWords(form?: string) {
   return { title: '', desc: '' };
 }
 
-/** "PacliGet (Paclitaxel) 300 mg/50 mL Injection": the product page's H1. */
+/*
+ * The product page's H1, in two lines with no brackets (team feedback: nested parentheses like
+ * "GemGet 200 (Gemcitabine (as Hydrochloride))" read badly):
+ *   title:    "PacliGet"                          (the brand; the generic when there is no brand)
+ *   subtitle: "Paclitaxel 300 mg/50 mL Injection" (generic + strength + form)
+ * The full active ingredient ("Gemcitabine (as Hydrochloride)") goes in its own spec row instead.
+ */
 export function productHeading(p: Pick<ProductSearchInput, 'displayName' | 'brandName' | 'genericName' | 'strength' | 'form'>) {
   const generic = plainGenericName(p.genericName);
   const brand = String(p.brandName || '').trim();
-  const name = brand && generic && brand.toLowerCase() !== generic.toLowerCase() ? `${brand} (${generic})` : brand || generic || p.displayName;
-  return [name, strengthForSearch(p.strength), formWords(p.form).title].filter(Boolean).join(' ');
+  const branded = Boolean(brand && generic && brand.toLowerCase() !== generic.toLowerCase());
+  const title = branded ? brand : brand || generic || p.displayName;
+  const subtitle = [branded ? generic : '', strengthForSearch(p.strength), formWords(p.form).title].filter(Boolean).join(' ');
+  return { title, subtitle };
 }
 
 export function productSearchTitle(p: ProductSearchInput) {

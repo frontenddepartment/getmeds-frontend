@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/patient-assistance-program" },
   title: { absolute: "PCSO & DSWD Medical Assistance for Cancer Patients PH" },
   description:
-    "Apply for PCSO Medical Assistance Program (MAP) and DSWD Medical Assistance (AICS) for cancer and chemotherapy treatment in the Philippines.",
+    "Check the requirements and apply for PCSO Medical Assistance (MAP) and DSWD Medical Assistance (AICS) for cancer treatment in the Philippines.",
 };
 
 /* The page copy is written in Filipino — tell search engines so it matches Filipino queries. */

@@ -400,7 +400,8 @@ export function productSeo(model: CatalogModel, p: CatalogProduct): CatalogPageS
     .filter((c): c is { name: string; url: string } => !!c.url);
 
   const facts: Array<[string, string]> = [];
-  if (p.genericName) facts.push(['Generic name', p.genericName]);
+  const heading = productHeading({ ...p, displayName });
+  if (p.genericName) facts.push(['Active ingredient', p.genericName]);
   if (p.strength) facts.push(['Strength', p.strength]);
   if (p.form) facts.push(['Dosage form', p.form]);
   if (p.packaging) facts.push(['Packaging', p.packaging]);
@@ -464,7 +465,10 @@ export function productSeo(model: CatalogModel, p: CatalogProduct): CatalogPageS
     baked: (
       <main className="max-w-5xl mx-auto px-4 pt-28 pb-16 text-gray-800">
         <Crumbs trail={trail} />
-        <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 mb-4">{productHeading({ ...p, displayName })}</h1>
+        <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 mb-4">
+          {heading.title}
+          {heading.subtitle ? <> <span className="block text-lg font-medium text-gray-700">{heading.subtitle}</span></> : null}
+        </h1>
         {p.imageUrl ? (
           // eslint-disable-next-line @next/next/no-img-element -- crawler copy; Sanity CDN already serves a resized image
           <img

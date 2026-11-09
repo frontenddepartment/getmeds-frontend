@@ -48,8 +48,8 @@ export default function PapPage() {
               </span>
             </h1>
             <p className="mt-6 max-w-2xl text-[15.5px] leading-relaxed text-black md:text-[15px] xl:mt-4 xl:max-w-xl xl:text-white xl:drop-shadow">
-              PCSO Medical Assistance Program (MAP) and DSWD Medical Assistance (AICS) requirements and steps for
-              cancer patients and families in the Philippines.
+              Learn the requirements and step-by-step process to apply for government medical assistance for
+              cancer treatment in the Philippines.
             </p>
           </Reveal>
         </div>

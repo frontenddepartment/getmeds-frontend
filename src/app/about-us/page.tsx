@@ -31,6 +31,7 @@ export const metadata: Metadata = {
 const pageSections = [
   { id: "our-people", label: "Our People" },
   { id: "highlights", label: "Highlights" },
+  { id: "what-we-supply", label: "What We Supply" },
   { id: "mission-vision", label: "Mission & Vision" },
   { id: "commitments", label: "Commitments" },
   { id: "core-values", label: "Core Values" },
@@ -202,6 +203,21 @@ export default function AboutPage() {
             <DedicatedPills />
           </div>
         </div>
+      </section>
+
+      {/* What we supply: full container width, same heading/body sizes as the other About Us sections */}
+      <section id="what-we-supply" className="scroll-mt-28 bg-white pb-4 pt-12 md:pb-6 md:pt-16">
+        <Reveal className="mx-auto max-w-7xl px-5 md:px-10">
+          <h2 className="font-display text-2xl font-semibold text-black md:text-[2rem]">What We Supply</h2>
+          <p className="mt-4 text-[15px] leading-relaxed text-ink-soft md:text-base">
+            Getmeds is a trusted pharmaceutical importer, wholesale distributor, and retail pharmacy serving patients,
+            doctors, pharmacies, and hospitals nationwide. We supply a wide range of cancer medicines and chemotherapy
+            drugs, treatments for blood disorders, and essential hospital medicines, including anesthesia and surgical
+            medicines — backed by global manufacturing partnerships and specialized, GDP-compliant distribution. Our
+            complete healthcare catalog also includes everyday over-the-counter (OTC) medicines, medical devices, and
+            food supplements.
+          </p>
+        </Reveal>
       </section>
 
       {/* Depth stack: team photos drifting out of the distance toward the viewer */}
