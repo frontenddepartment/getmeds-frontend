@@ -66,10 +66,13 @@ function buildMetadata(opts: {
   noindex?: boolean;
   /** Use the title as is, without the " - Getmeds" suffix (product titles follow the prototype's search format). */
   plainTitle?: boolean;
+  /** Marketing-approved description: published word-for-word, never shortened. */
+  exactDescription?: boolean;
 }): Metadata {
   const fullTitle = opts.plainTitle ? opts.title : withSiteName(opts.title);
   // Google cuts snippets off at ~155-160 chars; the full text still shows as the visible intro.
-  const description = truncateAtWord(opts.description, 155);
+  // Approved copy is left whole: Google trims the snippet itself, the tag keeps the full sentence.
+  const description = opts.exactDescription ? opts.description : truncateAtWord(opts.description, 155);
   const canonicalUrl = `${DOMAIN}${opts.canonicalPath}`;
   const image = opts.ogImage || DEFAULT_OG_IMAGE;
   return {
@@ -263,7 +266,7 @@ export function categorySeo(model: CatalogModel, folder: string): CatalogPageSeo
   const approved = CATEGORY_SEARCH_COPY[folder];
   return {
     metadata: approved
-      ? buildMetadata({ title: approved.title, plainTitle: true, description: approved.description, canonicalPath, ogType: 'website', ogImage: ogImageForFolder(folder) })
+      ? buildMetadata({ title: approved.title, plainTitle: true, description: approved.description, exactDescription: true, canonicalPath, ogType: 'website', ogImage: ogImageForFolder(folder) })
       : buildMetadata({ title: label, description, canonicalPath, ogType: 'website', ogImage: ogImageForFolder(folder) }),
     jsonLd: [
       {

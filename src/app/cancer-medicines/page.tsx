@@ -49,9 +49,15 @@ export default async function CancerMedicinesPage() {
           ]}
         />
         <HubHeading
-          title="Oncology: Cancer Medicines"
-          text="Cancer medicines and chemotherapy drugs, from oral chemotherapy tablets to injection vials, for patients, doctors, pharmacies and hospitals across the Philippines."
+          title="Oncology"
+          text="Browse Getmeds’ wide range of cancer medicines and chemotherapy drugs by cancer type — check availability and request a price quote for prescription oncology treatments in the Philippines."
         />
+        {/* Intro (Marketing copy, word-for-word) */}
+        <p className="mt-4 max-w-3xl text-[15px] leading-relaxed text-ink-soft md:text-base">
+          Getmeds supplies cancer medicines and chemotherapy drugs for major cancer types in the Philippines,
+          including breast, lung, ovarian, and colorectal cancers, with nationwide delivery. Browse by cancer type
+          below, or contact us for availability and a price quote.
+        </p>
 
         <section className="mt-12">
           <HubSectionTitle>Browse by cancer type</HubSectionTitle>

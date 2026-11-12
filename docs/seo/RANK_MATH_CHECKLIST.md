@@ -106,7 +106,7 @@ Search-result wording the team approved ("How it looks on Google" prototype boar
 - **Product title:** `{Generic} {strength} {Injection|Tablet|Capsule} Price in the Philippines`
 - **Product description:** `Buy {generic} {strength} {form} ({Brand}) from Getmeds. Send an inquiry to order and get a price quote. Prescription required.`
 - **Condition title:** `{Condition}: Symptoms, Treatment and Available Medicines`
-- **Category title:** `{Category}: Cancer Medicines in the Philippines`
+- **Category title (Oncology):** `Cancer & Chemotherapy Medicines Price Philippines`
 
 Every product page uses the product formats above (decided by the team; they replace the catalogue
 sheet's `metaTitle` / `metaDescription`). They're built in one place, `productSearchTitle` /

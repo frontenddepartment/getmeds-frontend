@@ -5,6 +5,8 @@
  * components/CatalogueHub.tsx. `a` in the FAQ lists is HTML, as in lib/data.ts.
  */
 
+import { SITE_URL } from "./site";
+
 export type HubFaq = { q: string; a: string };
 
 export interface CategoryCardDef {
@@ -42,19 +44,19 @@ export const prescriptionCategories: CategoryCardDef[] = [
 export const otherRanges = [
   {
     slug: "over-the-counter-medicines",
-    title: "Over-the-counter medicines",
+    title: "Over-the-Counter Medicines",
     text: "Allergy medicines, iron supplements and everyday medicines.",
     note: "No prescription needed.",
   },
   {
     slug: "food-supplements",
-    title: "Food supplements",
+    title: "Food Supplements",
     text: "Vitamins, probiotics, herbal teas and food supplements for daily wellness.",
     note: "No Approved Therapeutic Claims.",
   },
   {
     slug: "medical-devices",
-    title: "Medical devices",
+    title: "Medical Devices",
     text: "Medical devices and supplies for hospitals, clinics and healthcare professionals.",
   },
 ];
@@ -277,11 +279,12 @@ export const productMenu = [
 
 export const productRangeFaqs: HubFaq[] = [
   { q: "Do I need a prescription to view your product range?", a: "<p>No. Anyone can browse the catalogue. A valid prescription is needed only when patients order prescription medicines.</p>" },
-  { q: "What types of prescription medicines does Getmeds supply?", a: "<p>Getmeds supplies prescription medicines for cancer, blood disorders, infections, diabetes, heart and kidney conditions, available to patients with a valid prescription and to doctors, pharmacies and hospitals across Luzon, Visayas and Mindanao. Browse by category or by condition to find a specific medicine.</p>" },
-  { q: "Where can I find hematology medicines in the Philippines?", a: '<p>Getmeds supplies medicines for blood disorders such as leukemia, lymphoma and multiple myeloma. See our <a href="/product-range?category=hematology">Hematology medicines</a>, or send an inquiry for availability and an official price quote.</p>' },
+  { q: "What types of prescription medicines does Getmeds supply?", a: "<p>Getmeds supplies prescription medicines for conditions such as cancer, blood disorders, infections, diabetes, heart and kidney conditions, available to patients with a valid prescription and to doctors, pharmacies and hospitals across Luzon, Visayas and Mindanao. Browse by category or by condition to find a specific medicine.</p>" },
+  { q: "Where can I find cancer and chemotherapy medicines in the Philippines?", a: '<p>Getmeds supplies cancer medicines and chemotherapy drugs for breast, lung, ovarian, colorectal and other cancers. See our <a href="/cancer-medicines">Cancer medicines</a> and send an inquiry for availability and an official price quote.</p>' },
+  { q: "Where can I find hematology medicines in the Philippines?", a: '<p>Getmeds supplies medicines for blood disorders such as leukemia, lymphoma and multiple myeloma. See our <a href="/blood-disorder-medicines">Hematology medicines</a> and send an inquiry for availability and an official price quote.</p>' },
   { q: "How do I check the price and availability of a medicine?", a: "<p>Open the product page and send an inquiry. Our team will confirm availability and send you an official price quote.</p>" },
-  { q: "What if I can't find the medicine I need?", a: "<p>Send us an inquiry with the medicine name and strength, and our team will confirm whether it is available in the Getmeds portfolio.</p>" },
-  { q: "Are your products registered with the FDA Philippines?", a: "<p>Yes. Getmeds products carry a Certificate of Product Registration from the FDA Philippines, available on request.</p>" },
+  { q: "What if I can’t find the medicine I need?", a: "<p>Send us an inquiry with the medicine name and strength, and our team will confirm whether it is available in the Getmeds portfolio.</p>" },
+  { q: "Are Getmeds medicines genuine and registered with the FDA Philippines?", a: "<p>Yes. Getmeds medicines carry a Certificate of Product Registration from the FDA Philippines, and every prescription order is reviewed by a licensed Getmeds pharmacist before dispatch. Product documents are available on request.</p>" },
 ];
 
 export const prescriptionFaqs: HubFaq[] = [
@@ -291,11 +294,13 @@ export const prescriptionFaqs: HubFaq[] = [
 ];
 
 export const oncologyFaqs: HubFaq[] = [
-  { q: "Where can I order chemotherapy and cancer medicines in the Philippines?", a: "<p>Open the product page of the medicine you need and send an inquiry. Patients need a valid prescription, while doctors, pharmacies and hospitals order through a verified partner account. Getmeds delivers across Luzon, Visayas and Mindanao.</p>" },
-  { q: "How much are chemotherapy drugs in the Philippines?", a: "<p>Prices depend on the medicine, strength and quantity. Send an inquiry on the product page, and our team will send you an official price quotation, which you can also submit with medical assistance applications to PCSO, DSWD and other programs.</p>" },
-  { q: "Do I need a prescription to buy cancer medicines?", a: "<p>Yes. Patients need a valid prescription, which a licensed Getmeds pharmacist reviews before dispatch. Doctors, hospitals, clinics and pharmacies can order through a partner account verified with their PRC license or FDA License to Operate.</p>" },
-  { q: "How can I check that a cancer medicine is genuine?", a: "<p>Buy only from FDA-licensed suppliers and check that the medicine has a Certificate of Product Registration, which you can look up on the FDA Philippines verification portal. Getmeds can provide product documents for its cancer medicines on request.</p>" },
-  { q: "Does Getmeds supply cancer medicines to hospitals and doctors?", a: '<p>Yes. Getmeds supplies cancer medicines to hospitals, clinics, doctors and pharmacies nationwide. See our <a href="/order-medicines/hospitals">Hospitals &amp; Institutions</a> and <a href="/order-medicines/doctors">Doctors</a> pages.</p>' },
+  { q: "How much do cancer medicines and chemotherapy drugs cost in the Philippines?", a: "<p>Prices vary by generic name, dosage, and quantity. Contact us for a price quote on a specific cancer medicine or chemotherapy drug.</p>" },
+  { q: "How much does chemotherapy cost per session?", a: "<p>Chemotherapy costs depend on the specific drugs, dosage, and number of cycles prescribed by your doctor — not a fixed per-session rate. Send us your prescription for an official price quotation your doctor or hospital can use to estimate your treatment cost per session.</p>" },
+  { q: "Who can order cancer medicines from Getmeds?", a: "<p>Patients, doctors, hospitals, pharmacies, and distributors can all order cancer medicines from Getmeds. Patients need a valid prescription, while doctors, hospitals, pharmacies and distributors can order through a verified partner account.</p>" },
+  { q: "Do I need a prescription to order cancer medicines?", a: "<p>Patients need a valid prescription from a licensed doctor to order cancer medicines or chemotherapy drugs. Doctors, hospitals, pharmacies and distributors can order through a verified partner account instead.</p>" },
+  { q: "How do I get a price quote for a specific cancer medicine?", a: "<p>Send your prescription and contact details to Getmeds, and our team will prepare an official price quotation for your specific cancer medicine or chemotherapy drug.</p>" },
+  { q: "Can I get PCSO or DSWD assistance for chemotherapy medicines?", a: '<p>Yes. Getmeds’ Patient Assistance Program helps eligible patients access PCSO Medical Assistance and DSWD AICS medical assistance for chemotherapy and cancer treatment. <a href="/patient-assistance-program">Learn more →</a></p>' },
+  { q: "Does Getmeds deliver cancer medicines nationwide?", a: "<p>Yes. Getmeds delivers cancer medicines and chemotherapy drugs nationwide across the Philippines.</p>" },
 ];
 
 const faqPageSchema = (items: HubFaq[]) => ({
@@ -304,7 +309,8 @@ const faqPageSchema = (items: HubFaq[]) => ({
   mainEntity: items.map((f) => ({
     "@type": "Question",
     name: f.q,
-    acceptedAnswer: { "@type": "Answer", text: f.a },
+    // Same text as the visible answer; links made absolute (https://getmeds.ph/...) for search engines.
+    acceptedAnswer: { "@type": "Answer", text: f.a.replace(/href="\//g, `href="${SITE_URL}/`) },
   })),
 });
 

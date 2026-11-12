@@ -105,9 +105,9 @@ export function productSearchDescription(p: ProductSearchInput) {
  */
 export const CATEGORY_SEARCH_COPY: Record<string, { title: string; description: string }> = {
   'cancer-medicines': {
-    title: 'Oncology: Cancer Medicines in the Philippines',
+    title: 'Cancer & Chemotherapy Medicines Price Philippines',
     description:
-      'Browse Getmeds cancer medicines for breast, lung, ovarian and other cancers. Send an inquiry to order and get a price quote.',
+      'Getmeds supplies a wide range of cancer medicines and chemotherapy drugs in the Philippines, including tablets, injections, and infusions. Check availability and request a price quote.',
   },
 };
 

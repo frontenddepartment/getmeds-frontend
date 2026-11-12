@@ -3,9 +3,9 @@ import type { Metadata } from "next";
 /* page.tsx is a client component and can't export metadata — this server layout sets it. */
 export const metadata: Metadata = {
   alternates: { canonical: "/product-range" },
-  title: "Product Range: Oncology & Specialty Medicines",
+  title: "Medicines, Supplements and Medical Devices in the Philippines",
   description:
-    "Browse Getmeds' FDA Philippines-licensed medicines across oncology, hematology, cardiology, anti-infectives and more. Prescription-based ordering, nationwide delivery.",
+    "Browse Getmeds prescription medicines, OTC medicines, food supplements and medical devices. Send an inquiry for availability and pricing.",
 };
 
 export default function Layout({ children }: { children: React.ReactNode }) {

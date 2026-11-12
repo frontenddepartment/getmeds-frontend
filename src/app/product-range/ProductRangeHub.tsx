@@ -25,14 +25,15 @@ export default function ProductRangeHub({ model }: { model: CatalogModel }) {
         <HubHeading
           wide
           title="Product range"
-          text="Browse the tablets, capsules, injections and infusion vials Getmeds supplies to patients, doctors, pharmacies and hospitals across Luzon, Visayas and Mindanao, and send an inquiry for availability and an official price quote."
+          text="Browse the tablets, capsules, injections and infusion vials Getmeds supplies to patients, doctors, pharmacies and hospitals across Luzon, Visayas and Mindanao, and send an inquiry for availability and pricing."
         />
         <RibbonMarquee />
 
         <section className="mt-10">
-          <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
+          <HubSectionTitle>All categories</HubSectionTitle>
+          <div className="mt-6 flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
             <div className="flex items-center gap-2.5">
-              <h2 className="font-display text-2xl font-semibold text-black md:text-[2rem]">Prescription medicines</h2>
+              <h3 className="font-display text-xl font-semibold text-black md:text-2xl">Prescription medicines</h3>
               <span className="rounded-full bg-[#e4f2dc] px-2.5 py-0.5 text-[11px] font-semibold text-[#3f7a28]">Rx</span>
             </div>
             <Link href="/prescription-medicines" className={`${hubLink} text-sm`}>
@@ -47,25 +48,25 @@ export default function ProductRangeHub({ model }: { model: CatalogModel }) {
               <CategoryCard key={card.name} card={card} model={model} highlight={i === 0} />
             ))}
           </div>
-        </section>
 
-        <div className="mt-10 grid gap-4 md:grid-cols-3">
-          {otherRanges.map(({ slug, title, text, note }) => {
-            const { Icon, iconBg } = rangeIcons[slug as keyof typeof rangeIcons];
-            return (
-              <Link key={slug} href={`/${slug}`} className="flex gap-3.5 rounded-3xl border border-gray-200 bg-white p-5 transition hover:-translate-y-1 hover:border-primary">
-                <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-white ${iconBg}`}>
-                  <Icon aria-hidden className="h-5 w-5" />
-                </span>
-                <span>
-                  <span className="font-display block font-semibold text-black">{title}</span>
-                  <span className="mt-1 block text-sm leading-snug text-ink-soft">{text}{note && ` ${note}`}</span>
-                  <span className="mt-1.5 block text-[13px] font-semibold text-primary">Send an inquiry →</span>
-                </span>
-              </Link>
-            );
-          })}
-        </div>
+          <div className="mt-8 grid gap-4 md:grid-cols-3">
+            {otherRanges.map(({ slug, title, text, note }) => {
+              const { Icon, iconBg } = rangeIcons[slug as keyof typeof rangeIcons];
+              return (
+                <Link key={slug} href={`/${slug}`} className="flex gap-3.5 rounded-3xl border border-gray-200 bg-white p-5 transition hover:-translate-y-1 hover:border-primary">
+                  <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-white ${iconBg}`}>
+                    <Icon aria-hidden className="h-5 w-5" />
+                  </span>
+                  <span>
+                    <h3 className="font-display font-semibold text-black">{title}</h3>
+                    <span className="mt-1 block text-sm leading-snug text-ink-soft">{text}{note && ` ${note}`}</span>
+                    <span className="mt-1.5 block text-[13px] font-semibold text-primary">View all {title.toLowerCase()} →</span>
+                  </span>
+                </Link>
+              );
+            })}
+          </div>
+        </section>
 
         <section className="mt-12">
           <HubSectionTitle>Browse by condition</HubSectionTitle>
