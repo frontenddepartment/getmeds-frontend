@@ -13,7 +13,6 @@
  * Only server code imports this file.
  */
 
-import { wpFresh } from './wpCacheBust';
 import { unstable_cache } from 'next/cache';
 
 export const SITEMAP_DOMAIN = 'https://getmeds.ph';
@@ -319,7 +318,7 @@ export async function getPageAssetImages(): Promise<Map<string, string[]>> {
   return byPage;
 }
 
-// Fetch a single page of posts from the WordPress API (past the CMS proxy cache: see wpCacheBust.ts).
+// Fetch a single page of posts from the WordPress API.
 async function fetchPostsPage(page: number): Promise<{ posts: WpPost[]; totalPages: number }> {
   // _embed=true carries each post's featured image inline (for image-sitemap.xml). Not
   // combined with _fields: WordPress drops _embedded when _fields is present.
@@ -327,7 +326,7 @@ async function fetchPostsPage(page: number): Promise<{ posts: WpPost[]; totalPag
   const wordpressApiRoot =
     process.env.NEXT_PUBLIC_WORDPRESS_API_ROOT || process.env.VITE_WORDPRESS_API_ROOT || 'https://cms.getmeds.ph';
   const targetUrl = new URL(wordpressApiRoot);
-  const res = await fetch(wpFresh(`${targetUrl.origin}${pathQuery}`), {
+  const res = await fetch(`${targetUrl.origin}${pathQuery}`, {
     headers: { 'User-Agent': 'SitemapGenerator/1.0' },
     // Each page carrying embedded media is ~3MB, over the data cache's 2MB per-item limit,
     // so the raw response isn't cached; getAllPosts caches the slimmed posts instead.
