@@ -92,7 +92,8 @@ const nextConfig: NextConfig = {
   // Self-hosted on the InMotion VPS: the build emits .next/standalone (server.js plus only the
   // node_modules it needs), which the GitHub deploy workflow uploads and PM2 runs.
   output: 'standalone',
-  env: publicEnv,
+  // WP_FRESH_KEY: one value per build for WordPress requests (see src/lib/wpCacheBust.ts)
+  env: { ...publicEnv, WP_FRESH_KEY: Date.now().toString(36) },
   experimental: {
     cpus: 1,
     workerThreads: false,
