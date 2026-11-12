@@ -11,6 +11,7 @@ import { unstable_cache } from 'next/cache';
 import { getProducts, getCategories, folderDisplayName } from './queries';
 import { STATIC_CATEGORY_FOLDERS } from './categoryFolders';
 import { urlFor } from './sanity';
+import { wpFresh } from './wpCacheBust';
 
 export const DOMAIN = 'https://getmeds.ph';
 export const REVALIDATE_SECONDS = 3600;
@@ -314,7 +315,7 @@ export async function wordpressPostExists(slug: string): Promise<boolean> {
   if (!slug || slug.includes('/')) return false;
   const root = (process.env.NEXT_PUBLIC_WORDPRESS_API_ROOT || process.env.VITE_WORDPRESS_API_ROOT || 'https://cms.getmeds.ph').replace(/\/$/, '');
   try {
-    const res = await fetch(`${root}/wp-json/wp/v2/posts?slug=${encodeURIComponent(slug)}&_fields=id,slug`, {
+    const res = await fetch(wpFresh(`${root}/wp-json/wp/v2/posts?slug=${encodeURIComponent(slug)}&_fields=id,slug`), {
       next: { revalidate: REVALIDATE_SECONDS },
     });
     if (!res.ok) return false;
