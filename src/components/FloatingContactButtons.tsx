@@ -1,6 +1,8 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { PackageSearch } from 'lucide-react';
 import './floating-contact.css';
 
 /**
@@ -185,6 +187,10 @@ export default function FloatingContactButtons() {
   return (
     <>
       <div id="gm-chat-links" className={chatOpen ? 'gm-chat-links--hidden' : undefined}>
+        {/* NEW SETUP: request tracking, top of the stack (moved here from the navbar) */}
+        <Link href="/track-order" className="gm-track-link" aria-label="Track your request" title="Track your request">
+          <PackageSearch aria-hidden="true" />
+        </Link>
         {CHAT_LINKS.map((link) => {
           // viber:// hands off to the app, so it has no tab to open.
           const newTab = link.href.startsWith('http');

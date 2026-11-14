@@ -2,11 +2,12 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import {
-  ChevronRight, Clock, FileCheck2, HandHeart, HeartHandshake, Leaf,
+  ChevronRight, Clock, FileCheck2, HeartHandshake, Leaf,
   Lock, PhoneCall, Pill, ShieldCheck, Snowflake, Stethoscope, Tablets, Truck,
 } from "lucide-react";
 import { contact, orderFaqs } from "@/lib/data";
 import { Reveal, Stagger, StaggerItem } from "@/components/ui";
+import HubOptions from "@/newsetup/HubOptions"; // NEW SETUP
 import Faq from "@/components/Faq";
 import FaqSchema from "@/components/FaqSchema";
 import Vouchers from "@/components/Vouchers";
@@ -200,6 +201,9 @@ export default function OrderPage() {
           </Stagger>
         </div>
       </section>
+
+      {/* NEW SETUP: each customer type's options + request tracking */}
+      <HubOptions />
 
       {/* What we supply + the four order cards */}
       <section className="pb-10 pt-2 md:pb-16 md:pt-4">
@@ -410,12 +414,17 @@ export default function OrderPage() {
         <div className="mx-auto max-w-7xl px-5 md:px-10">
           {/* title on the left (two lines), description + button on the right */}
           <Reveal className="grid gap-6 md:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)] md:items-center md:gap-12">
+            {/* NEW SETUP: official PAP logo (same file as the navbar), straight on the blue band */}
             <div>
-              <HandHeart className="h-7 w-7 text-white" />
-              <h2 className="font-display mt-4 text-3xl font-semibold leading-tight text-white md:text-[2.6rem]">
-                Patient Assistance
-                <br />
-                Program
+              <h2 className="m-0 w-full max-w-[380px]">
+                <Image
+                  src="/images/newpaplogo.png"
+                  alt="Patient Assistance Program"
+                  width={1708}
+                  height={920}
+                  sizes="380px"
+                  className="h-auto w-full drop-shadow-[0_2px_6px_rgba(7,59,87,0.35)]"
+                />
               </h2>
             </div>
             <div>

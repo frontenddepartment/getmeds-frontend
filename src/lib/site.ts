@@ -28,6 +28,11 @@ export const routes: SiteRoute[] = [
   { path: "/conditions", title: "Conditions A–Z", description: "Conditions grouped by category, with the Getmeds medicines used to treat them.", priority: 1.0, changefreq: "weekly" },
   { path: "/order-medicines", title: "Order Medicines", description: "Buy prescription medicines online from Getmeds, an FDA-licensed importer, wholesaler, distributor and retail pharmacy. Delivery across the Philippines.", priority: 1.0, changefreq: "weekly" },
   { path: "/patient-assistance-program", title: "Patient Assistance Program", description: "Price quotations for DSWD, PCSO, OP and OVP Guarantee Letters.", priority: 1.0, changefreq: "weekly" },
+  // NEW SETUP pages
+  { path: "/patient-assistance-program/pcso", title: "PCSO Medical Assistance", description: "Medicine quotations, document checks and Guarantee Letter coordination for PCSO medical assistance.", priority: 0.8, changefreq: "monthly" },
+  { path: "/patient-assistance-program/dswd", title: "DSWD Medical Assistance", description: "Medicine quotations and guidance on DSWD medical assistance (AICS) requirements.", priority: 0.8, changefreq: "monthly" },
+  { path: "/request-quotation", title: "Request a Quotation", description: "Formal RFQ, regular, urgent or government bidding procurement, and purchase order submission.", priority: 0.8, changefreq: "monthly" },
+  { path: "/csp-inquiry", title: "CSP Inquiry", description: "Compassionate Special Permit coordination for physicians and institutions, subject to FDA approval.", priority: 0.8, changefreq: "monthly" },
   { path: "/services", title: "Our Services", description: "Importation, wholesale distribution, cold-chain logistics and patient programs.", priority: 1.0, changefreq: "monthly" },
 
   // Secondary — 0.8

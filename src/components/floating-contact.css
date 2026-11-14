@@ -37,6 +37,22 @@
   height: 26px;
   fill: #fff;
 }
+/* NEW SETUP: "Track your request" button at the top of the stack — Getmeds blue, outline icon */
+#gm-chat-links a.gm-track-link {
+  background: #1d9fda;
+  color: #fff;
+  /* white ring so it stays visible on blue sections too */
+  box-shadow: 0 0 0 2px #fff, 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+#gm-chat-links a.gm-track-link:hover {
+  box-shadow: 0 0 0 2px #fff, 0 10px 20px rgba(0, 0, 0, 0.25);
+}
+#gm-chat-links a.gm-track-link svg {
+  fill: none;
+  stroke: currentColor;
+  width: 24px;
+  height: 24px;
+}
 @media (max-width: 640px) {
   #gm-chat-links {
     right: 20px;

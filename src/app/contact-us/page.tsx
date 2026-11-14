@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import "@/newsetup/newsetup.css"; // NEW SETUP: site-wide form design (ns-skin)
 import Image from "next/image";
 import { motion } from "framer-motion";
 import {
@@ -165,7 +166,7 @@ export default function ContactPage() {
 
       {/* Form + map card */}
       <section className="relative bg-white pb-14 pt-0">
-        <div className="relative mx-auto grid max-w-7xl gap-8 px-5 md:px-10 lg:grid-cols-[1fr_1.25fr] lg:gap-12">
+        <div className="ns-skin-panel relative mx-auto grid max-w-7xl gap-8 px-5 md:px-10 lg:grid-cols-[1fr_1.25fr] lg:gap-12">
           {/* How to reach us: the four channels, left of the form */}
           <Reveal>
             <h2 className="font-display text-2xl font-semibold text-black md:text-[2rem]">How to Reach Us</h2>
@@ -232,7 +233,7 @@ export default function ContactPage() {
           </Reveal>
 
           <Reveal>
-            <div className="rounded-[28px] border border-gray-200 bg-white p-7 md:p-10">
+            <div className="ns-skin-card rounded-[28px] border border-gray-200 bg-white p-7 md:p-10">
               <p className="text-sm font-semibold text-primary">Send a message</p>
               {/* same size and weight as "How to Reach Us" */}
               <h2 className="font-display mt-2 text-2xl font-semibold text-black md:text-[2rem]">Get in touch with us.</h2>
@@ -253,7 +254,7 @@ export default function ContactPage() {
                 </motion.div>
               ) : (
                 <form
-                  className="mt-8 grid gap-4 sm:grid-cols-2"
+                  className="ns-skin mt-8 grid gap-4 sm:grid-cols-2"
                   onSubmit={handleSubmit}
                 >
                   {/* 2x2: Full Name | Email, Phone | Subject; then Message full width */}

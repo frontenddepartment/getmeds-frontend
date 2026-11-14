@@ -67,6 +67,8 @@ export const STATIC_SITEMAP_PAGES: StaticSitemapPage[] = [
   { path: 'product-range', label: 'Product Range', section: 'main', priority: PRIORITY.MAIN, changefreq: 'weekly' },
   { path: 'prescription-medicines', label: 'Prescription Medicines', section: 'main', priority: PRIORITY.MAIN, changefreq: 'weekly' },
   { path: 'conditions', label: 'Conditions A–Z', section: 'main', priority: PRIORITY.MAIN, changefreq: 'weekly' },
+  { path: 'therapeutic-categories', label: 'Therapeutic Categories', section: 'main', priority: PRIORITY.SECONDARY, changefreq: 'weekly' }, // NEW SETUP
+  { path: 'regulatory-information', label: 'Licenses & Compliance', section: 'company', priority: PRIORITY.STATIC, changefreq: 'yearly' }, // NEW SETUP
   { path: 'services', label: 'Services', section: 'main', priority: PRIORITY.MAIN, changefreq: 'monthly' },
   { path: 'patient-assistance-program', label: 'Patient Assistance Program', section: 'main', priority: PRIORITY.MAIN, changefreq: 'monthly' },
   { path: 'blog', label: 'Blog', section: 'main', priority: PRIORITY.MAIN, changefreq: 'daily' },
@@ -76,6 +78,13 @@ export const STATIC_SITEMAP_PAGES: StaticSitemapPage[] = [
   { path: 'order-medicines/doctors', label: 'For Doctors', section: 'order', priority: PRIORITY.SECONDARY, changefreq: 'monthly' },
   { path: 'order-medicines/distributors', label: 'For Distributors', section: 'order', priority: PRIORITY.SECONDARY, changefreq: 'monthly' },
   { path: 'order-medicines/hospitals', label: 'For Hospitals', section: 'order', priority: PRIORITY.SECONDARY, changefreq: 'monthly' },
+  // NEW SETUP pages (feature/new-ordering-setup)
+  { path: 'request-quotation', label: 'Request a Quotation', section: 'order', priority: PRIORITY.SECONDARY, changefreq: 'monthly' },
+  { path: 'csp-inquiry', label: 'CSP Inquiry', section: 'order', priority: PRIORITY.SECONDARY, changefreq: 'monthly' },
+  { path: 'professional-inquiry', label: 'Professional Inquiry', section: 'order', priority: PRIORITY.SECONDARY, changefreq: 'monthly' },
+  { path: 'partner-registration', label: 'Partner Registration', section: 'order', priority: PRIORITY.SECONDARY, changefreq: 'monthly' },
+  { path: 'patient-assistance-program/pcso', label: 'PCSO Medical Assistance', section: 'main', priority: PRIORITY.SECONDARY, changefreq: 'monthly' },
+  { path: 'patient-assistance-program/dswd', label: 'DSWD Medical Assistance', section: 'main', priority: PRIORITY.SECONDARY, changefreq: 'monthly' },
   { path: 'meditations', label: 'Meditations App', section: 'company', priority: PRIORITY.SECONDARY, changefreq: 'monthly' },
   { path: 'about-us', label: 'About Us', section: 'company', priority: PRIORITY.STATIC, changefreq: 'monthly' },
   { path: 'contact-us', label: 'Contact Us', section: 'company', priority: PRIORITY.STATIC, changefreq: 'monthly' },

@@ -1,6 +1,12 @@
 ﻿'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+import OrderOptionsPanel from '@/newsetup/OrderOptionsPanel'; // NEW SETUP
+import AudienceFlow from '@/newsetup/AudienceFlow'; // NEW SETUP
+
+// NEW SETUP: true = this page follows the low-fidelity prototype flow (options + new multi-step forms with
+// tracking references). The original v2 single-page forms below stay in the file, switched off, for review/merge.
+const NEW_SETUP_FORMS = true;
 import { getApiUrl } from '@/lib/api';
 import { submitInquiry } from '@/lib/offlineInquiry';
 import { loadDetails } from '@/lib/accountStore';
@@ -1100,12 +1106,18 @@ export default function OrderMedicinesClient({ audienceSlug }: { audienceSlug?: 
           </div>
         </section>
 
-        {/* ── Main Content ── */}
-        <section className="bg-white pb-12 pt-6 md:pb-14 md:pt-8">
+        {/* NEW SETUP: this customer type's options (same as the low-fidelity prototype) */}
+        <OrderOptionsPanel audienceSlug={audienceSlug} />
+
+        {/* ── Main Content ── (NEW SETUP: id="order-form" kept as an anchor) */}
+        <section id="order-form" className="scroll-mt-28 bg-white pb-12 pt-6 md:pb-14 md:pt-8">
           <div className="mx-auto max-w-7xl space-y-5 px-5 md:px-10">
 
-            {/* Patient prescription-order flow (default/unset/skipped user type) */}
-            {!isProfessionalUserType && (
+            {/* NEW SETUP: low-fi flow for this audience (patients: 3-step request form) */}
+            {NEW_SETUP_FORMS && <AudienceFlow audienceSlug={audienceSlug} />}
+
+            {/* Patient prescription-order flow (default/unset/skipped user type) — v2 original, off when NEW_SETUP_FORMS */}
+            {!NEW_SETUP_FORMS && !isProfessionalUserType && (
             <>
             {/* Guide + Upload layout — guide shown first so users are instructed before uploading */}
             <div className="grid grid-cols-1 lg:grid-cols-5 gap-5 items-start">
@@ -1571,7 +1583,7 @@ export default function OrderMedicinesClient({ audienceSlug }: { audienceSlug?: 
                 different copy and destination sheet (see PARTNER_FORM /
                 PARTNER_INQUIRY_TYPE). Separate from the generic professional form,
                 which doesn't carry organisation, role or location. */}
-            {isPartnerUserType && (
+            {!NEW_SETUP_FORMS && isPartnerUserType && (
               <>
               {/* Onboarding steps — pharmacy partners only */}
               {isPharmacyUserType && (

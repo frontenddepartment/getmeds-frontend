@@ -15,19 +15,30 @@ const rangeIcons = {
   "medical-devices": { Icon: Stethoscope, iconBg: "bg-[#E5484D]" },
 };
 
-export default function ProductRangeHub({ model }: { model: CatalogModel }) {
+// NEW SETUP: optional overrides so this view can serve /therapeutic-categories (no ribbons there).
+export default function ProductRangeHub({
+  model,
+  title = "Product range",
+  crumb = "Product range",
+  showRibbons = true,
+}: {
+  model: CatalogModel;
+  title?: string;
+  crumb?: string;
+  showRibbons?: boolean;
+}) {
   return (
     <>
       <FaqSchema page="productRange" />
       <CatalogueNotice />
       <HubPage>
-        <HubBreadcrumb trail={[{ label: "Home", href: "/" }, { label: "Product range" }]} />
+        <HubBreadcrumb trail={[{ label: "Home", href: "/" }, { label: crumb }]} />
         <HubHeading
           wide
-          title="Product range"
+          title={title}
           text="Browse the tablets, capsules, injections and infusion vials Getmeds supplies to patients, doctors, pharmacies and hospitals across Luzon, Visayas and Mindanao, and send an inquiry for availability and pricing."
         />
-        <RibbonMarquee />
+        {showRibbons && <RibbonMarquee />}
 
         <section className="mt-10">
           <HubSectionTitle>All categories</HubSectionTitle>

@@ -6,26 +6,67 @@ import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronDown, Menu, X } from "lucide-react";
+import { CUSTOMER_TYPES } from "@/newsetup/data/ordering"; // NEW SETUP
 import { otherRanges, productMenu } from "@/lib/catalogueHub";
 import { SearchField, SearchPanel, SearchTrigger } from "@/components/NavSearch";
 
+/* NEW SETUP: Product Range menu links open the filtered product list (like the low-fi prototype),
+   not the category / condition landing pages. */
+const rangeHref = (cat: { name: string; href: string }) => {
+  const m = cat.href.match(/[?&]category=([^&]+)/);
+  return `/product-range?category=${m ? m[1] : cat.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
+};
+/* #catalog: land on the filtered results, not the top of the hero */
+const rangeLink = (cat: { name: string; href: string }) => `${rangeHref(cat)}#catalog`;
+const conditionHref = (cat: { name: string; href: string }, conditionPath: string) =>
+  `${rangeHref(cat)}&condition=${conditionPath.split("/").pop()}#catalog`;
+
+/* NEW SETUP: the mobile menu follows the desktop menu — same items, same order, same destinations. */
+type MobileLink = { href: string; label: string; sub?: boolean };
+
 const mobileProductLinks = [
-  { href: "/product-range", label: "View all products" },
+  { href: "/product-range", label: "All medicines" },
   { href: "/prescription-medicines", label: "Prescription medicines" },
+  { href: "/therapeutic-categories", label: "Therapeutic categories" },
+  { href: "/conditions", label: "Browse by condition" },
   ...otherRanges.map((r) => ({ href: `/${r.slug}`, label: r.title })),
 ];
 
-const mobileLinksAfter = [
-  { href: "/conditions", label: "Conditions" },
+/* Between Home and Product range (desktop order: Home · Order Medicines · Product Range …) */
+const mobileLinksBefore: MobileLink[] = [
   { href: "/order-medicines", label: "Order medicines" },
-  { href: "/about-us", label: "About" },
+  ...CUSTOMER_TYPES.map((t) => ({ href: t.path, label: t.title, sub: true })),
+  { href: "/track-order", label: "Track your request", sub: true },
+];
+
+const mobileLinksAfter: MobileLink[] = [
+  { href: "/about-us", label: "About us" },
+  { href: "/services", label: "Our services", sub: true },
+  { href: "/blog", label: "Blog & health articles", sub: true },
+  { href: "/careers", label: "Careers", sub: true },
+  { href: "/regulatory-information", label: "Licenses & compliance", sub: true },
+  { href: "/ungc", label: "UNGC" },
+  { href: "/patient-assistance-program", label: "Patient Assistance Program" },
+  { href: "/patient-assistance-program/pcso", label: "PCSO Medical Assistance", sub: true },
+  { href: "/patient-assistance-program/dswd", label: "DSWD Medical Assistance", sub: true },
+  { href: "/patient-assistance-program#requirements", label: "Eligibility & requirements", sub: true },
+  { href: "/patient-assistance-program#steps", label: "How to apply", sub: true },
   { href: "/contact-us", label: "Contact us" },
+  { href: "/global-network", label: "Global Network" },
+];
+
+/* NEW SETUP: Patient Assistance Program sheet links */
+const papLinks = [
+  { href: "/patient-assistance-program/pcso", label: "PCSO Medical Assistance" },
+  { href: "/patient-assistance-program/dswd", label: "DSWD Medical Assistance" },
+  { href: "/patient-assistance-program#requirements", label: "Eligibility & Requirements" },
+  { href: "/patient-assistance-program#steps", label: "How to Apply" },
 ];
 
 const companyExplore = [
   { href: "/about-us", label: "About Us" },
   { href: "/services", label: "Our Services" },
-  { href: "/global-network", label: "Global Presence" },
+  { href: "/global-presence", label: "Global Presence" }, // NEW SETUP: was /global-network
   { href: "/meditations", label: "Meditations" },
 ];
 
@@ -34,6 +75,14 @@ const companyMore = [
   { href: "/careers", label: "Careers" },
   { href: "/ungc", label: "UNGC" },
   { href: "/blog", label: "Blog" },
+  { href: "/regulatory-information", label: "Licenses & Compliance" }, // NEW SETUP
+];
+
+/* NEW SETUP: Global Network links that land on real places (the org names below have no pages of their own). */
+const networkLinks = [
+  { href: "/global-network", label: "Global Network" },
+  { href: "/global-network#where-we-operate", label: "Where we operate" },
+  { href: "/global-presence", label: "Global Presence" },
 ];
 
 const networkOrgs = [
@@ -44,13 +93,22 @@ const networkOrgs = [
 ];
 
 const PANEL_DESC: Record<string, { label: string; text: string }> = {
+  // NEW SETUP
+  order: {
+    label: "Order Medicines",
+    text: "Choose who you are ordering as — each path leads to the right workflow: send a prescription, request a quotation, or send an inquiry.",
+  },
+  pap: {
+    label: "Patient Assistance Program",
+    text: "Help with medicine quotations and documents for PCSO and DSWD medical assistance. The agencies decide on assistance; Getmeds helps you prepare.",
+  },
   company: {
     label: "About Us",
     text: "Get to know Getmeds — who we are, our services, global presence and wellness initiatives, plus careers, CSR work and the latest company updates.",
   },
   network: {
     label: "Global Network",
-    text: "Getmeds' growing footprint across the world — connect with any of our regional sites and trusted partner organizations.",
+    text: "Getmeds' growing footprint across the world — see where we operate and the organizations in our network.", // NEW SETUP: orgs are listed, not linked
   },
 };
 
@@ -64,7 +122,7 @@ const itemVar = {
   show: { opacity: 1, y: 0, transition: { duration: 0.3, ease: [0.22, 1, 0.36, 1] as const } },
 };
 
-type DD = null | "products" | "company" | "network";
+type DD = null | "products" | "company" | "network" | "order" | "pap"; // NEW SETUP: order, pap
 
 
 export default function Navbar() {
@@ -123,6 +181,9 @@ export default function Navbar() {
 
   const mobileRow = (href: string) =>
     `block px-4 py-3.5 text-[15px] font-semibold ${pathname === href ? "text-primary" : "text-primary-deep"}`;
+  // NEW SETUP: indented child row under a mobile menu item
+  const mobileSubRow = (href: string) =>
+    `block !border-t-0 px-7 py-2.5 text-sm font-medium ${pathname === href ? "text-primary" : "text-primary-deep"}`;
 
   const chevron = (key: DD) =>
     `h-4 w-4 transition-transform duration-300 ${dd === key ? "rotate-180" : ""}`;
@@ -151,22 +212,31 @@ export default function Navbar() {
                   <motion.div variants={listVar} initial="hidden" animate="show" className="flex-1">
                     {dd === "products" && (
                       <div>
-                        <motion.div variants={itemVar} className="flex items-center justify-between gap-4">
-                          <Link href="/prescription-medicines" className="text-[15px] font-semibold text-primary transition-colors hover:text-primary-deep">
-                            Prescription medicines →
-                          </Link>
+                        {/* NEW SETUP: All medicines · Prescription medicines · Therapeutic categories (low-fi entry points) */}
+                        <motion.div variants={itemVar} className="flex flex-wrap items-center justify-between gap-4">
+                          <div className="flex flex-wrap items-center gap-x-6 gap-y-1">
+                            <Link href="/product-range" className="text-[15px] font-semibold text-primary transition-colors hover:text-primary-deep">
+                              All medicines →
+                            </Link>
+                            <Link href="/prescription-medicines" className="text-[15px] font-semibold text-primary transition-colors hover:text-primary-deep">
+                              Prescription medicines →
+                            </Link>
+                            <Link href="/therapeutic-categories" className="text-[15px] font-semibold text-primary transition-colors hover:text-primary-deep">
+                              Therapeutic categories →
+                            </Link>
+                          </div>
                           <span className="text-[12px] text-ink-soft">Category · conditions underneath</span>
                         </motion.div>
                         <div className="mt-3 grid grid-cols-3 gap-x-6 gap-y-5">
                           {productMenu.map((cat) => (
                             <motion.div key={cat.name} variants={itemVar}>
-                              <Link href={cat.href} className="font-display text-[15px] font-semibold text-black transition-colors hover:text-primary">
+                              <Link href={rangeLink(cat)} className="font-display text-[15px] font-semibold text-black transition-colors hover:text-primary">
                                 {cat.name}
                               </Link>
                               <ul className="mt-1.5 space-y-1">
                                 {cat.conditions.map((c) => (
                                   <li key={c.href}>
-                                    <Link href={c.href} className="text-[13.5px] text-primary transition-colors hover:text-primary-deep">
+                                    <Link href={conditionHref(cat, c.href)} className="text-[13.5px] text-primary transition-colors hover:text-primary-deep">
                                       {c.label}
                                     </Link>
                                   </li>
@@ -177,7 +247,7 @@ export default function Navbar() {
                         </div>
                         <motion.div variants={itemVar} className="mt-4 border-t border-[#eef2f7] pt-3">
                           <Link href="/conditions" className="text-sm font-semibold text-primary transition-colors hover:text-primary-deep">
-                            View all conditions A–Z →
+                            Browse by condition (A–Z) →
                           </Link>
                         </motion.div>
                       </div>
@@ -226,15 +296,74 @@ export default function Navbar() {
                       </div>
                     )}
 
-                    {dd === "network" && (
+                    {/* NEW SETUP: Order Medicines sheet — four customer types and their options */}
+                    {dd === "order" && (
+                      <div className="grid grid-cols-2 gap-x-10 gap-y-6">
+                        {CUSTOMER_TYPES.map((t) => (
+                          <motion.div key={t.key} variants={itemVar}>
+                            <Link href={t.path} className="font-display text-[15px] font-semibold text-black transition-colors hover:text-primary">
+                              {t.title}
+                            </Link>
+                            <ul className="mt-1.5 space-y-1">
+                              {t.options.slice(0, 3).map((o) => (
+                                <li key={o.label}>
+                                  <Link href={o.href} className="text-[13.5px] text-primary transition-colors hover:text-primary-deep">
+                                    {o.label}
+                                  </Link>
+                                </li>
+                              ))}
+                            </ul>
+                          </motion.div>
+                        ))}
+                        <motion.div variants={itemVar} className="col-span-2 border-t border-[#eef2f7] pt-3">
+                          <Link href="/track-order" className="text-sm font-semibold text-primary transition-colors hover:text-primary-deep">
+                            Track a request →
+                          </Link>
+                        </motion.div>
+                      </div>
+                    )}
+
+                    {/* NEW SETUP: Patient Assistance Program sheet */}
+                    {dd === "pap" && (
                       <div className="grid grid-cols-2 gap-x-10">
-                        {networkOrgs.map((o) => (
-                          <motion.div key={o} variants={itemVar}>
-                            <Link href="/global-network" className={panelLink}>
-                              {o}
+                        {papLinks.map((l) => (
+                          <motion.div key={l.href} variants={itemVar}>
+                            <Link href={l.href} className={panelLink}>
+                              {l.label}
                             </Link>
                           </motion.div>
                         ))}
+                        <motion.div variants={itemVar}>
+                          <Link
+                            href="/patient-assistance-program/request"
+                            className="ml-3 mt-3 inline-flex rounded-full bg-primary px-5 py-2 text-sm font-semibold text-white transition hover:brightness-95"
+                          >
+                            Start assistance request
+                          </Link>
+                        </motion.div>
+                      </div>
+                    )}
+
+                    {dd === "network" && (
+                      <div className="grid grid-cols-[1fr_1.4fr] gap-x-10">
+                        {/* NEW SETUP: links that land where their label says */}
+                        <div>
+                          {networkLinks.map((l) => (
+                            <motion.div key={l.href} variants={itemVar}>
+                              <Link href={l.href} className={panelLink}>
+                                {l.label}
+                              </Link>
+                            </motion.div>
+                          ))}
+                        </div>
+                        <motion.div variants={itemVar}>
+                          <p className="mb-2 border-b border-[#eef2f7] px-3 pb-2 text-[15px] font-medium text-primary">Our organizations</p>
+                          <ul className="grid grid-cols-2 gap-x-6 gap-y-1.5 px-3 text-[13.5px] text-ink-soft">
+                            {networkOrgs.map((o) => (
+                              <li key={o}>{o}</li>
+                            ))}
+                          </ul>
+                        </motion.div>
                       </div>
                     )}
                   </motion.div>
@@ -305,9 +434,12 @@ export default function Navbar() {
           {/* Desktop nav (centered) */}
           <nav className="hidden items-center justify-center gap-0.5 lg:flex">
             <Link href="/" className={linkCls("/")}>Home</Link>
-            <Link href="/order-medicines" className={linkCls("/order-medicines")}>
-              Order Medicines
-            </Link>
+            {/* NEW SETUP: Order Medicines — click goes to the hub, hover opens the customer-type sheet */}
+            <div onMouseEnter={() => setDd("order")}>
+              <Link href="/order-medicines" className={`flex items-center gap-1 ${linkCls("/order-medicines")}`}>
+                Order Medicines <ChevronDown className={chevron("order")} />
+              </Link>
+            </div>
 
             <div onMouseEnter={() => setDd("products")}>
               <Link
@@ -340,8 +472,8 @@ export default function Navbar() {
             {/* Patient Assistance Program logo, right of UNGC; the bar grows to fit it */}
             <Link
               href="/patient-assistance-program"
-              onMouseEnter={() => setDd(null)}
-              className="mx-1 flex shrink-0 items-center transition-opacity hover:opacity-80 xl:mx-2"
+              onMouseEnter={() => setDd("pap")}
+              className="mx-1 flex shrink-0 items-center gap-0.5 transition-opacity hover:opacity-80 xl:mx-2"
               aria-label="Patient Assistance Program"
             >
               <Image
@@ -353,6 +485,7 @@ export default function Navbar() {
                 priority
                 className="h-9 w-auto"
               />
+              <ChevronDown aria-hidden className={`${chevron("pap")} text-ink-soft`} />
             </Link>
 
             <Link href="/contact-us" className={linkCls("/contact-us")} onMouseEnter={() => setDd(null)}>
@@ -366,6 +499,7 @@ export default function Navbar() {
               <SearchField onDark={onDark} onOpenPanel={openSearch} />
             </div>
             <SearchTrigger onDark={onDark} open={searchOpen} onToggle={() => (searchOpen ? closeSearch() : openSearch())} />
+            {/* NEW SETUP: the "Track your request" button now sits at the top of the floating contact buttons */}
             <div onMouseEnter={() => setDd("network")}>
               <Link href="/global-network" className="flex items-center gap-1">
                 <Image
@@ -412,6 +546,9 @@ export default function Navbar() {
             >
               <div className="divide-y divide-[#e6ecf1] border-t border-[#e6ecf1] pb-[env(safe-area-inset-bottom)]">
               <Link href="/" className={mobileRow("/")}>Home</Link>
+              {mobileLinksBefore.map((l) => (
+                <Link key={l.href + l.label} href={l.href} className={l.sub ? mobileSubRow(l.href) : mobileRow(l.href)}>{l.label}</Link>
+              ))}
               <div>
                 <button
                   type="button"
@@ -437,7 +574,7 @@ export default function Navbar() {
                 )}
               </div>
               {mobileLinksAfter.map((l) => (
-                <Link key={l.href} href={l.href} className={mobileRow(l.href)}>{l.label}</Link>
+                <Link key={l.href + l.label} href={l.href} className={l.sub ? mobileSubRow(l.href) : mobileRow(l.href)}>{l.label}</Link>
               ))}
               </div>
             </motion.nav>

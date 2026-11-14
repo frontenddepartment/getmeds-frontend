@@ -308,7 +308,7 @@ export default function PapGuide() {
       </div>
 
       {/* 2. Requirements: full-width brand-blue band */}
-      <div className="mt-12 bg-[#1D9FDA] py-12 text-white md:py-16">
+      <div id="requirements" className="mt-12 scroll-mt-28 bg-[#1D9FDA] py-12 text-white md:py-16">
         <Reveal className="mx-auto grid max-w-7xl gap-6 px-5 md:px-10 lg:grid-cols-[13rem_minmax(0,1fr)] lg:gap-10">
           <div className="lg:sticky lg:top-28 lg:self-start">
             <p className="text-sm font-semibold text-white/85" lang="en">Documents</p>

@@ -17,6 +17,10 @@ import CustomerReviews from "@/components/CustomerReviews";
 import CapabilityList from "@/components/CapabilityList";
 import CapabilitiesWindow from "@/components/CapabilitiesWindow";
 import FeaturedArticles from "@/components/FeaturedArticles";
+// NEW SETUP: ordering, assistance and tracking entry points
+import HomeFind from "@/newsetup/home/HomeFind";
+import HomeRequestSwitcher from "@/newsetup/home/HomeRequestSwitcher";
+import { HomeAssistance, HomeHelp } from "@/newsetup/home/HomeBands";
 
 /* Quiet left-aligned section label, benchmark style */
 function Label({ children }: { children: React.ReactNode }) {
@@ -173,6 +177,9 @@ export default async function Home() {
 
       {/* everything below the hero: balanced headings, no single-word last lines */}
       <div className="text-flow">
+        {/* NEW SETUP: medicine search with instant suggestions */}
+        <HomeFind />
+
         {/* ================= Therapeutic areas: split slider ================= */}
         <section>
           <AreaSlider />
@@ -270,6 +277,9 @@ export default async function Home() {
             ))}
           </Reveal>
         </section>
+
+        {/* NEW SETUP: customer-type switcher (Patient / Doctor / Distributor / Hospital) */}
+        <HomeRequestSwitcher />
 
         {/* ================= Portfolio layers ================= */}
         <section>
@@ -412,6 +422,9 @@ export default async function Home() {
           </div>
         </section>
 
+        {/* NEW SETUP: PCSO / DSWD assistance */}
+        <HomeAssistance />
+
         {/* ================= Customer reviews ================= */}
         <CustomerReviews />
 
@@ -464,6 +477,9 @@ export default async function Home() {
             <Faq />
           </div>
         </section>
+
+        {/* NEW SETUP: contact + request tracking */}
+        <HomeHelp />
       </div>
     </>
   );

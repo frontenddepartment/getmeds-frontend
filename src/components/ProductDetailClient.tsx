@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, useRef } from 'react';
+import "@/newsetup/newsetup.css"; // NEW SETUP: site-wide form design (ns-skin)
 import { useProducts, useCategories, useImageMapper } from '@/lib/useSanity';
 import { urlFor } from '@/lib/sanity';
 import type { Product as SanityProduct, Category } from '@/types/sanity';
@@ -962,7 +963,7 @@ export default function ProductDetailClient(_props: { categorySlug?: string; pro
                       </button>
                     </div>
                   ) : userType === 'patient' ? (
-                  <form onSubmit={handleSubmit} className="space-y-4">
+                  <form onSubmit={handleSubmit} className="ns-skin space-y-4">
                     <div>
                       <label className="block text-[13px] font-medium text-gray-500 mb-2">Target Product</label>
                       <input
@@ -1093,7 +1094,7 @@ export default function ProductDetailClient(_props: { categorySlug?: string; pro
                           <button
                             type="button"
                             onClick={() => setAgeDropdownOpen(o => !o)}
-                            className="w-full flex items-center justify-between bg-white border border-gray-200 rounded-xl px-3 py-2.5 text-[13px] text-gray-700 outline-none focus:border-primary transition cursor-pointer"
+                            className="ns-skin-select w-full flex items-center justify-between bg-white border border-gray-200 rounded-xl px-3 py-2.5 text-[13px] text-gray-700 outline-none focus:border-primary transition cursor-pointer"
                           >
                             <span className={formData.age ? 'text-gray-700' : 'text-gray-400'}>{formData.age || 'Age'}</span>
                             <i className="fa-solid fa-chevron-down text-[10px] text-gray-400" />
@@ -1207,7 +1208,7 @@ export default function ProductDetailClient(_props: { categorySlug?: string; pro
                     <div className="h-4" />
                   </form>
                   ) : (
-                  <form onSubmit={handleSubmit} className="space-y-4">
+                  <form onSubmit={handleSubmit} className="ns-skin space-y-4">
                     <div>
                       <label className="block text-[13px] font-medium text-gray-500 mb-2">Target Product</label>
                       <input
@@ -1248,7 +1249,7 @@ export default function ProductDetailClient(_props: { categorySlug?: string; pro
                           <button
                             type="button"
                             onClick={() => setAgeDropdownOpen(o => !o)}
-                            className="w-full flex items-center justify-between bg-white border border-gray-200 rounded-xl px-3 py-2.5 text-[13px] text-gray-700 outline-none focus:border-primary transition cursor-pointer"
+                            className="ns-skin-select w-full flex items-center justify-between bg-white border border-gray-200 rounded-xl px-3 py-2.5 text-[13px] text-gray-700 outline-none focus:border-primary transition cursor-pointer"
                           >
                             <span className={formData.age ? 'text-gray-700' : 'text-gray-400'}>{formData.age || 'Age'}</span>
                             <i className="fa-solid fa-chevron-down text-[10px] text-gray-400" />

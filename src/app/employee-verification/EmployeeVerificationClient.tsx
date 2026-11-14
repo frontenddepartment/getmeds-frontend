@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import "@/newsetup/newsetup.css"; // NEW SETUP: site-wide form design (ns-skin)
 import { getVerifiedEmployees } from '@/lib/queries';
 import { ShieldCheck, User } from "lucide-react";
 
@@ -188,7 +189,7 @@ export default function EmployeeVerificationClient() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8 items-start">
+        <div className="ns-skin-panel grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8 items-start">
           {/* Left: How Verification Works */}
           <div className="md:col-span-5">
             <h2 className="text-xl md:text-2xl font-semibold text-dark mb-6">How Verification Works</h2>
@@ -238,12 +239,12 @@ export default function EmployeeVerificationClient() {
 
           {/* Right: verification form, centered */}
           <div className="md:col-span-7 flex justify-center">
-            <div className="w-full max-w-md bg-white border border-gray-100 rounded-2xl shadow-sm p-8">
+            <div className="ns-skin-card w-full max-w-md bg-white border border-gray-100 rounded-2xl shadow-sm p-8">
               <h2 className="text-lg font-semibold text-gray-900 mb-1 text-center">Verify an Employee</h2>
               <p className="text-[13px] text-gray-500 text-center mb-6 leading-relaxed">
                 Enter the employee's email address or phone number exactly as given to you.
               </p>
-              <form onSubmit={handleSubmit} className="space-y-3">
+              <form onSubmit={handleSubmit} className="ns-skin space-y-3">
                 <input
                   type="text"
                   value={query}

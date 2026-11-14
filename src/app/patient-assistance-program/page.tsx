@@ -7,6 +7,7 @@ import {
 import { contact } from "@/lib/data";
 import { Reveal } from "@/components/ui";
 import PapGuide from "@/components/PapGuide";
+import Link from "next/link"; // NEW SETUP
 import FaqSchema from "@/components/FaqSchema";
 
 /* The three promises shown on the PAP banner (kept in the banner's own wording). */
@@ -115,10 +116,11 @@ export default function PapPage() {
             <p className="font-display text-lg font-semibold text-gray-800">Mga katuwang na ahensya:</p>
             <div className="mt-4 space-y-3" lang="en">
               {[
-                { k: "DSWD – AICS", v: "Assistance to Individuals in Crisis Situation" },
-                { k: "PCSO", v: "Medical Assistance Program" },
+                { k: "DSWD – AICS", v: "Assistance to Individuals in Crisis Situation", href: "/patient-assistance-program/dswd" },
+                { k: "PCSO", v: "Medical Assistance Program", href: "/patient-assistance-program/pcso" },
               ].map((a) => (
-                <div key={a.k} className="flex items-center gap-4 rounded-2xl border border-gray-200 bg-white p-5">
+                /* NEW SETUP: each agency opens its own guidance page */
+                <Link key={a.k} href={a.href} className="flex items-center gap-4 rounded-2xl border border-gray-200 bg-white p-5 transition hover:border-primary">
                   <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#1D9FDA] text-white">
                     <HeartHandshake className="h-5 w-5" />
                   </span>
@@ -126,9 +128,13 @@ export default function PapPage() {
                     <h3 className="font-display font-semibold text-black">{a.k}</h3>
                     <p className="text-sm text-ink-soft">{a.v}</p>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
+            {/* NEW SETUP: upload-first assistance request (prototype) */}
+            <Link href="/patient-assistance-program/request" className="mt-4 inline-flex text-sm font-semibold text-primary hover:text-primary-deep" lang="en">
+              Start an assistance request →
+            </Link>
           </Reveal>
         </div>
       </section>

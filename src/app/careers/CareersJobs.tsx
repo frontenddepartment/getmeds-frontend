@@ -5,6 +5,7 @@
    with the resume attached. Same behaviour, restyled to the site's flat cards and pill buttons. */
 
 import { useEffect, useState } from "react";
+import "@/newsetup/newsetup.css"; // NEW SETUP: site-wide form design (ns-skin)
 import { ArrowLeft, Check, Paperclip, UploadCloud, X } from "lucide-react";
 import { getApiUrl } from "@/lib/api";
 import { submitInquiry } from "@/lib/offlineInquiry";
@@ -233,7 +234,7 @@ export default function CareersJobs() {
             Fill out the form below and our HR team will get back to you as soon as possible.
           </p>
 
-          <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
+          <form className="ns-skin mt-6 space-y-4" onSubmit={handleSubmit}>
             <div>
               <label className={labelClass}>Full Name <span className="text-red-500">*</span></label>
               <input type="text" required placeholder="e.g. Juan Dela Cruz" value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} className={fieldClass} />

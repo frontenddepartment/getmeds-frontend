@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { ConditionChips, FaqGrid, HubBreadcrumb, HubHeading, HubPage, HubSectionTitle, ProductCard, hubBanner, hubBannerButton, hubLink } from '@/components/CatalogueHub';
+import { ConditionChips, FaqGrid, HubBreadcrumb, HubHeading, HubPage, HubSectionTitle, ProductCard, RibbonMarquee, hubBanner, hubBannerButton, hubLink } from '@/components/CatalogueHub';
 import FaqSchema from '@/components/FaqSchema';
 import { getCatalogModel, productPath } from '@/lib/catalogServer';
 import { JsonLdScripts, categorySeo } from '@/lib/catalogSeo';
@@ -58,6 +58,8 @@ export default async function CancerMedicinesPage() {
           including breast, lung, ovarian, and colorectal cancers, with nationwide delivery. Browse by cancer type
           below, or contact us for availability and a price quote.
         </p>
+        {/* NEW SETUP: cancer-type ribbons moved here from /product-range */}
+        <RibbonMarquee />
 
         <section className="mt-12">
           <HubSectionTitle>Browse by cancer type</HubSectionTitle>

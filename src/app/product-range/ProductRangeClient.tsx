@@ -28,6 +28,9 @@ const MOBILE_PAGE = 12;
 
 /* "Hematology / OB-GYN" -> "hematology-ob-gyn" */
 const categorySlug = (c: string) => c.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+// NEW SETUP: compare a ?condition= slug (from the navbar) with the catalogue's condition names,
+// e.g. "hodgkin-non-hodgkins-lymphoma" ↔ "Hodgkin/Non-Hodgkin's Lymphoma", "hypertension-angina" ↔ "Hypertension & Angina".
+const conditionKey = (s: string) => s.toLowerCase().replace(/['’]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 
 const isInjectable = (form: string) => /inject|infusion|iv|sc|im|powder for/i.test(form);
 const isOral = (form: string) => /tablet|capsule|oral/i.test(form);
@@ -206,9 +209,20 @@ export default function ProductRangeClient({
       );
       if (found) setCategory(found);
       const cond = searchParams.get("condition");
-      if (found && cond) setPicked({ category: found, name: cond });
+      if (found && cond) {
+        // NEW SETUP: accept a slug or a name; pick the matching sidebar condition of that category
+        const key = conditionKey(cond);
+        const options = [
+          ...new Set(products.filter((p) => p.category === found).flatMap((p) => productConditions[p.brand.trim().toLowerCase()] ?? [])),
+        ];
+        const name =
+          options.find((n) => conditionKey(n) === key) ??
+          options.find((n) => conditionKey(n).includes(key) || key.includes(conditionKey(n))) ??
+          cond;
+        setPicked({ category: found, name });
+      }
     }
-  }, [searchParams]);
+  }, [searchParams, productConditions]);
 
   // Keep ?category= in step with the selected area so the address always matches the list
   // (runs after the prefill above has read the incoming URL)
@@ -407,7 +421,8 @@ export default function ProductRangeClient({
         </div>
       </section>
 
-      <section ref={catalogRef} className="scroll-mt-28 bg-white pt-4">
+      {/* NEW SETUP: id="catalog" so menu filter links (#catalog) land straight on the filtered results */}
+      <section id="catalog" ref={catalogRef} className="scroll-mt-28 bg-white pt-4">
         {/* Hero copy and catalog share this wide container so big screens fill with products instead of side margins */}
         <div className="mx-auto max-w-[1760px] px-4 sm:px-6 lg:px-8 2xl:px-10">
           {/* Breadcrumb under hero section */}

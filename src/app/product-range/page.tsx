@@ -1,18 +1,18 @@
 import ProductRangeClient, { type ProductLink } from "./ProductRangeClient";
-import ProductRangeHub from "./ProductRangeHub";
 import { getCatalogModel, productPath } from "@/lib/catalogServer";
 
 // Same cadence as the product pages the cards link to.
 export const revalidate = 3600;
 
-/* /product-range is the hub. Footer, sitemap and search links carry ?category=, ?cat= or ?q=,
-   which keep opening the searchable product list.
+/* NEW SETUP: /product-range opens the searchable product list directly (search + category / dosage-form
+   filters + sort), as in the low-fidelity prototype. The hub (ribbons, category cards) is no longer shown
+   here; ProductRangeHub.tsx is kept for reference and the ribbons now live on /cancer-medicines and /conditions.
+   Footer, sitemap and search links still carry ?category=, ?cat= or ?q=.
    Server wrapper: looks up each product's real page (e.g. /cancer-medicines/<slug>) and its
    Studio photo in the catalogue, so cards link straight to the page and show the real pack. */
 export default async function ProductRangePage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
-  const { q, cat, category } = await searchParams;
+  await searchParams; // the client reads ?q= / ?cat= / ?category= itself
   const model = await getCatalogModel();
-  if (!q && !cat && !category) return <ProductRangeHub model={model} />;
 
   const productLinks: Record<string, ProductLink> = {};
   // Each brand's conditions, across all its strengths, for the sidebar's subcategories
