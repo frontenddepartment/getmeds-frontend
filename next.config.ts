@@ -97,6 +97,7 @@ const nextConfig: NextConfig = {
   experimental: {
     cpus: 1,
     workerThreads: false,
+    agentUpgrade: 'security',
   },
   async headers() {
     const noindex = (value: string) => [{ key: 'X-Robots-Tag', value }];
