@@ -1,10 +1,13 @@
 'use client';
 
-import { useId, useMemo, useRef, useState, type FormEvent, type KeyboardEvent } from 'react';
+import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import {
+  Building,
   Check,
   CircleAlert,
+  House,
   Hospital,
   LoaderCircle,
   Lock,
@@ -22,13 +25,15 @@ import { getApiUrl } from '@/lib/api';
 import { submitInquiry } from '@/lib/offlineInquiry';
 import { Turnstile, useTurnstile } from '@/lib/turnstile';
 import { medicineLabel, searchMedicines, type MedicineOption } from '@/lib/medicineSearch';
+import { composeAddress, filterBarangays, loadBarangays, loadPlaces, placeLabel, searchPlaces, type Place } from '@/lib/phAddress';
+import Combobox, { type ComboItem } from './Combobox';
 
 /* The sheet ("PAP QR CONVENSION INQUIRY") and the email both receive this type; the backend
    maps it in INQUIRY_SPREADSHEETS and prefixes the patient's name with "(PAP QR)". */
 const INQUIRY_TYPE = 'PAP QR';
 const MAX_MEDICINES = 10;
 
-type FieldName = 'firstName' | 'middleName' | 'lastName' | 'phone' | 'address' | 'doctor' | 'hospital';
+type FieldName = 'firstName' | 'middleName' | 'lastName' | 'phone' | 'city' | 'barangay' | 'street' | 'doctor' | 'hospital';
 type Fields = Record<FieldName, string>;
 type ErrorKey = FieldName | 'medicines' | 'consent' | 'verify';
 
@@ -38,7 +43,7 @@ interface Chosen {
   option?: MedicineOption;
 }
 
-const EMPTY: Fields = { firstName: '', middleName: '', lastName: '', phone: '', address: '', doctor: '', hospital: '' };
+const EMPTY: Fields = { firstName: '', middleName: '', lastName: '', phone: '', city: '', barangay: '', street: '', doctor: '', hospital: '' };
 
 /** PH mobile (09…, 639…, +639…) must be complete; anything else needs 7 to 15 digits. */
 function phoneError(raw: string): string | null {
@@ -59,7 +64,9 @@ function validate(f: Fields, medicines: Chosen[], consent: boolean): Partial<Rec
   if (!f.lastName.trim()) e.lastName = "Enter the patient's last name.";
   const pe = phoneError(f.phone);
   if (pe) e.phone = pe;
-  if (f.address.trim().length < 10) e.address = 'Enter the complete address: house no., street, barangay, city and province.';
+  if (!f.city.trim()) e.city = 'Type and choose your city or municipality.';
+  if (!f.barangay.trim()) e.barangay = 'Type and choose your barangay.';
+  if (f.street.trim().length < 3) e.street = 'Enter your house or unit number and street.';
   if (!f.doctor.trim()) e.doctor = "Enter the doctor's name.";
   if (!f.hospital.trim()) e.hospital = 'Enter the hospital or clinic name.';
   if (!medicines.length) e.medicines = 'Search and add at least one medicine.';
@@ -67,10 +74,12 @@ function validate(f: Fields, medicines: Chosen[], consent: boolean): Partial<Rec
   return e;
 }
 
-const ORDER: ErrorKey[] = ['firstName', 'middleName', 'lastName', 'phone', 'address', 'doctor', 'hospital', 'medicines', 'consent', 'verify'];
+const ORDER: ErrorKey[] = ['firstName', 'middleName', 'lastName', 'phone', 'city', 'barangay', 'street', 'doctor', 'hospital', 'medicines', 'consent', 'verify'];
+const FIELD_DOM_ID: Partial<Record<ErrorKey, string>> = { medicines: 'pq-medicines', consent: 'pq-consent', verify: 'pq-verify' };
 
 export default function PapQrForm({ medicines: catalogue }: { medicines: MedicineOption[] }) {
   const [fields, setFields] = useState<Fields>(EMPTY);
+  const [place, setPlace] = useState<Place | null>(null);
   const [chosen, setChosen] = useState<Chosen[]>([]);
   const [consent, setConsent] = useState(false);
   const [honeypot, setHoneypot] = useState('');
@@ -81,10 +90,11 @@ export default function PapQrForm({ medicines: catalogue }: { medicines: Medicin
   const turnstile = useTurnstile(status !== 'sent');
   const topRef = useRef<HTMLDivElement>(null);
 
-  const set = (name: FieldName) => (value: string) => {
+  const setField = (name: FieldName, value: string) => {
     setFields((f) => ({ ...f, [name]: value }));
     if (errors[name]) setErrors((e) => ({ ...e, [name]: undefined }));
   };
+  const set = (name: FieldName) => (value: string) => setField(name, value);
 
   const addMedicine = (item: Chosen) => {
     setChosen((list) => (list.some((c) => c.key === item.key) || list.length >= MAX_MEDICINES ? list : [...list, item]));
@@ -101,7 +111,7 @@ export default function PapQrForm({ medicines: catalogue }: { medicines: Medicin
     setErrors(found);
     const first = ORDER.find((k) => found[k]);
     if (first) {
-      const el = document.getElementById(`pq-${first}`);
+      const el = document.getElementById(FIELD_DOM_ID[first] || `pq-${first}`);
       el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       if (el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement) el.focus({ preventScroll: true });
       return;
@@ -121,6 +131,7 @@ export default function PapQrForm({ medicines: catalogue }: { medicines: Medicin
 
     const t = (s: string) => s.trim().replace(/\s+/g, ' ');
     const patient = [fields.firstName, fields.middleName, fields.lastName].map(t).filter(Boolean).join(' ');
+    const address = composeAddress({ street: fields.street, barangay: fields.barangay, city: fields.city });
     const medicineText = chosen.map((c) => c.label).join('; ');
     const consentText = `Agreed to the Privacy Policy and Terms of Service (${new Date().toISOString()})`;
 
@@ -137,7 +148,7 @@ export default function PapQrForm({ medicines: catalogue }: { medicines: Medicin
           message: [
             `Patient: ${patient}`,
             `Contact number: ${t(fields.phone)}`,
-            `Complete address: ${t(fields.address)}`,
+            `Complete address: ${address}`,
             `Doctor: ${t(fields.doctor)}`,
             `Hospital: ${t(fields.hospital)}`,
             `Medicine needed: ${medicineText}`,
@@ -147,7 +158,12 @@ export default function PapQrForm({ medicines: catalogue }: { medicines: Medicin
             firstName: t(fields.firstName),
             middleName: t(fields.middleName),
             lastName: t(fields.lastName),
-            address: t(fields.address),
+            address,
+            addressStreet: t(fields.street),
+            addressBarangay: t(fields.barangay),
+            addressCity: place?.name || t(fields.city),
+            addressProvince: place?.province || '',
+            addressPsgcCode: place?.code || '',
             doctorName: t(fields.doctor),
             institution: t(fields.hospital),
             medicines: medicineText,
@@ -170,6 +186,7 @@ export default function PapQrForm({ medicines: catalogue }: { medicines: Medicin
       setResult({ code: body.inquiry_code, phone: t(fields.phone), name: t(fields.firstName) });
       setStatus('sent');
       setFields(EMPTY);
+      setPlace(null);
       setChosen([]);
       setConsent(false);
       requestAnimationFrame(() => topRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
@@ -227,7 +244,7 @@ export default function PapQrForm({ medicines: catalogue }: { medicines: Medicin
   return (
     <main className="pq" ref={topRef}>
       <header className="pq-hero">
-        <p className="pq-eyebrow">Patient Assistance Program</p>
+        <Image src="/images/newpaplogo.png" alt="Getmeds Patient Assistance Program" width={1708} height={920} priority sizes="190px" className="pq-logo" />
         <h1>Request help getting your medicine</h1>
         <p>Fill in the patient&apos;s details. Our team will contact you to arrange the medicine and guide you through the assistance available.</p>
         <p className="pq-trust">
@@ -265,18 +282,7 @@ export default function PapQrForm({ medicines: catalogue }: { medicines: Medicin
             hint="We'll call or text this number."
             required
           />
-          <TextField
-            id="address"
-            label="Complete address"
-            icon={<MapPin size={18} />}
-            multiline
-            placeholder="House no., street, barangay, city or municipality, province"
-            value={fields.address}
-            onChange={set('address')}
-            error={errors.address}
-            autoComplete="street-address"
-            required
-          />
+          <AddressFields fields={fields} errors={errors} place={place} setPlace={setPlace} setField={setField} />
         </fieldset>
 
         <fieldset className="pq-card">
@@ -284,7 +290,7 @@ export default function PapQrForm({ medicines: catalogue }: { medicines: Medicin
             <span className="pq-step">2</span> Doctor and hospital
           </legend>
           <TextField id="doctor" label="Doctor's name" icon={<Stethoscope size={18} />} placeholder="e.g. Dr. Maria Santos" value={fields.doctor} onChange={set('doctor')} error={errors.doctor} autoComplete="off" required />
-          <TextField id="hospital" label="Hospital name" icon={<Hospital size={18} />} placeholder="e.g. Philippine General Hospital" value={fields.hospital} onChange={set('hospital')} error={errors.hospital} autoComplete="organization" required />
+          <TextField id="hospital" label="Hospital name" icon={<Hospital size={18} />} placeholder="e.g. Philippine General Hospital" value={fields.hospital} onChange={set('hospital')} error={errors.hospital} autoComplete="off" required />
         </fieldset>
 
         <fieldset className="pq-card">
@@ -345,9 +351,7 @@ export default function PapQrForm({ medicines: catalogue }: { medicines: Medicin
               'Send request'
             )}
           </button>
-          <p className="pq-fine">
-            Prescription medicines are released only with a valid prescription from your doctor.
-          </p>
+          <p className="pq-fine">Prescription medicines are released only with a valid prescription from your doctor.</p>
         </div>
       </form>
     </main>
@@ -374,24 +378,13 @@ interface TextFieldProps {
   type?: string;
   inputMode?: 'tel' | 'text';
   autoComplete?: string;
-  multiline?: boolean;
   required?: boolean;
   optional?: boolean;
 }
 
-function TextField({ id, label, value, onChange, error, icon, hint, placeholder, type = 'text', inputMode, autoComplete, multiline, required, optional }: TextFieldProps) {
+function TextField({ id, label, value, onChange, error, icon, hint, placeholder, type = 'text', inputMode, autoComplete, required, optional }: TextFieldProps) {
   const domId = `pq-${id}`;
-  const describedBy = [error ? `${domId}-error` : '', hint ? `${domId}-hint` : ''].filter(Boolean).join(' ') || undefined;
-  const common = {
-    id: domId,
-    name: id,
-    value,
-    placeholder,
-    autoComplete,
-    required,
-    'aria-invalid': error ? true : undefined,
-    'aria-describedby': describedBy,
-  } as const;
+  const describedBy = [error ? `${domId}-error` : '', hint && !error ? `${domId}-hint` : ''].filter(Boolean).join(' ') || undefined;
   return (
     <div className={`pq-field${error ? ' has-error' : ''}${icon ? ' has-icon' : ''}`}>
       <label htmlFor={domId}>
@@ -399,12 +392,25 @@ function TextField({ id, label, value, onChange, error, icon, hint, placeholder,
         {optional ? <span className="pq-optional"> (optional)</span> : required ? <span className="pq-req" aria-hidden="true"> *</span> : null}
       </label>
       <div className="pq-control">
-        {icon && <span className="pq-icon" aria-hidden="true">{icon}</span>}
-        {multiline ? (
-          <textarea {...common} rows={3} onChange={(e) => onChange(e.target.value)} />
-        ) : (
-          <input {...common} type={type} inputMode={inputMode} enterKeyHint="next" onChange={(e) => onChange(e.target.value)} />
+        {icon && (
+          <span className="pq-icon" aria-hidden="true">
+            {icon}
+          </span>
         )}
+        <input
+          id={domId}
+          name={id}
+          value={value}
+          placeholder={placeholder}
+          autoComplete={autoComplete}
+          required={required}
+          aria-invalid={error ? true : undefined}
+          aria-describedby={describedBy}
+          type={type}
+          inputMode={inputMode}
+          enterKeyHint="next"
+          onChange={(e) => onChange(e.target.value)}
+        />
       </div>
       {hint && !error && (
         <p className="pq-hint" id={`${domId}-hint`}>
@@ -413,6 +419,160 @@ function TextField({ id, label, value, onChange, error, icon, hint, placeholder,
       )}
       {error && <FieldError id={`${domId}-error`}>{error}</FieldError>}
     </div>
+  );
+}
+
+/* City or municipality → barangay → street. The city list is the PSA's official one, so picking
+   a city fills the province and narrows the barangay list to that city's barangays. Anything not
+   in the lists can still be typed in as is. */
+function AddressFields({
+  fields,
+  errors,
+  place,
+  setPlace,
+  setField,
+}: {
+  fields: Fields;
+  errors: Partial<Record<ErrorKey, string>>;
+  place: Place | null;
+  setPlace: (p: Place | null) => void;
+  setField: (name: FieldName, value: string) => void;
+}) {
+  const [places, setPlaces] = useState<Place[] | null>(null);
+  const [placesFailed, setPlacesFailed] = useState(false);
+  const [loaded, setLoaded] = useState<{ code: string; list: string[] } | null>(null);
+  // The chosen city's barangays, or null while they load (or before a city is chosen).
+  const barangays = place && loaded?.code === place.code ? loaded.list : null;
+
+  const ensurePlaces = () => {
+    if (places) return;
+    loadPlaces()
+      .then(setPlaces)
+      .catch(() => setPlacesFailed(true));
+  };
+
+  useEffect(() => {
+    if (!place) return;
+    let live = true;
+    loadBarangays(place.code)
+      .then((list) => live && setLoaded({ code: place.code, list }))
+      .catch(() => live && setLoaded({ code: place.code, list: [] }));
+    return () => {
+      live = false;
+    };
+  }, [place]);
+
+  // Typing after choosing a city means a different city: drop the old one and its barangays.
+  const cityQuery = fields.city;
+  const showingChosen = place && cityQuery === placeLabel(place);
+  const cityHits = useMemo(() => (places && !showingChosen ? searchPlaces(cityQuery, places, 30) : []), [places, cityQuery, showingChosen]);
+  const cityItems: ComboItem[] = cityHits.map((p) => ({
+    key: p.code,
+    onSelect: () => {
+      setPlace(p);
+      setField('city', placeLabel(p));
+      setField('barangay', '');
+      window.setTimeout(() => document.getElementById('pq-barangay')?.focus(), 0);
+    },
+    content: (
+      <span className="pq-option-text">
+        <span className="pq-option-name">{p.name}</span>
+        <span className="pq-option-meta">{p.province}</span>
+      </span>
+    ),
+  }));
+
+  const brgyQuery = fields.barangay;
+  const brgyHits = useMemo(() => (barangays ? filterBarangays(brgyQuery, barangays, 80) : []), [barangays, brgyQuery]);
+  const brgyExact = brgyHits.some((b) => b.toLowerCase() === brgyQuery.trim().toLowerCase());
+  const brgyItems: ComboItem[] = brgyExact
+    ? []
+    : brgyHits.map((b) => ({
+        key: b,
+        onSelect: () => {
+          setField('barangay', b);
+          window.setTimeout(() => document.getElementById('pq-street')?.focus(), 0);
+        },
+        content: (
+          <span className="pq-option-text">
+            <span className="pq-option-name">{b}</span>
+          </span>
+        ),
+      }));
+
+  const preview = composeAddress({ street: fields.street, barangay: fields.barangay, city: fields.city });
+
+  return (
+    <div className="pq-address" role="group" aria-labelledby="pq-address-label">
+      <p className="pq-group-label" id="pq-address-label">
+        Complete address <span className="pq-req" aria-hidden="true">*</span>
+      </p>
+      <Combobox
+        id="pq-city"
+        label="City or municipality"
+        icon={<Building size={18} />}
+        placeholder="Start typing, e.g. Quezon City"
+        value={cityQuery}
+        onChange={(v) => {
+          setField('city', v);
+          if (place && v !== placeLabel(place)) setPlace(null);
+        }}
+        onFirstFocus={ensurePlaces}
+        items={cityItems}
+        loading={!places && !placesFailed}
+        empty={cityQuery.trim() && places ? <>No match. You can keep what you typed.</> : places ? <>Type the first letters of your city or municipality.</> : null}
+        error={errors.city}
+        autoComplete="address-level2"
+        listLabel="Cities and municipalities"
+        required
+      />
+      <Combobox
+        id="pq-barangay"
+        label="Barangay"
+        icon={<MapPin size={18} />}
+        placeholder={place ? 'Type or choose your barangay' : 'Type your barangay'}
+        value={brgyQuery}
+        onChange={(v) => setField('barangay', v)}
+        items={brgyItems}
+        loading={Boolean(place) && barangays === null}
+        empty={place && barangays && !brgyExact && brgyQuery.trim() ? <>Not in the list. You can keep what you typed.</> : null}
+        error={errors.barangay}
+        autoComplete="address-level3"
+        listLabel="Barangays"
+        hint={place ? undefined : 'Choose your city first to see its barangays.'}
+        required
+      />
+      <TextField
+        id="street"
+        label="House no., street, building or subdivision"
+        icon={<House size={18} />}
+        placeholder="e.g. 12 Rizal St., Villa Verde Subd."
+        value={fields.street}
+        onChange={(v) => setField('street', v)}
+        error={errors.street}
+        autoComplete="address-line1"
+        required
+      />
+      {preview && fields.city && (
+        <p className="pq-address-preview" aria-live="polite">
+          <span>Your address</span>
+          {preview}
+        </p>
+      )}
+    </div>
+  );
+}
+
+function MedicineThumb({ option }: { option?: MedicineOption }) {
+  const [broken, setBroken] = useState(false);
+  if (option?.image && !broken) {
+    // eslint-disable-next-line @next/next/no-img-element -- Sanity CDN already serves a resized, auto-format image
+    return <img src={option.image} alt="" loading="lazy" decoding="async" className="pq-thumb" onError={() => setBroken(true)} />;
+  }
+  return (
+    <span className="pq-thumb pq-thumb-icon" aria-hidden="true">
+      <Pill size={18} />
+    </span>
   );
 }
 
@@ -430,153 +590,99 @@ function MedicinePicker({
   error?: string;
 }) {
   const [query, setQuery] = useState('');
-  const [active, setActive] = useState(0);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const listId = useId();
-  const hits = useMemo(() => searchMedicines(query, catalogue, 12), [query, catalogue]);
   const typed = query.trim();
+  const hits = useMemo(() => searchMedicines(query, catalogue, 20), [query, catalogue]);
+  const full = chosen.length >= MAX_MEDICINES;
+  // Nothing typed: the whole list, A to Z, to browse. Typed: the best matches.
+  const options = typed ? hits.map((h) => h.option) : catalogue;
+  const readAs = hits.length && hits.every((h) => h.fuzzy) ? hits[0].readAs : undefined;
   // Offered when nothing matched as typed (none at all, or only typo guesses), so a
   // condition search such as "breast cancer" isn't offered as a medicine name.
   const showCustom = typed.length >= 3 && hits.every((h) => h.fuzzy);
-  const total = hits.length + (showCustom ? 1 : 0);
-  const full = chosen.length >= 10;
-  const readAs = hits.length && hits.every((h) => h.fuzzy) ? hits[0].readAs : undefined;
 
-  const pick = (index: number) => {
-    if (index < hits.length) {
-      const o = hits[index].option;
-      onAdd({ key: o.id, label: medicineLabel(o), option: o });
-    } else if (showCustom) {
-      onAdd({ key: `custom:${typed.toLowerCase()}`, label: `${typed} (not in list)` });
-    }
-    setQuery('');
-    setActive(0);
-    inputRef.current?.focus();
-  };
+  const items: ComboItem[] = options.map((o) => {
+    const added = chosen.some((c) => c.key === o.id);
+    return {
+      key: o.id,
+      disabled: added,
+      onSelect: () => {
+        onAdd({ key: o.id, label: medicineLabel(o), option: o });
+        setQuery('');
+      },
+      content: (
+        <>
+          <MedicineThumb option={o} />
+          <span className="pq-option-text">
+            <span className="pq-option-name">
+              {o.brand}
+              {o.rx && (
+                <span className="pq-rx" title="Prescription required">
+                  Rx
+                </span>
+              )}
+            </span>
+            <span className="pq-option-generic">{o.generic}</span>
+            <span className="pq-option-meta">{[o.strength, o.form].filter(Boolean).join(' · ')}</span>
+          </span>
+          <span className="pq-option-add" aria-hidden="true">
+            {added ? <Check size={16} /> : <Plus size={16} />}
+          </span>
+        </>
+      ),
+    };
+  });
+  if (showCustom) {
+    items.push({
+      key: `custom:${typed.toLowerCase()}`,
+      onSelect: () => {
+        onAdd({ key: `custom:${typed.toLowerCase()}`, label: `${typed} (not in list)` });
+        setQuery('');
+      },
+      content: (
+        <>
+          <span className="pq-thumb pq-thumb-icon pq-thumb-muted" aria-hidden="true">
+            <Plus size={18} />
+          </span>
+          <span className="pq-option-text">
+            <span className="pq-option-name">Add &ldquo;{typed}&rdquo;</span>
+            <span className="pq-option-meta">{hits.length ? 'Not the one? Request it by this name.' : "Not in our list. We'll check if we can source it."}</span>
+          </span>
+        </>
+      ),
+    });
+  }
 
-  const onKey = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (!total) return;
-    if (e.key === 'ArrowDown') {
-      e.preventDefault();
-      setActive((a) => (a + 1) % total);
-    } else if (e.key === 'ArrowUp') {
-      e.preventDefault();
-      setActive((a) => (a - 1 + total) % total);
-    } else if (e.key === 'Enter') {
-      e.preventDefault();
-      pick(active);
-    } else if (e.key === 'Escape') {
-      setQuery('');
-    }
-  };
+  const header = readAs ? (
+    <>
+      Showing results for <strong>{readAs}</strong>
+    </>
+  ) : !typed ? (
+    <>All medicines ({catalogue.length})</>
+  ) : null;
 
   return (
-    <div className={`pq-field pq-picker${error ? ' has-error' : ''}`}>
-      <label htmlFor="pq-medicines">Search by brand, generic name or condition</label>
-      <div className="pq-control has-icon">
-        <span className="pq-icon" aria-hidden="true">
-          <Search size={18} />
-        </span>
-        <input
-          ref={inputRef}
-          id="pq-medicines"
-          type="search"
-          inputMode="search"
-          enterKeyHint="search"
-          autoComplete="off"
-          autoCorrect="off"
-          autoCapitalize="none"
-          spellCheck={false}
-          placeholder={full ? 'You can add up to 10 medicines' : 'e.g. Lapanib or lapatinib'}
-          disabled={full}
-          value={query}
-          onChange={(e) => {
-            setQuery(e.target.value);
-            setActive(0);
-          }}
-          onKeyDown={onKey}
-          role="combobox"
-          aria-expanded={total > 0}
-          aria-controls={listId}
-          aria-autocomplete="list"
-          aria-activedescendant={total ? `${listId}-${active}` : undefined}
-          aria-invalid={error ? true : undefined}
-          aria-describedby={error ? 'pq-medicines-error' : undefined}
-        />
-        {query && (
-          <button type="button" className="pq-clear" onClick={() => { setQuery(''); inputRef.current?.focus(); }} aria-label="Clear search">
-            <X size={16} />
-          </button>
-        )}
-      </div>
-
-      {typed && (
-        <div className="pq-results">
-          {readAs && (
-            <p className="pq-readas">
-              Showing results for <strong>{readAs}</strong>
-            </p>
-          )}
-          <ul id={listId} role="listbox" aria-label="Matching medicines">
-            {hits.map((h, i) => {
-              const o = h.option;
-              const added = chosen.some((c) => c.key === o.id);
-              return (
-                <li
-                  key={o.id}
-                  id={`${listId}-${i}`}
-                  role="option"
-                  aria-selected={i === active}
-                  aria-disabled={added || undefined}
-                  className={`pq-option${i === active ? ' is-active' : ''}${added ? ' is-added' : ''}`}
-                  onMouseDown={(e) => e.preventDefault()}
-                  onClick={() => !added && pick(i)}
-                >
-                  <span className="pq-option-icon" aria-hidden="true">
-                    <Pill size={18} />
-                  </span>
-                  <span className="pq-option-text">
-                    <span className="pq-option-name">
-                      {o.brand}
-                      {o.rx && <span className="pq-rx" title="Prescription required">Rx</span>}
-                    </span>
-                    <span className="pq-option-generic">{o.generic}</span>
-                    <span className="pq-option-meta">{[o.strength, o.form].filter(Boolean).join(' · ')}</span>
-                  </span>
-                  <span className="pq-option-add" aria-hidden="true">
-                    {added ? <Check size={18} /> : <Plus size={18} />}
-                  </span>
-                </li>
-              );
-            })}
-            {showCustom && (
-              <li
-                id={`${listId}-${hits.length}`}
-                role="option"
-                aria-selected={active === hits.length}
-                className={`pq-option pq-option-custom${active === hits.length ? ' is-active' : ''}`}
-                onMouseDown={(e) => e.preventDefault()}
-                onClick={() => pick(hits.length)}
-              >
-                <span className="pq-option-icon" aria-hidden="true">
-                  <Plus size={18} />
-                </span>
-                <span className="pq-option-text">
-                  <span className="pq-option-name">Add &ldquo;{typed}&rdquo;</span>
-                  <span className="pq-option-meta">{hits.length ? 'Not the one? Request it by this name.' : "Not in our list. We'll check if we can source it."}</span>
-                </span>
-              </li>
-            )}
-          </ul>
-        </div>
-      )}
-
-      {error && <FieldError id="pq-medicines-error">{error}</FieldError>}
+    <div className="pq-picker">
+      <Combobox
+        id="pq-medicines"
+        label="Search by brand, generic name or condition"
+        icon={<Search size={18} />}
+        placeholder={full ? 'You can add up to 10 medicines' : 'e.g. Lapanib or lapatinib'}
+        value={query}
+        onChange={setQuery}
+        items={items}
+        header={header}
+        disabled={full}
+        error={error}
+        hint={chosen.length ? undefined : 'Type the name on the prescription or the box, or browse the list. You can add more than one.'}
+        listLabel="Medicines"
+        className="pq-combo-medicine"
+      />
 
       {chosen.length > 0 && (
         <ul className="pq-chosen" aria-label="Medicines added">
           {chosen.map((c) => (
             <li key={c.key}>
+              <MedicineThumb option={c.option} />
               <span className="pq-chosen-text">
                 {c.option ? (
                   <>
@@ -600,7 +706,6 @@ function MedicinePicker({
           ))}
         </ul>
       )}
-      {!chosen.length && !typed && <p className="pq-hint">Type the name on the prescription or the box. You can add more than one medicine.</p>}
     </div>
   );
 }

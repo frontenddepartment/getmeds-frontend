@@ -31,17 +31,11 @@
 .pq-hero {
   padding: 4px 2px 18px;
 }
-.pq-eyebrow {
-  display: inline-block;
-  margin: 0 0 10px;
-  padding: 4px 10px;
-  border-radius: 999px;
-  background: #fff;
-  color: var(--pq-deep);
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  box-shadow: 0 1px 2px rgba(7, 59, 87, 0.08);
+.pq-logo {
+  display: block;
+  width: 168px;
+  height: auto;
+  margin: 0 0 12px -4px;
 }
 .pq-hero h1 {
   margin: 0 0 8px;
@@ -201,14 +195,24 @@
   margin-top: 2px;
 }
 
-/* ── Medicine search ──────────────────── */
-.pq-picker input[type='search']::-webkit-search-cancel-button {
-  display: none;
+/* ── Dropdown search (medicines, city, barangay) ── */
+.pq-combo .pq-control {
+  position: relative;
 }
-.pq-picker input {
+.pq-combo input {
   padding-right: 44px;
+  scroll-margin-top: 124px; /* label stays clear of the fixed navbar when the field is lifted above the phone keyboard */
 }
-.pq-clear {
+.pq-combo.is-open input {
+  border-color: var(--pq-blue);
+  box-shadow: 0 0 0 3px rgba(29, 159, 218, 0.18);
+}
+.pq-combo input:disabled {
+  background: #f4f6f8;
+  color: var(--pq-muted);
+}
+.pq-clear,
+.pq-combo-side {
   position: absolute;
   right: 6px;
   top: 5px;
@@ -222,64 +226,63 @@
   color: var(--pq-muted);
   cursor: pointer;
 }
-.pq-results {
-  margin-top: 8px;
-  border: 1px solid #e1e7ed;
-  border-radius: 12px;
-  overflow: hidden;
+.pq-dropdown {
+  position: absolute;
+  z-index: 40;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  max-height: min(340px, 52vh);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border: 1px solid #dbe4ec;
+  border-radius: 14px;
   background: #fff;
+  box-shadow: 0 14px 32px rgba(7, 59, 87, 0.16), 0 2px 6px rgba(7, 59, 87, 0.06);
+  -webkit-overflow-scrolling: touch;
 }
-.pq-readas {
-  margin: 0;
-  padding: 10px 14px;
-  font-size: 13px;
+.pq-dropdown-head {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: 9px 14px;
+  font-size: 12.5px;
   color: var(--pq-muted);
   background: #f6f9fb;
   border-bottom: 1px solid #edf1f4;
 }
-.pq-readas strong {
+.pq-dropdown-head strong {
   color: var(--pq-deep);
 }
-.pq-results ul {
+.pq-dropdown ul {
   list-style: none;
   margin: 0;
-  padding: 0;
+  padding: 4px 0;
+}
+.pq-dropdown-empty {
+  margin: 0;
+  padding: 14px;
+  font-size: 13.5px;
+  color: var(--pq-muted);
 }
 .pq-option {
   display: flex;
   align-items: center;
   gap: 12px;
-  min-height: 60px;
-  padding: 10px 12px 10px 14px;
-  border-top: 1px solid #eef2f5;
+  min-height: 48px;
+  padding: 8px 12px 8px 14px;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
 }
-.pq-option:first-child {
-  border-top: 0;
+.pq-option + .pq-option {
+  border-top: 1px solid #f0f3f6;
 }
-.pq-option.is-active,
-.pq-option:active {
+.pq-option.is-active {
   background: var(--pq-soft);
-}
-@media (hover: hover) {
-  .pq-option:hover {
-    background: var(--pq-soft);
-  }
 }
 .pq-option.is-added {
   cursor: default;
-  opacity: 0.6;
-}
-.pq-option-icon {
-  flex: none;
-  width: 36px;
-  height: 36px;
-  display: grid;
-  place-items: center;
-  border-radius: 10px;
-  background: var(--pq-soft);
-  color: var(--pq-blue);
+  opacity: 0.55;
 }
 .pq-option-text {
   flex: 1;
@@ -296,7 +299,7 @@
   color: var(--pq-ink);
 }
 .pq-option-generic {
-  font-size: 14px;
+  font-size: 13.5px;
   color: var(--pq-deep);
 }
 .pq-option-meta {
@@ -306,8 +309,8 @@
 }
 .pq-option-add {
   flex: none;
-  width: 32px;
-  height: 32px;
+  width: 30px;
+  height: 30px;
   display: grid;
   place-items: center;
   border-radius: 50%;
@@ -318,7 +321,29 @@
   background: var(--pq-blue);
   color: #fff;
 }
-.pq-option-custom .pq-option-icon {
+.pq-combo-medicine .pq-dropdown {
+  max-height: min(420px, 58vh);
+}
+
+/* Product photo: the pack shot on white, the same treatment as the product range cards. */
+.pq-thumb {
+  flex: none;
+  width: 52px;
+  height: 52px;
+  border-radius: 10px;
+  border: 1px solid #e6ecf1;
+  background: #fff;
+  object-fit: contain;
+  padding: 3px;
+}
+.pq-thumb-icon {
+  display: grid;
+  place-items: center;
+  background: var(--pq-soft);
+  border-color: transparent;
+  color: var(--pq-blue);
+}
+.pq-thumb-muted {
   background: #f1f4f7;
   color: var(--pq-muted);
 }
@@ -335,7 +360,7 @@
 
 .pq-chosen {
   list-style: none;
-  margin: 12px 0 0;
+  margin: 12px 0 16px;
   padding: 0;
   display: grid;
   gap: 8px;
@@ -343,9 +368,9 @@
 .pq-chosen li {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 6px 10px 14px;
-  border-radius: 12px;
+  gap: 12px;
+  padding: 8px 6px 8px 8px;
+  border-radius: 14px;
   background: var(--pq-soft);
   border: 1px solid #cbe9f7;
 }
@@ -378,6 +403,42 @@
   color: var(--pq-muted);
   cursor: pointer;
 }
+
+/* ── Address ─────────────────────────── */
+.pq-address {
+  margin: 4px 0 16px;
+  padding: 14px 12px 2px;
+  border-radius: 14px;
+  background: #f6f9fb;
+  border: 1px solid #e8eef3;
+}
+.pq-group-label {
+  margin: 0 0 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--pq-ink);
+}
+.pq-address .pq-field > label {
+  font-size: 13px;
+  color: #3b4654;
+}
+.pq-address-preview {
+  display: grid;
+  gap: 2px;
+  margin: -4px 0 14px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #fff;
+  border: 1px dashed #b9dff2;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--pq-ink);
+}
+.pq-address-preview span {
+  font-size: 12px;
+  color: var(--pq-muted);
+}
+
 
 /* ── Consent and submit ───────────────── */
 .pq-consent-card {

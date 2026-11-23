@@ -21,6 +21,8 @@ export interface MedicineOption {
   category: string;
   conditions: string[];
   rx: boolean;
+  /** Small product photo (Sanity CDN), if the Studio has one for this product. */
+  image?: string;
 }
 
 export interface MedicineHit {
