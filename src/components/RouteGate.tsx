@@ -8,7 +8,8 @@ import { usePathname } from 'next/navigation';
 // WhatsApp and Viber buttons for the person on the card, so the site-wide ones (which reach
 // Getmeds support instead) would only compete with them. /locations opens from those cards
 // and keeps the same bare chrome; the buttons would also sit on top of the branches list.
-const NO_COMPONENTS_ROUTES = ['/coming-soon', '/card', '/business-card', '/locations'];
+// /qr3 is a phone form whose fields run edge to edge: the floating buttons covered the inputs.
+const NO_COMPONENTS_ROUTES = ['/coming-soon', '/card', '/business-card', '/locations', '/qr3'];
 
 export default function RouteGate({ children }: { children: ReactNode }) {
   const pathname = usePathname() ?? '/';
