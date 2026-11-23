@@ -1,0 +1,715 @@
+/* /qr3: Patient Assistance Program QR form. Mobile first; widens to a single centred column. */
+
+.pq {
+  --pq-blue: var(--primary, #1d9fda);
+  --pq-deep: var(--primary-deep, #073b57);
+  --pq-soft: var(--primary-soft, #e3f4fc);
+  --pq-ink: #1b2430;
+  --pq-muted: #5b6675;
+  --pq-line: #d6dde5;
+  --pq-error: #c62828;
+  --pq-green: #3f8f2a;
+  background: linear-gradient(180deg, var(--pq-soft) 0, #f6f9fb 320px);
+  color: var(--pq-ink);
+  /* The site navbar is fixed and ends about 78px down; start the page below it. */
+  padding: 96px 16px 48px;
+  min-height: 70vh;
+}
+
+.pq * {
+  box-sizing: border-box;
+}
+
+.pq-hero,
+.pq-form,
+.pq-done {
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+/* ── Intro ───────────────────────────── */
+.pq-hero {
+  padding: 4px 2px 18px;
+}
+.pq-logo {
+  display: block;
+  width: 168px;
+  height: auto;
+  margin: 0 0 12px -4px;
+}
+.pq-hero h1 {
+  margin: 0 0 8px;
+  font-size: clamp(1.45rem, 6vw, 1.9rem);
+  line-height: 1.2;
+  font-weight: 700;
+  color: var(--pq-deep);
+}
+.pq-hero p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--pq-muted);
+}
+.pq-hero .pq-trust {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  font-size: 13px;
+  color: var(--pq-green);
+  font-weight: 500;
+}
+
+/* ── Cards / sections ─────────────────── */
+.pq-form {
+  display: grid;
+  gap: 14px;
+}
+.pq-card {
+  margin: 0;
+  min-width: 0;
+  border: 1px solid #e4e9ee;
+  border-radius: 16px;
+  background: #fff;
+  padding: 18px 16px 6px;
+  box-shadow: 0 1px 3px rgba(7, 59, 87, 0.05);
+}
+.pq-card legend {
+  float: left; /* lets the legend sit inside the card's padding like a heading */
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 14px;
+  padding: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--pq-deep);
+}
+.pq-card legend + * {
+  clear: both;
+}
+.pq-step {
+  display: inline-grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--pq-blue);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* ── Fields ───────────────────────────── */
+.pq-field {
+  margin-bottom: 16px;
+}
+.pq-field > label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--pq-ink);
+}
+.pq-req {
+  color: var(--pq-error);
+}
+.pq-optional {
+  color: var(--pq-muted);
+  font-weight: 400;
+}
+.pq-control {
+  position: relative;
+}
+.pq-icon {
+  position: absolute;
+  left: 14px;
+  top: 15px;
+  color: #8a96a3;
+  pointer-events: none;
+  display: flex;
+}
+.pq-field input,
+.pq-field textarea {
+  width: 100%;
+  min-height: 50px;
+  padding: 13px 14px;
+  border: 1.5px solid var(--pq-line);
+  border-radius: 12px;
+  background: #fff;
+  color: var(--pq-ink);
+  font: inherit;
+  font-size: 16px; /* 16px stops iOS Safari zooming in on focus */
+  line-height: 1.4;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.pq-field textarea {
+  resize: vertical;
+  min-height: 92px;
+}
+.pq-field.has-icon input,
+.pq-field.has-icon textarea,
+.pq-control.has-icon input {
+  padding-left: 42px;
+}
+.pq-field input::placeholder,
+.pq-field textarea::placeholder {
+  color: #9aa5b1;
+}
+.pq-field input:focus,
+.pq-field textarea:focus {
+  outline: none;
+  border-color: var(--pq-blue);
+  box-shadow: 0 0 0 3px rgba(29, 159, 218, 0.18);
+}
+.pq-field.has-error input,
+.pq-field.has-error textarea {
+  border-color: var(--pq-error);
+}
+.pq-field.has-error input:focus,
+.pq-field.has-error textarea:focus {
+  box-shadow: 0 0 0 3px rgba(198, 40, 40, 0.15);
+}
+.pq-field.has-error .pq-icon {
+  color: var(--pq-error);
+}
+.pq-hint {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: var(--pq-muted);
+}
+.pq-error {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  margin: 6px 0 0;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--pq-error);
+}
+.pq-error svg {
+  flex: none;
+  margin-top: 2px;
+}
+
+/* ── Dropdown search (medicines, city, barangay) ── */
+.pq-combo .pq-control {
+  position: relative;
+}
+.pq-combo input {
+  padding-right: 44px;
+  scroll-margin-top: 124px; /* label stays clear of the fixed navbar when the field is lifted above the phone keyboard */
+}
+.pq-combo.is-open input {
+  border-color: var(--pq-blue);
+  box-shadow: 0 0 0 3px rgba(29, 159, 218, 0.18);
+}
+.pq-combo input:disabled {
+  background: #f4f6f8;
+  color: var(--pq-muted);
+}
+.pq-clear,
+.pq-combo-side {
+  position: absolute;
+  right: 6px;
+  top: 5px;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--pq-muted);
+  cursor: pointer;
+}
+.pq-dropdown {
+  position: absolute;
+  z-index: 40;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  max-height: min(340px, 52vh);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border: 1px solid #dbe4ec;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 14px 32px rgba(7, 59, 87, 0.16), 0 2px 6px rgba(7, 59, 87, 0.06);
+  -webkit-overflow-scrolling: touch;
+}
+.pq-dropdown-head {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: 9px 14px;
+  font-size: 12.5px;
+  color: var(--pq-muted);
+  background: #f6f9fb;
+  border-bottom: 1px solid #edf1f4;
+}
+.pq-dropdown-head strong {
+  color: var(--pq-deep);
+}
+.pq-dropdown ul {
+  list-style: none;
+  margin: 0;
+  padding: 4px 0;
+}
+.pq-dropdown-empty {
+  margin: 0;
+  padding: 14px;
+  font-size: 13.5px;
+  color: var(--pq-muted);
+}
+.pq-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 48px;
+  padding: 8px 12px 8px 14px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.pq-option + .pq-option {
+  border-top: 1px solid #f0f3f6;
+}
+.pq-option.is-active {
+  background: var(--pq-soft);
+}
+.pq-option.is-added {
+  cursor: default;
+  opacity: 0.55;
+}
+.pq-option-text {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  gap: 1px;
+}
+.pq-option-name {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--pq-ink);
+}
+.pq-option-generic {
+  font-size: 13.5px;
+  color: var(--pq-deep);
+}
+.pq-option-meta {
+  font-size: 12.5px;
+  color: var(--pq-muted);
+  line-height: 1.35;
+}
+.pq-option-add {
+  flex: none;
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1.5px solid var(--pq-blue);
+  color: var(--pq-blue);
+}
+.pq-option.is-added .pq-option-add {
+  background: var(--pq-blue);
+  color: #fff;
+}
+.pq-combo-medicine .pq-dropdown {
+  max-height: min(420px, 58vh);
+}
+
+/* Product photo: the pack shot on white, the same treatment as the product range cards. */
+.pq-thumb {
+  flex: none;
+  width: 52px;
+  height: 52px;
+  border-radius: 10px;
+  border: 1px solid #e6ecf1;
+  background: #fff;
+  object-fit: contain;
+  padding: 3px;
+}
+.pq-thumb-icon {
+  display: grid;
+  place-items: center;
+  background: var(--pq-soft);
+  border-color: transparent;
+  color: var(--pq-blue);
+}
+.pq-thumb-muted {
+  background: #f1f4f7;
+  color: var(--pq-muted);
+}
+.pq-rx {
+  display: inline-block;
+  padding: 1px 6px;
+  border-radius: 6px;
+  background: #fdecec;
+  color: var(--pq-error);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.pq-chosen {
+  list-style: none;
+  margin: 12px 0 16px;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+.pq-chosen li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 6px 8px 8px;
+  border-radius: 14px;
+  background: var(--pq-soft);
+  border: 1px solid #cbe9f7;
+}
+.pq-chosen-text {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+.pq-chosen-text strong {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 15px;
+  color: var(--pq-deep);
+}
+.pq-chosen-text span {
+  font-size: 13px;
+  color: var(--pq-muted);
+}
+.pq-chosen button {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--pq-muted);
+  cursor: pointer;
+}
+
+/* ── Address ─────────────────────────── */
+.pq-address {
+  margin: 4px 0 16px;
+  padding: 14px 12px 2px;
+  border-radius: 14px;
+  background: #f6f9fb;
+  border: 1px solid #e8eef3;
+}
+.pq-group-label {
+  margin: 0 0 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--pq-ink);
+}
+.pq-address .pq-field > label {
+  font-size: 13px;
+  color: #3b4654;
+}
+.pq-address-preview {
+  display: grid;
+  gap: 2px;
+  margin: -4px 0 14px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #fff;
+  border: 1px dashed #b9dff2;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--pq-ink);
+}
+.pq-address-preview span {
+  font-size: 12px;
+  color: var(--pq-muted);
+}
+
+
+/* ── Consent and submit ───────────────── */
+.pq-consent-card {
+  padding-bottom: 18px;
+}
+.pq-consent {
+  position: relative;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  font-size: 14px;
+  line-height: 1.5;
+  cursor: pointer;
+}
+.pq-consent input {
+  position: absolute;
+  opacity: 0;
+  width: 24px;
+  height: 24px;
+  margin: 0;
+}
+.pq-check {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  border: 2px solid var(--pq-line);
+  border-radius: 7px;
+  color: transparent;
+  background: #fff;
+  transition: background 0.15s, border-color 0.15s;
+}
+.pq-consent input:checked + .pq-check {
+  background: var(--pq-blue);
+  border-color: var(--pq-blue);
+  color: #fff;
+}
+.pq-consent input:focus-visible + .pq-check {
+  box-shadow: 0 0 0 3px rgba(29, 159, 218, 0.25);
+}
+.pq-consent.has-error .pq-check {
+  border-color: var(--pq-error);
+}
+.pq-consent a {
+  color: var(--pq-blue);
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.pq-note {
+  display: flex;
+  gap: 8px;
+  margin: 14px 0 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #f6f9fb;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--pq-muted);
+}
+.pq-note svg {
+  flex: none;
+  margin-top: 2px;
+}
+.pq-turnstile {
+  margin: 16px 0 0;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+}
+.pq-submit-error {
+  display: flex;
+  gap: 8px;
+  margin: 16px 0 0;
+  padding: 12px;
+  border-radius: 10px;
+  background: #fdecec;
+  color: var(--pq-error);
+  font-size: 14px;
+  line-height: 1.45;
+}
+.pq-submit-error svg {
+  flex: none;
+  margin-top: 1px;
+}
+
+.pq-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 54px;
+  margin-top: 16px;
+  padding: 14px 20px;
+  border: 0;
+  border-radius: 14px;
+  background: var(--pq-blue);
+  color: #fff;
+  font: inherit;
+  font-size: 16px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(29, 159, 218, 0.28);
+  transition: background 0.15s, transform 0.1s;
+}
+.pq-btn:hover {
+  background: #168bc0;
+}
+.pq-btn:active {
+  transform: scale(0.99);
+}
+.pq-btn:disabled {
+  opacity: 0.75;
+  cursor: progress;
+}
+.pq-btn:focus-visible {
+  outline: 3px solid rgba(29, 159, 218, 0.35);
+  outline-offset: 2px;
+}
+.pq-btn-ghost {
+  background: #fff;
+  color: var(--pq-deep);
+  border: 1.5px solid #cbe9f7;
+  box-shadow: none;
+}
+.pq-btn-ghost:hover {
+  background: var(--pq-soft);
+}
+.pq-fine {
+  margin: 12px 0 0;
+  text-align: center;
+  font-size: 12.5px;
+  color: var(--pq-muted);
+}
+.pq-spin {
+  animation: pq-spin 0.9s linear infinite;
+}
+@keyframes pq-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* The honeypot: off screen rather than display:none, which some bots skip. */
+.pq-hp {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+/* ── Success ─────────────────────────── */
+.pq-done {
+  text-align: center;
+  background: #fff;
+  border: 1px solid #e4e9ee;
+  border-radius: 18px;
+  padding: 32px 20px 24px;
+  box-shadow: 0 1px 3px rgba(7, 59, 87, 0.05);
+}
+.pq-done-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #e8f5e3;
+  color: var(--pq-green);
+  margin-bottom: 14px;
+  animation: pq-pop 0.35s ease-out;
+}
+@keyframes pq-pop {
+  from {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+}
+.pq-done h1 {
+  margin: 0 0 8px;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--pq-deep);
+}
+.pq-done > p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--pq-muted);
+}
+.pq-done > p strong {
+  color: var(--pq-ink);
+  white-space: nowrap;
+}
+.pq-code {
+  display: grid;
+  gap: 4px;
+  margin: 20px 0 0;
+  padding: 14px;
+  border: 1.5px dashed #9fd6ef;
+  border-radius: 14px;
+  background: var(--pq-soft);
+}
+.pq-code span {
+  font-size: 12.5px;
+  color: var(--pq-muted);
+}
+.pq-code strong {
+  font-size: 22px;
+  letter-spacing: 0.06em;
+  color: var(--pq-deep);
+  font-variant-numeric: tabular-nums;
+  user-select: all;
+}
+.pq-code small {
+  font-size: 12px;
+  color: var(--pq-muted);
+}
+.pq-next {
+  margin: 20px 0 4px;
+  text-align: left;
+}
+.pq-next h2 {
+  margin: 0 0 8px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--pq-deep);
+}
+.pq-next ul {
+  margin: 0;
+  padding-left: 20px;
+  list-style: disc;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--pq-muted);
+}
+.pq-next li + li {
+  margin-top: 4px;
+}
+.pq-link {
+  margin-top: 14px;
+  border: 0;
+  background: none;
+  color: var(--pq-blue);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+  padding: 8px;
+}
+
+@media (min-width: 640px) {
+  .pq {
+    padding: 112px 24px 72px;
+  }
+  .pq-card {
+    padding: 22px 22px 8px;
+  }
+  .pq-consent-card {
+    padding-bottom: 22px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pq-done-icon,
+  .pq-spin {
+    animation: none;
+  }
+}
