@@ -7,6 +7,8 @@ import { truncateAtWord } from './seo';
 // which fetched WordPress directly rather than through the admin backend's /api/blog/posts.
 // The browser still reads posts through /api/blog/posts (src/lib/queries.ts), as before.
 
+import { wpFetch, wpFresh } from './wpCacheBust';
+
 const WP_API_ROOT = (
   process.env.NEXT_PUBLIC_WORDPRESS_API_ROOT ||
   process.env.VITE_WORDPRESS_API_ROOT ||
@@ -112,8 +114,8 @@ export function toNewsItem(item: WpPost): News {
  */
 export async function fetchWpPostBySlug(slug: string): Promise<WpPost | null | undefined> {
   try {
-    const res = await fetch(
-      `${WP_API_ROOT}/wp-json/wp/v2/posts?slug=${encodeURIComponent(slug)}&_embed=true`,
+    const res = await wpFetch(
+      wpFresh(`${WP_API_ROOT}/wp-json/wp/v2/posts?slug=${encodeURIComponent(slug)}&_embed=true`, REVALIDATE_SECONDS),
       { next: { revalidate: REVALIDATE_SECONDS } }
     );
     if (!res.ok) throw new Error(`WordPress API returned status ${res.status}`);
@@ -132,7 +134,7 @@ export async function fetchWpPostBySlug(slug: string): Promise<WpPost | null | u
 export async function fetchWpPostById(id: string): Promise<WpPost | null | undefined> {
   if (!/^\d+$/.test(id)) return null; // WordPress ids are numbers; anything else names no post
   try {
-    const res = await fetch(`${WP_API_ROOT}/wp-json/wp/v2/posts/${id}?_fields=id,slug,status`, {
+    const res = await wpFetch(wpFresh(`${WP_API_ROOT}/wp-json/wp/v2/posts/${id}?_fields=id,slug,status`, REVALIDATE_SECONDS), {
       next: { revalidate: REVALIDATE_SECONDS },
     });
     // 404 = no post; 401/403 = a draft or private post, which only a preview may show.
@@ -163,7 +165,7 @@ export interface BlogPostSummary {
 async function fetchCategoryNames(): Promise<Map<number, string>> {
   const names = new Map<number, string>();
   try {
-    const res = await fetch(`${WP_API_ROOT}/wp-json/wp/v2/categories?per_page=100&_fields=id,name`, {
+    const res = await wpFetch(wpFresh(`${WP_API_ROOT}/wp-json/wp/v2/categories?per_page=100&_fields=id,name`, REVALIDATE_SECONDS), {
       next: { revalidate: REVALIDATE_SECONDS },
     });
     if (!res.ok) throw new Error(`WordPress API returned status ${res.status}`);
@@ -176,22 +178,75 @@ async function fetchCategoryNames(): Promise<Map<number, string>> {
 }
 
 /**
+ * Post id -> its category names, built per category (`/posts?categories=<id>`).
+ *
+ * The `categories` field in WordPress's paged post list is unreliable on this install: in a
+ * 100-post page roughly two thirds of posts come back with none, and others get one id repeated
+ * ("1,1,1,…"), while the same post fetched alone, or a list filtered by category, is correct
+ * (2026-11-12: the DSWD guide, in Cancer and Top Trending, showed only "News" and dropped out of
+ * the Cancer pill). Category-filtered lists match each category's own post count, so they are
+ * the source here. Categories are ordered most-used first; the first becomes the post's tag.
+ * Returns null if WordPress can't be read, so callers fall back to the list's own field.
+ */
+async function fetchPostCategoryNames(): Promise<Map<number, string[]> | null> {
+  try {
+    const res = await wpFetch(wpFresh(`${WP_API_ROOT}/wp-json/wp/v2/categories?per_page=100&_fields=id,name,count`, REVALIDATE_SECONDS), {
+      next: { revalidate: REVALIDATE_SECONDS },
+    });
+    if (!res.ok) throw new Error(`WordPress API returned status ${res.status}`);
+    const cats: WpPost[] = await res.json();
+    const used = (Array.isArray(cats) ? cats : [])
+      .filter((c) => Number(c.count) > 0)
+      .sort((a, b) => Number(b.count) - Number(a.count));
+    const byPost = new Map<number, string[]>();
+    // One request at a time: the host answers quick bursts with 429 (see wpCacheBust.ts)
+    for (const c of used) {
+      const name = decodeWpEntities(c.name || '');
+      let page = 1;
+      let totalPages = 1;
+      do {
+        const r = await wpFetch(
+          wpFresh(`${WP_API_ROOT}/wp-json/wp/v2/posts?categories=${Number(c.id)}&per_page=100&page=${page}&_fields=id`, REVALIDATE_SECONDS),
+          { next: { revalidate: REVALIDATE_SECONDS } }
+        );
+        if (!r.ok) throw new Error(`WordPress API returned status ${r.status}`);
+        const posts = await r.json();
+        (Array.isArray(posts) ? posts : []).forEach((p: WpPost) => {
+          const id = Number(p.id);
+          byPost.set(id, [...(byPost.get(id) || []), name]);
+        });
+        totalPages = parseInt(r.headers.get('x-wp-totalpages') || '1', 10) || 1;
+        page++;
+      } while (page <= totalPages);
+    }
+    // Keep each post's category names in most-used order
+    const rank = new Map(used.map((c, i) => [decodeWpEntities(c.name || ''), i]));
+    byPost.forEach((names, id) => byPost.set(id, [...new Set(names)].sort((a, b) => (rank.get(a) ?? 0) - (rank.get(b) ?? 0))));
+    return byPost;
+  } catch (err) {
+    console.warn('[Blog] Failed to fetch post categories:', err);
+    return null;
+  }
+}
+
+/**
  * Every published post, 100 per page, as the old scripts paged through them
  * (fetchAllPosts in prerender-blog.cjs / generate-sitemap.cjs). Only the listing fields are
  * requested: the full bodies would put each page's response past the fetch cache's size cap.
- * The first category is the post's tag, as wp:term[0][0] was there.
+ * The first category (most-used) is the post's tag.
  */
 export async function fetchAllPostSummaries(): Promise<BlogPostSummary[] | null> {
   try {
-    const [categories, raw] = await Promise.all([
+    const [categories, postCategories, raw] = await Promise.all([
       fetchCategoryNames(),
+      fetchPostCategoryNames(),
       (async () => {
         let all: WpPost[] = [];
         let page = 1;
         let totalPages = 1;
         do {
-          const res = await fetch(
-            `${WP_API_ROOT}/wp-json/wp/v2/posts?per_page=100&page=${page}&_fields=id,slug,title,date,modified,excerpt,categories,featured_media`,
+          const res = await wpFetch(
+            wpFresh(`${WP_API_ROOT}/wp-json/wp/v2/posts?per_page=100&page=${page}&_fields=id,slug,title,date,modified,excerpt,categories,featured_media`, REVALIDATE_SECONDS),
             { next: { revalidate: REVALIDATE_SECONDS } }
           );
           if (!res.ok) throw new Error(`WordPress API returned status ${res.status}`);
@@ -211,10 +266,16 @@ export async function fetchAllPostSummaries(): Promise<BlogPostSummary[] | null>
       // Same skips as prerender-blog.cjs: no slug/title, or already seen across pages.
       if (!slug || !title || seen.has(slug)) return;
       seen.add(slug);
+      // Categories from the per-category lists (see fetchPostCategoryNames); the list's own field
+      // only if those couldn't be read
       const catIds: unknown[] = Array.isArray(item.categories) ? item.categories : [];
-      const catNames = catIds
-        .map((id) => categories.get(Number(id)))
-        .filter((n): n is string => typeof n === 'string' && n.length > 0);
+      const catNames = postCategories
+        ? postCategories.get(Number(item.id)) || []
+        : [...new Set(
+            catIds
+              .map((id) => categories.get(Number(id)))
+              .filter((n): n is string => typeof n === 'string' && n.length > 0)
+          )];
       const firstCat = catNames[0];
       out.push({
         slug,
@@ -256,11 +317,12 @@ async function fetchMediaImages(ids: number[]): Promise<Map<number, NonNullable<
   const unique = [...new Set(ids.filter(Boolean))];
   const batches: number[][] = [];
   for (let i = 0; i < unique.length; i += 100) batches.push(unique.slice(i, i + 100));
-  await Promise.all(
-    batches.map(async (batch) => {
+  // One batch at a time: the host answers quick bursts with 429 (see wpCacheBust.ts)
+  for (const batch of batches) {
+    await (async () => {
       try {
-        const res = await fetch(
-          `${WP_API_ROOT}/wp-json/wp/v2/media?include=${batch.join(',')}&per_page=100&_fields=id,source_url,alt_text,media_details`, // this WordPress drops a nested media_details.sizes
+        const res = await wpFetch(
+          wpFresh(`${WP_API_ROOT}/wp-json/wp/v2/media?include=${batch.join(',')}&per_page=100&_fields=id,source_url,alt_text,media_details`, REVALIDATE_SECONDS), // this WordPress drops a nested media_details.sizes
           { next: { revalidate: REVALIDATE_SECONDS } }
         );
         if (!res.ok) throw new Error(`WordPress API returned status ${res.status}`);
@@ -280,8 +342,8 @@ async function fetchMediaImages(ids: number[]): Promise<Map<number, NonNullable<
       } catch (err) {
         console.warn('[Blog] Failed to fetch featured images:', err);
       }
-    })
-  );
+    })();
+  }
   return out;
 }
 
@@ -289,7 +351,12 @@ const DATE_FORMAT = new Intl.DateTimeFormat('en-US', { year: 'numeric', month: '
 
 /** Every listed post, newest first, with its featured image, for the /blog index page. */
 export async function fetchBlogIndex(): Promise<BlogIndexPost[]> {
-  const posts = await fetchListedPosts();
+  // Safety net: if WordPress can't be read, throw rather than render an empty /blog. A build then
+  // fails before anything is uploaded (the live site stays as it is), and an hourly refresh on
+  // the server keeps serving the last good page instead of replacing it with an empty one.
+  const all = await fetchAllPostSummaries();
+  if (!all || all.length === 0) throw new Error('[Blog] WordPress post list unavailable; keeping the previous /blog');
+  const posts = all.filter((p) => !BLOG_REDIRECTED_SLUGS.has(p.slug));
   const images = await fetchMediaImages(posts.map((p) => p.mediaId || 0));
   return posts
     .slice()
@@ -314,7 +381,13 @@ export async function fetchBlogIndex(): Promise<BlogIndexPost[]> {
 
 /** The newest posts: the /blog featured carousel (FEATURED in BlogIndex.tsx) and the homepage's Featured Articles. */
 export async function fetchFeaturedPosts(): Promise<BlogIndexPost[]> {
-  return (await fetchBlogIndex()).slice(0, 3);
+  // The homepage shouldn't fail because the blog can't be read: it just shows no featured posts
+  try {
+    return (await fetchBlogIndex()).slice(0, 3);
+  } catch (err) {
+    console.warn('[Blog] Featured posts unavailable:', err);
+    return [];
+  }
 }
 
 /** Posts for the /blog crawl list: everything except posts that redirect to another one. */
