@@ -880,7 +880,7 @@ export default function BlogDetailClient({ routeSlug, initialSlug, initialArticl
                   alt={article.title}
                   fetchPriority="high"
                   decoding="async"
-                  className="w-full h-[240px] md:h-[360px] rounded-2xl object-cover"
+                  className="aspect-[1200/630] h-auto w-full rounded-2xl object-cover"
                 />
               )}
             </div>

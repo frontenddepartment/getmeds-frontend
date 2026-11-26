@@ -4,12 +4,36 @@
    once (the old site put them behind three tabs). Copy is the old site's Filipino wording. */
 
 import Image from "next/image";
+import Link from "next/link";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Check, ChevronDown, Clock, Globe, MapPin } from "lucide-react";
 import { Reveal } from "@/components/ui";
 import Faq from "@/components/Faq";
 import { papFaqs } from "@/lib/data";
+
+const MALASAKIT_ACT = "https://ldr.senate.gov.ph/subject/malasakit-centers-act";
+const bulletList = "list-disc space-y-1.5 pl-5 marker:text-primary";
+const inlineLink = "font-semibold text-primary underline underline-offset-2 hover:text-primary-deep";
+
+/* Official sources: followed (no nofollow), opening in a new tab. */
+function ExternalLink({ href, children }: { href: string; children: React.ReactNode }) {
+  return (
+    <a href={href} target="_blank" rel="noopener" className={inlineLink}>
+      {children}
+    </a>
+  );
+}
+
+/* A plain H2 section: heading on the left (sticky on desktop), copy on the right. */
+function InfoSection({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <Reveal className="grid gap-4 py-8 first:pt-0 lg:grid-cols-[20rem_minmax(0,1fr)] lg:gap-10">
+      <h2 className="font-display text-xl font-semibold text-black md:text-2xl lg:sticky lg:top-28 lg:self-start">{title}</h2>
+      <div className="min-w-0 space-y-3 text-[15px] leading-relaxed text-ink-soft md:text-base">{children}</div>
+    </Reveal>
+  );
+}
 
 const DOCTOR_DOCS = ["Medical Prescription", "Treatment Protocol", "Medical Abstract / Clinical Summary"];
 
@@ -157,6 +181,7 @@ function Part({
   image,
   plain = false,
   bigTitle = false,
+  h2 = false,
   children,
 }: {
   kicker: string;
@@ -164,8 +189,10 @@ function Part({
   image?: { src: string; alt: string; width: number; height: number };
   plain?: boolean; // no card border/padding
   bigTitle?: boolean;
+  h2?: boolean; // a top-level section of the page rather than a part of the steps guide
   children: React.ReactNode;
 }) {
+  const Heading = h2 ? "h2" : "h3";
   return (
     // title (and optional image) on the left, sticking while the content scrolls past on desktop
     <Reveal
@@ -175,7 +202,7 @@ function Part({
     >
       <div className="lg:sticky lg:top-28 lg:self-start">
         <p className="text-sm font-semibold text-primary" lang="en">{kicker}</p>
-        <h3 className={`font-display mt-1 font-semibold text-black ${bigTitle ? "text-2xl md:text-[2rem]" : "text-xl md:text-2xl"}`}>{title}</h3>
+        <Heading className={`font-display mt-1 font-semibold text-black ${bigTitle ? "text-2xl md:text-[2rem]" : "text-xl md:text-2xl"}`}>{title}</Heading>
         {image && (
           <Image
             src={image.src}
@@ -296,12 +323,25 @@ export default function PapGuide() {
               })}
             </ol>
 
-            {/* after step 6: where to claim the medicines */}
-            <h4 className="font-display mt-10 text-base font-semibold text-black md:text-lg">Saan Makukuha ang Iyong Mga Gamot</h4>
-            <p className="mt-2 text-sm leading-relaxed text-ink-soft">
-              Pagkatapos matanggap ang inyong Guarantee Letter (GL) mula sa ahensiya, maaari kayong pumunta sa aming opisina
-              upang makuha ang inyong gamot.
-            </p>
+            {/* after step 6: using the GL to claim the medicines */}
+            <h3 className="font-display mt-10 text-base font-semibold text-black md:text-lg">Paano Gamitin ang Guarantee Letter (GL)</h3>
+            <div className="mt-2 space-y-2 text-[15px] leading-relaxed text-ink-soft md:text-base">
+              <p>
+                Ang GL ay nakapangalan sa isang partikular na supplier, at doon lang ito magagamit para kunin ang gamot. Bago
+                ka umalis sa opisina ng DSWD o PCSO, i-check ang mga ito:
+              </p>
+              <ul className={bulletList}>
+                <li>Tama ba ang pangalan ng supplier?</li>
+                <li>Tama ba ang gamot at ang dami, at tama ba ang spelling ng pangalan ng pasyente?</li>
+                <li>Hanggang kailan valid ang GL?</li>
+                <li>Ano ang mangyayari kung may balanseng hindi sakop ng GL?</li>
+              </ul>
+              <p>
+                Kapag nasa iyo na ang GL, dalhin ito sa Getmeds office para sa pagkuha ng gamot, kasama ang valid ID. Ang mga
+                reseta ay kailangang mula sa lisensyadong doktor, at dumadaan sa pharmacist verification bago i-dispense ang
+                gamot.
+              </p>
+            </div>
           </Part>
 
         </div>
@@ -329,10 +369,86 @@ export default function PapGuide() {
       </div>
 
       <div className="mx-auto mt-12 max-w-7xl px-5 md:px-10">
-        <div className="space-y-6">
-          {/* 3. FAQs, all answers open */}
-          <Part kicker="Tanong" title="FAQs" plain bigTitle>
-            {/* all 12 answers stay in the server HTML; FAQPage schema comes from <FaqSchema page="pap" /> */}
+        {/* 3. Who can apply, where, document tips, repeat cycles and other help */}
+        <div className="divide-y divide-gray-200">
+          <InfoSection title="Sino ang Puwedeng Mag-apply?">
+            <p>
+              Ang DSWD at PCSO ang nagpapasya kung sino ang makakatanggap ng tulong. Sa DSWD, social worker ang
+              nag-iinterbyu at tumitingin sa sitwasyon ng pasyente at pamilya. Hindi lang ito para sa pinakamahirap;
+              tinitingnan din kung may krisis o kakulangan sa pambayad sa gamot. Kung kapamilya ang mag-a-apply para sa
+              pasyente, karaniwang hindi na kailangan ng authorization letter. Kung hindi kapamilya, magdala ng signed
+              authorization letter at kopya ng ID ng pasyente. Magdala rin ng valid ID ng kumakatawan.
+            </p>
+          </InfoSection>
+
+          <InfoSection title="Saan Mag-apply sa DSWD?">
+            <p>
+              Maaari kang pumunta sa DSWD field office o satellite office na pinakamalapit sa inyo. Kung hindi ka sigurado
+              sa lokasyon, tanungin ang city o municipal social welfare office.
+            </p>
+            <p>
+              Sa mga government hospital, may Malasakit Center din, isang one-stop shop na may kinatawan ng DOH, DSWD, PCSO
+              at PhilHealth, ayon sa <ExternalLink href={MALASAKIT_ACT}>Republic Act No. 11463</ExternalLink>. Doon, pwedeng
+              mag-asikaso ng tulong nang hindi na lilipat-lipat ng opisina.
+            </p>
+          </InfoSection>
+
+          <InfoSection title="Mga Tip sa Paghahanda ng Dokumento">
+            <ul className={bulletList}>
+              <li>
+                Ang mga medical document (reseta, treatment protocol, medical abstract) ay karaniwang tinatanggap kung hindi
+                lumipas ang mga tatlong buwan mula nang ipalabas. Itanong ito sa opisina bago pumunta.
+              </li>
+              <li>Siguraduhing magkakapareho ang pangalan ng pasyente sa lahat ng dokumento, kasama ang ID.</li>
+              <li>Dapat nakasulat sa dokumento ng doktor ang buong pangalan, pirma, at license number.</li>
+              <li>Magdala ng original at hindi bababa sa dalawang photocopy ng bawat dokumento.</li>
+              <li>
+                Humingi ng official price quotation sa amin bago pumunta sa DSWD o PCSO para hindi maantala ang aplikasyon.
+              </li>
+            </ul>
+            <p>
+              Ang mga hinihingi ay maaaring magkaiba sa bawat opisina at nagbabago paminsan-minsan. Tawagan o bisitahin ang
+              opisina bago pumunta para makumpirma ang kasalukuyang listahan.
+            </p>
+          </InfoSection>
+
+          <InfoSection title="Kung Paulit-ulit ang Gamutan">
+            <p>
+              Ang chemotherapy ay karaniwang may ilang cycle. Itanong sa DSWD o PCSO kung kailan puwedeng mag-apply ulit para
+              sa susunod na cycle, at ihanda nang maaga ang bagong reseta at quotation para hindi maantala ang gamutan.
+            </p>
+          </InfoSection>
+
+          <InfoSection title="Ibang Tulong na Puwedeng Lapitan">
+            <p>Bukod sa DSWD at PCSO, may iba pang mapagkukunan ng tulong sa gastos ng gamot:</p>
+            <ul className={bulletList}>
+              <li>Office of the President at Office of the Vice President (medical assistance)</li>
+              <li>PhilHealth benefits para sa cancer</li>
+              <li>Lokal na pamahalaan (LGU) ng inyong lungsod o munisipyo</li>
+              <li>Philippine Cancer Society</li>
+            </ul>
+            <p>
+              Maaari ka ring magbasa ng aming mga gabay:{" "}
+              <Link href="/blog/how-to-get-medical-assistance-from-dswd-your-2025-ultimate-guide" className={inlineLink}>
+                Paano Mag-apply sa DSWD AICS
+              </Link>
+              ,{" "}
+              <Link href="/blog/how-to-apply-for-pcso-medical-assistance-program" className={inlineLink}>
+                Paano Mag-apply sa PCSO Medical Assistance
+              </Link>
+              , at{" "}
+              <Link href="/blog/how-to-reduce-cancer-treatment-costs-in-the-philippines" className={inlineLink}>
+                Paano Bawasan ang Gastos sa Gamutan ng Cancer
+              </Link>
+              .
+            </p>
+          </InfoSection>
+        </div>
+
+        <div className="mt-12 space-y-6">
+          {/* 4. FAQs */}
+          <Part kicker="Tanong" title="FAQs" plain bigTitle h2>
+            {/* all 16 answers stay in the server HTML; FAQPage schema comes from <FaqSchema page="pap" /> */}
             <Faq items={papFaqs} theme="white" initialOpen={null} idPrefix="pap-faq" />
             <div className="mt-8 grid gap-4 sm:grid-cols-2">
               <div className="rounded-2xl border border-gray-200 bg-white p-5">
@@ -341,8 +457,8 @@ export default function PapGuide() {
                 </span>
                 <p className="font-display mt-4 font-semibold text-black">Aming Lokasyon</p>
                 <p className="mt-1 text-sm leading-relaxed text-ink-soft">
-                  <span className="font-semibold text-gray-800">Unit 305, 17 Vatican Bldg.,</span> Vatican Drive, BF Resort
-                  Village, Las Piñas City, Metro Manila 1747
+                  <span className="font-semibold text-gray-800">Unit 301 &amp; 305, 17 Vatican Bldg.,</span> Vatican City
+                  Drive, B.F. Resort Village, Talon II, Las Piñas City, Metro Manila 1747
                 </p>
               </div>
               <div className="rounded-2xl border border-gray-200 bg-white p-5">
@@ -351,11 +467,30 @@ export default function PapGuide() {
                 </span>
                 <p className="font-display mt-4 font-semibold text-black">Oras ng Operasyon</p>
                 <p className="mt-1 text-sm leading-relaxed text-ink-soft">
-                  <span className="font-semibold text-gray-800">8:00 AM – 5:00 PM,</span> Lunes hanggang Biyernes.
+                  <span className="font-semibold text-gray-800">Monday to Saturday,</span> 7:00 AM to 4:00 PM
                 </p>
               </div>
             </div>
           </Part>
+        </div>
+
+        {/* 5. License, last updated and sources (license numbers are typed text, no dates) */}
+        <div className="mt-12 space-y-3 border-t border-gray-200 pt-6 text-[13px] leading-relaxed text-ink-soft">
+          <p>
+            Ang Getmeds Philippines Inc. ay lisensyado ng FDA Philippines bilang Drugstore na may online ordering at delivery
+            (LTO No. CDRR-NCR-DS-295793) at bilang Drug Distributor-Importer/Wholesaler (LTO No. CDRR-NCR-DI/W-418260).
+          </p>
+          <p>
+            Huling na-update: 21 Nobyembre 2026. Ang impormasyong ito ay pangkalahatang gabay lamang at hindi kapalit ng payo
+            ng doktor. Ang mga requirement at proseso ng DSWD at PCSO ay maaaring magbago; kumpirmahin sa mismong opisina bago
+            mag-apply.
+          </p>
+          <p>
+            Mga Pinagkunan: <ExternalLink href="https://www.dswd.gov.ph">DSWD</ExternalLink>,{" "}
+            <ExternalLink href="https://www.pcso.gov.ph">PCSO</ExternalLink>,{" "}
+            <ExternalLink href={MALASAKIT_ACT}>Republic Act No. 11463</ExternalLink> (Malasakit Centers Act), Philippine
+            Cancer Society.
+          </p>
         </div>
       </div>
     </section>

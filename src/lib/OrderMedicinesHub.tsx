@@ -59,8 +59,8 @@ const WHY_GETMEDS = [
   },
   {
     Icon: Headset,
-    title: '24/7 Customer Support',
-    desc: 'Emergency requirements, delivery updates and order questions, at any hour including weekends and holidays.',
+    title: 'Customer Support',
+    desc: 'Order questions, delivery updates and urgent requests, Monday to Saturday, 7:00 AM to 4:00 PM.',
   },
   {
     Icon: HandHeart,

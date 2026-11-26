@@ -397,8 +397,8 @@ export const orderFaqs: FaqItem[] = [
     schema: true,
   },
   {
-    q: "Is customer support available anytime?",
-    a: "<p>Yes. Getmeds customer support is available 24/7 through phone, Viber, WhatsApp, and Messenger.</p>",
+    q: "When is customer support available?",
+    a: "<p>Getmeds customer support is available Monday to Saturday, 7:00 AM to 4:00 PM, through phone, Viber, WhatsApp, and Messenger.</p>",
     schema: true,
   },
   {
@@ -425,8 +425,8 @@ export const orderFaqSchema = {
 };
 
 /*
- * Patient Assistance Program FAQ — final copy, word-for-word (all 12 in the accordion AND the
- * schema; Q10–11 are in Filipino). Same `a`-is-HTML contract as the other FAQ lists.
+ * Patient Assistance Program FAQ — final copy, word-for-word (all 16 in the accordion AND the
+ * schema; Q10–11 and Q13–16 are in Filipino). Same `a`-is-HTML contract as the other FAQ lists.
  */
 export const papFaqs: FaqItem[] = [
   {
@@ -489,9 +489,29 @@ export const papFaqs: FaqItem[] = [
     a: "<p>Yes — aside from DSWD and PCSO, Getmeds is also accredited to assist patients coordinating with the Office of the President and Office of the Vice President for medical assistance covering cancer and chemotherapy medicines.</p>",
     schema: true,
   },
+  {
+    q: "Puwede bang ang kapamilya ang mag-apply para sa pasyente?",
+    a: "<p>Oo. Karaniwang tinatanggap ang kapamilya, dala ang kanyang valid ID at ang dokumento ng pasyente. Kung hindi kapamilya, kailangan ng signed authorization letter at kopya ng ID ng pasyente.</p>",
+    schema: true,
+  },
+  {
+    q: "Para lang ba sa mahihirap ang DSWD AICS?",
+    a: "<p>Social worker ang tumitingin sa sitwasyon ng bawat aplikante. Hindi ito nakabatay lang sa kita; tinitingnan din kung may krisis o kakulangan sa pambayad. Ang pagpapasya ay nasa DSWD.</p>",
+    schema: true,
+  },
+  {
+    q: "Ano ang Malasakit Center?",
+    a: "<p>Isang one-stop shop sa mga government hospital, na may kinatawan ng DOH, DSWD, PCSO at PhilHealth, para sa tulong sa gastos sa pagpapagamot. Itinatakda ito ng Republic Act No. 11463.</p>",
+    schema: true,
+  },
+  {
+    q: "Ilang buwan valid ang medical documents?",
+    a: "<p>Iba-iba ito sa bawat opisina, pero karaniwang tinatanggap ang mga dokumentong hindi lumipas ang mga tatlong buwan. Kumpirmahin sa opisina bago pumunta.</p>",
+    schema: true,
+  },
 ];
 
-/** FAQPage JSON-LD for /patient-assistance-program only — all 12, answers identical to the accordion. */
+/** FAQPage JSON-LD for /patient-assistance-program only — all 16, answers identical to the accordion. */
 export const papFaqSchema = {
   "@context": "https://schema.org",
   "@type": "FAQPage",

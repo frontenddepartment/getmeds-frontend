@@ -82,7 +82,7 @@ const reasons = [
   { Icon: Pill, title: "Pharmacist-verified dispensing", text: "Every order is reviewed and dispensed under PRC-licensed Filipino pharmacists, under the Philippine Pharmacy Act (RA 10918)." },
   { Icon: FileCheck2, title: "Product documentation", text: "Certificate of Product Registration, Certificate of Analysis, product inserts and batch notifications." },
   { Icon: HeartHandshake, title: "Compassionate Special Permit coordination", text: "For medicines not registered in the Philippines, coordinated through our partner 2MG Inc. and subject to FDA approval." },
-  { Icon: PhoneCall, title: "24/7 Customer Support", text: "Emergency requirements, delivery updates and order questions, at any hour including weekends and holidays." },
+  { Icon: PhoneCall, title: "Customer Support", text: "Order questions, delivery updates and urgent requests, Monday to Saturday, 7:00 AM to 4:00 PM." },
   { Icon: Lock, title: "Secure prescription storage", text: "Uploads are encrypted and handled under the Data Privacy Act of 2012." },
 ];
 

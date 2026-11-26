@@ -60,12 +60,6 @@ const GROUND = '#F3F6FB';
 const CARD_SHADOW = '0 2px 10px rgba(23,43,77,.055)';
 
 /*
-  A downscaled copy of the logo for the header mark. Not /assets/getmedslogo.png,
-  which is 7122x4000 — fine as a hero image, wasteful for a 148px header mark.
-*/
-const LOGO_SRC = '/assets/getmeds-logo-sm.png';
-
-/*
   Hover motion for the icons on the three action buttons.
 
   Plain CSS rather than Tailwind's `group-hover:`, for the two guards it buys.
@@ -563,7 +557,7 @@ function BusinessCardPage({ initialSlug }: { initialSlug?: string }) {
   // ── Loading ───────────────────────────────────────────────────────────────
   if (state === 'loading') {
     return (
-      <main className="mx-auto max-w-md px-4 pb-10 pt-6">
+      <main className="mx-auto max-w-md px-4 pb-10 pt-24 lg:pt-36">
         <div className="mb-5 aspect-[1.75/1] w-full animate-pulse rounded-[18px] bg-white" />
         <div className="mx-auto mb-2 h-4 w-40 animate-pulse rounded-full bg-white" />
         <div className="mx-auto mb-7 h-3 w-28 animate-pulse rounded-full bg-white" />
@@ -580,7 +574,7 @@ function BusinessCardPage({ initialSlug }: { initialSlug?: string }) {
   if (state !== 'ready' || !card) {
     const isError = state === 'error';
     return (
-      <main className="mx-auto flex min-h-[70vh] max-w-md flex-col items-center justify-center px-6 text-center">
+      <main className="mx-auto flex min-h-[70vh] max-w-md flex-col items-center justify-center px-6 pb-10 pt-24 text-center lg:pt-36">
         <span
           className="mb-5 flex h-16 w-16 items-center justify-center rounded-full"
           style={{ background: '#FFF1F0' }}
@@ -624,7 +618,7 @@ function BusinessCardPage({ initialSlug }: { initialSlug?: string }) {
   // carries a link rather than a number.
   if (card.active === false) {
     return (
-      <main className="mx-auto flex min-h-[70vh] max-w-md flex-col items-center justify-center px-6 text-center">
+      <main className="mx-auto flex min-h-[70vh] max-w-md flex-col items-center justify-center px-6 pb-10 pt-24 text-center lg:pt-36">
         <span
           className="mb-5 flex h-16 w-16 items-center justify-center rounded-full"
           style={{ background: '#FFF8E6' }}
@@ -702,28 +696,10 @@ function BusinessCardPage({ initialSlug }: { initialSlug?: string }) {
           times and three identical stylesheets would do the same job. */}
       <style>{`${ENTRANCE_CSS}${ACTION_ICON_CSS}${DETAIL_HINT_CSS}`}</style>
 
-      {/* The page's own mark, and deliberately not a child of <main>.
 
-          In the flow it did two things it should not: pushed the card down, and
-          sat directly above the details column closely enough to read as that
-          column's heading. Out of the flow it is measured from the page corner
-          instead, so the layout below is exactly where it was without the logo,
-          and on a wide screen it sits well clear of the content in the margin.
-
-          This leans on <main> being unpositioned — if it ever gains `relative`,
-          this snaps back to the content edge and looks like part of the column
-          again. Absolute rather than fixed, so it scrolls away with the page
-          rather than shadowing the buttons. */}
-      <header className="gm-enter-fade-in absolute right-4 top-5 z-10 lg:right-8 lg:top-7">
-        <a href="/" className="inline-block">
-          <img src={LOGO_SRC} alt="Getmeds" className="h-auto w-[92px] lg:w-[148px]" />
-        </a>
-      </header>
-
-      {/* The phone-only top padding is the one concession: at that width there
-          is no margin beside the content to put a logo in, so the card has to
-          start below it. Desktop keeps its original pt-10. */}
-      <main className="mx-auto max-w-md px-4 pb-10 pt-[84px] lg:max-w-4xl lg:px-8 lg:pt-10">
+      {/* The site navbar is fixed over the top of the page (and carries the Getmeds
+          logo, so the page no longer adds its own), so the content starts below it. */}
+      <main className="mx-auto max-w-md px-4 pb-10 pt-24 lg:max-w-4xl lg:px-8 lg:pt-36">
         <div className="lg:grid lg:grid-cols-2 lg:items-start lg:gap-10">
         {/* ── Left: the card artwork ──
             Whoever is looking at this is holding the paper version, so matching

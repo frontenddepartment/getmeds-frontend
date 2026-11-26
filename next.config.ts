@@ -134,6 +134,8 @@ const nextConfig: NextConfig = {
       { source: '/blog/how-to-cure-cough-and-cold', destination: '/blog/best-cough-and-cold-otc-medicines', permanent: true },
       { source: '/blog/maintain-a-healthy-weight', destination: '/blog/ways-to-maintain-healthy-weight', permanent: true },
       { source: '/blog/best-supplements-and-vitamins-for-kids', destination: '/blog/best-vitamin-supplements-for-kids', permanent: true },
+      // Old contraceptive-pill post (404, but still ~84k impressions a quarter): same topic as the birth-control post.
+      { source: '/blog/best-contraceptive-pill-in-the-philippines', destination: '/blog/birth-control-pills-in-philippines', permanent: true },
 
       // Website pages the old blog templates linked without a leading "/" (so /blog/services,
       // /blog/product-range?category=...). Google still crawls them; the query string carries over.

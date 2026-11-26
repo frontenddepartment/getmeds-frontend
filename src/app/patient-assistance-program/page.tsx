@@ -20,7 +20,7 @@ export default function PapPage() {
 
   return (
     <>
-      {/* FAQPage JSON-LD (all 12, same wording as the accordion) — this page only */}
+      {/* FAQPage JSON-LD (all 16, same wording as the accordion) — this page only */}
       <FaqSchema page="pap" />
 
       {/* Hero image, same treatment as Order Medicines. xl+: copy sits white on the blue at the left.
